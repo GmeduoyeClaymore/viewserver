@@ -25,6 +25,13 @@
 
     <artifactId>viewserver-sql</artifactId>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>protoc-plugin</id>
+            <url>http://shotgun.ltd:8081/artifactory/libs-release/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
             <plugin>
