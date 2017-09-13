@@ -1,23 +1,26 @@
+import Expo from "expo";
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Landing from "./Landing";
 
 export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      isReady: false
+    };
+  }
+  async componentWillMount() {
+    await Expo.Font.loadAsync({
+      EncodeSansCondensed: require("./assets/fonts/EncodeSansCondensed-Thin.ttf")
+    });
+    this.setState({ isReady: true });
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={{color: 'red'}}>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
+    if (!this.state.isReady) {
+      return <Expo.AppLoading />;
+    }
+    return <Landing />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
