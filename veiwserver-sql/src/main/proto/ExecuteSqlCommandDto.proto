@@ -1,0 +1,13 @@
+option java_package = "io.viewserver.sql.messages";
+option java_outer_classname = "ExecuteSqlCommandMessage";
+
+import "core/CommandDto.proto";
+
+message ExecuteSqlCommandDto {
+    required string query = 1;
+    optional bool permanent = 2;
+}
+
+extend CommandDto {
+    optional ExecuteSqlCommandDto executeSqlCommand = 1000;
+}
