@@ -1,0 +1,58 @@
+/*
+ * Copyright 2016 Claymore Minds Limited and Niche Solutions (UK) Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.viewserver.operators.unenum;
+
+import io.viewserver.configurator.Configurator;
+import io.viewserver.datasource.IDimensionMapper;
+import io.viewserver.operators.ConfigurableOperatorFactoryBase;
+import io.viewserver.operators.IOperator;
+
+/**
+ * Created by nickc on 03/11/2014.
+ */
+public class UnEnumOperatorFactory extends ConfigurableOperatorFactoryBase<IUnEnumConfig> {
+    private IDimensionMapper dimensionMapper;
+
+    public UnEnumOperatorFactory(IDimensionMapper dimensionMapper) {
+        this.dimensionMapper = dimensionMapper;
+    }
+
+    @Override
+    public String getOperatorType() {
+        return "UnEnum";
+    }
+
+    @Override
+    public Class<? extends IOperator> getOperatorClass() {
+        return UnEnumOperator.class;
+    }
+
+    @Override
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+        return new UnEnumOperator(name, state.executionContext, state.catalog, dimensionMapper);
+    }
+
+    @Override
+    public Object getProtoConfigWrapper(Object configDto) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Class getProtoConfigDtoClass() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+}

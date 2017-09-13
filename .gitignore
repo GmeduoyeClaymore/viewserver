@@ -1,22 +1,30 @@
-# Compiled class file
-*.class
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
 
-# Log file
-*.log
+#build output files
+target
+war
+dependency-reduced-pom.xml
+*.releaseBackup
+release.properties
 
-# BlueJ files
-*.ctxt
+#Idea output files
+!.idea
+.idea/*
+!.idea/runConfigurations
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+#idea
+.idea/encodings.xml
+!.idea/ant.xml
+!.idea/compiler.xml
+.idea/workspace.xml
+.idea/modules.xml
+.idea/libraries
+!.idea/artifacts
+!.idea/copyright
+*.iml
 
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+node_modules
+out
+threadDumps

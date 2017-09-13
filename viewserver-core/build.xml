@@ -1,0 +1,30 @@
+<!--
+  ~ Copyright 2016 Claymore Minds Limited and Niche Solutions (UK) Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project name="viewserver" default="generateAll">
+    <target name="declare">
+        <taskdef name="sourcegen" classname="io.viewserver.sourcegen.SourceGen" classpath="${basedir}/../tools/viewserver-sourcegen/viewserver-sourcegen-0.8.0-SNAPSHOT.jar"/>
+    </target>
+
+    <target name="main" depends="declare">
+        <sourcegen>
+            <fileset dir="${basedir}">
+                <include name="**/*_KeyName_*.java"/>
+                <exclude name="**/target/generated-sources/java/**"/>
+            </fileset>
+        </sourcegen>
+    </target>
+</project>

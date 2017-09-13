@@ -1,0 +1,17 @@
+Instructions for using R Client
+===============================
+
+1) Make sure JRE 1.8 is installed
+2) Run "sudo R CMD javareconf"
+3) Make sure LD_LIBRARY_PATH is set if required (should include $JAVA_HOME/jre/lib/server)
+4) Download & Install rJava - sudo R CMD INSTALL rJava_0.9-7.tar.gz
+
+library(rJava)
+.jinit()
+.jaddClassPath('/path/to/viewserver-r.jar')
+client <- .jnew('io/viewserver/r/client/RClient', 'client', 'tcp://localhost:18000')
+client$authenticate('open', .jarray(''))
+opts <- .jnew('io/viewserver/execution/Options')
+opts$setLimit(as.integer(100))
+fx <- client$subscribe('fxrates', opts)
+

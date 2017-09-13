@@ -1,0 +1,13 @@
+{
+    "reportName" : "average",
+    "parameterValues" : {
+        "aggregators" : [ "clientType" ],
+        "measures" : [ "avg" ],
+        "startBucket" : [ 0 ],
+        "buckets" : [ 1 ],
+        "basis" : [ "tickets" ],
+        "bucketSize" : [ 30 ]
+    },
+    "dimensionValues" : [ ],
+    "childContexts" : [ ]
+}

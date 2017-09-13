@@ -1,0 +1,37 @@
+{
+  "dimensions" : [ {
+    "name" : "customer",
+    "label" : "customer",
+    "cardinality" : "Int",
+    "aggregator" : true
+  } ],
+  "dataAdapter" : {
+    "@class" : "io.viewserver.adapters.common.EmptyTableDataAdapter",
+    "name" : "distributed_aggregations"
+  },
+  "schema" : {
+    "columns" : [ {
+      "name" : "customer",
+      "dataSourceName" : "customer",
+      "type" : "String"
+    }, {
+      "name" : "value",
+      "dataSourceName" : "value",
+      "type" : "Double"
+    }, {
+      "name" : "include",
+      "dataSourceName" : "include",
+      "type" : "Bool"
+    } ],
+    "keyColumns" : [ ]
+  },
+  "output" : "distributed_aggregations",
+  "name" : "distributed_aggregations",
+  "nodes" : [ ],
+  "distributionMode" : "Striped",
+  "stripingStrategy" : {
+    "@class" : "io.viewserver.distribution.RoundRobinStripingStrategy"
+  },
+  "calculatedColumns" : [ ],
+  "options" : [ "IsIndexed", "IsReportSource", "IsWritable" ]
+}

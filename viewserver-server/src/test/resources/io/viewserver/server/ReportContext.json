@@ -1,0 +1,17 @@
+{
+    "reportName" : "default",
+    "parameterValues" : {
+        "measures" : [ "tradedByUs" ],
+        "startBucket" : [ 0 ],
+        "buckets" : [ 30 ],
+        "currency" : [ "USD" ],
+        "basis" : [ "dv01" ],
+        "bucketSize" : [ 1 ]
+    },
+    "dimensionValues" : [ {
+        "name" : "client",
+        "exclude" : false,
+        "values" : [ "BNP Asst Mgmt" ]
+    } ],
+    "childContexts" : [ ]
+}

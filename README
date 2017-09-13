@@ -1,0 +1,19 @@
+--SETUP--
+
+This protobuf files used in this project are included as a git submodule. To check out this submodule run the following
+(you may need to delete the src/proto directory if it already exists)
+1. git submodule init
+2. git submodule update
+
+
+If a git submodule has been updated run
+1. git submodule foreach git pull origin master
+
+This project also uses generated code to build the generated code run
+1. Setup an environment variable called "protoc" this should be the absolute path to "tools/protoc.exe" mine is "C:\git\viewserver\tools\protoc.exe"
+2. mvn install
+
+Importing into intellij
+
+There are a number of .java files that are excluded from the project they will have _KeyName_ in their path. When importing the project into intellij from maven the .idea/compiler.xml file in which these exclusions are saved is overwritten. In order to re excluded go into the .idea directory then revert modifications to the file to what is stored in git. Then close and re-open project
+

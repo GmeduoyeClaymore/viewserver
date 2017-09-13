@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<config>
+    <viewserver>
+        <servers>
+            <master>
+                <bootstrapper>com.shotgun.viewserver.setup.DemoBootstrapper</bootstrapper>
+                <database>%user.home%/viewserver-shotgun</database>
+
+                <endpoints>
+                    <endpoint>tcp://0.0.0.0:18000</endpoint>
+                    <!--<endpoint>ipc://master.viewserver.ipc</endpoint>-->
+                    <endpoint>ws://0.0.0.0:8080</endpoint>
+                </endpoints>
+            </master>
+
+            <slaves>2</slaves>
+        </servers>
+    </viewserver>
+
+    <webserver>
+        <sites>
+            <site port="8090" contentRoot="explorer"/>
+        </sites>
+    </webserver>
+
+    <mosaic>
+        <ruleEngine enabled="true"/>
+    </mosaic>
+</config>

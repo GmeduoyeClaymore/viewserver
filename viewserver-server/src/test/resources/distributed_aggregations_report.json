@@ -1,0 +1,85 @@
+{
+  "@class" : "io.viewserver.report.ReportDefinition",
+  "nodes" : [ {
+    "@class" : "io.viewserver.execution.nodes.MeasureGroupByNode",
+    "name" : "group",
+    "type" : "GroupBy",
+    "connections" : [ {
+      "operator" : "#input",
+      "output" : "out",
+      "input" : "in"
+    } ],
+    "distributed" : true,
+    "groupByColumns" : [ "customer" ],
+    "summaries" : [ ],
+    "subtotals" : [ ]
+  } ],
+  "output" : "group",
+  "id" : "distributed_aggregations_report",
+  "name" : "distributed_aggregations_report",
+  "parameters" : [ ],
+  "calculations" : [ {
+    "name" : "value_included",
+    "expression" : "if(include, value, 0)"
+  } ],
+  "measures" : {
+    "average" : {
+      "name" : "average",
+      "label" : "average",
+      "preSummaryCalculations" : [ ],
+      "summaries" : [ {
+        "name" : "value_avg",
+        "function" : "avg",
+        "target" : "value",
+        "regex" : false
+      } ],
+      "postSummaryCalculations" : [ ]
+    },
+    "sum" : {
+      "name" : "sum",
+      "label" : "sum",
+      "preSummaryCalculations" : [ ],
+      "summaries" : [ {
+        "name" : "value_sum",
+        "function" : "sum",
+        "target" : "value",
+        "regex" : false
+      } ],
+      "postSummaryCalculations" : [ ]
+    },
+    "average_included" : {
+      "name" : "average_included",
+      "label" : "average_included",
+      "preSummaryCalculations" : [ {
+        "name" : "avg_included",
+        "expression" : "if(include, 1, 0)"
+      } ],
+      "summaries" : [ {
+        "name" : "avg_included_count",
+        "function" : "sum",
+        "target" : "avg_included",
+        "regex" : false
+      }, {
+        "name" : "value_avg_included",
+        "function" : "avg",
+        "target" : "value_included",
+        "arguments" : [ "avg_included_count" ],
+        "regex" : false
+      } ],
+      "postSummaryCalculations" : [ ]
+    },
+    "sum_included" : {
+      "name" : "sum_included",
+      "label" : "sum_included",
+      "preSummaryCalculations" : [ ],
+      "summaries" : [ {
+        "name" : "value_included_sum",
+        "function" : "sum",
+        "target" : "value_included",
+        "regex" : false
+      } ],
+      "postSummaryCalculations" : [ ]
+    }
+  },
+  "dataSource" : "distributed_aggregations"
+}
