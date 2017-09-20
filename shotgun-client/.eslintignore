@@ -1,0 +1,42 @@
+# ignore base_node_modules
+node_modules/*
+
+# don't bother with sencha code right now
+falcon/app/control
+falcon/app/controller
+falcon/app/data
+falcon/app/datasource
+falcon/app/model
+falcon/app/search
+falcon/app/store
+falcon/app/util
+falcon/app/view
+falcon/app/Application.js
+
+# other node_modules are current included except those we don't compile through babel
+falcon/node_modules/moment/*
+falcon/node_modules/flux/*
+falcon/node_modules/codemirror/*
+falcon/node_modules/classnames/*
+falcon/node_modules/fuzzy/*
+falcon/node_modules/jsep/*
+falcon/node_modules/tether/*
+falcon/react/dist/*
+falcon/src/app/crb/node_modules/
+
+# ignore all other non-source folders
+falcon/.sencha/*
+falcon/.sass-cache/*
+falcon/css/*
+falcon/jasmine/*
+falcon/resources/*
+falcon/sass/*
+falcon/vendor/*
+
+
+# ignore dist folders
+**/dist/*
+**/docs/assets/*
+
+# ignore dev host files
+falcon/src/dev/hosts
