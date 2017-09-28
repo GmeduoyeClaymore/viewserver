@@ -1,11 +1,14 @@
 export default class Logger {
-    debug(msg){
+    static debug(msg){
         console.log(msg);
     }
-    error(msg){
+    static info(msg){
+        console.log(msg);
+    }
+    static error(msg){
         console.error(msg);
     }
-    fine(msg){
+    static fine(msg){
         console.log(msg);
     }
 }

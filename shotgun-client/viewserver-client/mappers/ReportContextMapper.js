@@ -3,15 +3,15 @@ import {$} from '../core/JQueryish';
 
 export default class ReportContextMapper{
     
-    toDto(reportContext) {
+    static toDto(reportContext) {
         let reportContextCopy = $.extend(true, {}, reportContext);
-        this._enrichParameters(reportContextCopy.parameters);
+        ReportContextMapper._enrichParameters(reportContextCopy.parameters);
 
         let reportContextDto = new ProtoLoader.Dto.ReportContextDto();
-        reportContextDto.setParameters(this._mapParameters(reportContextCopy.parameters, this._buildParameter));
-        reportContextDto.setDimensions(this._mapParameters(reportContextCopy.dimensions, this._buildDimension));
-        reportContextDto.setExcludedFilters(this._mapParameters(reportContextCopy.excludedFilters, this._buildDimension));
-        reportContextDto.setChildContexts(this._mapChildContexts(reportContextCopy.childContexts));
+        reportContextDto.setParameters(ReportContextMapper._mapParameters(reportContextCopy.parameters, ReportContextMapper._buildParameter));
+        reportContextDto.setDimensions(ReportContextMapper._mapParameters(reportContextCopy.dimensions, ReportContextMapper._buildDimension));
+        reportContextDto.setExcludedFilters(ReportContextMapper._mapParameters(reportContextCopy.excludedFilters, ReportContextMapper._buildDimension));
+        reportContextDto.setChildContexts(ReportContextMapper._mapChildContexts(reportContextCopy.childContexts));
 
         if(reportContextCopy.reportId !== undefined) {
             reportContextDto.setReportId(reportContextCopy.reportId);
@@ -28,8 +28,8 @@ export default class ReportContextMapper{
         return reportContextDto;
     }
         
-    _mapChildContexts(childContexts){
-        var _self = this;
+    static _mapChildContexts(childContexts){
+        var _self = ReportContextMapper;
         var childContextDtos = [];
 
         if(childContexts !== undefined) {
@@ -40,13 +40,13 @@ export default class ReportContextMapper{
         return childContextDtos;
     }
         
-    _enrichParameters(parameters){
+    static _enrichParameters(parameters){
         if(parameters.aggregators && parameters.aggregators.length > 1){
-            this._addSubTotalParameters(parameters);
+            ReportContextMapper._addSubTotalParameters(parameters);
         }
     }
         
-    _addSubTotalParameters(parameters){
+    static _addSubTotalParameters(parameters){
         var subTotalString = '';
         parameters.subtotals = [];
 
@@ -56,21 +56,21 @@ export default class ReportContextMapper{
         });
     }
         
-    _buildParameter(name, value) {
+    static _buildParameter(name, value) {
         return new ProtoLoader.Dto.ReportContextDto.ParameterValue({
             name: name,
             value: value
         });
     }
         
-    _buildDimension(name, value) {
+    static _buildDimension(name, value) {
         return new ProtoLoader.Dto.ReportContextDto.Dimension({
             name: name,
             value: value
         });
     }
         
-    _mapParameters(parameters, builder) {
+    static _mapParameters(parameters, builder) {
         let parametersDto = [];
 
         if(parameters !== undefined) {

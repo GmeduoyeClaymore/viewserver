@@ -1,7 +1,7 @@
 import {$} from '../core/JQueryish';
 
 export default class RowMapper{
-    _parseValue(rowValue) {
+    static _parseValue(rowValue) {
         var value = rowValue[rowValue.value];
 
         switch (rowValue.value) {
@@ -15,8 +15,8 @@ export default class RowMapper{
         }
     }
 
-    fromDto(schema, rowValues) {
-        var _self = this;
+    static fromDto(schema, rowValues) {
+        var _self = RowMapper;
         var row = {};
 
         $.each(rowValues, function (index, rowValue) {

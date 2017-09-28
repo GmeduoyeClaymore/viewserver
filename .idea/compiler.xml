@@ -73,6 +73,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="msx-server-demo" />
+        <module name="shotgun-viewsserver" />
         <module name="viewserver-adapters-common" />
         <module name="viewserver-adapters-csv" />
         <module name="viewserver-adapters-h2" />

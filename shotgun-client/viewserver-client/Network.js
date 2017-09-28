@@ -6,11 +6,15 @@ import Connection from './Connection';
 import TableMetaDataMapper from './mappers/TableMetaDataMapper';
 
 export default class Network {
-    constructor() {
+    constructor(connectionUrl) {
+        this.connectionUrl = connectionUrl
     }
 
     connect(){
-        this.connection = new Connection("ws://localhost:8080");
+        Logger.debug(`Creating connection to ${this.connectionUrl}`);
+        this.eventHandlers = undefined;
+        this.connection = new Connection(this.connectionUrl,this.eventHandlers,this);
+        return this.connection.connect();
     }
     
     get socket(){
@@ -36,24 +40,34 @@ export default class Network {
         }
     }
 
+    sendCommand(command) {
+        this.connection.sendCommand(command);
+    }
     sendMessage(message) {
-        var messageWrapper = new ProtoLoader.Dto.MessageDto();
-        if (message instanceof ProtoLoader.Dto.HeartbeatDto) {
-            messageWrapper.heartbeat = message;
-        } else if (message instanceof ProtoLoader.Dto.CommandDto) {
-            messageWrapper.command = message;
+        var messageWrapper = null;
+        
+        if (message.command) {
+            messageWrapper = ProtoLoader.Dto.MessageDto.create({
+                command : message
+            });
+        } else {
+            messageWrapper = ProtoLoader.Dto.MessageDto.create({
+                heartbeat : message
+            });
         }
-        this.send(messageWrapper.toArrayBuffer());
+        let result = ProtoLoader.Dto.MessageDto.encode(messageWrapper).finish();
+        Logger.info("Result is " + JSON.stringify(result));
+        this.send(result);
     }
 
 
     sendHeartbeat() {
-        var heartbeat = new ProtoLoader.Dto.HeartbeatDto(ProtoLoader.Dto.HeartbeatDto.Type.PING);
+        var heartbeat = ProtoLoader.Dto.HeartbeatDto.create({Type : 2});
         this.sendMessage(heartbeat);
     }
 
     receiveHeartBeat(heartBeat) {
-        if (heartBeat.type === ProtoLoader.Dto.HeartbeatDto.Type.PING) {
+        if (heartBeat.type === 1) {
             this.sendHeartbeat();
         } else {
             // Logger.debug('PONG!');
@@ -109,13 +123,13 @@ export default class Network {
         if (statuses) {
             $.each(statuses, function (index, statusDto) {
                 switch (statusDto.status) {
-                    case ProtoLoader.Dto.StatusDto.StatusId.SCHEMARESET:
+                    case 1:
                     {
                         Logger.fine('Received schema reset');
                         handler.onSchemaReset();
                         break;
                     }
-                    case ProtoLoader.Dto.StatusDto.StatusId.DATARESET:
+                    case 0:
                     {
                         Logger.fine('Received data reset');
                         handler.onDataReset();

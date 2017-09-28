@@ -2,8 +2,8 @@ import ProtoLoader from '../core/ProtoLoader';
 import {$} from '../core/JQueryish';
 
 export default class OptionsMapper{
-    toDto(options) {
-        var _self = this;
+    static toDto(options) {
+        var _self = OptionsMapper;
         var optionsCopy = $.extend(true, {}, options);
 
         if(optionsCopy.columnsToSort !== undefined){
@@ -13,14 +13,14 @@ export default class OptionsMapper{
             });
         }
 
-        return new ProtoLoader.Dto.OptionsDto(optionsCopy);
+        return ProtoLoader.Dto.OptionsDto.create(optionsCopy);
     }
 
-    _parseSortColumn(sortColumn){
+    static _parseSortColumn(sortColumn){
         return sortColumn.replace(/[\[\]]/g, '').replace(/\./g, '_');
     }
 
-    _parseDirection (direction) {
+    static _parseDirection (direction) {
         switch (direction.toLowerCase()) {
             case 'asc': {
                 return ProtoLoader.Dto.SortDirection.ASCENDING;

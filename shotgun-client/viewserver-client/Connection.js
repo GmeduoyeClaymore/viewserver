@@ -3,31 +3,72 @@ import ProtoLoader from './core/ProtoLoader';
 
 export default class Connection {
     constructor(uri, eventHandlers, network) {
-        this.eventHandlers = eventHandlers;
-        this.network = network;
-        this.socket = new WebSocket(uri);
-        this.socket.binaryType = 'arraybuffer';
-        this.socket.onopen = this.handleSocketOpen;
-        this.socket.onclose = this.handleSocketClosed;
-        this.commandId = 0;
-        this.openCommands = [];
+        this._uri = uri;
+        this._eventHandlers = eventHandlers;
+        this._network = network;
+        this._commandId = 0;
+        this._openCommands = [];
+        this._isOpen = false;
+        this.handleSocketOpen = this.handleSocketOpen.bind(this);
+        this.handleSocketClosed = this.handleSocketClosed.bind(this);
+    }
+
+
+    static CONNECTION_ATTEMPT_DELAY = 5000; // The maximum amount of time to wait for the socket to open before giving up
+
+    connect(){
+        let _this = this;
+        _this._socket = new WebSocket(this._uri);
+        _this._socket.binaryType = 'buffer';
+        _this._socket.onopen = this.handleSocketOpen;
+        _this._socket.onclose = this.handleSocketClosed;
+        return new Promise((resolve, reject) => {
+            const retryFrequency = 10;
+            const retryInterval = Connection.CONNECTION_ATTEMPT_DELAY/retryFrequency;
+            const result = (counter) => {
+                if(_this._isOpen){
+                    resolve();
+                }else if(counter === retryFrequency){
+                    reject( `Unable to detect open web socket to ${_this._uri} after ${retryFrequency} retries. Total time elapsed ${Connection.CONNECTION_ATTEMPT_DELAY} ms`)
+                }else{
+                    Logger.debug(`Attempt ${counter} socket not connected. Socket state is ${_this._socket.readyState} Trying again in  ${retryInterval}ms`)
+                    setTimeout(() => result(counter+1),
+                        retryInterval
+                    );
+                }
+                
+            }
+            result(0);
+        });
+        
     }
 
     get socket(){
-        return this.socket;
+        return this._socket;
+    }
+    
+    get network(){
+        return this._network;
     }
     
     get openCommands(){
-        return this.openCommands;
+        return this._openCommands;
+    }
+    
+    get commandId(){
+        return this._commandId;
     }
 
     handleSocketOpen(){
         Logger.debug('Network Connected');
-        this.eventHandlers.onSuccess();
+        this._isOpen = true;
+        if(this._eventHandlers){
+            this._eventHandlers.onSuccess();
+        }
     }
 
     handleSocketClosed(e){
-        Logger.debug('Network Disconnected');
+        
         let reason;
 
         switch(e.code){
@@ -74,8 +115,12 @@ export default class Connection {
                 reason = 'Unknown reason';
         }
 
+        Logger.debug(`Network Disconnected ${reason}`);
+
         if(e.code > 1000 && e.wasClean === false){
-            this.eventHandlers.onError(reason);
+            if(this._eventHandlers){
+                this._eventHandlers.onError(reason);
+            }
         }
     }
 
@@ -119,18 +164,16 @@ export default class Connection {
         this.socket.close();
     }
     
-    sendCommand(command) {
-        command.id = this.commandId++;
-        this.openCommands[command.id] = command;
+    sendCommand(cmd) {
+        cmd.id = this.commandId++;
+        this.openCommands[cmd.id] = cmd;
     
-        Logger.info('Sending command ' + command.id + ' - ' + command.command);
-        Logger.fine(JSON.stringify(command.data));
+        Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
+        Logger.fine(JSON.stringify(cmd.data));
     
-    
-        let commandDto = new ProtoLoader.Dto.CommandDto(command.id, command.command);
-    //            commandDto.data = command.data.encode();
-        commandDto.set('.' + command.command + 'Command', command.data);
-        this.sendMessage(commandDto);
+        const {id,command,data} = cmd;
+        let commandDto = ProtoLoader.Dto.CommandDto.create({id,command,data});
+        this.network.sendMessage(commandDto);
         return command;
     }
     

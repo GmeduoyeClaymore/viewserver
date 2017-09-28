@@ -45,6 +45,7 @@
         <module>viewserver-sql</module>
         <module>viewserver-logging</module>
         <module>viewserver-messages</module>
+        <module>viewserver-shotgun</module>
     </modules>
 
     <profiles>
