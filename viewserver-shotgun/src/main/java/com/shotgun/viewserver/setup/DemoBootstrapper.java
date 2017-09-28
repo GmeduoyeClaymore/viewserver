@@ -1,10 +1,8 @@
 package com.shotgun.viewserver.setup;
 
-import com.shotgun.viewserver.setup.datasource.CsvDataSource;
-import com.shotgun.viewserver.setup.datasource.FxRatesDataSource;
+import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.server.setup.BootstrapperBase;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.*;
+
 import java.util.Collection;
 
 /**
@@ -16,6 +14,11 @@ public class DemoBootstrapper extends BootstrapperBase {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
         dataSources.add(FxRatesDataSource.getDataSource());
         dataSources.add(CsvDataSource.getDataSource());
+        dataSources.add(CustomerDataSource.getDataSource());
+        dataSources.add(CustomerDeliveryAddressDataSource.getDataSource());
+        dataSources.add(DriverDataSource.getDataSource());
+        dataSources.add(MerchantDataSource.getDataSource());
+        dataSources.add(PaymentCardsDataSource.getDataSource());
         return dataSources;
     }
 }
