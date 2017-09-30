@@ -4,7 +4,7 @@ import {$} from '../core/JQueryish';
 
 export default class RowEventMapper{
     
-    mapRowEventType(rowEventType) {
+    static mapRowEventType(rowEventType) {
         switch (rowEventType) {
             case RowEvent.EventType.ADD: {
                 return ProtoLoader.Dto.RowEventDto.RowEventType.ADD;
@@ -21,8 +21,8 @@ export default class RowEventMapper{
         }
     }
 
-    toDto(rowEvent, dataSink) {
-        let rowEventDto = new ProtoLoader.Dto.RowEventDto(this.mapRowEventType(rowEvent.type));
+    static toDto(rowEvent, dataSink) {
+        let rowEventDto = new ProtoLoader.Dto.RowEventDto(RowEventMapper.mapRowEventType(rowEvent.type));
         if (rowEvent.rowId >= 0) {
             rowEventDto.setRowId(rowEvent.rowId);
         }

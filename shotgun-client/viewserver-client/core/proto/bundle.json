@@ -1,0 +1,2100 @@
+{
+  "options": {
+    "java_package": "io.viewserver.messages.protobuf.dto",
+    "java_outer_classname": "UpdateSubscriptionCommandMessage"
+  },
+  "nested": {
+    "AuthenticateCommandDto": {
+      "fields": {
+        "type": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "token": {
+          "rule": "repeated",
+          "type": "string",
+          "id": 2
+        }
+      }
+    },
+    "authenticateCommand": {
+      "type": "AuthenticateCommandDto",
+      "id": 100,
+      "extend": "CommandDto"
+    },
+    "CalcColConfigDto": {
+      "fields": {
+        "calculations": {
+          "rule": "repeated",
+          "type": "CalculatedColumn",
+          "id": 1
+        },
+        "aliases": {
+          "rule": "repeated",
+          "type": "CalculationAlias",
+          "id": 2
+        },
+        "doesDataRefreshOnColumnAdd": {
+          "type": "bool",
+          "id": 3
+        }
+      },
+      "nested": {
+        "CalculatedColumn": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "expression": {
+              "rule": "required",
+              "type": "string",
+              "id": 2
+            }
+          }
+        },
+        "CalculationAlias": {
+          "fields": {
+            "alias": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "CommandDto": {
+      "fields": {
+        "id": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        },
+        "command": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "data": {
+          "type": "bytes",
+          "id": 3
+        }
+      },
+      "extensions": [
+        [
+          100,
+          536870911
+        ]
+      ]
+    },
+    "CommandResultDto": {
+      "fields": {
+        "id": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        },
+        "success": {
+          "rule": "required",
+          "type": "bool",
+          "id": 2
+        },
+        "message": {
+          "type": "string",
+          "id": 3
+        }
+      }
+    },
+    "ConfiguratorDto": {
+      "fields": {
+        "operators": {
+          "rule": "repeated",
+          "type": "OperatorDto",
+          "id": 1
+        }
+      }
+    },
+    "configurator": {
+      "type": "ConfiguratorDto",
+      "id": 304,
+      "extend": "CommandDto"
+    },
+    "ConnectionDto": {
+      "fields": {
+        "input": {
+          "type": "string",
+          "id": 1
+        },
+        "operator": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "output": {
+          "type": "string",
+          "id": 3
+        }
+      }
+    },
+    "MetadataItem": {
+      "oneofs": {
+        "value": {
+          "oneof": [
+            "booleanValue",
+            "intValue",
+            "longValue",
+            "floatValue",
+            "doubleValue",
+            "stringValue",
+            "blobValue"
+          ]
+        }
+      },
+      "fields": {
+        "key": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "booleanValue": {
+          "type": "bool",
+          "id": 2
+        },
+        "intValue": {
+          "type": "sint32",
+          "id": 3
+        },
+        "longValue": {
+          "type": "sint64",
+          "id": 4
+        },
+        "floatValue": {
+          "type": "float",
+          "id": 5
+        },
+        "doubleValue": {
+          "type": "double",
+          "id": 6
+        },
+        "stringValue": {
+          "type": "string",
+          "id": 7
+        },
+        "blobValue": {
+          "type": "bytes",
+          "id": 8
+        }
+      }
+    },
+    "OperatorDto": {
+      "fields": {
+        "name": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "type": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "operation": {
+          "rule": "required",
+          "type": "Operation",
+          "id": 3
+        },
+        "config": {
+          "type": "bytes",
+          "id": 4
+        },
+        "connections": {
+          "rule": "repeated",
+          "type": "ConnectionDto",
+          "id": 5
+        },
+        "metadata": {
+          "rule": "repeated",
+          "type": "MetadataItem",
+          "id": 6
+        }
+      },
+      "nested": {
+        "Operation": {
+          "values": {
+            "CREATECONFIGURE": 0,
+            "REMOVE": 1
+          }
+        }
+      }
+    },
+    "ExecuteSqlCommandDto": {
+      "fields": {
+        "query": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "permanent": {
+          "type": "bool",
+          "id": 2
+        }
+      }
+    },
+    "executeSqlCommand": {
+      "type": "ExecuteSqlCommandDto",
+      "id": 1000,
+      "extend": "CommandDto"
+    },
+    "FilterConfigDto": {
+      "fields": {
+        "mode": {
+          "rule": "required",
+          "type": "Mode",
+          "id": 1
+        },
+        "expression": {
+          "type": "string",
+          "id": 2
+        }
+      },
+      "nested": {
+        "Mode": {
+          "values": {
+            "TRANSPARENT": 1,
+            "FILTER": 2
+          }
+        }
+      }
+    },
+    "GroupByConfigDto": {
+      "fields": {
+        "groupByColumn": {
+          "rule": "repeated",
+          "type": "string",
+          "id": 1
+        },
+        "summaries": {
+          "rule": "repeated",
+          "type": "Summary",
+          "id": 2
+        },
+        "countColumnName": {
+          "type": "string",
+          "id": 3
+        },
+        "subtotals": {
+          "rule": "repeated",
+          "type": "string",
+          "id": 4
+        }
+      },
+      "nested": {
+        "Summary": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "function": {
+              "rule": "required",
+              "type": "string",
+              "id": 2
+            },
+            "target": {
+              "rule": "required",
+              "type": "string",
+              "id": 3
+            },
+            "isRegex": {
+              "type": "bool",
+              "id": 4
+            },
+            "arguments": {
+              "rule": "repeated",
+              "type": "string",
+              "id": 5
+            }
+          }
+        }
+      }
+    },
+    "HeartbeatDto": {
+      "fields": {
+        "type": {
+          "rule": "required",
+          "type": "Type",
+          "id": 1
+        }
+      },
+      "nested": {
+        "Type": {
+          "values": {
+            "PING": 1,
+            "PONG": 2
+          }
+        }
+      }
+    },
+    "IndexConfigDto": {
+      "fields": {
+        "outputs": {
+          "rule": "repeated",
+          "type": "Output",
+          "id": 1
+        }
+      },
+      "nested": {
+        "Output": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "queryHolders": {
+              "rule": "repeated",
+              "type": "QueryHolder",
+              "id": 2
+            }
+          },
+          "nested": {
+            "QueryHolder": {
+              "fields": {
+                "columnName": {
+                  "rule": "required",
+                  "type": "string",
+                  "id": 1
+                },
+                "values": {
+                  "rule": "repeated",
+                  "type": "uint32",
+                  "id": 2,
+                  "options": {
+                    "packed": false
+                  }
+                },
+                "exclude": {
+                  "type": "bool",
+                  "id": 3
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "InitialiseSlaveCommandDto": {
+      "fields": {
+        "type": {
+          "rule": "required",
+          "type": "SlaveType",
+          "id": 1
+        }
+      },
+      "nested": {
+        "SlaveType": {
+          "values": {
+            "MASTER": 0,
+            "AGGREGATOR": 1,
+            "BLOTTER": 2
+          }
+        }
+      }
+    },
+    "initialiseSlaveCommand": {
+      "type": "InitialiseSlaveCommandDto",
+      "id": 301,
+      "extend": "CommandDto"
+    },
+    "MessageDto": {
+      "oneofs": {
+        "message": {
+          "oneof": [
+            "heartbeat",
+            "command",
+            "commandResult",
+            "tableEvent"
+          ]
+        }
+      },
+      "fields": {
+        "heartbeat": {
+          "type": "HeartbeatDto",
+          "id": 1
+        },
+        "command": {
+          "type": "CommandDto",
+          "id": 2
+        },
+        "commandResult": {
+          "type": "CommandResultDto",
+          "id": 3
+        },
+        "tableEvent": {
+          "type": "TableEventDto",
+          "id": 4
+        }
+      }
+    },
+    "TableEventDto": {
+      "fields": {
+        "id": {
+          "type": "uint32",
+          "id": 1
+        },
+        "initSize": {
+          "type": "uint32",
+          "id": 2
+        },
+        "executionCycle": {
+          "type": "uint32",
+          "id": 3
+        },
+        "schemaChange": {
+          "type": "SchemaChangeDto",
+          "id": 4
+        },
+        "rowEvents": {
+          "rule": "repeated",
+          "type": "RowEventDto",
+          "id": 5
+        },
+        "statuses": {
+          "rule": "repeated",
+          "type": "StatusDto",
+          "id": 6
+        },
+        "flags": {
+          "type": "uint32",
+          "id": 7
+        },
+        "metaData": {
+          "type": "TableMetaDataDto",
+          "id": 8
+        }
+      },
+      "nested": {
+        "Flags": {
+          "values": {
+            "SNAPSHOT_COMPLETE": 1
+          }
+        }
+      }
+    },
+    "DataType": {
+      "values": {
+        "BOOLEAN": 1,
+        "BYTE": 2,
+        "SHORT": 3,
+        "INTEGER": 4,
+        "LONG": 5,
+        "FLOAT": 6,
+        "DOUBLE": 7,
+        "STRING": 8,
+        "NULLABLEBOOLEAN": 9,
+        "DATE": 10,
+        "DATETIME": 11
+      }
+    },
+    "SchemaChangeDto": {
+      "fields": {
+        "schemaSize": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        },
+        "addedColumns": {
+          "rule": "repeated",
+          "type": "AddColumn",
+          "id": 2
+        },
+        "removedColumns": {
+          "rule": "repeated",
+          "type": "RemoveColumn",
+          "id": 3
+        }
+      },
+      "nested": {
+        "AddColumn": {
+          "oneofs": {
+            "nullValue": {
+              "oneof": [
+                "doubleNullValue",
+                "floatNullValue",
+                "intNullValue",
+                "longNullValue",
+                "booleanNullValue",
+                "stringNullValue",
+                "blobNullValue",
+                "nullNullValue"
+              ]
+            }
+          },
+          "fields": {
+            "columnId": {
+              "type": "uint32",
+              "id": 1
+            },
+            "type": {
+              "rule": "required",
+              "type": "ColumnType",
+              "id": 2
+            },
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 3
+            },
+            "dataType": {
+              "type": "DataType",
+              "id": 4
+            },
+            "doubleNullValue": {
+              "type": "double",
+              "id": 5
+            },
+            "floatNullValue": {
+              "type": "float",
+              "id": 6
+            },
+            "intNullValue": {
+              "type": "sint32",
+              "id": 7
+            },
+            "longNullValue": {
+              "type": "sint64",
+              "id": 8
+            },
+            "booleanNullValue": {
+              "type": "bool",
+              "id": 9
+            },
+            "stringNullValue": {
+              "type": "string",
+              "id": 10
+            },
+            "blobNullValue": {
+              "type": "bytes",
+              "id": 11
+            },
+            "nullNullValue": {
+              "type": "sint32",
+              "id": 12
+            }
+          },
+          "nested": {
+            "ColumnType": {
+              "values": {
+                "BOOLEAN": 1,
+                "BYTE": 2,
+                "SHORT": 3,
+                "INTEGER": 4,
+                "LONG": 5,
+                "FLOAT": 6,
+                "DOUBLE": 7,
+                "STRING": 8,
+                "NULLABLEBOOLEAN": 9
+              }
+            }
+          }
+        },
+        "RemoveColumn": {
+          "fields": {
+            "columnId": {
+              "rule": "required",
+              "type": "uint32",
+              "id": 1
+            }
+          }
+        }
+      }
+    },
+    "RowEventDto": {
+      "fields": {
+        "eventType": {
+          "rule": "required",
+          "type": "RowEventType",
+          "id": 1
+        },
+        "rowId": {
+          "type": "uint32",
+          "id": 2
+        },
+        "values": {
+          "rule": "repeated",
+          "type": "ColumnValue",
+          "id": 3
+        }
+      },
+      "nested": {
+        "RowEventType": {
+          "values": {
+            "ADD": 0,
+            "UPDATE": 1,
+            "REMOVE": 2
+          }
+        },
+        "ColumnValue": {
+          "oneofs": {
+            "value": {
+              "oneof": [
+                "doubleValue",
+                "floatValue",
+                "intValue",
+                "longValue",
+                "booleanValue",
+                "stringValue",
+                "blobValue",
+                "nullValue"
+              ]
+            }
+          },
+          "fields": {
+            "columnId": {
+              "rule": "required",
+              "type": "uint32",
+              "id": 1
+            },
+            "doubleValue": {
+              "type": "double",
+              "id": 2
+            },
+            "floatValue": {
+              "type": "float",
+              "id": 3
+            },
+            "intValue": {
+              "type": "sint32",
+              "id": 4
+            },
+            "longValue": {
+              "type": "sint64",
+              "id": 5
+            },
+            "booleanValue": {
+              "type": "bool",
+              "id": 6
+            },
+            "stringValue": {
+              "type": "string",
+              "id": 7
+            },
+            "blobValue": {
+              "type": "bytes",
+              "id": 8
+            },
+            "nullValue": {
+              "type": "sint32",
+              "id": 9
+            }
+          }
+        }
+      }
+    },
+    "StatusDto": {
+      "fields": {
+        "status": {
+          "rule": "required",
+          "type": "StatusId",
+          "id": 1
+        }
+      },
+      "nested": {
+        "StatusId": {
+          "values": {
+            "DATARESET": 0,
+            "SCHEMARESET": 1
+          }
+        }
+      }
+    },
+    "TableMetaDataDto": {
+      "fields": {
+        "metaDataValue": {
+          "rule": "repeated",
+          "type": "MetaDataValue",
+          "id": 1
+        }
+      },
+      "nested": {
+        "Value": {
+          "oneofs": {
+            "value": {
+              "oneof": [
+                "stringValue",
+                "intValue",
+                "longValue",
+                "floatValue",
+                "doubleValue",
+                "booleanValue"
+              ]
+            }
+          },
+          "fields": {
+            "stringValue": {
+              "type": "string",
+              "id": 1
+            },
+            "intValue": {
+              "type": "sint32",
+              "id": 2
+            },
+            "longValue": {
+              "type": "sint64",
+              "id": 3
+            },
+            "floatValue": {
+              "type": "float",
+              "id": 4
+            },
+            "doubleValue": {
+              "type": "double",
+              "id": 5
+            },
+            "booleanValue": {
+              "type": "bool",
+              "id": 6
+            }
+          }
+        },
+        "MetaDataValue": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "value": {
+              "rule": "required",
+              "type": "Value",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "SortDirection": {
+      "values": {
+        "ASCENDING": 1,
+        "DESCENDING": 2
+      }
+    },
+    "FilterMode": {
+      "values": {
+        "TRANSPARENT": 1,
+        "FILTERING": 2,
+        "OPAQUE": 3
+      }
+    },
+    "SubscriptionFlags": {
+      "values": {
+        "SNAPSHOT_ONLY": 1
+      }
+    },
+    "OptionsDto": {
+      "fields": {
+        "offset": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        },
+        "limit": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 2
+        },
+        "columnName": {
+          "type": "string",
+          "id": 3
+        },
+        "columnsToSort": {
+          "rule": "repeated",
+          "type": "SortColumn",
+          "id": 4
+        },
+        "filterMode": {
+          "type": "FilterMode",
+          "id": 5
+        },
+        "filterExpression": {
+          "type": "string",
+          "id": 6
+        },
+        "flags": {
+          "rule": "repeated",
+          "type": "SubscriptionFlags",
+          "id": 7,
+          "options": {
+            "packed": false
+          }
+        }
+      },
+      "nested": {
+        "SortColumn": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "direction": {
+              "type": "SortDirection",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "ProjectionConfigDto": {
+      "fields": {
+        "mode": {
+          "rule": "required",
+          "type": "Mode",
+          "id": 1
+        },
+        "projections": {
+          "rule": "repeated",
+          "type": "ProjectionColumn",
+          "id": 2
+        }
+      },
+      "nested": {
+        "Mode": {
+          "values": {
+            "Projection": 1,
+            "Inclusionary": 2,
+            "Exclusionary": 3
+          }
+        },
+        "ProjectionColumn": {
+          "fields": {
+            "inboundName": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "isRegex": {
+              "type": "bool",
+              "id": 2
+            },
+            "outboundName": {
+              "rule": "repeated",
+              "type": "string",
+              "id": 3
+            }
+          }
+        }
+      }
+    },
+    "RegisterDataSourceCommandDto": {
+      "fields": {
+        "dataSource": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "dimensionMapUpdate": {
+          "type": "UpdateDimensionMapCommandDto",
+          "id": 2
+        }
+      }
+    },
+    "registerDataSourceCommand": {
+      "type": "RegisterDataSourceCommandDto",
+      "id": 302,
+      "extend": "CommandDto"
+    },
+    "Mapping": {
+      "oneofs": {
+        "value": {
+          "oneof": [
+            "intValue",
+            "longValue",
+            "booleanValue",
+            "stringValue",
+            "nullValue"
+          ]
+        }
+      },
+      "fields": {
+        "id": {
+          "rule": "required",
+          "type": "sint32",
+          "id": 2
+        },
+        "intValue": {
+          "type": "sint32",
+          "id": 3
+        },
+        "longValue": {
+          "type": "sint64",
+          "id": 4
+        },
+        "booleanValue": {
+          "type": "bool",
+          "id": 5
+        },
+        "stringValue": {
+          "type": "string",
+          "id": 6
+        },
+        "nullValue": {
+          "type": "sint32",
+          "id": 7
+        }
+      }
+    },
+    "Dimension": {
+      "fields": {
+        "name": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "mapping": {
+          "rule": "repeated",
+          "type": "Mapping",
+          "id": 2
+        }
+      }
+    },
+    "DataSource": {
+      "fields": {
+        "name": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "dimension": {
+          "rule": "repeated",
+          "type": "Dimension",
+          "id": 2
+        }
+      }
+    },
+    "UpdateDimensionMapCommandDto": {
+      "fields": {
+        "dataSource": {
+          "rule": "repeated",
+          "type": "DataSource",
+          "id": 1
+        }
+      }
+    },
+    "updateDimensionMapCommand": {
+      "type": "UpdateDimensionMapCommandDto",
+      "id": 303,
+      "extend": "CommandDto"
+    },
+    "RegisterSlaveCommandDto": {
+      "fields": {}
+    },
+    "registerSlaveCommand": {
+      "type": "RegisterSlaveCommandDto",
+      "id": 300,
+      "extend": "CommandDto"
+    },
+    "ReportContextDto": {
+      "fields": {
+        "reportId": {
+          "type": "string",
+          "id": 1
+        },
+        "parameters": {
+          "rule": "repeated",
+          "type": "ParameterValue",
+          "id": 2
+        },
+        "dimensions": {
+          "rule": "repeated",
+          "type": "Dimension",
+          "id": 3
+        },
+        "childContexts": {
+          "rule": "repeated",
+          "type": "ReportContextDto",
+          "id": 4
+        },
+        "output": {
+          "type": "string",
+          "id": 5
+        },
+        "excludedFilters": {
+          "rule": "repeated",
+          "type": "Dimension",
+          "id": 6
+        },
+        "multiContextMode": {
+          "type": "string",
+          "id": 7
+        }
+      },
+      "nested": {
+        "DoubleList": {
+          "fields": {
+            "doubleValue": {
+              "rule": "repeated",
+              "type": "double",
+              "id": 1,
+              "options": {
+                "packed": false
+              }
+            }
+          }
+        },
+        "FloatList": {
+          "fields": {
+            "floatValue": {
+              "rule": "repeated",
+              "type": "float",
+              "id": 1,
+              "options": {
+                "packed": false
+              }
+            }
+          }
+        },
+        "IntList": {
+          "fields": {
+            "intValue": {
+              "rule": "repeated",
+              "type": "sint32",
+              "id": 1,
+              "options": {
+                "packed": false
+              }
+            }
+          }
+        },
+        "LongList": {
+          "fields": {
+            "longValue": {
+              "rule": "repeated",
+              "type": "sint64",
+              "id": 1,
+              "options": {
+                "packed": false
+              }
+            }
+          }
+        },
+        "BooleanList": {
+          "fields": {
+            "booleanValue": {
+              "rule": "repeated",
+              "type": "bool",
+              "id": 1,
+              "options": {
+                "packed": false
+              }
+            }
+          }
+        },
+        "StringList": {
+          "fields": {
+            "stringValue": {
+              "rule": "repeated",
+              "type": "string",
+              "id": 1
+            }
+          }
+        },
+        "Value": {
+          "oneofs": {
+            "value": {
+              "oneof": [
+                "doubleList",
+                "floatList",
+                "intList",
+                "longList",
+                "booleanList",
+                "stringList"
+              ]
+            }
+          },
+          "fields": {
+            "doubleList": {
+              "type": "DoubleList",
+              "id": 2
+            },
+            "floatList": {
+              "type": "FloatList",
+              "id": 3
+            },
+            "intList": {
+              "type": "IntList",
+              "id": 4
+            },
+            "longList": {
+              "type": "LongList",
+              "id": 5
+            },
+            "booleanList": {
+              "type": "BooleanList",
+              "id": 6
+            },
+            "stringList": {
+              "type": "StringList",
+              "id": 7
+            }
+          }
+        },
+        "ParameterValue": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "value": {
+              "rule": "required",
+              "type": "Value",
+              "id": 2
+            }
+          }
+        },
+        "Dimension": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "value": {
+              "rule": "required",
+              "type": "Value",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "RollingTableConfigDto": {
+      "fields": {
+        "size": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "SortConfigDto": {
+      "fields": {
+        "sortDescriptor": {
+          "type": "SortDescriptor",
+          "id": 1
+        },
+        "start": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 2
+        },
+        "end": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 3
+        }
+      },
+      "nested": {
+        "SortColumn": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "descending": {
+              "type": "bool",
+              "id": 2
+            }
+          }
+        },
+        "SortDescriptor": {
+          "fields": {
+            "columnName": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "columnsToSort": {
+              "rule": "repeated",
+              "type": "SortColumn",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "SubscribeCommandDto": {
+      "fields": {
+        "operatorName": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "outputName": {
+          "type": "string",
+          "id": 2
+        },
+        "options": {
+          "type": "OptionsDto",
+          "id": 3
+        },
+        "projection": {
+          "type": "ProjectionConfigDto",
+          "id": 4
+        }
+      }
+    },
+    "subscribeCommand": {
+      "type": "SubscribeCommandDto",
+      "id": 200,
+      "extend": "CommandDto"
+    },
+    "SubscribeDimensionCommandDto": {
+      "fields": {
+        "context": {
+          "rule": "required",
+          "type": "ReportContextDto",
+          "id": 1
+        },
+        "dimension": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "options": {
+          "rule": "required",
+          "type": "OptionsDto",
+          "id": 3
+        }
+      }
+    },
+    "subscribeDimensionCommand": {
+      "type": "SubscribeDimensionCommandDto",
+      "id": 202,
+      "extend": "CommandDto"
+    },
+    "SubscribeReportCommandDto": {
+      "fields": {
+        "context": {
+          "rule": "required",
+          "type": "ReportContextDto",
+          "id": 1
+        },
+        "options": {
+          "rule": "required",
+          "type": "OptionsDto",
+          "id": 2
+        }
+      }
+    },
+    "subscribeReportCommand": {
+      "type": "SubscribeReportCommandDto",
+      "id": 201,
+      "extend": "CommandDto"
+    },
+    "TableEditCommandDto": {
+      "fields": {
+        "tableName": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "tableEvent": {
+          "rule": "required",
+          "type": "TableEventDto",
+          "id": 2
+        },
+        "operation": {
+          "type": "Operation",
+          "id": 3
+        },
+        "creationConfig": {
+          "type": "CreationConfig",
+          "id": 4
+        }
+      },
+      "nested": {
+        "Operation": {
+          "values": {
+            "CREATE": 1,
+            "EDIT": 2,
+            "DELETE": 3
+          }
+        },
+        "CreationConfig": {
+          "fields": {
+            "tableType": {
+              "type": "string",
+              "id": 1
+            },
+            "config": {
+              "type": "bytes",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "tableEditCommand": {
+      "type": "TableEditCommandDto",
+      "id": 205,
+      "extend": "CommandDto"
+    },
+    "TransposeConfigDto": {
+      "fields": {
+        "keyColumns": {
+          "rule": "repeated",
+          "type": "string",
+          "id": 1
+        },
+        "pivotColumn": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "pivotValues": {
+          "rule": "repeated",
+          "type": "string",
+          "id": 3
+        }
+      }
+    },
+    "UnionConfigDto": {
+      "fields": {
+        "inputs": {
+          "rule": "repeated",
+          "type": "Input",
+          "id": 1
+        }
+      },
+      "nested": {
+        "Input": {
+          "fields": {
+            "name": {
+              "rule": "required",
+              "type": "string",
+              "id": 1
+            },
+            "sourceId": {
+              "rule": "required",
+              "type": "sint32",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "UnsubscribeCommandDto": {
+      "fields": {
+        "subscriptionId": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        }
+      }
+    },
+    "unsubscribeCommand": {
+      "type": "UnsubscribeCommandDto",
+      "id": 204,
+      "extend": "CommandDto"
+    },
+    "UpdateSubscriptionCommandDto": {
+      "fields": {
+        "commandId": {
+          "rule": "required",
+          "type": "uint32",
+          "id": 1
+        },
+        "options": {
+          "rule": "required",
+          "type": "OptionsDto",
+          "id": 2
+        }
+      }
+    },
+    "updateSubscriptionCommand": {
+      "type": "UpdateSubscriptionCommandDto",
+      "id": 203,
+      "extend": "CommandDto"
+    },
+    "google": {
+      "nested": {
+        "protobuf": {
+          "options": {
+            "java_package": "com.google.protobuf",
+            "java_outer_classname": "DescriptorProtos",
+            "optimize_for": "SPEED"
+          },
+          "nested": {
+            "FileDescriptorSet": {
+              "fields": {
+                "file": {
+                  "rule": "repeated",
+                  "type": "FileDescriptorProto",
+                  "id": 1
+                }
+              }
+            },
+            "FileDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "package": {
+                  "type": "string",
+                  "id": 2
+                },
+                "dependency": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 3
+                },
+                "publicDependency": {
+                  "rule": "repeated",
+                  "type": "int32",
+                  "id": 10,
+                  "options": {
+                    "packed": false
+                  }
+                },
+                "weakDependency": {
+                  "rule": "repeated",
+                  "type": "int32",
+                  "id": 11,
+                  "options": {
+                    "packed": false
+                  }
+                },
+                "messageType": {
+                  "rule": "repeated",
+                  "type": "DescriptorProto",
+                  "id": 4
+                },
+                "enumType": {
+                  "rule": "repeated",
+                  "type": "EnumDescriptorProto",
+                  "id": 5
+                },
+                "service": {
+                  "rule": "repeated",
+                  "type": "ServiceDescriptorProto",
+                  "id": 6
+                },
+                "extension": {
+                  "rule": "repeated",
+                  "type": "FieldDescriptorProto",
+                  "id": 7
+                },
+                "options": {
+                  "type": "FileOptions",
+                  "id": 8
+                },
+                "sourceCodeInfo": {
+                  "type": "SourceCodeInfo",
+                  "id": 9
+                }
+              }
+            },
+            "DescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "field": {
+                  "rule": "repeated",
+                  "type": "FieldDescriptorProto",
+                  "id": 2
+                },
+                "extension": {
+                  "rule": "repeated",
+                  "type": "FieldDescriptorProto",
+                  "id": 6
+                },
+                "nestedType": {
+                  "rule": "repeated",
+                  "type": "DescriptorProto",
+                  "id": 3
+                },
+                "enumType": {
+                  "rule": "repeated",
+                  "type": "EnumDescriptorProto",
+                  "id": 4
+                },
+                "extensionRange": {
+                  "rule": "repeated",
+                  "type": "ExtensionRange",
+                  "id": 5
+                },
+                "options": {
+                  "type": "MessageOptions",
+                  "id": 7
+                }
+              },
+              "nested": {
+                "ExtensionRange": {
+                  "fields": {
+                    "start": {
+                      "type": "int32",
+                      "id": 1
+                    },
+                    "end": {
+                      "type": "int32",
+                      "id": 2
+                    }
+                  }
+                }
+              }
+            },
+            "FieldDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "number": {
+                  "type": "int32",
+                  "id": 3
+                },
+                "label": {
+                  "type": "Label",
+                  "id": 4
+                },
+                "type": {
+                  "type": "Type",
+                  "id": 5
+                },
+                "typeName": {
+                  "type": "string",
+                  "id": 6
+                },
+                "extendee": {
+                  "type": "string",
+                  "id": 2
+                },
+                "defaultValue": {
+                  "type": "string",
+                  "id": 7
+                },
+                "options": {
+                  "type": "FieldOptions",
+                  "id": 8
+                }
+              },
+              "nested": {
+                "Type": {
+                  "values": {
+                    "TYPE_DOUBLE": 1,
+                    "TYPE_FLOAT": 2,
+                    "TYPE_INT64": 3,
+                    "TYPE_UINT64": 4,
+                    "TYPE_INT32": 5,
+                    "TYPE_FIXED64": 6,
+                    "TYPE_FIXED32": 7,
+                    "TYPE_BOOL": 8,
+                    "TYPE_STRING": 9,
+                    "TYPE_GROUP": 10,
+                    "TYPE_MESSAGE": 11,
+                    "TYPE_BYTES": 12,
+                    "TYPE_UINT32": 13,
+                    "TYPE_ENUM": 14,
+                    "TYPE_SFIXED32": 15,
+                    "TYPE_SFIXED64": 16,
+                    "TYPE_SINT32": 17,
+                    "TYPE_SINT64": 18
+                  }
+                },
+                "Label": {
+                  "values": {
+                    "LABEL_OPTIONAL": 1,
+                    "LABEL_REQUIRED": 2,
+                    "LABEL_REPEATED": 3
+                  }
+                }
+              }
+            },
+            "EnumDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "value": {
+                  "rule": "repeated",
+                  "type": "EnumValueDescriptorProto",
+                  "id": 2
+                },
+                "options": {
+                  "type": "EnumOptions",
+                  "id": 3
+                }
+              }
+            },
+            "EnumValueDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "number": {
+                  "type": "int32",
+                  "id": 2
+                },
+                "options": {
+                  "type": "EnumValueOptions",
+                  "id": 3
+                }
+              }
+            },
+            "ServiceDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "method": {
+                  "rule": "repeated",
+                  "type": "MethodDescriptorProto",
+                  "id": 2
+                },
+                "options": {
+                  "type": "ServiceOptions",
+                  "id": 3
+                }
+              }
+            },
+            "MethodDescriptorProto": {
+              "fields": {
+                "name": {
+                  "type": "string",
+                  "id": 1
+                },
+                "inputType": {
+                  "type": "string",
+                  "id": 2
+                },
+                "outputType": {
+                  "type": "string",
+                  "id": 3
+                },
+                "options": {
+                  "type": "MethodOptions",
+                  "id": 4
+                }
+              }
+            },
+            "FileOptions": {
+              "fields": {
+                "javaPackage": {
+                  "type": "string",
+                  "id": 1
+                },
+                "javaOuterClassname": {
+                  "type": "string",
+                  "id": 8
+                },
+                "javaMultipleFiles": {
+                  "type": "bool",
+                  "id": 10,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "javaGenerateEqualsAndHash": {
+                  "type": "bool",
+                  "id": 20,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "optimizeFor": {
+                  "type": "OptimizeMode",
+                  "id": 9,
+                  "options": {
+                    "default": "SPEED"
+                  }
+                },
+                "goPackage": {
+                  "type": "string",
+                  "id": 11
+                },
+                "ccGenericServices": {
+                  "type": "bool",
+                  "id": 16,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "javaGenericServices": {
+                  "type": "bool",
+                  "id": 17,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "pyGenericServices": {
+                  "type": "bool",
+                  "id": 18,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ],
+              "nested": {
+                "OptimizeMode": {
+                  "values": {
+                    "SPEED": 1,
+                    "CODE_SIZE": 2,
+                    "LITE_RUNTIME": 3
+                  }
+                }
+              }
+            },
+            "MessageOptions": {
+              "fields": {
+                "messageSetWireFormat": {
+                  "type": "bool",
+                  "id": 1,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "noStandardDescriptorAccessor": {
+                  "type": "bool",
+                  "id": 2,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
+            },
+            "FieldOptions": {
+              "fields": {
+                "ctype": {
+                  "type": "CType",
+                  "id": 1,
+                  "options": {
+                    "default": "STRING"
+                  }
+                },
+                "packed": {
+                  "type": "bool",
+                  "id": 2
+                },
+                "lazy": {
+                  "type": "bool",
+                  "id": 5,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "deprecated": {
+                  "type": "bool",
+                  "id": 3,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "experimentalMapKey": {
+                  "type": "string",
+                  "id": 9
+                },
+                "weak": {
+                  "type": "bool",
+                  "id": 10,
+                  "options": {
+                    "default": false
+                  }
+                },
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ],
+              "nested": {
+                "CType": {
+                  "values": {
+                    "STRING": 0,
+                    "CORD": 1,
+                    "STRING_PIECE": 2
+                  }
+                }
+              }
+            },
+            "EnumOptions": {
+              "fields": {
+                "allowAlias": {
+                  "type": "bool",
+                  "id": 2,
+                  "options": {
+                    "default": true
+                  }
+                },
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
+            },
+            "EnumValueOptions": {
+              "fields": {
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
+            },
+            "ServiceOptions": {
+              "fields": {
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
+            },
+            "MethodOptions": {
+              "fields": {
+                "uninterpretedOption": {
+                  "rule": "repeated",
+                  "type": "UninterpretedOption",
+                  "id": 999
+                }
+              },
+              "extensions": [
+                [
+                  1000,
+                  536870911
+                ]
+              ]
+            },
+            "UninterpretedOption": {
+              "fields": {
+                "name": {
+                  "rule": "repeated",
+                  "type": "NamePart",
+                  "id": 2
+                },
+                "identifierValue": {
+                  "type": "string",
+                  "id": 3
+                },
+                "positiveIntValue": {
+                  "type": "uint64",
+                  "id": 4
+                },
+                "negativeIntValue": {
+                  "type": "int64",
+                  "id": 5
+                },
+                "doubleValue": {
+                  "type": "double",
+                  "id": 6
+                },
+                "stringValue": {
+                  "type": "bytes",
+                  "id": 7
+                },
+                "aggregateValue": {
+                  "type": "string",
+                  "id": 8
+                }
+              },
+              "nested": {
+                "NamePart": {
+                  "fields": {
+                    "namePart": {
+                      "rule": "required",
+                      "type": "string",
+                      "id": 1
+                    },
+                    "isExtension": {
+                      "rule": "required",
+                      "type": "bool",
+                      "id": 2
+                    }
+                  }
+                }
+              }
+            },
+            "SourceCodeInfo": {
+              "fields": {
+                "location": {
+                  "rule": "repeated",
+                  "type": "Location",
+                  "id": 1
+                }
+              },
+              "nested": {
+                "Location": {
+                  "fields": {
+                    "path": {
+                      "rule": "repeated",
+                      "type": "int32",
+                      "id": 1
+                    },
+                    "span": {
+                      "rule": "repeated",
+                      "type": "int32",
+                      "id": 2
+                    },
+                    "leadingComments": {
+                      "type": "string",
+                      "id": 3
+                    },
+                    "trailingComments": {
+                      "type": "string",
+                      "id": 4
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Message": {
+      "fields": {
+        "text": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        }
+      }
+    },
+    "js": {
+      "nested": {
+        "Value": {
+          "oneofs": {
+            "type": {
+              "oneof": [
+                "integer",
+                "double",
+                "string",
+                "boolean",
+                "null",
+                "array",
+                "object"
+              ]
+            }
+          },
+          "fields": {
+            "integer": {
+              "type": "sint32",
+              "id": 1
+            },
+            "double": {
+              "type": "double",
+              "id": 2
+            },
+            "string": {
+              "type": "string",
+              "id": 3
+            },
+            "boolean": {
+              "type": "bool",
+              "id": 4
+            },
+            "null": {
+              "type": "bool",
+              "id": 5
+            },
+            "array": {
+              "type": "Array",
+              "id": 6
+            },
+            "object": {
+              "type": "Object",
+              "id": 7
+            }
+          }
+        },
+        "Array": {
+          "fields": {
+            "values": {
+              "rule": "repeated",
+              "type": "Value",
+              "id": 1
+            }
+          }
+        },
+        "Object": {
+          "fields": {
+            "keys": {
+              "rule": "repeated",
+              "type": "Value",
+              "id": 1
+            },
+            "values": {
+              "rule": "repeated",
+              "type": "Value",
+              "id": 2
+            }
+          }
+        }
+      }
+    }
+  }
+}

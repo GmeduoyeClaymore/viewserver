@@ -1,7 +1,7 @@
 import {$} from '../core/JQueryish';
 
 export default class TableMetaDataMapper{
-    fromDto(tableMetaDataDto) {
+    static fromDto(tableMetaDataDto) {
         var metaData = {};
 
         $.each(tableMetaDataDto.metaDataValue, function(index, metaDataValue){

@@ -2,7 +2,7 @@ import ProtoLoader from '../core/ProtoLoader';
 import Projection from '../domain/Projection';
 
 export default class ProjectionMapper{
-    mapMode(mode) {
+    static mapMode(mode) {
         switch (mode) {
             case Projection.Mode.PROJECTION: {
                 return ProtoLoader.Dto.ProjectionConfigDto.Mode.Projection;
@@ -19,7 +19,7 @@ export default class ProjectionMapper{
         }
     }
 
-    toDto(projection) {
-        return new ProtoLoader.Dto.ProjectionConfigDto(this.mapMode(projection.mode), projection.projectionColumns);
+    static toDto(projection) {
+        return new ProtoLoader.Dto.ProjectionConfigDto(ProjectionMapper.mapMode(projection.mode), projection.projectionColumns);
     }
 }
