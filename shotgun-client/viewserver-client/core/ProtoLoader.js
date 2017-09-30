@@ -20,6 +20,7 @@ export default class ProtoLoader{
         ProtoLoader._dto.OptionsDto = root.lookupType('OptionsDto');
         ProtoLoader._dto.CommandDto = root.lookupType('CommandDto');
         ProtoLoader._dto.MessageDto = root.lookupType('MessageDto');
+        ProtoLoader._dto.HeartbeatDto = root.lookupType('HeartbeatDto');
         ProtoLoader._dto.SubscribeCommandDto = root.lookupType('SubscribeCommandDto');
         ProtoLoader._dto.UnsubscribeCommandDto = root.lookupType('UnsubscribeCommandDto');
         ProtoLoader._dto.SubscribeReportCommandDto = root.lookupType('SubscribeReportCommandDto');

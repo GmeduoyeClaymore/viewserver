@@ -3,6 +3,6 @@ export const $ = {
         return Object.assign({},from,to);
     },
     each : (collection, fn) => {
-        return collection.map(fn)
+        return collection.map((val,index) => fn(index,val))
     }
 }

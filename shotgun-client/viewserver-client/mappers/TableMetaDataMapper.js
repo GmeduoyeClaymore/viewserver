@@ -5,6 +5,7 @@ export default class TableMetaDataMapper{
         var metaData = {};
 
         $.each(tableMetaDataDto.metaDataValue, function(index, metaDataValue){
+			console.log("Mapping" + JSON.stringify(metaDataValue));
             metaData[metaDataValue.name] = metaDataValue.value[metaDataValue.value.value];
         });
         return metaData;

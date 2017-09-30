@@ -18,6 +18,10 @@ export default class Client {
     return this.network.connect(eventHandlers);
   }
 
+  get connected(){
+    return this.network.connected();
+}
+
   authenticate (type, tokens, eventhandlers) {
     if (Object.prototype.toString.call(tokens) !== '[object Array]') {
         tokens = [tokens];
@@ -46,12 +50,16 @@ export default class Client {
 
   subscribe = function (operatorName, options, dataSink, output, projection) {
       var optionsDto = OptionsMapper.toDto(options);
-
-      var subscribeCommand = ProtoLoader.Dto.SubscribeCommandDto.create({operatorName, output  : output || 'out', options : optionsDto});
-      if (projection !== undefined) {
+      var payload = {operatorName, outputName  : output || 'out', options : optionsDto};
+      var error = ProtoLoader.Dto.SubscribeCommandDto.verify(payload)
+      if(error){
+        throw Error(error);
+      }
+      let subscribeCommand = ProtoLoader.Dto.SubscribeCommandDto.create(payload);
+      if (projection !== undefined) { 
           subscribeCommand.setProjection(ProjectionMapper.toDto(projection));
       }
-      return this.sendCommand('subscribe', ProtoLoader.Dto.SubscribeCommandDto.encode(subscribeCommand), true, dataSink);
+      return this.sendCommand('subscribe', subscribeCommand, true, dataSink,200);
   }
 
   subscribeToReport = function (reportContext, options, dataSink) {
@@ -103,10 +111,11 @@ export default class Client {
       return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   }
 
-  sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
+  sendCommand = function (commandName, commandDto, continuous, eventHandlers, extensions) {
       var command = new Command(commandName, commandDto);
       command.handler = eventHandlers;
       command.continuous = continuous;
+      //command.extensions = extensions;
       return this.network.sendCommand(command);
   }
 

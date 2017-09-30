@@ -20,6 +20,7 @@ export default class RowMapper{
         var row = {};
 
         $.each(rowValues, function (index, rowValue) {
+            console.log("Mapping row value " + JSON.stringify(schema));
             var columnName = schema[rowValue.columnId].name;
             var columnValue = _self._parseValue(rowValue);
 

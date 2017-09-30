@@ -11,6 +11,7 @@ export default class Connection {
         this._isOpen = false;
         this.handleSocketOpen = this.handleSocketOpen.bind(this);
         this.handleSocketClosed = this.handleSocketClosed.bind(this);
+        this.handleSocketMessage = this.handleSocketMessage.bind(this);
     }
 
 
@@ -19,9 +20,10 @@ export default class Connection {
     connect(){
         let _this = this;
         _this._socket = new WebSocket(this._uri);
-        _this._socket.binaryType = 'buffer';
+        _this._socket.binaryType = 'arraybuffer';
         _this._socket.onopen = this.handleSocketOpen;
         _this._socket.onclose = this.handleSocketClosed;
+        _this._socket.onmessage = this.handleSocketMessage;
         return new Promise((resolve, reject) => {
             const retryFrequency = 10;
             const retryInterval = Connection.CONNECTION_ATTEMPT_DELAY/retryFrequency;
@@ -45,6 +47,10 @@ export default class Connection {
 
     get socket(){
         return this._socket;
+    }
+
+    get connected(){
+        return this._isOpen;
     }
     
     get network(){
@@ -131,7 +137,7 @@ export default class Connection {
             return;
         }
 
-        Logger.fine('about to decode');
+  
         let msg = ProtoLoader.Dto.MessageDto.decode(evt.data);
         Logger.fine('decoded');
 
@@ -172,7 +178,11 @@ export default class Connection {
         Logger.fine(JSON.stringify(cmd.data));
     
         const {id,command,data} = cmd;
-        let commandDto = ProtoLoader.Dto.CommandDto.create({id,command,data});
+        const payload = {id,command};
+        
+        let commandDto = ProtoLoader.Dto.CommandDto.create(payload);
+        commandDto["." + cmd.command + 'Command'] = data; 
+        Logger.info('constructed - ' + JSON.stringify(commandDto));
         this.network.sendMessage(commandDto);
         return command;
     }

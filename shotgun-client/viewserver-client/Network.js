@@ -17,6 +17,11 @@ export default class Network {
         return this.connection.connect();
     }
     
+
+    get connected(){
+        return this.connection.connected;
+    }
+    
     get socket(){
         if(!this.connection){
             throw new Error("Connect must be called before attempting to retrieve socket")
@@ -75,24 +80,30 @@ export default class Network {
     }
 
     receiveCommandResult(commandResult) {
-        Logger.debug('Received command result', commandResult);
+        Logger.debug('Received command result' + JSON.stringify(commandResult));
 
-        let command = this.openCommands[commandResult.getId()];
+        let command = this.openCommands[commandResult.id];
 
         if (!command) {
-            Logger.warning('Received command result from command that no longer exists. Was this command cancelled ??' + commandResult.getId());
+            Logger.warning('Received command result from command that no longer exists. Was this command cancelled ??' + commandResult.id);
             return;
         }
 
-        if (!commandResult.getSuccess() || !command.continuous) {
+        if (!commandResult.success || !command.continuous) {
             delete this.openCommands[this.openCommands.indexOf(command)];
         }
 
         if (command.handler) {
-            if (commandResult.getSuccess()) {
-                command.handler.onSuccess(commandResult.getId());
+            if (commandResult.success) {
+                if(command.handler.onSuccess){
+                  command.handler.onSuccess(commandResult.id);
+                }
             } else {
-                command.handler.onError(commandResult.getMessage());
+                if(command.handler.onError){
+                    command.handler.onError(commandResult.message);
+                }else{
+                    console.error(commandResult.message)
+                }
             }
         }
     }
@@ -100,17 +111,19 @@ export default class Network {
     receiveTableEvent(tableEvent) {
         Logger.fine('Received table event', tableEvent);
 
-        let command = this.openCommands[tableEvent.getId()];
+        let command = this.openCommands[tableEvent.id];
 
         if (!command) {
-            Logger.warning('Could not find command: ' + tableEvent.getId() + ' subscription has most likely been cancelled while data on the wire');
+            Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire');
             return;
         }
 
         let tableMetaData = TableMetaDataMapper.fromDto(tableEvent.metaData);
 
         if (command.handler) {
-            command.handler.onTotalRowCount(tableMetaData.totalSize);
+            if(command.handler.onTotalRowCount){
+               command.handler.onTotalRowCount(tableMetaData.totalSize);
+            }
 
             this.handleStatuses(tableEvent.statuses, command.handler);
             this.handleSchemaChange(tableEvent.schemaChange, command.handler);
@@ -126,13 +139,17 @@ export default class Network {
                     case 1:
                     {
                         Logger.fine('Received schema reset');
-                        handler.onSchemaReset();
+                        if(handler.onSchemaReset){
+                            handler.onSchemaReset();
+                        }
                         break;
                     }
                     case 0:
                     {
                         Logger.fine('Received data reset');
-                        handler.onDataReset();
+                        if(handler.onDataReset){
+                            handler.onDataReset();
+                        }
                         break;
                     }
                     default:

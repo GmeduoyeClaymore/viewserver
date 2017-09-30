@@ -4,14 +4,31 @@ import {$} from './viewserver-client/core/JQueryish';
 import Logger from './viewserver-client/Logger';
 
 class DataSink {
+  constructor(){
+    this.schema = {};
+    this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
+    this.onDataReset = this.onDataReset.bind(this);
+    this.onTotalRowCount = this.onTotalRowCount.bind(this);
+    this.onSchemaReset = this.onSchemaReset.bind(this);
+    this.onRowAdded = this.onRowAdded.bind(this);
+    this.onRowUpdated = this.onRowUpdated.bind(this);
+    this.onRowRemoved = this.onRowRemoved.bind(this);
+    this.onColumnAdded = this.onColumnAdded.bind(this);
+  }
   onSnapshotComplete(){
     Logger.info("Snapshot complete");
   }
   onDataReset(){
     Logger.info("Data reset");
   }
+  onTotalRowCount(count){
+    Logger.info("total row count is " + count);
+  }
+  onSchemaReset(){
+    this.schema = {};
+  }
   onRowAdded(rowId, row){
-    Logger.info("Row added - " + row);
+    Logger.info("Row added - " + JSON.stringify(row));
   }
   onRowUpdated(rowId, row){
     Logger.info("Row updated - " + row);
@@ -20,7 +37,11 @@ class DataSink {
     Logger.info("Row removed - " + rowId);
   }
   onColumnAdded(colId, col){
-    Logger.info("Column added  - " + colId + " " + col);
+    Logger.info("column added - " + col.name);
+    this.schema[colId] = col;
+  }
+  onColumnRemoved(colId){
+    delete this.schema[colId];
   }
 }
 
@@ -37,7 +58,7 @@ export default class Landing extends React.Component {
   }
 
   componentWillMount() {
-    this.props.client.subscribe('/datasources',{offset : 0,limit : 100},this.dataSink,)
+    this.props.client.subscribe('/datasources/fxrates',{offset : 0,limit : 100},this.dataSink) 
   }
 
   render() {
