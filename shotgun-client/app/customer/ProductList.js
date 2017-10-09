@@ -12,9 +12,9 @@ const LoadedAllItems = () => <View><Text>No More to display</Text></View>;
 
 export default class ProductList extends Component {
 
-    static propTypes = {
-        client : PropTypes.object.isRequired
-    }
+  static propTypes = {
+    client : PropTypes.object.isRequired
+  }
 
   constructor(props) {
     super(props);
@@ -22,8 +22,9 @@ export default class ProductList extends Component {
   }
 
   search(productName) {
-    if  (this.listView){
-        this.listView.search("P_name == " + productName);
+    if (this.listView)
+    {
+        this.listView.search("P_name == \"" + productName + "\"");
     }
   }
 
@@ -34,14 +35,14 @@ export default class ProductList extends Component {
         ref={ listView => { this.listView = listView}}
         style={styles.container}
         subscriptionStrategy={this.subscriptionStrategy}
-        rowView={(data) => <ProductListItem navigator={this.props.navigator} data={_this.transform(data)} />}
+        rowView={(data) => (<ProductListItem navigator={this.props.navigator} {...data} />)}
         paginationWaitingView={Paging}
         emptyView={NoItems}
         paginationAllLoadedView={LoadedAllItems}
         refreshable={true}
         enableEmptySections={true}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-        renderHeader={() => <SearchBar onChange={this.search.bind(this)} />}
+        headerView={() => <SearchBar onChange={this.search.bind(this)} />}
       />
     );
   }

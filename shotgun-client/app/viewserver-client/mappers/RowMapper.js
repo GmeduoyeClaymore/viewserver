@@ -18,12 +18,10 @@ export default class RowMapper{
     static fromDto(schema, rowValues) {
         var _self = RowMapper;
         var row = {};
-
+        console.log("Mapping row values " + JSON.stringify(schema));
         $.each(rowValues, function (index, rowValue) {
-            console.log("Mapping row value " + JSON.stringify(schema));
             var columnName = schema[rowValue.columnId].name;
             var columnValue = _self._parseValue(rowValue);
-
             row[columnName] = columnValue;
         });
 

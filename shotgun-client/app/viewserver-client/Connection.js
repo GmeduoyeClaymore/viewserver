@@ -171,7 +171,7 @@ export default class Connection {
     }
     
     sendCommand(cmd) {
-        cmd.id = this.commandId++;
+        cmd.id = this._commandId++;
         this.openCommands[cmd.id] = cmd;
     
         Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));

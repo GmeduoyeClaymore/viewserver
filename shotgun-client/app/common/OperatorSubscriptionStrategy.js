@@ -1,8 +1,11 @@
+import Logger from '../viewserver-client/Logger';
 export default class OperatorSubsciptionStrategy{
 
     constructor(client,path){
         this.client = client;
         this.path = path;
+        this.subscribe = this.subscribe.bind(this);
+        this.update = this.update.bind(this);
     }
 
     subscribe(dataSink,options){
@@ -13,7 +16,7 @@ export default class OperatorSubsciptionStrategy{
         if(!this.subscribeCommand){
             throw new Error("No subscribe command found must call subscribe before we call update subscription")
         }
-        this.updateSubscribeCommand = this.client.updateSubscription(this.subscribeCommand.id,this.lastOptions,dataSink);
+        this.updateSubscribeCommand = this.client.updateSubscription(this.subscribeCommand.id,options,dataSink);
     }
 
 }

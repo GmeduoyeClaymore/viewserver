@@ -8,6 +8,9 @@ export default class Logger {
     static error(msg){
         console.error(msg);
     }
+    static warning(msg){
+        console.error(msg);
+    }
     static fine(msg){
         console.log(msg);
     }

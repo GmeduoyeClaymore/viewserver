@@ -46,7 +46,7 @@ export default class Network {
     }
 
     sendCommand(command) {
-        this.connection.sendCommand(command);
+        return this.connection.sendCommand(command);
     }
     sendMessage(message) {
         var messageWrapper = null;
@@ -114,7 +114,7 @@ export default class Network {
         let command = this.openCommands[tableEvent.id];
 
         if (!command) {
-            Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire');
+            Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire ' + JSON.stringify(this.openCommands));
             return;
         }
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {Text, TouchableOpacity, Image, StyleSheet,View} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
 import ProductList from './customer/ProductList';
 import ProductDetails from './customer/ProductDetails';
@@ -24,7 +24,7 @@ export default class Landing extends Component {
         return (
             <Navigator
                 initialRoute={{name: 'product-list', title: 'Product List'}}
-                renderScene={this.renderScene}
+                renderScene={(rt,nav) => <View style={{marginTop : 60,flex : 1}}>{this.renderScene(rt,nav)}</View>}
                 navigationBar={
                     <Navigator.NavigationBar
                         routeMapper={{

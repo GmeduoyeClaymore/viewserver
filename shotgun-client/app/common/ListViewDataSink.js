@@ -1,7 +1,13 @@
 import React, {Component,PropTypes} from 'react';
-import {View, ListView, StyleSheet} from 'react-native';
+import {View, ListView, ScrollView, StyleSheet, Text, Dimensions } from 'react-native';
 import Logger from '../viewserver-client/Logger';
 import InfiniteVirtualizedList from 'react-native-infinite-virtualized-list';
+
+const styles = StyleSheet.create({
+    contentContainer: {
+        paddingVertical: 20
+    }
+});
 
 export default class DataSinkListView extends Component{
     static propTypes = {
@@ -20,7 +26,7 @@ export default class DataSinkListView extends Component{
         limit :  20,
         columnName  :  undefined,
         columnsToSort :  undefined,
-        filterMode :  2,//Filtering
+        filterMode :  3,//Filtering
         filterExpression : undefined,
         flags : undefined
     }
@@ -42,6 +48,7 @@ export default class DataSinkListView extends Component{
         this.idRows = {};
         this.rows = [];
         this.dirtyRows = [];
+        this._onScroll = this._onScroll.bind(this)
     }
 
  
@@ -63,22 +70,39 @@ export default class DataSinkListView extends Component{
         });
         this.props.subscriptionStrategy.subscribe(this,this.state.options);
     }
+
+    _onScroll(e){
+        var windowHeight = Dimensions.get('window').height
+        const {isNextPageLoading} = this.state;
+        height = e.nativeEvent.contentSize.height
+        offset = e.nativeEvent.contentOffset.y; 
+        if( windowHeight + offset >= (height * 0.75) ){ 
+            if(isNextPageLoading){
+                this.setState({loadingQueued : true});
+            }
+            else{
+                this.loadNextPage();
+            }
+        }
+      }
     
     loadNextPage(){
-        /*const { offset,limit } = this.state.options
-        const newOffset = offset + limit;
-        const newLimit = newOffset + DataSinkListView.DEFAULT_OPTIONS.limit;
+        if(this.rows.length >= this.totalRowCount){
+            Logger.info("Reached end of viewport")
+            return;
+        }
+        const { offset,limit } = this.state.options
+        const newLimit = limit + DataSinkListView.DEFAULT_OPTIONS.limit;
         const newOptions = {...this.state.options};
-        newOptions.offset = newOffset;
         newOptions.limit = newLimit;
-        this.props.subscriptionStrategy.update(this,this.state.options);
-        this.setState({options : newOptions})*/
-        return Promise.resolve();
+        this.props.subscriptionStrategy.update(this,newOptions);
+        this.setState({options : newOptions, isNextPageLoading : true})
     }
     
     search(expression){
+        const newOptions = {...this.state.options};
         newOptions.filterExpression = expression;
-        this.props.subscriptionStrategy.update(this,this.state.options);
+        this.props.subscriptionStrategy.update(this,newOptions);
         this.setState({options : newOptions})
     }
     
@@ -87,31 +111,25 @@ export default class DataSinkListView extends Component{
         this.setState({options : DataSinkListView.DEFAULT_OPTIONS})
     }
 
-    renderItem = ({ item }) => {
-        return this.props.rowView(item)
+    renderItem = (item) => {
+        const RowView = this.props.rowView
+        return <RowView key={item["P_ID"]} style={{flex : 1}} item={item}/>
     }
     
     render() {
         const { rows } = this
         const {  hasNextPage, isNextPageLoading, refreshing } = this.state
-        const { emptyView, paginationWaitingView, headerView, refreshable, ...otherProps } = this.props
-
+        const { emptyView, paginationWaitingView, headerView : HeaderView, refreshable, ...otherProps } = this.props
         if (rows.length === 0) return emptyView()
         return (
-            <InfiniteVirtualizedList
-            data={this.rows}
-            hasNextPage={hasNextPage}
-            isNextPageLoading={isNextPageLoading}
-            loadNextPage={this.loadNextPage}
-            renderItem={this.renderItem}
-            paginationWaitingView={paginationWaitingView}
-            getItem={(data, index) => rows[index]}
-            getItemCount={() => rows.length}
-            ListHeaderComponent={headerView}
-            onRefresh={refreshable ? this.refresh : null}
-            refreshing={refreshing}
-            {...otherProps}
-            />
+            <View style={{flex : 1,flexDirection : 'column'}}>
+                <View style={{height : 60}}>
+                    <HeaderView/>
+                </View>
+                <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
+                    {this.rows.map( c => this.renderItem(c))}
+                </ScrollView >
+            </View>
         )
     }
 
@@ -138,6 +156,17 @@ export default class DataSinkListView extends Component{
         this.rows.push(row)
         this.dirtyRows.push(rowId);
         Logger.info("Row added - " + JSON.stringify(row));
+        const {isNextPageLoading,loadingQueued} = this.state;
+        const { offset,limit } = this.state.options
+        if(this.rows.length >= limit && isNextPageLoading){
+            if(loadingQueued){
+                this.loadNextPage();
+            }
+            this.setState({
+                isNextPageLoading: false,
+                loadingQueued : false
+            })
+        }
     }
     onRowUpdated(rowId, row){
         const rowIndex = this._getRowIndex(rowId);
