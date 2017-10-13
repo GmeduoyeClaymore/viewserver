@@ -47,14 +47,18 @@ public class LikeExpression implements IExpressionBool {
         }
         if (rhsString.startsWith("*")) {
             if (rhsString.endsWith("*")) {
-                return lhsString.contains(rhsString.substring(1, rhsString.length() - 2));
+                if(rhsString.length() <= 2){
+                    return true;
+                }else{
+                    return lhsString.toLowerCase().contains(rhsString.toLowerCase().substring(1, rhsString.length() - 2));
+                }
             }
-            return lhsString.endsWith(rhsString.substring(1));
+            return lhsString.toLowerCase().endsWith(rhsString.toLowerCase().substring(1));
         }
         if (rhsString.endsWith("*")) {
-            return lhsString.startsWith(rhsString.substring(0, rhsString.length() - 2));
+            return lhsString.toLowerCase().startsWith(rhsString.toLowerCase().substring(0, rhsString.length() - 2));
         }
-        return lhsString.equals(rhsString);
+        return lhsString.toLowerCase().equals(rhsString.toLowerCase());
     }
 
     @Override

@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native'
 export default class EmployeeListItem extends Component {
 
     showDetails() {
-        this.props.navigator.push({name: 'product-details', data: this.props.data});
+        this.props.navigator.push({name: 'product-details', data: this.props.item});
     }
 
     render() {

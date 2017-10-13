@@ -1,11 +1,12 @@
 import Logger from '../viewserver-client/Logger';
+import {debounce} from 'lodash';
 export default class OperatorSubsciptionStrategy{
 
     constructor(client,path){
         this.client = client;
         this.path = path;
         this.subscribe = this.subscribe.bind(this);
-        this.update = this.update.bind(this);
+        this.update = debounce(this.update.bind(this),500);
     }
 
     subscribe(dataSink,options){

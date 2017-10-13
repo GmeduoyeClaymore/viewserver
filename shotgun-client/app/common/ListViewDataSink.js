@@ -26,7 +26,7 @@ export default class DataSinkListView extends Component{
         limit :  20,
         columnName  :  undefined,
         columnsToSort :  undefined,
-        filterMode :  3,//Filtering
+        filterMode :  2,//Filtering
         filterExpression : undefined,
         flags : undefined
     }
@@ -120,15 +120,14 @@ export default class DataSinkListView extends Component{
         const { rows } = this
         const {  hasNextPage, isNextPageLoading, refreshing } = this.state
         const { emptyView, paginationWaitingView, headerView : HeaderView, refreshable, ...otherProps } = this.props
-        if (rows.length === 0) return emptyView()
         return (
             <View style={{flex : 1,flexDirection : 'column'}}>
                 <View style={{height : 60}}>
                     <HeaderView/>
                 </View>
-                <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
+                {(rows.length === 0)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
                     {this.rows.map( c => this.renderItem(c))}
-                </ScrollView >
+                </ScrollView >}
             </View>
         )
     }

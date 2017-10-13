@@ -254,7 +254,7 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
         }
 
         private boolean matches(int row) {
-            return mode.equals(FilterMode.Transparent) || (mode == FilterMode.Filter && filterExpression.getBool(row));
+            return mode.equals(FilterMode.Transparent) || filterExpression == null || (mode == FilterMode.Filter && filterExpression.getBool(row));
         }
 
         @Override

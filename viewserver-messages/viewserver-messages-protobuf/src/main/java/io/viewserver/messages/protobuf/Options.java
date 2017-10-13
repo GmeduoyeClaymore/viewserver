@@ -101,7 +101,7 @@ public class Options extends PoolableMessage<Options> implements IOptions<Option
 
     @Override
     public FilterMode getFilterMode() {
-        if (optionsDto.hasFilterMode()) {
+        if (!optionsDto.hasFilterMode()) {
             return null;
         }
         final OptionsMessage.FilterMode filterMode = optionsDto.getFilterMode();
