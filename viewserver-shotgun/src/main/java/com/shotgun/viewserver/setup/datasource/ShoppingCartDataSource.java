@@ -3,40 +3,34 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.Schema;
 
 import java.util.Arrays;
 
 /**
- * Created by nick on 07/07/15.
+ * Created by bennett on 26/09/17.
  */
 public class
-        FxRatesDataSource {
-    public static final String NAME = "fxrates";
+        ShoppingCartDataSource {
+    public static final String NAME = "shoppingCartItem";
 
     public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/fxrates.csv");
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(
-                        new DataLoader(
-                                NAME,
-                                dataAdapter,
-                                null
-                        )
-                )
                 .withSchema(new Schema()
-                                .withColumns(Arrays.asList(
-                                        new Column("date", "date", ColumnType.Date),
-                                        new Column("rate_EUR", "rate_EUR", ColumnType.Float),
-                                        new Column("rate_GBP", "rate_GBP", ColumnType.Float)
-                                ))
+                        .withColumns(Arrays.asList(
+                                new Column("C_ShoppingCartId", "C_ShoppingCartId", ColumnType.Int),
+                                new Column("C_CustomerId", "C_CustomerId", ColumnType.Int),
+                                new Column("C_ProductId", "C_ProductId", ColumnType.Int),
+                                new Column("C_ProductQuantity", "C_ProductQuantity", ColumnType.Int),
+                                new Column("C_ShoppingCartCreationDate", "C_ShoppingCartCreationDate", ColumnType.DateTime)
+
+                        ))
                 )
-                .withNodes(
+                /*.withNodes(
                         new CalcColNode("fxRatesDayCalCol")
                                 .withCalculations(new CalcColOperator.CalculatedColumn("day", "businessDay(date, false)- " + CsvDataSource.START_DATE_OFFSET))
                                 .withCalculations(new CalcColOperator.CalculatedColumn("actualDay", "weekday(date)- " + CsvDataSource.START_DATE_OFFSET))
@@ -48,6 +42,6 @@ public class
                 )
                 .withDistributionMode(DistributionMode.Mirrored)
                 .withOutput("fxRatesFilter")
-                .withOptions(DataSourceOption.IsReportSource);
+                .withOptions(DataSourceOption.IsReportSource)*/;
     }
 }

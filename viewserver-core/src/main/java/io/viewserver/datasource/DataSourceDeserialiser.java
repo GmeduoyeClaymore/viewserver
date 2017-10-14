@@ -36,7 +36,9 @@ public class DataSourceDeserialiser extends DataSourceDeserialiserBase<DataSourc
     public DataSource deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         DataSource dataSource = doDeserialize(p, ctxt);
 
-        dataSource.getDataLoader().getDataAdapter().setDataSource(dataSource);
+        if(dataSource.getDataLoader() != null && dataSource.getDataLoader().getDataAdapter() != null){
+            dataSource.getDataLoader().getDataAdapter().setDataSource(dataSource);
+        }
 
         return dataSource;
     }

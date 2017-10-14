@@ -2,6 +2,7 @@ import React, {Component,PropTypes} from 'react';
 import {View, ListView, ScrollView, StyleSheet, Text, Dimensions } from 'react-native';
 import Logger from '../viewserver-client/Logger';
 import InfiniteVirtualizedList from 'react-native-infinite-virtualized-list';
+import DataSink from './DataSink';
 
 const styles = StyleSheet.create({
     contentContainer: {
@@ -9,7 +10,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default class DataSinkListView extends Component{
+export default class DataSinkListView extends DataSink(Component){
+    
     static propTypes = {
         subscriptionStrategy: PropTypes.object.isRequired,
         rowView: PropTypes.func.isRequired,
@@ -30,28 +32,12 @@ export default class DataSinkListView extends Component{
         filterExpression : undefined,
         flags : undefined
     }
-    
 
     constructor(props){
         super(props);
-        this.schema = {};
-        this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
-        this.onDataReset = this.onDataReset.bind(this);
-        this.onTotalRowCount = this.onTotalRowCount.bind(this);
-        this.onSchemaReset = this.onSchemaReset.bind(this);
-        this.onRowAdded = this.onRowAdded.bind(this);
-        this.onRowUpdated = this.onRowUpdated.bind(this);
-        this.onRowRemoved = this.onRowRemoved.bind(this);
-        this.onColumnAdded = this.onColumnAdded.bind(this);
-        this.loadNextPage = this.loadNextPage.bind(this);
-        this.idIndexes = {};
-        this.idRows = {};
-        this.rows = [];
-        this.dirtyRows = [];
         this._onScroll = this._onScroll.bind(this)
     }
 
- 
     state = {
         list: [],
         page: 1,
@@ -137,24 +123,9 @@ export default class DataSinkListView extends Component{
             isNextPageLoading: false
         })
     }
-    onDataReset(){
-        this.rows = [];
-        this.idIndexes = {};
-        this.idRows = {};
-    }
-    onTotalRowCount(count){
-        this.totalRowCount = count;
-    }
-    onSchemaReset(){
-        this.schema = {};
-    }
+
     onRowAdded(rowId, row){
-        row.key = rowId;
-        this.idIndexes[rowId] = this.rows.length;
-        this.idRows[rowId] = row;
-        this.rows.push(row)
-        this.dirtyRows.push(rowId);
-        Logger.info("Row added - " + JSON.stringify(row));
+        super.onRowAdded(rowId, row)
         const {isNextPageLoading,loadingQueued} = this.state;
         const { offset,limit } = this.state.options
         if(this.rows.length >= limit && isNextPageLoading){
@@ -166,29 +137,5 @@ export default class DataSinkListView extends Component{
                 loadingQueued : false
             })
         }
-    }
-    onRowUpdated(rowId, row){
-        const rowIndex = this._getRowIndex(rowId);
-        this.rows[rowIndex] = row;
-        Logger.info("Row updated - " + row);
-    }
-    onRowRemoved(rowId){
-        const rowIndex = this._getRowIndex(rowId);
-        this.rows[rowIndex] = row;
-    }
-    onColumnAdded(colId, col){
-       Logger.info("column added - " + col.name);
-       this.schema[colId] = col;
-    }
-    onColumnRemoved(colId){
-        delete this.schema[colId];
-    }
-
-    _getRowIndex(rowId){
-        const rowIndex = this.idIndexes[rowId];
-        if(typeof rowIndex === 'undefined'){
-            throw new Error("Attempting to remove a row that doesn't exist " + rowId + " with " + JSON.stringify(row))
-        }
-        return rowIndex;
     }
   }

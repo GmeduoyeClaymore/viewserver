@@ -1,15 +1,34 @@
 import React, {Component} from 'react';
 import {Text, TouchableOpacity, Image, StyleSheet,View} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import ProductList from './customer/ProductList';
-import ProductDetails from './customer/ProductDetails';
+import ProductList from '../customer/ProductList';
+import ProductDetails from '../customer/ProductDetails';
+import CustomerServiceFactory from '../customer/data/CustomerServiceFactory';
+import Logger from '../viewserver-client/Logger';
 
-export default class Landing extends Component {
+export default class CustomerLanding extends Component {
 
     constructor(props){
       super(props);
+      this.state = {
+        isReady: false
+      };
       this.renderScene = this.renderScene.bind(this);
+      this.customerServiceFactory = new CustomerServiceFactory(this.props.client);
     }
+
+    async componentWillMount() {
+        try
+        {
+          this.customerService = await this.customerServiceFactory.create(this.props.principal.customerId);
+        }
+        catch(error){
+          Logger.error(error);
+        }
+        Logger.debug("Network connected !!");
+        this.setState({ isReady: true });
+    }
+    
 
     renderScene(route, navigator) {
         switch (route.name) {
@@ -21,6 +40,10 @@ export default class Landing extends Component {
     }
 
     render() {
+        if (!this.state.isReady) {
+            return null;
+        }
+      
         return (
             <Navigator
                 initialRoute={{name: 'product-list', title: 'Product List'}}
@@ -34,7 +57,7 @@ export default class Landing extends Component {
                                 } else {
                                     return (
                                         <TouchableOpacity onPress={() => navigator.pop()}>
-                                            <Image source={require('./assets/back.png')} style={styles.backButton} />
+                                            <Image source={require('../assets/back.png')} style={styles.backButton} />
                                         </TouchableOpacity>
                                     );
                                 }
