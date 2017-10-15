@@ -35,7 +35,7 @@ export default class CustomerLanding extends Component {
             case 'product-list':
                 return <ProductList navigator={navigator} client={this.props.client}/>
             case 'product-details':
-                return <ProductDetails navigator={navigator} product={route.data} />
+                return <ProductDetails navigator={navigator} product={route.data} customerService={this.customerService}/>
         }
     }
 

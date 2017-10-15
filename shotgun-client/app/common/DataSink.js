@@ -51,13 +51,16 @@ export default DataSink = (superclass) => class extends superclass {
         this.rows[rowIndex] = row;
     }
     onColumnAdded(colId, col){
-       Logger.info("column added - " + col.name);
+       Logger.info("column added - " + JSON.stringify(col));
        this.schema[colId] = col;
     }
     onColumnRemoved(colId){
         delete this.schema[colId];
     }
 
+    getColumn(columnid){
+        return this.schema[columnid]
+    }
     _getRowIndex(rowId){
         const rowIndex = this.idIndexes[rowId];
         if(typeof rowIndex === 'undefined'){

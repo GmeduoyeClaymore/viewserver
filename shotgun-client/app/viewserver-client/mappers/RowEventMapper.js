@@ -7,13 +7,13 @@ export default class RowEventMapper{
     static mapRowEventType(rowEventType) {
         switch (rowEventType) {
             case RowEvent.EventType.ADD: {
-                return ProtoLoader.Dto.RowEventDto.RowEventType.ADD;
+                return 0;
             }
             case RowEvent.EventType.UPDATE: {
-                return ProtoLoader.Dto.RowEventDto.RowEventType.UPDATE;
+                return 1;
             }
             case RowEvent.EventType.REMOVE: {
-                return ProtoLoader.Dto.RowEventDto.RowEventType.REMOVE;
+                return 2;
             }
             default : {
                 throw new Error()
@@ -22,11 +22,14 @@ export default class RowEventMapper{
     }
 
     static toDto(rowEvent, dataSink) {
-        let rowEventDto = new ProtoLoader.Dto.RowEventDto(RowEventMapper.mapRowEventType(rowEvent.type));
+        let rowEventDto = ProtoLoader.Dto.RowEventDto.create({
+            eventType : RowEventMapper.mapRowEventType(rowEvent.type)
+        });
         if (rowEvent.rowId >= 0) {
             rowEventDto.setRowId(rowEvent.rowId);
         }
         let columnValueDtos = [];
+        console.log(`Column values ${JSON.stringify(rowEvent.columnValues)}`)
         $.each(rowEvent.columnValues, function (key, value) {
             let columnId;
             if (typeof key === 'string') {
@@ -37,42 +40,43 @@ export default class RowEventMapper{
             } else {
                 columnId = key;
             }
-            let columnValue = new ProtoLoader.Dto.RowEventDto.ColumnValue(columnId);
+            let columnValue = ProtoLoader.Dto.RowEventDto.ColumnValue.create({columnId});
             if (value === null) {
-                columnValue.set('nullValue', -1); // -1 is arbitrary
+                columnValue['nullValue'] =-1; // -1 is arbitrary
             } else {
                 let column = dataSink.getColumn(columnId);
+                console.log(`!!! Row mapper found column "${JSON.stringify(column)}"`)
                 switch (column.type) {
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
                     {
-                        columnValue.set('booleanValue', value);
+                        columnValue['booleanValue']  = value;
                         break;
                     }
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BYTE:
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.SHORT:
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.INTEGER:
                     {
-                        columnValue.set('intValue', value);
+                        columnValue['intValue'] = value;
                         break;
                     }
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.LONG:
                     {
-                        columnValue.set('longValue', value);
+                        columnValue['longValue'] = value;
                         break;
                     }
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.FLOAT:
                     {
-                        columnValue.set('floatValue', value);
+                        columnValue['floatValue'] = value;
                         break;
                     }
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.DOUBLE:
                     {
-                        columnValue.set('doubleValue', value);
+                        columnValue['doubleValue'] = value;
                         break;
                     }
                     case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.STRING:
                     {
-                        columnValue.set('stringValue', value);
+                        columnValue['stringValue'] = value;
                         break;
                     }
                     default : {
@@ -82,7 +86,7 @@ export default class RowEventMapper{
             }
             columnValueDtos.push(columnValue);
         });
-        rowEventDto.setValues(columnValueDtos);
+        rowEventDto["values"] = columnValueDtos;
         return rowEventDto;
     }
 }

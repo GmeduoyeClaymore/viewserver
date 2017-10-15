@@ -1,15 +1,21 @@
-import React, {Component} from 'react';
+import React, {Component,PropTypes} from 'react';
 import { View, ListView, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import ActionBar from './ActionBar';
+import ProductActionBar from './ProductActionBar';
 
 export default class ProductDetails extends Component {
+
+    static PropTypes = {
+        customerService : PropTypes.object,
+        product : PropTypes.object
+    }
 
     constructor(props) {
         super(props);
     }
 
     render() {
-        const { product } = this.props;
+        const { product,customerService } = this.props;
+        const { shoppingCartDao } = customerService;
         if (product) {
             return (
                 <View style={styles.container}>
@@ -17,7 +23,7 @@ export default class ProductDetails extends Component {
                         <Image source={require('./assets/cement.jpg')} style={styles.picture} />
                         <Text style={styles.bigText}>{product['P_name']}</Text>
                         <Text style={[styles.mediumText, styles.lightText]}>{product['P_description']}</Text>
-                        <ActionBar mobilePhone={product['P_price']} email={product['P_dimensions']} />
+                        <ProductActionBar product={product} shoppingCartDao={shoppingCartDao}/>
                     </View>
                 </View>
             );

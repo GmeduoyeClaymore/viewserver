@@ -20,6 +20,8 @@ export default class ProtoLoader{
         ProtoLoader._dto.OptionsDto = root.lookupType('OptionsDto');
         ProtoLoader._dto.CommandDto = root.lookupType('CommandDto');
         ProtoLoader._dto.MessageDto = root.lookupType('MessageDto');
+        ProtoLoader._dto.RowEventDto = root.lookupType('RowEventDto');
+        ProtoLoader._dto.SchemaChangeDto = root.lookupType('SchemaChangeDto');
         ProtoLoader._dto.HeartbeatDto = root.lookupType('HeartbeatDto');
         ProtoLoader._dto.SubscribeCommandDto = root.lookupType('SubscribeCommandDto');
         ProtoLoader._dto.UnsubscribeCommandDto = root.lookupType('UnsubscribeCommandDto');
@@ -29,6 +31,7 @@ export default class ProtoLoader{
         ProtoLoader._dto.ReportContextDto = root.lookupType('ReportContextDto');
         ProtoLoader._dto.AuthenticateCommandDto = root.lookupType('AuthenticateCommandDto');
         ProtoLoader._dto.TableEditCommandDto = root.lookupType('TableEditCommandDto');
+        ProtoLoader._dto.TableEventDto = root.lookupType('TableEventDto');
         ProtoLoader._dto.ProjectionConfigDto = root.lookupType('ProjectionConfigDto');
         ProtoLoader._dto.ExecuteSqlCommandDto = root.lookupType('ExecuteSqlCommandDto');
     }

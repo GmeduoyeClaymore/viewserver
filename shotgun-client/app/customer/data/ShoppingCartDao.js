@@ -12,7 +12,7 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
         columnName  :  undefined,
         columnsToSort :  undefined,
         filterMode :  2,//Filtering
-        filterExpression : `C_CustomerId == "${customerId}"`,
+        filterExpression : `CustomerId == "${customerId}"`,
         flags : undefined 
       }
     }
@@ -23,6 +23,7 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscriptionStrategy.subscribe(this,ShoppingCartDao.DEFAULT_OPTIONS(customerId))
+      this.rowAddedListeners = [];
     }
   
     async addItemtoCart(productId,quantity){
@@ -31,7 +32,7 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
       let addItemRowEvent = this.createAddItemtoCartRowEvent(productId,quantity,creationDateTime);
       this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME,this,addItemRowEvent,addItemToCartPromise)
       await addItemToCartPromise;
-      let addedItem = await waitForItemAddition(addItemRowEvent);
+      let addedItem = await this.waitForItemAddition(addItemRowEvent);
     }
   
     waitForItemAddition(rowAddedEvent){
@@ -54,19 +55,19 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
     }
   
     eventsEqual(event,row){
-      return event.C_ShoppingCartCreationDate == row.C_ShoppingCartCreationDate && event.C_ProductId === row.C_ProductId;
+      return event.ShoppingCartCreationDate == row.ShoppingCartCreationDate && event.ProductId === row.ProductId;
     }
   
     createAddItemtoCartRowEvent(productId,quantity,creationDateTime){
-      return {
+      return [{
         type : 0, // ADD
         columnValues : {
-          C_CustomerId : this.customerId,
-          C_ProductId : productId,
-          C_ProductQuantity : quantity,
-          C_ShoppingCartCreationDate : creationDateTime
+          CustomerId : this.customerId,
+          ProductId : productId,
+          ProductQuantity : quantity,
+          ShoppingCartCreationDate : creationDateTime
         }
-      }
+      }]
     }
   
     get cartItems(){

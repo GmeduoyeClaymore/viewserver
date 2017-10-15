@@ -5,6 +5,7 @@ import OptionsMapper from './mappers/OptionsMapper';
 import RowEventMapper from './mappers/RowEventMapper';
 import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
+import Logger from './Logger';
 
 export default class Client {
   
@@ -97,17 +98,17 @@ export default class Client {
       return this.sendCommand('updateSubscription', updateSubscriptionCommand, false, eventHandlers);
   }
 
-  editTable = function (operatorName, dataSink, rowEvents, eventHandlers) {
-      
+  editTable = function (tableName, dataSink, rowEvents, eventHandlers) {
+      Logger.info(`Processing row events: ${JSON.stringify(rowEvents)} on ${tableName}`)
       var rowEventDtos = [];
-      rowEvents.map(function (index, rowEvent) {
+      rowEvents.map(function (rowEvent,index) {
           rowEventDtos.push(RowEventMapper.toDto(rowEvent, dataSink));
       });
       let tableEvent = ProtoLoader.Dto.TableEventDto.create({
         rowEvents : rowEventDtos
       })
 
-      let tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({operatorName, tableEvent});
+      let tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({tableName, tableEvent, operation : 2 /* EDIT */});
       return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   }
 

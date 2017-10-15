@@ -31,11 +31,11 @@ public class
                 )
                 .withSchema(new Schema()
                         .withColumns(Arrays.asList(
-                                new Column("C_ShoppingCartId", "C_ShoppingCartId", ColumnType.Int),
-                                new Column("C_CustomerId", "C_CustomerId", ColumnType.Int),
-                                new Column("C_ProductId", "C_ProductId", ColumnType.Int),
-                                new Column("C_ProductQuantity", "C_ProductQuantity", ColumnType.Int),
-                                new Column("C_ShoppingCartCreationDate", "C_ShoppingCartCreationDate", ColumnType.DateTime)
+                                new Column("ShoppingCartId", "ShoppingCartId", ColumnType.String),
+                                new Column("CustomerId", "CustomerId", ColumnType.String),
+                                new Column("ProductId", "ProductId", ColumnType.Int),
+                                new Column("ProductQuantity", "ProductQuantity", ColumnType.Int),
+                                new Column("ShoppingCartCreationDate", "ShoppingCartCreationDate", ColumnType.DateTime)
 
                         ))
                 )
