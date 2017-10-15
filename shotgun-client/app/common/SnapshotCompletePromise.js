@@ -1,9 +1,17 @@
 import Logger from '../viewserver-client/Logger';
 
-export default class PromiseEventHandler extends Promise {  
+export default class PromiseEventHandler {  
 
     constructor(){
-        super((resolve,reject) => this._handlePromiseExecution.bind(this)(resolve,reject))
+        this.promise = new Promise(this._handlePromiseExecution.bind(this))
+        this.onSuccess = this.onSuccess.bind(this);
+        this.onError = this.onError.bind(this);
+        this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
+    }
+
+    then ()
+    {
+	    return this.promise.then.apply(this.promise, arguments)
     }
 
     _handlePromiseExecution(resolve,reject){
@@ -12,7 +20,7 @@ export default class PromiseEventHandler extends Promise {
     }
 
     onSnapshotComplete(){
-        this.resolve;
+        this.resolve();
     }
 
     onError(message){
@@ -21,7 +29,6 @@ export default class PromiseEventHandler extends Promise {
     }
 
     onSuccess(commandResultId){
-        Logger.error(`Successfully executed command"${commandResultId}"`)
         this.resolve();
     }
    

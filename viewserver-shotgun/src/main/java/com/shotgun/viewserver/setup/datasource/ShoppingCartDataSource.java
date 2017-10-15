@@ -18,8 +18,17 @@ public class
     public static final String NAME = "shoppingCartItem";
 
     public static DataSource getDataSource() {
+        CsvDataAdapter dataAdapter = new CsvDataAdapter();
+        dataAdapter.setFileName("data/shoppingCart.csv");
         return new DataSource()
                 .withName(NAME)
+                .withDataLoader(
+                        new DataLoader(
+                                NAME,
+                                dataAdapter,
+                                null
+                        )
+                )
                 .withSchema(new Schema()
                         .withColumns(Arrays.asList(
                                 new Column("C_ShoppingCartId", "C_ShoppingCartId", ColumnType.Int),

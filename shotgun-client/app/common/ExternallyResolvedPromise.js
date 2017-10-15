@@ -1,14 +1,19 @@
 import Logger from '../viewserver-client/Logger';
 
-export default class ExternallyResolvedPromise extends Promise {  
+export default class ExternallyResolvedPromise{  
 
     constructor(){
-        super((resolve,reject) => this._handlePromiseExecution.bind(this)(resolve,reject))
+        this.promise = new Promise(this._handlePromiseExecution.bind(this))
     }
 
     _handlePromiseExecution(resolve,reject){
         this.resolve = resolve;
         this.reject = reject;
+    }
+
+    then ()
+    {
+	    return this.promise.then.apply(this.promise, arguments)
     }
 
     reject(message){
