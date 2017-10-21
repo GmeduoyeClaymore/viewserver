@@ -24,6 +24,7 @@ public class DemoBootstrapper extends BootstrapperBase {
         dataSources.add(OrderProductDataSource.getDataSource());
         dataSources.add(PackageTypeDataSource.getDataSource());
         dataSources.add(ProductDataSource.getDataSource());
+        dataSources.add(ProductCategoryDataSource.getDataSource());
         dataSources.add(StatusDataSource.getDataSource());
         dataSources.add(ShoppingCartDataSource.getDataSource());
         return dataSources;
