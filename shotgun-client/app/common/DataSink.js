@@ -5,6 +5,7 @@ export default DataSink = (superclass) => class extends superclass {
     constructor(){
         super();
         this.schema = {};
+        this.columnsByName = {};
         this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
         this.onDataReset = this.onDataReset.bind(this);
         this.onTotalRowCount = this.onTotalRowCount.bind(this);
@@ -29,6 +30,7 @@ export default DataSink = (superclass) => class extends superclass {
     }
     onTotalRowCount(count){
         this.totalRowCount = count;
+        Logger.info("Total row count is - " + this.totalRowCount);
     }
     onSchemaReset(){
         this.schema = {};
@@ -39,7 +41,7 @@ export default DataSink = (superclass) => class extends superclass {
         this.idRows[rowId] = row;
         this.rows.push(row)
         this.dirtyRows.push(rowId);
-        Logger.info("Row added - " + JSON.stringify(row));
+        Logger.info(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
     }
     onRowUpdated(rowId, row){
         const rowIndex = this._getRowIndex(rowId);
@@ -51,16 +53,28 @@ export default DataSink = (superclass) => class extends superclass {
         this.rows[rowIndex] = row;
     }
     onColumnAdded(colId, col){
-       Logger.info("column added - " + JSON.stringify(col));
-       this.schema[colId] = col;
+       Logger.info(`column added - ${colId} -  + ${JSON.stringify(col)}`);
+       const newCol = {...col,colId}
+       this.schema[colId] = newCol;
+       this.columnsByName[col.name] = newCol;;
     }
     onColumnRemoved(colId){
-        delete this.schema[colId];
+        var col = this.schema[colId];
+        if(col){
+            delete this.columnsByName[col.name];
+            delete this.schema[colId];
+        }
     }
 
     getColumn(columnid){
         return this.schema[columnid]
     }
+
+    getColumnId(name){
+        const result = this.columnsByName[name];
+        return result ? result.colId : undefined;
+    }
+
     _getRowIndex(rowId){
         const rowIndex = this.idIndexes[rowId];
         if(typeof rowIndex === 'undefined'){

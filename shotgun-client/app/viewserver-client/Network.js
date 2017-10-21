@@ -123,6 +123,8 @@ export default class Network {
         if (command.handler) {
             if(command.handler.onTotalRowCount){
                command.handler.onTotalRowCount(tableMetaData.totalSize);
+            }else{
+                Logger.warning('couldnt find total row count handler');
             }
 
             this.handleStatuses(tableEvent.statuses, command.handler);

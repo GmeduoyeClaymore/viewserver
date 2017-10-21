@@ -13,7 +13,7 @@ export default class App extends React.Component {
     };
     this.client = new Client("ws://192.168.0.20:8080/");
     this.principal = {
-      customerId : "2BBui",
+      customerId : "2BBuxi",
     }
     this.applicationMode = "customer";
   }

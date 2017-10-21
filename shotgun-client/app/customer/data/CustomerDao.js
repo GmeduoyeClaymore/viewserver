@@ -23,7 +23,8 @@ export default class CustomerDao extends DataSink(SnapshotCompletePromise){
       this.viewserverClient = viewserverClient;
       this.subscriptionStrategy.subscribe(this,CustomerDao.DEFAULT_OPTIONS(customerId))
     }
-  
+   
+
     get customer(){
       return  this.rows.first();
     }

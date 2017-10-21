@@ -174,15 +174,14 @@ export default class Connection {
         cmd.id = this._commandId++;
         this.openCommands[cmd.id] = cmd;
     
-        Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
-        Logger.fine(JSON.stringify(cmd.data));
+        //Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
+        //Logger.fine(JSON.stringify(cmd.data));
     
         const {id,command,data} = cmd;
         const payload = {id,command};
         
         let commandDto = ProtoLoader.Dto.CommandDto.create(payload);
         commandDto["." + cmd.command + 'Command'] = data; 
-        Logger.info('constructed - ' + JSON.stringify(commandDto));
         this.network.sendMessage(commandDto);
         return cmd;
     }

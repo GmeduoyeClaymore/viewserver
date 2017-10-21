@@ -3,6 +3,8 @@ import {Text, TouchableOpacity, Image, StyleSheet,View} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
 import ProductList from '../customer/ProductList';
 import ProductDetails from '../customer/ProductDetails';
+import CustomerMenuBar from '../customer/CustomerMenuBar';
+import ViewShoppingCart from '../customer/ViewShoppingCart';
 import CustomerServiceFactory from '../customer/data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
 
@@ -16,6 +18,8 @@ export default class CustomerLanding extends Component {
       this.renderScene = this.renderScene.bind(this);
       this.customerServiceFactory = new CustomerServiceFactory(this.props.client);
     }
+
+
 
     async componentWillMount() {
         try
@@ -31,11 +35,21 @@ export default class CustomerLanding extends Component {
     
 
     renderScene(route, navigator) {
+        return <View style={{flexDirection : 'column',flex : 1}}>
+        <CustomerMenuBar style={{minHeight : 45}} navigator={navigator} shoppingCartDao={this.customerService.shoppingCartDao}/>
+        {this.renderSceneContent(route, navigator)}
+    </View>
+        
+    }
+    
+    renderSceneContent(route, navigator) {
         switch (route.name) {
             case 'product-list':
-                return <ProductList navigator={navigator} client={this.props.client}/>
+                return <ProductList style={styles.contentStyle} navigator={navigator} client={this.props.client}/>
             case 'product-details':
-                return <ProductDetails navigator={navigator} product={route.data} customerService={this.customerService}/>
+                return <ProductDetails style={styles.contentStyle} navigator={navigator} product={route.data} customerService={this.customerService}/>
+            case 'view-shopping-cart':
+                return <ViewShoppingCart style={styles.contentStyle} shoppingCartItems={route.data}/>
         }
     }
 
@@ -57,7 +71,7 @@ export default class CustomerLanding extends Component {
                                 } else {
                                     return (
                                         <TouchableOpacity onPress={() => navigator.pop()}>
-                                            <Image source={require('../assets/back.png')} style={styles.backButton} />
+                                            <Image source={require('../common/assets/back.png')} style={styles.backButton} />
                                         </TouchableOpacity>
                                     );
                                 }
@@ -81,6 +95,9 @@ const styles = StyleSheet.create({
     navBar: {
         backgroundColor: '#FAFAFF',
         height: 60,
+    },
+    contentStyle: {
+        flex: 1
     },
     backButton: {
         marginTop: 8,

@@ -1,6 +1,7 @@
 import React, {Component,PropTypes} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
-
+import ActionButton from '../common/ActionButton.js'
+import icon from  "../common/assets/basket-fill.png"
 export default class ProductActionBar extends Component {
 
     state = {
@@ -44,14 +45,12 @@ export default class ProductActionBar extends Component {
                     value = {this.state.itemCount + ""}
                     maxLength = {10}  //setting limit of input
                 />
-                <TouchableOpacity onPress={this.addToShopping} style={styles.action}>
-                    <Image source={require('./assets/basket-fill.png')} style={styles.icon} />
-                    <Text style={styles.actionText}>Add To Basket</Text>
-                </TouchableOpacity>
+                <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToShopping}/>
             </View>
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {

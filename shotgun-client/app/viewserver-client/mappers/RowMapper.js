@@ -3,15 +3,19 @@ import {$} from '../core/JQueryish';
 export default class RowMapper{
     static _parseValue(rowValue) {
         var value = rowValue[rowValue.value];
+        try{
+            switch (rowValue.value) {
+                case 'longValue':
+                    return value.toNumber ? value.toNumber() : parseFloat(value.toNumber);
+                case 'nullValue':
+                    return undefined;
+                default:
+                    return value;
 
-        switch (rowValue.value) {
-            case 'longValue':
-                return value.toNumber();
-            case 'nullValue':
-                return undefined;
-            default:
-                return value;
-
+            }
+        }catch(error){
+            console.error("error parsing value " + JSON.stringify(rowValue));
+            throw error;
         }
     }
 

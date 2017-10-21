@@ -32,9 +32,12 @@ export default class RowEventMapper{
         console.log(`Column values ${JSON.stringify(rowEvent.columnValues)}`)
         $.each(rowEvent.columnValues, function (key, value) {
             let columnId;
+            console.log(`Key is ` + key)
             if (typeof key === 'string') {
+                
                 columnId = parseInt(key,10);
                 if (isNaN(columnId)) {
+                    console.log(`Getting col id from data sink`)
                     columnId = dataSink.getColumnId(key);
                 }
             } else {

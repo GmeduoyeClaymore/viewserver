@@ -3,6 +3,8 @@ import DataSink from '../../common/DataSink';
 import SnapshotCompletePromise from '../../common/SnapshotCompletePromise';
 import ExternallyResolvedPromise from '../../common/ExternallyResolvedPromise';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
+import Rx from 'rx-lite';
+
 
 export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
     static DEFAULT_OPTIONS = (customerId) =>  {
@@ -24,6 +26,16 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
       this.customerId = customerId;
       this.subscriptionStrategy.subscribe(this,ShoppingCartDao.DEFAULT_OPTIONS(customerId))
       this.rowAddedListeners = [];
+      this.shoppingCartSizeSubject = new Rx.ReplaySubject();
+    }
+
+    get shoppingCartSizeObservable(){
+      return  this.shoppingCartSizeSubject;
+    }
+
+    onTotalRowCount(count){
+      super.onTotalRowCount(count);
+      this.shoppingCartSizeSubject.onNext(count);
     }
   
     async addItemtoCart(productId,quantity){
@@ -43,7 +55,7 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
   
     onRowAdded(rowId, row){
       super.onRowAdded(rowId, row);
-      const listenerersCopy = {...this.rowAddedListeners};
+      const listenerersCopy = [...this.rowAddedListeners];
       listenerersCopy.map(
         (evt,listener) => {
           if(this.eventsEqual(evt,row)){

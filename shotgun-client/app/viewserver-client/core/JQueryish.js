@@ -3,8 +3,10 @@ export const $ = {
         return Object.assign({},from,to);
     },
     each : (collection, fn) => {
-        if(typeof collection === 'object' && !collection.map){
-            return Object.entries(collection).map((val,index) => fn(index,val[1]))
+        if(typeof collection === 'object'){
+            return Object.keys(collection).map(function(key, index) {
+                return fn(key,collection[key])
+            });
         }
         else if(Array.isArray(collection)){
             return collection.map((val,index) => fn(index,val))

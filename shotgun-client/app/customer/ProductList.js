@@ -29,7 +29,6 @@ export default class ProductList extends Component {
   }
 
   render() {
-    const _this = this;
     return (
       <ListViewDataSink 
         ref={ listView => { this.listView = listView}}
@@ -46,12 +45,6 @@ export default class ProductList extends Component {
       />
     );
   }
-
-  transform(data){
-    data.picture = 'https://www.google.co.uk/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwiarp_l9s_WAhVDvRoKHRLrCVsQjRwIBw&url=http%3A%2F%2Fwww.boral.com.au%2Fproductcatalogue%2Fproduct.aspx%3Fproduct%3D2329&psig=AOvVaw1o_u016sObHsExJzLiLoQl&ust=1506964592873862';
-    return data;
-  }
-
 }
 
 const styles = StyleSheet.create({

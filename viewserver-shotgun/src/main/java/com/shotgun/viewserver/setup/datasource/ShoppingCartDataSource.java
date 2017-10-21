@@ -33,7 +33,7 @@ public class
                         .withColumns(Arrays.asList(
                                 new Column("ShoppingCartId", "ShoppingCartId", ColumnType.String),
                                 new Column("CustomerId", "CustomerId", ColumnType.String),
-                                new Column("ProductId", "ProductId", ColumnType.Int),
+                                new Column("ProductId", "ProductId", ColumnType.String),
                                 new Column("ProductQuantity", "ProductQuantity", ColumnType.Int),
                                 new Column("ShoppingCartCreationDate", "ShoppingCartCreationDate", ColumnType.DateTime)
 
