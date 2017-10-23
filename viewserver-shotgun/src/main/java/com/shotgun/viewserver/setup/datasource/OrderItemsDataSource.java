@@ -3,10 +3,10 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.Schema;
 
 import java.util.Arrays;
 
@@ -14,12 +14,12 @@ import java.util.Arrays;
  * Created by bennett on 26/09/17.
  */
 public class
-OrderDataSource {
-    public static final String NAME = "orders";
+        OrderItemsDataSource {
+    public static final String NAME = "orderItems";
 
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/orders.csv");
+        dataAdapter.setFileName("data/orderItems.csv");
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -32,13 +32,8 @@ OrderDataSource {
                 .withSchema(new Schema()
                         .withColumns(Arrays.asList(
                                 new Column("OrderId", "OrderId", ColumnType.String),
-                                new Column("CreationDate", "CreationDate", ColumnType.DateTime),
-                                new Column("LastModified", "LastModified", ColumnType.DateTime),
-                                new Column("CustomerId", "CustomerId", ColumnType.String),
-                                new Column("OrderFulfillmentId", "OrderFulfillmentId", ColumnType.String),
-                                new Column("DeliveryId", "DeliveryId", ColumnType.String),
-                                new Column("OrderStatus", "OrderStatus", ColumnType.String),
-                                new Column("DeliverySizeRequirement", "DeliverySizeRequirement", ColumnType.String)
+                                new Column("ProductId", "ProductId", ColumnType.String),
+                                new Column("Quantity", "Quantity", ColumnType.Int)
                         ))
                 )
                 /*.withNodes(

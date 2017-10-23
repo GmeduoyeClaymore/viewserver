@@ -205,6 +205,8 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
     private void performRowOperations(ITableEditCommand data, CommandResult commandResult, final IOperator operator, final IDataSource dataSource, IPeerSession peerSession) {
         TIntIntHashMap rowIdMap = (TIntIntHashMap) operator.getMetadata("rowIdMap");
         final List<IRowEvent> rowEvents = data.getTableEvent().getRowEvents();
+        StringBuilder resultMessage = new StringBuilder();
+
         final int rowEventCount = rowEvents.size();
         for (int i = 0; i < rowEventCount; i++) {
             final IRowEvent rowEventDto = rowEvents.get(i);
@@ -369,11 +371,17 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                 };
                 if (rowEventDto.getType().equals(IRowEvent.Type.Add)) {
                     int rowId = ((ITable) operator).addRow(tableRowUpdater);
+                    if(commandResult.getMessage().length() > 0)
+                        commandResult.setMessage(",");
+                    commandResult.setMessage(",A" + rowId);
                     if (rowIdMap != null) {
                         rowIdMap.put(rowEventDto.getRowId(), rowId);
                     }
                 } else {
                     int rowId = rowIdMap != null ? rowIdMap.get(rowEventDto.getRowId()) : rowEventDto.getRowId();
+                    if(commandResult.getMessage().length() > 0)
+                        commandResult.setMessage(",");
+                    commandResult.setMessage("U"+rowId);
                     ((ITable) operator).updateRow(rowId, tableRowUpdater);
                 }
             } finally {

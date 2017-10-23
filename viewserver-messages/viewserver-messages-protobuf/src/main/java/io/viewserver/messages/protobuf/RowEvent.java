@@ -286,7 +286,10 @@ public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<Row
         @Override
         public String getStringValue() {
             final RowEventMessage.RowEventDto.ColumnValue.ValueCase valueCase = getValueCase();
-            if (valueCase != RowEventMessage.RowEventDto.ColumnValue.ValueCase.STRINGVALUE &&
+            if(getNullValue()){
+                return null;
+            }
+            else if (valueCase != RowEventMessage.RowEventDto.ColumnValue.ValueCase.STRINGVALUE &&
                     valueCase != RowEventMessage.RowEventDto.ColumnValue.ValueCase.VALUE_NOT_SET) {
                 throw new UnsupportedOperationException(String.format("Value are of type %s, cannot get string value", valueCase));
             }

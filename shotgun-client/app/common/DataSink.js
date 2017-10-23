@@ -21,21 +21,36 @@ export default DataSink = (superclass) => class extends superclass {
     }
 
     onSnapshotComplete(){
+        if(super.onSnapshotComplete){
+            super.onSnapshotComplete()
+        }
     }
 
     onDataReset(){
+        if(super.onDataReset){
+            super.onDataReset()
+        }
         this.rows = [];
         this.idIndexes = {};
         this.idRows = {};
     }
     onTotalRowCount(count){
+        if(super.onTotalRowCount){
+            super.onTotalRowCount(count)
+        }
         this.totalRowCount = count;
         Logger.info("Total row count is - " + this.totalRowCount);
     }
     onSchemaReset(){
+        if(super.onSchemaReset){
+            super.onSchemaReset()
+        }
         this.schema = {};
     }
     onRowAdded(rowId, row){
+        if(super.onRowAdded){
+            super.onRowAdded(rowId, row)
+        }
         row.key = rowId;
         this.idIndexes[rowId] = this.rows.length;
         this.idRows[rowId] = row;
@@ -44,21 +59,33 @@ export default DataSink = (superclass) => class extends superclass {
         Logger.info(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
     }
     onRowUpdated(rowId, row){
+        if(super.onRowUpdated){
+            super.onRowUpdated(rowId, row)
+        }
         const rowIndex = this._getRowIndex(rowId);
         this.rows[rowIndex] = row;
         Logger.info("Row updated - " + row);
     }
     onRowRemoved(rowId){
+        if(super.onRowRemoved){
+            super.onRowRemoved(rowId)
+        }
         const rowIndex = this._getRowIndex(rowId);
         this.rows[rowIndex] = row;
     }
     onColumnAdded(colId, col){
        Logger.info(`column added - ${colId} -  + ${JSON.stringify(col)}`);
+       if(super.onColumnAdded){
+            super.onColumnAdded(colId, col)
+       }
        const newCol = {...col,colId}
        this.schema[colId] = newCol;
        this.columnsByName[col.name] = newCol;;
     }
     onColumnRemoved(colId){
+        if(super.onColumnRemoved){
+            super.onColumnRemoved(colId)
+        }
         var col = this.schema[colId];
         if(col){
             delete this.columnsByName[col.name];

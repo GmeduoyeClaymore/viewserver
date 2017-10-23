@@ -1,12 +1,14 @@
 import * as FieldMappings from './FieldMappings';
 import DataSink from '../../common/DataSink';
-import SnapshotCompletePromise from '../../common/SnapshotCompletePromise';
+import Logger from '../../viewserver-client/Logger';
+import ClientTableEventPromise from '../../common/ClientTableEventPromise';
+import CoolRxDataSink from '../../common/CoolRxDataSink';
 import ExternallyResolvedPromise from '../../common/ExternallyResolvedPromise';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
 import Rx from 'rx-lite';
 
 
-export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
+export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     static DEFAULT_OPTIONS = (customerId) =>  {
       return {
         offset :  0,
@@ -24,50 +26,27 @@ export default class ShoppingCartDao extends DataSink(SnapshotCompletePromise){
       this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient,FieldMappings.SHOPPING_CART_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
-      this.subscriptionStrategy.subscribe(this,ShoppingCartDao.DEFAULT_OPTIONS(customerId))
+      this.subscribeToData(this);
       this.rowAddedListeners = [];
-      this.shoppingCartSizeSubject = new Rx.ReplaySubject();
     }
 
     get shoppingCartSizeObservable(){
-      return  this.shoppingCartSizeSubject;
+      return  this.onTotalRowCountObservable;
     }
 
-    onTotalRowCount(count){
-      super.onTotalRowCount(count);
-      this.shoppingCartSizeSubject.onNext(count);
+    subscribeToData(datasink){
+      this.subscriptionStrategy.subscribe(datasink,ShoppingCartDao.DEFAULT_OPTIONS(this.customerId))
     }
   
     async addItemtoCart(productId,quantity){
-      let addItemToCartPromise = new SnapshotCompletePromise();
+      let clientTablEventPromise = new ClientTableEventPromise(this);
+      Logger.info(`Adding item to cart`)
       let creationDateTime = new Date();
       let addItemRowEvent = this.createAddItemtoCartRowEvent(productId,quantity,creationDateTime);
-      this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME,this,addItemRowEvent,addItemToCartPromise)
-      await addItemToCartPromise;
-      let addedItem = await this.waitForItemAddition(addItemRowEvent);
-    }
-  
-    waitForItemAddition(rowAddedEvent){
-      let rowAddedPromise = new ExternallyResolvedPromise();
-      this.rowAddedListeners[rowAddedEvent] = rowAddedPromise;
-      return rowAddedPromise;
-    }
-  
-    onRowAdded(rowId, row){
-      super.onRowAdded(rowId, row);
-      const listenerersCopy = [...this.rowAddedListeners];
-      listenerersCopy.map(
-        (evt,listener) => {
-          if(this.eventsEqual(evt,row)){
-            listener.resolve();
-            delete this.rowAddedListeners[evt];
-          }
-        }
-      )
-    }
-  
-    eventsEqual(event,row){
-      return event.ShoppingCartCreationDate == row.ShoppingCartCreationDate && event.ProductId === row.ProductId;
+      this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME,this,addItemRowEvent,clientTablEventPromise)
+      let modifiedRows = await clientTablEventPromise;
+      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`)
+      return modifiedRows;
     }
   
     createAddItemtoCartRowEvent(productId,quantity,creationDateTime){

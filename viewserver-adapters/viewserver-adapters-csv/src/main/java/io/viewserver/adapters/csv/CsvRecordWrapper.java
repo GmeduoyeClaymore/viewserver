@@ -129,18 +129,21 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
 
     @Override
     public byte getByte(String columnName) {
-        return TypeFormat.parseByte(getString(columnName)); //Byte.parseByte(getString(columnName));
+        String string = getString(columnName);
+        return string == null ? 0 : TypeFormat.parseByte(string); //Byte.parseByte(getString(columnName));
     }
 
     @Override
     public String getString(String columnName) {
-        String value = record.get(this.getDataSourceColumnName(columnName));
+        String dataSourceColumnName = this.getDataSourceColumnName(columnName);
+        String value = record.isSet(columnName) ? record.get(dataSourceColumnName) : null;
         return this.replaceNullValues(columnName, value, String.class);
     }
 
     @Override
     public boolean getBool(String columnName) {
-        return TypeFormat.parseBoolean(getString(columnName)); //Boolean.parseBoolean(getString(columnName));
+        String string = getString(columnName);
+        return string != null && TypeFormat.parseBoolean(string); //Boolean.parseBoolean(getString(columnName));
     }
 
     @Override
@@ -154,32 +157,40 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
 
     @Override
     public short getShort(String columnName) {
-        return TypeFormat.parseShort(getString(columnName)); //Short.parseShort(getString(columnName));
+        String string = getString(columnName);
+        return string == null ? -1 : TypeFormat.parseShort(string); //Short.parseShort(getString(columnName));
     }
 
     @Override
     public int getInt(String columnName) {
-        return (int) Math.round(getDouble(columnName));
+        Double dbl = getDouble(columnName);
+        return dbl == null ? -1 : (int) Math.round(dbl);
     }
 
     @Override
     public long getLong(String columnName) {
-        return TypeFormat.parseLong(getString(columnName)); //Long.parseLong(getString(columnName));
+        String string = getString(columnName);
+        return string == null ? -1 : TypeFormat.parseLong(string);
     }
 
     @Override
     public float getFloat(String columnName) {
-        return TypeFormat.parseFloat(getString(columnName)); //Float.parseFloat(getString(columnName));
+        String string = getString(columnName);
+        return string == null ? -1 : TypeFormat.parseFloat(string);
     }
 
     @Override
     public double getDouble(String columnName) {
-        return TypeFormat.parseDouble(getString(columnName)); //Double.parseDouble(getString(columnName));
+        String string = getString(columnName);
+        return (string == null) ? -1 : TypeFormat.parseDouble(string);
     }
 
     @Override
     public Date getDate(String columnName) {
         String value = getString(columnName);
+        if(value == null){
+            return null;
+        }
         try {
             Matcher matcher = datePattern.matcher(value);
 
@@ -200,6 +211,9 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     public Date getDateTime(String columnName) {
         try {
             String value = getString(columnName);
+            if(value == null){
+                return null;
+            }
             Matcher matcher = datePattern.matcher(value);
 
             if (matcher.find()) {

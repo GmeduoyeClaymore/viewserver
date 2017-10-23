@@ -25,7 +25,7 @@ export default class ProductActionBar extends Component {
             const {itemCount} = this.state;
             const {product,shoppingCartDao} = this.props;
             const {P_ID} = product;
-            await shoppingCartDao.addItemtoCart(P_ID,itemCount);
+            let items = await shoppingCartDao.addItemtoCart(P_ID,itemCount);
         }
         finally{
             this.setState({busy : false});
@@ -37,6 +37,7 @@ export default class ProductActionBar extends Component {
     }
 
     render() {
+        const {busy} = this.state;
         return (
             <View style={styles.container}>
                 <TextInput 
@@ -45,7 +46,7 @@ export default class ProductActionBar extends Component {
                     value = {this.state.itemCount + ""}
                     maxLength = {10}  //setting limit of input
                 />
-                <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToShopping}/>
+                {!busy? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToShopping}/> : null}
             </View>
         );
     }

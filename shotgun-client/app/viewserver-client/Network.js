@@ -96,7 +96,7 @@ export default class Network {
         if (command.handler) {
             if (commandResult.success) {
                 if(command.handler.onSuccess){
-                  command.handler.onSuccess(commandResult.id);
+                  command.handler.onSuccess(commandResult.id,commandResult.message);
                 }
             } else {
                 if(command.handler.onError){
