@@ -3,27 +3,24 @@ import DataSink from '../../common/DataSink';
 import Logger from '../../viewserver-client/Logger';
 import ClientTableEventPromise from '../../common/ClientTableEventPromise';
 import CoolRxDataSink from '../../common/CoolRxDataSink';
-import ExternallyResolvedPromise from '../../common/ExternallyResolvedPromise';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
-import Rx from 'rx-lite';
-
 
 export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     static DEFAULT_OPTIONS = (customerId) =>  {
       return {
-        offset :  0,
-        limit :  20,
-        columnName  :  undefined,
-        columnsToSort :  undefined,
-        filterMode :  2,//Filtering
-        filterExpression : `CustomerId == "${customerId}"`,
-        flags : undefined 
-      }
-    }
+        offset: 0,
+        limit: 20,
+        columnName: undefined,
+        columnsToSort: undefined,
+        filterMode: 2, //Filtering
+        filterExpression: `CustomerId == "${customerId}"`,
+        flags: undefined
+      };
+    };
   
-    constructor(viewserverClient,customerId){
-      super()
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient,FieldMappings.SHOPPING_CART_TABLE_NAME);
+    constructor(viewserverClient, customerId){
+      super();
+      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.SHOPPING_CART_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscribeToData(this);
@@ -31,37 +28,60 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     }
 
     get shoppingCartSizeObservable(){
-      return  this.onTotalRowCountObservable;
+      return this.onTotalRowCountObservable;
     }
 
     subscribeToData(datasink){
-      this.subscriptionStrategy.subscribe(datasink,ShoppingCartDao.DEFAULT_OPTIONS(this.customerId))
+      this.subscriptionStrategy.subscribe(datasink, ShoppingCartDao.DEFAULT_OPTIONS(this.customerId));
     }
   
-    async addItemtoCart(productId,quantity){
-      let clientTablEventPromise = new ClientTableEventPromise(this);
-      Logger.info(`Adding item to cart`)
-      let creationDateTime = new Date();
-      let addItemRowEvent = this.createAddItemtoCartRowEvent(productId,quantity,creationDateTime);
-      this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME,this,addItemRowEvent,clientTablEventPromise)
-      let modifiedRows = await clientTablEventPromise;
-      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`)
+    async addItemtoCart(productId, quantity){
+      let cartRowEvent;
+      const clientTablEventPromise = new ClientTableEventPromise(this);
+      const existingRow = this.getProductRow(productId);
+
+      if (existingRow !== undefined){
+        Logger.info(`Updating cart row ${existingRow.rowId}`);
+        cartRowEvent = this.createUpdateCartRowEvent(existingRow, quantity);
+      } else {
+        Logger.info('Adding item to cart');
+        cartRowEvent = this.createAddItemtoCartRowEvent(productId, quantity, new Date());
+      }
+
+      this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME, this, cartRowEvent, clientTablEventPromise);
+      const modifiedRows = await clientTablEventPromise;
+      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
     }
   
-    createAddItemtoCartRowEvent(productId,quantity,creationDateTime){
+    createAddItemtoCartRowEvent(productId, quantity, creationDateTime){
       return [{
-        type : 0, // ADD
-        columnValues : {
-          CustomerId : this.customerId,
-          ProductId : productId,
-          ProductQuantity : quantity,
-          ShoppingCartCreationDate : creationDateTime
+        type: 0, // ADD
+        columnValues: {
+          CustomerId: this.customerId,
+          ProductId: productId,
+          ProductQuantity: quantity,
+          ShoppingCartCreationDate: creationDateTime
         }
-      }]
+      }];
+    }
+
+    createUpdateCartRowEvent(existingRow, quantity){
+      return [{
+        type: 1, // UPDATE
+        /* rowId: existingRow.rowId,*/
+        columnValues: {
+          ProductId: existingRow.ProductId,
+          ProductQuantity: existingRow.ProductQuantity + quantity
+        }
+      }];
+    }
+
+    getProductRow(productId){
+      return this.rows.find(r => r.ProductId === productId);
     }
   
     get cartItems(){
-      return  this.rows;
+      return this.rows;
     }
-  }
+}

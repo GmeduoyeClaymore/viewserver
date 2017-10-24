@@ -88,6 +88,7 @@
         <module name="viewserver-server" />
         <module name="viewserver-sourcegen" />
         <module name="viewserver-sql" />
+        <module name="viewsserver-shotgun" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -110,10 +111,10 @@
       <module name="viewserver-server" target="1.8" />
       <module name="viewserver-sourcegen" target="1.8" />
       <module name="viewserver-sql" target="1.8" />
+      <module name="viewsserver-shotgun" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
   </component>
 </project>
-
