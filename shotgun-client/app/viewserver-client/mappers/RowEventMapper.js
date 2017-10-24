@@ -22,11 +22,10 @@ export default class RowEventMapper{
 
   static toDto(rowEvent, dataSink) {
     const rowEventDto = ProtoLoader.Dto.RowEventDto.create({
-      eventType: RowEventMapper.mapRowEventType(rowEvent.type)
+      eventType: RowEventMapper.mapRowEventType(rowEvent.type),
+      rowId: (rowEvent.rowId >= 0 ? rowEvent.rowId : undefined)
     });
-    if (rowEvent.rowId >= 0) {
-      rowEventDto.setRowId(rowEvent.rowId);
-    }
+
     const columnValueDtos = [];
     console.log(`Column values ${JSON.stringify(rowEvent.columnValues)}`);
     $.each(rowEvent.columnValues, (key, value) => {

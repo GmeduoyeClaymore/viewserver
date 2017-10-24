@@ -69,7 +69,7 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     createUpdateCartRowEvent(existingRow, quantity){
       return [{
         type: 1, // UPDATE
-        /* rowId: existingRow.rowId,*/
+        rowId: existingRow.rowId,
         columnValues: {
           ProductId: existingRow.ProductId,
           ProductQuantity: existingRow.ProductQuantity + quantity
