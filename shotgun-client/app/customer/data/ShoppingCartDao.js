@@ -13,18 +13,17 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
         columnName: undefined,
         columnsToSort: undefined,
         filterMode: 2, //Filtering
-        filterExpression: `CustomerId == "${customerId}"`,
+        filterExpression: `customerId == "${customerId}" && orderId == ''`,
         flags: undefined
       };
     };
   
     constructor(viewserverClient, customerId){
       super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.SHOPPING_CART_TABLE_NAME);
+      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEMS_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscribeToData(this);
-      this.rowAddedListeners = [];
     }
 
     get shoppingCartSizeObservable(){
@@ -45,23 +44,22 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
         cartRowEvent = this.createUpdateCartRowEvent(existingRow, quantity);
       } else {
         Logger.info('Adding item to cart');
-        cartRowEvent = this.createAddItemtoCartRowEvent(productId, quantity, new Date());
+        cartRowEvent = this.createAddItemtoCartRowEvent(productId, quantity);
       }
 
-      this.viewserverClient.editTable(FieldMappings.SHOPPING_CART_TABLE_NAME, this, cartRowEvent, clientTablEventPromise);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEMS_TABLE_NAME, this, cartRowEvent, clientTablEventPromise);
       const modifiedRows = await clientTablEventPromise;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
     }
   
-    createAddItemtoCartRowEvent(productId, quantity, creationDateTime){
+    createAddItemtoCartRowEvent(productId, quantity){
       return [{
         type: 0, // ADD
         columnValues: {
-          CustomerId: this.customerId,
-          ProductId: productId,
-          ProductQuantity: quantity,
-          ShoppingCartCreationDate: creationDateTime
+          customerId: this.customerId,
+          productId,
+          quantity
         }
       }];
     }
@@ -71,14 +69,13 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
         type: 1, // UPDATE
         rowId: existingRow.rowId,
         columnValues: {
-          ProductId: existingRow.ProductId,
-          ProductQuantity: existingRow.ProductQuantity + quantity
+          quantity: existingRow.quantity + quantity
         }
       }];
     }
 
     getProductRow(productId){
-      return this.rows.find(r => r.ProductId === productId);
+      return this.rows.find(r => r.productId === productId);
     }
   
     get cartItems(){

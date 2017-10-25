@@ -31,28 +31,15 @@ OrderDataSource {
                 )
                 .withSchema(new Schema()
                         .withColumns(Arrays.asList(
-                                new Column("OrderId", "OrderId", ColumnType.String),
-                                new Column("CreationDate", "CreationDate", ColumnType.DateTime),
-                                new Column("LastModified", "LastModified", ColumnType.DateTime),
-                                new Column("CustomerId", "CustomerId", ColumnType.String),
-                                new Column("OrderFulfillmentId", "OrderFulfillmentId", ColumnType.String),
-                                new Column("DeliveryId", "DeliveryId", ColumnType.String),
-                                new Column("OrderStatus", "OrderStatus", ColumnType.String),
-                                new Column("DeliverySizeRequirement", "DeliverySizeRequirement", ColumnType.String)
+                                new Column("orderId", "orderId", ColumnType.String),
+                                new Column("creationDate", "creationDate", ColumnType.DateTime),
+                                new Column("lastModified", "lastModified", ColumnType.DateTime),
+                                new Column("customerId", "customerId", ColumnType.String),
+                                new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
+                                new Column("deliveryId", "deliveryId", ColumnType.String),
+                                new Column("orderStatus", "orderStatus", ColumnType.String),
+                                new Column("deliverySizeRequirement", "deliverySizeRequirement", ColumnType.String)
                         ))
-                )
-                /*.withNodes(
-                        new CalcColNode("fxRatesDayCalCol")
-                                .withCalculations(new CalcColOperator.CalculatedColumn("day", "businessDay(date, false)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withCalculations(new CalcColOperator.CalculatedColumn("actualDay", "weekday(date)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withConnection(FxRatesDataSource.NAME),
-                        new FilterNode("fxRatesFilter")
-                                .withExpression("actualDay<6")
-                                .withConnection("fxRatesDayCalCol")
-
-                )
-                .withDistributionMode(DistributionMode.Mirrored)
-                .withOutput("fxRatesFilter")
-                .withOptions(DataSourceOption.IsReportSource)*/;
+                );
     }
 }

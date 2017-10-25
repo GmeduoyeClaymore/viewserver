@@ -1,4 +1,4 @@
-OrderId,ProductId,Quantity
+orderId,productId,quantity
 OR21,PROD_CeCppb2,2
 OR31,PROD_CeCppb3,2
 OR41,PROD_CeCppb4,2

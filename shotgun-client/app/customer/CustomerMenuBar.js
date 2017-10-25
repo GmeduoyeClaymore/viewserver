@@ -7,7 +7,7 @@ export default class CustomerMenuBar extends Component {
       shoppingCartDao: PropTypes.object,
       navigator: PropTypes.object
     };
-    
+
 
     constructor(props){
       super(props);

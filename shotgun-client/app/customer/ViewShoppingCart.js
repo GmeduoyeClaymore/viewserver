@@ -15,8 +15,8 @@ export default class ViewShoppingCart extends Component {
 
     renderItem(item){
       return <View key={item.key} style={{flexDirection: 'column', flex: 1}}>
-        <Text>{'Product: ' + item.ProductId}</Text>
-        <Text>{'Quantity: ' + item.ProductQuantity}</Text>
+        <Text>{'Product: ' + item.productId}</Text>
+        <Text>{'Quantity: ' + item.quantity}</Text>
       </View>;
     }
 
