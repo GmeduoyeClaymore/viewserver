@@ -44,7 +44,7 @@ export default class CustomerLanding extends Component {
       case 'product-details':
         return <ProductDetails style={styles.contentStyle} navigator={navigator} product={route.data} customerService={this.customerService}/>;
       case 'view-shopping-cart':
-        return <ViewShoppingCart style={styles.contentStyle} shoppingCartItems={route.data}/>;
+        return <ViewShoppingCart style={styles.contentStyle} shoppingCartItems={route.data} customerService={this.customerService}/>;
       default:
         return undefined;
     }

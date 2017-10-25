@@ -14,11 +14,11 @@ import java.util.Arrays;
  * Created by bennett on 26/09/17.
  */
 public class OrderItemsDataSource {
-        public static final String NAME = "orderItems";
+        public static final String NAME = "orderItem";
 
         public static DataSource getDataSource() {
                 CsvDataAdapter dataAdapter = new CsvDataAdapter();
-                dataAdapter.setFileName("data/orderItems.csv");
+                dataAdapter.setFileName("data/orderItem.csv");
                 return new DataSource()
                         .withName(NAME)
                         .withDataLoader(
@@ -34,7 +34,6 @@ public class OrderItemsDataSource {
                                                 new Column("customerId", "customerId", ColumnType.String),
                                                 new Column("productId", "productId", ColumnType.String),
                                                 new Column("quantity", "quantity", ColumnType.Int)
-
                                         ))
                         );
         }

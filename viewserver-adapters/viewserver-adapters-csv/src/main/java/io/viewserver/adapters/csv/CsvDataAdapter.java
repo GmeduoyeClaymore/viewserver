@@ -91,7 +91,7 @@ public class CsvDataAdapter implements IDataAdapter {
 
             log.info(String.format("Loaded %s rows from %s", recordsLoaded, this.fileName));
         } catch (Throwable e) {
-            log.error("Failed to load CSV data", e);
+            log.error(String.format("Failed to load CSV data from %s", this.fileName), e);
         }
 
         return recordsLoaded;

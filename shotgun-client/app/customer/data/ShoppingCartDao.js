@@ -20,7 +20,7 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
   
     constructor(viewserverClient, customerId){
       super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEMS_TABLE_NAME);
+      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscribeToData(this);
@@ -41,37 +41,44 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
 
       if (existingRow !== undefined){
         Logger.info(`Updating cart row ${existingRow.rowId}`);
-        cartRowEvent = this.createUpdateCartRowEvent(existingRow, quantity);
+        cartRowEvent = this.createUpdateCartRowEvent(existingRow.rowId, {quantity: existingRow.quantity + quantity});
       } else {
         Logger.info('Adding item to cart');
-        cartRowEvent = this.createAddItemtoCartRowEvent(productId, quantity);
+        cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
       }
 
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEMS_TABLE_NAME, this, cartRowEvent, clientTablEventPromise);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], clientTablEventPromise);
       const modifiedRows = await clientTablEventPromise;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
     }
-  
-    createAddItemtoCartRowEvent(productId, quantity){
-      return [{
+
+    async purchaseCartItems(orderId){
+      const clientTablEventPromise = new ClientTableEventPromise(this);
+      const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
+      console.log(rowEvents);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTablEventPromise);
+      await clientTablEventPromise;
+      Logger.info('purchase cart item promise resolved');
+    }
+
+    createAddOrderItemRowEvent(productId, quantity){
+      return {
         type: 0, // ADD
         columnValues: {
           customerId: this.customerId,
           productId,
           quantity
         }
-      }];
+      };
     }
 
-    createUpdateCartRowEvent(existingRow, quantity){
-      return [{
+    createUpdateCartRowEvent(rowId, columnValues){
+      return {
         type: 1, // UPDATE
-        rowId: existingRow.rowId,
-        columnValues: {
-          quantity: existingRow.quantity + quantity
-        }
-      }];
+        rowId: rowId,
+        columnValues
+      };
     }
 
     getProductRow(productId){

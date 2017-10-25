@@ -15,11 +15,11 @@ import java.util.Arrays;
  */
 public class
 OrderDataSource {
-    public static final String NAME = "orders";
+    public static final String NAME = "order";
 
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/orders.csv");
+        dataAdapter.setFileName("data/order.csv");
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -32,12 +32,12 @@ OrderDataSource {
                 .withSchema(new Schema()
                         .withColumns(Arrays.asList(
                                 new Column("orderId", "orderId", ColumnType.String),
-                                new Column("creationDate", "creationDate", ColumnType.DateTime),
+                                new Column("created", "created", ColumnType.DateTime),
                                 new Column("lastModified", "lastModified", ColumnType.DateTime),
+                                new Column("status", "status", ColumnType.String),
                                 new Column("customerId", "customerId", ColumnType.String),
                                 new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
                                 new Column("deliveryId", "deliveryId", ColumnType.String),
-                                new Column("orderStatus", "orderStatus", ColumnType.String),
                                 new Column("deliverySizeRequirement", "deliverySizeRequirement", ColumnType.String)
                         ))
                 );

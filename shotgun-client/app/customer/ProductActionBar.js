@@ -2,11 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import ActionButton from '../common/ActionButton.js';
 import icon from  '../common/assets/basket-fill.png';
-export default class ProductActionBar extends Component {
-    state = {
-      itemCount: 1
-    };
 
+export default class ProductActionBar extends Component {
     static PropTypes = {
       product: PropTypes.object,
       shoppingCartDao: PropTypes.object
@@ -15,6 +12,10 @@ export default class ProductActionBar extends Component {
     constructor(props){
       super(props);
       this.addToShopping = this.addToShopping.bind(this);
+      this.state = {
+        itemCount: 1,
+        busy: false
+      };
     }
 
     async addToShopping() {
@@ -34,13 +35,13 @@ export default class ProductActionBar extends Component {
     }
 
     render() {
-      const {busy} = this.state;
+      const {busy, itemCount} = this.state;
       return (
         <View style={styles.container}>
           <TextInput
             keyboardType = 'numeric'
             onChangeText = {(text)=> this.onItemCountChange(text)}
-            value = {this.state.itemCount + ''}
+            value = {itemCount + ''}
             maxLength = {10}  //setting limit of input
           />
           {!busy ? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToShopping}/> : null}

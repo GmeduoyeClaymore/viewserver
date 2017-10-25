@@ -1,4 +1,5 @@
 import ShoppingCartDao from './ShoppingCartDao';
+import OrderDao from './OrderDao';
 import CustomerDao from './CustomerDao';
 
 export default class CustomerServiceFactory {
@@ -12,18 +13,20 @@ export default class CustomerServiceFactory {
     }
 
     const shoppingCartDao = new ShoppingCartDao(this.viewserverClient, customerId);
+    const orderDao = new OrderDao(this.viewserverClient, customerId);
     const customerDao = new CustomerDao(this.viewserverClient, customerId);
 
-    await Promise.all(shoppingCartDao, customerDao);
+    await Promise.all(shoppingCartDao, customerDao, orderDao);
 
-    this.customerService = new CustomerService(customerDao, shoppingCartDao);
+    this.customerService = new CustomerService(customerDao, shoppingCartDao, orderDao);
     return this.customerService;
   }
 }
 class CustomerService {
-  constructor(customerDao, shoppingCartDao) {
+  constructor(customerDao, shoppingCartDao, orderDao) {
     this.customerDao = customerDao;
     this.shoppingCartDao = shoppingCartDao;
+    this.orderDao = orderDao;
   }
 }
   
