@@ -6,7 +6,8 @@
     "start-expo": "react-native-scripts start",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "android-linux": "node node_modules/react-native/local-cli/cli.js bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && node node_modules/react-native/local-cli/cli.js run-android",
-    "test": "jest"
+    "test": "jest",
+    "lint": "node_modules/.bin/eslint --ext .jsx,.js ."
   },
   "dependencies": {
     "cavy": "^0.1.0",
@@ -16,6 +17,7 @@
     "react-native": "0.48.4",
     "react-native-deprecated-custom-components": "^0.1.1",
     "react-native-infinite-virtualized-list": "^0.1.10",
+    "react-navigation": "^1.0.0-beta.15",
     "rx-lite": "^4.0.8"
   },
   "devDependencies": {

@@ -7,16 +7,16 @@ export default class CustomerServiceFactory {
   }
 
   async create(customerId){
-    if(this.customerService){
-      return this.customerService
+    if (this.customerService){
+      return this.customerService;
     }
 
-    let shoppingCartDao = new ShoppingCartDao(this.viewserverClient,customerId);
-    let customerDao = new CustomerDao(this.viewserverClient,customerId);
+    const shoppingCartDao = new ShoppingCartDao(this.viewserverClient, customerId);
+    const customerDao = new CustomerDao(this.viewserverClient, customerId);
 
-    await Promise.all(shoppingCartDao,customerDao);
+    await Promise.all(shoppingCartDao, customerDao);
 
-    this.customerService = new CustomerService(customerDao,shoppingCartDao);
+    this.customerService = new CustomerService(customerDao, shoppingCartDao);
     return this.customerService;
   }
 }

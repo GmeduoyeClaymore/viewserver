@@ -24,6 +24,7 @@ release.properties
 !.idea/artifacts
 !.idea/copyright
 *.iml
+.tmp
 
 node_modules
 out

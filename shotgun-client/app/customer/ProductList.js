@@ -1,5 +1,5 @@
-import React, {Component,PropTypes} from 'react';
-import {View, ListView, StyleSheet, Text} from 'react-native';
+import React, {Component, PropTypes} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import ListViewDataSink from '../common/ListViewDataSink';
@@ -11,27 +11,25 @@ const NoItems = () => <View><Text>No items to display</Text></View>;
 const LoadedAllItems = () => <View><Text>No More to display</Text></View>;
 
 export default class ProductList extends Component {
-
   static propTypes = {
-    client : PropTypes.object.isRequired
-  }
+    client: PropTypes.object.isRequired
+  };
 
   constructor(props) {
     super(props);
-    this.subscriptionStrategy = new OperatorSubscriptionStrategy(this.props.client,'/datasources/product/product')
+    this.subscriptionStrategy = new OperatorSubscriptionStrategy(this.props.client, '/datasources/product/product');
   }
 
   search(productName) {
-    if (this.listView)
-    {
-        this.listView.search("P_name like \"*" + productName + "*\"");
+    if (this.listView) {
+      this.listView.search('P_name like "*' + productName + '*"');
     }
   }
 
   render() {
     return (
-      <ListViewDataSink 
-        ref={ listView => { this.listView = listView}}
+      <ListViewDataSink
+        ref={ listView => { this.listView = listView;}}
         style={styles.container}
         subscriptionStrategy={this.subscriptionStrategy}
         rowView={(data) => (<ProductListItem navigator={this.props.navigator} {...data} />)}

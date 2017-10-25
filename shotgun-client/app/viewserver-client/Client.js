@@ -8,8 +8,7 @@ import ProtoLoader from './core/ProtoLoader';
 import Logger from './Logger';
 
 export default class Client {
-  
-  constructor(url,protocol) {
+  constructor(url, protocol) {
     this.url = url;
     this.protocol = protocol;
     this.network = new Network(this.url);
@@ -21,14 +20,14 @@ export default class Client {
 
   get connected(){
     return this.network.connected();
-}
+  }
 
   authenticate (type, tokens, eventhandlers) {
     if (Object.prototype.toString.call(tokens) !== '[object Array]') {
-        tokens = [tokens];
+      tokens = [tokens];
     }
 
-    let authenticateCommand = ProtoLoader.Dto.AuthenticateCommandDto.create();
+    const authenticateCommand = ProtoLoader.Dto.AuthenticateCommandDto.create();
     authenticateCommand.setType(type);
     authenticateCommand.setToken(tokens);
     this.sendCommand('authenticate', authenticateCommand, false, eventhandlers);
@@ -39,86 +38,84 @@ export default class Client {
   }
 
   unsubscribe = function (commandId, eventHandlers) {
-    var unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({commandId});
+    const unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({commandId});
     this.network.removeOpenCommand(commandId);
     return this.sendCommand('unsubscribe', unsubscribeCommand, false, eventHandlers);
-  }
+  };
 
   executeSql = function (query, permanent, dataSink) {
-      var sqlCommand = ProtoLoader.Dto.ExecuteSqlCommandDto.create({query, permanent});
-      return this.sendCommand('executeSql', sqlCommand, true, dataSink);
-  }
+    const sqlCommand = ProtoLoader.Dto.ExecuteSqlCommandDto.create({query, permanent});
+    return this.sendCommand('executeSql', sqlCommand, true, dataSink);
+  };
 
   subscribe = function (operatorName, options, dataSink, output, projection) {
-      var optionsDto = OptionsMapper.toDto(options);
-      var payload = {operatorName, outputName  : output || 'out', options : optionsDto};
-      var error = ProtoLoader.Dto.SubscribeCommandDto.verify(payload)
-      if(error){
-        throw Error(error);
-      }
-      let subscribeCommand = ProtoLoader.Dto.SubscribeCommandDto.create(payload);
-      if (projection !== undefined) { 
-          subscribeCommand.setProjection(ProjectionMapper.toDto(projection));
-      }
-      return this.sendCommand('subscribe', subscribeCommand, true, dataSink,200);
-  }
+    const optionsDto = OptionsMapper.toDto(options);
+    const payload = {operatorName, outputName: output || 'out', options: optionsDto};
+    const error = ProtoLoader.Dto.SubscribeCommandDto.verify(payload);
+    if (error){
+      throw Error(error);
+    }
+    const subscribeCommand = ProtoLoader.Dto.SubscribeCommandDto.create(payload);
+    if (projection !== undefined) {
+      subscribeCommand.setProjection(ProjectionMapper.toDto(projection));
+    }
+    return this.sendCommand('subscribe', subscribeCommand, true, dataSink, 200);
+  };
 
   subscribeToReport = function (reportContext, options, dataSink) {
-      var reportContextDto = ReportContextMapper.toDto(reportContext);
-      var optionsDto = OptionsMapper.toDto(options);
+    const reportContextDto = ReportContextMapper.toDto(reportContext);
+    const optionsDto = OptionsMapper.toDto(options);
 
-      var subscribeReportCommand = ProtoLoader.Dto.SubscribeReportCommandDto.create({
-          context : reportContextDto,
-          options : optionsDto
-      });
+    const subscribeReportCommand = ProtoLoader.Dto.SubscribeReportCommandDto.create({
+      context: reportContextDto,
+      options: optionsDto
+    });
 
-      return this.sendCommand('subscribeReport', subscribeReportCommand, true, dataSink);
-  }
+    return this.sendCommand('subscribeReport', subscribeReportCommand, true, dataSink);
+  };
 
   subscribeToDimension = function (dimension, reportContext, options, dataSink) {
-      var context = ReportContextMapper.toDto(reportContext);
-      var optionsDto = OptionsMapper.toDto(options);
+    const context = ReportContextMapper.toDto(reportContext);
+    const optionsDto = OptionsMapper.toDto(options);
 
-      var subscribeReportCommand = ProtoLoader.Dto.SubscribeDimensionCommandDto.create({
-        dimension,
-        context,
-        options : optionsDto
-      });
+    const subscribeReportCommand = ProtoLoader.Dto.SubscribeDimensionCommandDto.create({
+      dimension,
+      context,
+      options: optionsDto
+    });
 
-      return this.sendCommand('subscribeDimension', subscribeReportCommand, true, dataSink);
-
-  }
+    return this.sendCommand('subscribeDimension', subscribeReportCommand, true, dataSink);
+  };
 
   updateSubscription = function (commandId, options, eventHandlers) {
-      var optionsDto = OptionsMapper.toDto(options);
-      var updateSubscriptionCommand = ProtoLoader.Dto.UpdateSubscriptionCommandDto.create({
-          commandId, 
-          options : optionsDto
-        });
-      return this.sendCommand('updateSubscription', updateSubscriptionCommand, false, eventHandlers);
-  }
+    const optionsDto = OptionsMapper.toDto(options);
+    const updateSubscriptionCommand = ProtoLoader.Dto.UpdateSubscriptionCommandDto.create({
+      commandId,
+      options: optionsDto
+    });
+    return this.sendCommand('updateSubscription', updateSubscriptionCommand, false, eventHandlers);
+  };
 
   editTable = function (tableName, dataSink, rowEvents, eventHandlers) {
-      Logger.info(`Processing row events: ${JSON.stringify(rowEvents)} on ${tableName}`)
-      var rowEventDtos = [];
-      rowEvents.map(function (rowEvent,index) {
-          rowEventDtos.push(RowEventMapper.toDto(rowEvent, dataSink));
-      });
-      let tableEvent = ProtoLoader.Dto.TableEventDto.create({
-        rowEvents : rowEventDtos
-      })
+    Logger.info(`Processing row events: ${JSON.stringify(rowEvents)} on ${tableName}`);
+    const rowEventDtos = [];
+    rowEvents.map((rowEvent) => {
+      rowEventDtos.push(RowEventMapper.toDto(rowEvent, dataSink));
+    });
+    const tableEvent = ProtoLoader.Dto.TableEventDto.create({
+      rowEvents: rowEventDtos
+    });
 
-      let tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({tableName, tableEvent, operation : 2 /* EDIT */});
-      return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
-  }
+    const tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({tableName, tableEvent, operation: 2 /* EDIT */});
+    return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
+  };
 
-  sendCommand = function (commandName, commandDto, continuous, eventHandlers, extensions) {
-      var command = new Command(commandName, commandDto);
-      command.handler = eventHandlers;
-      command.continuous = continuous;
-      //command.extensions = extensions;
-      return this.network.sendCommand(command);
-  }
-
+  sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
+    const command = new Command(commandName, commandDto);
+    command.handler = eventHandlers;
+    command.continuous = continuous;
+    //command.extensions = extensions;
+    return this.network.sendCommand(command);
+  };
 }
   
