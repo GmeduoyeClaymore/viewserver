@@ -13,7 +13,7 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
         columnName: undefined,
         columnsToSort: undefined,
         filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}" && orderId == ''`,
+        filterExpression: `customerId == "${customerId}" && orderId == null`,
         flags: undefined
       };
     };
