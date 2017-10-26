@@ -8,13 +8,17 @@ export default class ProductDetails extends Component {
       product: PropTypes.object
     };
 
+    static navigationOptions = ({ navigation }) => ({
+      title: `${navigation.state.params.product.name}`,
+    });
+
     constructor(props) {
       super(props);
     }
 
     render() {
-      const { product, customerService } = this.props;
-      const { shoppingCartDao } = customerService;
+      const {customerService} = this.props.screenProps;
+      const { product } = this.props.navigation.state.params;
       if (product) {
         return (
           <View style={styles.container}>
@@ -22,7 +26,7 @@ export default class ProductDetails extends Component {
               <Image source={require('./assets/cement.jpg')} style={styles.picture} />
               <Text style={styles.bigText}>{product.name}</Text>
               <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
-              <ProductActionBar product={product} shoppingCartDao={shoppingCartDao}/>
+              <ProductActionBar product={product} shoppingCartDao={customerService.shoppingCartDao}/>
             </View>
           </View>
         );

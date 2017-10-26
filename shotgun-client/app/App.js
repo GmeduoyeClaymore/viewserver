@@ -1,8 +1,10 @@
 import React from 'react';
+import {View} from 'react-native';
+import {StackNavigator} from 'react-navigation';
 import Client from './viewserver-client/Client';
 import Logger from './viewserver-client/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
-import CustomerLanding from './landing/CustomerLanding';
+import CustomerLanding from './customer/CustomerLanding';
 
 export default class App extends React.Component {
   constructor() {
@@ -34,6 +36,17 @@ export default class App extends React.Component {
     if (!this.state.isReady) {
       return null;
     }
-    return <CustomerLanding client={this.client} principal={this.principal}/>;
+
+    //TODO - change the home screen based on the current application mode
+    const AppNavigator = StackNavigator({
+      Home: { screen: CustomerLanding }
+    });
+    const screenProps = {client: this.client, principal: this.principal};
+
+    return <View style={{flexDirection: 'column', flex: 1}}>
+      <AppNavigator screenProps={screenProps} />
+    </View>;
   }
 }
+//This is required to hook up the nested navigation - https://reactnavigation.org/docs/intro/nesting
+App.router = CustomerLanding.router;

@@ -2,18 +2,17 @@ import React, { Component } from 'react';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
 
 export default class EmployeeListItem extends Component {
-  showDetails() {
-    this.props.navigator.push({name: 'product-details', data: this.props.item});
-  }
-
   render() {
+    const {navigate} = this.props.navigation;
+    const {product} = this.props;
+
     return (
-      <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={this.showDetails.bind(this)} underlayColor={'#EEEEEE'}>
+      <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => navigate('ProductDetails', {product})} underlayColor={'#EEEEEE'}>
         <View style={styles.container}>
           <Image source={require('./assets/cement.jpg')} style={styles.picture} />
           <View style={{flex: 1}}>
-            <Text style={styles.title}>{this.props.item.name}</Text>
-            <Text>{this.props.item.description}</Text>
+            <Text style={styles.title}>{product.name}</Text>
+            <Text>{product.description}</Text>
           </View>
         </View>
       </TouchableHighlight>
