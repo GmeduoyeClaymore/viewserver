@@ -23,8 +23,8 @@ export default class ProductActionBar extends Component {
         this.setState({busy: true});
         const {itemCount} = this.state;
         const {product, shoppingCartDao} = this.props;
-        const {P_ID} = product;
-        await shoppingCartDao.addItemtoCart(P_ID, itemCount);
+        const {productId} = product;
+        await shoppingCartDao.addItemtoCart(productId, itemCount);
       } finally {
         this.setState({busy: false});
       }
