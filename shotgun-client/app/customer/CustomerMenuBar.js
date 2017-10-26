@@ -5,13 +5,12 @@ import icon from  '../common/assets/cart-outline.png';
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
       shoppingCartDao: PropTypes.object,
-      navigator: PropTypes.object
+      navigation: PropTypes.object
     };
 
 
     constructor(props){
       super(props);
-      this.viewShoppingCart = this.viewShoppingCart.bind(this);
       this.updateItemCount = this.updateItemCount.bind(this);
       this.state = {};
     }
@@ -30,17 +29,12 @@ export default class CustomerMenuBar extends Component {
       this.setState({itemCount});
     }
 
-    viewShoppingCart(data){
-      this.props.navigator.push({name: 'view-shopping-cart', data});
-    }
-
     render(){
       const { itemCount } = this.state;
-      const { shoppingCartDao } = this.props;
-      const { rows } = shoppingCartDao;
-
+      const {navigate} = this.props.navigation;
+      const {rows} = this.props.shoppingCartDao;
       return <View style={styles.container}>
-        <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => this.viewShoppingCart(rows)}/>
+        <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => navigate('ShoppingCart', {rows})}/>
       </View>;
     }
 }
@@ -48,7 +42,7 @@ export default class CustomerMenuBar extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    marginTop: 60,
+    paddingTop: 10,
     flexDirection: 'row'
   },
   separator: {

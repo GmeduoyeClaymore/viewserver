@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 import ActionButton from '../common/ActionButton';
 import icon from '../common/assets/truck-fast.png';
 
-export default class ViewShoppingCart extends Component {
+export default class ShoppingCart extends Component {
     static PropTypes = {
       shoppingCartItems: PropTypes.array,
       customerService: PropTypes.object
@@ -27,7 +27,7 @@ export default class ViewShoppingCart extends Component {
     async purchaseItems() {
       try {
         this.setState({busy: true});
-        const {orderDao, shoppingCartDao} = this.props.customerService;
+        const {orderDao, shoppingCartDao} = this.props.screenProps.customerService;
         const orderId = await orderDao.createOrder();
         await shoppingCartDao.purchaseCartItems(orderId);
       } finally {
@@ -36,10 +36,10 @@ export default class ViewShoppingCart extends Component {
     }
 
     render() {
-      const {shoppingCartItems} = this.props;
+      const {rows} = this.props.navigation.state.params;
       const {busy} = this.state;
       return <View style={{flex: 1, flexDirection: 'column'}}>
-        {shoppingCartItems.map(c => this.renderItem(c))}
+        {rows.map(c => this.renderItem(c))}
         {!busy ? <ActionButton buttonText="Purchase" icon={icon} action={this.purchaseItems}/> : null}
       </View>;
     }

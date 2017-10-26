@@ -15,8 +15,7 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
         columnName: undefined,
         columnsToSort: undefined,
         filterMode: 2, //Filtering
-        filterExpression: '1 == 1',
-        //filterExpression: `customerId == "${customerId}"`,
+        filterExpression: `customerId == "${customerId}"`,
         flags: undefined
       };
     };
