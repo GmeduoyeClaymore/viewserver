@@ -36,17 +36,18 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
   
     async addItemtoCart(productId, quantity){
       let cartRowEvent;
-      const clientTablEventPromise = new ClientTableEventPromise(this);
+      
       const existingRow = this.getProductRow(productId);
 
       if (existingRow !== undefined){
         Logger.info(`Updating cart row ${existingRow.rowId}`);
-        cartRowEvent = this.createUpdateCartRowEvent(existingRow.rowId, {quantity: existingRow.quantity + quantity});
+        cartRowEvent = this.createUpdateCartRowEvent(existingRow.rowId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
       } else {
         Logger.info('Adding item to cart');
         cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
       }
 
+      const clientTablEventPromise = new ClientTableEventPromise(this, [cartRowEvent]);
       this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], clientTablEventPromise);
       const modifiedRows = await clientTablEventPromise;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
@@ -54,8 +55,9 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     }
 
     async purchaseCartItems(orderId){
-      const clientTablEventPromise = new ClientTableEventPromise(this);
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
+      const clientTablEventPromise = new ClientTableEventPromise(this, rowEvents);
+      console.log(rowEvents);
       this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTablEventPromise);
       await clientTablEventPromise;
       Logger.info('purchase cart item promise resolved');
