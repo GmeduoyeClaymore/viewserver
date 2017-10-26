@@ -3,6 +3,12 @@ import Logger from '../viewserver-client/Logger';
 
 export default class ClientTableEventPromise{
   constructor(coolRxDataSink, rowEvents){
+    if (!coolRxDataSink){
+      throw new Error('I needs a coolRxDataSink if you please !!');
+    }
+    if (!rowEvents){
+      throw new Error('I need to know what row events I am listening for. please specify rowEvents as constructor param');
+    }
     this.promise = new Promise(this._handlePromiseExecution.bind(this));
     this.onSuccess = this.onSuccess.bind(this);
     this.onError = this.onError.bind(this);

@@ -70,7 +70,10 @@ export default DataSink = (superclass) => class extends superclass {
       super.onRowRemoved(rowId);
     }
     const rowIndex = this._getRowIndex(rowId);
-    this.rows[rowIndex] = row;
+    if (!!~rowIndex){
+      delete this.idIndexes[rowId];
+      this.rows = this.rows.splice(rowIndex, 1);
+    }
   }
   onColumnAdded(colId, col){
     Logger.info(`column added - ${colId} -  + ${JSON.stringify(col)}`);

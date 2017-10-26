@@ -33,12 +33,11 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
     }
   
     async createOrder(){
-      const clientTableEventPromise = new ClientTableEventPromise(this);
-
       //create order object
       const orderId = uuidv4();
       Logger.info(`Creating order ${orderId}`);
       const addOrderRowEvent = this.createAddOrderRowEvent(orderId);
+      const clientTableEventPromise = new ClientTableEventPromise(this, [addOrderRowEvent]);
       this.viewserverClient.editTable(FieldMappings.ORDER_TABLE_NAME, this, [addOrderRowEvent], clientTableEventPromise);
       await clientTableEventPromise;
       Logger.info('Create order promise resolved');
@@ -46,14 +45,14 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
     }
 
     createAddOrderRowEvent(orderId){
-      const created = new Date();
+      //const created = new Date();
 
       return {
         type: 0, // ADD
         columnValues: {
           orderId,
           customerId: this.customerId,
-        /*  created,
+          /*  created,
           lastModified: created,*/
           status: OrderStatuses.PLACED
         }
