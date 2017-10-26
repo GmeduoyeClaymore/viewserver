@@ -29,7 +29,6 @@ export default class ViewShoppingCart extends Component {
         this.setState({busy: true});
         const {orderDao, shoppingCartDao} = this.props.customerService;
         const orderId = await orderDao.createOrder();
-        Logger.info('Order Created')
         await shoppingCartDao.purchaseCartItems(orderId);
       } finally {
         this.setState({busy: false});
