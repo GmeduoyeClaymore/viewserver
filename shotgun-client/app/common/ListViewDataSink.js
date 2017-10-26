@@ -96,7 +96,7 @@ export default class DataSinkListView extends DataSink(Component){
 
     renderItem = (item) => {
       const RowView = this.props.rowView;
-      return <RowView key={item.P_ID} style={{flex: 1}} item={item}/>;
+      return <RowView key={item.productId} style={{flex: 1}} item={item}/>;
     };
     
     render() {

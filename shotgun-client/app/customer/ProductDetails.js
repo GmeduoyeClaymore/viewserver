@@ -20,8 +20,8 @@ export default class ProductDetails extends Component {
           <View style={styles.container}>
             <View style={styles.header}>
               <Image source={require('./assets/cement.jpg')} style={styles.picture} />
-              <Text style={styles.bigText}>{product.P_name}</Text>
-              <Text style={[styles.mediumText, styles.lightText]}>{product.P_description}</Text>
+              <Text style={styles.bigText}>{product.name}</Text>
+              <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
               <ProductActionBar product={product} shoppingCartDao={shoppingCartDao}/>
             </View>
           </View>

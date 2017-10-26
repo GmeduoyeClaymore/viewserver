@@ -22,7 +22,7 @@ export default class ProductList extends Component {
 
   search(productName) {
     if (this.listView) {
-      this.listView.search('P_name like "*' + productName + '*"');
+      this.listView.search('name like "*' + productName + '*"');
     }
   }
 

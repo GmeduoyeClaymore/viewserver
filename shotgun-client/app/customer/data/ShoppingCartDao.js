@@ -57,7 +57,6 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     async purchaseCartItems(orderId){
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
       const clientTablEventPromise = new ClientTableEventPromise(this, rowEvents);
-      console.log(rowEvents);
       this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTablEventPromise);
       await clientTablEventPromise;
       Logger.info('purchase cart item promise resolved');

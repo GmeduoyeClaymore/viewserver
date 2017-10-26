@@ -12,8 +12,8 @@ export default class EmployeeListItem extends Component {
         <View style={styles.container}>
           <Image source={require('./assets/cement.jpg')} style={styles.picture} />
           <View style={{flex: 1}}>
-            <Text style={styles.title}>{this.props.item.P_name}</Text>
-            <Text>{this.props.item.P_description}</Text>
+            <Text style={styles.title}>{this.props.item.name}</Text>
+            <Text>{this.props.item.description}</Text>
           </View>
         </View>
       </TouchableHighlight>
