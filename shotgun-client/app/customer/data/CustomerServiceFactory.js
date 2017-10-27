@@ -1,4 +1,6 @@
-import ShoppingCartDao from './ShoppingCartDao';
+import OrderItemsDao from './OrderItemsDao';
+import CartItemsDao from './CartItemsDao';
+import CartSummaryDao from './CartSummaryDao';
 import OrderDao from './OrderDao';
 import CustomerDao from './CustomerDao';
 
@@ -12,20 +14,24 @@ export default class CustomerServiceFactory {
       return this.customerService;
     }
 
-    const shoppingCartDao = new ShoppingCartDao(this.viewserverClient, customerId);
+    const orderItemsDao = new OrderItemsDao(this.viewserverClient, customerId);
+    const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId);
+    const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId);
     const orderDao = new OrderDao(this.viewserverClient, customerId);
     const customerDao = new CustomerDao(this.viewserverClient, customerId);
 
-    await Promise.all(shoppingCartDao, customerDao, orderDao);
+    await Promise.all(orderItemsDao, customerDao, orderDao, cartItemsDao, cartSummaryDao);
 
-    this.customerService = new CustomerService(customerDao, shoppingCartDao, orderDao);
+    this.customerService = new CustomerService(customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao);
     return this.customerService;
   }
 }
 class CustomerService {
-  constructor(customerDao, shoppingCartDao, orderDao) {
+  constructor(customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao) {
     this.customerDao = customerDao;
-    this.shoppingCartDao = shoppingCartDao;
+    this.orderItemsDao = orderItemsDao;
+    this.cartItemsDao = cartItemsDao;
+    this.cartSummaryDao = cartSummaryDao;
     this.orderDao = orderDao;
   }
 }

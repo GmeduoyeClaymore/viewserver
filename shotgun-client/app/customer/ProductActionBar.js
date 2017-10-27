@@ -6,25 +6,25 @@ import icon from  '../common/assets/basket-fill.png';
 export default class ProductActionBar extends Component {
     static PropTypes = {
       product: PropTypes.object,
-      shoppingCartDao: PropTypes.object
+      orderItemsDao: PropTypes.object
     };
 
     constructor(props){
       super(props);
-      this.addToShopping = this.addToShopping.bind(this);
+      this.addToCart = this.addToCart.bind(this);
       this.state = {
         itemCount: 1,
         busy: false
       };
     }
 
-    async addToShopping() {
+    async addToCart() {
       try {
         this.setState({busy: true});
         const {itemCount} = this.state;
-        const {product, shoppingCartDao} = this.props;
+        const {product, orderItemsDao} = this.props;
         const {productId} = product;
-        await shoppingCartDao.addItemtoCart(productId, itemCount);
+        await orderItemsDao.addItemtoCart(productId, itemCount);
       } finally {
         this.setState({busy: false});
       }
@@ -44,7 +44,7 @@ export default class ProductActionBar extends Component {
             value = {itemCount + ''}
             maxLength = {10}  //setting limit of input
           />
-          {!busy ? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToShopping}/> : null}
+          {!busy ? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToCart}/> : null}
         </View>
       );
     }

@@ -6,23 +6,18 @@ export default class ReportContextMapper{
     const reportContextCopy = $.extend(true, {}, reportContext);
     ReportContextMapper._enrichParameters(reportContextCopy.parameters);
 
-    const reportContextDto = new ProtoLoader.Dto.ReportContextDto();
-    reportContextDto.setParameters(ReportContextMapper._mapParameters(reportContextCopy.parameters, ReportContextMapper._buildParameter));
-    reportContextDto.setDimensions(ReportContextMapper._mapParameters(reportContextCopy.dimensions, ReportContextMapper._buildDimension));
-    reportContextDto.setExcludedFilters(ReportContextMapper._mapParameters(reportContextCopy.excludedFilters, ReportContextMapper._buildDimension));
-    reportContextDto.setChildContexts(ReportContextMapper._mapChildContexts(reportContextCopy.childContexts));
+    const reportContextDto = ProtoLoader.Dto.ReportContextDto.create({
+      reportId: reportContextCopy.reportId,
+      multiContextMode: reportContextCopy.multiContextMode,
+      output: reportContextCopy.output,
+      parameters: ReportContextMapper._mapParameters(reportContextCopy.parameters, ReportContextMapper._buildParameter),
+      dimensions: ReportContextMapper._mapParameters(reportContextCopy.dimensions, ReportContextMapper._buildDimension),
+      excludedFilters: ReportContextMapper._mapParameters(reportContextCopy.excludedFilters, ReportContextMapper._buildDimension),
+      childContexts: ReportContextMapper._mapChildContexts(reportContextCopy.childContexts)
+    });
 
-    if (reportContextCopy.reportId !== undefined) {
-      reportContextDto.setReportId(reportContextCopy.reportId);
-    }
-
-    if (reportContextCopy.multiContextMode !== undefined) {
-      reportContextDto.setMultiContextMode(reportContextCopy.multiContextMode);
-    }
-
-    if (reportContextCopy.output !== undefined) {
-      reportContextDto.setOutput(reportContextCopy.output);
-    }
+    console.log('REPCONTEXT');
+    console.log(reportContextDto);
 
     return reportContextDto;
   }
@@ -32,7 +27,7 @@ export default class ReportContextMapper{
     const childContextDtos = [];
 
     if (childContexts !== undefined) {
-      $.each(childContexts, (index, childContext) => {
+      childContexts.forEach((childContext) => {
         childContextDtos.push(_self.toDto(childContext));
       });
     }
@@ -49,21 +44,21 @@ export default class ReportContextMapper{
     let subTotalString = '';
     parameters.subtotals = [];
 
-    $.each(parameters.aggregators, (i, aggregator) => {
+    parameters.aggregators.forEach((aggregator) => {
       subTotalString += aggregator + '|';
       parameters.subtotals.push(subTotalString + 'bucket');
     });
   }
         
   static _buildParameter(name, value) {
-    return new ProtoLoader.Dto.ReportContextDto.ParameterValue({
+    return ProtoLoader.Dto.ReportContextDto.ParameterValue.create({
       name,
       value
     });
   }
         
   static _buildDimension(name, value) {
-    return new ProtoLoader.Dto.ReportContextDto.Dimension({
+    return ProtoLoader.Dto.ReportContextDto.Dimension.create({
       name,
       value
     });
@@ -79,42 +74,45 @@ export default class ReportContextMapper{
         }
 
         const newValue = [];
-        $.each(value, (index, val) => {
+        value.forEach((val) => {
           if (val !== undefined && val !== null){
             newValue.push(val);
           }
         });
         value = newValue;
-        const valueDto = new ProtoLoader.Dto.ReportContextDto.Value();
+        let valueDto = ProtoLoader.Dto.ReportContextDto.Value.create();
         let valuesListDto;
         let field;
 
-        $.each(value, (index, currentValue) => {
+        value.forEach((currentValue, index) => {
           //get the type for the values list based on the first type in the values list
           //TODO - maybe do this better, based on reportDefinition?
           if (index === 0) {
             if (typeof currentValue === 'string') {
               field = 'string';
-              valuesListDto = new ProtoLoader.Dto.ReportContextDto.StringList();
+              console.log('creating string');
+              valuesListDto = ProtoLoader.Dto.ReportContextDto.StringList.create();
             } else if (typeof currentValue === 'number') {
               field = currentValue % 1 === 0 ? 'int' : 'double';
-              valuesListDto = currentValue % 1 === 0 ? new ProtoLoader.Dto.ReportContextDto.IntList() : new ProtoLoader.Dto.ReportContextDto.DoubleList();
+              valuesListDto = currentValue % 1 === 0 ? ProtoLoader.Dto.ReportContextDto.IntList.create() : ProtoLoader.Dto.ReportContextDto.DoubleList.create();
             } else if (typeof currentValue === 'boolean') {
               field = 'boolean';
-              valuesListDto = new ProtoLoader.Dto.ReportContextDto.BooleanList();
+              valuesListDto = ProtoLoader.Dto.ReportContextDto.BooleanList.create();
             } else if (typeof currentValue === 'undefined') {
               field = 'null';
-              valuesListDto = new ProtoLoader.Dto.ReportContextDto.NullList();
+              valuesListDto = ProtoLoader.Dto.ReportContextDto.NullList.create();
             } else {
               field = 'string';
-              valuesListDto = new ProtoLoader.Dto.ReportContextDto.StringList();
+              valuesListDto = ProtoLoader.Dto.ReportContextDto.StringList.create();
             }
           }
-
           valuesListDto[field + 'Value'].push(currentValue);
         });
+
+
         if (field) {
-          valueDto.set(field + 'List', valuesListDto);
+          const val = {[field + 'List']: valuesListDto};
+          valueDto = ProtoLoader.Dto.ReportContextDto.Value.create(val);
         }
 
         const parameterValueDto = builder(key, valueDto);

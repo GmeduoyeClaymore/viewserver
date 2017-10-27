@@ -26,7 +26,7 @@ export default class ProductDetails extends Component {
               <Image source={require('./assets/cement.jpg')} style={styles.picture} />
               <Text style={styles.bigText}>{product.name}</Text>
               <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
-              <ProductActionBar product={product} shoppingCartDao={customerService.shoppingCartDao}/>
+              <ProductActionBar product={product} orderItemsDao={customerService.orderItemsDao}/>
             </View>
           </View>
         );

@@ -32,8 +32,8 @@ ProductDataSource {
                                 new Column("name", "name", ColumnType.String),
                                 new Column("description", "description", ColumnType.String),
                                 new Column("type", "type", ColumnType.String),
-                                new Column("price", "price", ColumnType.String),
-                                new Column("rating", "rating", ColumnType.String)
+                                new Column("price", "price", ColumnType.Double),
+                                new Column("rating", "rating", ColumnType.Double)
                         ))
                 );
     }
