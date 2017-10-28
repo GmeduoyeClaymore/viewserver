@@ -48,7 +48,7 @@ export default class ClientTableEventPromise{
     }
     for (const event of events){
       for (const columnName of Object.keys(event.columnValues)){
-        if (row[columnName] !== event.columnValues[columnName]){
+        if (row[columnName] != event.columnValues[columnName]){
           Logger.info(`Value for column ${columnName} differs on row ${JSON.stringify(row)} and event ${JSON.stringify(event)}`);
           return;
         }
