@@ -2,7 +2,6 @@ import * as FieldMappings from './FieldMappings';
 import SimpleDataSink from '../../common/SimpleDataSink';
 import Logger from '../../viewserver-client/Logger';
 import ClientTableEventPromise from '../../common/ClientTableEventPromise';
-import CoolRxDataSink from '../../common/CoolRxDataSink';
 import ReportSubscriptionStrategy from '../../common/ReportSubscriptionStrategy';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
 
@@ -26,7 +25,6 @@ export default class ShoppingCartDao{
       this.orderItemTotalsDataSink  = new SimpleDataSink();
       this.orderItemsDataSink  = new SimpleDataSink();
       this.orderItemTableDatasink  = new SimpleDataSink();
-
 
       this.shoppingCartItemsQuantity = this.orderItemTotalsDataSink.onRowAddedOrUpdatedObservable.select(row => row.sumQuantity);
       
@@ -62,9 +60,7 @@ export default class ShoppingCartDao{
   
     async addItemtoCart(productId, quantity){
       let cartRowEvent;
-      
       const existingRow = this.getProductRow(productId);
-
       if (existingRow !== undefined){
         Logger.info(`Updating cart row ${existingRow.rowId}`);
         cartRowEvent = this.createUpdateCartRowEvent(existingRow.rowId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
@@ -81,7 +77,7 @@ export default class ShoppingCartDao{
     }
 
     async purchaseCartItems(orderId){
-      const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
+      const rowEvents = this.itemData.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
       const clientTablEventPromise = new ClientTableEventPromise(this.orderItemsDataSink, rowEvents);
       this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this.orderItemsDataSink, rowEvents, clientTablEventPromise);
       await clientTablEventPromise;
@@ -109,9 +105,5 @@ export default class ShoppingCartDao{
 
     getProductRow(productId){
       return this.itemData.find(r => r.productId === productId);
-    }
-  
-    get cartItems(){
-      return this.itemData;
     }
 }
