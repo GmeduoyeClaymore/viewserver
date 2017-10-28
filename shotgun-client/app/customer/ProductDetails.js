@@ -22,12 +22,10 @@ export default class ProductDetails extends Component {
       if (product) {
         return (
           <View style={styles.container}>
-            <View style={styles.header}>
-              <Image source={require('./assets/cement.jpg')} style={styles.picture} />
-              <Text style={styles.bigText}>{product.name}</Text>
-              <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
-              <ProductActionBar product={product} shoppingCartDao={customerService.shoppingCartDao}/>
-            </View>
+            <Image source={require('./assets/cement.jpg')} style={styles.picture} />
+            <Text style={styles.bigText}>{product.name}</Text>
+            <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
+            <ProductActionBar product={product} shoppingCartDao={customerService.shoppingCartDao}/>
           </View>
         );
       }
@@ -37,7 +35,6 @@ export default class ProductDetails extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 60,
     backgroundColor: '#FFFFFF',
     flex: 1
   },

@@ -2,21 +2,25 @@ import Rx from 'rx-lite';
 
 export default class CoolRxDataSink{
   constructor(){
-    this._rowAdded = new Rx.Subject();
-    this._snapshotComplete = new Rx.Subject();
-    this._onDataReset = new Rx.Subject();
-    this._onTotalRowCount = new Rx.ReplaySubject();
-    this._onSchemaReset = new Rx.Subject();
-    this._onRowAdded = new Rx.Subject();
-    this._onRowUpdated = new Rx.Subject();
-    this._onRowRemoved = new Rx.Subject();
-    this._onColumnAdded = new Rx.Subject();
+    this._rowAdded = new Rx.ReplaySubject(1);
+    this._snapshotComplete = new Rx.ReplaySubject(1);
+    this._onDataReset = new Rx.ReplaySubject(1);
+    this._onTotalRowCount = new Rx.ReplaySubject(1);
+    this._onSchemaReset = new Rx.ReplaySubject(1);
+    this._onRowAdded = new Rx.ReplaySubject(1);
+    this._onRowUpdated = new Rx.ReplaySubject(1);
+    this._onRowRemoved = new Rx.ReplaySubject(1);
+    this._onColumnAdded = new Rx.ReplaySubject(1);
+    this._onRowAddedOrUpdatedObservable = new Rx.ReplaySubject(1);
   }
   get rowAddedObservable(){
     return this._rowAdded;
   }
   get snapshotCompleteObservable(){
     return this._snapshotComplete;
+  }
+  get onRowAddedOrUpdatedObservable(){
+    return this._onRowAddedOrUpdatedObservable;
   }
   get onDataResetObservable(){
     return this._onDataReset;
@@ -54,10 +58,12 @@ export default class CoolRxDataSink{
   onRowAdded(rowId, row){
     row.rowId = rowId;
     this._onRowAdded.onNext(row);
+    this._onRowAddedOrUpdatedObservable.onNext(row);
   }
   onRowUpdated(rowId, row){
     row.rowId = rowId;
     this._onRowUpdated.onNext(row);
+    this._onRowAddedOrUpdatedObservable.onNext(row);
   }
   onRowRemoved(rowId){
     this._onRowRemoved.onNext(rowId);

@@ -1,37 +1,63 @@
 import * as FieldMappings from './FieldMappings';
-import DataSink from '../../common/DataSink';
+import SimpleDataSink from '../../common/SimpleDataSink';
 import Logger from '../../viewserver-client/Logger';
 import ClientTableEventPromise from '../../common/ClientTableEventPromise';
 import CoolRxDataSink from '../../common/CoolRxDataSink';
+import ReportSubscriptionStrategy from '../../common/ReportSubscriptionStrategy';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
 
-export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
-    static DEFAULT_OPTIONS = (customerId) =>  {
-      return {
-        offset: 0,
-        limit: 20,
-        columnName: undefined,
-        columnsToSort: undefined,
-        filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}" && orderId == null`,
-        flags: undefined
-      };
+export default class ShoppingCartDao{
+    static DEFAULT_OPTIONS = {
+      offset: 0,
+      limit: 20,
+      columnName: undefined,
+      columnsToSort: undefined,
+      filterMode: 2, //Filtering
+      filterExpression: undefined, //`customerId == "${customerId}" && orderId == null`,
+      flags: undefined
     };
   
     constructor(viewserverClient, customerId){
-      super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
-      this.viewserverClient = viewserverClient;
       this.customerId = customerId;
-      this.subscribeToData(this);
+      this.orderItemsSubscriptionStrategy = new ReportSubscriptionStrategy(viewserverClient, this.createReportContext('orderItemByCustomerId'));
+      this.orderItemsTotalSubscriptionStrategy = new ReportSubscriptionStrategy(viewserverClient, this.createReportContext('orderItemTotalsByCustomerId'));
+      this.orderItemTableSubscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
+      this.viewserverClient = viewserverClient;
+      this.orderItemTotalsDataSink  = new SimpleDataSink();
+      this.orderItemsDataSink  = new SimpleDataSink();
+      this.orderItemTableDatasink  = new SimpleDataSink();
+
+
+      this.shoppingCartItemsQuantity = this.orderItemTotalsDataSink.onRowAddedOrUpdatedObservable.select(row => row.sumQuantity);
+      
+      this.orderItemsTotalSubscriptionStrategy.subscribe(this.orderItemTotalsDataSink, {...ShoppingCartDao.DEFAULT_OPTIONS, limit: 1});
+      this.orderItemsSubscriptionStrategy.subscribe(this.orderItemsDataSink, {...ShoppingCartDao.DEFAULT_OPTIONS, limit: 100});
+      this.orderItemTableSubscriptionStrategy.subscribe(this.orderItemTableDatasink, {...ShoppingCartDao.DEFAULT_OPTIONS, limit: 0});
+    }
+
+    get itemData(){
+      return this.orderItemsDataSink.rows;
+    }
+    get schema(){
+      return this.orderItemTableDatasink.schema;
+    }
+    getColumn(columnId){
+      return this.orderItemTableDatasink.getColumn(columnId);
     }
 
     get shoppingCartSizeObservable(){
-      return this.onTotalRowCountObservable;
+      return this.shoppingCartItemsQuantity;
     }
 
-    subscribeToData(datasink){
-      this.subscriptionStrategy.subscribe(datasink, ShoppingCartDao.DEFAULT_OPTIONS(this.customerId));
+    createReportContext(reportId){
+      const {customerId} = this;
+      const parameters = {
+        customerId
+      };
+      return {
+        reportId,
+        parameters
+      };
     }
   
     async addItemtoCart(productId, quantity){
@@ -47,8 +73,8 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
         cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
       }
 
-      const clientTablEventPromise = new ClientTableEventPromise(this, [cartRowEvent]);
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], clientTablEventPromise);
+      const clientTablEventPromise = new ClientTableEventPromise(this.orderItemsDataSink, [cartRowEvent]);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this.orderItemsDataSink, [cartRowEvent], clientTablEventPromise);
       const modifiedRows = await clientTablEventPromise;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
@@ -56,8 +82,8 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
 
     async purchaseCartItems(orderId){
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
-      const clientTablEventPromise = new ClientTableEventPromise(this, rowEvents);
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTablEventPromise);
+      const clientTablEventPromise = new ClientTableEventPromise(this.orderItemsDataSink, rowEvents);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this.orderItemsDataSink, rowEvents, clientTablEventPromise);
       await clientTablEventPromise;
       Logger.info('purchase cart item promise resolved');
     }
@@ -82,10 +108,10 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     }
 
     getProductRow(productId){
-      return this.rows.find(r => r.productId === productId);
+      return this.itemData.find(r => r.productId === productId);
     }
   
     get cartItems(){
-      return this.rows;
+      return this.itemData;
     }
 }
