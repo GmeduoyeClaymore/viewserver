@@ -19,6 +19,7 @@ package io.viewserver.messages.tableevent;
 import io.viewserver.messages.IRecyclableMessage;
 import io.viewserver.messages.common.ColumnType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,11 @@ public interface IRowEvent<T> extends IRecyclableMessage<T> {
 
     int getRowId();
 
+    String getKey();
+
     IRowEvent setRowId(int rowId);
+
+    IRowEvent setKey(String key);
 
     List<IColumnValue> getColumnValues();
 

@@ -21,6 +21,7 @@ import io.viewserver.messages.common.ColumnType;
 import io.viewserver.messages.protobuf.dto.RowEventMessage;
 import io.viewserver.messages.tableevent.IRowEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,6 +89,17 @@ public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<Row
     @Override
     public int getRowId() {
         return rowEventDto.getRowId();
+    }
+
+    @Override
+    public String getKey(){
+        return rowEventDto.getKey();
+    }
+
+    @Override
+    public IRowEvent setKey(String key){
+        getRowEventDtoBuilder().setKey(key);
+        return this;
     }
 
     @Override
