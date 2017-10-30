@@ -18,8 +18,4 @@ export default class CartSummaryDao extends DataSink(CoolRxDataSink){
     this.totalQuantity = this.onRowAddedOrUpdatedObservable.select(row => row.totalQuantity);
     this.subscriptionStrategy.subscribe(this, {limit: 1});
   }
-
-  get totalQuantityObservable() {
-    return this.totalQuantity;
-  }
 }

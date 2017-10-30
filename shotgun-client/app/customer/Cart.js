@@ -39,7 +39,7 @@ export default class Cart extends Component {
     render() {
       const {cartItemsDao, cartSummaryDao} = this.props.screenProps.customerService;
       const {busy} = this.state;
-      const cartSummary = cartSummaryDao.rows[0];
+      const cartSummary = cartSummaryDao.rows[0] || {totalQuantity: 0, totalPrice: 0};
 
       return <View style={{flex: 1, flexDirection: 'column'}}>
         {cartItemsDao.rows.map(c => this.renderCartItem(c))}

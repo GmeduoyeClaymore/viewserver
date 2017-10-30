@@ -12,7 +12,7 @@ export default class CustomerMenuBar extends Component {
     constructor(props){
       super(props);
       this.updateItemCount = this.updateItemCount.bind(this);
-      this.state = {};
+      this.state = {itemCount: 0};
     }
 
     componentWillMount(){
