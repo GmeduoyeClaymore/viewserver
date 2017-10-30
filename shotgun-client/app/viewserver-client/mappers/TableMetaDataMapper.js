@@ -1,11 +1,11 @@
-import {$} from '../core/JQueryish';
+import Logger from '../Logger';
 
 export default class TableMetaDataMapper{
   static fromDto(tableMetaDataDto) {
     const metaData = {};
 
-    $.each(tableMetaDataDto.metaDataValue, (index, metaDataValue) => {
-      console.log('Mapping' + JSON.stringify(metaDataValue));
+    tableMetaDataDto.metaDataValue.forEach(metaDataValue => {
+      Logger.debug('Mapping' + JSON.stringify(metaDataValue));
       metaData[metaDataValue.name] = metaDataValue.value[metaDataValue.value.value];
     });
     return metaData;

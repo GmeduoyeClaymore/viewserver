@@ -1,6 +1,6 @@
 import ProtoLoader from '../core/ProtoLoader';
 import RowEvent from '../domain/RowEvent';
-import {$} from '../core/JQueryish';
+import Logger from '../Logger';
 
 export default class RowEventMapper{
   static mapRowEventType(rowEventType) {
@@ -27,14 +27,14 @@ export default class RowEventMapper{
     });
 
     const columnValueDtos = [];
-    console.log(`Column values ${JSON.stringify(rowEvent.columnValues)}`);
-    $.each(rowEvent.columnValues, (key, value) => {
+    Logger.debug(`Column values ${JSON.stringify(rowEvent.columnValues)}`);
+    Object.entries(rowEvent.columnValues).forEach(([key, value]) => {
       let columnId;
-      console.log('Key is ' + key);
+      Logger.debug('Key is ' + key);
       if (typeof key === 'string') {
         columnId = parseInt(key, 10);
         if (isNaN(columnId)) {
-          console.log('Getting col id from data sink');
+          Logger.debug('Getting col id from data sink');
           columnId = dataSink.getColumnId(key);
         }
       } else {
@@ -45,7 +45,7 @@ export default class RowEventMapper{
         columnValue.nullValue = -1; // -1 is arbitrary
       } else {
         const column = dataSink.getColumn(columnId);
-        console.log(`!!! Row mapper found column "${JSON.stringify(column)}"`);
+        Logger.debug(`!!! Row mapper found column "${JSON.stringify(column)}"`);
         switch (column.type) {
           case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
           {

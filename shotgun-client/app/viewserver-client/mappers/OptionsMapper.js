@@ -1,13 +1,12 @@
 import ProtoLoader from '../core/ProtoLoader';
-import {$} from '../core/JQueryish';
 
 export default class OptionsMapper{
   static toDto(options) {
     const _self = OptionsMapper;
-    const optionsCopy = $.extend(true, {}, options);
+    const optionsCopy = Object.assign({}, options);
 
     if (optionsCopy.columnsToSort !== undefined){
-      $.each(optionsCopy.columnsToSort, (index, columnToSort) => {
+      optionsCopy.columnsToSort.forEach(columnToSort => {
         columnToSort.name = _self._parseSortColumn(columnToSort.name);
         columnToSort.direction = _self._parseDirection(columnToSort.direction);
       });

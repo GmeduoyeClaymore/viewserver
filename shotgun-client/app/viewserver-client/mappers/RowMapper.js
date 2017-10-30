@@ -1,4 +1,4 @@
-import {$} from '../core/JQueryish';
+import Logger from '../Logger';
 
 export default class RowMapper{
   static _parseValue(rowValue) {
@@ -13,7 +13,7 @@ export default class RowMapper{
           return value;
       }
     } catch (error){
-      console.error('error parsing value ' + JSON.stringify(rowValue));
+      Logger.error('error parsing value ' + JSON.stringify(rowValue));
       throw error;
     }
   }
@@ -21,8 +21,8 @@ export default class RowMapper{
   static fromDto(schema, rowValues) {
     const _self = RowMapper;
     const row = {};
-    console.log('Mapping row values ' + JSON.stringify(schema));
-    $.each(rowValues, (index, rowValue) => {
+    Logger.debug('Mapping row values ' + JSON.stringify(schema));
+    rowValues.forEach(rowValue => {
       const columnName = schema[rowValue.columnId].name;
       const columnValue = _self._parseValue(rowValue);
       row[columnName] = columnValue;

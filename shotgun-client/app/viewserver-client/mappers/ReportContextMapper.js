@@ -1,5 +1,4 @@
 import ProtoLoader from '../core/ProtoLoader';
-import {$} from '../core/JQueryish';
 
 export default class ReportContextMapper{
   static toDto(reportContext) {
@@ -13,7 +12,7 @@ export default class ReportContextMapper{
     const childContextDtos = [];
 
     if (childContexts !== undefined) {
-      $.each(childContexts, (index, childContext) => {
+      childContexts.forEach(childContext => {
         childContextDtos.push(_self.toDto(childContext));
       });
     }
@@ -38,13 +37,13 @@ export default class ReportContextMapper{
     const parametersDto = [];
 
     if (parameters !== undefined) {
-      $.each(parameters, (key, value) => {
+      Object.entries(parameters).forEach(([key, value]) => {
         if (Object.prototype.toString.call(value) !== '[object Array]') {
           value = [value];
         }
 
         const newValue = [];
-        $.each(value, (index, val) => {
+        value.forEach(val => {
           if (val !== undefined && val !== null){
             newValue.push(val);
           }
@@ -54,7 +53,7 @@ export default class ReportContextMapper{
         let valuesListDto;
         let field;
 
-        $.each(value, (index, currentValue) => {
+        value.forEach((currentValue, index) => {
           //get the type for the values list based on the first type in the values list
           //TODO - maybe do this better, based on reportDefinition?
           //!!!!!! DO NOT CHANGE this to === type coercion is needed !!!!!!

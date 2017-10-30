@@ -1,5 +1,4 @@
 import ProtoLoader from './core/ProtoLoader';
-import {$} from './core/JQueryish';
 import Logger from './Logger';
 import RowMapper from './mappers/RowMapper';
 import Connection from './Connection';
@@ -102,7 +101,7 @@ export default class Network {
         if (command.handler.onError){
           command.handler.onError(commandResult.message);
         } else {
-          console.error(commandResult.message);
+          Logger.error(commandResult.message);
         }
       }
     }
@@ -136,7 +135,7 @@ export default class Network {
 
   handleStatuses(statuses, handler) {
     if (statuses) {
-      $.each(statuses, (index, statusDto) => {
+      statuses.forEach((statusDto) => {
         switch (statusDto.status) {
           case 1:
           {
@@ -172,13 +171,13 @@ export default class Network {
 
   handleSchemaChange(schemaChange, handler) {
     if (schemaChange) {
-      $.each(schemaChange.addedColumns, (index, addedColumn) => {
+      schemaChange.addedColumns.forEach(addedColumn => {
         Logger.fine('Column added', addedColumn);
 
         handler.onColumnAdded(addedColumn.columnId, {name: addedColumn.name, type: addedColumn.type});
       });
 
-      $.each(schemaChange.removedColumns, (index, removedColumnId) => {
+      schemaChange.removedColumns.forEach(removedColumnId => {
         Logger.fine('Column removed', removedColumnId);
         handler.onColumnRemoved(removedColumnId);
       });
@@ -189,7 +188,7 @@ export default class Network {
     if (rowEvents) {
       let row;
 
-      $.each(rowEvents, (index, rowEvent) => {
+      rowEvents.forEach(rowEvent => {
         switch (rowEvent.eventType) {
           case 0: //add
             row = RowMapper.fromDto(handler.schema, rowEvent.values);
