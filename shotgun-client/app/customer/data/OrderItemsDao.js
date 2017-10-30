@@ -34,7 +34,7 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       this.subscriptionStrategy.subscribe(datasink, OrderItems.DEFAULT_OPTIONS(this.customerId));
     }
   
-    async addItemtoCart(productId, quantity){
+    async addItemToCart(productId, quantity){
       let cartRowEvent;
       
       const existingRow = this.getProductRow(productId);
@@ -56,9 +56,9 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
 
     async purchaseCartItems(orderId){
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
-      const clientTablEventPromise = new ClientTableEventPromise(this, rowEvents);
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTablEventPromise);
-      await clientTablEventPromise;
+      const clientTableEventPromise = new ClientTableEventPromise(this, rowEvents);
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTableEventPromise);
+      await clientTableEventPromise;
       Logger.info('purchase cart item promise resolved');
     }
 

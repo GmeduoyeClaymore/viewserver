@@ -31,8 +31,10 @@ export default class Cart extends Component {
         const {orderDao, orderItemsDao} = this.props.screenProps.customerService;
         const orderId = await orderDao.createOrder();
         await orderItemsDao.purchaseCartItems(orderId);
+        console.log('PURCHASE COMPLETE');
       } finally {
         this.setState({busy: false});
+        this.props.navigation.navigate('Home');
       }
     }
 
