@@ -373,7 +373,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                     int rowId = ((ITable) operator).addRow(tableRowUpdater);
                     if(commandResult.getMessage().length() > 0)
                         commandResult.setMessage(",");
-                    commandResult.setMessage(",A" + rowId);
+                    commandResult.setMessage("A" + rowId);
                     if (rowIdMap != null) {
                         rowIdMap.put(rowEventDto.getRowId(), rowId);
                     }

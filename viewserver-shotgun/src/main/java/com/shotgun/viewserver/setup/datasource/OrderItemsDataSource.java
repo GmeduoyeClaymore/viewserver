@@ -1,12 +1,15 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.datasource.Column;
-import io.viewserver.datasource.ColumnType;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.Schema;
+import io.viewserver.datasource.*;
+import io.viewserver.execution.nodes.CalcColNode;
+import io.viewserver.execution.nodes.FilterNode;
+import io.viewserver.execution.nodes.GroupByNode;
+import io.viewserver.execution.nodes.JoinNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 
 import java.util.Arrays;
 
@@ -35,6 +38,20 @@ public class OrderItemsDataSource {
                                                 new Column("productId", "productId", ColumnType.String),
                                                 new Column("quantity", "quantity", ColumnType.Int)
                                         ))
-                        );
+                        ).withNodes(
+                                new JoinNode("productJoin")
+                                        .withLeftJoinColumns("productId")
+                                        .withRightJoinColumns("productId")
+                                        .withConnection(NAME, Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
+                                new CalcColNode("totalPriceCalcCol")
+                                        .withCalculations(new CalcColOperator.CalculatedColumn("totalPrice", "quantity * price"))
+                                        .withConnection("productJoin"),
+                                new FilterNode("cartItems")
+                                        .withExpression("orderId == null")
+                                        .withConnection("totalPriceCalcCol")
+                        )
+                .withOutput("cartItems")
+                .withOptions(DataSourceOption.IsReportSource);
         }
 }

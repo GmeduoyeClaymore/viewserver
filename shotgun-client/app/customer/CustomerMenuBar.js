@@ -4,7 +4,7 @@ import ActionButton from '../common/ActionButton';
 import icon from  '../common/assets/cart-outline.png';
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
-      shoppingCartDao: PropTypes.object,
+      cartSummaryDao: PropTypes.object,
       navigation: PropTypes.object
     };
 
@@ -16,7 +16,7 @@ export default class CustomerMenuBar extends Component {
     }
 
     componentWillMount(){
-      this.subscription = this.props.shoppingCartDao.shoppingCartSizeObservable.subscribe(this.updateItemCount);
+      this.subscription = this.props.cartSummaryDao.totalQuantity.subscribe(this.updateItemCount);
     }
 
     componentWillUnmount(){
@@ -32,9 +32,8 @@ export default class CustomerMenuBar extends Component {
     render(){
       const { itemCount } = this.state;
       const {navigate} = this.props.navigation;
-      const {rows} = this.props.shoppingCartDao;
       return <View style={styles.container}>
-        <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => navigate('ShoppingCart', {rows})}/>
+        <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => navigate('Cart')}/>
       </View>;
     }
 }

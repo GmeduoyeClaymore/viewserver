@@ -5,7 +5,7 @@ import ClientTableEventPromise from '../../common/ClientTableEventPromise';
 import CoolRxDataSink from '../../common/CoolRxDataSink';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
 
-export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
+export default class OrderItems extends DataSink(CoolRxDataSink){
     static DEFAULT_OPTIONS = (customerId) =>  {
       return {
         offset: 0,
@@ -31,7 +31,7 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
     }
 
     subscribeToData(datasink){
-      this.subscriptionStrategy.subscribe(datasink, ShoppingCartDao.DEFAULT_OPTIONS(this.customerId));
+      this.subscriptionStrategy.subscribe(datasink, OrderItems.DEFAULT_OPTIONS(this.customerId));
     }
   
     async addItemtoCart(productId, quantity){
@@ -83,9 +83,5 @@ export default class ShoppingCartDao extends DataSink(CoolRxDataSink){
 
     getProductRow(productId){
       return this.rows.find(r => r.productId === productId);
-    }
-  
-    get cartItems(){
-      return this.rows;
     }
 }
