@@ -4,6 +4,7 @@ import Logger from '../../viewserver-client/Logger';
 import ClientTableEventPromise from '../../common/ClientTableEventPromise';
 import CoolRxDataSink from '../../common/CoolRxDataSink';
 import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
+import uuidv4 from 'uuid/v4';
 
 export default class OrderItems extends DataSink(CoolRxDataSink){
     static DEFAULT_OPTIONS = (customerId) =>  {
@@ -40,8 +41,8 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       const existingRow = this.getProductRow(productId);
 
       if (existingRow !== undefined){
-        Logger.info(`Updating cart row ${existingRow.rowId}`);
-        cartRowEvent = this.createUpdateCartRowEvent(existingRow.rowId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
+        Logger.info(`Updating cart row ${existingRow.itemId}`);
+        cartRowEvent = this.createUpdateCartRowEvent(existingRow.itemId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
       } else {
         Logger.info('Adding item to cart');
         cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
@@ -55,7 +56,7 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
     }
 
     async purchaseCartItems(orderId){
-      const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.rowId, {orderId}));
+      const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.itemId, {orderId}));
       const clientTableEventPromise = new ClientTableEventPromise(this, rowEvents);
       this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTableEventPromise);
       await clientTableEventPromise;
@@ -66,6 +67,7 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       return {
         type: 0, // ADD
         columnValues: {
+          itemId: uuidv4(),
           customerId: this.customerId,
           productId,
           quantity
@@ -73,10 +75,10 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       };
     }
 
-    createUpdateCartRowEvent(rowId, columnValues){
+    createUpdateCartRowEvent(key, columnValues){
       return {
         type: 1, // UPDATE
-        rowId,
+        key,
         columnValues
       };
     }
