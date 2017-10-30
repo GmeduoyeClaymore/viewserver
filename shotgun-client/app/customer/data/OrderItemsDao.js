@@ -75,10 +75,10 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       };
     }
 
-    createUpdateCartRowEvent(key, columnValues){
+    createUpdateCartRowEvent(tableKey, columnValues){
       return {
         type: 1, // UPDATE
-        key,
+        tableKey,
         columnValues
       };
     }

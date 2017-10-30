@@ -629,13 +629,13 @@
           "type": "uint32",
           "id": 2
         },
-        "key": {
-          "type": "string",
-          "id": 3
-        },
         "values": {
           "rule": "repeated",
           "type": "ColumnValue",
+          "id": 3
+        },
+        "tableKey": {
+          "type": "string",
           "id": 4
         }
       },

@@ -34,9 +34,9 @@ public interface IRowEvent<T> extends IRecyclableMessage<T> {
 
     String getKey();
 
-    IRowEvent setRowId(int rowId);
-
     IRowEvent setKey(String key);
+
+    IRowEvent setRowId(int rowId);
 
     List<IColumnValue> getColumnValues();
 

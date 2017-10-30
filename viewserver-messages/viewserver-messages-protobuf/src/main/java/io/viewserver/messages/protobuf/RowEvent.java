@@ -93,12 +93,12 @@ public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<Row
 
     @Override
     public String getKey(){
-        return rowEventDto.getKey();
+        return rowEventDto.getTableKey();
     }
 
     @Override
     public IRowEvent setKey(String key){
-        getRowEventDtoBuilder().setKey(key);
+        getRowEventDtoBuilder().setTableKey(key);
         return this;
     }
 
