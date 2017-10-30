@@ -4,7 +4,7 @@ import ActionButton from '../common/ActionButton';
 import icon from  '../common/assets/cart-outline.png';
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
-      orderItemsDao: PropTypes.object,
+      cartSummaryDao: PropTypes.object,
       navigation: PropTypes.object
     };
 
@@ -16,7 +16,7 @@ export default class CustomerMenuBar extends Component {
     }
 
     componentWillMount(){
-      this.subscription = this.props.orderItemsDao.shoppingCartSizeObservable.subscribe(this.updateItemCount);
+      this.subscription = this.props.cartSummaryDao.totalQuantity.subscribe(this.updateItemCount);
     }
 
     componentWillUnmount(){

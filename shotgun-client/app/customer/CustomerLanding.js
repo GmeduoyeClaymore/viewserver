@@ -38,7 +38,7 @@ export default class CustomerLanding extends Component {
     const screenProps = {customerService: this.customerService, client: this.client};
 
     return <View style={{flexDirection: 'column', flex: 1}}>
-      <CustomerMenuBar navigation={this.props.navigation} orderItemsDao={this.customerService.orderItemsDao}/>
+      <CustomerMenuBar navigation={this.props.navigation} cartSummaryDao={this.customerService.cartSummaryDao}/>
       <CustomerLandingNavigator navigation={this.props.navigation}  screenProps={screenProps} />
     </View>;
   }

@@ -63,7 +63,7 @@ export default DataSink = (superclass) => class extends superclass {
     }
     const rowIndex = this._getRowIndex(rowId);
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
-    Logger.info('Row updated - ' + row);
+    Logger.info('Row updated - ' + JSON.stringify(row));
   }
   onRowRemoved(rowId){
     if (super.onRowRemoved){

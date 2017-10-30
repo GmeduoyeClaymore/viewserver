@@ -19,9 +19,9 @@ export default class Cart extends Component {
     renderCartItem(item) {
       return <View key={item.key} style={{flexDirection: 'column', flex: 1}}>
         <Text>{`Product: ${item.name} - (${item.productId})`}</Text>
-        <Text>{'Quantity: ' + item.quantity}</Text>
-        <Text>{'Price: ' + item.price}</Text>
-        <Text>{'Total: ' + item.totalPrice}</Text>
+        <Text>{`Quantity: ${item.quantity}`}</Text>
+        <Text>{`Price: ${item.price}`}</Text>
+        <Text>{`Total: ${item.totalPrice}`}</Text>
       </View>;
     }
 
@@ -39,13 +39,12 @@ export default class Cart extends Component {
     render() {
       const {cartItemsDao, cartSummaryDao} = this.props.screenProps.customerService;
       const {busy} = this.state;
-
-      console.log('HERE');
-      console.log(cartSummaryDao.rows);
+      const cartSummary = cartSummaryDao.rows[0];
 
       return <View style={{flex: 1, flexDirection: 'column'}}>
         {cartItemsDao.rows.map(c => this.renderCartItem(c))}
-        <Text>{cartSummaryDao.rows.length}</Text>
+        <Text>{`Total Items ${cartSummary.totalQuantity}`}</Text>
+        <Text>{`Total Price ${cartSummary.totalPrice}`}</Text>
         {!busy ? <ActionButton buttonText="Purchase" icon={icon} action={this.purchaseItems}/> : null}
       </View>;
     }

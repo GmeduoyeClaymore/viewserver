@@ -1,19 +1,8 @@
 import DataSink from '../../common/DataSink';
 import CoolRxDataSink from '../../common/CoolRxDataSink';
+import ReportSubscriptionStrategy from '../../common/ReportSubscriptionStrategy';
 
 export default class CartSummaryDao extends DataSink(CoolRxDataSink){
-  static DEFAULT_OPTIONS = (customerId) =>  {
-    return {
-      offset: 0,
-      limit: 20,
-      columnName: undefined,
-      columnsToSort: undefined,
-      /* filterMode: 2, //Filtering
-       filterExpression: `customerId == "${customerId}" && orderId == null`,*/
-      flags: undefined
-    };
-  };
-
   constructor(viewserverClient, customerId){
     super();
     this.viewserverClient = viewserverClient;
@@ -25,6 +14,12 @@ export default class CartSummaryDao extends DataSink(CoolRxDataSink){
         customerId
       }
     };
-    this.viewserverClient.subscribeToReport(reportContext, CartSummaryDao.DEFAULT_OPTIONS, this);
+    this.subscriptionStrategy = new ReportSubscriptionStrategy(viewserverClient, reportContext);
+    this.totalQuantity = this.onRowAddedOrUpdatedObservable.select(row => row.totalQuantity);
+    this.subscriptionStrategy.subscribe(this, {limit: 1});
+  }
+
+  get totalQuantityObservable() {
+    return this.totalQuantity;
   }
 }
