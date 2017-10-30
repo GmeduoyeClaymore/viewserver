@@ -97,7 +97,7 @@ export default class Client {
   };
 
   editTable = function (tableName, dataSink, rowEvents, eventHandlers) {
-    Logger.info(`EDIT TABLE sending row events: ${JSON.stringify(rowEvents)} on ${tableName}`);
+    Logger.info(`Processing row events: ${JSON.stringify(rowEvents)} on ${tableName}`);
     const rowEventDtos = [];
     rowEvents.map((rowEvent) => {
       rowEventDtos.push(RowEventMapper.toDto(rowEvent, dataSink));

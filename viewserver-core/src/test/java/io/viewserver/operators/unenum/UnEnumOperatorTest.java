@@ -47,7 +47,6 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
                 final DataSource dataSource = new DataSource();
                 dataSource.setName("test");
-                dataSource.setSchema(new io.viewserver.datasource.Schema());
                 dataSource.getSchema().getColumns().addAll(Arrays.asList(
                         new Column("market", io.viewserver.datasource.ColumnType.String),
                         new Column("product", io.viewserver.datasource.ColumnType.Int)

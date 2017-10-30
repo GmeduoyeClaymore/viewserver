@@ -36,7 +36,7 @@ export default class ProductList extends Component {
         paginationWaitingView={Paging}
         emptyView={NoItems}
         paginationAllLoadedView={LoadedAllItems}
-        refreshable={true}refreshable={true}
+        refreshable={true}
         enableEmptySections={true}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
         headerView={() => <SearchBar onChange={this.search.bind(this)} />}

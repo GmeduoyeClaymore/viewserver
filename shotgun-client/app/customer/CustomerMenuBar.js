@@ -32,7 +32,7 @@ export default class CustomerMenuBar extends Component {
     render(){
       const { itemCount } = this.state;
       const {navigate} = this.props.navigation;
-      const rows = this.props.shoppingCartDao.itemData;
+      const {rows} = this.props.shoppingCartDao;
       return <View style={styles.container}>
         <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => navigate('ShoppingCart', {rows})}/>
       </View>;

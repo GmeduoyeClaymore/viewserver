@@ -3,10 +3,10 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.GroupByNode;
-import io.viewserver.execution.nodes.IndexNode;
-import io.viewserver.execution.nodes.UnEnumNode;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.Schema;
 
 import java.util.Arrays;
 
@@ -19,14 +19,7 @@ public class OrderItemsDataSource {
         public static DataSource getDataSource() {
                 CsvDataAdapter dataAdapter = new CsvDataAdapter();
                 dataAdapter.setFileName("data/orderItem.csv");
-            Schema schema = new Schema()
-                    .withColumns(Arrays.asList(
-                            new Column("orderId", "orderId", ColumnType.String),
-                            new Column("customerId", "customerId", ColumnType.String),
-                            new Column("productId", "productId", ColumnType.String),
-                            new Column("quantity", "quantity", ColumnType.Int)
-                    ));
-            return new DataSource()
+                return new DataSource()
                         .withName(NAME)
                         .withDataLoader(
                                 new DataLoader(
@@ -35,7 +28,13 @@ public class OrderItemsDataSource {
                                         null
                                 )
                         )
-                        .withSchema(schema)
-                        .withOutput(NAME);
+                        .withSchema(new Schema()
+                                        .withColumns(Arrays.asList(
+                                                new Column("orderId", "orderId", ColumnType.String),
+                                                new Column("customerId", "customerId", ColumnType.String),
+                                                new Column("productId", "productId", ColumnType.String),
+                                                new Column("quantity", "quantity", ColumnType.Int)
+                                        ))
+                        );
         }
 }
