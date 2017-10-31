@@ -33,11 +33,13 @@ public class OrderItemsDataSource {
                         )
                         .withSchema(new Schema()
                                         .withColumns(Arrays.asList(
+                                                new Column("itemId", "itemId", ColumnType.String),
                                                 new Column("orderId", "orderId", ColumnType.String),
                                                 new Column("customerId", "customerId", ColumnType.String),
                                                 new Column("productId", "productId", ColumnType.String),
                                                 new Column("quantity", "quantity", ColumnType.Int)
                                         ))
+                        .withKeyColumns("itemId")
                         ).withNodes(
                                 new JoinNode("productJoin")
                                         .withLeftJoinColumns("productId")
@@ -52,6 +54,6 @@ public class OrderItemsDataSource {
                                         .withConnection("totalPriceCalcCol")
                         )
                 .withOutput("cartItems")
-                .withOptions(DataSourceOption.IsReportSource);
+                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
         }
 }

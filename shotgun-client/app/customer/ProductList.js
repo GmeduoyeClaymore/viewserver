@@ -2,14 +2,10 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
-import ListViewDataSink from '../common/ListViewDataSink';
-import OperatorSubscriptionStrategy from '../common/OperatorSubscriptionStrategy';
+import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
+import OperatorSubscriptionStrategy from '../common/subscriptionStrategies/OperatorSubscriptionStrategy';
 
 export default class ProductList extends Component {
-  /* static propTypes = {
-    client: PropTypes.object.isRequired
-  };*/
-
   constructor(props) {
     super(props);
     const {client} = this.props.screenProps;

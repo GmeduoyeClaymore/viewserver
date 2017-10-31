@@ -37,7 +37,9 @@ message RowEventDto {
         string stringValue = 7;
         bytes blobValue = 8;
         sint32 nullValue = 9;
+        }
     }
-}
-repeated ColumnValue values = 3;
+
+    repeated ColumnValue values = 3;
+    optional string tableKey = 4;
 }

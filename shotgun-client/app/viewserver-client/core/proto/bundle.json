@@ -633,6 +633,10 @@
           "rule": "repeated",
           "type": "ColumnValue",
           "id": 3
+        },
+        "tableKey": {
+          "type": "string",
+          "id": 4
         }
       },
       "nested": {

@@ -1,7 +1,7 @@
 import * as FieldMappings from './FieldMappings';
-import DataSink from '../../common/DataSink';
-import SnapshotCompletePromise from '../../common/SnapshotCompletePromise';
-import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
+import DataSink from '../../common/dataSinks/DataSink';
+import SnapshotCompletePromise from '../../common/promises/SnapshotCompletePromise';
+import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
 
 export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
     static DEFAULT_OPTIONS = (customerId) =>  {

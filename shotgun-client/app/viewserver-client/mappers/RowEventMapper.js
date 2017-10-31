@@ -23,6 +23,7 @@ export default class RowEventMapper{
   static toDto(rowEvent, dataSink) {
     const rowEventDto = ProtoLoader.Dto.RowEventDto.create({
       eventType: RowEventMapper.mapRowEventType(rowEvent.type),
+      tableKey: rowEvent.tableKey,
       rowId: (rowEvent.rowId >= 0 ? rowEvent.rowId : undefined)
     });
 

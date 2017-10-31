@@ -41,6 +41,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntIntHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -378,11 +379,19 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                         rowIdMap.put(rowEventDto.getRowId(), rowId);
                     }
                 } else {
-                    int rowId = rowIdMap != null ? rowIdMap.get(rowEventDto.getRowId()) : rowEventDto.getRowId();
+
                     if(commandResult.getMessage().length() > 0)
                         commandResult.setMessage(",");
-                    commandResult.setMessage("U"+rowId);
-                    ((ITable) operator).updateRow(rowId, tableRowUpdater);
+
+                    if(operator instanceof KeyedTable && rowEventDto.getKey() != null) {
+                        TableKey updateKey = new TableKey(rowEventDto.getKey());
+                        ((KeyedTable) operator).updateRow(updateKey, tableRowUpdater);
+                        commandResult.setMessage("U "+ rowEventDto.getKey());
+                    }else{
+                        int rowId = rowIdMap != null ? rowIdMap.get(rowEventDto.getRowId()) : rowEventDto.getRowId();
+                        ((ITable) operator).updateRow(rowId, tableRowUpdater);
+                        commandResult.setMessage("U "+ rowId);
+                    }
                 }
             } finally {
                 rowEventDto.release();

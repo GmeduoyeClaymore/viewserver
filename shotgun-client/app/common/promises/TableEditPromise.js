@@ -1,11 +1,10 @@
-import Logger from '../viewserver-client/Logger';
+import Logger from '../../viewserver-client/Logger';
 
-export default class PromiseEventHandler {
+export default class TableEditPromise{
   constructor(){
     this.promise = new Promise(this._handlePromiseExecution.bind(this));
     this.onSuccess = this.onSuccess.bind(this);
     this.onError = this.onError.bind(this);
-    this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
   }
 
   then () {
@@ -13,12 +12,8 @@ export default class PromiseEventHandler {
   }
 
   _handlePromiseExecution(resolve, reject){
-    this.resolve = resolve;
-    this.reject = reject;
-  }
-
-  onSnapshotComplete(){
-    this.resolve();
+    this.resolve = arg => { resolve(arg); this.dispose(); };
+    this.reject = arg => { reject(arg); this.dispose(); };
   }
 
   onError(message){
@@ -26,7 +21,11 @@ export default class PromiseEventHandler {
     this.reject(message);
   }
 
-  onSuccess(){
+  onSuccess(commandResultId, message){
+    Logger.info(`Table edit result successfully executed with the following message "${message}"`);
     this.resolve();
+  }
+
+  dispose(){
   }
 }
