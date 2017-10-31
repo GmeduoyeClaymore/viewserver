@@ -15,7 +15,7 @@ export default class App extends React.Component {
     //TODO - for some reason localhost or loopback ip doesnt' work here
     this.client = new Client('ws://192.168.0.5:8080/');
     this.principal = {
-      customerId: '3BBuxi',
+      customerId: '4BBuxi',
     };
     this.applicationMode = 'customer';
   }

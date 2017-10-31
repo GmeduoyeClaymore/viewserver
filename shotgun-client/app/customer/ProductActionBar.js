@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
-import ActionButton from '../common/ActionButton.js';
+import ActionButton from '../common/components/ActionButton.js';
 import icon from  '../common/assets/basket-fill.png';
 
 export default class ProductActionBar extends Component {

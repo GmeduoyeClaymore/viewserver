@@ -1,9 +1,9 @@
 import * as FieldMappings from './FieldMappings';
-import DataSink from '../../common/DataSink';
+import DataSink from '../../common/dataSinks/DataSink';
 import Logger from '../../viewserver-client/Logger';
-import ClientTableEventPromise from '../../common/ClientTableEventPromise';
-import CoolRxDataSink from '../../common/CoolRxDataSink';
-import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
+import TableEditPromise from '../../common/promises/TableEditPromise';
+import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
+import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 
 export default class OrderItems extends DataSink(CoolRxDataSink){
@@ -24,17 +24,13 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
       this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
-      this.subscribeToData(this);
+      this.subscriptionStrategy.subscribe(this, OrderItems.DEFAULT_OPTIONS(this.customerId));
     }
 
     get shoppingCartSizeObservable(){
       return this.onTotalRowCountObservable;
     }
 
-    subscribeToData(datasink){
-      this.subscriptionStrategy.subscribe(datasink, OrderItems.DEFAULT_OPTIONS(this.customerId));
-    }
-  
     async addItemToCart(productId, quantity){
       let cartRowEvent;
       
@@ -48,18 +44,18 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
         cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
       }
 
-      const clientTablEventPromise = new ClientTableEventPromise(this, [cartRowEvent]);
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], clientTablEventPromise);
-      const modifiedRows = await clientTablEventPromise;
+      const tableEditPromise = new TableEditPromise();
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], tableEditPromise);
+      const modifiedRows = await tableEditPromise;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
     }
 
     async purchaseCartItems(orderId){
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.itemId, {orderId}));
-      const clientTableEventPromise = new ClientTableEventPromise(this, rowEvents);
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, clientTableEventPromise);
-      await clientTableEventPromise;
+      const tableEditPromise = new TableEditPromise();
+      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, tableEditPromise);
+      await tableEditPromise;
       Logger.info('purchase cart item promise resolved');
     }
 

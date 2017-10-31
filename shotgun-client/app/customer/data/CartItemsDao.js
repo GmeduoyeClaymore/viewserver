@@ -1,7 +1,7 @@
 import * as FieldMappings from './FieldMappings';
-import DataSink from '../../common/DataSink';
-import CoolRxDataSink from '../../common/CoolRxDataSink';
-import OperatorSubscriptionStrategy from '../../common/OperatorSubscriptionStrategy';
+import DataSink from '../../common/dataSinks/DataSink';
+import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
+import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
 
 export default class CartItemsDao extends DataSink(CoolRxDataSink) {
   static DEFAULT_OPTIONS = (customerId) => {

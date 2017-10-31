@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import { View, StyleSheet } from 'react-native';
-import ActionButton from '../common/ActionButton';
+import ActionButton from '../common/components/ActionButton';
 import icon from  '../common/assets/cart-outline.png';
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
@@ -11,12 +11,12 @@ export default class CustomerMenuBar extends Component {
 
     constructor(props){
       super(props);
-      this.updateItemCount = this.updateItemCount.bind(this);
-      this.state = {itemCount: 0};
+      this.updateTotalQuantity = this.updateTotalQuantity.bind(this);
+      this.state = {totalQuantity: 0};
     }
 
     componentWillMount(){
-      this.subscription = this.props.cartSummaryDao.totalQuantity.subscribe(this.updateItemCount);
+      this.subscription = this.props.cartSummaryDao.subscribe(this.updateTotalQuantity);
     }
 
     componentWillUnmount(){
@@ -25,15 +25,16 @@ export default class CustomerMenuBar extends Component {
       }
     }
 
-    updateItemCount(itemCount){
-      this.setState({itemCount});
+    updateTotalQuantity(cartSummary){
+      const totalQuantity = cartSummary ? cartSummary.totalQuantity : 0;
+      this.setState({totalQuantity});
     }
 
     render(){
-      const { itemCount } = this.state;
+      const { totalQuantity } = this.state;
       const {navigate} = this.props.navigation;
       return <View style={styles.container}>
-        <ActionButton buttonText={`(${itemCount})`} icon={icon} action={() => navigate('Cart')}/>
+        <ActionButton buttonText={`(${totalQuantity})`} icon={icon} action={() => navigate('Cart')}/>
       </View>;
     }
 }

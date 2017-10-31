@@ -11,16 +11,12 @@ export default class CoolRxDataSink{
     this._onRowUpdated = new Rx.ReplaySubject(1);
     this._onRowRemoved = new Rx.ReplaySubject(1);
     this._onColumnAdded = new Rx.ReplaySubject(1);
-    this._onRowAddedOrUpdatedObservable = new Rx.ReplaySubject(1);
   }
   get rowAddedObservable(){
     return this._rowAdded;
   }
-  get snapshotCompleteObservable(){
+  get onSnapshotCompleteObservable(){
     return this._snapshotComplete;
-  }
-  get onRowAddedOrUpdatedObservable(){
-    return this._onRowAddedOrUpdatedObservable;
   }
   get onDataResetObservable(){
     return this._onDataReset;
@@ -58,12 +54,10 @@ export default class CoolRxDataSink{
   onRowAdded(rowId, row){
     row.rowId = rowId;
     this._onRowAdded.onNext(row);
-    this._onRowAddedOrUpdatedObservable.onNext(row);
   }
   onRowUpdated(rowId, row){
     row.rowId = rowId;
     this._onRowUpdated.onNext(row);
-    this._onRowAddedOrUpdatedObservable.onNext(row);
   }
   onRowRemoved(rowId){
     this._onRowRemoved.onNext(rowId);

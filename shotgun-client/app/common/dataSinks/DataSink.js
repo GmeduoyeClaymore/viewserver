@@ -1,4 +1,4 @@
-import Logger from '../viewserver-client/Logger';
+import Logger from '../../viewserver-client/Logger';
 
 export default DataSink = (superclass) => class extends superclass {
   constructor(){
@@ -72,7 +72,7 @@ export default DataSink = (superclass) => class extends superclass {
     const rowIndex = this._getRowIndex(rowId);
     if (!!~rowIndex){
       delete this.idIndexes[rowId];
-      this.rows = this.rows.splice(rowIndex, 1);
+      this.rows.splice(rowIndex, 1);
     }
   }
   onColumnAdded(colId, col){

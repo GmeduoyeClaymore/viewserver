@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
-import Logger from '../viewserver-client/Logger';
+import Logger from '../../viewserver-client/Logger';
 import DataSink from './DataSink';
 
 const styles = StyleSheet.create({
