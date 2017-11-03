@@ -68,30 +68,4 @@ public abstract class ReportContextHandler<TCommand> extends SubscriptionHandler
 
         return reportRegistry.getReportById(reportContext.getReportName());
     }
-
-    protected IConfiguratorSpec.OperatorSpec getUnEnumSpec(ExecutionContext executionContext, ICatalog catalog, ReportContextExecutionPlanContext executionPlanContext, CommandResult commandResult){
-        // unenum
-        UnEnumNode unEnumNode = new UnEnumNode("unenum", executionPlanContext.getDataSource())
-                .withConnection(executionPlanContext.getInputOperator(), executionPlanContext.getInputOutputName(), Constants.IN);
-
-        IConfiguratorSpec.OperatorSpec unEnumSpec = unEnumNode.getOperatorSpec(null, true);
-
-        configurator.process(new IConfiguratorSpec() {
-            @Override
-            public List<OperatorSpec> getOperators() {
-                return Collections.singletonList(unEnumSpec);
-            }
-
-            @Override
-            public void reset() {
-            }
-        }, executionContext, catalog, commandResult);
-
-        return unEnumSpec;
-    }
-
-    protected ICatalog getGraphNodesCatalog(IPeerSession peerSession) {
-        final ICatalog systemCatalog = peerSession.getSystemCatalog();
-        return systemCatalog.getChild("graphNodes");
-    }
 }

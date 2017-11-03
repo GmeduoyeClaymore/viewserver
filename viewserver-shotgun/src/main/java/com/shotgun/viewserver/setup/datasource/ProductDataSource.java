@@ -35,6 +35,9 @@ ProductDataSource {
                                 new Column("price", "price", ColumnType.Double),
                                 new Column("rating", "rating", ColumnType.Double)
                         ))
-                );
+                        .withKeyColumns("productId")
+                )
+                .withOutput(NAME)
+                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

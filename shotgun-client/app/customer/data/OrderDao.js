@@ -1,11 +1,11 @@
 import * as FieldMappings from './FieldMappings';
 import DataSink from '../../common/dataSinks/DataSink';
 import Logger from '../../viewserver-client/Logger';
-import TableEditPromise from '../../common/promises/TableEditPromise';
 import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
-import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import {OrderStatuses} from '../../common/constants/OrderStatuses';
 import uuidv4 from 'uuid/v4';
+import moment from 'moment';
 
 export default class OrderDao extends DataSink(CoolRxDataSink){
     static DEFAULT_OPTIONS = (customerId) =>  {
@@ -22,7 +22,7 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
   
     constructor(viewserverClient, customerId){
       super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_TABLE_NAME);
+      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscriptionStrategy.subscribe(this, OrderDao.DEFAULT_OPTIONS(this.customerId));
@@ -33,23 +33,22 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
       const orderId = uuidv4();
       Logger.info(`Creating order ${orderId}`);
       const addOrderRowEvent = this.createAddOrderRowEvent(orderId);
-      const tableEditPromise = new TableEditPromise();
-      this.viewserverClient.editTable(FieldMappings.ORDER_TABLE_NAME, this, [addOrderRowEvent], tableEditPromise);
-      await tableEditPromise;
+      await this.subscriptionStrategy.editTable(this, [addOrderRowEvent]);
       Logger.info('Create order promise resolved');
       return orderId;
     }
 
     createAddOrderRowEvent(orderId){
-      //const created = new Date();
+      //note we are using UTC offset time format here
+      const created = moment().format('DD/MM/YYYY HH:mm:ssZ');
 
       return {
         type: 0, // ADD
         columnValues: {
           orderId,
           customerId: this.customerId,
-          /*  created,
-          lastModified: created,*/
+          created,
+          lastModified: created,
           status: OrderStatuses.PLACED
         }
       };

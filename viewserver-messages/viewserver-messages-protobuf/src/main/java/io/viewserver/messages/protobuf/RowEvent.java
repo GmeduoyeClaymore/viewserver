@@ -87,11 +87,6 @@ public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<Row
     }
 
     @Override
-    public int getRowId() {
-        return rowEventDto.getRowId();
-    }
-
-    @Override
     public String getKey(){
         return rowEventDto.getTableKey();
     }
@@ -100,6 +95,11 @@ public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<Row
     public IRowEvent setKey(String key){
         getRowEventDtoBuilder().setTableKey(key);
         return this;
+    }
+
+    @Override
+    public int getRowId() {
+        return rowEventDto.getRowId();
     }
 
     @Override

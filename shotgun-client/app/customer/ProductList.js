@@ -3,13 +3,13 @@ import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
-import OperatorSubscriptionStrategy from '../common/subscriptionStrategies/OperatorSubscriptionStrategy';
+import DataSourceSubscriptionStrategy from '../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
 export default class ProductList extends Component {
   constructor(props) {
     super(props);
     const {client} = this.props.screenProps;
-    this.subscriptionStrategy = new OperatorSubscriptionStrategy(client, '/datasources/product/product');
+    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(client, 'product');
   }
 
   search(productName) {

@@ -22,6 +22,18 @@ public class OrderItemsDataSource {
         public static DataSource getDataSource() {
                 CsvDataAdapter dataAdapter = new CsvDataAdapter();
                 dataAdapter.setFileName("data/orderItem.csv");
+
+
+                Schema schema = new Schema()
+                        .withColumns(Arrays.asList(
+                                new Column("itemId", "itemId", ColumnType.String),
+                                new Column("orderId", "orderId", ColumnType.String),
+                                new Column("customerId", "customerId", ColumnType.String),
+                                new Column("productId", "productId", ColumnType.String),
+                                new Column("quantity", "quantity", ColumnType.Int)
+                        ))
+                        .withKeyColumns("itemId");
+
                 return new DataSource()
                         .withName(NAME)
                         .withDataLoader(
@@ -31,28 +43,21 @@ public class OrderItemsDataSource {
                                         null
                                 )
                         )
-                        .withSchema(new Schema()
-                                        .withColumns(Arrays.asList(
-                                                new Column("itemId", "itemId", ColumnType.String),
-                                                new Column("orderId", "orderId", ColumnType.String),
-                                                new Column("customerId", "customerId", ColumnType.String),
-                                                new Column("productId", "productId", ColumnType.String),
-                                                new Column("quantity", "quantity", ColumnType.Int)
-                                        ))
-                        .withKeyColumns("itemId")
+                        .withSchema(schema
                         ).withNodes(
                                 new JoinNode("productJoin")
                                         .withLeftJoinColumns("productId")
                                         .withRightJoinColumns("productId")
                                         .withConnection(NAME, Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
-                                new CalcColNode("totalPriceCalcCol")
+                                new CalcColNode("cartItems")
                                         .withCalculations(new CalcColOperator.CalculatedColumn("totalPrice", "quantity * price"))
-                                        .withConnection("productJoin"),
-                                new FilterNode("cartItems")
-                                        .withExpression("orderId == null")
-                                        .withConnection("totalPriceCalcCol")
+                                        .withConnection("productJoin")
                         )
+                        .withDimensions(Arrays.asList(
+                                new Dimension("orderId", Cardinality.Int, schema.getColumn("orderId"))
+                                        .setLabel("Order Id").setPlural("Order Ids").setGroup("Order")
+                        ))
                 .withOutput("cartItems")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
         }

@@ -20,6 +20,19 @@ OrderDataSource {
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
         dataAdapter.setFileName("data/order.csv");
+        Schema schema = new Schema()
+                .withColumns(Arrays.asList(
+                        new Column("orderId", "orderId", ColumnType.String),
+                        new Column("created", "created", ColumnType.DateTime),
+                        new Column("lastModified", "lastModified", ColumnType.DateTime),
+                        new Column("status", "status", ColumnType.String),
+                        new Column("customerId", "customerId", ColumnType.String),
+                        new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
+                        new Column("deliveryId", "deliveryId", ColumnType.String),
+                        new Column("deliverySizeRequirement", "deliverySizeRequirement", ColumnType.String)
+                ))
+                .withKeyColumns("orderId");
+
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -29,17 +42,12 @@ OrderDataSource {
                                 null
                         )
                 )
-                .withSchema(new Schema()
-                        .withColumns(Arrays.asList(
-                                new Column("orderId", "orderId", ColumnType.String),
-                                new Column("created", "created", ColumnType.DateTime),
-                                new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                new Column("status", "status", ColumnType.String),
-                                new Column("customerId", "customerId", ColumnType.String),
-                                new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
-                                new Column("deliveryId", "deliveryId", ColumnType.String),
-                                new Column("deliverySizeRequirement", "deliverySizeRequirement", ColumnType.String)
-                        ))
-                );
+                .withSchema(schema)
+                .withDimensions(Arrays.asList(
+                        new Dimension("orderId", Cardinality.Int, schema.getColumn("orderId"))
+                                .setLabel("Order Id").setPlural("Order Ids").setGroup("Order")
+                ))
+                .withOutput(NAME)
+                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

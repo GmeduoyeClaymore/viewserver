@@ -39,3 +39,4 @@ public interface ISubscribeCommand<T> extends IPoolableMessage<T> {
 
     ISubscribeCommand setProjection(IProjectionConfig projection);
 }
+

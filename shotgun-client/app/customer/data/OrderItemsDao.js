@@ -1,9 +1,8 @@
 import * as FieldMappings from './FieldMappings';
 import DataSink from '../../common/dataSinks/DataSink';
 import Logger from '../../viewserver-client/Logger';
-import TableEditPromise from '../../common/promises/TableEditPromise';
 import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
-import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 
 export default class OrderItems extends DataSink(CoolRxDataSink){
@@ -14,14 +13,14 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
         columnName: undefined,
         columnsToSort: undefined,
         filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}" && orderId == null`,
+        filterExpression: `customerId == "${customerId}" && orderId == null`, //TODO - this is quite dangerous is we remove the filter all a users orders could be updated.
         flags: undefined
       };
     };
   
     constructor(viewserverClient, customerId){
       super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
+      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.customerId = customerId;
       this.subscriptionStrategy.subscribe(this, OrderItems.DEFAULT_OPTIONS(this.customerId));
@@ -44,25 +43,22 @@ export default class OrderItems extends DataSink(CoolRxDataSink){
         cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
       }
 
-      const tableEditPromise = new TableEditPromise();
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, [cartRowEvent], tableEditPromise);
-      const modifiedRows = await tableEditPromise;
+      const modifiedRows = await this.subscriptionStrategy.editTable(this, [cartRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       return modifiedRows;
     }
 
     async purchaseCartItems(orderId){
       const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.itemId, {orderId}));
-      const tableEditPromise = new TableEditPromise();
-      this.viewserverClient.editTable(FieldMappings.ORDER_ITEM_TABLE_NAME, this, rowEvents, tableEditPromise);
-      await tableEditPromise;
-      Logger.info('purchase cart item promise resolved');
+      await this.subscriptionStrategy.editTable(this, rowEvents);
+      Logger.info('Purchase cart item promise resolved');
     }
 
     createAddOrderItemRowEvent(productId, quantity){
       return {
         type: 0, // ADD
         columnValues: {
+          orderId: null,
           itemId: uuidv4(),
           customerId: this.customerId,
           productId,

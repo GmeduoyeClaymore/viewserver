@@ -131,6 +131,11 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
 
             IDataSource dataSource = dataSourceRegistry.get(tableName);
 
+            if(dataSource == null){//TODO - this is a hack as we currently send the full path to the table for some reason and so it can't be found in the registry
+                dataSource = dataSourceRegistry.get(tableName.substring(tableName.lastIndexOf("/")+1));
+            }
+            final IDataSource finalDataSource = dataSource;
+
             boolean willReset = false;
             final List<IStatus> statuses = tableEvent.getStatuses();
             final int statusCount = statuses.size();
@@ -157,7 +162,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
             }
 
             if (willReset && operator instanceof IInputOperator) {
-                ((IInputOperator)operator).deferOperation(() -> performRowOperations(data, commandResult, operator, dataSource, peerSession));
+                ((IInputOperator)operator).deferOperation(() -> performRowOperations(data, commandResult, operator, finalDataSource, peerSession));
             } else {
                 performRowOperations(data, commandResult, operator, dataSource, peerSession);
             }

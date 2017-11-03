@@ -23,6 +23,7 @@ import io.viewserver.messages.command.*;
 import io.viewserver.messages.config.*;
 import io.viewserver.messages.heartbeat.IHeartbeat;
 import io.viewserver.messages.protobuf.dto.MessageMessage;
+import io.viewserver.messages.protobuf.dto.SubscribeDataSourceCommandMessage;
 import io.viewserver.messages.tableevent.*;
 
 /**
@@ -44,6 +45,7 @@ public class Message extends PoolableMessage<Message> implements IMessage<Messag
         MessagePool.getInstance().createPool(IAuthenticateCommand.class, AuthenticateCommand::new);
         MessagePool.getInstance().createPool(IConfigurateCommand.class, ConfigurateCommand::new);
         MessagePool.getInstance().createPool(ISubscribeCommand.class, SubscribeCommand::new);
+        MessagePool.getInstance().createPool(ISubscribeDataSourceCommand.class, SubscribeDataSourceCommand::new);
         MessagePool.getInstance().createPool(ISubscribeReportCommand.class, SubscribeReportCommand::new);
         MessagePool.getInstance().createPool(ISubscribeDimensionCommand.class, SubscribeDimensionCommand::new);
         MessagePool.getInstance().createPool(IUpdateSubscriptionCommand.class, UpdateSubscriptionCommand::new);

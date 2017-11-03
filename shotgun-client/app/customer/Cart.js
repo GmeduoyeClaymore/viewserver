@@ -24,7 +24,7 @@ export default class Cart extends Component {
 
     componentWillMount(){
       this.cartSummarySubscription = this.customerService.cartSummaryDao.subscribe(this.updateCartSummary);
-      this.cartItemsSubscription = this.customerService.cartItemsDao.onSnapshotCompleteObservable.subscribe(this.updateCartItems);
+      this.ordersSubscription = this.customerService.cartItemsDao.onSnapshotCompleteObservable.subscribe(this.updateCartItems);
     }
 
     componentWillUnmount(){
@@ -32,8 +32,8 @@ export default class Cart extends Component {
         this.cartSummarySubscription.dispose();
       }
 
-      if (this.cartItemsSubscription){
-        this.cartItemsSubscription.dispose();
+      if (this.ordersSubscription){
+        this.ordersSubscription.dispose();
       }
     }
 

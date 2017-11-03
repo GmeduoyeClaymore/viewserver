@@ -4,6 +4,7 @@ import ProductList from './ProductList';
 import ProductDetails from './ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
 import Cart from './Cart';
+import Orders from './Orders';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
 import {StackNavigator} from 'react-navigation';
@@ -48,7 +49,8 @@ const CustomerLandingNavigator = StackNavigator(
   {
     ProductList: {screen: ProductList},
     ProductDetails: { screen: ProductDetails },
-    Cart: { screen: Cart }
+    Cart: { screen: Cart },
+    Orders: {screen: Orders}
   }, {
     initialRouteName: 'ProductList'
   });

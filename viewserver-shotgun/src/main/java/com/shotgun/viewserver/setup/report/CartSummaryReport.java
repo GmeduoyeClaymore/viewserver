@@ -16,9 +16,10 @@ public class CartSummaryReport {
                 .withParameter("customerId", "Customer Id", String[].class)
                 .withNodes(
                         new FilterNode("customerFilter")
-                                .withExpression("customerId == \"{customerId}\"")
+                                .withExpression("customerId == \"{customerId}\" && orderId == null")
                                 .withConnection("#input", null, Constants.IN),
                         new GroupByNode("totalsGroupBy")
+                                .withGroupByColumns("orderId")
                                 .withSummary("totalQuantity", "sum", "quantity")
                                 .withSummary("totalPrice", "sum", "totalPrice")
                                 .withConnection("customerFilter")
@@ -26,3 +27,4 @@ public class CartSummaryReport {
                 .withOutput("totalsGroupBy");
     }
 }
+

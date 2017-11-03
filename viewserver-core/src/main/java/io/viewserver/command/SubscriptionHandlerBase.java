@@ -16,18 +16,26 @@
 
 package io.viewserver.command;
 
+import io.viewserver.Constants;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
+import io.viewserver.configurator.IConfiguratorSpec;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.IExecutionPlanContext;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
+import io.viewserver.execution.context.ReportContextExecutionPlanContext;
+import io.viewserver.execution.nodes.UnEnumNode;
 import io.viewserver.execution.plan.UserExecutionPlan;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.serialiser.SerialiserOperator;
 import io.viewserver.util.ViewServerException;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -78,5 +86,31 @@ public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBa
                 options);
 
         operator.getOutput(executionPlanContext.getInputOutputName()).plugIn(serialiser.getInput());
+    }
+
+    protected IConfiguratorSpec.OperatorSpec getUnEnumSpec(ExecutionContext executionContext, ICatalog catalog, OptionsExecutionPlanContext executionPlanContext, CommandResult commandResult){
+        // unenum
+        UnEnumNode unEnumNode = new UnEnumNode("unenum", executionPlanContext.getDataSource())
+                .withConnection(executionPlanContext.getInputOperator(), executionPlanContext.getInputOutputName(), Constants.IN);
+
+        IConfiguratorSpec.OperatorSpec unEnumSpec = unEnumNode.getOperatorSpec(null, true);
+
+        configurator.process(new IConfiguratorSpec() {
+            @Override
+            public List<OperatorSpec> getOperators() {
+                return Collections.singletonList(unEnumSpec);
+            }
+
+            @Override
+            public void reset() {
+            }
+        }, executionContext, catalog, commandResult);
+
+        return unEnumSpec;
+    }
+
+    protected ICatalog getGraphNodesCatalog(IPeerSession peerSession) {
+        final ICatalog systemCatalog = peerSession.getSystemCatalog();
+        return systemCatalog.getChild("graphNodes");
     }
 }

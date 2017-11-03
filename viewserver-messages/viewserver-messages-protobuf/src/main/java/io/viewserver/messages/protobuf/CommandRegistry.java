@@ -35,6 +35,7 @@ public class CommandRegistry {
     public CommandRegistry() {
         registerExtension(IAuthenticateCommand.class, AuthenticateCommandMessage.authenticateCommand);
         registerExtension(ISubscribeCommand.class, SubscribeCommandMessage.subscribeCommand);
+        registerExtension(ISubscribeDataSourceCommand.class, SubscribeDataSourceCommandMessage.subscribeDataSourceCommand);
         registerExtension(ISubscribeReportCommand.class, SubscribeReportCommandMessage.subscribeReportCommand);
         registerExtension(ISubscribeDimensionCommand.class, SubscribeDimensionCommandMessage.subscribeDimensionCommand);
         registerExtension(IUpdateSubscriptionCommand.class, UpdateSubscriptionCommandMessage.updateSubscriptionCommand);

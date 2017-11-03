@@ -62,6 +62,20 @@ export default class Client {
     return this.sendCommand('subscribe', subscribeCommand, true, dataSink, 200);
   };
 
+  subscribeToDataSource = function (dataSourceName, options, dataSink, output, projection) {
+    const optionsDto = OptionsMapper.toDto(options);
+    const payload = {dataSourceName, outputName: output || 'out', options: optionsDto};
+    const error = ProtoLoader.Dto.SubscribeDataSourceCommandDto.verify(payload);
+    if (error){
+      throw Error(error);
+    }
+    const subscribeCommand = ProtoLoader.Dto.SubscribeDataSourceCommandDto.create(payload);
+    if (projection !== undefined) {
+      subscribeCommand.setProjection(ProjectionMapper.toDto(projection));
+    }
+    return this.sendCommand('subscribeDataSource', subscribeCommand, true, dataSink, 200);
+  };
+
   subscribeToReport = function (reportContext, options, dataSink) {
     const reportContextDto = ReportContextMapper.toDto(reportContext);
     const optionsDto = OptionsMapper.toDto(options);

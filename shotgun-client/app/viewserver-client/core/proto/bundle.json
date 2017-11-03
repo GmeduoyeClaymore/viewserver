@@ -1264,6 +1264,32 @@
       "id": 200,
       "extend": "CommandDto"
     },
+    "SubscribeDataSourceCommandDto": {
+      "fields": {
+        "dataSourceName": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "outputName": {
+          "type": "string",
+          "id": 2
+        },
+        "options": {
+          "type": "OptionsDto",
+          "id": 3
+        },
+        "projection": {
+          "type": "ProjectionConfigDto",
+          "id": 4
+        }
+      }
+    },
+    "subscribeDataSourceCommand": {
+      "type": "SubscribeDataSourceCommandDto",
+      "id": 206,
+      "extend": "CommandDto"
+    },
     "SubscribeDimensionCommandDto": {
       "fields": {
         "context": {

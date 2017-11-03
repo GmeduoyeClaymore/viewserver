@@ -1,7 +1,7 @@
 import * as FieldMappings from './FieldMappings';
 import DataSink from '../../common/dataSinks/DataSink';
 import SnapshotCompletePromise from '../../common/promises/SnapshotCompletePromise';
-import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
 export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
     static DEFAULT_OPTIONS = (customerId) =>  {
@@ -18,7 +18,7 @@ export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
   
     constructor(viewserverClient, customerId){
       super();
-      this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.CUSTOMER_TABLE_NAME);
+      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.CUSTOMER_TABLE_NAME);
       this.viewserverClient = viewserverClient;
       this.subscriptionStrategy.subscribe(this, CustomerDao.DEFAULT_OPTIONS(customerId));
     }

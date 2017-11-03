@@ -2,6 +2,7 @@ package com.shotgun.viewserver.setup;
 
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.setup.report.CartSummaryReport;
+import com.shotgun.viewserver.setup.report.OrderSummaryReport;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.server.setup.BootstrapperBase;
 
@@ -37,6 +38,7 @@ public class DemoBootstrapper extends BootstrapperBase {
     protected Map<String, ReportDefinition> getReportDefinitions() {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
         reportDefinitions.put(CartSummaryReport.ID, CartSummaryReport.getReportDefinition());
+        reportDefinitions.put(OrderSummaryReport.ID, OrderSummaryReport.getReportDefinition());
 
         return reportDefinitions;
     }

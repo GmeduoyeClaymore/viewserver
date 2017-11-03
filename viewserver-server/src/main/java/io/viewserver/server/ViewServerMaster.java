@@ -323,6 +323,7 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         commandHandlerRegistry.register("tableEdit", new TableEditCommandHandler(getDataSourceRegistry(), dimensionMapper, tableFactoryRegistry));
 
         commandHandlerRegistry.register("subscribeReport", new SubscribeReportHandler(dimensionMapper, getDataSourceRegistry(), reportRegistry, getSubscriptionManager(), distributionManager, configurator, executionPlanRunner, reportContextRegistry, systemReportExecutor));
+        commandHandlerRegistry.register("subscribeDataSource", new SubscribeDataSourceHandler(getDataSourceRegistry(), getSubscriptionManager(), distributionManager, configurator, executionPlanRunner));
         commandHandlerRegistry.register("subscribeDimension", new SubscribeDimensionHandler(dimensionMapper, getDataSourceRegistry(), reportRegistry, getSubscriptionManager(), distributionManager, getServerExecutionContext().getOperatorFactoryRegistry(), configurator, executionPlanRunner));
 
         commandHandlerRegistry.register("executeSql", new ExecuteSqlCommandHandler(getSubscriptionManager(),

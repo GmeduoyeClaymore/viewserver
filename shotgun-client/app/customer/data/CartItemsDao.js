@@ -1,7 +1,7 @@
 import * as FieldMappings from './FieldMappings';
 import DataSink from '../../common/dataSinks/DataSink';
 import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
-import OperatorSubscriptionStrategy from '../../common/subscriptionStrategies/OperatorSubscriptionStrategy';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
 export default class CartItemsDao extends DataSink(CoolRxDataSink) {
   static DEFAULT_OPTIONS = (customerId) => {
@@ -18,7 +18,7 @@ export default class CartItemsDao extends DataSink(CoolRxDataSink) {
 
   constructor(viewserverClient, customerId) {
     super();
-    this.subscriptionStrategy = new OperatorSubscriptionStrategy(viewserverClient, FieldMappings.CART_ITEMS_VIEW_NAME);
+    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
     this.subscriptionStrategy.subscribe(this, CartItemsDao.DEFAULT_OPTIONS(customerId));
   }
 }
