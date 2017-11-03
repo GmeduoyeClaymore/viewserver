@@ -17,4 +17,11 @@ export default class DataSourceSubscriptionStrategyStrategy{
     this.client.editTable(`/datasources/${this.path}/${this.path}`, dataSink, rowEvents, tableEditPromise);
     return tableEditPromise;
   }
+
+  update(dataSink, options){
+    if (!this.subscribeCommand){
+      throw new Error('No subscribe command found must call subscribe before we call update subscription');
+    }
+    this.updateSubscribeCommand = this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
+  }
 }

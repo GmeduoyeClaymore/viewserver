@@ -433,7 +433,7 @@ public class ReportContext extends PoolableMessage<ReportContext>
                     }
 
                     @Override
-                    public void add(boolean value) {
+                    public void add(int index, boolean value) {
                         getValueDtoBuilder().getBooleanListBuilder().addBooleanValue(value);
                     }
                 };

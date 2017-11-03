@@ -52,7 +52,8 @@ const CustomerLandingNavigator = StackNavigator(
     Cart: { screen: Cart },
     Orders: {screen: Orders}
   }, {
-    initialRouteName: 'ProductList'
+    initialRouteName: 'ProductList',
+    headerMode: 'none'
   });
 
 CustomerLanding.router = CustomerLandingNavigator.router;

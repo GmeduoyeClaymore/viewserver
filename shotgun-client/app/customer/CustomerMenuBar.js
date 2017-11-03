@@ -1,13 +1,14 @@
 import React, {Component, PropTypes} from 'react';
 import { View, StyleSheet } from 'react-native';
 import ActionButton from '../common/components/ActionButton';
-import icon from  '../common/assets/cart-outline.png';
+import cartIcon from  '../common/assets/cart-outline.png';
+import homeIcon from  '../common/assets/home.png';
+import orderIcon from  '../common/assets/orders.png';
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
       cartSummaryDao: PropTypes.object,
       navigation: PropTypes.object
     };
-
 
     constructor(props){
       super(props);
@@ -34,7 +35,9 @@ export default class CustomerMenuBar extends Component {
       const { totalQuantity } = this.state;
       const {navigate} = this.props.navigation;
       return <View style={styles.container}>
-        <ActionButton buttonText={`(${totalQuantity})`} icon={icon} action={() => navigate('Cart')}/>
+        <ActionButton buttonText={null} icon={homeIcon} action={() => navigate('ProductList')}/>
+        <ActionButton buttonText={`(${totalQuantity})`} icon={cartIcon} action={() => navigate('Cart')}/>
+        <ActionButton buttonText={null} icon={orderIcon} action={() => navigate('Orders')}/>
       </View>;
     }
 }

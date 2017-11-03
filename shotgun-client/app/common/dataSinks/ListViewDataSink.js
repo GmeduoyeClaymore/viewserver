@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class DataSinkListView extends DataSink(Component){
+export default class ListViewDataSink extends DataSink(Component){
     static propTypes = {
       subscriptionStrategy: PropTypes.object.isRequired,
       rowView: PropTypes.func.isRequired,
@@ -41,7 +41,7 @@ export default class DataSinkListView extends DataSink(Component){
       page: 1,
       hasNextPage: true,
       refreshing: false,
-      options: DataSinkListView.DEFAULT_OPTIONS
+      options: ListViewDataSink.DEFAULT_OPTIONS
     };
     
     componentDidMount() {
@@ -75,7 +75,7 @@ export default class DataSinkListView extends DataSink(Component){
         return;
       }
       const { limit } = this.state.options;
-      const newLimit = limit + DataSinkListView.DEFAULT_OPTIONS.limit;
+      const newLimit = limit + ListViewDataSink.DEFAULT_OPTIONS.limit;
       const newOptions = {...this.state.options};
       newOptions.limit = newLimit;
       this.props.subscriptionStrategy.update(this, newOptions);
@@ -90,23 +90,18 @@ export default class DataSinkListView extends DataSink(Component){
     }
     
     refresh(){
-      this.props.subscriptionStrategy.update(this.props.client, DataSinkListView.DEFAULT_OPTIONS);
-      this.setState({options: DataSinkListView.DEFAULT_OPTIONS});
+      this.props.subscriptionStrategy.update(this.props.client, ListViewDataSink.DEFAULT_OPTIONS);
+      this.setState({options: ListViewDataSink.DEFAULT_OPTIONS});
     }
 
-    renderItem = (item) => {
-      const RowView = this.props.rowView;
-      return <RowView key={item.productId} style={{flex: 1}} item={item}/>;
-    };
+    renderItem = (item) => this.props.rowView(item);
     
     render() {
       const { rows } = this;
       const { emptyView, headerView: HeaderView } = this.props;
       return (
         <View style={{flex: 1, flexDirection: 'column'}}>
-          <View style={{height: 60}}>
-            <HeaderView/>
-          </View>
+          <HeaderView/>
           {(rows.length === 0)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
             {this.rows.map( c => this.renderItem(c))}
           </ScrollView >}

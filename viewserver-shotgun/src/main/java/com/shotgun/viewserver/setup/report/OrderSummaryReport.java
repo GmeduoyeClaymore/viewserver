@@ -17,9 +17,8 @@ public class OrderSummaryReport {
                 return new ReportDefinition(ID, "orderSummary")
                         .withDataSource(OrderItemsDataSource.NAME)
                         .withParameter("customerId", "Customer Id", String[].class)
-                        /*.withParameter("isCompleted", "Is Order Complete", Boolean[].class)*/
+                        .withParameter("isCompleted", "Is Order Complete", Boolean[].class)
                         .withNodes(
-                                //TODO status filter
                                 new FilterNode("orderFilter")
                                         .withExpression("customerId == \"{customerId}\" && orderId != null")
                                         .withConnection("#input", null, Constants.IN),
@@ -33,14 +32,18 @@ public class OrderSummaryReport {
                                         .withRightJoinColumns("orderId")
                                         .withConnection("totalsGroupBy", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(OrderDataSource.NAME, OrderDataSource.NAME), Constants.OUT, "right"),
+                                new FilterNode("statusFilter")
+                                        .withExpression("if({isCompleted} == true, status == \"COMPLETED\", true == true)")
+                                        .withConnection("orderSummaryJoin"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
                                                 new IProjectionConfig.ProjectionColumn("totalQuantity"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
+                                                new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("createdDate"))
-                                        .withConnection("orderSummaryJoin")
+                                        .withConnection("statusFilter")
                         )
                         .withOutput("orderSummaryProjection");
         }

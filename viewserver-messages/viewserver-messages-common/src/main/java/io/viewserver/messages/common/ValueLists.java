@@ -36,7 +36,7 @@ public class ValueLists {
         if (values[0] instanceof Boolean) {
             final BooleanList booleanList = new BooleanList();
             for (int i = 0; i < values.length; i++) {
-                booleanList.add((boolean)values[i]);
+                booleanList.add(i, (boolean)values[i]);
             }
             return booleanList;
         }
@@ -117,7 +117,7 @@ public class ValueLists {
     public interface IBooleanList extends IValueList {
         boolean get(int index);
 
-        void add(boolean value);
+        void add(int index, boolean value);
 
         default String getValuesString(String separator) {
             final int size = size();
@@ -163,7 +163,7 @@ public class ValueLists {
             this.size = other.size();
             innerList = new BitSet(size);
             for (int i = 0; i < size; i++) {
-                add(other.get(i));
+                add(i, other.get(i));
             }
         }
 
@@ -179,11 +179,10 @@ public class ValueLists {
         }
 
         @Override
-        public void add(boolean value) {
+        public void add(int index, boolean value) {
             if (value) {
-                innerList.set(size);
+                innerList.set(index, value);
             }
-            size++;
         }
 
         @Override

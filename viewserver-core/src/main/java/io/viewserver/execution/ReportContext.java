@@ -251,7 +251,7 @@ public class ReportContext implements IParameterHolder {
             final ValueLists.IBooleanList messageValues = value.getBooleanValues();
             int size = values.size();
             for (int i = 0; i < size; i++) {
-                messageValues.add(((ValueLists.IBooleanList) values).get(i));
+                messageValues.add(i, ((ValueLists.IBooleanList) values).get(i));
             }
             return value;
         }

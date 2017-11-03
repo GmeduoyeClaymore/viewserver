@@ -1,49 +1,68 @@
-import React, {Component, PropTypes} from 'react';
-import {View, Text} from 'react-native';
-import ActionButton from '../common/components/ActionButton';
-import icon from '../common/assets/truck-fast.png';
+import React, {PropTypes} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
+import ReportSubscriptionStrategy from '../common/subscriptionStrategies/ReportSubscriptionStrategy';
+import { TabNavigator } from 'react-navigation';
 
-export default class Orders extends Component {
-    static PropTypes = {
-      customerService: PropTypes.object
-    };
-
-    constructor(props) {
-      super(props);
-      this.updateOrders = this.updateOrders.bind(this);
-      this.customerService = this.props.screenProps.customerService;
-      this.state = {
-        busy: false,
-        orders: []
-      };
+const Orders = ({screenProps, isCompleted}) => {
+  const {client} = screenProps;
+  const {customerId} = screenProps.customerService;
+  const reportContext = {
+    reportId: 'orderSummary',
+    parameters: {
+      customerId,
+      isCompleted
     }
+  };
+  const subscriptionStrategy = new ReportSubscriptionStrategy(client, reportContext);
 
-    componentWillMount(){
-      this.ordersSubscription = this.customerService.orderSummaryDao.onSnapshotCompleteObservable.subscribe(this.updateOrders);
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: '#FFFFFF',
+      marginTop: 10
+    },
+    separator: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: '#AAAAAA',
     }
+  });
 
-    componentWillUnmount(){
-      if (this.ordersSubscription){
-        this.ordersSubscription.dispose();
-      }
-    }
+  const Paging = () => <View><Text>Paging...</Text></View>;
+  const NoItems = () => <View><Text>No orders to display</Text></View>;
+  const LoadedAllItems = () => <View><Text>No More Orders to display</Text></View>;
+  const rowView = (order) => {
+    return <View key={order.orderId} style={{flexDirection: 'column', flex: 1, padding: 0}}>
+      <Text>{`Order: ${order.orderId}`}</Text>
+      <Text>{`£${order.totalPrice} (${order.totalQuantity} items) ${order.status}`}</Text>
+      <Text>{`${order.createdDate}`}</Text>
+    </View>;
+  };
 
-    updateOrders(){
-      this.setState({orders: this.customerService.orderSummaryDao.rows});
-    }
+  return <ListViewDataSink
+    ref={null}
+    style={styles.container}
+    subscriptionStrategy={subscriptionStrategy}
+    rowView={rowView}
+    paginationWaitingView={Paging}
+    emptyView={NoItems}
+    paginationAllLoadedView={LoadedAllItems}
+    refreshable={true}
+    enableEmptySections={true}
+    renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+    headerView={() => null}
+  />;
+};
 
-    renderOrder(order) {
-      return <View key={order.key} style={{flexDirection: 'column', flex: 1}}>
-        <Text>{`Order: ${order.orderId}`}</Text>
-        <Text>{`£${order.totalPrice} (${order.totalQuantity} items)`}</Text>
-      </View>;
-    }
+Orders.propTypes = {
+  screenProps: PropTypes.object
+};
 
-    render() {
-      const {orders} = this.state;
+export default TabNavigator({
+  Pending: { screen: props => <Orders {...props} isCompleted={false}/>},
+  Completed: { screen: props => <Orders {...props} isCompleted={true}/> }
+},
+{
+  lazy: true
+});
 
-      return <View style={{flex: 1, flexDirection: 'column'}}>
-        {orders.map(c => this.renderOrder(c))}
-      </View>;
-    }
-}
+

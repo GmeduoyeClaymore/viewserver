@@ -15,7 +15,6 @@ export default class SearchBar extends Component {
 
 const styles = StyleSheet.create({
   input: {
-    flex: 1,
     paddingHorizontal: 8,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,

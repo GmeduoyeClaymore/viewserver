@@ -12,7 +12,6 @@ export default class App extends React.Component {
     this.state = {
       isReady: false
     };
-    //TODO - for some reason localhost or loopback ip doesnt' work here
     this.client = new Client('ws://localhost:8080/');
     this.principal = {
       customerId: '4BBuxi',
@@ -38,9 +37,12 @@ export default class App extends React.Component {
     }
 
     //TODO - change the home screen based on the current application mode
-    const AppNavigator = StackNavigator({
-      Home: { screen: CustomerLanding }
-    });
+    const AppNavigator = StackNavigator(
+      {
+        Home: { screen: CustomerLanding }
+      }, {
+        headerMode: 'none'
+      });
     const screenProps = {client: this.client, principal: this.principal};
 
     return <View style={{flexDirection: 'column', flex: 1}}>
