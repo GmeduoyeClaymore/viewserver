@@ -13,7 +13,7 @@ export default class App extends React.Component {
       isReady: false
     };
     //TODO - for some reason localhost or loopback ip doesnt' work here
-    this.client = new Client('ws://192.168.0.5:8080/');
+    this.client = new Client('ws://localhost:8080/');
     this.principal = {
       customerId: '4BBuxi',
     };
