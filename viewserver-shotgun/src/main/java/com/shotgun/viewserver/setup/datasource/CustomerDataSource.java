@@ -31,17 +31,15 @@ CustomerDataSource {
                 )
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
-                                        new Column("C_ID", "C_ID", ColumnType.String),
-                                        new Column("C_fname", "C_fname", ColumnType.String),
-                                        new Column("C_lname", "C_lname", ColumnType.String),
-                                        new Column("C_contactNo", "C_contactNo", ColumnType.String),
-                                        new Column("C_EmailAddress", "C_EmailAddress", ColumnType.String),
-                                        new Column("C_primaryDeliveryId", "C_primaryDeliveryId", ColumnType.String),
-                                        new Column("C_primaryPaymentId", "C_primaryPaymentId", ColumnType.String),
-                                        new Column("C_rating", "C_rating", ColumnType.Float)
-
+                                        new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("firstName", "firstName", ColumnType.String),
+                                        new Column("lastName", "lastName", ColumnType.String),
+                                        new Column("contactNo", "contactNo", ColumnType.String),
+                                        new Column("emailAddress", "emailAddress", ColumnType.String),
+                                        new Column("deliveryAddress", "deliveryAddress", ColumnType.String),
+                                        new Column("paymentDetails", "paymentDetails", ColumnType.String)
                                 ))
-                                .withKeyColumns("C_ID")
+                                .withKeyColumns("customerId")
                 )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

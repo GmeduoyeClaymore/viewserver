@@ -19,11 +19,9 @@ package io.viewserver.messages.protobuf;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.PoolableMessage;
 import io.viewserver.messages.command.IOptions;
-import io.viewserver.messages.command.ISubscribeCommand;
 import io.viewserver.messages.command.ISubscribeDataSourceCommand;
 import io.viewserver.messages.config.IProjectionConfig;
 import io.viewserver.messages.protobuf.dto.CommandMessage;
-import io.viewserver.messages.protobuf.dto.SubscribeCommandMessage;
 import io.viewserver.messages.protobuf.dto.SubscribeDataSourceCommandMessage;
 
 /**

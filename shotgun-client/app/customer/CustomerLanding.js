@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import ProductList from './ProductList';
+import CustomerRegistration from './CustomerRegistration';
 import ProductDetails from './ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
 import Cart from './Cart';
@@ -49,6 +50,7 @@ const CustomerLandingNavigator = StackNavigator(
   {
     ProductList: {screen: ProductList},
     ProductDetails: { screen: ProductDetails },
+    CustomerRegistration: { screen: CustomerRegistration },
     Cart: { screen: Cart },
     Orders: {screen: Orders}
   }, {

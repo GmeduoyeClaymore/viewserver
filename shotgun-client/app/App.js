@@ -5,6 +5,7 @@ import Client from './viewserver-client/Client';
 import Logger from './viewserver-client/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import CustomerLanding from './customer/CustomerLanding';
+import CustomerRegistration from './customer/CustomerRegistration';
 
 export default class App extends React.Component {
   constructor() {
@@ -39,8 +40,10 @@ export default class App extends React.Component {
     //TODO - change the home screen based on the current application mode
     const AppNavigator = StackNavigator(
       {
-        Home: { screen: CustomerLanding }
+        Home: { screen: CustomerLanding },
+        Registration: { screen: CustomerRegistration }
       }, {
+        initialRouteName: 'Home',
         headerMode: 'none'
       });
     const screenProps = {client: this.client, principal: this.principal};

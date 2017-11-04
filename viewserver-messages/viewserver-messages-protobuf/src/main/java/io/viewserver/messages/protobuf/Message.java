@@ -23,7 +23,6 @@ import io.viewserver.messages.command.*;
 import io.viewserver.messages.config.*;
 import io.viewserver.messages.heartbeat.IHeartbeat;
 import io.viewserver.messages.protobuf.dto.MessageMessage;
-import io.viewserver.messages.protobuf.dto.SubscribeDataSourceCommandMessage;
 import io.viewserver.messages.tableevent.*;
 
 /**
