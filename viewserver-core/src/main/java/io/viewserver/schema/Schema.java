@@ -60,7 +60,7 @@ public class Schema {
     }
 
     public ColumnHolder getColumnHolder(int columnId) {
-        return columnHolders.get(columnId);
+        return columnId >= 0 && columnId < columnHolders.size() ? columnHolders.get(columnId) : null;
     }
 
     public ColumnHolder getColumnHolder(String name) {

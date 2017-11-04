@@ -3,6 +3,7 @@ import DataSink from '../../common/dataSinks/DataSink';
 import SnapshotCompletePromise from '../../common/promises/SnapshotCompletePromise';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
+import Logger from '../../viewserver-client/Logger';
 
 export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
     static DEFAULT_OPTIONS = (customerId) =>  {
@@ -12,7 +13,7 @@ export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
         columnName: undefined,
         columnsToSort: undefined,
         filterMode: 2, //Filtering
-        filterExpression: `C_ID == "${customerId}"`,
+        filterExpression: `customerId == "${customerId}"`,
         flags: undefined
       };
     };
@@ -30,12 +31,18 @@ export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
 
     async addOrUpdateCustomer(args){
       let customerRowEvent;
-      if (this.customer !== undefined){
-        Logger.info(`Adding customer ${JSON.stringify(args)}`);
-        customerRowEvent = this.createAddCustomerEvent(args);
+      const message = {};
+
+
+      Logger.info(`Adding customer schema is ${JSON.stringify(this.schema)}`);
+      Object.keys(this.schema).forEach(key => { message[key] = args[key];});
+
+      if (this.customer == undefined){
+        Logger.info(`Adding customer ${JSON.stringify(message)}`);
+        customerRowEvent = this.createAddCustomerEvent(message);
       } else {
-        Logger.info(`Updating customer ${JSON.stringify(args)}`);
-        customerRowEvent = this.createUpdateCustomerEvent(args);
+        Logger.info(`Updating customer ${JSON.stringify(message)}`);
+        customerRowEvent = this.createUpdateCustomerEvent(message);
       }
       const modifiedRows = await this.subscriptionStrategy.editTable(this, [customerRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
@@ -57,7 +64,10 @@ export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
     }
 
     get customer(){
-      return  this.rows.first();
+      if (!this.rows || !this.rows.length){
+        return undefined;
+      }
+      return  this.rows[0];
     }
 }
   

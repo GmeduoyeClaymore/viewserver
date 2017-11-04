@@ -32,6 +32,7 @@ CustomerDataSource {
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("title", "title", ColumnType.String),
                                         new Column("firstName", "firstName", ColumnType.String),
                                         new Column("lastName", "lastName", ColumnType.String),
                                         new Column("contactNo", "contactNo", ColumnType.String),

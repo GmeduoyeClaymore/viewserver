@@ -110,6 +110,9 @@ public class KeyedTable extends Table {
     public void updateRow(TableKey tableKey, ITableRowUpdater updater) {
         Object keyValue = tableKeyDefinition.getValue(tableKey);
         int rowId = keys.get(keyValue);
+        if (rowId != -1) {
+            throw new ViewServerException("A row does not exist for key " + keyValue);
+        }
         super.updateRow(rowId, updater);
     }
 

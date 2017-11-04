@@ -232,6 +232,9 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                             final IRowEvent.IColumnValue columnValue = columnValues.get(i);
                             try {
                                 ColumnHolder columnHolder = ((ITable) operator).getOutput().getSchema().getColumnHolder(columnValue.getColumnId());
+                                if(columnHolder == null){
+                                    continue;
+                                }
                                 Dimension dimension = null;
                                 if (dataSource != null && dimensionMapper != null) {
                                     dimension = dataSource.getDimension(columnHolder.getName());

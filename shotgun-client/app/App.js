@@ -43,7 +43,7 @@ export default class App extends React.Component {
         Home: { screen: CustomerLanding },
         Registration: { screen: CustomerRegistration }
       }, {
-        initialRouteName: 'Home',
+        initialRouteName: 'Registration',
         headerMode: 'none'
       });
     const screenProps = {client: this.client, principal: this.principal};
