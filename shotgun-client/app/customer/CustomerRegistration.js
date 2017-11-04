@@ -1,9 +1,10 @@
 import React, {Component, PropTypes} from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import ActionButton from '../common/components/ActionButton.js';
 import nextIcon from  '../common/assets/chevron-double-right.png';
 import Logger from '../viewserver-client/Logger';
 import CustomerDao from './data/CustomerDao';
+
 const validateRequiredFields = context => (fieldNames) => {
     const state = context.state;
     return new Promise(
@@ -102,12 +103,12 @@ class CardDetails{
     }
 
     async validate(){
-        return this.validateRequiredFields(this.context)([
+        return validateRequiredFields(this.context)([
             'nameOncard',
             'cardnumber',
             'expirationDateMonth',
             'expirationDateYear',
-            'securityCode'
+            'securitycode'
         ]);
     }
     render = () => (<View  style={{display: 'flex', flex: 1}}>
@@ -126,6 +127,7 @@ export default class CustomerRegistration extends Component {
         this.customerDao = this.props.screenProps.customerDao || new CustomerDao(this.client, CustomerDao.generateCustomerId());
         this.proceeedToNextItem = this.proceeedToNextItem.bind(this);
         this.submitRegistration = this.submitRegistration.bind(this);
+        this.nextStep = this.nextStep.bind(this);
         const context = this;
         this.state = {
             stepCounter: 0,
@@ -200,15 +202,21 @@ export default class CustomerRegistration extends Component {
         }
     }
 
-    async proceeedToNextItem(){
+    async proceeedToNextItem(action){
         const {stepCounter} = this.state;
         const RegistrationStep  = this.registrationSteps[stepCounter];
         try {
             await RegistrationStep.validate();
-            this.setState({stepCounter: stepCounter + 1, errors: []});
+            await action();
         } catch (error){
             Logger.info(`Issue with validation ${error}`);
+            this.setState({errors: [error]});
         }
+    }
+
+    nextStep(){
+        const {stepCounter} = this.state;
+        this.setState({stepCounter: stepCounter + 1, errors: []});
     }
 
     goToStep(index){
@@ -220,10 +228,10 @@ export default class CustomerRegistration extends Component {
         const registrationStep  = this.registrationSteps[stepCounter];
         const finalStep = stepCounter === this.registrationSteps.length - 1;
         const buttonText = finalStep ? 'Complete' : 'Next';
-        const buttonAction = finalStep ? this.submitRegistration : this.proceeedToNextItem;
+        const buttonAction = finalStep ? () => this.proceeedToNextItem(this.submitRegistration) : () => this.proceeedToNextItem(this.nextStep);
         return (<View>
             {errors ? errors.map((c, idx)=> <Text key={idx} style={{color: 'red'}}>{c.message}</Text> ) : null}
-            {this.registrationSteps.map((c, idx) => <Text key={idx} onClick={stepCounter >= idx ? null : () => this.goToStep(idx)}>{c.name}</Text> )}
+            {this.registrationSteps.map((c, idx) => <TouchableOpacity  key={idx} onPress={idx < stepCounter ? () => this.goToStep(idx) : null}><Text>{c.name + (idx == stepCounter ? '*' : '') }</Text></TouchableOpacity>  )}
             <View style={{display: 'flex', flexDirection: 'column', height: 600}}>
             {registrationStep.render()}
             <ActionButton icon={nextIcon} action={buttonAction}  buttonText={buttonText}/>
