@@ -40,7 +40,7 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
 
     createAddOrderRowEvent(orderId){
       //note we are using UTC offset time format here
-      const created = moment().format('DD/MM/YYYY HH:mm:ssZ');
+      const created = moment().format('x');
 
       return {
         type: 0, // ADD

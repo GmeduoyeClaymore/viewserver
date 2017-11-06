@@ -19,6 +19,7 @@ export default class ListViewDataSink extends DataSink(Component){
       refreshable: PropTypes.bool.isRequired,
       enableEmptySections: PropTypes.bool.isRequired,
       removeRow: PropTypes.func,
+      options: PropTypes.object
     };
 
     static DEFAULT_OPTIONS = {
@@ -31,20 +32,22 @@ export default class ListViewDataSink extends DataSink(Component){
       flags: undefined
     };
 
-    constructor(props){
-      super(props);
-      this._onScroll = this._onScroll.bind(this);
-    }
-
-    state = {
+    static INITIAL_STATE = {
       list: [],
       page: 1,
       hasNextPage: true,
       refreshing: false,
-      options: ListViewDataSink.DEFAULT_OPTIONS
+      limit: 10
     };
-    
-    componentDidMount() {
+
+    constructor(props){
+      super(props);
+      this._onScroll = this._onScroll.bind(this);
+      this.options = Object.assign({}, ListViewDataSink.DEFAULT_OPTIONS, props.options);
+      this.state = {options: this.options, ...ListViewDataSink.INITIAL_STATE};
+    }
+
+    componentWillMount(){
       this.subscribe();
     }
 
@@ -56,10 +59,11 @@ export default class ListViewDataSink extends DataSink(Component){
     }
 
     _onScroll(e){
+
       const windowHeight = Dimensions.get('window').height;
       const {isNextPageLoading} = this.state;
-      height = e.nativeEvent.contentSize.height;
-      offset = e.nativeEvent.contentOffset.y;
+      const height = e.nativeEvent.contentSize.height;
+      const offset = e.nativeEvent.contentOffset.y;
       if ( windowHeight + offset >= (height * 0.75) ){
         if (isNextPageLoading){
           this.setState({loadingQueued: true});
@@ -70,12 +74,14 @@ export default class ListViewDataSink extends DataSink(Component){
     }
     
     loadNextPage(){
+      //TODO - not sure this is quite working - keeps printing this after the first scroll
       if (this.rows.length >= this.totalRowCount){
         Logger.info('Reached end of viewport');
         return;
       }
-      const { limit } = this.state.options;
-      const newLimit = limit + ListViewDataSink.DEFAULT_OPTIONS.limit;
+      //TODO - tidy this up a bit
+      const { limit } = this.state;
+      const newLimit = limit + this.state.options.limit;
       const newOptions = {...this.state.options};
       newOptions.limit = newLimit;
       this.props.subscriptionStrategy.update(this, newOptions);
@@ -90,8 +96,8 @@ export default class ListViewDataSink extends DataSink(Component){
     }
     
     refresh(){
-      this.props.subscriptionStrategy.update(this.props.client, ListViewDataSink.DEFAULT_OPTIONS);
-      this.setState({options: ListViewDataSink.DEFAULT_OPTIONS});
+      this.props.subscriptionStrategy.update(this.props.client, this.options);
+      this.setState({options: this.options});
     }
 
     renderItem = (item) => this.props.rowView(item);

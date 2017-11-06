@@ -6,7 +6,7 @@ export default class RowMapper{
     try {
       switch (rowValue.value) {
         case 'longValue':
-          return value.toNumber ? value.toNumber() : parseFloat(value.toNumber);
+          return value;
         case 'nullValue':
           return undefined;
         default:

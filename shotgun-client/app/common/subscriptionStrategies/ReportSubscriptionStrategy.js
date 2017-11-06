@@ -12,9 +12,9 @@ export default class OperatorSubsciptionStrategy{
   }
 
   update(dataSink, options){
-    if (!this.subscribeCommand){
+    if (this.subscribeCommand === undefined){
       throw new Error('No subscribe command found must call subscribe before we call update subscription');
     }
-    this.updateSubscribeCommand = this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
+    this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
   }
 }

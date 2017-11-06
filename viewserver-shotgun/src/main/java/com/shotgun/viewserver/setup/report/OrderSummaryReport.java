@@ -33,7 +33,7 @@ public class OrderSummaryReport {
                                         .withConnection("totalsGroupBy", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(OrderDataSource.NAME, OrderDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("statusFilter")
-                                        .withExpression("if({isCompleted} == true, status == \"COMPLETED\", true == true)")
+                                        .withExpression("if({isCompleted} == true, status == \"COMPLETED\", status != \"COMPLETED\")")
                                         .withConnection("orderSummaryJoin"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -42,7 +42,7 @@ public class OrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("totalQuantity"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
-                                                new IProjectionConfig.ProjectionColumn("createdDate"))
+                                                new IProjectionConfig.ProjectionColumn("created"))
                                         .withConnection("statusFilter")
                         )
                         .withOutput("orderSummaryProjection");

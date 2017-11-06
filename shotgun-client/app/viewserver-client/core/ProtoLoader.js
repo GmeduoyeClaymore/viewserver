@@ -31,5 +31,6 @@ export default class ProtoLoader{
       ProtoLoader._dto.TableEventDto = root.lookupType('TableEventDto');
       ProtoLoader._dto.ProjectionConfigDto = root.lookupType('ProjectionConfigDto');
       ProtoLoader._dto.ExecuteSqlCommandDto = root.lookupType('ExecuteSqlCommandDto');
+      ProtoLoader._dto.SortDirection = root.lookupEnum('SortDirection');
     }
 }

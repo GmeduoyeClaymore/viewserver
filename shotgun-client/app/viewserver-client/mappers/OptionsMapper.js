@@ -3,7 +3,7 @@ import ProtoLoader from '../core/ProtoLoader';
 export default class OptionsMapper{
   static toDto(options) {
     const _self = OptionsMapper;
-    const optionsCopy = Object.assign({}, options);
+    const optionsCopy = JSON.parse(JSON.stringify(options));
 
     if (optionsCopy.columnsToSort !== undefined){
       optionsCopy.columnsToSort.forEach(columnToSort => {
@@ -22,10 +22,10 @@ export default class OptionsMapper{
   static _parseDirection (direction) {
     switch (direction.toLowerCase()) {
       case 'asc': {
-        return ProtoLoader.Dto.SortDirection.ASCENDING;
+        return ProtoLoader.Dto.SortDirection.values.ASCENDING;
       }
       case 'desc': {
-        return ProtoLoader.Dto.SortDirection.DESCENDING;
+        return ProtoLoader.Dto.SortDirection.values.DESCENDING;
       }
       default: {
         throw new Error('Inew Error(nvalid sort direction ' + direction);
