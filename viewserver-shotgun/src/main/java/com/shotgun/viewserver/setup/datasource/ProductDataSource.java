@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.setup.datasource;
+    package com.shotgun.viewserver.setup.datasource;
 
 
 import io.viewserver.adapters.common.DataLoader;
@@ -17,6 +17,17 @@ ProductDataSource {
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
         dataAdapter.setFileName("data/product.csv");
+        Schema schema = new Schema()
+                .withColumns(Arrays.asList(
+                        new Column("productId", "productId", ColumnType.String),
+                        new Column("name", "name", ColumnType.String),
+                        new Column("description", "description", ColumnType.String),
+                        new Column("categoryId", "categoryId", ColumnType.String),
+                        new Column("price", "price", ColumnType.Double),
+                        new Column("rating", "rating", ColumnType.Double)
+                ))
+                .withKeyColumns("productId");
+
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -26,17 +37,7 @@ ProductDataSource {
                                 null
                         )
                 )
-                .withSchema(new Schema()
-                        .withColumns(Arrays.asList(
-                                new Column("productId", "productId", ColumnType.String),
-                                new Column("name", "name", ColumnType.String),
-                                new Column("description", "description", ColumnType.String),
-                                new Column("type", "type", ColumnType.String),
-                                new Column("price", "price", ColumnType.Double),
-                                new Column("rating", "rating", ColumnType.Double)
-                        ))
-                        .withKeyColumns("productId")
-                )
+                .withSchema(schema)
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

@@ -36,7 +36,7 @@ const Orders = ({screenProps, isCompleted}) => {
   const NoItems = () => <View><Text>No orders to display</Text></View>;
   const LoadedAllItems = () => <View><Text>No More Orders to display</Text></View>;
   const rowView = (order) => {
-    const created = moment(order.created)
+    const created = moment(order.created);
 
     return <View key={order.orderId} style={{flexDirection: 'column', flex: 1, padding: 0}}>
       <Text>{`Order: ${order.orderId}`}</Text>
@@ -65,12 +65,12 @@ Orders.propTypes = {
   screenProps: PropTypes.object
 };
 
-export default TabNavigator({
-  Pending: { screen: props => <Orders {...props} isCompleted={false}/>},
-  Completed: { screen: props => <Orders {...props} isCompleted={true}/> }
-},
-{
-  lazy: true
-});
+const tabNavigator = TabNavigator({
+    Pending: { screen: props => <Orders {...props} isCompleted={false}/>},
+    Completed: { screen: props => <Orders {...props} isCompleted={true}/> }
+  });
+tabNavigator.navigationOptions = {header: null};
+
+export default tabNavigator;
 
 

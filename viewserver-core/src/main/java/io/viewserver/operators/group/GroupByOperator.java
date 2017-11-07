@@ -242,6 +242,10 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
                         ((ColumnMetadataInt) metadata).setNullValue(Integer.MIN_VALUE);
                         break;
                     }
+                    case String: {
+                        ((ColumnMetadataString) metadata).setNullValue(null);
+                        break;
+                    }
                 }
                 columnHolder.setMetadata(metadata);
                 output.getSchema().addColumn(columnHolder);
@@ -401,6 +405,11 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
                         ((IWritableColumnInt) outHolder.getColumn()).setInt(groupId, value);
                         break;
                     }
+                    case String: {
+                        String value = subtotal.get(i) ? ((IColumnString) groupByColumns[i]).getString(row) : ((ColumnHolderString) outHolder).getMetadata().getNullValue();
+                        ((IWritableColumnString) outHolder.getColumn()).setString(groupId, value);
+                        break;
+                    }
                 }
             }
 
@@ -528,6 +537,10 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
                 case Int: {
                     IColumnInt groupByColumn = (IColumnInt) columnHolder;
                     return usePreviousValues ? groupByColumn.getPreviousInt(row) : groupByColumn.getInt(row);
+                }
+                case String: {
+                    IColumnString groupByColumn = (IColumnString) columnHolder;
+                    return usePreviousValues ? (groupByColumn.getPreviousString(row) != null ? groupByColumn.getPreviousString(row).hashCode() : -1) : (groupByColumn.getString(row) != null ? groupByColumn.getString(row).hashCode() : -1);
                 }
                 default: {
                     throw new IllegalArgumentException("Cannot group on a column of type " + columnHolder.getType());

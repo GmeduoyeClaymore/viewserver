@@ -54,10 +54,6 @@ public class OrderItemsDataSource {
                                         .withCalculations(new CalcColOperator.CalculatedColumn("totalPrice", "quantity * price"))
                                         .withConnection("productJoin")
                         )
-                        .withDimensions(Arrays.asList(
-                                new Dimension("orderId", Cardinality.Int, schema.getColumn("orderId"))
-                                        .setLabel("Order Id").setPlural("Order Ids").setGroup("Order")
-                        ))
                 .withOutput("cartItems")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
         }

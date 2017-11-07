@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import ActionButton from '../common/components/ActionButton.js';
 import nextIcon from  '../common/assets/chevron-double-right.png';
@@ -121,7 +121,9 @@ class CardDetails{
 }
 
 export default class CustomerRegistration extends Component {
-    constructor(props){
+  static navigationOptions = {header: null};
+
+  constructor(props){
         super(props);
         this.client = this.props.screenProps.client;
         this.customerDao = this.props.screenProps.customerDao || new CustomerDao(this.client, CustomerDao.generateCustomerId());

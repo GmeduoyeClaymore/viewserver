@@ -21,9 +21,17 @@ const ProductList = ({screenProps, navigation}) => {
     }
   });
 
-  const search = (productName) => {
+  const categoryId = navigation.state.params && navigation.state.params.categoryId;
+  const filterExpression = categoryId !== undefined ? `categoryId ==\"${categoryId}\"` : 'true == true';
+  const options = {
+    filterExpression
+  };
+
+  const search = (searchText) => {
     if (myListView) {
-      myListView.search('name like "*' + productName + '*"');
+      const productFilter = searchText != '' ? `name like "*${searchText}*"` : '';
+      options.filterExpression = options.filterExpression == '' ? productFilter : `${filterExpression} && ${productFilter}`;
+      myListView.updateOptions(options);
     }
   };
 
@@ -38,6 +46,7 @@ const ProductList = ({screenProps, navigation}) => {
     ref={ listView => { myListView = listView;}}
     style={styles.container}
     subscriptionStrategy={subscriptionStrategy}
+    options={options}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}
@@ -52,6 +61,17 @@ const ProductList = ({screenProps, navigation}) => {
 ProductList.propTypes = {
   screenProps: PropTypes.object,
   navigation: PropTypes.object
+};
+
+ProductList.navigationOptions = ({navigation}) => {
+  const title = navigation.state.params !== undefined ? navigation.state.params.category : undefined;
+  const navOptions = {title};
+
+  //hide the header if this is not a sub category
+  if (title == undefined){
+    navOptions.header = null;
+  }
+  return navOptions;
 };
 
 export default ProductList;

@@ -31,6 +31,8 @@ import java.util.Map;
 public interface IExpressionParser {
     void setDimensionMapper(IDimensionMapper dimensionMapper);
 
+    IDimensionMapper getDimensionMapper();
+
     IExpression parse(String expressionText, Schema schema, Map<String, String> columnAliases);
 
     IExpression parse(String expressionText, Schema schema, Map<String, String> columnAliases, BitSet columnsUsed, HookingContext hookingContext);

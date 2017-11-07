@@ -19,13 +19,13 @@ ProductCategoryDataSource {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
         dataAdapter.setFileName("data/productCategory.csv");
 
-//        Define Schema
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
-                        new Column("CategoryType", "CategoryType", ColumnType.String),
-                        new Column("SubCategoryType", "SubCategoryType", ColumnType.String),
-                        new Column("PackageCode", "PackageCode", ColumnType.String)
-                ));
+                        new Column("categoryId", "categoryId", ColumnType.String),
+                        new Column("category", "category", ColumnType.String),
+                        new Column("parentCategoryId", "parentCategoryId", ColumnType.String)
+                ))
+                .withKeyColumns("categoryId");
 
         return new DataSource()
                 .withName(NAME)
@@ -36,30 +36,8 @@ ProductCategoryDataSource {
                                 null
                         )
                 )
-                /*.withDimensions(Arrays.asList(
-
-                        new Dimension("CategoryType", Cardinality.Int, schema.getColumn("CategoryType"))
-                        .setLabel("Category Type").setPlural("Category Types").setGroup("CategoryType")
-                ))*/
                 .withSchema(schema)
-                /*.withNodes(
-                    new GroupByNode("prodCategories")
-                        .withGroupByColumns("CategoryType")
-                            .withConnection(NAME)
-                )*/
-//                .withDistributionMode(DistributionMode.Mirrored)
-//                .withOutput("prodCategories")
-                        /*new CalcColNode("fxRatesDayCalCol")
-                                .withCalculations(new CalcColOperator.CalculatedColumn("day", "businessDay(date, false)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withCalculations(new CalcColOperator.CalculatedColumn("actualDay", "weekday(date)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withConnection(FxRatesDataSource.NAME),
-                        new FilterNode("fxRatesFilter")
-                                .withExpression("actualDay<6")
-                                .withConnection("fxRatesDayCalCol")
-
-                )
-                .withDistributionMode(DistributionMode.Mirrored)
-                .withOutput("fxRatesFilter")
-                .withOptions(DataSourceOption.IsReportSource)*/;
+                .withOutput(NAME)
+                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

@@ -1,52 +1,52 @@
-productId,name,description,type,price,rating
-PROD_CeCppb2,General Purpose Cement,"For general purpose use in concrete, mortar, render and screed.",Cement & Aggregates,5.49,4
-PROD_CeCplb3,Mastercrete Cement,A CEM II Portland-composite cement suitable for most applications,Cement & Aggregates,6.35,3
-PROD_CeCplb4,Extra Rapid Cement,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes,Cement & Aggregates,12.79,4
-PROD_CeCplb5,Mastercrete Cement,A multi-purpose cement containing special additives for superior performance.,Cement & Aggregates,2.99,5
-PROD_CeCplb6,Extra Rapid Cement,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes.,Cement & Aggregates,7.19,2
-PROD_CeCtb7,Rapid Setting Cement,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",Cement & Aggregates,3.25,3
-PROD_CeCtb8,Rapid Setting Cement,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",Cement & Aggregates,5.95,4
-PROD_CeBmjb9,Ballast,Wickes Ballast is suitable for all general building use.,Cement & Aggregates,5.49,3.5
-PROD_CeBjb10,Ballast,Wickes Ballast is suitable for all general building use.,Cement & Aggregates,6.35,4
-PROD_CeGmjb11,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",Cement & Aggregates,12.79,3
-PROD_CeGjb12,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",Cement & Aggregates,2.99,3.5
-PROD_CeGmjb13,20mm Gravel,"Ideal for building use, suitable for driveways, paths, borders and water features",Cement & Aggregates,7.19,2
-PROD_CeGjb14,20mm Gravel,Wickes 20mm Gravel is suitable for all general building use.,Cement & Aggregates,3.25,4
-PROD_CeSmjb15,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,Cement & Aggregates,5.95,3
-PROD_CeSjb16,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,Cement & Aggregates,5.49,1
-PROD_CeRmjb17,Rock Salt 25 kg,"Ideal for De-Icing Paths, Driveways and Steps.",Cement & Aggregates,6.35,2
-PROD_CeMmjb18,Instant Lay Macadam,Designed to easily restore paths and drives and is convenient and cost effective.,Cement & Aggregates,12.79,4
-PROD_CeSjb19,Sharp Sand,Sharp sand for all general building use.,Cement & Aggregates,2.99,2
-PROD_CeSmjb20,Sharp Sand,"Sharp sand for all general building use.",Cement & Aggregates,7.19,1
-PROD_CeSmjb21,Building Sand,Building sand for all general building uses.,Cement & Aggregates,3.25,3
-PROD_CeSjb22,Building Sand,Building sand for all general building uses.,Cement & Aggregates,5.95,2
-PROD_CeSjb23,Plastering Sand,Fine sand for use in plastering and render.,Cement & Aggregates,5.49,3
-PROD_CeSmjb24,Plastering Sand,Fine sand for use in plastering and render.,Cement & Aggregates,6.35,2
-PROD_CeCplb25,Postcrete 20kg,"A quick-setting ready-to-use blend of selected sand, cement and additives formulated for fixing wooden, concrete and metal posts",Cement & Aggregates,12.79,4
-PROD_CeCplb26,Slablayer 20kg,A cement-based material containing specially selected sand and cement for use under patio paving slabs,Cement & Aggregates,2.99,2
-PROD_CeMplb27,Mortar Mix 20kg,Pre-mixed and ready-to-use mortar that just needs the addition of clean water,Cement & Aggregates,7.19,1
-PROD_CeMtb28,Mix in the Tub Mortar 10kg,Just add water ideal for brick or block laying,Cement & Aggregates,3.25,3
-PROD_CeMppb29,Mortar 12.5kg,"Easy to use for repairs and pointing, just add water",Cement & Aggregates,5.95,2
-PROD_ShP30,Structural Softwood Plywood 18x1220x2440mm,A high strength exterior panel which has excellent stability and load-bearing properties.,Sheet Materials,30.99,3
-PROD_ShP31,Non Structural Hardwood Plywood 5.5 x 1220 x 2440mm,Versatile non-structural building board with a smooth sanded surface.,Sheet Materials,19.99,4
-PROD_ShM32,General Purpose MDF Board 18 x 1220 x 2440mm,Versatile non-structural interior board free of natural defects,Sheet Materials,18.89,3
-PROD_ShT33,General Purpose Timberboard 18 x 500,Quality timberboard for general joinery use,Sheet Materials,27.09,3.5
-PROD_TiS34,Sawn Kiln Dried C16 47 x 125 x 2400mm Single,Structurally C16 strength graded timber that has been regularised to consistent widths for working accurately and Kiln Dried for extra strength and stability,Timber,10.99,2
-PROD_PlP35,Knauf Plasterboard Tapered Edge 2400x1200x12.5mm,Ivory paper faced plasterboard can be finished with a plaster finish or direct decoration including painting.,Plaster & Plasterboard,6.94,4
-PROD_PlP36,Gyproc Plasterboard - Square Edge - 1220 x 900 x 9.5mm,Gyproc HandiBoard is a small and easy to transport gypsum plasterboard.,Plaster & Plasterboard,3.99,3
-PROD_PlP37,"KNAUF FIRELINE SQUARE EDGE PLASTERBOARD (L)1200MM(W)2400MM (T)12.5MM",Knauf plasterboard with core additives to increase fire protection,Plaster & Plasterboard,11.03,1
-PROD_PlP38,British Gypsum Thistle Multi Finish Plaster 25kg,"Thistle Multi-Finish is a gypsum finish plaster for use on a wide range of backgrounds it provides a smooth, inert, high quality surface to internal walls and ceilings, and a durable base for the application of decorative finishes.",Plaster & Plasterboard,6.25,2
-PROD_PlP39,Polycell White 5L Plastic Container,For damaged and textured walls,Plaster & Plasterboard,38,4
-PROD_PlP40,British Gypsum Thistle Hardwall Plaster 25kg,An undercoat plaster with high impact-resistance and is suitable for application by hand or mechanical plastering machine to most masonry backgrounds.,Plaster & Plasterboard,8.99,2
-PROD_InI41,Celotex 50mm High Performance Cavity Wall Board 450 x 1200mm,"General purpose polyisocyanurate insulation board for floors, walls and roofs, provides thermal insulation making a property more thermally efficient.",Insulation,5.65,1
-PROD_InI42,HOMELUX HEATWAVE INSULATION BOARD 1200MM 600MM,ThisInsulation board;Ideal for use under tiled flooring,Insulation,20,3
-PROD_InL43,Knauf 170mm Standard Top Up Loft Roll Insulation 6.47m2,170mm Top-up layer loft roll insulation is a glass mineral wool product designed for topping up existing insulation,Insulation,24.99,2
-PROD_BrB44,Aerated Block 3.6 N 100mm,"Aerated blocks can be used below DPC as infill for Beam and Block flooring systems, as well as above the ground in walling applications","Bricks, Blocks & Lintels",2.28,3
-PROD_BrB45,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,"Bricks, Blocks & Lintels",0.54,4
-PROD_HaA46,Bracket - White,This Bracket - White - 20cm is a multi purpose bracket all around the home.,Hardware and Metalwork,3.99,4
-PROD_HaA47,38mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,Hardware and Metalwork,3.99,2
-PROD_HaA48,25mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,Hardware and Metalwork,3.99,2
-PROD_HaA49,ABRU SILVER EFFECT STEEL ANGLE BRACKET,ABRU SILVER EFFECT STEEL ANGLE BRACKET,Hardware and Metalwork,2.32,5
-PROD_HaT50,Galvansied Angle Bracket 40x40x40mm,Angle brackets for multi-purpose connections,Hardware and Metalwork,1.99,3
-PROD_HaT51,80mm Galvanised Angle Bracket Pack 4,Angle brackets for multi-purpose connections,Hardware and Metalwork,4.49,3
-PROD_HaM52,Metal Sheet Aluminium with Stainless Steel Effect Finish 300 x 1000mm,"Multi-purpose aluminium metal sheet with stainless steel effect finish. Cut, drill or bend to shape if required.",Hardware and Metalwork,4.45,1
+productId,name,description,categoryId,price,rating
+PROD_CeCppb2,General Purpose Cement,"For general purpose use in concrete, mortar, render and screed.",c1f5d05d-911d-4305-a26e-287938b1bd03,5.49,4
+PROD_CeCplb3,Mastercrete Cement 20kg,A CEM II Portland-composite cement suitable for most applications,c1f5d05d-911d-4305-a26e-287938b1bd03,6.35,3
+PROD_CeCplb4,Extra Rapid Cement 10kg,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes,c1f5d05d-911d-4305-a26e-287938b1bd03,12.79,4
+PROD_CeCplb5,Mastercrete Cement 10kg,A multi-purpose cement containing special additives for superior performance.,c1f5d05d-911d-4305-a26e-287938b1bd03,2.99,5
+PROD_CeCplb6,Extra Rapid Cement 20kg,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes.,c1f5d05d-911d-4305-a26e-287938b1bd03,7.19,2
+PROD_CeCtb7,Rapid Setting Cement 10kg,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",c1f5d05d-911d-4305-a26e-287938b1bd03,3.25,3
+PROD_CeCtb8,Rapid Setting Cement 20kg,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",c1f5d05d-911d-4305-a26e-287938b1bd03,5.95,4
+PROD_CeBmjb9,Ballast Type 10kg,Wickes Ballast is suitable for all general building use.,346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,5.49,3.5
+PROD_CeBjb10,Ballast Type 20kg,Wickes Ballast is suitable for all general building use.,346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,6.35,4
+PROD_CeGmjb11,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,12.79,3
+PROD_CeGjb12,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,2.99,3.5
+PROD_CeGmjb13,20mm Gravel,"Ideal for building use, suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,7.19,2
+PROD_CeGjb14,20mm Gravel,Wickes 20mm Gravel is suitable for all general building use.,c566ac2f-e485-4cd6-8313-32ccdfe24dc0,3.25,4
+PROD_CeSmjb15,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,575f8e92-eb24-4f76-aab1-b93ea2fb4163,5.95,3
+PROD_CeSjb16,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,575f8e92-eb24-4f76-aab1-b93ea2fb4163,5.49,1
+PROD_CeRmjb17,Rock Salt 25 kg,"Ideal for De-Icing Paths, Driveways and Steps.",96310611-6664-467b-af77-65424223baeb,6.35,2
+PROD_CeMmjb18,Instant Lay Macadam,Designed to easily restore paths and drives and is convenient and cost effective.,eeced8f7-755c-4865-8e2d-b013b15bf483,12.79,4
+PROD_CeSjb19,Sharp Sand,Sharp sand for all general building use.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,2.99,2
+PROD_CeSmjb20,Sharp Sand,"Sharp sand for all general building use.",d0a957a6-74ab-4cd5-b577-1e1611c60d50,7.19,1
+PROD_CeSmjb21,Building Sand,Building sand for all general building uses.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,3.25,3
+PROD_CeSjb22,Building Sand,Building sand for all general building uses.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,5.95,2
+PROD_CeSjb23,Plastering Sand,Fine sand for use in plastering and render.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,5.49,3
+PROD_CeSmjb24,Plastering Sand,Fine sand for use in plastering and render.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,6.35,2
+PROD_CeCplb25,Postcrete 20kg,"A quick-setting ready-to-use blend of selected sand, cement and additives formulated for fixing wooden, concrete and metal posts",840b6935-166d-4110-be6c-65dfce5afcd9,12.79,4
+PROD_CeCplb26,Slablayer 20kg,A cement-based material containing specially selected sand and cement for use under patio paving slabs,840b6935-166d-4110-be6c-65dfce5afcd9,2.99,2
+PROD_CeMplb27,Mortar Mix 20kg,Pre-mixed and ready-to-use mortar that just needs the addition of clean water,d2e04bec-321b-42c9-9b23-c4c1fd793269,7.19,1
+PROD_CeMtb28,Mix in the Tub Mortar 10kg,Just add water ideal for brick or block laying,d2e04bec-321b-42c9-9b23-c4c1fd793269,3.25,3
+PROD_CeMppb29,Mortar 12.5kg,"Easy to use for repairs and pointing, just add water",d2e04bec-321b-42c9-9b23-c4c1fd793269,5.95,2
+PROD_ShP30,Structural Softwood Plywood 18x1220x2440mm,A high strength exterior panel which has excellent stability and load-bearing properties.,604e6f40-0796-4511-acf8-96ba25ec7595,30.99,3
+PROD_ShP31,Non Structural Hardwood Plywood 5.5 x 1220 x 2440mm,Versatile non-structural building board with a smooth sanded surface.,604e6f40-0796-4511-acf8-96ba25ec7595,19.99,4
+PROD_ShM32,General Purpose MDF Board 18 x 1220 x 2440mm,Versatile non-structural interior board free of natural defects,da27c495-5cf0-417a-b0a4-77ba15ec7d71,18.89,3
+PROD_ShT33,General Purpose Timberboard 18 x 500,Quality timberboard for general joinery use,5cfe1f34-e36e-45b7-955b-ef214c9765ee,27.09,3.5
+PROD_TiS34,Sawn Kiln Dried C16 47 x 125 x 2400mm Single,Structurally C16 strength graded timber that has been regularised to consistent widths for working accurately and Kiln Dried for extra strength and stability,06207dbb-7366-4d45-a669-d84744415aaa,10.99,2
+PROD_PlP35,Knauf Plasterboard Tapered Edge 2400x1200x12.5mm,Ivory paper faced plasterboard can be finished with a plaster finish or direct decoration including painting.,3361dce4-3994-424b-9996-f670a23f35dd,6.94,4
+PROD_PlP36,Gyproc Plasterboard - Square Edge - 1220 x 900 x 9.5mm,Gyproc HandiBoard is a small and easy to transport gypsum plasterboard.,3361dce4-3994-424b-9996-f670a23f35dd,3.99,3
+PROD_PlP37,"KNAUF FIRELINE SQUARE EDGE PLASTERBOARD (L)1200MM(W)2400MM (T)12.5MM",Knauf plasterboard with core additives to increase fire protection,3361dce4-3994-424b-9996-f670a23f35dd,11.03,1
+PROD_PlP38,British Gypsum Thistle Multi Finish Plaster 25kg,"Thistle Multi-Finish is a gypsum finish plaster for use on a wide range of backgrounds it provides a smooth, inert, high quality surface to internal walls and ceilings, and a durable base for the application of decorative finishes.",f85b25dd-9de7-4575-8fe4-22d6add31e65,6.25,2
+PROD_PlP39,Polycell White 5L Plastic Container,For damaged and textured walls,f85b25dd-9de7-4575-8fe4-22d6add31e65,38,4
+PROD_PlP40,British Gypsum Thistle Hardwall Plaster 25kg,An undercoat plaster with high impact-resistance and is suitable for application by hand or mechanical plastering machine to most masonry backgrounds.,f85b25dd-9de7-4575-8fe4-22d6add31e65,8.99,2
+PROD_InI41,Celotex 50mm High Performance Cavity Wall Board 450 x 1200mm,"General purpose polyisocyanurate insulation board for floors, walls and roofs, provides thermal insulation making a property more thermally efficient.",0dba507f-edb2-40bf-a76f-0c3b3e3b0d06,5.65,1
+PROD_InI42,HOMELUX HEATWAVE INSULATION BOARD 1200MM 600MM,ThisInsulation board;Ideal for use under tiled flooring,94abc45d-b99d-428a-bbd1-1373e8f20ee0,20,3
+PROD_InL43,Knauf 170mm Standard Top Up Loft Roll Insulation 6.47m2,170mm Top-up layer loft roll insulation is a glass mineral wool product designed for topping up existing insulation,bdef7480-7b96-415f-9704-731e7d1f9554,24.99,2
+PROD_BrB44,Aerated Block 3.6 N 100mm,"Aerated blocks can be used below DPC as infill for Beam and Block flooring systems, as well as above the ground in walling applications",39327e8f-d795-48c5-8564-c5a41b681132,2.28,3
+PROD_BrB45,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,0a853985-608d-4720-8db3-e56c6c6da84c,0.54,4
+PROD_HaA46,Bracket - White,This Bracket - White - 20cm is a multi purpose bracket all around the home.,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,4
+PROD_HaA47,38mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,2
+PROD_HaA48,25mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,2
+PROD_HaA49,ABRU SILVER EFFECT STEEL ANGLE BRACKET,ABRU SILVER EFFECT STEEL ANGLE BRACKET,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,2.32,5
+PROD_HaT50,Galvansied Angle Bracket 40x40x40mm,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,1.99,3
+PROD_HaT51,80mm Galvanised Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,4.49,3
+PROD_HaM52,Metal Sheet Aluminium with Stainless Steel Effect Finish 300 x 1000mm,"Multi-purpose aluminium metal sheet with stainless steel effect finish. Cut, drill or bend to shape if required.",7e4664e6-461b-4ae2-b81f-4d163b830871,4.45,1

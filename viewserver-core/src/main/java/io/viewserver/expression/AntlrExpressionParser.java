@@ -58,6 +58,11 @@ public class AntlrExpressionParser implements IExpressionParser {
     }
 
     @Override
+    public IDimensionMapper getDimensionMapper(){
+        return this.dimensionMapper;
+    }
+
+    @Override
     public IExpression parse(String expressionText, Schema schema, Map<String, String> columnAliases) {
         return parse(expressionText, schema, columnAliases, null, null);
     }

@@ -40,7 +40,7 @@ public class NotEqualsString implements IExpressionBool {
 
         @Override
         public boolean getBool(int row) {
-            return isLiteral ? isNotEqual : !Objects.equal(lhs.getString(0), rhs.getString(0));
+            return isLiteral ? isNotEqual : !Objects.equal(lhs.getString(row), rhs.getString(row));
         }
 
         @Override

@@ -43,10 +43,6 @@ OrderDataSource {
                         )
                 )
                 .withSchema(schema)
-                .withDimensions(Arrays.asList(
-                        new Dimension("orderId", Cardinality.Int, schema.getColumn("orderId"))
-                                .setLabel("Order Id").setPlural("Order Ids").setGroup("Order")
-                ))
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

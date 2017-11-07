@@ -59,7 +59,6 @@ export default class ListViewDataSink extends DataSink(Component){
     }
 
     _onScroll(e){
-
       const windowHeight = Dimensions.get('window').height;
       const {isNextPageLoading} = this.state;
       const height = e.nativeEvent.contentSize.height;
@@ -88,13 +87,12 @@ export default class ListViewDataSink extends DataSink(Component){
       this.setState({options: newOptions, isNextPageLoading: true});
     }
     
-    search(expression){
-      const newOptions = {...this.state.options};
-      newOptions.filterExpression = expression;
-      this.props.subscriptionStrategy.update(this, newOptions);
-      this.setState({options: newOptions});
+    updateOptions(options){
+      this.options = Object.assign({}, ListViewDataSink.DEFAULT_OPTIONS, options);
+      this.props.subscriptionStrategy.update(this, this.options);
+      this.setState({options: this.options});
     }
-    
+
     refresh(){
       this.props.subscriptionStrategy.update(this.props.client, this.options);
       this.setState({options: this.options});

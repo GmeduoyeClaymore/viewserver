@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import ProductList from './ProductList';
+import ProductCategoryList from './ProductCategoryList';
 import CustomerRegistration from './CustomerRegistration';
 import ProductDetails from './ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
@@ -49,13 +50,14 @@ export default class CustomerLanding extends Component {
 const CustomerLandingNavigator = StackNavigator(
   {
     ProductList: {screen: ProductList},
+    ProductCategoryList: {screen: ProductCategoryList},
     ProductDetails: { screen: ProductDetails },
     CustomerRegistration: { screen: CustomerRegistration },
     Cart: { screen: Cart },
     Orders: {screen: Orders}
   }, {
-    initialRouteName: 'ProductList',
-    headerMode: 'none'
+    initialRouteName: 'ProductCategoryList',
+    headerMode: 'screen'
   });
 
 CustomerLanding.router = CustomerLandingNavigator.router;

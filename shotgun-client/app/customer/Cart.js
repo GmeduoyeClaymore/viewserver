@@ -8,6 +8,8 @@ export default class Cart extends Component {
       customerService: PropTypes.object
     };
 
+    static navigationOptions = {header: null};
+
     constructor(props) {
       super(props);
       this.purchaseItems = this.purchaseItems.bind(this);

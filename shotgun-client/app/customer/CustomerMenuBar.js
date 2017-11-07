@@ -25,7 +25,7 @@ export default class CustomerMenuBar extends Component {
         this.subscription.dispose();
       }
     }
-
+rr
     updateTotalQuantity(cartSummary){
       const totalQuantity = cartSummary ? cartSummary.totalQuantity : 0;
       this.setState({totalQuantity});
@@ -35,7 +35,7 @@ export default class CustomerMenuBar extends Component {
       const { totalQuantity } = this.state;
       const {navigate} = this.props.navigation;
       return <View style={styles.container}>
-        <ActionButton buttonText={null} icon={homeIcon} action={() => navigate('ProductList')}/>
+        <ActionButton buttonText={null} icon={homeIcon} action={() => navigate('ProductCategoryList')}/>
         <ActionButton buttonText={`(${totalQuantity})`} icon={cartIcon} action={() => navigate('Cart')}/>
         <ActionButton buttonText={null} icon={orderIcon} action={() => navigate('Orders')}/>
       </View>;

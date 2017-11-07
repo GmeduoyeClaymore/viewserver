@@ -10,9 +10,7 @@ export default class ProductDetails extends Component {
       product: PropTypes.object
     };
 
-    static navigationOptions = ({ navigation }) => ({
-      title: `${navigation.state.params.product.name}`,
-    });
+    static navigationOptions = {header: null};
 
     constructor(props) {
       super(props);
