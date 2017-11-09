@@ -1,9 +1,11 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
 import ActionButton from '../common/components/ActionButton';
 import cartIcon from  '../common/assets/cart-outline.png';
 import homeIcon from  '../common/assets/home.png';
 import orderIcon from  '../common/assets/orders.png';
+import PropTypes from 'prop-types';
+
 export default class CustomerMenuBar extends Component {
     static PropTypes = {
       cartSummaryDao: PropTypes.object,

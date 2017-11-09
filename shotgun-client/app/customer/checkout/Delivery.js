@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {View, Text, Slider} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 import {ListItem, Radio, Right} from 'native-base';

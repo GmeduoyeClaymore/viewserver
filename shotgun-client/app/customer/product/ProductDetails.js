@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import ProductActionBar from './ProductActionBar';
 import ActionButton from '../../common/components/ActionButton';

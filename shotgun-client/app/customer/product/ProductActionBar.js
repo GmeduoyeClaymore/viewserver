@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {View, StyleSheet, TextInput} from 'react-native';
 import ActionButton from '../../common/components/ActionButton.js';
 import icon from '../../common/assets/basket-fill.png';

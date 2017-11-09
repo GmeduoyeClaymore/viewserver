@@ -1,5 +1,6 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import PropTypes from 'prop-types';
 
 export default class ActionButton extends Component {
     static PropTypes = {

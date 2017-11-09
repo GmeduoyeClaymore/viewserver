@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {View, Text, StyleSheet} from 'react-native';
 import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
 import ReportSubscriptionStrategy from '../common/subscriptionStrategies/ReportSubscriptionStrategy';

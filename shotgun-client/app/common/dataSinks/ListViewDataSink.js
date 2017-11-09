@@ -1,7 +1,8 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import Logger from '../../viewserver-client/Logger';
 import DataSink from './DataSink';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   contentContainer: {
