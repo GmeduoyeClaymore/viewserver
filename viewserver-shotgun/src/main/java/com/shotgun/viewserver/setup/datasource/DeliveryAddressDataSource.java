@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
+
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.datasource.*;
@@ -10,15 +11,15 @@ import io.viewserver.operators.calccol.CalcColOperator;
 import java.util.Arrays;
 
 /**
- * Created by bennett on 26/09/17.
+ * Created by bennett on 27/09/17.
  */
 public class
-DeliveryDataSource {
-    public static final String NAME = "delivery";
+        DeliveryAddressDataSource {
+    public static final String NAME = "deliveryAddress";
 
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/delivery.csv");
+        dataAdapter.setFileName("data/deliveryAddress.csv");
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -30,17 +31,16 @@ DeliveryDataSource {
                 )
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
-                                        new Column("deliveryId", "deliveryId", ColumnType.String),
                                         new Column("deliveryAddressId", "deliveryAddressId", ColumnType.String),
-                                        new Column("created", "created", ColumnType.DateTime),
-                                        new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                        new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
-                                        new Column("driverId", "driverId", ColumnType.String),
-                                        new Column("type", "type", ColumnType.String),
-                                        new Column("dueTime", "dueTime", ColumnType.DateTime),
-                                        new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int)
+                                        new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("isDefault", "isDefault", ColumnType.Bool),
+                                        new Column("line1", "line1", ColumnType.String),
+                                        new Column("line2", "line2", ColumnType.String),
+                                        new Column("city", "city", ColumnType.String),
+                                        new Column("country", "country", ColumnType.String),
+                                        new Column("postcode", "postcode", ColumnType.String)
                                 ))
-                                .withKeyColumns("deliveryId")
+                                .withKeyColumns("deliveryAddressId")
                 )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

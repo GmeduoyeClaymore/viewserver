@@ -1,0 +1,17 @@
+deliveryAddressId,customerId,isDefault,line1,line2,city,country,postcode
+2188552d-9fe1-462f-bbd3-ca296c968884,2BBui,TRUE,1 Mickey Mouse Rd,Streatham,London,UK,SE4 1TL
+cae3510a-81a2-4425-b56c-5ef78721dd78,3AOra,TRUE,2 Mickey Mouse Rd,Clapham,London,UK,S4 4BL
+38213090-ae17-4ba5-a2bb-16a1e27ed1f0,4LPea,TRUE,3 Mickey Mouse Rd,Brockley,London,UK,SE9 2DD
+55360d3d-947d-423f-8e75-1f5aa8a8807f,5FMan,TRUE,4 Mickey Mouse Rd,Brockley,London,UK,SE3 1BR
+355adacd-e5a3-4ba4-a469-38106d834111,6RBer,TRUE,5 Mickey Mouse Rd,Catford,London,UK,SE11 9DS
+df839c3b-1737-474c-b8a3-abc68f9e00e8,4BBuxi,TRUE,6 Mickey Mouse Rd,Clapham,London,UK,SE13 2BS
+6d00fa3d-c002-47b4-b6a6-49378fc6fb7a,4BBuxi,FALSE,5a Candyfloss Lane,Ladywell,London,UK,SE12 1LT
+2ebe6e09-dd8f-433b-b4b4-e6d8d1de807d,8ASan,TRUE,7 Mickey Mouse Rd,Woolwich,London,UK,SE13 5TT
+c0fe9bb1-2b11-41b4-b46c-08cda1d6a83d,9FRib,TRUE,8 Mickey Mouse Rd,Lewisham,London,UK,SE23 1TR
+b7607023-6cf6-4745-9147-10847bec429c,10PBea,TRUE,9 Mickey Mouse Rd,Brockley,London,UK,SE12 5GP
+79c19706-5331-40b9-8559-d1ce69789b5e,11DMig,TRUE,10 Mickey Mouse Rd,Croydon,London,UK,SE1 2BP
+9a00429b-edab-42c5-9494-6a308d541ad3,12DQua,TRUE,11 Mickey Mouse Rd,Clapham,London,UK,SE21 7BG
+3b34fc7e-18dc-4454-9f3d-4b5b36adf9a0,12DQua,FALSE,3 Madison Rd,Woolwich,London,UK,SE3 5BG
+bf316de0-d09a-4994-8b9b-edfda878fb0b,13DWhi,TRUE,12 Mickey Mouse Rd,Brockley,London,UK,SE13 2DF
+728cdd16-a337-48f3-ba45-13b6fac26c1a,14FNig,TRUE,13 Mickey Mouse Rd,Streatham,London,UK,SE19 5TP
+3006cfa5-0d1b-4b9a-9e90-8e71ad1715bb,15LWhi,TRUE,14 Mickey Mouse Rd,Woolwich,London,UK,SE1 6DS

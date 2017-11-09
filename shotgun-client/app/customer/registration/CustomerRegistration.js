@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import ActionButton from '../common/components/ActionButton.js';
-import nextIcon from  '../common/assets/chevron-double-right.png';
-import Logger from '../viewserver-client/Logger';
-import CustomerDao from './data/CustomerDao';
+import ActionButton from '../../common/components/ActionButton.js';
+import nextIcon from '../../common/assets/chevron-double-right.png';
+import Logger from '../../viewserver-client/Logger';
+import CustomerDao from '../data/CustomerDao';
 
 const validateRequiredFields = context => (fieldNames) => {
     const state = context.state;
@@ -152,7 +152,7 @@ export default class CustomerRegistration extends Component {
                 line2,
                 line3,
                 city,
-                county,
+                country,
             } = this.state;
 
             const addressInformation = {
@@ -160,7 +160,7 @@ export default class CustomerRegistration extends Component {
                 line2,
                 line3,
                 city,
-                county
+                country
             };
 
             const {

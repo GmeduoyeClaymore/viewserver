@@ -2,8 +2,8 @@ import React, {PropTypes} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
-import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
-import DataSourceSubscriptionStrategy from '../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import ListViewDataSink from '../../common/dataSinks/ListViewDataSink';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
 const ProductList = ({screenProps, navigation}) => {
   const {client} = screenProps;

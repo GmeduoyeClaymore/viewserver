@@ -27,9 +27,9 @@ OrderDataSource {
                         new Column("lastModified", "lastModified", ColumnType.DateTime),
                         new Column("status", "status", ColumnType.String),
                         new Column("customerId", "customerId", ColumnType.String),
+                        new Column("paymentId", "paymentId", ColumnType.String),
                         new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
-                        new Column("deliveryId", "deliveryId", ColumnType.String),
-                        new Column("deliverySizeRequirement", "deliverySizeRequirement", ColumnType.String)
+                        new Column("deliveryId", "deliveryId", ColumnType.String)
                 ))
                 .withKeyColumns("orderId");
 

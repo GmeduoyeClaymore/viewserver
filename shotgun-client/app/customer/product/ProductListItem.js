@@ -22,7 +22,7 @@ const ProductListItem = ({navigation, product}) => {
 
   return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => navigation.navigate('ProductDetails', {product})} underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
-      <Image source={require('./assets/cement.jpg')} style={styles.picture} />
+      <Image source={require('../assets/cement.jpg')} style={styles.picture} />
       <View style={{flex: 1}}>
         <Text style={styles.title}>{product.name}</Text>
         <Text>{product.description}</Text>

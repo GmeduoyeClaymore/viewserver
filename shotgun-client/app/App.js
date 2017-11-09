@@ -5,7 +5,7 @@ import Client from './viewserver-client/Client';
 import Logger from './viewserver-client/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import CustomerLanding from './customer/CustomerLanding';
-import CustomerRegistration from './customer/CustomerRegistration';
+import CustomerRegistration from './customer/registration/CustomerRegistration';
 
 export default class App extends React.Component {
   constructor() {

@@ -30,27 +30,16 @@ PaymentCardsDataSource {
                         )
                 )
                 .withSchema(new Schema()
-                        .withColumns(Arrays.asList(
-                                new Column("C_ID", "C_ID", ColumnType.String),
-                                new Column("categoryType", "categoryType", ColumnType.String),
-                                new Column("paymentId", "paymentId", ColumnType.String),
-                                new Column("defaultPaymentCard", "defaultPaymentCard", ColumnType.Bool),
-                                new Column("paymentCardNo", "paymentCardNo", ColumnType.String),
-                                new Column("expiryDate", "expiryDate", ColumnType.String)
-                        ))
+                                .withColumns(Arrays.asList(
+                                        new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("paymentId", "paymentId", ColumnType.String),
+                                        new Column("isDefault", "isDefault", ColumnType.Bool),
+                                        new Column("cardNumber", "cardNumber", ColumnType.String),
+                                        new Column("expiryDate", "expiryDate", ColumnType.String)
+                                ))
+                                .withKeyColumns("paymentId")
                 )
-                /*.withNodes(
-                        new CalcColNode("fxRatesDayCalCol")
-                                .withCalculations(new CalcColOperator.CalculatedColumn("day", "businessDay(date, false)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withCalculations(new CalcColOperator.CalculatedColumn("actualDay", "weekday(date)- " + CsvDataSource.START_DATE_OFFSET))
-                                .withConnection(FxRatesDataSource.NAME),
-                        new FilterNode("fxRatesFilter")
-                                .withExpression("actualDay<6")
-                                .withConnection("fxRatesDayCalCol")
-
-                )
-                .withDistributionMode(DistributionMode.Mirrored)
-                .withOutput("fxRatesFilter")
-                .withOptions(DataSourceOption.IsReportSource)*/;
+                .withOutput(NAME)
+                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }
