@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import ProductList from './ProductList';
-import ProductCategoryList from './ProductCategoryList';
-import CustomerRegistration from './CustomerRegistration';
-import ProductDetails from './ProductDetails';
+import ProductList from './product/ProductList';
+import ProductCategoryList from './product/ProductCategoryList';
+import CustomerRegistration from './registration/CustomerRegistration';
+import ProductDetails from './product/ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
-import Cart from './Cart';
+import Cart from './checkout/Cart';
+import Payment from './checkout/Payment';
+import Delivery from './checkout/Delivery';
+import DeliveryOptions from './checkout/DeliveryOptions';
+import OrderConfirmation from './checkout/OrderConfirmation';
+import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
@@ -49,11 +54,16 @@ export default class CustomerLanding extends Component {
 
 const CustomerLandingNavigator = StackNavigator(
   {
-    ProductList: {screen: ProductList},
     ProductCategoryList: {screen: ProductCategoryList},
+    ProductList: {screen: ProductList},
     ProductDetails: { screen: ProductDetails },
     CustomerRegistration: { screen: CustomerRegistration },
     Cart: { screen: Cart },
+    Payment: { screen: Payment },
+    Delivery: { screen: Delivery },
+    DeliveryOptions: { screen: DeliveryOptions },
+    OrderConfirmation: { screen: OrderConfirmation },
+    OrderComplete: { screen: OrderComplete },
     Orders: {screen: Orders}
   }, {
     initialRouteName: 'ProductCategoryList',

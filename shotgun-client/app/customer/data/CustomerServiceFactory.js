@@ -3,6 +3,9 @@ import CartItemsDao from './CartItemsDao';
 import CartSummaryDao from './CartSummaryDao';
 import OrderDao from './OrderDao';
 import CustomerDao from './CustomerDao';
+import PaymentCardsDao from './PaymentCardsDao';
+import DeliveryAddressDao from './DeliveryAddressDao';
+import DeliveryDao from './DeliveryDao';
 
 export default class CustomerServiceFactory {
   constructor(viewserverClient) {
@@ -19,21 +22,27 @@ export default class CustomerServiceFactory {
     const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId);
     const orderDao = new OrderDao(this.viewserverClient, customerId);
     const customerDao = new CustomerDao(this.viewserverClient, customerId);
+    const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId);
+    const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId);
+    const deliveryDao = new DeliveryDao(this.viewserverClient);
 
-    await Promise.all(orderItemsDao, customerDao, orderDao, cartItemsDao, cartSummaryDao);
+    await Promise.all(orderItemsDao, customerDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao);
 
-    this.customerService = new CustomerService(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao);
+    this.customerService = new CustomerService(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao);
     return this.customerService;
   }
 }
 class CustomerService {
-  constructor(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao) {
+  constructor(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao) {
     this.customerId = customerId;
     this.customerDao = customerDao;
     this.orderItemsDao = orderItemsDao;
     this.cartItemsDao = cartItemsDao;
     this.cartSummaryDao = cartSummaryDao;
     this.orderDao = orderDao;
+    this.paymentCardsDao = paymentCardsDao;
+    this.deliveryAddressDao = deliveryAddressDao;
+    this.deliveryDao = deliveryDao;
   }
 }
   

@@ -28,28 +28,30 @@ export default class OrderDao extends DataSink(CoolRxDataSink){
       this.subscriptionStrategy.subscribe(this, OrderDao.DEFAULT_OPTIONS(this.customerId));
     }
   
-    async createOrder(){
+    async createOrder(order){
       //create order object
       const orderId = uuidv4();
       Logger.info(`Creating order ${orderId}`);
-      const addOrderRowEvent = this.createAddOrderRowEvent(orderId);
+      order.orderId = orderId;
+
+      const addOrderRowEvent = this.createAddOrderRowEvent(order);
       await this.subscriptionStrategy.editTable(this, [addOrderRowEvent]);
       Logger.info('Create order promise resolved');
       return orderId;
     }
 
-    createAddOrderRowEvent(orderId){
+    createAddOrderRowEvent(order){
       //note we are using UTC offset time format here
       const created = moment().format('x');
 
       return {
         type: 0, // ADD
         columnValues: {
-          orderId,
           customerId: this.customerId,
           created,
           lastModified: created,
-          status: OrderStatuses.PLACED
+          status: OrderStatuses.PLACED,
+          ...order
         }
       };
     }

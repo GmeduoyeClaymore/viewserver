@@ -40,7 +40,7 @@ export default class CoolRxDataSink{
     return this._onColumnAdded;
   }
   onSnapshotComplete(){
-    this._snapshotComplete.onNext();
+    this._snapshotComplete.onNext(this.rows);
   }
   onDataReset(){
     this._onDataReset.onNext();

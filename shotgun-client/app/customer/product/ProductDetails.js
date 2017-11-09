@@ -1,8 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import ProductActionBar from './ProductActionBar';
-import ActionButton from '../common/components/ActionButton';
-import backIcon from  '../common/assets/back.png';
+import ActionButton from '../../common/components/ActionButton';
+import backIcon from '../../common/assets/back.png';
 
 export default class ProductDetails extends Component {
     static PropTypes = {
@@ -23,7 +23,7 @@ export default class ProductDetails extends Component {
       if (product) {
         return (
           <View style={styles.container}>
-            <Image source={require('./assets/cement.jpg')} style={styles.picture} />
+            <Image source={require('../assets/cement.jpg')} style={styles.picture} />
             <View style={styles.header}>
               <ActionButton buttonText={null} icon={backIcon} action={() => goBack()}/>
               <Text style={styles.bigText}>{product.name}</Text>

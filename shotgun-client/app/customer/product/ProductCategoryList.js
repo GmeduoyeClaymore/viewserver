@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
-import ReportSubscriptionStrategy from '../common/subscriptionStrategies/ReportSubscriptionStrategy';
+import ListViewDataSink from '../../common/dataSinks/ListViewDataSink';
+import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
 
 
 const ProductCategoryList = ({screenProps, navigation}) => {

@@ -1,4 +1,4 @@
-deliveryId,created,lastModified,driverId,orderFulfillmentId,deliveryType,noRequiredForOffload
+deliveryId,created,lastModified,driverId,orderFulfillmentId,type,noRequiredForOffload
 6bf2b31d-3a8e-4cc7-b31a-a499d11d2a92,31/01/2017 08:30,31/01/2017 08:30,774dc610-208b-484b-9a6f-1473a35fcf45,b47b7410-cedf-458a-87fc-f03386559114,CARRYIN,1
 f17050d2-7497-4336-b6f5-98ce5c336532,21/06/2017 15:45,21/06/2017 15:45,6f5efb5a-50c1-4d89-b114-e17064788862,651d8550-32c3-48c0-9d16-16844c8768d7,CARRYIN,1
 cd69cb5c-5054-4248-9cfd-3ace21a6c4de,06/07/2017 10:00,06/07/2017 10:00,0901a250-46bf-4ab5-94ad-b59ca5a600f4,e2c61118-9592-48a4-a792-911e6b47985d,CARRYIN,1
