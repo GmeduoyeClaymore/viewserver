@@ -17,8 +17,8 @@ export default class App extends React.Component {
     this.state = {
       isReady: false
     };
-    this.client = new Client('ws://192.168.0.5:8080/');
-    //this.client = new Client('ws://localhost:8080/');
+    //this.client = new Client('ws://192.168.0.5:8080/');
+    this.client = new Client('ws://localhost:8080/');
     this.principal = {
       customerId: '4BBuxi',
     };
@@ -48,7 +48,7 @@ export default class App extends React.Component {
         Home: { screen: CustomerLanding },
         Registration: { screen: CustomerRegistration }
       }, {
-        initialRouteName: 'Home',
+        initialRouteName: 'Registration',
         headerMode: 'none'
       });
     const screenProps = {client: this.client, principal: this.principal};

@@ -10,4 +10,5 @@ else
 fi
 
 adb reverse tcp:7007 tcp:7007
+adb reverse tcp:8080 tcp:8080
 react-native run-android
