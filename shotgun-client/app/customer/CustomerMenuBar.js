@@ -1,48 +1,19 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import {connect} from 'react-redux';
 import ActionButton from '../common/components/ActionButton';
 import cartIcon from  '../common/assets/cart-outline.png';
 import homeIcon from  '../common/assets/home.png';
 import orderIcon from  '../common/assets/orders.png';
 import PropTypes from 'prop-types';
 
-export default class CustomerMenuBar extends Component {
-    static PropTypes = {
-      cartSummaryDao: PropTypes.object,
-      navigation: PropTypes.object
-    };
-
-    constructor(props){
-      super(props);
-      this.updateTotalQuantity = this.updateTotalQuantity.bind(this);
-      this.state = {totalQuantity: 0};
-    }
-
-    componentWillMount(){
-      this.subscription = this.props.cartSummaryDao.subscribe(this.updateTotalQuantity);
-    }
-
-    componentWillUnmount(){
-      if (this.subscription){
-        this.subscription.dispose();
-      }
-    }
-rr
-    updateTotalQuantity(cartSummary){
-      const totalQuantity = cartSummary ? cartSummary.totalQuantity : 0;
-      this.setState({totalQuantity});
-    }
-
-    render(){
-      const { totalQuantity } = this.state;
-      const {navigate} = this.props.navigation;
-      return <View style={styles.container}>
-        <ActionButton buttonText={null} icon={homeIcon} action={() => navigate('ProductCategoryList')}/>
-        <ActionButton buttonText={`(${totalQuantity})`} icon={cartIcon} action={() => navigate('Cart')}/>
-        <ActionButton buttonText={null} icon={orderIcon} action={() => navigate('Orders')}/>
-      </View>;
-    }
-}
+const CustomerMenuBar = ({cart, navigation}) => {
+    return <View style={styles.container}>
+      <ActionButton buttonText={null} icon={homeIcon} action={() => navigation.navigate('ProductCategoryList')}/>
+      <ActionButton buttonText={`(${cart.totalQuantity})`} icon={cartIcon} action={() => navigation.navigate('Cart')}/>
+      <ActionButton buttonText={null} icon={orderIcon} action={() => navigation.navigate('Orders')}/>
+    </View>;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -55,3 +26,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#AAAAAA',
   }
 });
+
+CustomerMenuBar.PropTypes = {
+  cart: PropTypes.object
+};
+
+const mapStateToProps = ({CheckoutReducer}) => ({
+  cart: CheckoutReducer.cart
+});
+
+export default connect(
+  mapStateToProps
+)(CustomerMenuBar);
+

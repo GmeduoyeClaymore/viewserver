@@ -1,57 +1,51 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import * as constants from '../../redux/ActionConstants';
+import {connect} from 'react-redux';
 import {View, Text, Picker} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 
-export default class Payment extends Component {
-  static PropTypes = {
-    customerService: PropTypes.object
-  };
-
-  static navigationOptions = {header: null};
-
+class Payment extends Component {
   constructor(props) {
     super(props);
-    this.updateCardItems = this.updateCardItems.bind(this);
     this.setCard = this.setCard.bind(this);
-    this.customerService = this.props.screenProps.customerService;
-    this.navigation = this.props.navigation;
-    this.state = {
-      paymentCards: [],
-      order: this.props.navigation.state.params.order,
-      delivery: this.props.navigation.state.params.delivery
-    };
   }
 
   componentWillMount(){
-    this.paymentCardSubscription = this.customerService.paymentCardsDao.onSnapshotCompleteObservable.subscribe(this.updateCardItems);
-  }
-
-  componentWillUnmount(){
-    if (this.paymentCardSubscription){
-      this.paymentCardSubscription.dispose();
-    }
-  }
-
-  updateCardItems(paymentCards){
-    this.setState({paymentCards});
-    this.setCard(paymentCards.find(c => c.isDefault).paymentId);
+    this.setCard(this.props.customer.paymentCards.find(c => c.isDefault).paymentId);
   }
 
   setCard(paymentId){
-    this.setState({order: Object.assign({}, this.state.order, {paymentId})});
+    this.props.dispatch({type: constants.UPDATE_ORDER, order: {paymentId}});
   }
 
   render() {
-    const {paymentCards} = this.state;
+    const {customer, navigation, order} = this.props;
 
     return <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>Payment Details</Text>
-      <Picker selectedValue={this.state.order.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
-        {paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
+      <Picker selectedValue={order.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
+        {customer.paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
       </Picker>
-
-      <ActionButton buttonText="Next" icon={null} action={() => this.navigation.navigate('Delivery', {order: this.state.order, delivery: this.state.delivery})}/>
+      <ActionButton buttonText="Next" icon={null} action={() => navigation.navigate('Delivery')}/>
     </View>;
   }
 }
+
+Payment.PropTypes = {
+  status: PropTypes.object,
+  customer: PropTypes.object,
+  order: PropTypes.object
+};
+
+Payment.navigationOptions = {header: null};
+
+const mapStateToProps = ({CheckoutReducer, CustomerReducer}) => ({
+  customer: CustomerReducer.customer,
+  status: CheckoutReducer.status,
+  order: CheckoutReducer.order
+});
+
+export default connect(
+  mapStateToProps
+)(Payment);

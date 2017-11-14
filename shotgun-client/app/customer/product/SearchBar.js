@@ -1,17 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 
-export default class SearchBar extends Component {
-  render() {
-    return (
-      <TextInput
-        style={styles.input}
-        placeholder="Search"
-        onChangeText={this.props.onChange}
-      />
-    );
-  }
-}
+const SearchBar = ({onChange}) => {
+  return <TextInput
+      style={styles.input}
+      placeholder="Search"
+      onChangeText={onChange}
+    />;
+};
 
 const styles = StyleSheet.create({
   input: {
@@ -20,4 +16,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 });
+
+export default SearchBar;
 

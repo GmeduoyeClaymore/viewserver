@@ -1,9 +1,9 @@
-import * as FieldMappings from './FieldMappings';
-import DataSink from '../../common/dataSinks/DataSink';
-import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
+import * as FieldMappings from '../../common/constants/TableNames';
+import * as constants from '../../redux/ActionConstants';
+import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
-export default class PaymentCardsDao extends DataSink(CoolRxDataSink) {
+export default class PaymentCardsDao extends DispatchingDataSink {
   static DEFAULT_OPTIONS = (customerId) => {
     return {
       offset: 0,
@@ -16,11 +16,15 @@ export default class PaymentCardsDao extends DataSink(CoolRxDataSink) {
     };
   };
 
-  constructor(viewserverClient, customerId) {
+  constructor(viewserverClient, customerId, dispatch) {
     super();
+    this.dispatch = dispatch;
     this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
     this.subscriptionStrategy.subscribe(this, PaymentCardsDao.DEFAULT_OPTIONS(customerId));
   }
 
+  dispatchUpdate(){
+    this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {paymentCards: this.rows}});
+  }
   //TODO - functionality to add and remove cards
 }

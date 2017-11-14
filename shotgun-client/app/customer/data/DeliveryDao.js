@@ -1,13 +1,12 @@
-import * as FieldMappings from './FieldMappings';
+import * as FieldMappings from '../../common/constants/TableNames';
 import DataSink from '../../common/dataSinks/DataSink';
-import CoolRxDataSink from '../../common/dataSinks/CoolRxDataSink';
+import * as constants from '../../redux/ActionConstants';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from '../../viewserver-client/Logger';
-
 import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 
-export default class DeliveryDao extends DataSink(CoolRxDataSink) {
+export default class DeliveryDao extends DataSink(null) {
   static DEFAULT_OPTIONS = () =>  {
     return {
       offset: 0,
@@ -26,28 +25,25 @@ export default class DeliveryDao extends DataSink(CoolRxDataSink) {
     this.subscriptionStrategy.subscribe(this, DeliveryDao.DEFAULT_OPTIONS());
   }
 
-  async createDelivery(delivery){
-    //create order object
-    const deliveryId = uuidv4();
-    Logger.info(`Creating delivery ${deliveryId}`);
-    const addOrderRowEvent = this.createAddOrderRowEvent(deliveryId, delivery);
-    await this.subscriptionStrategy.editTable(this, [addOrderRowEvent]);
-    Logger.info('Create delivery promise resolved');
-    return deliveryId;
+  createDelivery(){
+      return async (dispatch, getState) => {
+        //create order object
+        const created = moment().format('x');
+        const deliveryId = uuidv4();
+        dispatch({type: constants.UPDATE_DELIVERY, delivery: {deliveryId, created, lastModified: created}});
+
+        Logger.info(`Creating delivery ${deliveryId}`);
+        const addDeliveryRowEvent = this.createAddOrderRowEvent(getState().CheckoutReducer.delivery);
+        await this.subscriptionStrategy.editTable(this, [addDeliveryRowEvent]);
+        Logger.info('Delivery created');
+        return deliveryId;
+      };
   }
 
-  createAddOrderRowEvent(deliveryId, delivery){
-    const now = moment();
-    delivery.dueTime = now.add(delivery.eta, 'hours').format('x');
-    delete delivery.eta;
-    const created = now.format('x');
-
+  createAddOrderRowEvent(delivery){
     return {
       type: 0, // ADD
       columnValues: {
-        deliveryId,
-        created,
-        lastModified: created,
         ...delivery
       }
     };

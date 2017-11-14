@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
+import {connect} from 'react-redux';
 import ProductList from './product/ProductList';
 import ProductCategoryList from './product/ProductCategoryList';
 import CustomerRegistration from './registration/CustomerRegistration';
@@ -12,11 +13,12 @@ import DeliveryOptions from './checkout/DeliveryOptions';
 import OrderConfirmation from './checkout/OrderConfirmation';
 import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
+import OrderDetail from './OrderDetail';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
 import {StackNavigator} from 'react-navigation';
 
-export default class CustomerLanding extends Component {
+class CustomerLanding extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,9 +27,8 @@ export default class CustomerLanding extends Component {
 
     this.client = this.props.screenProps.client;
     this.principal = this.props.screenProps.principal;
-    this.customerServiceFactory = new CustomerServiceFactory(this.client);
+    this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch, this.props.getState);
   }
-
 
   async componentWillMount() {
     try {
@@ -64,10 +65,13 @@ const CustomerLandingNavigator = StackNavigator(
     DeliveryOptions: { screen: DeliveryOptions },
     OrderConfirmation: { screen: OrderConfirmation },
     OrderComplete: { screen: OrderComplete },
-    Orders: {screen: Orders}
+    Orders: {screen: Orders},
+    OrderDetail: {screen: OrderDetail}
   }, {
     initialRouteName: 'ProductCategoryList',
     headerMode: 'screen'
   });
 
 CustomerLanding.router = CustomerLandingNavigator.router;
+
+export default connect()(CustomerLanding);

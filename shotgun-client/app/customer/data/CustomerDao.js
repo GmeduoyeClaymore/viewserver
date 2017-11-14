@@ -1,4 +1,4 @@
-import * as FieldMappings from './FieldMappings';
+import * as FieldMappings from '../../common/constants/TableNames';
 import DataSink from '../../common/dataSinks/DataSink';
 import SnapshotCompletePromise from '../../common/promises/SnapshotCompletePromise';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';

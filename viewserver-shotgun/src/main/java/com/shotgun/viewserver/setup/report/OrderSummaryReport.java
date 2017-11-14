@@ -18,9 +18,10 @@ public class OrderSummaryReport {
                         .withDataSource(OrderItemsDataSource.NAME)
                         .withParameter("customerId", "Customer Id", String[].class)
                         .withParameter("isCompleted", "Is Order Complete", Boolean[].class)
+                        .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("customerId == \"{customerId}\" && orderId != null")
+                                        .withExpression("customerId == \"{customerId}\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
                                 new GroupByNode("totalsGroupBy")
                                         .withGroupByColumns("orderId")
@@ -39,6 +40,8 @@ public class OrderSummaryReport {
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
+                                                new IProjectionConfig.ProjectionColumn("paymentId"),
+                                                new IProjectionConfig.ProjectionColumn("deliveryId"),
                                                 new IProjectionConfig.ProjectionColumn("totalQuantity"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("status"),

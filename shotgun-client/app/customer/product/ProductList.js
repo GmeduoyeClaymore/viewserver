@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
-import ListViewDataSink from '../../common/dataSinks/ListViewDataSink';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import {Spinner} from 'native-base';
+import PagingListView from '../../common/components/PagingListView';
+import ProductDao from '../data/ProductDao';
 
-const ProductList = ({screenProps, navigation}) => {
-  const {client} = screenProps;
-  const subscriptionStrategy = new DataSourceSubscriptionStrategy(client, 'product');
-  let myListView;
-
+const ProductList = ({product, screenProps, navigation, dispatch}) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: '#FFFFFF',
@@ -28,40 +26,38 @@ const ProductList = ({screenProps, navigation}) => {
     filterExpression
   };
 
+  const productDao = new ProductDao(screenProps.client, dispatch, options);
+
   const search = (searchText) => {
-    if (myListView) {
       const productFilter = searchText != '' ? `name like "*${searchText}*"` : '';
       options.filterExpression = options.filterExpression == '' ? productFilter : `${filterExpression} && ${productFilter}`;
-      myListView.updateOptions(options);
-    }
+      productDao.updateOptions(options);
   };
 
-  const Paging = () => <View><Text>Paging...</Text></View>;
+  const Paging = () => <View><Spinner /></View>;
   const NoItems = () => <View><Text>No items to display</Text></View>;
-  const LoadedAllItems = () => <View><Text>No More to display</Text></View>;
-  const rowView = (product) => {
-    return (<ProductListItem key={product.productId} product={product} navigation={navigation}/>);
+  const rowView = (p) => {
+    return (<ProductListItem key={p.productId} product={p} navigation={navigation}/>);
   };
 
-  return <ListViewDataSink
-    ref={ listView => { myListView = listView;}}
+  return <PagingListView
     style={styles.container}
-    subscriptionStrategy={subscriptionStrategy}
-    options={options}
+    dao={productDao}
+    data={product.products}
+    pageSize={10}
+    busy={product.status.busy}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}
-    paginationAllLoadedView={LoadedAllItems}
-    refreshable={true}
-    enableEmptySections={true}
-    renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
     headerView={() => <SearchBar onChange={search.bind(this)} />}
   />;
 };
 
 ProductList.propTypes = {
+  product: PropTypes.object,
+  dispatch: PropTypes.func,
   screenProps: PropTypes.object,
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
 };
 
 ProductList.navigationOptions = ({navigation}) => {
@@ -75,6 +71,12 @@ ProductList.navigationOptions = ({navigation}) => {
   return navOptions;
 };
 
-export default ProductList;
+const mapStateToProps = ({ProductReducer}) => ({
+  product: ProductReducer.product
+});
+
+export default connect(
+  mapStateToProps
+)(ProductList);
 
 

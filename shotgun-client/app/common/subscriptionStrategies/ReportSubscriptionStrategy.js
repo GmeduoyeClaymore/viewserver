@@ -1,5 +1,5 @@
 import {debounce} from 'lodash';
-export default class OperatorSubsciptionStrategy{
+export default class ReportSubsciptionStrategy{
   constructor(client, reportContext){
     this.client = client;
     this.reportContext = reportContext;

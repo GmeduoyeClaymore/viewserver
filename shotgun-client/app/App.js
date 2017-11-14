@@ -1,11 +1,15 @@
 import React from 'react';
 import {View} from 'react-native';
+import {Provider} from 'react-redux';
 import {StackNavigator} from 'react-navigation';
+import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
 import Logger from './viewserver-client/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import CustomerLanding from './customer/CustomerLanding';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
+
+const store = configureStore();
 
 export default class App extends React.Component {
   constructor() {
@@ -49,9 +53,12 @@ export default class App extends React.Component {
       });
     const screenProps = {client: this.client, principal: this.principal};
 
-    return <View style={{flexDirection: 'column', flex: 1}}>
+
+    return <Provider store={store}>
+      <View style={{flexDirection: 'column', flex: 1}}>
       <AppNavigator screenProps={screenProps} />
-    </View>;
+    </View>
+    </Provider>;
   }
 }
 //This is required to hook up the nested navigation - https://reactnavigation.org/docs/intro/nesting

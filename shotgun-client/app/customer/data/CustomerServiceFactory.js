@@ -8,8 +8,9 @@ import DeliveryAddressDao from './DeliveryAddressDao';
 import DeliveryDao from './DeliveryDao';
 
 export default class CustomerServiceFactory {
-  constructor(viewserverClient) {
+  constructor(viewserverClient, dispatch) {
     this.viewserverClient = viewserverClient;
+    this.dispatch = dispatch;
   }
 
   async create(customerId){
@@ -17,14 +18,15 @@ export default class CustomerServiceFactory {
       return this.customerService;
     }
 
-    const orderItemsDao = new OrderItemsDao(this.viewserverClient, customerId);
-    const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId);
-    const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId);
-    const orderDao = new OrderDao(this.viewserverClient, customerId);
+    //TODO - find a better way of passing dispatch to the dao objects
+    const orderItemsDao = new OrderItemsDao(this.viewserverClient, customerId, this.dispatch);
+    const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId, this.dispatch);
+    const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId, this.dispatch);
+    const orderDao = new OrderDao(this.viewserverClient, customerId, this.dispatch);
     const customerDao = new CustomerDao(this.viewserverClient, customerId);
-    const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId);
-    const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId);
-    const deliveryDao = new DeliveryDao(this.viewserverClient);
+    const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId, this.dispatch);
+    const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId, this.dispatch);
+    const deliveryDao = new DeliveryDao(this.viewserverClient, this.dispatch);
 
     await Promise.all(orderItemsDao, customerDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao);
 

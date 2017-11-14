@@ -1,56 +1,31 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import * as constants from '../../redux/ActionConstants';
+import {connect} from 'react-redux';
 import {View, Text, Picker} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 import {ListItem, Radio, Right} from 'native-base';
 
-export default class DeliveryOptions extends Component {
-  static PropTypes = {
-    customerService: PropTypes.object
-  };
-
-  static navigationOptions = {header: null};
-
+class DeliveryOptions extends Component {
   constructor(props) {
     super(props);
-    this.updateDeliveryAddresses = this.updateDeliveryAddresses.bind(this);
-    this.setDeliveryType = this.setDeliveryType.bind(this);
     this.setDeliveryAddress = this.setDeliveryAddress.bind(this);
-    this.customerService = this.props.screenProps.customerService;
-    this.navigation = this.props.navigation;
-    this.state = {
-      deliveryAddresses: [],
-      order: this.props.navigation.state.params.order,
-      delivery: this.props.navigation.state.params.delivery
-    };
   }
 
   componentWillMount(){
-    this.deliveryAddressSubscription = this.customerService.deliveryAddressDao.onSnapshotCompleteObservable.subscribe(this.updateDeliveryAddresses);
-  }
-
-  componentWillUnmount(){
-    if (this.deliveryAddressSubscription){
-      this.deliveryAddressSubscription.dispose();
-    }
-  }
-
-  updateDeliveryAddresses(deliveryAddresses){
-    this.setState(Object.assign({}, this.state.order, {deliveryAddresses}));
-    //TODO - handle edge case where not default dlievery address is et
-    this.setDeliveryAddress((deliveryAddresses.find(a => a.isDefault)).deliveryAddressId);
-  }
-
-  setDeliveryType(type){
-    this.setState({delivery: Object.assign({}, this.state.delivery, {type})});
+    this.setDeliveryAddress(this.props.customer.deliveryAddresses.find(c => c.isDefault).deliveryAddressId);
   }
 
   setDeliveryAddress(deliveryAddressId){
-    this.setState({delivery: Object.assign({}, this.state.delivery, {deliveryAddressId})});
+    this.props.dispatch({type: constants.UPDATE_DELIVERY, delivery: {deliveryAddressId}});
   }
 
   render() {
-    const {deliveryAddresses} = this.state;
+    const {customer, delivery, navigation, dispatch} = this.props;
+
+    const setDeliveryType = (type) => {
+      dispatch({type: constants.UPDATE_DELIVERY, delivery: {type}});
+    };
 
     return <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>Delivery Instructions</Text>
@@ -58,22 +33,43 @@ export default class DeliveryOptions extends Component {
       <ListItem>
         <Text>Roadside Delivery</Text>
         <Right>
-          <Radio selected={this.state.delivery.type == 'ROADSIDE'} onPress={() => this.setDeliveryType('ROADSIDE')}/>
+          <Radio selected={delivery.type == 'ROADSIDE'} onPress={() => setDeliveryType('ROADSIDE')}/>
         </Right>
       </ListItem>
       <ListItem>
         <Text>Carry-in Delivery</Text>
         <Right>
-          <Radio selected={this.state.delivery.type == 'CARRYIN'} onPress={() => this.setDeliveryType('CARRYIN')}/>
+          <Radio selected={delivery.type == 'CARRYIN'} onPress={() => setDeliveryType('CARRYIN')}/>
         </Right>
       </ListItem>
 
       <Text>Delivery Address</Text>
-      <Picker selectedValue={this.state.order.deliveryAddressId} onValueChange={(itemValue) => this.setDeliveryAddress(itemValue)}>
-        {deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
+      <Picker selectedValue={delivery.deliveryAddressId} onValueChange={(itemValue) => this.setDeliveryAddress(itemValue)}>
+        {customer.deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
       </Picker>
 
-      <ActionButton buttonText="Next" icon={null} action={() =>  this.navigation.navigate('OrderConfirmation', {order: this.state.order, delivery: this.state.delivery})}/>
+      <ActionButton buttonText="Next" icon={null} action={() =>  navigation.navigate('OrderConfirmation')}/>
     </View>;
   }
 }
+
+DeliveryOptions.PropTypes = {
+  status: PropTypes.object,
+  order: PropTypes.object,
+  delivery: PropTypes.object
+};
+
+DeliveryOptions.navigationOptions = {header: null};
+
+const mapStateToProps = ({CheckoutReducer, CustomerReducer}) => ({
+  customer: CustomerReducer.customer,
+  status: CheckoutReducer.status,
+  order: CheckoutReducer.order,
+  delivery: CheckoutReducer.delivery
+});
+
+export default connect(
+  mapStateToProps
+)(DeliveryOptions);
+
+

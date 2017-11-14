@@ -1,26 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import ListViewDataSink from '../../common/dataSinks/ListViewDataSink';
-import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
+import {connect} from 'react-redux';
+import {Spinner} from 'native-base';
+import ProductCategoryDao from '../data/ProductCategoryDao';
+import PagingListView from '../../common/components/PagingListView';
 
-
-const ProductCategoryList = ({screenProps, navigation}) => {
-  const {client} = screenProps;
+const ProductCategoryList = ({product, screenProps, navigation, dispatch}) => {
   const parentCategoryId = navigation.state.params !== undefined ? navigation.state.params.parentCategoryId : undefined;
-
-  const reportContext = {
-    reportId: 'productCategory',
-    parameters: {
-      parentCategoryId
-    }
-  };
-
-  const options = {
-    columnsToSort: [{name: 'category', direction: 'asc'}]
-  };
-
-  const subscriptionStrategy = new ReportSubscriptionStrategy(client, reportContext);
+  const productCategoryDao = new ProductCategoryDao(screenProps.client, dispatch, parentCategoryId);
 
   const styles = StyleSheet.create({
     container: {
@@ -33,9 +21,8 @@ const ProductCategoryList = ({screenProps, navigation}) => {
     }
   });
 
-  const Paging = () => <View><Text>Paging...</Text></View>;
+  const Paging = () => <View><Spinner /></View>;
   const NoItems = () => <View><Text>No items to display</Text></View>;
-  const LoadedAllItems = () => <View><Text>No More to display</Text></View>;
   const rowView = (row) => {
     const {categoryId, category} = row;
 
@@ -55,24 +42,22 @@ const ProductCategoryList = ({screenProps, navigation}) => {
     </TouchableHighlight>;
   };
 
-
-  return <ListViewDataSink
-    ref={null}
+  return <PagingListView
     style={styles.container}
-    subscriptionStrategy={subscriptionStrategy}
-    options={options}
+    dao={productCategoryDao}
+    data={product.categories}
+    pageSize={10}
+    busy={product.status.busy}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}
-    paginationAllLoadedView={LoadedAllItems}
-    refreshable={true}
-    enableEmptySections={true}
-    renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
     headerView={() => null}
   />;
 };
 
 ProductCategoryList.propTypes = {
+  product: PropTypes.object,
+  dispatch: PropTypes.func,
   screenProps: PropTypes.object,
   navigation: PropTypes.object
 };
@@ -88,6 +73,11 @@ ProductCategoryList.navigationOptions = ({navigation}) => {
   return navOptions;
 };
 
-export default ProductCategoryList;
+const mapStateToProps = ({ProductReducer}) => ({
+  product: ProductReducer.product
+});
 
+export default connect(
+  mapStateToProps
+)(ProductCategoryList);
 

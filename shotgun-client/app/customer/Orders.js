@@ -1,75 +1,76 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet} from 'react-native';
-import ListViewDataSink from '../common/dataSinks/ListViewDataSink';
-import ReportSubscriptionStrategy from '../common/subscriptionStrategies/ReportSubscriptionStrategy';
+import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
+import {Spinner} from 'native-base';
+import PagingListView from '../common/components/PagingListView';
+import OrderSummaryDao from './data/OrderSummaryDao';
 import { TabNavigator } from 'react-navigation';
 import moment from 'moment';
 
-const Orders = ({screenProps, isCompleted}) => {
-  const {client} = screenProps;
-  const {customerId} = screenProps.customerService;
-  const reportContext = {
-    reportId: 'orderSummary',
-    parameters: {
-      customerId,
-      isCompleted
-    }
-  };
-  const options = {
-    columnsToSort: [{name: 'created', direction: 'desc'}]
-  };
+const Orders = ({customer, isCompleted, dispatch, screenProps, navigation}) => {
+    const {customerId} = screenProps.customerService;
+    const orderSummaryDao = new OrderSummaryDao(screenProps.client, dispatch, customerId, isCompleted);
+    const orders = isCompleted ? customer.orders.complete : customer.orders.incomplete;
 
-  const subscriptionStrategy = new ReportSubscriptionStrategy(client, reportContext);
+    const styles = StyleSheet.create({
+      container: {
+        backgroundColor: '#FFFFFF',
+        marginTop: 10
+      },
+      separator: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: '#AAAAAA',
+      }
+    });
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#FFFFFF',
-      marginTop: 10
-    },
-    separator: {
-      height: StyleSheet.hairlineWidth,
-      backgroundColor: '#AAAAAA',
-    }
-  });
+    const Paging = () => <View><Spinner /></View>;
+    const NoItems = () => <View><Text>No orders to display</Text></View>;
+    const rowView = (order) => {
+      const created = moment(order.created);
+      const orderComplete = order.status == 'COMPLETED';
 
-  const Paging = () => <View><Text>Paging...</Text></View>;
-  const NoItems = () => <View><Text>No orders to display</Text></View>;
-  const LoadedAllItems = () => <View><Text>No More Orders to display</Text></View>;
-  const rowView = (order) => {
-    const created = moment(order.created);
+      return <TouchableHighlight key={order.orderId} style={{flex: 1, flexDirection: 'row'}} onPress={() => navigation.navigate('OrderDetail', {orderId: order.orderId, isCompleted: orderComplete})} underlayColor={'#EEEEEE'}>
+        <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
+          <Text>{`Order: ${order.orderId}`}</Text>
+          <Text>{`£${order.totalPrice} (${order.totalQuantity} items) ${order.status}`}</Text>
+          <Text>{`${created.format('DD/MM/YYYY HH:mmZ')}`}</Text>
+        </View>
+      </TouchableHighlight>;
+    };
 
-    return <View key={order.orderId} style={{flexDirection: 'column', flex: 1, padding: 0}}>
-      <Text>{`Order: ${order.orderId}`}</Text>
-      <Text>{`£${order.totalPrice} (${order.totalQuantity} items) ${order.status}`}</Text>
-      <Text>{`${created.format('DD/MM/YYYY HH:mmZ')}`}</Text>
-    </View>;
-  };
-
-  return <ListViewDataSink
-    ref={null}
-    style={styles.container}
-    subscriptionStrategy={subscriptionStrategy}
-    options={options}
-    rowView={rowView}
-    paginationWaitingView={Paging}
-    emptyView={NoItems}
-    paginationAllLoadedView={LoadedAllItems}
-    refreshable={true}
-    enableEmptySections={true}
-    renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-    headerView={() => null}
-  />;
+    return <PagingListView
+      style={styles.container}
+      dao={orderSummaryDao}
+      data={orders}
+      pageSize={10}
+      busy={customer.status.busy}
+      rowView={rowView}
+      paginationWaitingView={Paging}
+      emptyView={NoItems}
+      headerView={() => null}
+    />;
 };
 
-Orders.propTypes = {
-  screenProps: PropTypes.object
+Orders.PropTypes = {
+  customer: PropTypes.object
 };
+
+Orders.navigationOptions = {header: null};
+
+const mapStateToProps = ({CustomerReducer}) => ({
+  customer: CustomerReducer.customer
+});
+
+const ConnectedOrders = connect(
+  mapStateToProps
+)(Orders);
 
 const tabNavigator = TabNavigator({
-    Pending: { screen: props => <Orders {...props} isCompleted={false}/>},
-    Completed: { screen: props => <Orders {...props} isCompleted={true}/> }
-  });
+  Pending: { screen: props => <ConnectedOrders {...props} isCompleted={false}/>},
+  Completed: { screen: props => <ConnectedOrders {...props} isCompleted={true}/> }
+});
+
 tabNavigator.navigationOptions = {header: null};
 
 export default tabNavigator;
