@@ -6,28 +6,34 @@ import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
 import Logger from './viewserver-client/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
+import PrincipalService from './common/services/PrincipalService';
 import CustomerLanding from './customer/CustomerLanding';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
 
 const store = configureStore();
 
 export default class App extends React.Component {
+  static INITIAL_ROOT_NAME = 'Home';
+
   constructor() {
     super();
     this.state = {
       isReady: false
     };
-    //this.client = new Client('ws://192.168.0.5:8080/');
-    this.client = new Client('ws://localhost:8080/');
-    this.principal = {
-      customerId: '4BBuxi',
-    };
+    this.client = new Client('ws://192.168.0.5:8080/');
+    //this.client = new Client('ws://localhost:8080/');
     this.applicationMode = 'customer';
   }
 
   async componentWillMount() {
     try {
       await ProtoLoader.loadAll();
+      await this.setCustomerId();
+
+      if (this.customerId == undefined){
+        App.INITIAL_ROOT_NAME = 'Registration';
+      }
+
       Logger.debug('Mounting component !!' + ProtoLoader.Dto.AuthenticateCommandDto);
       await this.client.connect();
     } catch (error){
@@ -35,6 +41,10 @@ export default class App extends React.Component {
     }
     Logger.debug('Network connected !!');
     this.setState({ isReady: true });
+  }
+
+  async setCustomerId(){
+    this.customerId = await PrincipalService.getCustomerIdFromDevice();
   }
 
   render() {
@@ -48,10 +58,10 @@ export default class App extends React.Component {
         Home: { screen: CustomerLanding },
         Registration: { screen: CustomerRegistration }
       }, {
-        initialRouteName: 'Registration',
-        headerMode: 'none'
+        initialRouteName: App.INITIAL_ROOT_NAME,
+        headerMode: 'screen'
       });
-    const screenProps = {client: this.client, principal: this.principal};
+    const screenProps = {client: this.client, customerId: this.customerId};
 
 
     return <Provider store={store}>
@@ -62,4 +72,4 @@ export default class App extends React.Component {
   }
 }
 //This is required to hook up the nested navigation - https://reactnavigation.org/docs/intro/nesting
-App.router = CustomerLanding.router;
+App.router = CustomerRegistration.router;

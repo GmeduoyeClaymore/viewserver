@@ -10,12 +10,9 @@ export default class OrderDao extends DataSink(null){
     static DEFAULT_OPTIONS = (customerId) =>  {
       return {
         offset: 0,
-        limit: 20,
-        columnName: undefined,
-        columnsToSort: undefined,
+        limit: 1,
         filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}"`,
-        flags: undefined
+        filterExpression: `customerId == "${customerId}"`
       };
     };
   

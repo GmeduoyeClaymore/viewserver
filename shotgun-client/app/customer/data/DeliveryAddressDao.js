@@ -2,6 +2,9 @@ import * as FieldMappings from '../../common/constants/TableNames';
 import * as constants from '../../redux/ActionConstants';
 import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import uuidv4 from 'uuid/v4';
+import Logger from '../../viewserver-client/Logger';
+import {forEach} from 'lodash';
 
 export default class DeliveryAddressDao extends DispatchingDataSink {
   static DEFAULT_OPTIONS = (customerId) => {
@@ -27,5 +30,51 @@ export default class DeliveryAddressDao extends DispatchingDataSink {
     this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {deliveryAddresses: this.rows}});
   }
 
-  //TODO - functionality to add and remove cards
+  async addOrUpdateDeliveryAddress(customerId, deliveryAddress){
+    let deliveryAddressRowEvent;
+
+    Logger.info(`Adding deliveryAddress schema is ${JSON.stringify(this.schema)}`);
+    const deliveryAddressObject = {}
+    forEach(this.schema, value => {
+      const field = value.name;
+      deliveryAddressObject[field] = deliveryAddress[field];
+    });
+
+    deliveryAddressObject.customerId = customerId;
+
+    if (deliveryAddressObject.deliveryAddressId == undefined) {
+      deliveryAddressObject.deliveryAddressId = uuidv4();
+    }
+
+    if (this.customer == undefined){
+      Logger.info(`Adding deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
+      deliveryAddressRowEvent = this.createAddDeliveryAddressEvent(deliveryAddressObject);
+    } else {
+      Logger.info(`Updating deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
+      deliveryAddressRowEvent = this.createUpdateDeliveryAddressEvent(deliveryAddressObject);
+    }
+    const modifiedRows = await this.subscriptionStrategy.editTable(this, [deliveryAddressRowEvent]);
+    Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
+    return modifiedRows;
+  }
+
+  createAddDeliveryAddressEvent(deliveryAddress){
+    return {
+      type: 0, // ADD
+      columnValues: {
+        ...deliveryAddress
+      }
+    };
+  }
+
+  createUpdateDeliveryAddressEvent(deliveryAddress){
+    return {
+      type: 1, // UPDATE
+      columnValues: {
+        ...deliveryAddress
+      }
+    };
+  }
+
+  //TODO - functionality  remove addreses
 }

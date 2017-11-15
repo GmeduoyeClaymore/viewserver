@@ -35,10 +35,9 @@ CustomerDataSource {
                                         new Column("title", "title", ColumnType.String),
                                         new Column("firstName", "firstName", ColumnType.String),
                                         new Column("lastName", "lastName", ColumnType.String),
+                                        new Column("password", "password", ColumnType.String),
                                         new Column("contactNo", "contactNo", ColumnType.String),
-                                        new Column("emailAddress", "emailAddress", ColumnType.String),
-                                        new Column("deliveryAddress", "deliveryAddress", ColumnType.String),
-                                        new Column("paymentDetails", "paymentDetails", ColumnType.String)
+                                        new Column("email", "email", ColumnType.String)
                                 ))
                                 .withKeyColumns("customerId")
                 )

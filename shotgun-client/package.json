@@ -24,7 +24,8 @@
     "redux-thunk": "^2.2.0",
     "rx-lite": "^4.0.8",
     "seamless-immutable": "^7.1.2",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "yup": "^0.23.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.2",

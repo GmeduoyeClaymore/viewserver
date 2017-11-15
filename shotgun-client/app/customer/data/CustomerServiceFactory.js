@@ -23,7 +23,8 @@ export default class CustomerServiceFactory {
     const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId, this.dispatch);
     const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId, this.dispatch);
     const orderDao = new OrderDao(this.viewserverClient, customerId, this.dispatch);
-    const customerDao = new CustomerDao(this.viewserverClient, customerId);
+    const customerDao = new CustomerDao(this.viewserverClient);
+    customerDao.subscribe(customerId);
     const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId, this.dispatch);
     const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId, this.dispatch);
     const deliveryDao = new DeliveryDao(this.viewserverClient, this.dispatch);
@@ -35,6 +36,8 @@ export default class CustomerServiceFactory {
   }
 }
 class CustomerService {
+  static customerIdKey = '@shotgun:customerId';
+
   constructor(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao) {
     this.customerId = customerId;
     this.customerDao = customerDao;

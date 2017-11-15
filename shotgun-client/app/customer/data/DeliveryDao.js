@@ -10,11 +10,8 @@ export default class DeliveryDao extends DataSink(null) {
   static DEFAULT_OPTIONS = () =>  {
     return {
       offset: 0,
-      limit: 20,
-      columnName: undefined,
-      columnsToSort: undefined,
+      limit: 1,
       filterMode: 2, //Filtering
-      flags: undefined
     };
   };
 
