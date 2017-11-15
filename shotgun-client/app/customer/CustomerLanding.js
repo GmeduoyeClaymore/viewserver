@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
+import {setLocale} from 'yup/lib/customLocale';
 import ProductList from './product/ProductList';
 import ProductCategoryList from './product/ProductCategoryList';
-import CustomerRegistration from './registration/CustomerRegistration';
 import ProductDetails from './product/ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
 import Cart from './checkout/Cart';
@@ -18,7 +18,22 @@ import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
 import {StackNavigator} from 'react-navigation';
 
+//TODO - we should be able to put this in App.js but it doesn't work for some reason
+setLocale({
+  mixed: {
+    required: 'is required',
+    matches: 'is invalid',
+    max: 'is too long',
+    min: 'is too short'
+  },
+  string: {
+    email: 'is not a valid email'
+  }
+});
+
 class CustomerLanding extends Component {
+  static INITIAL_ROOT_NAME = 'ProductCategoryList';
+
   constructor(props) {
     super(props);
     this.state = {
@@ -27,7 +42,7 @@ class CustomerLanding extends Component {
 
     this.client = this.props.screenProps.client;
     this.principal = this.props.screenProps.principal;
-    this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch, this.props.getState);
+    this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch);
   }
 
   async componentWillMount() {
@@ -58,7 +73,6 @@ const CustomerLandingNavigator = StackNavigator(
     ProductCategoryList: {screen: ProductCategoryList},
     ProductList: {screen: ProductList},
     ProductDetails: { screen: ProductDetails },
-    CustomerRegistration: { screen: CustomerRegistration },
     Cart: { screen: Cart },
     Payment: { screen: Payment },
     Delivery: { screen: Delivery },
@@ -68,7 +82,7 @@ const CustomerLandingNavigator = StackNavigator(
     Orders: {screen: Orders},
     OrderDetail: {screen: OrderDetail}
   }, {
-    initialRouteName: 'ProductCategoryList',
+    initialRouteName: CustomerLanding.INITIAL_ROOT_NAME,
     headerMode: 'screen'
   });
 

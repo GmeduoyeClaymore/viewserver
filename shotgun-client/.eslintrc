@@ -140,7 +140,7 @@
     "object-shorthand": ["error", "always"],
     "prefer-arrow-callback": "error",
     "no-useless-rename": "error",
-    "no-shadow": "error",
+    "no-shadow": "warn",
     "func-style": ["error", "expression", { "allowArrowFunctions": true }]
   }
 }
