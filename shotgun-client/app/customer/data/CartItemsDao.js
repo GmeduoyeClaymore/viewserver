@@ -1,87 +1,112 @@
 import * as FieldMappings from '../../common/constants/TableNames';
-import * as constants from '../../redux/ActionConstants';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import uuidv4 from 'uuid/v4';
 import Logger from '../../viewserver-client/Logger';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 
-export default class CartItemsDao extends DispatchingDataSink {
-  static DEFAULT_OPTIONS = (customerId) => {
+const createAddOrderItemRowEvent = (productId, quantity) =>{
+  return {
+    type: 0, // ADD
+    columnValues: {
+      orderId: null,
+      itemId: uuidv4(),
+      customerId: this.customerId,
+      productId,
+      quantity
+    }
+  };
+};
+
+const createUpdateCartRowEvent = (tableKey, columnValues) => {
+  return {
+    type: 1, // UPDATE
+    tableKey,
+    columnValues
+  };
+};
+
+export default class CartItemsDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
+  }
+
+  get defaultOptions(){
     return {
       offset: 0,
       limit: 20,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
-      filterExpression: `customerId == "${customerId}" && orderId == null`,
       flags: undefined
     };
-  };
-
-  constructor(viewserverClient, customerId, dispatch) {
-    super();
-    this.dispatch = dispatch;
-    this.customerId = customerId;
-    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
-    this.subscriptionStrategy.subscribe(this, CartItemsDao.DEFAULT_OPTIONS(customerId));
   }
 
-  dispatchUpdate(){
-    this.dispatch({type: constants.UPDATE_CART, cart: {items: this.rows}});
+  get name(){
+      return 'cartItems';
   }
 
-  async addItemToCart(productId, quantity){
-    let cartRowEvent;
-
-    const existingRow = this.getProductRow(productId);
-
-    if (existingRow !== undefined){
-      Logger.info(`Updating cart row ${existingRow.itemId}`);
-      cartRowEvent = this.createUpdateCartRowEvent(existingRow.itemId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
-    } else {
-      Logger.info('Adding item to cart');
-      cartRowEvent = this.createAddOrderItemRowEvent(productId, quantity);
-    }
-
-    const modifiedRows = await this.subscriptionStrategy.editTable(this, [cartRowEvent]);
-    Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-    return modifiedRows;
+  createDataSink(){
+      return new RxDataSink();
   }
 
-  async purchaseCartItems(orderId){
-    if (this.rows.some(e => e.orderId !== undefined)){
-      //defensive coding to make sure we're not updating existing order items by mistake
-      Logger.error('Tried to update an item which already has an orderId this shouldnt happen!');
-      return;
-    }
-
-    const rowEvents = this.rows.map(i => this.createUpdateCartRowEvent(i.itemId, {orderId}));
-    await this.subscriptionStrategy.editTable(this, rowEvents);
-    Logger.info('Purchase cart item promise resolved');
-  }
-
-  createAddOrderItemRowEvent(productId, quantity){
+  mapDomainEvent(event, dataSink){
     return {
-      type: 0, // ADD
-      columnValues: {
-        orderId: null,
-        itemId: uuidv4(),
-        customerId: this.customerId,
-        productId,
-        quantity
+      cart: {
+        items: dataSink.rows
       }
     };
   }
 
-  createUpdateCartRowEvent(tableKey, columnValues){
-    return {
-      type: 1, // UPDATE
-      tableKey,
-      columnValues
-    };
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
   }
 
-  getProductRow(productId){
-    return this.rows.find(r => r.productId === productId);
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    const {customerId} = options;
+    if (typeof customerId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerId == "${customerId}" && orderId == null`};
+  }
+
+  extendDao(dao){
+    dao.addItemToCart = async ({productId, quantity}) => {
+      let cartRowEvent;
+      const {dataSink, subscriptionStrategy} = dao;
+      const {rows} = dataSink;
+      const existingRow = rows.find(r => r.productId === productId);
+
+      if (existingRow !== undefined){
+        Logger.info(`Updating cart row ${existingRow.itemId}`);
+        cartRowEvent = createUpdateCartRowEvent(existingRow.itemId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
+      } else {
+        Logger.info('Adding item to cart');
+        cartRowEvent = createAddOrderItemRowEvent(productId, quantity);
+      }
+
+      const modifiedRows = await subscriptionStrategy.editTable(this, [cartRowEvent]);
+      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
+      const result = await dao.rowEventObservable.filter(row => row.itemId == cartRowEvent.columnValues.itemId).timeout(5000, `Could not modification to cart item ${cartRowEvent.columnValues.itemId} in 5 seconds`).toPromise();
+      return result;
+    };
+    dao.purchaseCartItems = async (orderId) => {
+      const {dataSink, subscriptionStrategy} = dao;
+      const {rows} = dataSink;
+      if (rows.some(e => e.orderId !== undefined)){
+        //defensive coding to make sure we're not updating existing order items by mistake
+        Logger.error('Tried to update an item which already has an orderId this shouldnt happen!');
+        return;
+      }
+      const rowEvents = rows.map(i => createUpdateCartRowEvent(i.itemId, {orderId}));
+      await subscriptionStrategy.editTable(dataSink, rowEvents);
+      const result = await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(row => row.itemId == ev.columnValues.itemId).timeout(5000, `Could not modification to cart event ${ev.columnValues.itemId} in 5 seconds`).toPromise()));
+      Logger.info('Purchase cart item promise resolved');
+      return result;
+    };
   }
 }
+

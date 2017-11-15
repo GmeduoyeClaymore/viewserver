@@ -15,6 +15,7 @@ const OrderConfirmation = ({cart, order, delivery, customer, status, dispatch, n
       dispatch({type: constants.UPDATE_ORDER, order: {deliveryId}});
       const orderId = await dispatch(screenProps.customerService.orderDao.createOrder());
       await screenProps.customerService.cartItemsDao.purchaseCartItems(orderId);
+
       dispatch({type: constants.UPDATE_STATUS, status: {busy: false}});
 
       navigation.navigate('OrderComplete');

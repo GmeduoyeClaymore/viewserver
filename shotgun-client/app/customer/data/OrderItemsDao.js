@@ -1,35 +1,59 @@
-import * as FieldMappings from '../../common/constants/TableNames';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
-import * as constants from '../../redux/ActionConstants';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
-export default class OrderItemsDao extends DispatchingDataSink{
-    static DEFAULT_OPTIONS = (customerId, orderId) =>  {
-      return {
-        offset: 0,
-        limit: 20,
-        columnName: undefined,
-        columnsToSort: undefined,
-        filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}" && orderId == "${orderId}"`,
-        flags: undefined
-      };
-    };
-  
-    constructor(viewserverClient, dispatch, customerId, orderId){
-      super();
-      this.dispatch = dispatch;
-      this.customerId = customerId;
-      this.orderId = orderId;
-      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
-    }
-
-  subscribe(){
-    this.subscriptionStrategy.subscribe(this, OrderItemsDao.DEFAULT_OPTIONS(this.customerId, this.orderId));
+export default class OrderItemsDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
   }
 
+  get defaultOptions(){
+    return {
+      offset: 0,
+      limit: 20,
+      columnName: undefined,
+      columnsToSort: undefined,
+      filterMode: 2, //Filtering
+      flags: undefined
+    };
+  }
 
-  dispatchUpdate(){
-      this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {orderDetail: {items: this.rows}}});
+  get name(){
+      return 'orderItems';
+  }
+
+  createDataSink(){
+      return new RxDataSink();
+  }
+
+  mapDomainEvent(event, dataSink){
+    return {
+      customer: {
+        orderDetail: {
+          items: dataSink.rows
+        }
+      }
+    };
+  }
+
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    const {customerId, orderId} = options;
+    if (typeof customerId === 'undefined'){
+      throw new Error('customerId should be defined');
     }
+    if (typeof orderId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerId == "${customerId}" && orderId == "${orderId}"`};
+  }
 }
+
+

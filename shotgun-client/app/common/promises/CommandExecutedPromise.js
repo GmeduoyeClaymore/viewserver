@@ -1,6 +1,6 @@
 import Logger from '../../viewserver-client/Logger';
 
-export default class TableEditPromise{
+export default class CommandExecutedPromise{
   constructor(){
     this.promise = new Promise(this._handlePromiseExecution.bind(this));
     this.onSuccess = this.onSuccess.bind(this);
@@ -22,7 +22,7 @@ export default class TableEditPromise{
   }
 
   onSuccess(commandResultId, message){
-    Logger.info(`Table edit result successfully executed with the following message "${message}"`);
+    Logger.info(`Command successfully executed with the following message "${message}"`);
     this.resolve();
   }
 

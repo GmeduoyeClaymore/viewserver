@@ -1,30 +1,53 @@
-import * as FieldMappings from '../../common/constants/TableNames';
-import * as constants from '../../redux/ActionConstants';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
+
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 
-export default class PaymentCardsDao extends DispatchingDataSink {
-  static DEFAULT_OPTIONS = (customerId) => {
+export default class PaymentCardsDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
+  }
+
+  get defaultOptions(){
     return {
       offset: 0,
       limit: 100,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
-      filterExpression: `customerId == "${customerId}"`,
       flags: undefined
     };
-  };
-
-  constructor(viewserverClient, customerId, dispatch) {
-    super();
-    this.dispatch = dispatch;
-    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
-    this.subscriptionStrategy.subscribe(this, PaymentCardsDao.DEFAULT_OPTIONS(customerId));
   }
 
-  dispatchUpdate(){
-    this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {paymentCards: this.rows}});
+  get name(){
+      return 'paymentCards';
   }
-  //TODO - functionality to add and remove cards
+
+  createDataSink(){
+      return new RxDataSink();
+  }
+
+  mapDomainEvent(event, dataSink){
+    return {
+      customer: {
+        paymentCards: dataSink.rows
+      }
+    };
+  }
+
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(client, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    if (typeof options.customerId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerId == "${options.customerId}"`};
+  }
 }
+

@@ -1,9 +1,7 @@
-import * as constants from '../../redux/ActionConstants';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
-import Logger from '../../viewserver-client/Logger';
 
-export default class ProductCategoryDao extends DispatchingDataSink {
+export default class ProductCategoryDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
@@ -11,11 +9,17 @@ export default class ProductCategoryDao extends DispatchingDataSink {
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
-  constructor(client, dispatch, parentCategoryId, options) {
-    super();
-    this.dispatch = dispatch;
-    this.options = Object.assign({}, ProductCategoryDao.OPTIONS, options);
-    this.subscriptionStrategy = new ReportSubscriptionStrategy(client, this.getReportContext(parentCategoryId));
+  constructor(client, options) {
+    this.client = client;
+    this.options = {...OPTIONS, ...options};
+  }
+
+  get defaultOptions(){
+      this.options;
+  }
+
+  get name(){
+      return 'productCategoryDao';
   }
 
   getReportContext(parentCategoryId){
@@ -27,34 +31,29 @@ export default class ProductCategoryDao extends DispatchingDataSink {
     };
   }
 
-  subscribe(){
-    this.dispatch({type: constants.UPDATE_PRODUCT,  product: {status: {busy: true}}});
-    this.subscriptionStrategy.subscribe(this, this.options);
+  createDataSink(){
+      return new RxDataSink();
   }
 
-  updateOptions(options){
-    this.options = Object.assign({}, ProductCategoryDao.OPTIONS, options);
-    this.subscriptionStrategy.update(this, this.options);
+  mapDomainEvent(event, dataSink){
+    return {
+      product: {
+        products: dataSink.rows
+      }
+    };
   }
 
-  onSnapshotComplete(){
-    super.onSnapshotComplete();
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {status: {busy: false}}});
+  createSubscriptionStrategy({parentCategoryId}){
+    return new ReportSubscriptionStrategy(client, this.getReportContext(parentCategoryId));
   }
 
-  dispatchUpdate(){
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {categories: this.rows}});
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.parentCategoryId != newOptions.parentCategoryId;
   }
 
-  page(offset, limit){
-    if (this.rows.length >= this.totalRowCount){
-      Logger.info('Reached end of viewport');
-      return false;
+  transformOptions(options){
+    if (typeof options.parentCategoryId === 'undefined'){
+      throw new Error('Parent category should be defined');
     }
-
-    Logger.info(`Paging: offset ${offset} limit ${limit}`);
-    this.updateOptions({offset, limit});
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {status: {busy: true}}});
-    return true;
   }
 }

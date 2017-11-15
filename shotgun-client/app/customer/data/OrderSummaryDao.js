@@ -1,65 +1,62 @@
-import * as constants from '../../redux/ActionConstants';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
-import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
-import Logger from '../../viewserver-client/Logger';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 
-//TODO - fix table edit so you don't have to subscribe and then merge this with OrderDao
-export default class OrderSummaryDao extends DispatchingDataSink {
+export default class OrderSummaryDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
-    columnsToSort: [{name: 'created', direction: 'desc', limit: 100}]
+    filterMode: 2,
+    columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
-  constructor(client, dispatch, customerId, isCompleted, orderId) {
-    super();
-    this.dispatch = dispatch;
-    this.isCompleted = isCompleted;
-    this.subscriptionStrategy = new ReportSubscriptionStrategy(client, this.getReportContext(customerId, isCompleted, orderId));
+  constructor(client, options) {
+    this.client = client;
+    this.options = {...OPTIONS, ...options};
   }
 
-  getReportContext(customerId, isCompleted, orderId){
+  get defaultOptions(){
+      this.options;
+  }
+
+  get name(){
+      return 'orderSummary';
+  }
+
+  getReportContext({customerId, isCompleted}){
     return {
       reportId: 'orderSummary',
       parameters: {
         customerId,
-        isCompleted,
-        orderId
+        isCompleted
       }
     };
   }
 
-  subscribe(){
-    this.dispatch({type: constants.UPDATE_CUSTOMER,  customer: {status: {busy: true}}});
-    this.subscriptionStrategy.subscribe(this, OrderSummaryDao.OPTIONS);
+  createDataSink(){
+      return new RxDataSink();
   }
 
-  onSnapshotComplete(){
-    super.onSnapshotComplete();
-    this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {status: {busy: false}}});
+  mapDomainEvent(event, dataSink){
+    return {
+      customer: {
+        orders: {
+          //todo work out exactly why we need this cruft :)
+          ['incomplete']: dataSink.rows
+        }
+      }
+    };
   }
 
-  dispatchUpdate(){
-    let orderType = 'complete';
+  createSubscriptionStrategy({customerId, isCompleted}){
+    return new ReportSubscriptionStrategy(client, this.getReportContext({customerId, isCompleted}));
+  }
 
-    if (!this.isCompleted) {
-      orderType = 'incomplete';
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId || previousOptions.isCompleted != newOptions.isCompleted;
+  }
+
+  transformOptions(options){
+    if (typeof options.parentCategoryId === 'undefined'){
+      throw new Error('Parent category should be defined');
     }
-
-    this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {orders: {[orderType]: this.rows}}});
-  }
-
-  page(offset, limit){
-    if (this.rows.length >= this.totalRowCount){
-      Logger.info('Reached end of viewport');
-      return false;
-    }
-
-    Logger.info(`Paging: offset ${offset} limit ${limit}`);
-
-    const newOptions = Object.assign({}, OrderSummaryDao.OPTIONS, {offset, limit});
-    this.subscriptionStrategy.update(this, newOptions);
-    this.dispatch({type: constants.UPDATE_CUSTOMER, customer: {status: {busy: true}}});
-    return true;
   }
 }

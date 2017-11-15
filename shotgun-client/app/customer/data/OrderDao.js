@@ -1,52 +1,80 @@
 import * as FieldMappings from '../../common/constants/TableNames';
-import * as constants from '../../redux/ActionConstants';
-import DataSink from '../../common/dataSinks/DataSink';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 import Logger from '../../viewserver-client/Logger';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 
-export default class OrderDao extends DataSink(null){
-    static DEFAULT_OPTIONS = (customerId) =>  {
-      return {
-        offset: 0,
-        limit: 20,
-        columnName: undefined,
-        columnsToSort: undefined,
-        filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}"`,
-        flags: undefined
-      };
+const createAddOrderRowEvent = (order) => {
+  return {
+    type: 0, // ADD
+    columnValues: {
+      ...order
+    }
+  };
+};
+export default class OrderItemsDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
+  }
+
+  get defaultOptions(){
+    return {
+      offset: 0,
+      limit: 20,
+      columnName: undefined,
+      columnsToSort: undefined,
+      filterMode: 2, //Filtering
+      flags: undefined
     };
-  
-    constructor(viewserverClient, customerId){
-      super();
-      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_TABLE_NAME);
-      this.viewserverClient = viewserverClient;
-      this.customerId = customerId;
-      this.subscriptionStrategy.subscribe(this, OrderDao.DEFAULT_OPTIONS(this.customerId));
-    }
-  
-    createOrder(){
-      return async (dispatch, getState) => {
-        const orderId = uuidv4();
-        const created = moment().format('x');
-        Logger.info(`Creating order ${orderId}`);
-        dispatch({type: constants.UPDATE_ORDER, order: {orderId, created, lastModified: created, customerId: this.customerId}});
+  }
 
-        const addOrderRowEvent = this.createAddOrderRowEvent(getState().CheckoutReducer.order);
-        await this.subscriptionStrategy.editTable(this, [addOrderRowEvent]);
-        Logger.info('Order created');
-        return orderId;
-      };
-    }
+  get name(){
+      return 'orderItems';
+  }
 
-    createAddOrderRowEvent(order){
-      return {
-        type: 0, // ADD
-        columnValues: {
-          ...order
-        }
-      };
+  createDataSink(){
+      return new RxDataSink();
+  }
+
+  mapDomainEvent(event, dataSink){
+    return {
+      orders: dataSink.rows
+    };
+  }
+
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    const {customerId, orderId} = options;
+    if (typeof customerId === 'undefined'){
+      throw new Error('customerId should be defined');
     }
+    if (typeof orderId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerId == "${customerId}"`};
+  }
+
+  extendDao(dao){
+    dao.createOrder = async () => {
+      const orderId = uuidv4();
+      const created = moment().format('x');
+      Logger.info(`Creating order ${orderId}`);
+      const order = {orderId, created, lastModified: created, customerId: dao.options.customerId};
+      const addOrderRowEvent = createAddOrderRowEvent(order);
+      await dao.subscriptionStrategy.editTable(this, [addOrderRowEvent]);
+      await dao.rowEventObservable.filter(row => row.orderId == orderId).timeout(5000, 'Could not detect created order in 5 seconds').toPromise();
+      Logger.info('Order created');
+      return orderId;
+    };
+  }
 }
+

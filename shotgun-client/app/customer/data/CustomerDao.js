@@ -1,73 +1,94 @@
 import * as FieldMappings from '../../common/constants/TableNames';
-import DataSink from '../../common/dataSinks/DataSink';
-import SnapshotCompletePromise from '../../common/promises/SnapshotCompletePromise';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import uuidv4 from 'uuid/v4';
 import Logger from '../../viewserver-client/Logger';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 
-export default class CustomerDao extends DataSink(SnapshotCompletePromise) {
-    static DEFAULT_OPTIONS = (customerId) =>  {
-      return {
-        offset: 0,
-        limit: 20,
-        columnName: undefined,
-        columnsToSort: undefined,
-        filterMode: 2, //Filtering
-        filterExpression: `customerId == "${customerId}"`,
-        flags: undefined
-      };
+const createAddCustomerEvent = (args) => {
+  return {
+    type: 0, // ADD
+    columnValues: args
+  };
+};
+
+const createUpdateCustomerEvent = (args) => {
+  return {
+    type: 1, // UPDATE
+    columnValues: args
+  };
+};
+
+export default class OrderItemsDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
+  }
+
+  get defaultOptions(){
+    return {
+      offset: 0,
+      limit: 20,
+      columnName: undefined,
+      columnsToSort: undefined,
+      filterMode: 2, //Filtering
+      filterExpression: `customerId == "${customerId}"`,
+      flags: undefined
     };
-  
-    constructor(viewserverClient, customerId){
-      super();
-      this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.CUSTOMER_TABLE_NAME);
-      this.viewserverClient = viewserverClient;
-      this.subscriptionStrategy.subscribe(this, CustomerDao.DEFAULT_OPTIONS(customerId));
-    }
+  }
 
-    static generateCustomerId(){
-      return uuidv4();
-    }
+  get name(){
+      return 'orderItems';
+  }
 
-    async addOrUpdateCustomer(args){
+  createDataSink(){
+      return new RxDataSink();
+  }
+
+  mapDomainEvent(event, dataSink){
+    return {
+      customer: {
+        deliveryAddresses: dataSink.rows
+      }
+    };
+  }
+
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.CUSTOMER_TABLE_NAME);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    const {customerId} = options;
+    if (typeof customerId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerId == "${customerId}"`};
+  }
+
+  extendDao(dao){
+    dao.addOrUpdateCustomer = async (args) => {
       let customerRowEvent;
       const message = {};
+      const {dataSink, subscriptionStrategy} = dao;
+      const {schema} = dataSink;
+      const {customerId} = dao.options;
+      Logger.info(`Adding customer schema is ${JSON.stringify(schema)}`);
+      Object.keys(schema).forEach(key => { message[key] = args[key];});
 
-
-      Logger.info(`Adding customer schema is ${JSON.stringify(this.schema)}`);
-      Object.keys(this.schema).forEach(key => { message[key] = args[key];});
-
-      if (this.customer == undefined){
+      if (!dataSink.rows.length){
         Logger.info(`Adding customer ${JSON.stringify(message)}`);
-        customerRowEvent = this.createAddCustomerEvent(message);
+        customerRowEvent = createAddCustomerEvent(message);
       } else {
         Logger.info(`Updating customer ${JSON.stringify(message)}`);
-        customerRowEvent = this.createUpdateCustomerEvent(message);
+        customerRowEvent = createUpdateCustomerEvent(message);
       }
-      const modifiedRows = await this.subscriptionStrategy.editTable(this, [customerRowEvent]);
+      const modifiedRows = await subscriptionStrategy.editTable(dataSink, [customerRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return modifiedRows;
+      const result = await dao.rowEventObservable.filter(row => row.customerId == customerId).timeout(5000, `Could not modification to customer id ${customerId} in 5 seconds`).toPromise();
+      return result;
     }
-
-    createAddCustomerEvent(args){
-      return {
-        type: 0, // ADD
-        columnValues: args
-      };
-    }
-
-    createUpdateCustomerEvent(args){
-      return {
-        type: 1, // UPDATE
-        columnValues: args
-      };
-    }
-
-    get customer(){
-      if (!this.rows || !this.rows.length){
-        return undefined;
-      }
-      return  this.rows[0];
-    }
+  }
 }
-  
+

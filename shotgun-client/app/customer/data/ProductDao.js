@@ -1,9 +1,7 @@
-import * as constants from '../../redux/ActionConstants';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import Logger from '../../viewserver-client/Logger';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 
-export default class ProductDao extends DispatchingDataSink {
+export default class ProductDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
@@ -11,41 +9,40 @@ export default class ProductDao extends DispatchingDataSink {
     columnsToSort: [{name: 'name', direction: 'asc'}]
   };
 
-  constructor(client, dispatch, options) {
-    super();
-    this.dispatch = dispatch;
-    this.options = Object.assign({}, ProductDao.OPTIONS, options);
-    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(client, 'product');
+  constructor(client, options) {
+    this.client = client;
+    this.options = {...OPTIONS, ...options};
   }
 
-  subscribe(){
-    this.dispatch({type: constants.UPDATE_PRODUCT,  product: {status: {busy: true}}});
-    this.subscriptionStrategy.subscribe(this, this.options);
+  get defaultOptions(){
+      this.options;
   }
 
-  updateOptions(options){
-    this.options = Object.assign({}, ProductDao.DEFAULT_OPTIONS, options);
-    this.subscriptionStrategy.update(this, this.options);
+  get name(){
+      return 'productDao';
   }
 
-  onSnapshotComplete(){
-    super.onSnapshotComplete();
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {status: {busy: false}}});
+  createDataSink(){
+      return new RxDataSink();
   }
 
-  dispatchUpdate(){
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {products: this.rows}});
+  mapDomainEvent(event, dataSink){
+    return {
+      product: {
+        products: dataSink.rows
+      }
+    };
   }
 
-  page(offset, limit){
-    if (this.rows.length >= this.totalRowCount){
-      Logger.info('Reached end of viewport');
-      return false;
-    }
+  createSubscriptionStrategy(){
+      return new DataSourceSubscriptionStrategy(client, 'product');
+  }
 
-    Logger.info(`Paging: offset ${offset} limit ${limit}`);
-    this.updateOptions({offset, limit});
-    this.dispatch({type: constants.UPDATE_PRODUCT, product: {status: {busy: true}}});
-    return true;
+  doesSubscriptionNeedToBeRecreated(previousOptions){
+      return !previousOptions;
+  }
+
+  transformOptions(options){
+    return options;
   }
 }

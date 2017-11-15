@@ -1,27 +1,33 @@
-import TableEditPromise from '../../common/promises/TableEditPromise';
+import CommandExecutedPromise from '../../common/promises/CommandExecutedPromise';
 
 export default class DataSourceSubscriptionStrategyStrategy{
-  constructor(client, path){
+  constructor(client, path, dataSink){
     this.client = client;
+    this.dataSink = dataSink;
     this.path = path;
-    this.subscribe = this.subscribe.bind(this);
+    this.subscribeOrUpdate = this.subscribeOrUpdate.bind(this);
     this.editTable = this.editTable.bind(this);
+    this.dispose = this.dispose.bind(this);
+    this.subscribeOrUpdate = debounce(this.subscribeOrUpdate.bind(this), 500);
   }
 
-  subscribe(dataSink, options){
-    this.subscribeCommand = this.client.subscribeToDataSource(this.path, options, dataSink);
+  editTable(rowEvents){
+    const commandExecutedPromise = new CommandExecutedPromise();
+    this.client.editTable(`/datasources/${this.path}/${this.path}`, this.dataSink, rowEvents, commandExecutedPromise);
+    return commandExecutedPromise;
   }
 
-  editTable(dataSink, rowEvents){
-    const tableEditPromise = new TableEditPromise();
-    this.client.editTable(`/datasources/${this.path}/${this.path}`, dataSink, rowEvents, tableEditPromise);
-    return tableEditPromise;
-  }
-
-  update(dataSink, options){
-    if (!this.subscribeCommand){
-      throw new Error('No subscribe command found must call subscribe before we call update subscription');
+  subscribeOrUpdate(options){
+    if (this.subscribeCommand === undefined){
+      this.subscribeCommand = this.client.subscribeToDataSource(this.path, options, this.dataSink);
+    } else {
+      this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
     }
-    this.updateSubscribeCommand = this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
+  }
+
+  dispose(){
+    if (this.subscribeCommand && this.dataSink){
+      this.client.unsubscribe(this.subscribeCommand.id, this.dataSink);
+    }
   }
 }

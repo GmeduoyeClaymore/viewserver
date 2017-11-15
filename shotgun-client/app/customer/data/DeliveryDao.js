@@ -1,13 +1,25 @@
 import * as FieldMappings from '../../common/constants/TableNames';
-import DataSink from '../../common/dataSinks/DataSink';
-import * as constants from '../../redux/ActionConstants';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 import Logger from '../../viewserver-client/Logger';
+import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 
-export default class DeliveryDao extends DataSink(null) {
-  static DEFAULT_OPTIONS = () =>  {
+export const createAddDeliveryRowEvent = (delivery) => {
+  return {
+    type: 0, // ADD
+    columnValues: {
+      ...delivery
+    }
+  };
+};
+export default class DeliveryDaoContext{
+  constructor(client, options) {
+    this.client = client;
+    this.options = options;
+  }
+
+  get defaultOptions(){
     return {
       offset: 0,
       limit: 20,
@@ -16,36 +28,47 @@ export default class DeliveryDao extends DataSink(null) {
       filterMode: 2, //Filtering
       flags: undefined
     };
-  };
-
-  constructor(viewserverClient) {
-    super();
-    //TODO - it's crazy we need to subscribe just to be able to update a thing....
-    this.subscriptionStrategy = new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.DELIVERY_TABLE_NAME);
-    this.subscriptionStrategy.subscribe(this, DeliveryDao.DEFAULT_OPTIONS());
   }
 
-  createDelivery(){
-      return async (dispatch, getState) => {
-        //create order object
+  get name(){
+      return 'delivery';
+  }
+
+  createDataSink(){
+      return new RxDataSink();
+  }
+
+  mapDomainEvent(event, dataSink){
+    return {
+      delivery: dataSink.rows
+    };
+  }
+
+  createSubscriptionStrategy(){
+    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.DELIVERY_TABLE_NAME);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions;
+  }
+
+  transformOptions(options){
+    return options;
+  }
+
+  extendDao(dao){
+    dao.createDelivery = async () =>{
+          //create order object
         const created = moment().format('x');
         const deliveryId = uuidv4();
-        dispatch({type: constants.UPDATE_DELIVERY, delivery: {deliveryId, created, lastModified: created}});
-
+        const delivery =  {deliveryId, created, lastModified: created};
         Logger.info(`Creating delivery ${deliveryId}`);
-        const addDeliveryRowEvent = this.createAddOrderRowEvent(getState().CheckoutReducer.delivery);
-        await this.subscriptionStrategy.editTable(this, [addDeliveryRowEvent]);
+        const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
+        await dao.subscriptionStrategy.editTable(this, [addDeliveryRowEvent]);
+        await dao.rowEventObservable.filter(row => row.deliveryId == deliveryId).timeout(5000, 'Could not detect delivery created in 5 seconds').toPromise();
         Logger.info('Delivery created');
         return deliveryId;
-      };
-  }
-
-  createAddOrderRowEvent(delivery){
-    return {
-      type: 0, // ADD
-      columnValues: {
-        ...delivery
-      }
     };
   }
 }
+
