@@ -29,11 +29,6 @@ export default class App extends React.Component {
     try {
       await ProtoLoader.loadAll();
       await this.setCustomerId();
-
-      if (this.customerId == undefined){
-        App.INITIAL_ROOT_NAME = 'Registration';
-      }
-
       Logger.debug('Mounting component !!' + ProtoLoader.Dto.AuthenticateCommandDto);
       await this.client.connect();
     } catch (error){
@@ -52,17 +47,25 @@ export default class App extends React.Component {
       return null;
     }
 
+    if (this.customerId == undefined){
+      App.INITIAL_ROOT_NAME = 'Registration';
+    } else {
+      App.INITIAL_ROOT_NAME = 'Home'
+      Logger.info(`Loading with customer id ${this.customerId}`);
+    }
+
+    const screenProps = {client: this.client, customerId: this.customerId};
+
     //TODO - change the home screen based on the current application mode
     const AppNavigator = StackNavigator(
       {
+        Root: {screen: App},
         Home: { screen: CustomerLanding },
         Registration: { screen: CustomerRegistration }
       }, {
         initialRouteName: App.INITIAL_ROOT_NAME,
-        headerMode: 'screen'
+        headerMode: 'none'
       });
-    const screenProps = {client: this.client, customerId: this.customerId};
-
 
     return <Provider store={store}>
       <View style={{flexDirection: 'column', flex: 1}}>
@@ -71,5 +74,3 @@ export default class App extends React.Component {
     </Provider>;
   }
 }
-//This is required to hook up the nested navigation - https://reactnavigation.org/docs/intro/nesting
-App.router = CustomerRegistration.router;

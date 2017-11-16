@@ -23,7 +23,7 @@ export default class CustomerServiceFactory {
     const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId, this.dispatch);
     const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId, this.dispatch);
     const orderDao = new OrderDao(this.viewserverClient, customerId, this.dispatch);
-    const customerDao = new CustomerDao(this.viewserverClient);
+    const customerDao = new CustomerDao(this.viewserverClient, this.dispatch);
     customerDao.subscribe(customerId);
     const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId, this.dispatch);
     const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId, this.dispatch);

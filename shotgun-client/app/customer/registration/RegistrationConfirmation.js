@@ -5,6 +5,7 @@ import { Form, Button, Text, Item, Input, Label} from 'native-base';
 import CustomerDao from '../data/CustomerDao';
 import PaymentCardsDao from '../data/PaymentCardsDao';
 import DeliveryAddressDao from '../data/DeliveryAddressDao';
+import PrincipalService from '../../common/services/PrincipalService';
 
 const RegistrationConfirmation  = ({navigation, dispatch, screenProps}) => {
   //TODO - don't like this needs reworking
@@ -21,7 +22,8 @@ const RegistrationConfirmation  = ({navigation, dispatch, screenProps}) => {
     const newCustomer = await customerDao.addOrUpdateCustomer(customer);
     await paymentCardsDao.addOrUpdatePaymentCard(newCustomer.customerId, paymentCard);
     await deliveryAddressDao.addOrUpdateDeliveryAddress(newCustomer.customerId, deliveryAddress);
-    //navigation.navigate('Home', {});
+    await PrincipalService.setCustomerIdOnDevice(newCustomer.customerId);
+    navigation.navigate('Root');
   };
 
   return <ScrollView style={{flex: 1, flexDirection: 'column'}}>

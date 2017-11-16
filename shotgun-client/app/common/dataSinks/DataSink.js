@@ -61,7 +61,7 @@ export default DataSink = (superclass) => class extends superclass {
     this.idRows[rowId] = row;
     this.rows.push(row);
     this.dirtyRows.push(rowId);
-    Logger.info(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    Logger.fine(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
   }
 
   onRowUpdated(rowId, row){
@@ -85,7 +85,7 @@ export default DataSink = (superclass) => class extends superclass {
   }
 
   onColumnAdded(colId, col){
-    Logger.info(`column added - ${colId} -  + ${JSON.stringify(col)}`);
+    Logger.fine(`column added - ${colId} -  + ${JSON.stringify(col)}`);
     if (super.onColumnAdded){
       super.onColumnAdded(colId, col);
     }

@@ -14,6 +14,7 @@ import OrderConfirmation from './checkout/OrderConfirmation';
 import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
+import CustomerSettings from './CustomerSettings';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from '../viewserver-client/Logger';
 import {StackNavigator} from 'react-navigation';
@@ -41,13 +42,13 @@ class CustomerLanding extends Component {
     };
 
     this.client = this.props.screenProps.client;
-    this.principal = this.props.screenProps.principal;
+    this.customerId = this.props.screenProps.customerId;
     this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch);
   }
 
   async componentWillMount() {
     try {
-      this.customerService = await this.customerServiceFactory.create(this.principal.customerId);
+      this.customerService = await this.customerServiceFactory.create(this.customerId);
     } catch (error) {
       Logger.error(error);
     }
@@ -80,7 +81,8 @@ const CustomerLandingNavigator = StackNavigator(
     OrderConfirmation: { screen: OrderConfirmation },
     OrderComplete: { screen: OrderComplete },
     Orders: {screen: Orders},
-    OrderDetail: {screen: OrderDetail}
+    OrderDetail: {screen: OrderDetail},
+    CustomerSettings: {screen: CustomerSettings}
   }, {
     initialRouteName: CustomerLanding.INITIAL_ROOT_NAME,
     headerMode: 'screen'
