@@ -52,7 +52,7 @@ class CustomerLanding extends Component {
     } catch (error) {
       Logger.error(error);
     }
-    Logger.debug('Network connected !!');
+    Logger.debug('CustomerLanding mounted');
     this.setState({isReady: true});
   }
 
@@ -60,6 +60,8 @@ class CustomerLanding extends Component {
     if (!this.state.isReady) {
       return null;
     }
+    Logger.debug('CustomerLanding rendering');
+
     const screenProps = {customerService: this.customerService, client: this.client};
 
     return <View style={{flexDirection: 'column', flex: 1}}>

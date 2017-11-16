@@ -42,7 +42,7 @@ export default DataSink = (superclass) => class extends superclass {
       super.onTotalRowCount(count);
     }
     this.totalRowCount = count;
-    Logger.info('Total row count is - ' + this.totalRowCount);
+    Logger.fine('Total row count is - ' + this.totalRowCount);
   }
 
   onSchemaReset(){

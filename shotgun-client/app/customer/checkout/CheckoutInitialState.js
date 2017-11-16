@@ -3,7 +3,7 @@ import {OrderStatuses} from '../../common/constants/OrderStatuses';
 
 export const INITIAL_STATE = Immutable({
   cart: {
-    totalQuantity: 0,
+    totalQuantity: undefined,
     totalPrice: 0,
     items: []
   },

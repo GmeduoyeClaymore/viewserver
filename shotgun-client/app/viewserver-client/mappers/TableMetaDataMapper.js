@@ -5,7 +5,7 @@ export default class TableMetaDataMapper{
     const metaData = {};
 
     tableMetaDataDto.metaDataValue.forEach(metaDataValue => {
-      Logger.debug('Mapping' + JSON.stringify(metaDataValue));
+      Logger.fine('Mapping' + JSON.stringify(metaDataValue));
       metaData[metaDataValue.name] = metaDataValue.value[metaDataValue.value.value];
     });
     return metaData;

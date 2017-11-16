@@ -11,8 +11,7 @@ export default class Network {
 
   connect(){
     Logger.debug(`Creating connection to ${this.connectionUrl}`);
-    this.eventHandlers = undefined;
-    this.connection = new Connection(this.connectionUrl, this.eventHandlers, this);
+    this.connection = new Connection(this.connectionUrl, this);
     return this.connection.connect();
   }
     
@@ -79,7 +78,7 @@ export default class Network {
   }
 
   receiveCommandResult(commandResult) {
-    Logger.debug('Received command result' + JSON.stringify(commandResult));
+    Logger.fine('Received command result' + JSON.stringify(commandResult));
 
     const command = this.openCommands[commandResult.id];
 
