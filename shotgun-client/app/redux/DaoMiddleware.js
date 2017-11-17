@@ -1,25 +1,23 @@
 
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, INVOKE_DAO_COMMAND} from './ActionConstants';
 
-export const REGISTER_DAO_ACTION = 'registerDao';
-export const UNREGISTER_DAO_ACTION = 'unRegisterDao';
-export const UPDATE_STATE = 'updateState';
-export const INVOKE_DAO_COMMAND = 'invokeCommand';
 
 export const DaoMiddleware = ({ getState, dispatch }) => {
     //TODO - find a better way of passing dispatch to the dao objects
     
     const asyncDispatch = (action, promiseOrFactory) => {
-		dispatch({ ...action, type: `${action.type}/start` });
+        const path = [action.daoName, action.method];
+		dispatch({ type, UPDATE_STATE, path, data: {status: 'start', message: undefined} });
 		//	if supplied with a function then wrapped in Promise to get built in exception handling
 		const promise = typeof promiseOrFactory === 'function' ?
 			new Promise((resolve, reject) => promiseOrFactory(action).then(resolve, reject)) :
 			promiseOrFactory;
 		return promise
 			.then(result => {
-				dispatch({ ...action, type: `${action.type}/success`, result });
+				dispatch({ type, UPDATE_STATE, path, data: {status: 'success', message: result} });
 				return result;
 			}, error => {
-				dispatch({ ...action, type: `${action.type}/failure`, error: serializableError(error, action.description) });
+				dispatch({ type, UPDATE_STATE, path, data: {status: 'fail', message: result} });
 				return Promise.reject(error);
 			});
 	};
@@ -32,7 +30,7 @@ export const DaoMiddleware = ({ getState, dispatch }) => {
             throw new Exception(`A DAO with name ${name} has already been registered`);
         }
         DAOS[name] = dao;
-        const sub = dao.observable.subject(c => dispatch({type: UPDATE_STATE, data: c}));
+        const sub = dao.observable.subject(c => dispatch({type: UPDATE_STATE, path: [name], data: c}));
         DAO_SUBSCRIPTIONS[name] = sub;
         return getState();
     };
@@ -48,7 +46,7 @@ export const DaoMiddleware = ({ getState, dispatch }) => {
     };
 
     const updateState = (action) => {
-        return getState().merge(action.data, {deep: true});
+        return getState().setIn(action.path || [], action.data);
     };
 
     const invokeCommand = (action) => {

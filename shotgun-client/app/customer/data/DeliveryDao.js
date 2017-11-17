@@ -22,8 +22,11 @@ export default class DeliveryDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 1,
+      limit: 20,
+      columnName: undefined,
+      columnsToSort: undefined,
       filterMode: 2, //Filtering
+      flags: undefined
     };
   }
 
@@ -57,11 +60,12 @@ export default class DeliveryDaoContext{
     dao.createDelivery = async () =>{
           //create order object
         const created = moment().format('x');
+        const {dataSink} = dao;
         const deliveryId = uuidv4();
         const delivery =  {deliveryId, created, lastModified: created};
         Logger.info(`Creating delivery ${deliveryId}`);
         const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
-        await dao.subscriptionStrategy.editTable(this, [addDeliveryRowEvent]);
+        await dao.subscriptionStrategy.editTable(dataSink, [addDeliveryRowEvent]);
         await dao.rowEventObservable.filter(row => row.deliveryId == deliveryId).timeout(5000, 'Could not detect delivery created in 5 seconds').toPromise();
         Logger.info('Delivery created');
         return deliveryId;

@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
-import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import {View, ScrollView, StyleSheet, Dimensions, connectAdvanced } from 'react-native';
 import PropTypes from 'prop-types';
-
+import { updateSubscriptionAction} from 'common/dao/DaoActions';
+import { bindActionCreators} from 'redux';
+import { isEqual, memoize } from 'common/utils';
 const styles = StyleSheet.create({
   contentContainer: {
     paddingVertical: 20
   }
 });
 
-export default class PagingListView extends Component{
+class PagingListView extends Component{
     static propTypes = {
-      dao: PropTypes.object.isRequired,
       data: PropTypes.array.isRequired,
+      daoName: PropTypes.string.isRequired,
       busy: PropTypes.bool.isRequired,
       rowView: PropTypes.func.isRequired,
       paginationWaitingView: PropTypes.func.isRequired,
@@ -21,12 +23,12 @@ export default class PagingListView extends Component{
     constructor(props){
       super(props);
       this._onScroll = this._onScroll.bind(this);
-      this.dao = props.dao;
+      this.daoName = props.daoName;
       this.state = {pageSize: props.pageSize, limit: props.pageSize};
     }
 
     componentWillMount(){
-      this.dao.subscribe();
+      this.props.doPage(this.props.pageSize);
     }
 
     _onScroll(e){
@@ -42,11 +44,7 @@ export default class PagingListView extends Component{
     
     loadNextPage(){
       const newLimit = this.state.limit + this.state.pageSize;
-      const pagingSuccess =  this.dao.page(0, newLimit);
-
-      if (pagingSuccess) {
-        this.setState({limit: newLimit});
-      }
+      this.props.doPage(newLimit);
     }
     
     renderItem = (item) => this.props.rowView(item);
@@ -64,3 +62,37 @@ export default class PagingListView extends Component{
       );
     }
 }
+
+const selectorFactory = (dispatch, initializationProps) => {
+  let result = {};
+  let ownProps = {};
+  const actions = bindActionCreators({updateSubscriptionAction}, dispatch);
+  const {daoName} = initializationProps;
+  const doPageFactory  = memoize(options => limit => actions.updateSubscriptionAction(daoName, {...options, limit}), isEqual);
+  return (nextState, nextOwnProps) => {
+    const data = nextState.getIn([daoName, ...initializationProps.dataPath]);
+    const daoPageStatus = nextState.getIn([daoName, 'page', 'status']);
+    const daoPageResult = nextState.getIn([daoName, 'page', 'result']); //if paging method fails the result is the error message. If it succeeds the result is the limit
+    const busy = daoPageStatus === 'start';
+    const limit =  daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
+    const errorMessage = daoPageStatus === 'fail' ? daoPageResult : undefined;
+    const nextResult = {
+      busy,
+      data,
+      doPage: doPageFactory(nextOwnProps.options),
+      errorMessage,
+      limit,
+      ...nextOwnProps
+    };
+    ownProps = nextOwnProps;
+    if (!isEqual(result, nextResult)){
+      result = nextResult;
+    }
+    return result;
+  };
+};
+
+export default connectAdvanced(
+  selectorFactory
+)(PagingListView);
+

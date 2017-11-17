@@ -1,31 +1,55 @@
-import * as constants from '../../redux/ActionConstants';
 import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
-import DispatchingDataSink from '../../common/dataSinks/DispatchingDataSink';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
 
+export default class CarSummaryDaoContext{
+  static OPTIONS = {
+    offset: 0,
+    limit: 1,
+  };
 
-export default class CartSummaryDao extends DispatchingDataSink{
-  constructor(viewserverClient, customerId, dispatch){
-    super();
-    this.viewserverClient = viewserverClient;
-    this.customerId = customerId;
-    this.dispatch = dispatch;
+  constructor(client, options) {
+    this.client = client;
+    this.options = {...OPTIONS, ...options};
+  }
 
-    const reportContext = {
+  get defaultOptions(){
+      this.options;
+  }
+
+  get name(){
+      return 'cartSummary';
+  }
+
+  getReportContext({customerId}){
+    return {
       reportId: 'cartSummary',
       parameters: {
         customerId
       }
     };
-    this.subscriptionStrategy = new ReportSubscriptionStrategy(viewserverClient, reportContext);
-    this.subscriptionStrategy.subscribe(this, {limit: 1});
   }
 
-  dispatchUpdate(){
-    this.dispatch({type: constants.UPDATE_CART, cart: this.mapCartSummary()});
+  createDataSink(){
+      return new RxDataSink();
   }
 
-  mapCartSummary(){
-    const summaryRow = this.rows[0];
+  mapDomainEvent(event, dataSink){
+    const summaryRow = dataSink.rows[0];
     return summaryRow !== undefined ? {totalPrice: summaryRow.totalPrice, totalQuantity: summaryRow.totalQuantity} : {totalPrice: 0, totalQuantity: 0};
   }
+
+  createSubscriptionStrategy({customerId}){
+    return new ReportSubscriptionStrategy(client, this.getReportContext(customerId));
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+  }
+
+  transformOptions(options){
+    if (typeof options.parentCategoryId === 'undefined'){
+      throw new Error('Parent category should be defined');
+    }
+  }
 }
+

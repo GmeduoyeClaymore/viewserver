@@ -1,7 +1,7 @@
 import Logger from '../../common/Logger';
 import Rx from 'rx-lite';
 import RowFilteredObservable from '../../common/rx/RowFilteredObservable';
-
+import {page} from 'DaoExtensions';
 export default class Dao {
     constructor(daoContext) {
       this.dispatch = dispatch;
@@ -12,6 +12,7 @@ export default class Dao {
       if (this.daoContext.extendDao){
         this.daoContext.extendDao(this);
       }
+      this.page = page(this);
     }
     updatOrSubscribe(options){
         if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, options)){

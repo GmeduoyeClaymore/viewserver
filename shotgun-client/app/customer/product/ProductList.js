@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import {Spinner} from 'native-base';
 import PagingListView from '../../common/components/PagingListView';
-import ProductDao from '../data/ProductDao';
+import {daoActions} from 'common/dao';
 
-const ProductList = ({product, screenProps, navigation, dispatch}) => {
+const ProductList = ({navigation}) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: '#FFFFFF',
@@ -21,17 +20,12 @@ const ProductList = ({product, screenProps, navigation, dispatch}) => {
   });
 
   const categoryId = navigation.state.params && navigation.state.params.categoryId;
-  const filterExpression = categoryId !== undefined ? `categoryId ==\"${categoryId}\"` : 'true == true';
-  const options = {
-    filterExpression
-  };
-
-  const productDao = new ProductDao(screenProps.client, dispatch, options);
+  const categoryFilterExpression = categoryId !== undefined ? `categoryId ==\"${categoryId}\"` : 'true == true';
 
   const search = (searchText) => {
       const productFilter = searchText != '' ? `name like "*${searchText}*"` : '';
-      options.filterExpression = options.filterExpression == '' ? productFilter : `${filterExpression} && ${productFilter}`;
-      productDao.updateOptions(options);
+      const filterExpression = options.filterExpression == '' ? productFilter : `${productFilter} && ${categoryFilterExpression}`;
+      dispatch(daoActions.updateSubscriptionAction('productDao', {filterExpression}));
   };
 
   const Paging = () => <View><Spinner /></View>;
@@ -42,10 +36,10 @@ const ProductList = ({product, screenProps, navigation, dispatch}) => {
 
   return <PagingListView
     style={styles.container}
-    dao={productDao}
-    data={product.products}
+    daoName='productDao'
+    dataPath={['product', 'products']}
     pageSize={10}
-    busy={product.status.busy}
+    options={options}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}
@@ -70,13 +64,4 @@ ProductList.navigationOptions = ({navigation}) => {
   }
   return navOptions;
 };
-
-const mapStateToProps = ({ProductReducer}) => ({
-  product: ProductReducer.product
-});
-
-export default connect(
-  mapStateToProps
-)(ProductList);
-
 
