@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import * as constants from '../../redux/ActionConstants';
+import * as constants from 'common/dao/ActionConstants';
 import {connect} from 'react-redux';
 import {View, Text, Picker} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';

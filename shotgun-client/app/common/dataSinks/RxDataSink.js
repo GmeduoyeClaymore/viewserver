@@ -1,7 +1,7 @@
 import Rx from 'rx-lite';
 import DataSink from './DataSink';
 
-export default class RxDataSink extends DataSink{
+export default class RxDataSink extends DataSink(null){
   static SNAPSHOT_COMPLETE = 'SnapshotComplete';
   static DATA_RESET = 'SnapshotComplete';
   static TOTAL_ROW_COUNT = 'TotalRowCount';
@@ -15,6 +15,7 @@ export default class RxDataSink extends DataSink{
   static SUCCESS = 'Success';
 
   constructor(){
+    super();
     this._dataSinkUpdated = new Rx.Subject();
   }
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
 import {connect} from 'react-redux';
+import {View} from 'react-native';
 import {setLocale} from 'yup/lib/customLocale';
 import ProductList from './product/ProductList';
 import ProductCategoryList from './product/ProductCategoryList';
@@ -15,7 +15,7 @@ import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
-import Logger from '../viewserver-client/Logger';
+import Logger from 'common/Logger';
 import {StackNavigator} from 'react-navigation';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
@@ -31,6 +31,32 @@ setLocale({
   }
 });
 
+const CustomerLandingContent = ({navigation, screenProps, isReady}) => (
+  isReady ? <View style={{flexDirection: 'column', flex: 1}}>
+  <CustomerMenuBar navigation={navigation}/>
+  <CustomerLandingNavigator navigation={navigation}  screenProps={screenProps} />
+</View> : null
+);
+
+const isLoading = (state, daoName) => {
+  const status = state.getIn([daoName, 'updateSubscription', 'status']);
+  return status === null || status === 'start';
+};
+
+const mapStateToProps = (state, nextOwnProps) => ({
+  busy: isLoading(state, 'orderItems') ||
+        isLoading(state, 'cartItems') ||
+        isLoading(state, 'cartSummary') ||
+        isLoading(state, 'order')  ||
+        isLoading(state, 'orderItems') ||
+        isLoading(state, 'customer')  ||
+        isLoading(state, 'paymentCards')  ||
+        isLoading(state, 'deliveryAddresses')  ||
+        isLoading(state, 'delivery'), ...nextOwnProps
+});
+
+const ConnectedCustomerLandingContent =  connect(mapStateToProps)(CustomerLandingContent);
+
 class CustomerLanding extends Component {
   static INITIAL_ROOT_NAME = 'ProductCategoryList';
 
@@ -40,14 +66,15 @@ class CustomerLanding extends Component {
       isReady: false
     };
 
-    this.client = this.props.screenProps.client;
-    this.principal = this.props.screenProps.principal;
-    this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch);
+    const { client, dispatch, customerId} = this.props.screenProps;
+    this.customerId = customerId;
+    this.dispatch = dispatch;
+    this.customerServiceFactory = new CustomerServiceFactory(client, dispatch);
   }
 
   async componentWillMount() {
     try {
-      this.customerService = await this.customerServiceFactory.create(this.principal.customerId);
+      this.customerService = await this.customerServiceFactory.create(this.customerId);
     } catch (error) {
       Logger.error(error);
     }
@@ -59,12 +86,9 @@ class CustomerLanding extends Component {
     if (!this.state.isReady) {
       return null;
     }
-    const screenProps = {customerService: this.customerService, client: this.client};
-
-    return <View style={{flexDirection: 'column', flex: 1}}>
-      <CustomerMenuBar navigation={this.props.navigation} cartSummaryDao={this.customerService.cartSummaryDao}/>
-      <CustomerLandingNavigator navigation={this.props.navigation}  screenProps={screenProps} />
-    </View>;
+    const {dispatch} = this;
+    const screenProps = {customerService: this.customerService, client: this.client, dispatch};
+    return <ConnectedCustomerLandingContent {...this.props} screenProps={screenProps}/>;
   }
 }
 
@@ -88,4 +112,6 @@ const CustomerLandingNavigator = StackNavigator(
 
 CustomerLanding.router = CustomerLandingNavigator.router;
 
-export default connect()(CustomerLanding);
+export default CustomerLanding;
+
+

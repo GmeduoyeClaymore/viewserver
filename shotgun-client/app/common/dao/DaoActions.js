@@ -1,4 +1,4 @@
-import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, INVOKE_DAO_COMMAND} from '../ActionConstants';
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 
 export const invokeDaoCommand = (daoName, method, options) => {
     return {
@@ -16,4 +16,13 @@ export const updateSubscriptionAction = (daoName, options) => {
 export const pageAction = (daoName, offset, limit) => {
     return invokeDaoCommand(daoName, 'page', {offset, limit});
 };
+
+export const registerDao = (dao) => {
+    return {
+        type: REGISTER_DAO_ACTION,
+        name: dao.name,
+        dao
+    };
+};
+
 

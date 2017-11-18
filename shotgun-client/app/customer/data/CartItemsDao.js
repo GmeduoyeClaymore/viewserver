@@ -1,7 +1,7 @@
-import * as FieldMappings from '../../common/constants/TableNames';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import Logger from '../../viewserver-client/Logger';
-import RxDataSink from '../../common/dataSinks/RxDataSink';
+import * as FieldMappings from 'common/constants/TableNames';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import Logger from 'common/Logger';
+import RxDataSink from 'common/dataSinks/RxDataSink';
 
 const createAddOrderItemRowEvent = (productId, quantity) =>{
   return {
@@ -25,7 +25,7 @@ const createUpdateCartRowEvent = (tableKey, columnValues) => {
 };
 
 export default class CartItemsDaoContext{
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -58,7 +58,7 @@ export default class CartItemsDaoContext{
   }
 
   createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.ORDER_ITEM_TABLE_NAME);
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

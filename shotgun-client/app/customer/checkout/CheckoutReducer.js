@@ -1,4 +1,4 @@
-import * as constants from '../../redux/ActionConstants';
+import * as constants from 'common/dao/ActionConstants';
 import {INITIAL_STATE} from './CheckoutInitialState';
 
 export default function CheckoutReducer(state = INITIAL_STATE, action) {

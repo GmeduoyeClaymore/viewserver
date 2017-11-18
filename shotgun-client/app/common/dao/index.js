@@ -1,1 +1,1 @@
-export * as daoActions  from './DaoActions';
+export * from './DaoActions';

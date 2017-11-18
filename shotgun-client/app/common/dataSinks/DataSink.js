@@ -1,4 +1,4 @@
-import Logger from '../../viewserver-client/Logger';
+import Logger from 'common/Logger';
 
 export default DataSink = (superclass) => class extends superclass {
   constructor(){

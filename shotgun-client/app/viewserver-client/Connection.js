@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import Logger from 'common/Logger';
 import ProtoLoader from './core/ProtoLoader';
 
 export default class Connection {

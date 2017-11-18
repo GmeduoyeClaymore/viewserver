@@ -9,9 +9,9 @@ export default class ProductCategoryDaoContext{
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
-    this.options = {...OPTIONS, ...options};
+    this.options = {...ProductCategoryDaoContext.OPTIONS, ...options};
   }
 
   get defaultOptions(){
@@ -44,7 +44,7 @@ export default class ProductCategoryDaoContext{
   }
 
   createSubscriptionStrategy({parentCategoryId}){
-    return new ReportSubscriptionStrategy(client, this.getReportContext(parentCategoryId));
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(parentCategoryId));
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

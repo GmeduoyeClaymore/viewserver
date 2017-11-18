@@ -5,7 +5,7 @@ import OptionsMapper from './mappers/OptionsMapper';
 import RowEventMapper from './mappers/RowEventMapper';
 import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
-import Logger from './Logger';
+import Logger from 'common/Logger';
 
 export default class Client {
   constructor(url, protocol) {

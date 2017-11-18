@@ -1,15 +1,15 @@
 import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
 
-export default class CarSummaryDaoContext{
+export default class CartSummaryDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 1,
   };
 
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
-    this.options = {...OPTIONS, ...options};
+    this.options = {...CartSummaryDaoContext.OPTIONS, ...options};
   }
 
   get defaultOptions(){
@@ -39,7 +39,7 @@ export default class CarSummaryDaoContext{
   }
 
   createSubscriptionStrategy({customerId}){
-    return new ReportSubscriptionStrategy(client, this.getReportContext(customerId));
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(customerId));
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

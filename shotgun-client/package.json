@@ -24,6 +24,9 @@
     "redux-thunk": "^2.2.0",
     "rx-lite": "^4.0.8",
     "seamless-immutable": "^7.1.2",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-stage-2": "6.24.1",
+    "redux-seamless-immutable": "^0.3.2",
     "uuid": "^3.1.0",
     "yup": "^0.23.0"
   },

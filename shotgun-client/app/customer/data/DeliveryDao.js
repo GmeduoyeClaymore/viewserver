@@ -1,7 +1,7 @@
-import * as FieldMappings from '../../common/constants/TableNames';
-import RxDataSink from '../../common/dataSinks/RxDataSink';
-import Logger from '../../viewserver-client/Logger';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import * as FieldMappings from 'common/constants/TableNames';
+import RxDataSink from 'common/dataSinks/RxDataSink';
+import Logger from 'common/Logger';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 
@@ -14,7 +14,7 @@ export const createAddDeliveryRowEvent = (delivery) => {
   };
 };
 export default class DeliveryDaoContext{
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -45,7 +45,7 @@ export default class DeliveryDaoContext{
   }
 
   createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.DELIVERY_TABLE_NAME);
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_TABLE_NAME);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

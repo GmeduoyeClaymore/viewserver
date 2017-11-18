@@ -1,5 +1,7 @@
-import RxDataSink from '../../common/dataSinks/RxDataSink';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import RxDataSink from 'common/dataSinks/RxDataSink';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import Logger from 'common/Logger';
+import * as FieldMappings from 'common/constants/TableNames';
 
 const createAddDeliveryAddressEvent = (deliveryAddress) =>{
   return {
@@ -19,8 +21,8 @@ const createUpdateDeliveryAddressEvent = (deliveryAddress) => {
   };
 };
 
-export default class OrderItemsDaoContext{
-  constructor(client, options) {
+export default class DeliveryAddressDaoContext{
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -37,7 +39,7 @@ export default class OrderItemsDaoContext{
   }
 
   get name(){
-      return 'orderItems';
+      return 'deliveryAddresses';
   }
 
   createDataSink(){
@@ -53,7 +55,7 @@ export default class OrderItemsDaoContext{
   }
 
   createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(viewserverClient, FieldMappings.DELIVERY_ADDRESS_TABLE_NAME);
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_ADDRESS_TABLE_NAME);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

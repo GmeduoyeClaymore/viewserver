@@ -1,4 +1,4 @@
-import Logger from '../Logger';
+import Logger from 'common/Logger';
 
 export default class TableMetaDataMapper{
   static fromDto(tableMetaDataDto) {

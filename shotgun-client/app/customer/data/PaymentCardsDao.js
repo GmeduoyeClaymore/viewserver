@@ -1,6 +1,7 @@
-
-import RxDataSink from '../../common/dataSinks/RxDataSink';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import * as FieldMappings from 'common/constants/TableNames';
+import RxDataSink from 'common/dataSinks/RxDataSink';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import Logger from 'common/Logger';
 
 const createAddPaymentCardEvent = (paymentCard) => {
   return {
@@ -21,7 +22,7 @@ const createUpdatePaymentCardEvent = (paymentCard) =>{
 };
 
 export default class PaymentCardsDaoContext{
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -54,7 +55,7 @@ export default class PaymentCardsDaoContext{
   }
 
   createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(client, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

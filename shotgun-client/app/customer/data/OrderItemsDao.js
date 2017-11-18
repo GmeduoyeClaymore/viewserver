@@ -1,8 +1,9 @@
-import RxDataSink from '../../common/dataSinks/RxDataSink';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import RxDataSink from 'common/dataSinks/RxDataSink';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import * as FieldMappings from 'common/constants/TableNames';
 
 export default class OrderItemsDaoContext{
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -50,7 +51,7 @@ export default class OrderItemsDaoContext{
       throw new Error('customerId should be defined');
     }
     if (typeof orderId === 'undefined'){
-      throw new Error('customerId should be defined');
+      throw new Error('orderId should be defined');
     }
     return {...options, filterExpression: `customerId == "${customerId}" && orderId == "${orderId}"`};
   }

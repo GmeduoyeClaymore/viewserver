@@ -1,6 +1,6 @@
 import ProtoLoader from '../core/ProtoLoader';
 import RowEvent from '../domain/RowEvent';
-import Logger from '../Logger';
+import Logger from 'common/Logger';
 
 export default class RowEventMapper{
   static mapRowEventType(rowEventType) {

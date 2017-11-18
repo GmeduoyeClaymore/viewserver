@@ -5,7 +5,7 @@ import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import {Spinner} from 'native-base';
 import PagingListView from '../../common/components/PagingListView';
-import {daoActions} from 'common/dao';
+import {updateSubscriptionAction} from 'common/dao';
 
 const ProductList = ({navigation}) => {
   const styles = StyleSheet.create({
@@ -25,7 +25,7 @@ const ProductList = ({navigation}) => {
   const search = (searchText) => {
       const productFilter = searchText != '' ? `name like "*${searchText}*"` : '';
       const filterExpression = options.filterExpression == '' ? productFilter : `${productFilter} && ${categoryFilterExpression}`;
-      dispatch(daoActions.updateSubscriptionAction('productDao', {filterExpression}));
+      dispatch(updateSubscriptionAction('productDao', {filterExpression}));
   };
 
   const Paging = () => <View><Spinner /></View>;
@@ -65,3 +65,4 @@ ProductList.navigationOptions = ({navigation}) => {
   return navOptions;
 };
 
+export default ProductList;

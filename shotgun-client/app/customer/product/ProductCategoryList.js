@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import {connect} from 'react-redux';
 import {Spinner} from 'native-base';
-import ProductCategoryDao from '../data/ProductCategoryDao';
-import PagingListView from '../../common/components/PagingListView';
+import PagingListView from 'common/components/PagingListView';
 
-const ProductCategoryList = ({product, screenProps, navigation, dispatch}) => {
+const ProductCategoryList = ({screenProps, navigation}) => {
   const parentCategoryId = navigation.state.params !== undefined ? navigation.state.params.parentCategoryId : undefined;
-  const productCategoryDao = new ProductCategoryDao(screenProps.client, dispatch, parentCategoryId);
+  const options = {parentCategoryId};
 
   const styles = StyleSheet.create({
     container: {
@@ -42,18 +40,20 @@ const ProductCategoryList = ({product, screenProps, navigation, dispatch}) => {
     </TouchableHighlight>;
   };
 
+
   return <PagingListView
     style={styles.container}
-    dao={productCategoryDao}
-    data={product.categories}
+    daoName='productCategoryDao'
+    dataPath={['product', 'categories']}
     pageSize={10}
-    busy={product.status.busy}
+    options={options}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}
     headerView={() => null}
   />;
 };
+
 
 ProductCategoryList.propTypes = {
   product: PropTypes.object,
@@ -73,11 +73,5 @@ ProductCategoryList.navigationOptions = ({navigation}) => {
   return navOptions;
 };
 
-const mapStateToProps = ({ProductReducer}) => ({
-  product: ProductReducer.product
-});
-
-export default connect(
-  mapStateToProps
-)(ProductCategoryList);
+export default ProductCategoryList;
 

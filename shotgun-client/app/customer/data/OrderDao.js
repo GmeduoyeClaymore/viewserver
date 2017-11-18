@@ -1,9 +1,10 @@
-import * as FieldMappings from '../../common/constants/TableNames';
+import * as FieldMappings from 'common/constants/TableNames';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
-import Logger from '../../viewserver-client/Logger';
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import Logger from 'common/Logger';
+import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import uuidv4 from 'uuid/v4';
 import moment from 'moment';
+
 
 const createAddOrderRowEvent = (order) => {
   return {
@@ -13,8 +14,8 @@ const createAddOrderRowEvent = (order) => {
     }
   };
 };
-export default class OrderItemsDaoContext{
-  constructor(client, options) {
+export default class OrdersDaoContext{
+  constructor(client, options = {}) {
     this.client = client;
     this.options = options;
   }
@@ -31,7 +32,7 @@ export default class OrderItemsDaoContext{
   }
 
   get name(){
-      return 'orderItems';
+      return 'order';
   }
 
   createDataSink(){

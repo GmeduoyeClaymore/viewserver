@@ -1,10 +1,8 @@
-import {combineReducers} from 'redux';
-import CheckoutReducer from '../customer/checkout/CheckoutReducer';
-import CustomerReducer from '../customer/CustomerReducer';
-import ProductReducer from '../customer/product/ProductReducer';
+import {combineReducers} from 'redux-seamless-immutable';
 
-export default rootReducer = combineReducers({
-  CheckoutReducer,
-  CustomerReducer,
-  ProductReducer
-});
+const customerReducer = (state = {}, action) => {
+    return state;
+  };
+  
+
+export default rootReducer = combineReducers({customerReducer});

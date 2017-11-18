@@ -49,7 +49,7 @@ const memoize = (fn, comparer) => {
 			cachedResult = fn(...args);
 		}
 		return cachedResult;
-	}
-}
+	};
+};
 
 export default memoize;

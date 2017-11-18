@@ -1,4 +1,4 @@
-import RxDataSink from '../../common/dataSinks/RxDataSink';
+import RxDataSink from 'common/dataSinks/RxDataSink';
 
 export default class OrderSummaryDaoContext{
   static OPTIONS = {
@@ -8,9 +8,9 @@ export default class OrderSummaryDaoContext{
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
-    this.options = {...OPTIONS, ...options};
+    this.options = {...OrderSummaryDaoContext.OPTIONS, ...options};
   }
 
   get defaultOptions(){

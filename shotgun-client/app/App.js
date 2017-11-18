@@ -3,14 +3,14 @@ import {View} from 'react-native';
 import {Provider} from 'react-redux';
 import {StackNavigator} from 'react-navigation';
 import configureStore from './redux/ConfigureStore';
-import Client from './viewserver-client/Client';
-import Logger from './viewserver-client/Logger';
+import Client from 'viewserver-client/Client';
+import Logger from 'common/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import PrincipalService from './common/services/PrincipalService';
 import CustomerLanding from './customer/CustomerLanding';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
-
-const store = configureStore();
+import Immutable from 'seamless-immutable';
+const store = configureStore(Immutable({}));
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'Home';
@@ -20,8 +20,8 @@ export default class App extends React.Component {
     this.state = {
       isReady: false
     };
-    this.client = new Client('ws://192.168.0.5:8080/');
-    //this.client = new Client('ws://localhost:8080/');
+    //this.client = new Client('ws://192.168.0.5:8080/');
+    this.client = new Client('ws://localhost:8080/');
     this.applicationMode = 'customer';
   }
 
@@ -31,7 +31,7 @@ export default class App extends React.Component {
       await this.setCustomerId();
 
       if (this.customerId == undefined){
-        App.INITIAL_ROOT_NAME = 'Registration';
+        App.INITIAL_ROOT_NAME = 'Home';
       }
 
       Logger.debug('Mounting component !!' + ProtoLoader.Dto.AuthenticateCommandDto);
@@ -44,7 +44,7 @@ export default class App extends React.Component {
   }
 
   async setCustomerId(){
-    this.customerId = await PrincipalService.getCustomerIdFromDevice();
+    this.customerId = 'BEM_PUT_IN_THIS_BLOOPER' || await PrincipalService.getCustomerIdFromDevice();
   }
 
   render() {
@@ -61,7 +61,7 @@ export default class App extends React.Component {
         initialRouteName: App.INITIAL_ROOT_NAME,
         headerMode: 'screen'
       });
-    const screenProps = {client: this.client, customerId: this.customerId};
+    const screenProps = {client: this.client, customerId: this.customerId, dispatch: store.dispatch};
 
 
     return <Provider store={store}>

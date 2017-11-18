@@ -1,4 +1,6 @@
 
+import Logger from 'common/Logger';
+
   export const page = dao => ({offset, limit}) => {
     const {rows, totalRowCount} = dao.dataSink;
 
@@ -12,5 +14,5 @@
     }
     Logger.info(`Paging to offset: ${offset}, limit: ${limit}`);
     const newOptions = {...dao.options, offset, limit};
-    return dao.updatOrSubscribe(newOptions);
+    return dao.updateSubscription(newOptions);
   };

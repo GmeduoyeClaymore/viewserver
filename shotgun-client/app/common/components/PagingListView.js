@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {View, ScrollView, StyleSheet, Dimensions, connectAdvanced } from 'react-native';
+import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
-import { bindActionCreators} from 'redux';
+import { bindActionCreators, connectAdvanced} from 'react-redux';
 import { isEqual, memoize } from 'common/utils';
 const styles = StyleSheet.create({
   contentContainer: {
@@ -71,8 +71,8 @@ const selectorFactory = (dispatch, initializationProps) => {
   const doPageFactory  = memoize(options => limit => actions.updateSubscriptionAction(daoName, {...options, limit}), isEqual);
   return (nextState, nextOwnProps) => {
     const data = nextState.getIn([daoName, ...initializationProps.dataPath]);
-    const daoPageStatus = nextState.getIn([daoName, 'page', 'status']);
-    const daoPageResult = nextState.getIn([daoName, 'page', 'result']); //if paging method fails the result is the error message. If it succeeds the result is the limit
+    const daoPageStatus = nextState.getIn([daoName, 'updateSubscription', 'status']);
+    const daoPageResult = nextState.getIn([daoName, 'updateSubscription', 'result']); //if paging method fails the result is the error message. If it succeeds the result is the limit
     const busy = daoPageStatus === 'start';
     const limit =  daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
     const errorMessage = daoPageStatus === 'fail' ? daoPageResult : undefined;

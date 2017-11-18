@@ -9,9 +9,9 @@ export default class ProductDaoContext{
     columnsToSort: [{name: 'name', direction: 'asc'}]
   };
 
-  constructor(client, options) {
+  constructor(client, options = {}) {
     this.client = client;
-    this.options = {...OPTIONS, ...options};
+    this.options = {...ProductDaoContext.OPTIONS, ...options};
   }
 
   get defaultOptions(){
@@ -35,7 +35,7 @@ export default class ProductDaoContext{
   }
 
   createSubscriptionStrategy(){
-      return new DataSourceSubscriptionStrategy(client, 'product');
+      return new DataSourceSubscriptionStrategy(this.client, 'product');
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions){

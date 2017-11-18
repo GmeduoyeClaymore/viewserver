@@ -1,14 +1,13 @@
 import CommandExecutedPromise from '../../common/promises/CommandExecutedPromise';
-
+import {debounce} from 'lodash';
 export default class DataSourceSubscriptionStrategyStrategy{
   constructor(client, path, dataSink){
     this.client = client;
     this.dataSink = dataSink;
     this.path = path;
-    this.subscribeOrUpdate = this.subscribeOrUpdate.bind(this);
     this.editTable = this.editTable.bind(this);
     this.dispose = this.dispose.bind(this);
-    this.subscribeOrUpdate = debounce(this.subscribeOrUpdate.bind(this), 500);
+    this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
   }
 
   editTable(rowEvents){
@@ -17,7 +16,7 @@ export default class DataSourceSubscriptionStrategyStrategy{
     return commandExecutedPromise;
   }
 
-  subscribeOrUpdate(options){
+  updateSubscription(options){
     if (this.subscribeCommand === undefined){
       this.subscribeCommand = this.client.subscribeToDataSource(this.path, options, this.dataSink);
     } else {

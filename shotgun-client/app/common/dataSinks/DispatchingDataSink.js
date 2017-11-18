@@ -1,5 +1,5 @@
-import DataSink from '../../common/dataSinks/DataSink';
-import Logger from '../../viewserver-client/Logger';
+import DataSink from 'common/dataSinks/DataSink';
+import Logger from 'common/Logger';
 
 export default class DispatchingDataSink extends DataSink(null){
   onSnapshotComplete(){

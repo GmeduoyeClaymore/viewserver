@@ -1,4 +1,4 @@
-import * as constants from '../../redux/ActionConstants';
+import * as constants from 'common/dao/ActionConstants';
 import {INITIAL_STATE} from './ProductInitialState';
 
 export default function productReducer(state = INITIAL_STATE, action) {
