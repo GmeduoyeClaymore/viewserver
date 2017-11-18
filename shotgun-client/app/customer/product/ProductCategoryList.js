@@ -5,7 +5,7 @@ import {Spinner} from 'native-base';
 import PagingListView from 'common/components/PagingListView';
 
 const ProductCategoryList = ({screenProps, navigation}) => {
-  const parentCategoryId = navigation.state.params !== undefined ? navigation.state.params.parentCategoryId : undefined;
+  const parentCategoryId = navigation.state.params !== undefined ? navigation.state.params.parentCategoryId : 'NONE';
   const options = {parentCategoryId};
 
   const styles = StyleSheet.create({

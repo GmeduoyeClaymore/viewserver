@@ -14,7 +14,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
     //TODO - find a better way of passing dispatch to the dao objects
 
     const asyncDispatch = (action, promiseOrFactory) => {
-        const path = [action.daoName, action.method];
+        const path = [action.daoName, 'commands', action.method];
 		dispatch({ type: UPDATE_STATE, path, data: {status: 'start', message: undefined} });
 		//	if supplied with a function then wrapped in Promise to get built in exception handling
 		const promise = typeof promiseOrFactory === 'function' ?
@@ -25,8 +25,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
 				dispatch({ type: UPDATE_STATE, path, data: {status: 'success', message: result} });
 				return result;
 			}, error => {
-				dispatch({ type: UPDATE_STATE, path, data: {status: 'fail', message: error} });
-				return Promise.reject(error);
+				dispatch({ type: UPDATE_STATE, path, data: {status: 'fail', message: error.message ? error.message : error} });
 			});
 	};
 
@@ -53,10 +52,6 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
         return getState();
     };
 
-    const updateState = (action) => {
-        return getState().setIn(action.path || [], action.data);
-    };
-
     const invokeCommand = (action) => {
         const dao = DAOS[action.daoName];
         Logger.info(`Invoking command ${JSON.stringify(action)}`);
@@ -74,13 +69,14 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
     const _handlers = {
         [REGISTER_DAO_ACTION]: registerDao,
         [UNREGISTER_DAO_ACTION]: unRegisterDao,
-        [UPDATE_STATE]: updateState,
         [INVOKE_DAO_COMMAND]: invokeCommand
     };
 
     return next => action => {
         const handler = _handlers[action.type];
-        const result = handler ? handler(action) : next(action);
-        return result;
+        if (handler){
+            handler(action);
+        }
+        return next(action);
     };
 };

@@ -5,6 +5,7 @@ import OrderDao from './OrderDao';
 import CustomerDao from './CustomerDao';
 import PaymentCardsDao from './PaymentCardsDao';
 import DeliveryAddressDao from './DeliveryAddressDao';
+import ProductCategoryDao from './ProductCategoryDao';
 import DeliveryDao from './DeliveryDao';
 import Dao from './DaoBase';
 import {registerDao, updateSubscriptionAction} from 'common/dao';
@@ -26,6 +27,7 @@ export default class CustomerServiceFactory {
     if (this.customerService){
       return this.customerService;
     }
+    this.register(new ProductCategoryDao(this.client), customerId);
     this.register(new OrderItemsDao(this.client), customerId);
     this.register(new CartItemsDao(this.client), customerId);
     this.register(new CartSummaryDao(this.client), customerId);

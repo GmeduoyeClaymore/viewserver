@@ -12,7 +12,7 @@ export default class ReportSubscriptionStrategy{
     if (this.subscribeCommand === undefined){
       this.subscribeCommand = this.client.subscribeToReport(this.reportContext, options, this.dataSink);
     } else {
-      this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
+      this.client.updateSubscription(this.subscribeCommand.id, options, this.dataSink);
     }
   }
 

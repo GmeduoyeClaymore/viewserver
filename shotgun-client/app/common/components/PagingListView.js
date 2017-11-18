@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
-import { bindActionCreators, connectAdvanced} from 'react-redux';
+import { connectAdvanced} from 'custom-redux';
+import { bindActionCreators} from 'redux';
 import { isEqual, memoize } from 'common/utils';
+import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
 const styles = StyleSheet.create({
   contentContainer: {
     paddingVertical: 20
@@ -12,7 +14,7 @@ const styles = StyleSheet.create({
 
 class PagingListView extends Component{
     static propTypes = {
-      data: PropTypes.array.isRequired,
+      data: PropTypes.array,
       daoName: PropTypes.string.isRequired,
       busy: PropTypes.bool.isRequired,
       rowView: PropTypes.func.isRequired,
@@ -50,7 +52,7 @@ class PagingListView extends Component{
     renderItem = (item) => this.props.rowView(item);
     
     render() {
-      const { data, emptyView, paginationWaitingView, headerView: HeaderView } = this.props;
+      const { data = [], emptyView, paginationWaitingView, headerView: HeaderView } = this.props;
       return (
         <View style={{flex: 1, flexDirection: 'column'}}>
           <HeaderView/>
@@ -70,9 +72,9 @@ const selectorFactory = (dispatch, initializationProps) => {
   const {daoName} = initializationProps;
   const doPageFactory  = memoize(options => limit => actions.updateSubscriptionAction(daoName, {...options, limit}), isEqual);
   return (nextState, nextOwnProps) => {
-    const data = nextState.getIn([daoName, ...initializationProps.dataPath]);
-    const daoPageStatus = nextState.getIn([daoName, 'updateSubscription', 'status']);
-    const daoPageResult = nextState.getIn([daoName, 'updateSubscription', 'result']); //if paging method fails the result is the error message. If it succeeds the result is the limit
+    const data = getDaoState(nextState, initializationProps.dataPath, daoName);
+    const daoPageStatus = getDaoCommandStatus(nextState, 'updateSubscription', daoName);
+    const daoPageResult = getDaoCommandResult(nextState, 'updateSubscription', daoName);
     const busy = daoPageStatus === 'start';
     const limit =  daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
     const errorMessage = daoPageStatus === 'fail' ? daoPageResult : undefined;

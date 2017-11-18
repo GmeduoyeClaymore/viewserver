@@ -14,7 +14,7 @@ export default class OrderSummaryDaoContext{
   }
 
   get defaultOptions(){
-      this.options;
+      return this.options;
   }
 
   get name(){
@@ -58,5 +58,6 @@ export default class OrderSummaryDaoContext{
     if (typeof options.parentCategoryId === 'undefined'){
       throw new Error('Parent category should be defined');
     }
+    return options;
   }
 }

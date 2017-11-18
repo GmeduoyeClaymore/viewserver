@@ -23,7 +23,7 @@ const isArrayEqual = (arrayA, arrayB) => {
  * @param  {boolean} [deep=false] A value indicating whether the comparison should be deep.
  * @return {boolean}        true if the values are considered equal; otherwise, false.
  */
-const isEqual = (objA, objB, deep) => {
+export const isEqual = (objA, objB, deep) => {
 	if (deep) {
 		return deepIsEqual(objA, objB);
 	}

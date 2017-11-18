@@ -6,7 +6,6 @@ import {page} from 'common/dao/DaoExtensions';
 export default class Dao {
     constructor(daoContext) {
       this.daoContext = daoContext;
-      this.parentCategoryId = undefined;
       this.subject = new Rx.Subject();
       this.options = this.daoContext.defaultOptions;
       if (this.daoContext.extendDao){
@@ -22,21 +21,22 @@ export default class Dao {
     }
 
     updateSubscription(options){
-        if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, options) || !this.subscriptionStrategy){
+        const newOptions = {...this.options, ...options};
+        if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy){
             if (this.subscriptionStrategy){
                 this.subscriptionStrategy.dispose();
             }
             if (this.rowEventSubscription){
-                this.rowEventSubscription.unsubscribe();
+                this.rowEventSubscription.dispose();
             }
-            this.dataSink = this.daoContext.createDataSink(options);
-            this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(options);
+            this.dataSink = this.daoContext.createDataSink(newOptions);
+            this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions);
            
             this.rowEventObservable = RowEventFilteredObservable(this.dataSink.dataSinkUpdated);
             this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, dataSink)).subscribe(this.subject.onNext);
             Logger.info(`Updating subscription for  ${this.daoContext.name}`);
         }
-        const newOptions = {...this.options, ...options};
+        
         try {
             this.options = newOptions;
             Logger.info(`Updating options to ${JSON.stringify(this.options)}`);

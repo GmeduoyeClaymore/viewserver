@@ -6,6 +6,7 @@ export default class ProductCategoryDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
+    parentCategoryId: 'NONE',
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
@@ -15,7 +16,7 @@ export default class ProductCategoryDaoContext{
   }
 
   get defaultOptions(){
-      this.options;
+      return this.options;
   }
 
   get name(){
@@ -55,5 +56,6 @@ export default class ProductCategoryDaoContext{
     if (typeof options.parentCategoryId === 'undefined'){
       throw new Error('Parent category should be defined');
     }
+    return options;
   }
 }

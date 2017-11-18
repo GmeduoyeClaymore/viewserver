@@ -17,6 +17,7 @@ import OrderDetail from './OrderDetail';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from 'common/Logger';
 import {StackNavigator} from 'react-navigation';
+import {isPaging as isLoading} from 'common/dao';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -31,17 +32,12 @@ setLocale({
   }
 });
 
-const CustomerLandingContent = ({navigation, screenProps, isReady}) => (
-  isReady ? <View style={{flexDirection: 'column', flex: 1}}>
+const CustomerLandingContent = ({navigation, screenProps, busy}) => (
+  busy ? null :  <View style={{flexDirection: 'column', flex: 1}}>
   <CustomerMenuBar navigation={navigation}/>
   <CustomerLandingNavigator navigation={navigation}  screenProps={screenProps} />
-</View> : null
+</View>
 );
-
-const isLoading = (state, daoName) => {
-  const status = state.getIn([daoName, 'updateSubscription', 'status']);
-  return status === null || status === 'start';
-};
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isLoading(state, 'orderItems') ||

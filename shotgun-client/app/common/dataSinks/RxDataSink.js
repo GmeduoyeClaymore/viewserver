@@ -1,6 +1,7 @@
 import Rx from 'rx-lite';
 import DataSink from './DataSink';
 
+
 export default class RxDataSink extends DataSink(null){
   static SNAPSHOT_COMPLETE = 'SnapshotComplete';
   static DATA_RESET = 'SnapshotComplete';

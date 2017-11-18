@@ -26,7 +26,7 @@ const defaultComparer = (arg1, arg2) => arg1 === arg2;
  * @param  {Function} comparer   in the format (arg,arg,index) => bool comparing positional args.
  * @return {Function}      The memoized function
  */
-const memoize = (fn, comparer) => {
+export const memoize = (fn, comparer) => {
 	comparer = comparer || defaultComparer;
 	const cachedArgs = [];
 	let cachedResult = NEVER_SET;

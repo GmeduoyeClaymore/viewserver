@@ -22,6 +22,7 @@ export default DataSink = (superclass) => class extends superclass {
 
   onSnapshotComplete(){
     this.isSnapshotComplete = true;
+    Logger.info('Snapshot complete');
     if (super.onSnapshotComplete){
       super.onSnapshotComplete();
     }

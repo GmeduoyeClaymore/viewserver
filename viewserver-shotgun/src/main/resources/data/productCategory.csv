@@ -1,5 +1,5 @@
 categoryId,category,parentCategoryId
-897d97d1-948f-42ae-b80c-5a00fe922ac5,Cement & Aggregates,
+897d97d1-948f-42ae-b80c-5a00fe922ac5,Cement & Aggregates,NONE
 c1f5d05d-911d-4305-a26e-287938b1bd03,Cement,897d97d1-948f-42ae-b80c-5a00fe922ac5
 346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,Ballast,897d97d1-948f-42ae-b80c-5a00fe922ac5
 c566ac2f-e485-4cd6-8313-32ccdfe24dc0,Gravel,897d97d1-948f-42ae-b80c-5a00fe922ac5
@@ -11,7 +11,7 @@ d2e04bec-321b-42c9-9b23-c4c1fd793269,Mortar,897d97d1-948f-42ae-b80c-5a00fe922ac5
 840b6935-166d-4110-be6c-65dfce5afcd9,Concrete,897d97d1-948f-42ae-b80c-5a00fe922ac5
 a6329b2d-6a04-4970-adae-577c80577a74,Floor Levelling Compound,897d97d1-948f-42ae-b80c-5a00fe922ac5
 83d20659-a5a6-49f0-ad03-a7e76f1f309a,Cement Additives,897d97d1-948f-42ae-b80c-5a00fe922ac5
-0949a142-3968-4960-ac6e-bffde903a305,SheetMaterials,
+0949a142-3968-4960-ac6e-bffde903a305,SheetMaterials,NONE
 604e6f40-0796-4511-acf8-96ba25ec7595,Plywood,0949a142-3968-4960-ac6e-bffde903a305
 16f8fda4-3b41-492c-b111-28b2142bf53a,OSB,0949a142-3968-4960-ac6e-bffde903a305
 da27c495-5cf0-417a-b0a4-77ba15ec7d71,MDFSheets,0949a142-3968-4960-ac6e-bffde903a305
@@ -21,7 +21,7 @@ e99add5a-7a87-4ec9-a9d1-446853deb92b,Chipboard Flooring,0949a142-3968-4960-ac6e-
 0dba507f-edb2-40bf-a76f-0c3b3e3b0d06,Hardboard,0949a142-3968-4960-ac6e-bffde903a305
 41b5c749-bde9-4d29-abfd-2bb632774968,Chipboard Sheets,0949a142-3968-4960-ac6e-bffde903a305
 f9d6e65d-44dc-4703-84ad-a4b3f4c424f6,Acrylic Sheets,0949a142-3968-4960-ac6e-bffde903a305
-5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,Timber,
+5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,Timber,NONE
 5459785e-4d92-4685-86ea-c02c1178e87c,Planned Square Edge Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
 ea27a9db-27cc-4588-8faa-d109fc30bb76,CLS Studwork Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
 dbf471a3-2309-43ec-95ec-7bef044a4ab2,Treated Sawn Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
@@ -34,16 +34,16 @@ d8bf69fc-91ff-433e-9d43-fda88eee70b4,Sawn Kiln Dried Timber,5e5d0d64-4ad2-4b98-a
 ba230a5d-930e-4b0f-8c16-1ce213d7cd2d,Sawn Kiln Dried C16 Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
 ac1a5ac8-30a6-4b4e-b3a3-a9911909c9eb,Floorboards,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
 b17246ab-25e1-450f-8504-f2b0399d6166,Timber Roof Battons,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665
-cb9becc2-2fc8-4512-9ca9-4b1f7acadf59,Plaster & Plasterboard,
+cb9becc2-2fc8-4512-9ca9-4b1f7acadf59,Plaster & Plasterboard,NONE
 3361dce4-3994-424b-9996-f670a23f35dd,Plasterboard,cb9becc2-2fc8-4512-9ca9-4b1f7acadf59
 f85b25dd-9de7-4575-8fe4-22d6add31e65,Plaster,cb9becc2-2fc8-4512-9ca9-4b1f7acadf59
-ab341068-ec0d-41a5-acf5-c7562cb37bbe,Insulation,
+ab341068-ec0d-41a5-acf5-c7562cb37bbe,Insulation,NONE
 94abc45d-b99d-428a-bbd1-1373e8f20ee0,Wall Insulation,ab341068-ec0d-41a5-acf5-c7562cb37bbe
 bdef7480-7b96-415f-9704-731e7d1f9554,Loft Insulation,ab341068-ec0d-41a5-acf5-c7562cb37bbe
-68664c9c-6c3a-42aa-bd32-7b033a5c39b3,"Bricks, Blocks & Lintels",
+68664c9c-6c3a-42aa-bd32-7b033a5c39b3,"Bricks, Blocks & Lintels",NONE
 39327e8f-d795-48c5-8564-c5a41b681132,Blocks,68664c9c-6c3a-42aa-bd32-7b033a5c39b3
 0a853985-608d-4720-8db3-e56c6c6da84c,Bricks,68664c9c-6c3a-42aa-bd32-7b033a5c39b3
-f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,Hardware and Metalwork,
+f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,Hardware and Metalwork,NONE
 feb5e5f9-b5e5-40b6-a202-0be146bf3a93,Angle Brackets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c
 13988c85-3956-4d95-9609-a7d726484657,Timber Brackets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c
 7e4664e6-461b-4ae2-b81f-4d163b830871,Metal Sheets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c

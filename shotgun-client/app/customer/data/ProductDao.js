@@ -15,7 +15,7 @@ export default class ProductDaoContext{
   }
 
   get defaultOptions(){
-      this.options;
+      return this.options;
   }
 
   get name(){
