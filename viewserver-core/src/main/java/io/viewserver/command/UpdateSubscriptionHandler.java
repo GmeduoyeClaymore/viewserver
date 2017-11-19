@@ -46,8 +46,11 @@ public class UpdateSubscriptionHandler extends CommandHandlerBase<IUpdateSubscri
         try {
             OptionsExecutionPlanContext executionPlanContext = new OptionsExecutionPlanContext();
             final IOptions options = data.getOptions();
+
             if (options != null) {
-                executionPlanContext.setOptions(Options.fromMessage(options));
+                Options options1 = Options.fromMessage(options);
+                log.info("Subscription options are {}",options1);
+                executionPlanContext.setOptions(options1);
             }
 
             UserExecutionPlan userExecutionPlan = new UserExecutionPlan(data.getCommandId());

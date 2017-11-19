@@ -40,6 +40,7 @@ export default DataSink = (superclass) => class extends superclass {
     if (super.onDataReset){
       super.onDataReset();
     }
+    Logger.info('Data reset');
     this.rows = [];
     this.idIndexes = {};
     this.idRows = {};

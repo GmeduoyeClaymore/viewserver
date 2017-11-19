@@ -70,7 +70,7 @@ const selectorFactory = (dispatch, initializationProps) => {
   let ownProps = {};
   const actions = bindActionCreators({updateSubscriptionAction}, dispatch);
   const {daoName} = initializationProps;
-  const doPageFactory  = memoize(options => limit => actions.updateSubscriptionAction(daoName, {...options, limit}), isEqual);
+  const doPage = limit => actions.updateSubscriptionAction(daoName, {limit});
   return (nextState, nextOwnProps) => {
     const data = getDaoState(nextState, initializationProps.dataPath, daoName);
     const daoPageStatus = getDaoCommandStatus(nextState, 'updateSubscription', daoName);
@@ -81,7 +81,7 @@ const selectorFactory = (dispatch, initializationProps) => {
     const nextResult = {
       busy,
       data,
-      doPage: doPageFactory(nextOwnProps.options),
+      doPage,
       errorMessage,
       limit,
       ...nextOwnProps

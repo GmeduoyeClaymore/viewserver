@@ -10,7 +10,11 @@ export const UPDATE_REGISTRATION_CUSTOMER = 'UPDATE_REGISTRATION_CUSTOMER';
 export const UPDATE_REGISTRATION_PAYMENT_CARD = 'UPDATE_REGISTRATION_PAYMENT_CARD';
 export const UPDATE_REGISTRATION_DELIVERY_ADDRESS = 'UPDATE_REGISTRATION_DELIVERY_ADDRESS';
 
-export const REGISTER_DAO_ACTION = 'registerDao';
-export const UNREGISTER_DAO_ACTION = 'unRegisterDao';
-export const UPDATE_STATE = 'updateState';
-export const INVOKE_DAO_COMMAND = 'invokeCommand';
+const getOr = (val, suffix = '') =>{
+    return val ? val.toUpperCase() + suffix : '';
+};
+export const REGISTER_DAO_ACTION = (dao) => `REGISTER_DAO_${getOr(dao)}`;
+export const UNREGISTER_DAO_ACTION = (dao) => `UNREGISTER_DAO_${getOr(dao)}`;
+export const UPDATE_STATE = (dao) => `UPDATE_STATE_${getOr(dao)}`;
+export const INVOKE_DAO_COMMAND = (dao, name) => `INVOKE_COMMAND_${getOr(dao, name ? '_' : '')}${getOr(name)}`;
+export const UPDATE_COMMAND_STATUS = (dao, command) => `UPDATE_COMMAND_STATUS_${getOr(dao, command ? '_' : '')}${getOr(command)}`;

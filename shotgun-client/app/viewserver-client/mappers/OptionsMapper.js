@@ -4,8 +4,8 @@ export default class OptionsMapper{
   static toDto(options) {
     const _self = OptionsMapper;
     let optionsCopy = JSON.parse(JSON.stringify(options));
-    const {offset, limit, columnName, columnsToSort, filterMode, flags} = optionsCopy;
-    optionsCopy = {offset, limit, columnName, columnsToSort, filterMode, flags};
+    const {offset, limit, columnName, columnsToSort, filterMode, flags, filterExpression} = optionsCopy;
+    optionsCopy = {offset, limit, columnName, columnsToSort, filterMode, flags, filterExpression};
 
     if (optionsCopy.columnsToSort !== undefined){
       optionsCopy.columnsToSort.forEach(columnToSort => {

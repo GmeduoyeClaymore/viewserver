@@ -23,7 +23,8 @@ ProductCategoryDataSource {
                 .withColumns(Arrays.asList(
                         new Column("categoryId", "categoryId", ColumnType.String),
                         new Column("category", "category", ColumnType.String),
-                        new Column("parentCategoryId", "parentCategoryId", ColumnType.String)
+                        new Column("parentCategoryId", "parentCategoryId", ColumnType.String),
+                        new Column("isLeaf", "isLeaf", ColumnType.String)
                 ))
                 .withKeyColumns("categoryId");
 

@@ -1,16 +1,31 @@
-import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
-
-export const invokeDaoCommand = (daoName, method, options) => {
+import {REGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
+import {getDaoOptions} from './DaoStateUtils';
+import {isEqual} from 'common/utils';
+export const invokeDaoCommand = (daoName, method, options, continueWith) => {
     return {
-        type: INVOKE_DAO_COMMAND,
+        type: INVOKE_DAO_COMMAND(daoName,method),
         daoName,
         method,
-        payload: options
+        payload: options,
+        continueWith
     };
 };
 
-export const updateSubscriptionAction = (daoName, options) => {
-    return invokeDaoCommand(daoName, 'updateSubscription', options);
+const getExistingValues = (existingOptions, options) => {
+    const existingValues = {};
+    Object.keys(options).forEach(op => {existingValues[op] = existingOptions[op];});
+    return existingValues;
+};
+
+export const updateSubscriptionAction = (daoName, options, continueWith) => {
+    return async (dispatch, getState) => {
+        const existingOptions = getDaoOptions(getState(), daoName);
+        if (!existingOptions || !isEqual(getExistingValues(existingOptions, options), options)){
+            dispatch(invokeDaoCommand(daoName, 'updateSubscription', options, continueWith));
+        } else if (continueWith){
+            continueWith();
+        }
+    };
 };
 
 export const pageAction = (daoName, offset, limit) => {
@@ -19,7 +34,7 @@ export const pageAction = (daoName, offset, limit) => {
 
 export const registerDao = (dao) => {
     return {
-        type: REGISTER_DAO_ACTION,
+        type: REGISTER_DAO_ACTION(dao.name),
         name: dao.name,
         dao
     };

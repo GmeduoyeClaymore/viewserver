@@ -43,6 +43,10 @@ export default class ProductDaoContext{
   }
 
   transformOptions(options){
-    return options;
+    const {categoryId, searchText } = options;
+    const categoryFilterExpression = categoryId ? `categoryId like \"${categoryId}\"` : 'true == true';
+    const productFilter = searchText ? `name like "*${searchText}*"` : '';
+    const filterExpression = productFilter === '' ? categoryFilterExpression : `${productFilter} && ${categoryFilterExpression}`;
+    return {...options, filterExpression};
   }
 }

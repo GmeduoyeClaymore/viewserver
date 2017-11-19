@@ -20,7 +20,7 @@ export default class ProductCategoryDaoContext{
   }
 
   get name(){
-      return 'productCategory';
+      return 'productCategoryDao';
   }
 
   getReportContext(parentCategoryId){

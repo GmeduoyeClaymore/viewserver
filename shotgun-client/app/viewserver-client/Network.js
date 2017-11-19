@@ -35,6 +35,13 @@ export default class Network {
     return this.connection.openCommands;
   }
 
+  removeOpenCommand(commandId) {
+    if (!this.connection){
+      throw new Error('Connect must be called before attempting to remove open command');
+    }
+    this.connection.removeOpenCommand(commandId);
+  }
+
   //Private functions
   send(buffer) {
     if (this.socket.readyState === WebSocket.OPEN) {

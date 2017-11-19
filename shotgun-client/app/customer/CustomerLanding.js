@@ -17,7 +17,7 @@ import OrderDetail from './OrderDetail';
 import CustomerServiceFactory from './data/CustomerServiceFactory';
 import Logger from 'common/Logger';
 import {StackNavigator} from 'react-navigation';
-import {isPaging as isLoading} from 'common/dao';
+import {isLoading} from 'common/dao';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
