@@ -4,34 +4,46 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import ProductActionBar from './ProductActionBar';
 import ActionButton from '../../common/components/ActionButton';
 import backIcon from '../../common/assets/back.png';
+import ErrorRegion from 'common/components/ErrorRegion';
+import {isOperationPending, getOperationError} from 'common/dao';
+import {connect} from 'react-redux';
 
-const ProductDetails = ({navigation, screenProps}) => {
-    const {customerService} = screenProps;
+const ProductDetails = ({navigation, screenProps, errors}) => {
+    const {dispatch} = screenProps;
     const { product } = navigation.state.params;
     if (product) {
       return (
-        <View style={styles.container}>
-          <Image source={require('../assets/cement.jpg')} style={styles.picture} />
-          <View style={styles.header}>
-            <ActionButton buttonText={null} icon={backIcon} action={() => navigation.goBack()}/>
-            <Text style={styles.bigText}>{product.name}</Text>
+        <ErrorRegion errors={errors}>
+          <View style={styles.container}>
+            <Image source={require('../assets/cement.jpg')} style={styles.picture} />
+            <View style={styles.header}>
+              <ActionButton buttonText={null} icon={backIcon} action={() => navigation.goBack()}/>
+              <Text style={styles.bigText}>{product.name}</Text>
+            </View>
+            <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
+            <ProductActionBar product={product} dispatch={dispatch}/>
           </View>
-          <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
-          <ProductActionBar product={product} cartItemsDao={customerService.cartItemsDao}/>
-        </View>
+        </ErrorRegion>
       );
     }
     return null;
 };
 
 ProductDetails.PropTypes = {
-  customerService: PropTypes.object,
   product: PropTypes.object
 };
 
 ProductDetails.navigationOptions = {header: null};
 
-export default ProductDetails;
+const mapStateToProps = (state, nextOwnProps) => ({
+  busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),
+  errors: getOperationError(state, 'cartItemsDao', 'addItemToCart'),
+  ...nextOwnProps
+});
+
+const ConnectedProductDetails =  connect(mapStateToProps)(ProductDetails);
+
+export default ConnectedProductDetails;
 
 const styles = StyleSheet.create({
   container: {

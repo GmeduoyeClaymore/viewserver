@@ -35,7 +35,7 @@ export default class CustomerDaoContext{
   }
 
   get name(){
-      return 'customer';
+      return 'customerDao';
   }
 
   createDataSink(){

@@ -1,6 +1,6 @@
 import Logger from 'common/Logger';
 import Rx from 'rx-lite';
-import RowEventFilteredObservable from 'common/rx/RowEventFilteredObservable';
+import {RowEventFilteredObservable} from 'common/rx';
 import SubscriptionUpdateObservable from 'common/rx/SubscriptionUpdateObservable';
 import {page} from 'common/dao/DaoExtensions';
 import {SubscribeWithSensibleErrorHandling} from 'common/rx';
@@ -39,6 +39,9 @@ export default class Dao {
             this.dataSink = this.daoContext.createDataSink(newOptions);
             this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
            
+            if (!RowEventFilteredObservable){
+                throw new Error('need this');
+            }
             this.rowEventObservable = RowEventFilteredObservable(this.dataSink.dataSinkUpdated);
             const _this = this;
             this.rowEventSubscription = SubscribeWithSensibleErrorHandling(this.rowEventObservable.map(ev => _this.daoContext.mapDomainEvent(ev, _this.dataSink)), ev => _this.subject.onNext(ev));
@@ -46,9 +49,6 @@ export default class Dao {
         }
         
         try {
-            if (isEqual(this.options, newOptions)){
-                return Promise.success();
-            }
             this.options = newOptions;
             Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
             this.optionsSubject.onNext(this.options);

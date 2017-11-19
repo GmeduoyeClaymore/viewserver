@@ -53,7 +53,11 @@ class ProductList extends Component{
   }
 
   componentDidMount(){
-    const {dispatch, options} = this.props;
+    this.updateSubs(this.props);
+  }
+
+  updateSubs(props){
+    const {options, screenProps: {dispatch}} = props;
     const {categoryId} = options;
     dispatch(updateSubscriptionAction('productDao', {categoryId}));
   }

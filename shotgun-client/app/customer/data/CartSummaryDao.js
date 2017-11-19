@@ -17,7 +17,7 @@ export default class CartSummaryDaoContext{
   }
 
   get name(){
-      return 'cartSummary';
+      return 'cartSummaryDao';
   }
 
   getReportContext({customerId}){
@@ -35,7 +35,7 @@ export default class CartSummaryDaoContext{
 
   mapDomainEvent(event, dataSink){
     const summaryRow = dataSink.rows[0];
-    return summaryRow !== undefined ? {totalPrice: summaryRow.totalPrice, totalQuantity: summaryRow.totalQuantity} : {totalPrice: 0, totalQuantity: 0};
+    return summaryRow !== undefined ? {totalPrice: summaryRow.totalPrice, totalQuantity: summaryRow.quantity} : {totalPrice: 0, totalQuantity: 0};
   }
 
   createSubscriptionStrategy({customerId}, dataSink){
@@ -47,8 +47,8 @@ export default class CartSummaryDaoContext{
   }
 
   transformOptions(options){
-    if (typeof options.parentCategoryId === 'undefined'){
-      throw new Error('Parent category should be defined');
+    if (typeof options.customerId === 'undefined'){
+      throw new Error('customerId should be defined');
     }
     return options;
   }

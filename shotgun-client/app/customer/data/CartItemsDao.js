@@ -2,14 +2,15 @@ import * as FieldMappings from 'common/constants/TableNames';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
+import uuidv4 from 'uuid/v4';
 
-const createAddOrderItemRowEvent = (productId, quantity) =>{
+const createAddOrderItemRowEvent = (productId, quantity, customerId) =>{
   return {
     type: 0, // ADD
     columnValues: {
       orderId: null,
       itemId: uuidv4(),
-      customerId: this.customerId,
+      customerId,
       productId,
       quantity
     }
@@ -33,7 +34,7 @@ export default class CartItemsDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 20,
+      limit: 150,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -42,7 +43,7 @@ export default class CartItemsDaoContext{
   }
 
   get name(){
-      return 'cartItems';
+      return 'cartItemsDao';
   }
 
   createDataSink(){
@@ -52,7 +53,7 @@ export default class CartItemsDaoContext{
   mapDomainEvent(event, dataSink){
     return {
       cart: {
-        items: dataSink.rows
+        items: [...dataSink.rows],
       }
     };
   }
@@ -70,27 +71,28 @@ export default class CartItemsDaoContext{
     if (typeof customerId === 'undefined'){
       throw new Error('customerId should be defined');
     }
-    return {...options, filterExpression: `customerId == "${customerId}" && orderId == null`};
+    return {...options, filterExpression: `customerId like \"${customerId}\" && orderId == null`};
   }
 
   extendDao(dao){
-    dao.addItemToCart = async ({productId, quantity}) => {
+    dao.addItemToCart = async ({productId, quantity, customerId}) => {
       let cartRowEvent;
       const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;
       const existingRow = rows.find(r => r.productId === productId);
-
+      let resultKey;
       if (existingRow !== undefined){
         Logger.info(`Updating cart row ${existingRow.itemId}`);
+        resultKey = existingRow.itemId;
         cartRowEvent = createUpdateCartRowEvent(existingRow.itemId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
       } else {
         Logger.info('Adding item to cart');
-        cartRowEvent = createAddOrderItemRowEvent(productId, quantity);
+        cartRowEvent = createAddOrderItemRowEvent(productId, quantity, customerId);
+        resultKey = cartRowEvent.columnValues.itemId;
       }
 
-      const modifiedRows = await subscriptionStrategy.editTable(this, [cartRowEvent]);
-      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      const result = await dao.rowEventObservable.filter(row => row.itemId == cartRowEvent.columnValues.itemId).timeout(5000, `Could not modification to cart item ${cartRowEvent.columnValues.itemId} in 5 seconds`).toPromise();
+      await subscriptionStrategy.editTable([cartRowEvent]);
+      const result = await dao.rowEventObservable.filter(ev => ev.row.itemId === resultKey).take(1).timeout(5000, new Error(`Could not detect modification to cart item ${cartRowEvent.columnValues.itemId} in 5 seconds`)).toPromise();
       return result;
     };
     dao.purchaseCartItems = async (orderId) => {
@@ -103,7 +105,7 @@ export default class CartItemsDaoContext{
       }
       const rowEvents = rows.map(i => createUpdateCartRowEvent(i.itemId, {orderId}));
       await subscriptionStrategy.editTable(dataSink, rowEvents);
-      const result = await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(row => row.itemId == ev.columnValues.itemId).timeout(5000, `Could not modification to cart event ${ev.columnValues.itemId} in 5 seconds`).toPromise()));
+      const result = await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(event => event.row.itemId === ev.tableKey).timeout(5000, new Error(`Could not modification to cart event ${ev.columnValues.itemId} in 5 seconds`)).toPromise()));
       Logger.info('Purchase cart item promise resolved');
       return result;
     };

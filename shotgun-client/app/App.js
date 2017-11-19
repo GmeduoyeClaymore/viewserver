@@ -44,7 +44,7 @@ export default class App extends React.Component {
   }
 
   async setCustomerId(){
-    this.customerId = 'BEM_PUT_IN_THIS_BLOOPER' || await PrincipalService.getCustomerIdFromDevice();
+    this.customerId = 'BEM_FK' || await PrincipalService.getCustomerIdFromDevice();
   }
 
   render() {

@@ -50,6 +50,7 @@ class ProductCategoryList extends Component{
     const {dispatch} = screenProps;
     const params = navigation.state.params || {};
     const {isLeaf: shouldNavigateToProductPage} = params;
+    this.state = {};
     this.rowView = (row) => {
       const {categoryId, category, isLeaf} = row;
       return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={navFuncFactory({dispatch, navigation, categoryId, category, isLeaf, shouldNavigateToProductPage})} underlayColor={'#EEEEEE'}>
@@ -61,16 +62,27 @@ class ProductCategoryList extends Component{
   }
 
   componentDidMount(){
-    const {navigation, dispatch} = this.props;
-    const params = navigation.state.params || {};
+    this.updateSubs(this.props);
+  }
+
+  componentWillReceiveProps(nextProps){
+    const {parentCategoryId} = this.state;
+    if (nextProps.navigation.state.params && nextProps.navigation.state.params.parentCategoryId != parentCategoryId){
+      this.updateSubs(nextProps);
+    }
+  }
+
+  updateSubs(props){
+    const params = props.navigation.state.params || {};
+    const {screenProps: {dispatch}} = props;
     const {parentCategoryId = 'NONE', parentCategory = undefined} = params;
-    dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}));
+    dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}, () => this.setState({parentCategoryId})));
   }
 
   render(){
     const {busy, errors, options} = this.props;
     const {rowView} = this;
-    return busy ? <Paging/> : <View style={{flexDirection: 'column', flex: 1, padding: 0}}><ErrorRegion errors={errors}/><PagingListView
+    return busy ? <Paging/> : <ErrorRegion errors={errors}><PagingListView
       style={styles.container}
       daoName='productCategoryDao'
       dataPath={['product', 'categories']}
@@ -80,7 +92,7 @@ class ProductCategoryList extends Component{
       paginationWaitingView={Paging}
       emptyView={NoItems}
       headerView={() => null}
-    /></View>;
+    /></ErrorRegion>;
   }
 }
 

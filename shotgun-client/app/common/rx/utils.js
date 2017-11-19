@@ -10,9 +10,7 @@ const tryCatch = (action, ev) => {
 };
 
 export const SubscribeWithSensibleErrorHandling = (observable, action) => {
-    const _this = this;
-    const scopedAction = action.bind(_this);
-    return observable.subscribe(ev => tryCatch(scopedAction, ev));
+    return observable.subscribe(action);
 };
 
 export default SubscribeWithSensibleErrorHandling;

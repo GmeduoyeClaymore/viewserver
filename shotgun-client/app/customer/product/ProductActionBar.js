@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet, TextInput} from 'react-native';
 import ActionButton from '../../common/components/ActionButton.js';
 import icon from '../../common/assets/basket-fill.png';
+import {isOperationPending, getOperationError} from 'common/dao';
+import {connect} from 'react-redux';
+import {addItemToCartAction} from 'customer/actions/CartActions';
 
-export default class ProductActionBar extends Component {
+class ProductActionBar extends Component {
     static PropTypes = {
       product: PropTypes.object,
       orderItemsDao: PropTypes.object
@@ -19,16 +22,11 @@ export default class ProductActionBar extends Component {
       };
     }
 
-    async addToCart() {
-      try {
-        this.setState({busy: true});
-        const {itemCount} = this.state;
-        const {product, cartItemsDao} = this.props;
-        const {productId} = product;
-        await cartItemsDao.addItemToCart(productId, itemCount);
-      } finally {
-        this.setState({busy: false});
-      }
+    addToCart() {
+      const {dispatch, product} = this.props;
+      const {itemCount} = this.state;
+      const {productId} = product;
+      dispatch(addItemToCartAction({productId , quantity: itemCount}));
     }
 
     onItemCountChange(itemCount) {
@@ -51,6 +49,15 @@ export default class ProductActionBar extends Component {
     }
 }
 
+const mapStateToProps = (state, nextOwnProps) => ({
+  busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),
+  errors: getOperationError(state, 'cartItemsDao', 'addItemToCart'),
+  ...nextOwnProps
+});
+
+const ConnectedProductActionBar =  connect(mapStateToProps)(ProductActionBar);
+
+export default ConnectedProductActionBar;
 
 const styles = StyleSheet.create({
   container: {

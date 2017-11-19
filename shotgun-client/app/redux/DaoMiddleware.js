@@ -46,8 +46,18 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
             throw new Error(`A DAO with name ${name} has already been registered`);
         }
         DAOS[name] = dao;
-        const sub = SubscribeWithSensibleErrorHandling(dao.observable, c => dispatch({type: UPDATE_STATE(name), path: [name, 'data'], data: c}));
-        const optionsSub = SubscribeWithSensibleErrorHandling(dao.optionsObservable, c => dispatch({type: UPDATE_STATE(name), path: [name, 'options'], data: c}));
+        let daoEventFunc = c => {
+            const _this = this;
+            dispatch({type: UPDATE_STATE(_this.name), path: [_this.name, 'data'], data: c});
+        };
+        daoEventFunc = daoEventFunc.bind(dao);
+        const sub = SubscribeWithSensibleErrorHandling(dao.observable, daoEventFunc);
+        let daoOptionFunc = c => {
+            const _this = this;
+            dispatch({type: UPDATE_STATE(_this.name), path: [_this.name, 'options'], data: c});
+        };
+        daoOptionFunc = daoOptionFunc.bind(dao);
+        const optionsSub = SubscribeWithSensibleErrorHandling(dao.optionsObservable, daoOptionFunc);
         DAO_SUBSCRIPTIONS[name] = sub;
         DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
         return getState();

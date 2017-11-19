@@ -6,11 +6,12 @@ import cartIcon from  'common/assets/cart-outline.png';
 import homeIcon from  'common/assets/home.png';
 import orderIcon from  'common/assets/orders.png';
 import PropTypes from 'prop-types';
+import {getDaoState} from 'common/dao';
 
-const CustomerMenuBar = ({cart, navigation}) => {
-    return cart ? <View style={styles.container}>
+const CustomerMenuBar = ({cart, navigation, summary}) => {
+    return cart && summary ? <View style={styles.container}>
       <ActionButton buttonText={null} icon={homeIcon} action={() => navigation.navigate('ProductCategoryList')}/>
-      <ActionButton buttonText={`(${cart.totalQuantity})`} icon={cartIcon} action={() => navigation.navigate('Cart')}/>
+      <ActionButton buttonText={`(${summary.totalQuantity})`} icon={cartIcon} action={() => navigation.navigate('Cart')}/>
       <ActionButton buttonText={null} icon={orderIcon} action={() => navigation.navigate('Orders')}/>
     </View> : null;
 };
@@ -31,8 +32,10 @@ CustomerMenuBar.PropTypes = {
   cart: PropTypes.object
 };
 
-const mapStateToProps = ({cartItems}) => ({
-  cart: cartItems && cartItems.cart
+const mapStateToProps = (state, initialProps) => ({
+  cart: getDaoState(state, ['cart'], 'cartItemsDao'),
+  summary: getDaoState(state, [], 'cartSummaryDao'),
+  ...initialProps
 });
 
 export default connect(
