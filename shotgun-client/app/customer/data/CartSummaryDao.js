@@ -38,8 +38,8 @@ export default class CartSummaryDaoContext{
     return summaryRow !== undefined ? {totalPrice: summaryRow.totalPrice, totalQuantity: summaryRow.totalQuantity} : {totalPrice: 0, totalQuantity: 0};
   }
 
-  createSubscriptionStrategy({customerId}){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(customerId));
+  createSubscriptionStrategy({customerId}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(customerId), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

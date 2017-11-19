@@ -15,7 +15,7 @@ export default class DaoContext{
         throw new Error('This should be implemented in base class');
     }
 
-    createSubscriptionStrategy(options){
+    createSubscriptionStrategy(options, dataSink){
         throw new Error('This should be implemented in base class');
     }
 

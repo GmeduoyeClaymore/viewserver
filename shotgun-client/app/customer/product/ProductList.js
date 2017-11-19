@@ -39,7 +39,6 @@ const ProductList = ({navigation}) => {
     daoName='productDao'
     dataPath={['product', 'products']}
     pageSize={10}
-    options={options}
     rowView={rowView}
     paginationWaitingView={Paging}
     emptyView={NoItems}

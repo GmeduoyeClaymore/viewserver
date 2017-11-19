@@ -54,8 +54,8 @@ export default class DeliveryAddressDaoContext{
     };
   }
 
-  createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_ADDRESS_TABLE_NAME);
+  createSubscriptionStrategy(options, dataSink){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_ADDRESS_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

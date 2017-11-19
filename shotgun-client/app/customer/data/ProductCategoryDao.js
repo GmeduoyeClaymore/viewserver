@@ -20,7 +20,7 @@ export default class ProductCategoryDaoContext{
   }
 
   get name(){
-      return 'productCategoryDao';
+      return 'productCategory';
   }
 
   getReportContext(parentCategoryId){
@@ -39,13 +39,13 @@ export default class ProductCategoryDaoContext{
   mapDomainEvent(event, dataSink){
     return {
       product: {
-        products: dataSink.rows
+        categories: dataSink.rows
       }
     };
   }
 
-  createSubscriptionStrategy({parentCategoryId}){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(parentCategoryId));
+  createSubscriptionStrategy({parentCategoryId}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(parentCategoryId), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

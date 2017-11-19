@@ -50,8 +50,8 @@ export default class CustomerDaoContext{
     };
   }
 
-  createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.CUSTOMER_TABLE_NAME);
+  createSubscriptionStrategy(options, dataSink){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.CUSTOMER_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

@@ -43,7 +43,7 @@ const ProductCategoryList = ({screenProps, navigation}) => {
 
   return <PagingListView
     style={styles.container}
-    daoName='productCategoryDao'
+    daoName='productCategory'
     dataPath={['product', 'categories']}
     pageSize={10}
     options={options}

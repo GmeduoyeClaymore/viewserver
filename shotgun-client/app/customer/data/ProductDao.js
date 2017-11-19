@@ -34,8 +34,8 @@ export default class ProductDaoContext{
     };
   }
 
-  createSubscriptionStrategy(){
-      return new DataSourceSubscriptionStrategy(this.client, 'product');
+  createSubscriptionStrategy(options, dataSink){
+      return new DataSourceSubscriptionStrategy(this.client, 'product', dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions){

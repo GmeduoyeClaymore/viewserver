@@ -3,7 +3,9 @@ import ProtoLoader from '../core/ProtoLoader';
 export default class OptionsMapper{
   static toDto(options) {
     const _self = OptionsMapper;
-    const optionsCopy = JSON.parse(JSON.stringify(options));
+    let optionsCopy = JSON.parse(JSON.stringify(options));
+    const {offset, limit, columnName, columnsToSort, filterMode, flags} = optionsCopy;
+    optionsCopy = {offset, limit, columnName, columnsToSort, filterMode, flags};
 
     if (optionsCopy.columnsToSort !== undefined){
       optionsCopy.columnsToSort.forEach(columnToSort => {

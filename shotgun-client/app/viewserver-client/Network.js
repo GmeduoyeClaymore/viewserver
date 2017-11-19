@@ -60,7 +60,7 @@ export default class Network {
       });
     }
     const result = ProtoLoader.Dto.MessageDto.encode(messageWrapper).finish();
-    Logger.info('Result is ' + JSON.stringify(result));
+    Logger.debug('Sending message ' + JSON.stringify(result));
     this.send(result);
   }
 

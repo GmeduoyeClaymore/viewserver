@@ -1,6 +1,7 @@
 
 import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import Logger from 'common/Logger';
+import {SubscribeWithSensibleErrorHandling} from 'common/rx';
 const listMethodNames = (object, downToClass = Object) => {
     // based on code by Muhammad Umer, https://stackoverflow.com/a/31055217/441899
     let props = [];
@@ -37,7 +38,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
             throw new Error(`A DAO with name ${name} has already been registered`);
         }
         DAOS[name] = dao;
-        const sub = dao.observable.subscribe(c => dispatch({type: UPDATE_STATE, path: [name], data: c}));
+        const sub = SubscribeWithSensibleErrorHandling(dao.observable, c => dispatch({type: UPDATE_STATE, path: [name], data: c}));
         DAO_SUBSCRIPTIONS[name] = sub;
         return getState();
     };

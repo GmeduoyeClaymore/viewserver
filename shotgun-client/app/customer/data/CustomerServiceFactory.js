@@ -7,6 +7,7 @@ import PaymentCardsDao from './PaymentCardsDao';
 import DeliveryAddressDao from './DeliveryAddressDao';
 import ProductCategoryDao from './ProductCategoryDao';
 import DeliveryDao from './DeliveryDao';
+import ProductDao from './ProductDao';
 import Dao from './DaoBase';
 import {registerDao, updateSubscriptionAction} from 'common/dao';
 
@@ -36,6 +37,7 @@ export default class CustomerServiceFactory {
     this.register(new PaymentCardsDao(this.client), customerId);
     this.register(new DeliveryAddressDao(this.client), customerId);
     this.register(new DeliveryDao(this.client), customerId);
+    this.register(new ProductDao(this.client));
   }
 }
 

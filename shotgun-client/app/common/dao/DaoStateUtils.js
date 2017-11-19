@@ -5,7 +5,7 @@ export const getDaoCommandResult = (state, commandName, daoName) => {
     return state.getIn(['dao', daoName, 'commands', commandName, 'message']);
 };
 export const getDaoState = (state, path, daoName) => {
-    return state.getIn(['dao', daoName, ...path, 'message']);
+    return state.getIn(['dao', daoName, ...path]);
 };
 
 export const isPaging = (state, daoName) => {

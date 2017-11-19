@@ -20,7 +20,7 @@ export default class DataSourceSubscriptionStrategyStrategy{
     if (this.subscribeCommand === undefined){
       this.subscribeCommand = this.client.subscribeToDataSource(this.path, options, this.dataSink);
     } else {
-      this.client.updateSubscription(this.subscribeCommand.id, options, dataSink);
+      this.client.updateSubscription(this.subscribeCommand.id, options, this.dataSink);
     }
   }
 

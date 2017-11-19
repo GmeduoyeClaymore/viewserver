@@ -45,8 +45,8 @@ export default class OrdersDaoContext{
     };
   }
 
-  createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME);
+  createSubscriptionStrategy(options, dataSink){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

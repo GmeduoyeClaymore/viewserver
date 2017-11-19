@@ -46,8 +46,8 @@ export default class OrderSummaryDaoContext{
     };
   }
 
-  createSubscriptionStrategy({customerId, isCompleted}){
-    return new ReportSubscriptionStrategy(client, this.getReportContext({customerId, isCompleted}));
+  createSubscriptionStrategy({customerId, isCompleted}, dataSink){
+    return new ReportSubscriptionStrategy(client, this.getReportContext({customerId, isCompleted}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

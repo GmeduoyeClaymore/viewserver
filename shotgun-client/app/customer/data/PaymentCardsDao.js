@@ -54,8 +54,8 @@ export default class PaymentCardsDaoContext{
     };
   }
 
-  createSubscriptionStrategy(){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.PAYMENT_CARDS_TABLE_NAME);
+  createSubscriptionStrategy(options, dataSink){
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.PAYMENT_CARDS_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

@@ -3,6 +3,7 @@ import Rx from 'rx-lite';
 import RowEventFilteredObservable from 'common/rx/RowEventFilteredObservable';
 import SubscriptionUpdateObservable from 'common/rx/SubscriptionUpdateObservable';
 import {page} from 'common/dao/DaoExtensions';
+import {SubscribeWithSensibleErrorHandling} from 'common/rx';
 export default class Dao {
     constructor(daoContext) {
       this.daoContext = daoContext;
@@ -30,10 +31,11 @@ export default class Dao {
                 this.rowEventSubscription.dispose();
             }
             this.dataSink = this.daoContext.createDataSink(newOptions);
-            this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions);
+            this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
            
             this.rowEventObservable = RowEventFilteredObservable(this.dataSink.dataSinkUpdated);
-            this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, dataSink)).subscribe(this.subject.onNext);
+            const _this = this;
+            this.rowEventSubscription = SubscribeWithSensibleErrorHandling(this.rowEventObservable.map(ev => _this.daoContext.mapDomainEvent(ev, _this.dataSink)), ev => _this.subject.onNext(ev));
             Logger.info(`Updating subscription for  ${this.daoContext.name}`);
         }
         
