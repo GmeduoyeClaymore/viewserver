@@ -8,7 +8,7 @@ import RegistrationConfirmation from './RegistrationConfirmation';
 class CustomerRegistration extends Component {
   constructor(){
     super();
-    this.state = INITIAL_STATE;
+    this.state = {};
   }
 
   render() {

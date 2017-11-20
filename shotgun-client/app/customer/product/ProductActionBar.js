@@ -26,7 +26,7 @@ class ProductActionBar extends Component {
       const {dispatch, product} = this.props;
       const {itemCount} = this.state;
       const {productId} = product;
-      dispatch(addItemToCartAction({productId , quantity: itemCount}));
+      dispatch(addItemToCartAction({productId, quantity: itemCount}));
     }
 
     onItemCountChange(itemCount) {
