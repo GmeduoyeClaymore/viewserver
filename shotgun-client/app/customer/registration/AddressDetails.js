@@ -7,7 +7,7 @@ import ValidatingButton from '../../common/components/ValidatingButton';
 
 export default AddressDetails  = ({navigation, screenProps}) => {
   const {context} = screenProps;
-  const {deliveryAddress} = context.state;
+  const {deliveryAddress = {}} = context.state;
 
   const onChangeText = async (field, value) => {
     context.setState({deliveryAddress: merge(deliveryAddress, {[field]: value})});

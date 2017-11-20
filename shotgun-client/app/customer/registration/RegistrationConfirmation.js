@@ -5,7 +5,8 @@ import { Form, Button, Text, Item, Input, Label} from 'native-base';
 import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import uuidv4 from 'uuid/v4';
-import PrincipalService from '../../common/services/PrincipalService';
+import PrincipalService from 'common/services/PrincipalService';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) => {
   const {context} = screenProps;
@@ -80,8 +81,8 @@ const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) 
 RegistrationConfirmation.navigationOptions = {title: 'Registration Confirmation'};
 
 const mapStateToProps = (state, initialProps) => ({
-  errors: getOperationError(state, 'customerDao', 'customerDao'),
-  busy: isAnyOperationPending(state, { customerDao: 'customerDao'}),
+  errors: getOperationError(state, 'customerDao', 'addOrUpdateCustomer'),
+  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}),
   ...initialProps
 });
 

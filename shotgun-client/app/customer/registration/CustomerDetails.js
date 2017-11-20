@@ -1,8 +1,8 @@
 import React from 'react';
 import { Form, Text} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from '../../common/components/ValidatingInput';
-import ValidatingButton from '../../common/components/ValidatingButton';
+import ValidatingInput from 'common/components/ValidatingInput';
+import ValidatingButton from 'common/components/ValidatingButton';
 import {merge} from 'lodash';
 
 export default CustomerDetails  = ({navigation, screenProps}) => {

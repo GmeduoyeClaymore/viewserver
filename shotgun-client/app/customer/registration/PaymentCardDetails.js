@@ -7,7 +7,7 @@ import {merge} from 'lodash';
 
 export default PaymentCardDetails  = ({navigation, screenProps}) => {
   const {context} = screenProps;
-  const {paymentCard} = context.state;
+  const {paymentCard = {}} = context.state;
 
   const onChangeText = async (field, value) => {
     context.setState({paymentCard: merge(paymentCard, {[field]: value})});
