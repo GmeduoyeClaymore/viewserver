@@ -1,5 +1,5 @@
 import ProtoLoader from './core/ProtoLoader';
-import Logger from './Logger';
+import Logger from 'common/Logger';
 import RowMapper from './mappers/RowMapper';
 import Connection from './Connection';
 import TableMetaDataMapper from './mappers/TableMetaDataMapper';

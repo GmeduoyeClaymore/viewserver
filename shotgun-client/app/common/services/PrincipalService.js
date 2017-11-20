@@ -1,4 +1,4 @@
-import Logger from '../../viewserver-client/Logger';
+import Logger from 'common/Logger';
 import {AsyncStorage} from 'react-native';
 
 export default class PrincipalService {

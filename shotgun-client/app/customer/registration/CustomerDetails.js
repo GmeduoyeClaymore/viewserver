@@ -7,7 +7,7 @@ import {merge} from 'lodash';
 
 export default CustomerDetails  = ({navigation, screenProps}) => {
   const {context} = screenProps;
-  const {customer} = context.state;
+  const {customer = {}} = context.state;
 
   const onChangeText = async (field, value) => {
     context.setState({customer: merge(customer, {[field]: value})});

@@ -4,14 +4,14 @@ import {Spinner, Text} from 'native-base';
 import {Provider} from 'react-redux';
 import {StackNavigator} from 'react-navigation';
 import configureStore from './redux/ConfigureStore';
-import Client from 'viewserver-client/Client';
+import Client from './viewserver-client/Client';
 import Logger from 'common/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import PrincipalService from './common/services/PrincipalService';
 import CustomerLanding from './customer/CustomerLanding';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
-import Immutable from 'seamless-immutable';
-const store = configureStore(Immutable({}));
+
+const store = configureStore();
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'Home';
@@ -32,16 +32,7 @@ export default class App extends React.Component {
     try {
       await ProtoLoader.loadAll();
       await this.setCustomerId();
-<<<<<<< HEAD
-
-      if (this.customerId == undefined){
-        App.INITIAL_ROOT_NAME = 'Home';
-      }
-
-      Logger.debug('Mounting component !!' + ProtoLoader.Dto.AuthenticateCommandDto);
-=======
       Logger.debug('Mounting App Component');
->>>>>>> 916c8f288cddf546bb41930d2476feb68ff11aff
       await this.client.connect();
       isConnected = true;
     } catch (error){
@@ -52,7 +43,7 @@ export default class App extends React.Component {
   }
 
   async setCustomerId(){
-    this.customerId = 'BEM_FK' || await PrincipalService.getCustomerIdFromDevice();
+    this.customerId = await PrincipalService.getCustomerIdFromDevice();
   }
 
   render() {
@@ -83,11 +74,6 @@ export default class App extends React.Component {
         initialRouteName: App.INITIAL_ROOT_NAME,
         headerMode: 'none'
       });
-<<<<<<< HEAD
-    const screenProps = {client: this.client, customerId: this.customerId, dispatch: store.dispatch};
-
-=======
->>>>>>> 916c8f288cddf546bb41930d2476feb68ff11aff
 
     return <Provider store={store}>
       <View style={{flexDirection: 'column', flex: 1}}>

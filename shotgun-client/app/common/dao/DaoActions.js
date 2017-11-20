@@ -1,6 +1,7 @@
 import {REGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import {getDaoOptions} from './DaoStateUtils';
 import {isEqual} from 'common/utils';
+
 export const invokeDaoCommand = (daoName, method, options, continueWith) => {
     return {
         type: INVOKE_DAO_COMMAND(daoName, method),
