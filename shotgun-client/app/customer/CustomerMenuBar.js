@@ -1,26 +1,27 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { Button, Icon, Text, Spinner } from 'native-base';
 import {connect} from 'react-redux';
-import ActionButton from 'common/components/ActionButton';
-import cartIcon from  'common/assets/cart-outline.png';
-import homeIcon from  'common/assets/home.png';
-import orderIcon from  'common/assets/orders.png';
 import PropTypes from 'prop-types';
-import {getDaoState} from 'common/dao';
 
-const CustomerMenuBar = ({cart, navigation, summary}) => {
-    return cart && summary ? <View style={styles.container}>
-      <ActionButton buttonText={null} icon={homeIcon} action={() => navigation.navigate('ProductCategoryList')}/>
-      <ActionButton buttonText={`(${summary.totalQuantity})`} icon={cartIcon} action={() => navigation.navigate('Cart')}/>
-      <ActionButton buttonText={null} icon={orderIcon} action={() => navigation.navigate('Orders')}/>
-    </View> : null;
+const CustomerMenuBar = ({cart, navigation}) => {
+    return <View style={styles.container}>
+      <Button transparent dark onPress={() => navigation.navigate('ProductCategoryList')}><Icon name='home'/></Button>
+      <Button transparent dark onPress={() => navigation.navigate('Cart')}><Icon name='cart'/>{cart.totalQuantity !== undefined ? <Text>{cart.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button>
+      <Button transparent dark onPress={() => navigation.navigate('Orders')}><Icon name='list'/></Button>
+      <Button transparent dark onPress={() => navigation.navigate('CustomerSettings')}><Icon name='settings'/></Button>
+    </View>;
 };
 
 const styles = StyleSheet.create({
+  spinner: {
+    height: 10
+  },
   container: {
     backgroundColor: '#FFFFFF',
     paddingTop: 10,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   separator: {
     height: StyleSheet.hairlineWidth,
@@ -32,10 +33,8 @@ CustomerMenuBar.PropTypes = {
   cart: PropTypes.object
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  cart: getDaoState(state, ['cart'], 'cartItemsDao'),
-  summary: getDaoState(state, [], 'cartSummaryDao'),
-  ...initialProps
+const mapStateToProps = ({CheckoutReducer}) => ({
+  cart: CheckoutReducer.cart
 });
 
 export default connect(

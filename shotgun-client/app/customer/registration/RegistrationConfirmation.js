@@ -5,6 +5,7 @@ import { Form, Button, Text, Item, Input, Label} from 'native-base';
 import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import uuidv4 from 'uuid/v4';
+import PrincipalService from '../../common/services/PrincipalService';
 
 const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) => {
   const {context} = screenProps;

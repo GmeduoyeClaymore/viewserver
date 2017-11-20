@@ -5,41 +5,49 @@ import OrderDao from './OrderDao';
 import CustomerDao from './CustomerDao';
 import PaymentCardsDao from './PaymentCardsDao';
 import DeliveryAddressDao from './DeliveryAddressDao';
-import ProductCategoryDao from './ProductCategoryDao';
 import DeliveryDao from './DeliveryDao';
-import ProductDao from './ProductDao';
-import Dao from './DaoBase';
-import {registerDao, updateSubscriptionAction} from 'common/dao';
-
 
 export default class CustomerServiceFactory {
-  constructor(client, dispatch) {
-    this.client = client;
+  constructor(viewserverClient, dispatch) {
+    this.viewserverClient = viewserverClient;
     this.dispatch = dispatch;
-    this.register = this.register.bind(this);
   }
 
-  register(daoContext, customerId){
-    const dao = new Dao(daoContext);
-    const {dispatch} = this;
-    dispatch(registerDao(dao));
-    dispatch(updateSubscriptionAction(dao.name, {customerId}));
-    return dao;
-  }
   async create(customerId){
     if (this.customerService){
       return this.customerService;
     }
-    this.register(new ProductCategoryDao(this.client), customerId);
-    this.register(new OrderItemsDao(this.client), customerId);
-    const orderDao = this.register(new OrderDao(this.client), customerId);
-    const paymentCardsDao = this.register(new PaymentCardsDao(this.client), customerId);
-    const deliveryAddressDao = this.register(new DeliveryAddressDao(this.client), customerId);
-    this.register(new CustomerDao(this.client, paymentCardsDao, deliveryAddressDao), customerId);
-    const deliveryDao = this.register(new DeliveryDao(this.client), customerId);
-    this.register(new CartSummaryDao(this.client), customerId);
-    this.register(new ProductDao(this.client));
-    this.register(new CartItemsDao(this.client, orderDao, deliveryDao), customerId);
+
+    //TODO - find a better way of passing dispatch to the dao objects
+    const orderItemsDao = new OrderItemsDao(this.viewserverClient, customerId, this.dispatch);
+    const cartItemsDao = new CartItemsDao(this.viewserverClient, customerId, this.dispatch);
+    const cartSummaryDao = new CartSummaryDao(this.viewserverClient, customerId, this.dispatch);
+    const orderDao = new OrderDao(this.viewserverClient, customerId, this.dispatch);
+    const customerDao = new CustomerDao(this.viewserverClient, this.dispatch);
+    customerDao.subscribe(customerId);
+    const paymentCardsDao = new PaymentCardsDao(this.viewserverClient, customerId, this.dispatch);
+    const deliveryAddressDao = new DeliveryAddressDao(this.viewserverClient, customerId, this.dispatch);
+    const deliveryDao = new DeliveryDao(this.viewserverClient, this.dispatch);
+
+    await Promise.all(orderItemsDao, customerDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao);
+
+    this.customerService = new CustomerService(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao);
+    return this.customerService;
   }
 }
+class CustomerService {
+  static customerIdKey = '@shotgun:customerId';
 
+  constructor(customerId, customerDao, orderItemsDao, orderDao, cartItemsDao, cartSummaryDao, paymentCardsDao, deliveryAddressDao, deliveryDao) {
+    this.customerId = customerId;
+    this.customerDao = customerDao;
+    this.orderItemsDao = orderItemsDao;
+    this.cartItemsDao = cartItemsDao;
+    this.cartSummaryDao = cartSummaryDao;
+    this.orderDao = orderDao;
+    this.paymentCardsDao = paymentCardsDao;
+    this.deliveryAddressDao = deliveryAddressDao;
+    this.deliveryDao = deliveryDao;
+  }
+}
+  

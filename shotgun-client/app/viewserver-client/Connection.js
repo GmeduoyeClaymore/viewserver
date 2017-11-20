@@ -2,45 +2,49 @@ import Logger from 'common/Logger';
 import ProtoLoader from './core/ProtoLoader';
 
 export default class Connection {
-  constructor(uri, eventHandlers, network) {
+  constructor(uri, network) {
     this._uri = uri;
-    this._eventHandlers = eventHandlers;
     this._network = network;
     this._commandId = 1;
     this._openCommands = [];
     this._isOpen = false;
+    this._autoReconnect = false;
+    this._forcedClose = false;
     this.handleSocketOpen = this.handleSocketOpen.bind(this);
     this.handleSocketClosed = this.handleSocketClosed.bind(this);
     this.handleSocketMessage = this.handleSocketMessage.bind(this);
   }
 
+    static CONNECTION_ATTEMPT_DELAY = 500; // The maximum amount of time to wait for the socket to open before giving up
+    static CONNECTING_RETRY_ATTEMPTS = 5;
 
-    static CONNECTION_ATTEMPT_DELAY = 5000; // The maximum amount of time to wait for the socket to open before giving up
-
-    connect(){
-      const _this = this;
-      _this._socket = new WebSocket(this._uri);
-      _this._socket.binaryType = 'arraybuffer';
-      _this._socket.onopen = this.handleSocketOpen;
-      _this._socket.onclose = this.handleSocketClosed;
-      _this._socket.onmessage = this.handleSocketMessage;
+    connect(autoReconnect) {
+      this._autoReconnect = autoReconnect;
       return new Promise((resolve, reject) => {
-        const retryFrequency = 10;
-        const retryInterval = Connection.CONNECTION_ATTEMPT_DELAY / retryFrequency;
-        const result = (counter) => {
-          if (_this._isOpen){
-            resolve();
-          } else if (counter === retryFrequency){
-            reject( `Unable to detect open web socket to ${_this._uri} after ${retryFrequency} retries. Total time elapsed ${Connection.CONNECTION_ATTEMPT_DELAY} ms`);
-          } else {
-            Logger.debug(`Attempt ${counter} socket not connected. Socket state is ${_this._socket.readyState} Trying again in  ${retryInterval}ms`);
-            setTimeout(() => result(counter + 1),
-              retryInterval
-            );
-          }
-        };
-        result(0);
+          this.tryConnect(1, resolve, reject);
       });
+    }
+
+    tryConnect(attemptCounter, resolve, reject){
+      this._socket = new WebSocket(this._uri);
+      this._socket.binaryType = 'arraybuffer';
+
+      this._socket.onopen = () => {
+        Logger.debug(`Attempt ${attemptCounter} socket connected successfully`);
+        this._socket.onclose = this.handleSocketClosed;
+        this.handleSocketOpen();
+        resolve();
+      }
+
+      this._socket.onerror = () => {
+        if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS){
+          reject(`Unable to detect open web socket to ${this._uri} after ${Connection.CONNECTING_RETRY_ATTEMPTS} retries`);
+        } else {
+          Logger.debug(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);
+          setTimeout(() => this.tryConnect(attemptCounter + 1, resolve, reject), Connection.CONNECTION_ATTEMPT_DELAY);
+        }
+      }
+      this._socket.onmessage = this.handleSocketMessage;
     }
 
     get socket(){
@@ -66,9 +70,6 @@ export default class Connection {
     handleSocketOpen(){
       Logger.debug('Network Connected');
       this._isOpen = true;
-      if (this._eventHandlers){
-        this._eventHandlers.onSuccess();
-      }
     }
 
     handleSocketClosed(e){
@@ -120,10 +121,13 @@ export default class Connection {
 
       Logger.debug(`Network Disconnected ${reason}`);
 
+      if (this._autoReconnect == true && !this._forcedClose){
+        Logger.debug('Attempting auto reconnect');
+        this.connect(this._autoReconnect);
+      }
+
       if (e.code > 1000 && e.wasClean === false){
-        if (this._eventHandlers){
-          this._eventHandlers.onError(reason);
-        }
+        Logger.error(`Error ${e.code} \'${reason}\' when closing socket`);
       }
     }
 
@@ -162,6 +166,7 @@ export default class Connection {
     }
 
     disconnect(eventHandlers) {
+      this._forcedClose = true;
       this.socket.onclose = eventHandlers.onSuccess;
       this.socket.close();
     }

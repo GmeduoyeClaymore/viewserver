@@ -21,7 +21,7 @@ export default class RowMapper{
   static fromDto(schema, rowValues) {
     const _self = RowMapper;
     const row = {};
-    Logger.debug('Mapping row values ' + JSON.stringify(schema));
+    Logger.fine('Mapping row values ' + JSON.stringify(schema));
     rowValues.forEach(rowValue => {
       const columnName = schema[rowValue.columnId].name;
       const columnValue = _self._parseValue(rowValue);

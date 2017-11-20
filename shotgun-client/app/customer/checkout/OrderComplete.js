@@ -9,7 +9,7 @@ const OrderComplete = ({navigation, order}) => {
   return <View style={{flex: 1, flexDirection: 'column'}}>
     <Text>Your Order Has Been Placed</Text>
     <Text>{`Order Id ${order.orderId}`}</Text>
-    <ActionButton buttonText="Continue Shopping" icon={null} action={() => navigation.navigate('Home')}/>
+    <ActionButton buttonText="Continue Shopping" icon={null} action={() => navigation.navigate('ProductCategoryList')}/>
   </View>;
 };
 

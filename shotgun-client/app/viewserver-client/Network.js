@@ -1,5 +1,5 @@
 import ProtoLoader from './core/ProtoLoader';
-import Logger from 'common/Logger';
+import Logger from './Logger';
 import RowMapper from './mappers/RowMapper';
 import Connection from './Connection';
 import TableMetaDataMapper from './mappers/TableMetaDataMapper';
@@ -11,8 +11,7 @@ export default class Network {
 
   connect(){
     Logger.debug(`Creating connection to ${this.connectionUrl}`);
-    this.eventHandlers = undefined;
-    this.connection = new Connection(this.connectionUrl, this.eventHandlers, this);
+    this.connection = new Connection(this.connectionUrl, this);
     return this.connection.connect();
   }
     
@@ -33,13 +32,6 @@ export default class Network {
       throw new Error('Connect must be called before attempting to retrieve socket');
     }
     return this.connection.openCommands;
-  }
-
-  removeOpenCommand(commandId) {
-    if (!this.connection){
-      throw new Error('Connect must be called before attempting to remove open command');
-    }
-    this.connection.removeOpenCommand(commandId);
   }
 
   //Private functions
@@ -67,7 +59,7 @@ export default class Network {
       });
     }
     const result = ProtoLoader.Dto.MessageDto.encode(messageWrapper).finish();
-    Logger.debug('Sending message ' + JSON.stringify(result));
+    Logger.fine('Result is ' + JSON.stringify(result));
     this.send(result);
   }
 
@@ -86,7 +78,7 @@ export default class Network {
   }
 
   receiveCommandResult(commandResult) {
-    Logger.debug('Received command result' + JSON.stringify(commandResult));
+    Logger.fine('Received command result' + JSON.stringify(commandResult));
 
     const command = this.openCommands[commandResult.id];
 
@@ -96,7 +88,7 @@ export default class Network {
     }
 
     if (!commandResult.success || !command.continuous) {
-      delete this.openCommands[commandResult.id];
+      delete this.openCommands[this.openCommands.indexOf(command)];
     }
 
     if (command.handler) {
@@ -115,7 +107,7 @@ export default class Network {
   }
 
   receiveTableEvent(tableEvent) {
-    Logger.fine('Received table event ' + JSON.stringify(tableEvent));
+    Logger.fine('Received table event', tableEvent);
 
     const command = this.openCommands[tableEvent.id];
 

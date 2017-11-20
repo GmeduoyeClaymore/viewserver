@@ -14,8 +14,8 @@ export default class Client {
     this.network = new Network(this.url);
   }
 
-  connect(eventHandlers){
-    return this.network.connect(eventHandlers);
+  connect(){
+    return this.network.connect();
   }
 
   get connected(){

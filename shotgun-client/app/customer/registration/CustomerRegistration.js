@@ -26,7 +26,7 @@ const CustomerRegistrationNavigator = StackNavigator(
     RegistrationConfirmation: {screen: RegistrationConfirmation},
   }, {
     initialRouteName: 'CustomerDetails',
-    headerMode: 'none'
+    headerMode: 'screen'
   });
 
 CustomerRegistration.router = CustomerRegistrationNavigator.router;
