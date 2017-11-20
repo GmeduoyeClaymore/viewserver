@@ -5,10 +5,10 @@ import PropTypes from 'prop-types';
 import {getDaoState} from 'common/dao';
 import { Button, Icon, Text, Spinner } from 'native-base';
 
-const CustomerMenuBar = ({cart, navigation}) => {
+const CustomerMenuBar = ({navigation, summary}) => {
     return <View style={styles.container}>
       <Button transparent dark onPress={() => navigation.navigate('ProductCategoryList')}><Icon name='home'/></Button>
-      <Button transparent dark onPress={() => navigation.navigate('Cart')}><Icon name='cart'/>{cart.totalQuantity !== undefined ? <Text>{cart.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button>
+      <Button transparent dark onPress={() => navigation.navigate('Cart')}><Icon name='cart'/>{summary.totalQuantity !== undefined ? <Text>{summary.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button>
       <Button transparent dark onPress={() => navigation.navigate('Orders')}><Icon name='list'/></Button>
       <Button transparent dark onPress={() => navigation.navigate('CustomerSettings')}><Icon name='settings'/></Button>
     </View>;
@@ -36,7 +36,7 @@ CustomerMenuBar.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => ({
   cart: getDaoState(state, ['cart'], 'cartItemsDao'),
-  summary: getDaoState(state, [], 'cartSummaryDao'),
+  summary: getDaoState(state, [], 'cartSummaryDao') || {},
   ...initialProps
 });
 

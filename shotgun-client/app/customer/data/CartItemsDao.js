@@ -98,7 +98,7 @@ export default class CartItemsDaoContext{
       const result = await dao.rowEventObservable.filter(ev => ev.row.itemId === resultKey).take(1).timeoutWithError(5000, new Error(`Could not detect modification to cart item ${resultKey} in 5 seconds`)).toPromise();
       return result;
     };
-    dao.purchaseCartItems = async (eta, paymentId, deliveryAddressId, deliveryType) => {
+    dao.purchaseCartItems = async ({eta, paymentId, deliveryAddressId, deliveryType}) => {
         const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;
       if (rows.some(e => e.orderId !== undefined)){
@@ -107,11 +107,12 @@ export default class CartItemsDaoContext{
         return;
       }
 
-      const deliveryId = await _this.deliveryDao.createDelivery(deliveryAddressId, eta, deliveryType);
-      const orderId = await _this.orderDao.createOrder(deliveryId, paymentId);
+      const deliveryId = await _this.deliveryDao.createDelivery({deliveryAddressId, eta, deliveryType});
+      const orderId = await _this.orderDao.createOrder({deliveryId, paymentId});
       const rowEvents = rows.map(i => createUpdateCartRowEvent(i.itemId, {orderId}));
-      await subscriptionStrategy.editTable(dataSink, rowEvents);
-      await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(event => event.row.itemId === ev.tableKey).timeoutWithError(5000, new Error(`Could not detect modification to cart event ${ev.columnValues.itemId} in 5 seconds`)).toPromise()));
+      const promise = Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(event => event.row.itemId === ev.tableKey).timeoutWithError(5000, new Error(`Could not detect modification to cart event ${ev.columnValues.itemId} in 5 seconds`)).toPromise()));
+      await subscriptionStrategy.editTable(rowEvents);
+      await promise;
       Logger.info('Purchase cart item promise resolved');
       return orderId;
     };

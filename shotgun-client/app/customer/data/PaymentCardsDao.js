@@ -3,6 +3,7 @@ import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import {forEach} from 'lodash';
+import uuidv4 from 'uuid/v4';
 
 const createAddPaymentCardEvent = (paymentCard) => {
   return {
@@ -67,13 +68,13 @@ export default class PaymentCardsDaoContext{
     if (typeof options.customerId === 'undefined'){
       throw new Error('customerId should be defined');
     }
-    return {...options, filterExpression: `customerId == "${options.customerId}"`};
+    return {...options, filterExpression: `customerId == \"${options.customerId}\"`};
   }
 
   extendDao(dao){
-    dao.addOrUpdatePaymentCard = async(customerId, paymentCard) =>{
+    dao.addOrUpdatePaymentCard = async({customerId, paymentCard}) =>{
       const {dataSink, subscriptionStrategy} = dao;
-      const {schema} = dataSink;
+      const schema = await dataSink.waitForSchema();
       let paymentCardRowEvent;
       const customer = dataSink.rows[0];
   
@@ -97,9 +98,10 @@ export default class PaymentCardsDaoContext{
         Logger.info(`Updating paymentCard ${JSON.stringify(paymentCardObject)}`);
         paymentCardRowEvent = createUpdatePaymentCardEvent(paymentCardObject);
       }
-      const modifiedRows = await subscriptionStrategy.editTable(dataSink, [paymentCardRowEvent]);
+      const promise = dao.rowEventObservable.filter(ev => ev.row.paymentId == paymentCardObject.paymentId).take(1).timeoutWithError(5000, new Error(`Could not detect creation of payment card ${paymentCardObject.paymentId} in 5 seconds`)).toPromise();
+      const modifiedRows = await subscriptionStrategy.editTable([paymentCardRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return await dao.rowEventObservable.filter(row => row.paymentId === paymentCardRowEvent.columnValues.paymentId).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
+      return await promise;
     };
   }
 }

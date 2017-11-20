@@ -57,16 +57,16 @@ export default class DeliveryDaoContext{
   }
 
   extendDao(dao){
-    dao.createDelivery = async (deliveryAddressId, eta, type) =>{
+    dao.createDelivery = async ({deliveryAddressId, eta, type}) =>{
           //create order object
         const created = moment().format('x');
-        const {dataSink} = dao;
         const deliveryId = uuidv4();
         const delivery =  {deliveryId, created, lastModified: created, deliveryAddressId, eta, type};
         Logger.info(`Creating delivery ${deliveryId}`);
         const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
-        await dao.subscriptionStrategy.editTable(dataSink, [addDeliveryRowEvent]);
-        await dao.rowEventObservable.filter(row => row.deliveryId == deliveryId).timeoutWithError(5000, new Error('Could not detect delivery created in 5 seconds')).toPromise();
+        const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error('Could not detect delivery created in 5 seconds')).toPromise();
+        await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
+        await promise;
         Logger.info('Delivery created');
         return deliveryId;
     };

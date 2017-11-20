@@ -53,7 +53,7 @@ export default class OrderItemsDaoContext{
     if (typeof orderId === 'undefined'){
       throw new Error('orderId should be defined');
     }
-    return {...options, filterExpression: `customerId == "${customerId}" && orderId == "${orderId}"`};
+    return {...options, filterExpression: `customerId == \"${customerId}\" && orderId == "${orderId}"`};
   }
 }
 

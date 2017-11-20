@@ -25,6 +25,7 @@ export default class App extends React.Component {
     //this.client = new Client('ws://192.168.0.5:8080/');
     this.client = new Client('ws://localhost:8080/');
     this.applicationMode = 'customer';
+    this.dispatch = store.dispatch;
   }
 
   async componentWillMount() {
@@ -62,7 +63,7 @@ export default class App extends React.Component {
       Logger.info(`Loading with customer id ${this.customerId}`);
     }
 
-    const screenProps = {client: this.client, customerId: this.customerId};
+    const screenProps = {client: this.client, customerId: this.customerId, dispatch: this.dispatch};
 
     //TODO - change the home screen based on the current application mode
     const AppNavigator = StackNavigator(

@@ -18,6 +18,7 @@ export default class RxDataSink extends DataSink(null){
   constructor(){
     super();
     this._dataSinkUpdated = new Rx.Subject();
+    this.hasSchemaLoaded = false;
   }
 
   get dataSinkUpdated(){
@@ -26,6 +27,7 @@ export default class RxDataSink extends DataSink(null){
 
   onSnapshotComplete(){
     super.onSnapshotComplete();
+    this.hasSchemaLoaded = true;
     this._dataSinkUpdated.next({Type: RxDataSink.SNAPSHOT_COMPLETE});
   }
   onDataReset(){
@@ -38,8 +40,18 @@ export default class RxDataSink extends DataSink(null){
   }
   onSchemaReset(){
     super.onSchemaReset();
+    this.hasSchemaLoaded = false;
     this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_RESET});
   }
+
+  async waitForSchema(){
+    if (this.hasSchemaLoaded){
+      return Promise.resolve(this.schema);
+    }
+    await this._dataSinkUpdated.waitForSnapshotComplete().toPromise();
+    return Promise.resolve(this.schema);
+  }
+
   onRowAdded(rowId, row){
     super.onRowAdded(rowId, row);
     row.rowId = rowId;

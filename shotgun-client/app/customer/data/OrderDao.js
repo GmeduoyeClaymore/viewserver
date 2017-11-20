@@ -54,26 +54,23 @@ export default class OrdersDaoContext{
   }
 
   transformOptions(options){
-    const {customerId, orderId} = options;
+    const {customerId} = options;
     if (typeof customerId === 'undefined'){
       throw new Error('customerId should be defined');
     }
-    if (typeof orderId === 'undefined'){
-      throw new Error('customerId should be defined');
-    }
-    return {...options, filterExpression: `customerId == "${customerId}"`};
+    return {...options, filterExpression: `customerId == \"${customerId}\"`};
   }
 
   extendDao(dao){
-    dao.createOrder = async (deliveryId, paymentId) => {
+    dao.createOrder = async ({deliveryId, paymentId}) => {
       const orderId = uuidv4();
       const created = moment().format('x');
-      const {dataSink} = dao;
       Logger.info(`Creating order ${orderId}`);
       const order = {orderId, created, lastModified: created, customerId: dao.options.customerId, deliveryId, paymentId};
       const addOrderRowEvent = createAddOrderRowEvent(order);
-      await dao.subscriptionStrategy.editTable(dataSink, [addOrderRowEvent]);
-      await dao.rowEventObservable.filter(row => row.orderId == orderId).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
+      const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
+      await dao.subscriptionStrategy.editTable([addOrderRowEvent]);
+      await promise;
       Logger.info('Order created');
       return orderId;
     };

@@ -13,7 +13,7 @@ const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) 
   const {customer, paymentCard, deliveryAddress} = context.state;
 
   const register = async () => {
-    dispatch(addOrUpdateCustomer(customer, paymentCard, deliveryAddress), () => navigation.navigate('Home', {}));
+    dispatch(addOrUpdateCustomer(customer, paymentCard, deliveryAddress, () => navigation.navigate('Home', {})));
   };
   const createServicesThenRegister = async () => {
     dispatch(customerServicesRegistrationAction(screenProps.client, uuidv4(), register));

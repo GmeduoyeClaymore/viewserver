@@ -3,6 +3,7 @@ import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSo
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {forEach} from 'lodash';
+import uuidv4 from 'uuid/v4';
 
 const createAddCustomerEvent = (args) => {
   return {
@@ -66,14 +67,14 @@ export default class CustomerDaoContext{
     if (typeof customerId === 'undefined'){
       throw new Error('customerId should be defined');
     }
-    return {...options, filterExpression: `customerId == "${customerId}"`};
+    return {...options, filterExpression: `customerId == \"${customerId}\"`};
   }
 
   extendDao(dao){
-    dao.addOrUpdateCustomer = async (customer, paymentCard, deliveryAddress) => {
+    dao.addOrUpdateCustomer = async ({customer, paymentCard, deliveryAddress}) => {
       let customerRowEvent;
       const {dataSink, subscriptionStrategy} = dao;
-      const {schema} = dataSink;
+      const schema = await dataSink.waitForSchema();
       const {customerId} = dao.options;
       Logger.info(`Adding customer schema is ${JSON.stringify(schema)}`);
 
@@ -85,7 +86,7 @@ export default class CustomerDaoContext{
       });
 
       if (customerObject.customerId == undefined) {
-        customerObject.customerId = uuidv4();
+        customerObject.customerId = customerId;
       }
 
       if (!dataSink.rows.length){
@@ -95,12 +96,14 @@ export default class CustomerDaoContext{
         Logger.info(`Updating customer ${JSON.stringify(customerObject)}`);
         customerRowEvent = createUpdateCustomerEvent(customerObject);
       }
-      const modifiedRows = await subscriptionStrategy.editTable(dataSink, [customerRowEvent]);
-      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      const result = await dao.rowEventObservable.filter(row => row.customerId == customerId).timeoutWithError(5000, new Error(`Could not modification to customer id ${customerId} in 5 seconds`)).toPromise();
 
-      await this.paymentCardsDao.addOrUpdatePaymentCard(newCustomer.customerId, paymentCard);
-      await this.deliveryAddressDao.addOrUpdateDeliveryAddress(newCustomer.customerId, deliveryAddress);
+      const promise = dao.rowEventObservable.filter(ev => ev.row.customerId == customerId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to customer id ${customerId} in 5 seconds`)).toPromise();
+      const modifiedRows = await subscriptionStrategy.editTable([customerRowEvent]);
+      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
+      const result = await promise;
+
+      await this.paymentCardsDao.addOrUpdatePaymentCard({customerId: customerObject.customerId, paymentCard});
+      await this.deliveryAddressDao.addOrUpdateDeliveryAddress({customerId: customerObject.customerId, deliveryAddress});
 
       return result;
     };

@@ -44,10 +44,10 @@ export const customerServicesRegistrationAction = (client, customerId, continueW
     };
 };
 
-export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId) => {
-    return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId}, continueWith);
+export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId, deliveryType) => {
+    return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId, deliveryType}, continueWith);
 };
 
-export const addOrUpdateCustomer = (customer, paymentCard, deliveryAddress) => {
-    return invokeDaoCommand('customerDao', 'addOrUpdateCustomer', {customer, paymentCard, deliveryAddress});
+export const addOrUpdateCustomer = (customer, paymentCard, deliveryAddress, continueWith) => {
+    return invokeDaoCommand('customerDao', 'addOrUpdateCustomer', {customer, paymentCard, deliveryAddress}, continueWith);
 };

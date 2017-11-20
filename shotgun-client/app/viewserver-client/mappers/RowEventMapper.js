@@ -47,6 +47,9 @@ export default class RowEventMapper{
       } else {
         const column = dataSink.getColumn(columnId);
         Logger.debug(`!!! Row mapper found column "${JSON.stringify(column)}"`);
+        if (!column){
+          throw new Error(`Unable to find column ${key} id ${columnId} on schemal ${JSON.stringify(dataSink.schema)}`);
+        }
         switch (column.type) {
           case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
           {

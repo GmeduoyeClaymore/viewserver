@@ -14,5 +14,5 @@ Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
 };
 
 Rx.Observable.prototype.filterRowEvents = function (debounce = 1) {
-    return this.filter(ev => !!~DOMAIN_EVENT_TYPES.indexOf(ev.Type)).debounce(() => Rx.Observable.timer(debounce));
+    return this.filter(ev => !!~DOMAIN_EVENT_TYPES.indexOf(ev.Type));
 };

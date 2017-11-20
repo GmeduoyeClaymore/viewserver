@@ -3,6 +3,7 @@ import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSo
 import Logger from 'common/Logger';
 import * as FieldMappings from 'common/constants/TableNames';
 import {forEach} from 'lodash';
+import uuidv4 from 'uuid/v4';
 
 const createAddDeliveryAddressEvent = (deliveryAddress) =>{
   return {
@@ -68,13 +69,13 @@ export default class DeliveryAddressDaoContext{
     if (typeof customerId === 'undefined'){
       throw new Error('customerId should be defined');
     }
-    return {...options, filterExpression: `customerId == "${customerId}"`};
+    return {...options, filterExpression: `customerId == \"${customerId}\"`};
   }
 
   extendDao(dao){
     dao.addOrUpdateDeliveryAddress = async ({customerId, deliveryAddress}) => {
       const {dataSink, subscriptionStrategy} = dao;
-      const {schema} = dataSink;
+      const schema = await dataSink.waitForSchema();
       const customer = dataSink.rows[0];
       let deliveryAddressRowEvent;
       Logger.info(`Adding deliveryAddress schema is ${JSON.stringify(schema)}`);
@@ -97,9 +98,10 @@ export default class DeliveryAddressDaoContext{
         Logger.info(`Updating deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
         deliveryAddressRowEvent = createUpdateDeliveryAddressEvent(deliveryAddressObject);
       }
-      const modifiedRows = await subscriptionStrategy.editTable(dataSink, [deliveryAddressRowEvent]);
+      const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryAddressId == deliveryAddressObject.deliveryAddressId).take(1).timeoutWithError(5000, new Error(`Could not detect created delivery address id ${deliveryAddressObject.deliveryAddressId} in 5 seconds`)).toPromise();
+      const modifiedRows = await subscriptionStrategy.editTable([deliveryAddressRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      await dao.rowEventObservable.filter(row => row.deliveryAddressId == deliveryAddressRowEvent.columnValues.deliveryAddressId).timeoutWithError(5000, new Error('Could not detect created delivery address in 5 seconds')).toPromise();
+      await promise;
       return modifiedRows;
     };
   }
