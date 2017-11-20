@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
 import ActionButton from 'common/components/ActionButton';
-import {getDaoCommandResult} from 'commmon/dao';
+import {getDaoCommandResult} from 'common/dao';
 
 const OrderComplete = ({navigation, order}) => {
   return <View style={{flex: 1, flexDirection: 'column'}}>

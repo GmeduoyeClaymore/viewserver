@@ -45,7 +45,7 @@ export default class Dao {
         
         try {
             if (isEqual(this.options, newOptions)){
-                return Promise.success();
+                return Promise.resolve();
             }
             this.options = newOptions;
             Logger.info(`Updating options to ${JSON.stringify(this.options)}`);

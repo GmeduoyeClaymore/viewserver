@@ -4,7 +4,6 @@ import CustomerDetails from './CustomerDetails';
 import PaymentCardDetails from './PaymentCardDetails';
 import AddressDetails from './AddressDetails';
 import RegistrationConfirmation from './RegistrationConfirmation';
-import {INITIAL_STATE} from './RegistrationInitialState';
 
 class CustomerRegistration extends Component {
   constructor(){

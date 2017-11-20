@@ -5,7 +5,7 @@ import {View, Text} from 'react-native';
 import {Spinner} from 'native-base';
 import ActionButton from 'common/components/ActionButton';
 import icon from 'common/assets/truck-fast.png';
-import {purchaseCartItemsAction} from 'customer/CustomerActions';
+import {purchaseCartItemsAction} from 'customer/actions/CustomerActions';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
 import ErrorRegion from 'common/components/ErrorRegion';
 
