@@ -66,7 +66,7 @@ export default class DeliveryDaoContext{
         Logger.info(`Creating delivery ${deliveryId}`);
         const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
         await dao.subscriptionStrategy.editTable(dataSink, [addDeliveryRowEvent]);
-        await dao.rowEventObservable.filter(row => row.deliveryId == deliveryId).timeout(5000, 'Could not detect delivery created in 5 seconds').toPromise();
+        await dao.rowEventObservable.filter(row => row.deliveryId == deliveryId).timeoutWithError(5000, new Error('Could not detect delivery created in 5 seconds')).toPromise();
         Logger.info('Delivery created');
         return deliveryId;
     };

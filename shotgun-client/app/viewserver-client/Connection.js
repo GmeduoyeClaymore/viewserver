@@ -6,7 +6,7 @@ export default class Connection {
     this._uri = uri;
     this._eventHandlers = eventHandlers;
     this._network = network;
-    this._commandId = 0;
+    this._commandId = 1;
     this._openCommands = [];
     this._isOpen = false;
     this.handleSocketOpen = this.handleSocketOpen.bind(this);
@@ -167,11 +167,12 @@ export default class Connection {
     }
     
     sendCommand(cmd) {
-      cmd.id = this._commandId++;
+      cmd.id = this._commandId;
+      this._commandId = this._commandId + 10;
       this.openCommands[cmd.id] = cmd;
     
-      //Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
-      //Logger.fine(JSON.stringify(cmd.data));
+      Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
+      Logger.fine(JSON.stringify(cmd.data));
     
       const {id, command, data} = cmd;
       const payload = {id, command};

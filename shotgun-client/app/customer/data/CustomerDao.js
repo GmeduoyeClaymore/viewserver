@@ -94,7 +94,7 @@ export default class CustomerDaoContext{
       }
       const modifiedRows = await subscriptionStrategy.editTable(dataSink, [customerRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      const result = await dao.rowEventObservable.filter(row => row.customerId == customerId).timeout(5000, `Could not modification to customer id ${customerId} in 5 seconds`).toPromise();
+      const result = await dao.rowEventObservable.filter(row => row.customerId == customerId).timeoutWithError(5000, new Error(`Could not modification to customer id ${customerId} in 5 seconds`)).toPromise();
       return result;
     };
   }

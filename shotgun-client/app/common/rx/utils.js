@@ -1,16 +1,18 @@
-import Logger from 'common/Logger';
+import Rx from 'rxjs/Rx';
+import RxDataSink from 'common/dataSinks/RxDataSink';
 
-const tryCatch = (action, ev) => {
-    try {
-        action(ev);
-    } catch (error) {
-        Logger.error(error);
-        throw error;
-    }
+const DOMAIN_EVENT_TYPES = [RxDataSink.ROW_ADDED, RxDataSink.ROW_UPDATED, RxDataSink.ROW_REMOVED, RxDataSink.DATA_RESET];
+
+Rx.Observable.prototype.timeoutWithError = function (timeout, error) {
+	return this.timeoutWith(timeout, Rx.Observable.throw(error));
 };
 
-export const SubscribeWithSensibleErrorHandling = (observable, action) => {
-    return observable.subscribe(action);
+Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
+    return this.filter(ev => RxDataSink.SNAPSHOT_COMPLETE === ev.Type)
+        .take(1)
+        .timeoutWithError(timeout, new Error('No snapshot complete event detected 10 seconds after update'));
 };
 
-export default SubscribeWithSensibleErrorHandling;
+Rx.Observable.prototype.filterRowEvents = function (debounce = 1) {
+    return this.filter(ev => !!~DOMAIN_EVENT_TYPES.indexOf(ev.Type)).debounce(() => Rx.Observable.timer(debounce));
+};

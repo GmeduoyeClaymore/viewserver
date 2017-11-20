@@ -1,4 +1,4 @@
-import Rx from 'rx-lite';
+import Rx from 'rxjs/Rx';
 import DataSink from './DataSink';
 
 
@@ -26,49 +26,49 @@ export default class RxDataSink extends DataSink(null){
 
   onSnapshotComplete(){
     super.onSnapshotComplete();
-    this._dataSinkUpdated.onNext({Type: RxDataSink.SNAPSHOT_COMPLETE});
+    this._dataSinkUpdated.next({Type: RxDataSink.SNAPSHOT_COMPLETE});
   }
   onDataReset(){
     super.onDataReset();
-    this._dataSinkUpdated.onNext({Type: RxDataSink.DATA_RESET});
+    this._dataSinkUpdated.next({Type: RxDataSink.DATA_RESET});
   }
   onTotalRowCount(count){
     super.onTotalRowCount(count);
-    this._dataSinkUpdated.onNext({Type: RxDataSink.TOTAL_ROW_COUNT, count});
+    this._dataSinkUpdated.next({Type: RxDataSink.TOTAL_ROW_COUNT, count});
   }
   onSchemaReset(){
     super.onSchemaReset();
-    this._dataSinkUpdated.onNext({Type: RxDataSink.SCHEMA_RESET});
+    this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_RESET});
   }
   onRowAdded(rowId, row){
     super.onRowAdded(rowId, row);
     row.rowId = rowId;
-    this._dataSinkUpdated.onNext({Type: RxDataSink.ROW_ADDED, row});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_ADDED, row});
   }
   onRowUpdated(rowId, row){
     super.onRowUpdated(rowId, row);
     row.rowId = rowId;
-    this._dataSinkUpdated.onNext({Type: RxDataSink.ROW_UPDATED, row});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_UPDATED, row: this.rows[rowId]});
   }
   onRowRemoved(rowId){
     super.onRowRemoved(rowId);
-    this._dataSinkUpdated.onNext({Type: RxDataSink.ROW_REMOVED, rowId});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_REMOVED, rowId});
   }
   onColumnAdded(colId, col){
     super.onColumnAdded(colId, col);
     col.colId = colId;
-    this._dataSinkUpdated.onNext({Type: RxDataSink.COLUMN_ADDED, col});
+    this._dataSinkUpdated.next({Type: RxDataSink.COLUMN_ADDED, col});
   }
   onColumnRemoved(col){
     super.onColumnRemoved(col);
-    this._dataSinkUpdated.onNext({Type: RxDataSink.COLUMN_REMOVED, col});
+    this._dataSinkUpdated.next({Type: RxDataSink.COLUMN_REMOVED, col});
   }
   onError(error){
     super.onError(error);
-    this._dataSinkUpdated.onNext({Type: RxDataSink.ERROR, error});
+    this._dataSinkUpdated.next({Type: RxDataSink.ERROR, error});
   }
   onSuccess(commandResultId, message){
     super.onSuccess(commandResultId, message);
-    this._dataSinkUpdated.onNext({Type: RxDataSink.SUCCESS, commandResultId, message});
+    this._dataSinkUpdated.next({Type: RxDataSink.SUCCESS, commandResultId, message});
   }
 }

@@ -57,7 +57,7 @@ class ProductList extends Component{
   }
 
   updateSubs(props){
-    const {options, screenProps: {dispatch}} = props;
+    const {options = {}, screenProps: {dispatch}} = props;
     const {categoryId} = options;
     dispatch(updateSubscriptionAction('productDao', {categoryId}));
   }

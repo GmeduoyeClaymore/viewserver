@@ -98,7 +98,7 @@ export default class PaymentCardsDaoContext{
       }
       const modifiedRows = await subscriptionStrategy.editTable(dataSink, [paymentCardRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return await dao.rowEventObservable.filter(row => row.paymentId === paymentCardRowEvent.columnValues.paymentId).timeout(5000, 'Could not detect created order in 5 seconds').toPromise();
+      return await dao.rowEventObservable.filter(row => row.paymentId === paymentCardRowEvent.columnValues.paymentId).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
     };
   }
 }

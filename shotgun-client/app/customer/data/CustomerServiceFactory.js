@@ -11,6 +11,7 @@ import ProductDao from './ProductDao';
 import Dao from './DaoBase';
 import {registerDao, updateSubscriptionAction} from 'common/dao';
 
+
 export default class CustomerServiceFactory {
   constructor(client, dispatch) {
     this.client = client;
@@ -18,7 +19,7 @@ export default class CustomerServiceFactory {
     this.register = this.register.bind(this);
   }
 
-  register(daoContext, customerId){
+  async register(daoContext, customerId){
     const dao = new Dao(daoContext);
     const {dispatch} = this;
     dispatch(registerDao(dao));
@@ -30,14 +31,14 @@ export default class CustomerServiceFactory {
     }
     this.register(new ProductCategoryDao(this.client), customerId);
     this.register(new OrderItemsDao(this.client), customerId);
-    this.register(new CartItemsDao(this.client), customerId);
-    this.register(new CartSummaryDao(this.client), customerId);
     this.register(new OrderDao(this.client), customerId);
     this.register(new CustomerDao(this.client), customerId);
     this.register(new PaymentCardsDao(this.client), customerId);
     this.register(new DeliveryAddressDao(this.client), customerId);
     this.register(new DeliveryDao(this.client), customerId);
+    this.register(new CartSummaryDao(this.client), customerId);
     this.register(new ProductDao(this.client));
+    this.register(new CartItemsDao(this.client), customerId);
   }
 }
 

@@ -98,7 +98,7 @@ export default class DeliveryAddressDaoContext{
       }
       const modifiedRows = await subscriptionStrategy.editTable(dataSink, [deliveryAddressRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      await dao.rowEventObservable.filter(row => row.deliveryAddressId == deliveryAddressRowEvent.columnValues.deliveryAddressId).timeout(5000, 'Could not detect created delivery address in 5 seconds').toPromise();
+      await dao.rowEventObservable.filter(row => row.deliveryAddressId == deliveryAddressRowEvent.columnValues.deliveryAddressId).timeoutWithError(5000, new Error('Could not detect created delivery address in 5 seconds')).toPromise();
       return modifiedRows;
     };
   }

@@ -1,7 +1,6 @@
 
 import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import Logger from 'common/Logger';
-import {SubscribeWithSensibleErrorHandling} from 'common/rx';
 const listMethodNames = (object, downToClass = Object) => {
     // based on code by Muhammad Umer, https://stackoverflow.com/a/31055217/441899
     let props = [];
@@ -47,17 +46,15 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
         }
         DAOS[name] = dao;
         let daoEventFunc = c => {
-            const _this = this;
-            dispatch({type: UPDATE_STATE(_this.name), path: [_this.name, 'data'], data: c});
+            dispatch({type: UPDATE_STATE(name), path: [name, 'data'], data: c});
         };
         daoEventFunc = daoEventFunc.bind(dao);
-        const sub = SubscribeWithSensibleErrorHandling(dao.observable, daoEventFunc);
+        const sub = dao.observable.subscribe(daoEventFunc);
         let daoOptionFunc = c => {
-            const _this = this;
-            dispatch({type: UPDATE_STATE(_this.name), path: [_this.name, 'options'], data: c});
+            dispatch({type: UPDATE_STATE(name), path: [name, 'options'], data: c});
         };
         daoOptionFunc = daoOptionFunc.bind(dao);
-        const optionsSub = SubscribeWithSensibleErrorHandling(dao.optionsObservable, daoOptionFunc);
+        const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);
         DAO_SUBSCRIPTIONS[name] = sub;
         DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
         return getState();

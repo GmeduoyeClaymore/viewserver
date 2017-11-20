@@ -1,9 +1,7 @@
 import Logger from 'common/Logger';
-import Rx from 'rx-lite';
-import {RowEventFilteredObservable} from 'common/rx';
-import SubscriptionUpdateObservable from 'common/rx/SubscriptionUpdateObservable';
+import Rx from 'rxjs/Rx';
+import * as crx from 'common/rx';
 import {page} from 'common/dao/DaoExtensions';
-import {SubscribeWithSensibleErrorHandling} from 'common/rx';
 import {isEqual} from 'common/utils';
 export default class Dao {
     constructor(daoContext) {
@@ -38,27 +36,27 @@ export default class Dao {
             }
             this.dataSink = this.daoContext.createDataSink(newOptions);
             this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
-           
-            if (!RowEventFilteredObservable){
-                throw new Error('need this');
-            }
-            this.rowEventObservable = RowEventFilteredObservable(this.dataSink.dataSinkUpdated);
+
+            this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
             const _this = this;
-            this.rowEventSubscription = SubscribeWithSensibleErrorHandling(this.rowEventObservable.map(ev => _this.daoContext.mapDomainEvent(ev, _this.dataSink)), ev => _this.subject.onNext(ev));
+            this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink)).subscribe(ev => this.subject.next(ev));
             Logger.info(`Updating subscription for  ${this.daoContext.name}`);
         }
         
         try {
+            if (isEqual(this.options, newOptions)){
+                return Promise.success();
+            }
             this.options = newOptions;
             Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
-            this.optionsSubject.onNext(this.options);
+            this.optionsSubject.next(this.options);
             const optionsMessage = this.daoContext.transformOptions(this.options);
             this.subscriptionStrategy.updateSubscription(optionsMessage);
         } catch (error){
             return Promise.reject(error);
         }
         Logger.info('!!!!!Waiting for snapshot complete!!!!');
-        const result = await SubscriptionUpdateObservable(this.dataSink.dataSinkUpdated.filter(ev => {Logger.info(`${this.daoContext.name} - Event is - ${JSON.stringify(ev)}`); return true;} )).toPromise();
+        const result = await this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
         Logger.info('!!!!!Completed snapshot complete!!!!');
         return result;
     }

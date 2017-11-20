@@ -74,13 +74,15 @@ class ProductCategoryList extends Component{
 
   updateSubs(props){
     const params = props.navigation.state.params || {};
-    const {screenProps: {dispatch}} = props;
-    const {parentCategoryId = 'NONE', parentCategory = undefined} = params;
-    dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}, () => this.setState({parentCategoryId})));
+    const {parentCategoryId = 'NONE'} = params;
+    const options  = {...this.props.options, parentCategoryId};
+    this.setState({options});
+    //dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}, () => this.setState({parentCategoryId})));
   }
 
   render(){
-    const {busy, errors, options} = this.props;
+    const {busy, errors} = this.props;
+    const {options} = this.state;
     const {rowView} = this;
     return busy ? <Paging/> : <ErrorRegion errors={errors}><PagingListView
       style={styles.container}

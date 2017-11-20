@@ -73,7 +73,7 @@ export default class OrdersDaoContext{
       const order = {orderId, created, lastModified: created, customerId: dao.options.customerId};
       const addOrderRowEvent = createAddOrderRowEvent(order);
       await dao.subscriptionStrategy.editTable(dataSink, [addOrderRowEvent]);
-      await dao.rowEventObservable.filter(row => row.orderId == orderId).timeout(5000, 'Could not detect created order in 5 seconds').toPromise();
+      await dao.rowEventObservable.filter(row => row.orderId == orderId).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
       Logger.info('Order created');
       return orderId;
     };

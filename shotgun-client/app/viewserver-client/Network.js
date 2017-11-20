@@ -96,7 +96,7 @@ export default class Network {
     }
 
     if (!commandResult.success || !command.continuous) {
-      delete this.openCommands[this.openCommands.indexOf(command)];
+      delete this.openCommands[commandResult.id];
     }
 
     if (command.handler) {
@@ -115,7 +115,7 @@ export default class Network {
   }
 
   receiveTableEvent(tableEvent) {
-    Logger.fine('Received table event', tableEvent);
+    Logger.fine('Received table event ' + JSON.stringify(tableEvent));
 
     const command = this.openCommands[tableEvent.id];
 
