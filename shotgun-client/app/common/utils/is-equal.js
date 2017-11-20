@@ -29,7 +29,7 @@ export const isEqual = (objA, objB, deep) => {
 	}
 
 	// eslint-disable-next-line no-self-compare
-	if (objA === objB || (objA !== objA && objB !== objB)) { // covers NaN 
+	if (objA === objB || (objA !== objA && objB !== objB)) { // covers NaN
 		return true;
 	}
 	

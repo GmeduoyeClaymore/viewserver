@@ -15,7 +15,6 @@ import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
 import { customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
-import Logger from 'common/Logger';
 import CustomerSettings from './CustomerSettings';
 import {StackNavigator} from 'react-navigation';
 import {isAnyLoading} from 'common/dao';

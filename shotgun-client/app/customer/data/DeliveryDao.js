@@ -48,7 +48,7 @@ export default class DeliveryDaoContext{
     return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_TABLE_NAME, dataSink);
   }
 
-  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+  doesSubscriptionNeedToBeRecreated(previousOptions/*, newOptions*/){
     return !previousOptions;
   }
 
@@ -63,7 +63,7 @@ export default class DeliveryDaoContext{
   extendDao(dao){
     dao.createDelivery = async ({deliveryAddressId, eta, type}) =>{
           //create order object
-        const schema = await dao.dataSink.waitForSchema();
+        await dao.dataSink.waitForSchema();
         const created = moment().format('x');
         const deliveryId = uuidv4();
         const customerId = dao.options.customerId;

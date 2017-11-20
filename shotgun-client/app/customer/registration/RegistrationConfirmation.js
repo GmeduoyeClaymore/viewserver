@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {ScrollView, View} from 'react-native';
+import {ScrollView} from 'react-native';
 import { Form, Button, Text, Item, Input, Label} from 'native-base';
 import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';

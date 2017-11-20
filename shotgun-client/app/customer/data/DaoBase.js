@@ -15,6 +15,7 @@ export default class Dao {
       this.name = daoContext.name;
       this.page = page(this);
       this.updateSubscription = this.updateSubscription.bind(this);
+      this.crx = crx;//force this to load
     }
     
     get observable(){

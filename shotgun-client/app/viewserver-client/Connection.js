@@ -34,7 +34,7 @@ export default class Connection {
         this._socket.onclose = this.handleSocketClosed;
         this.handleSocketOpen();
         resolve();
-      }
+      };
 
       this._socket.onerror = () => {
         if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS){
@@ -43,7 +43,7 @@ export default class Connection {
           Logger.debug(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);
           setTimeout(() => this.tryConnect(attemptCounter + 1, resolve, reject), Connection.CONNECTION_ATTEMPT_DELAY);
         }
-      }
+      };
       this._socket.onmessage = this.handleSocketMessage;
     }
 
