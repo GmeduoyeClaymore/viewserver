@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Icon, Text, Spinner } from 'native-base';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {getDaoState} from 'common/dao';
+import { Button, Icon, Text, Spinner } from 'native-base';
 
 const CustomerMenuBar = ({cart, navigation}) => {
     return <View style={styles.container}>
@@ -33,8 +34,10 @@ CustomerMenuBar.PropTypes = {
   cart: PropTypes.object
 };
 
-const mapStateToProps = ({CheckoutReducer}) => ({
-  cart: CheckoutReducer.cart
+const mapStateToProps = (state, initialProps) => ({
+  cart: getDaoState(state, ['cart'], 'cartItemsDao'),
+  summary: getDaoState(state, [], 'cartSummaryDao'),
+  ...initialProps
 });
 
 export default connect(

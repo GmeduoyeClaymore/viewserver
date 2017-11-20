@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
 import {connect} from 'react-redux';
+import {View, Text} from 'react-native';
 import {setLocale} from 'yup/lib/customLocale';
 import ProductList from './product/ProductList';
 import ProductCategoryList from './product/ProductCategoryList';
@@ -14,10 +14,11 @@ import OrderConfirmation from './checkout/OrderConfirmation';
 import OrderComplete from './checkout/OrderComplete';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
+import { customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
+import Logger from 'common/Logger';
 import CustomerSettings from './CustomerSettings';
-import CustomerServiceFactory from './data/CustomerServiceFactory';
-import Logger from '../viewserver-client/Logger';
 import {StackNavigator} from 'react-navigation';
+import {isAnyLoading} from 'common/dao';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -32,6 +33,28 @@ setLocale({
   }
 });
 
+const CustomerLandingContent = ({navigation, screenProps, busy}) => (
+  busy ? <View><Text>Loading Application.....</Text></View> :  <View style={{flexDirection: 'column', flex: 1}}>
+  <CustomerMenuBar navigation={navigation}/>
+  <CustomerLandingNavigator navigation={navigation}  screenProps={screenProps} />
+</View>
+);
+
+const mapStateToProps = (state, nextOwnProps) => ({
+  busy: isAnyLoading(state, [
+      'orderItems',
+      'cartItems',
+      'cartSummary',
+      'order',
+      'orderItems',
+      'customer',
+      'paymentCards',
+      'deliveryAddresses',
+      'delivery']), ...nextOwnProps
+});
+
+const ConnectedCustomerLandingContent =  connect(mapStateToProps)(CustomerLandingContent);
+
 class CustomerLanding extends Component {
   static INITIAL_ROOT_NAME = 'ProductCategoryList';
 
@@ -40,34 +63,24 @@ class CustomerLanding extends Component {
     this.state = {
       isReady: false
     };
-
-    this.client = this.props.screenProps.client;
-    this.customerId = this.props.screenProps.customerId;
-    this.customerServiceFactory = new CustomerServiceFactory(this.client, this.props.dispatch);
+    const { client, dispatch, customerId} = this.props.screenProps;
+    this.customerId = customerId;
+    this.dispatch = dispatch;
+    this.client = client;
   }
 
   async componentWillMount() {
-    try {
-      this.customerService = await this.customerServiceFactory.create(this.customerId);
-    } catch (error) {
-      Logger.error(error);
-    }
-    Logger.debug('CustomerLanding mounted');
-    this.setState({isReady: true});
+    const {dispatch, customerId, client} = this;
+    dispatch(customerServicesRegistrationAction(client, customerId, () => this.setState({isReady: true})));
   }
 
   render() {
     if (!this.state.isReady) {
-      return null;
+      return <View><Text>Loading Application.....</Text></View>;
     }
-    Logger.debug('CustomerLanding rendering');
-
-    const screenProps = {customerService: this.customerService, client: this.client};
-
-    return <View style={{flexDirection: 'column', flex: 1}}>
-      <CustomerMenuBar navigation={this.props.navigation} cartSummaryDao={this.customerService.cartSummaryDao}/>
-      <CustomerLandingNavigator navigation={this.props.navigation}  screenProps={screenProps} />
-    </View>;
+    const {dispatch, client} = this;
+    const screenProps = {client, dispatch};
+    return <ConnectedCustomerLandingContent {...this.props} screenProps={screenProps}/>;
   }
 }
 
@@ -92,4 +105,6 @@ const CustomerLandingNavigator = StackNavigator(
 
 CustomerLanding.router = CustomerLandingNavigator.router;
 
-export default connect()(CustomerLanding);
+export default CustomerLanding;
+
+
