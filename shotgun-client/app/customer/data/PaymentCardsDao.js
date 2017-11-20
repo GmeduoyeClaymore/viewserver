@@ -2,6 +2,7 @@ import * as FieldMappings from 'common/constants/TableNames';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
+import {forEach} from 'lodash';
 
 const createAddPaymentCardEvent = (paymentCard) => {
   return {

@@ -2,6 +2,7 @@ import * as FieldMappings from 'common/constants/TableNames';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
+import {forEach} from 'lodash';
 
 const createAddCustomerEvent = (args) => {
   return {
