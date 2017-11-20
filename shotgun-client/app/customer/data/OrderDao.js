@@ -23,7 +23,7 @@ export default class OrdersDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 1,
+      limit: 1000,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -46,7 +46,7 @@ export default class OrdersDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
@@ -66,11 +66,10 @@ export default class OrdersDaoContext{
       const orderId = uuidv4();
       const created = moment().format('x');
       Logger.info(`Creating order ${orderId}`);
-      const order = {orderId, created, lastModified: created, customerId: dao.options.customerId, deliveryId, paymentId};
+      const order = {orderId, lastModified: created, customerId: dao.options.customerId, deliveryId, paymentId};
       const addOrderRowEvent = createAddOrderRowEvent(order);
-      const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();
-      await dao.subscriptionStrategy.editTable([addOrderRowEvent]);
-      await promise;
+      const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error(`Could not detect created order in 5 seconds "${orderId}"`)).toPromise();
+      await Promise.all([dao.subscriptionStrategy.editTable([addOrderRowEvent]), promise]);
       Logger.info('Order created');
       return orderId;
     };

@@ -59,7 +59,6 @@ export default class Network {
       });
     }
     const result = ProtoLoader.Dto.MessageDto.encode(messageWrapper).finish();
-    Logger.fine('Result is ' + JSON.stringify(result));
     this.send(result);
   }
 

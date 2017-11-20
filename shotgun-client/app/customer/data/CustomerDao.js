@@ -3,7 +3,7 @@ import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSo
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {forEach} from 'lodash';
-import uuidv4 from 'uuid/v4';
+import PrincipalService from 'common/services/PrincipalService';
 
 const createAddCustomerEvent = (args) => {
   return {
@@ -98,14 +98,15 @@ export default class CustomerDaoContext{
       }
 
       const promise = dao.rowEventObservable.filter(ev => ev.row.customerId == customerId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to customer id ${customerId} in 5 seconds`)).toPromise();
-      const modifiedRows = await subscriptionStrategy.editTable([customerRowEvent]);
-      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      const result = await promise;
+      await Promise.all([promise, subscriptionStrategy.editTable([customerRowEvent])]);
+      Logger.info('Add customer promise resolved');
 
       await this.paymentCardsDao.addOrUpdatePaymentCard({customerId: customerObject.customerId, paymentCard});
       await this.deliveryAddressDao.addOrUpdateDeliveryAddress({customerId: customerObject.customerId, deliveryAddress});
 
-      return result;
+      await PrincipalService.setCustomerIdOnDevice(customerObject.customerId);
+
+      return customerObject.customerId;
     };
   }
 }

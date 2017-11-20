@@ -13,7 +13,7 @@ export default class Delivery extends Component{
 
   constructor(props) {
     super(props);
-    this.setIsDeliveryRequired = this.setIsDeliveryRequired.bind(this);
+    this.setState = this.setState.bind(this);
     this.state = {
       isDeliveryRequired: true,
       eta: 72,

@@ -4,10 +4,10 @@ import {connect} from 'react-redux';
 import {View, Text, Picker} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 import {getDaoState} from 'common/dao';
-
+const DEFAULT_PAYMENT_CARDS = [];
 class Payment extends Component {
   static propTypes = {
-    customer: PropTypes.object
+    paymentCards: PropTypes.array
   };
 
   static navigationOptions = {header: null};
@@ -19,7 +19,11 @@ class Payment extends Component {
   }
 
   componentWillMount(){
-    this.setCard(this.props.customer.paymentCards.find(c => c.isDefault).paymentId);
+    const {paymentCards} = this.props;
+    const defaultCard = paymentCards.find(c => c.isDefault) || paymentCards[0];
+    if (defaultCard){
+      this.setCard(defaultCard.paymentId);
+    }
   }
 
   setCard(paymentId){
@@ -27,21 +31,21 @@ class Payment extends Component {
   }
 
   render() {
-    const {customer, navigation} = this.props;
+    const {paymentCards, navigation} = this.props;
     const {paymentId} = this.state;
 
     return <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>Payment Details</Text>
       <Picker selectedValue={paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
-        {customer.paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
+        {paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
       </Picker>
-      <ActionButton buttonText="Next" icon={null} action={() => navigation.navigate('Delivery', {paymentId})}/>
+      {paymentId ? <ActionButton buttonText="Next" icon={null} action={() => navigation.navigate('Delivery', {paymentId})}/> : null}
     </View>;
   }
 }
 
 const mapStateToProps = (state, initialProps) => ({
-  customer: getDaoState(state, [], 'customerDao'),
+  paymentCards: getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao') || DEFAULT_PAYMENT_CARDS,
   ...initialProps
 });
 

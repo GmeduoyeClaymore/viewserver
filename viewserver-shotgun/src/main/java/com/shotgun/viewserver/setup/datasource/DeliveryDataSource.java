@@ -31,6 +31,7 @@ DeliveryDataSource {
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("deliveryId", "deliveryId", ColumnType.String),
+                                        new Column("customerIdDelivery", "customerId", ColumnType.String),
                                         new Column("deliveryAddressId", "deliveryAddressId", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),

@@ -1,14 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {ScrollView} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import { Form, Button, Text, Item, Input, Label} from 'native-base';
 import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import uuidv4 from 'uuid/v4';
-import PrincipalService from 'common/services/PrincipalService';
+import {Spinner} from 'native-base';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
-const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) => {
+const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors, busy}) => {
   const {context} = screenProps;
   const {customer, paymentCard, deliveryAddress} = context.state;
 
@@ -20,6 +20,7 @@ const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) 
   };
 
   return <ErrorRegion errors={errors}><ScrollView style={{flex: 1, flexDirection: 'column'}}>
+    {busy ? <Spinner/> : null}
     <Form>
     <Text>Personal Details</Text>
     <Item fixedLabel>

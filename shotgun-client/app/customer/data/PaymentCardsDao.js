@@ -41,7 +41,7 @@ export default class PaymentCardsDaoContext{
   }
 
   get name(){
-      return 'paymentCards';
+      return 'paymentCardsDao';
   }
 
   createDataSink(){

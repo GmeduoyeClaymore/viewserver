@@ -176,8 +176,7 @@ export default class Connection {
       this._commandId = this._commandId + 10;
       this.openCommands[cmd.id] = cmd;
     
-      Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command + ' - ' + JSON.stringify(cmd.data));
-      Logger.fine(JSON.stringify(cmd.data));
+      Logger.info('Sending command ' + cmd.id + ' - ' + cmd.command);
     
       const {id, command, data} = cmd;
       const payload = {id, command};

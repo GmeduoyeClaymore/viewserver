@@ -4,6 +4,9 @@ import {connect} from 'react-redux';
 import {View, Text, Picker} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 import {ListItem, Radio, Right} from 'native-base';
+import {getDaoState} from 'common/dao';
+
+const DEFAULT_DELIVERY_ADDRESSES = [];
 
 class DeliveryOptions extends Component {
   constructor(props) {
@@ -13,7 +16,11 @@ class DeliveryOptions extends Component {
   }
 
   componentWillMount(){
-    this.setDeliveryAddress(this.props.customer.deliveryAddresses.find(c => c.isDefault).deliveryAddressId);
+    const {deliveryAddresses} = this.props;
+    const defaultAddress = deliveryAddresses.find(c => c.isDefault) || deliveryAddresses[0];
+    if (defaultAddress){
+      this.setDeliveryAddress(defaultAddress.deliveryAddressId);
+    }
   }
 
   setDeliveryAddress(deliveryAddressId){
@@ -25,7 +32,7 @@ class DeliveryOptions extends Component {
   }
 
   render() {
-    const {customer, navigation} = this.props;
+    const {deliveryAddresses, navigation} = this.props;
     const {deliveryType = 'ROADSIDE', deliveryAddressId} = this.state;
 
     return <View style={{flex: 1, flexDirection: 'column'}}>
@@ -46,7 +53,7 @@ class DeliveryOptions extends Component {
 
       <Text>Delivery Address</Text>
       <Picker selectedValue={deliveryAddressId} onValueChange={(itemValue) => this.setDeliveryAddress(itemValue)}>
-        {customer.deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
+        {deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
       </Picker>
 
       <ActionButton buttonText="Next" icon={null} action={() =>  navigation.navigate('OrderConfirmation', this.state)}/>
@@ -55,15 +62,13 @@ class DeliveryOptions extends Component {
 }
 
 DeliveryOptions.PropTypes = {
-  status: PropTypes.object,
-  order: PropTypes.object,
-  delivery: PropTypes.object
+  deliveryAddresses: PropTypes.array
 };
 
 DeliveryOptions.navigationOptions = {header: null};
 
 const mapStateToProps = (state, initialProps) => ({
-  customer: getDaoState(state, [], 'customerDao'),
+  deliveryAddresses: getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao') || DEFAULT_DELIVERY_ADDRESSES,
   ...initialProps
 });
 

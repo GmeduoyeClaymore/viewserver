@@ -44,7 +44,7 @@ export const customerServicesRegistrationAction = (client, customerId, continueW
     };
 };
 
-export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId, deliveryType) => {
+export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId, deliveryType, continueWith) => {
     return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId, deliveryType}, continueWith);
 };
 

@@ -5,10 +5,10 @@ import {View, Text} from 'react-native';
 import ActionButton from 'common/components/ActionButton';
 import {getDaoCommandResult} from 'common/dao';
 
-const OrderComplete = ({navigation, order}) => {
+const OrderComplete = ({navigation, orderId}) => {
   return <View style={{flex: 1, flexDirection: 'column'}}>
     <Text>Your Order Has Been Placed</Text>
-    <Text>{`Order Id ${order.orderId}`}</Text>
+    <Text>{`Order Id ${orderId}`}</Text>
     <ActionButton buttonText="Continue Shopping" icon={null} action={() => navigation.navigate('ProductCategoryList')}/>
   </View>;
 };

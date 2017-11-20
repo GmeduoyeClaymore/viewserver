@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
 import {Spinner} from 'native-base';
 import PagingListView from 'common/components/PagingListView';
-import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {connect} from 'react-redux';
 import ErrorRegion from 'common/components/ErrorRegion';
 const styles = StyleSheet.create({

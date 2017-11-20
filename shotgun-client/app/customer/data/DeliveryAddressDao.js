@@ -41,7 +41,7 @@ export default class DeliveryAddressDaoContext{
   }
 
   get name(){
-      return 'deliveryAddresses';
+      return 'deliveryAddressDao';
   }
 
   createDataSink(){

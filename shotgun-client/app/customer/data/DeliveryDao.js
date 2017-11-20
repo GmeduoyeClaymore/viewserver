@@ -22,7 +22,7 @@ export default class DeliveryDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 20,
+      limit: 1000,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -53,18 +53,27 @@ export default class DeliveryDaoContext{
   }
 
   transformOptions(options){
-    return options;
+    const {customerId} = options;
+    if (typeof customerId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    return {...options, filterExpression: `customerIdDelivery like \"${customerId}\"`};
   }
 
   extendDao(dao){
     dao.createDelivery = async ({deliveryAddressId, eta, type}) =>{
           //create order object
+        const schema = await dao.dataSink.waitForSchema();
         const created = moment().format('x');
         const deliveryId = uuidv4();
-        const delivery =  {deliveryId, created, lastModified: created, deliveryAddressId, eta, type};
+        const customerId = dao.options.customerId;
+        if (typeof customerId === 'undefined'){
+          throw new Error('customerId should be defined');
+        }
+        const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, customerIdDelivery: customerId};
         Logger.info(`Creating delivery ${deliveryId}`);
         const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
-        const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error('Could not detect delivery created in 5 seconds')).toPromise();
+        const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();
         await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
         await promise;
         Logger.info('Delivery created');

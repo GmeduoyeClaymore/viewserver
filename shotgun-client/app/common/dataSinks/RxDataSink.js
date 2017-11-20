@@ -63,8 +63,9 @@ export default class RxDataSink extends DataSink(null){
     this._dataSinkUpdated.next({Type: RxDataSink.ROW_UPDATED, row: this.rows[rowId]});
   }
   onRowRemoved(rowId){
+    const rowToRemove = this.rows[rowId];
     super.onRowRemoved(rowId);
-    this._dataSinkUpdated.next({Type: RxDataSink.ROW_REMOVED, rowId});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_REMOVED, rowId, row: rowToRemove});
   }
   onColumnAdded(colId, col){
     super.onColumnAdded(colId, col);

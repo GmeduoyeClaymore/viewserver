@@ -17,7 +17,7 @@ export default class CommandExecutedPromise{
   }
 
   onError(message){
-    Logger.error(`Promise event handler returned error "${message}"`);
+    Logger.warning(`Promise event handler returned error "${message}"`);
     this.reject(message);
   }
 
