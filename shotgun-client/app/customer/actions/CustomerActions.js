@@ -7,6 +7,7 @@ import CustomerDao from 'customer/data/CustomerDao';
 import PaymentCardsDao from 'customer/data/PaymentCardsDao';
 import DeliveryAddressDao from 'customer/data/DeliveryAddressDao';
 import ProductCategoryDao from 'customer/data/ProductCategoryDao';
+import OrderSummaryDao from 'customer/data/OrderSummaryDao';
 import DeliveryDao from 'customer/data/DeliveryDao';
 import ProductDao from 'customer/data/ProductDao';
 import Dao from 'customer/data/DaoBase';
@@ -38,6 +39,7 @@ export const customerServicesRegistrationAction = (client, customerId, continueW
             const deliveryDao = register(dispatch, new DeliveryDao(client), {customerId});
             register(dispatch, new CartSummaryDao(client), {customerId});
             register(dispatch, new ProductDao(client));
+            register(dispatch, new OrderSummaryDao(client), {customerId});
             register(dispatch, new CartItemsDao(client, orderDao, deliveryDao), {customerId});
         }
         continueWith();

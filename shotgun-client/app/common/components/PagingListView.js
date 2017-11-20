@@ -30,7 +30,15 @@ class PagingListView extends Component{
     }
 
     componentWillMount(){
-      this.props.doPage(this.props.pageSize);
+      const limit = this.props.pageSize || 10;
+      const {options = {}} = this.props;
+      this.props.setOptions({...options, limit});
+    }
+
+    componentWillReceiveProps(newProps){
+      if (newProps.options && !isEqual(newProps.options, this.props.options)){
+        this.props.setOptions(newProps.options);
+      }
     }
 
     _onScroll(e){
@@ -70,6 +78,7 @@ const selectorFactory = (dispatch, initializationProps) => {
   let ownProps = {};
   const actions = bindActionCreators({updateSubscriptionAction}, dispatch);
   const {daoName} = initializationProps;
+  const setOptions = options => actions.updateSubscriptionAction(daoName, options);
   const doPage = limit => actions.updateSubscriptionAction(daoName, {limit});
   return (nextState, nextOwnProps) => {
     const data = getDaoState(nextState, initializationProps.dataPath, daoName);
@@ -82,6 +91,7 @@ const selectorFactory = (dispatch, initializationProps) => {
       busy,
       data,
       doPage,
+      setOptions,
       errorMessage,
       limit,
       ...nextOwnProps

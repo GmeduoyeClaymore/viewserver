@@ -4,15 +4,11 @@ import PropTypes from 'prop-types';
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import {Spinner} from 'native-base';
 import PagingListView from '../common/components/PagingListView';
-import OrderSummaryDao from './data/OrderSummaryDao';
 import { TabNavigator } from 'react-navigation';
 import moment from 'moment';
+import {getDaoState, isAnyLoading} from 'common/dao';
 
-const Orders = ({customer, isCompleted, dispatch, screenProps, navigation}) => {
-    const {customerId} = screenProps.customerService;
-    const orderSummaryDao = new OrderSummaryDao(screenProps.client, dispatch, customerId, isCompleted);
-    const orders = isCompleted ? customer.orders.complete : customer.orders.incomplete;
-
+const Orders = ({isCompleted, navigation}) => {
     const styles = StyleSheet.create({
       container: {
         backgroundColor: '#FFFFFF',
@@ -40,14 +36,14 @@ const Orders = ({customer, isCompleted, dispatch, screenProps, navigation}) => {
     };
 
     return <PagingListView
+       daoName='orderSummaryDao'
+      dataPath={['customer', 'orders']}
       style={styles.container}
-      dao={orderSummaryDao}
-      data={orders}
-      pageSize={10}
-      busy={customer.status.busy}
       rowView={rowView}
+      options={{isCompleted}}
       paginationWaitingView={Paging}
       emptyView={NoItems}
+      pageSize={10}
       headerView={() => null}
     />;
 };
@@ -58,8 +54,10 @@ Orders.PropTypes = {
 
 Orders.navigationOptions = {header: null};
 
-const mapStateToProps = ({CustomerReducer}) => ({
-  customer: CustomerReducer.customer
+const mapStateToProps = (state, initialProps) => ({
+  orders: getDaoState(state, ['orders'], 'orderSummaryDao'),
+  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentCardsDao']),
+  ...initialProps
 });
 
 const ConnectedOrders = connect(

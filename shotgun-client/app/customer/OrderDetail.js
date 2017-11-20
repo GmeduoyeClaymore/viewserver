@@ -2,30 +2,30 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
-import OrderItemsDao from './data/OrderItemsDao';
+import {getDaoState, updateSubscriptionAction} from 'common/dao';
+import {Spinner} from 'native-base';
 
 class OrderDetail extends Component{
   constructor(props) {
     super(props);
-    const {customerId} = props.screenProps.customerService;
-    const {orderId} = props.navigation.state.params;
-    this.orderItemsDao = new OrderItemsDao(props.screenProps.client, props.dispatch, customerId, orderId);
   }
 
   componentWillMount(){
-    this.orderItemsDao.subscribe();
+    const {dispatch} = this.props;
+    const {isCompleted} = this.props.navigation.state.params;
+    dispatch(updateSubscriptionAction('orderSummaryDao', {isCompleted}));
   }
 
   render() {
-    const {customer} = this.props;
+    const {customer, busy} = this.props;
     const {orderId, isCompleted} = this.props.navigation.state.params;
     let orderType = 'complete';
 
     if (!isCompleted) {
       orderType = 'incomplete';
     }
-    const orderSummary = customer.orders[orderType].find(o => o.orderId == orderId);
-    const paymentCard = customer.paymentCards.find(a => a.paymentId == orderSummary.paymentId);
+    const orderSummary = orders[orderType].find(o => o.orderId == orderId);
+    const paymentCard = paymentCards.find(a => a.paymentId == orderSummary.paymentId);
 
     const renderOrderItem = (item) => {
       return <View key={item.key} style={{flexDirection: 'column', flex: 1}}>
@@ -36,24 +36,28 @@ class OrderDetail extends Component{
       </View>;
     };
 
-    return <View style={{flex: 1, flexDirection: 'column'}}>
+    return busy ? <Spinner/> : <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>{orderSummary.orderId}</Text>
     {customer.orderDetail.items.map(c => renderOrderItem(c))}
       <Text>{`Total Items ${orderSummary.totalQuantity}`}</Text>
       <Text>{`Total Price ${orderSummary.totalPrice}`}</Text>
       <Text>Payment {paymentCard.cardNumber}</Text>
-    </View>;
+  </View>;
   }
 }
 
 OrderDetail.PropTypes = {
-  customer: PropTypes.object
+  orders: PropTypes.object,
+  paymentCards: PropTypes.object
 };
 
 OrderDetail.navigationOptions = {header: null};
 
-const mapStateToProps = ({CustomerReducer}) => ({
-  customer: CustomerReducer.customer
+const mapStateToProps = (state, initialProps) => ({
+  paymentCards: getDaoState(state, ['paymentCards'], 'paymentCardsDao'),
+  orders: getDaoState(state, ['orders'], 'orderSummaryDao'),
+  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentCardsDao']),
+  ...initialProps
 });
 
 export default connect(

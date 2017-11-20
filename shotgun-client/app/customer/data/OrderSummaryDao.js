@@ -5,6 +5,7 @@ export default class OrderSummaryDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
+    isCompleted: false,
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 
@@ -18,7 +19,7 @@ export default class OrderSummaryDaoContext{
   }
 
   get name(){
-      return 'orderSummary';
+      return 'orderSummaryDao';
   }
 
   getReportContext({customerId, isCompleted}){
@@ -38,10 +39,7 @@ export default class OrderSummaryDaoContext{
   mapDomainEvent(event, dataSink){
     return {
       customer: {
-        orders: {
-          //todo work out exactly why we need this cruft :)
-          ['incomplete']: dataSink.rows
-        }
+        orders: dataSink.rows,
       }
     };
   }
