@@ -32,7 +32,7 @@ export default class OrdersDaoContext{
   }
 
   get name(){
-      return 'order';
+      return 'orderDao';
   }
 
   createDataSink(){
@@ -65,12 +65,12 @@ export default class OrdersDaoContext{
   }
 
   extendDao(dao){
-    dao.createOrder = async () => {
+    dao.createOrder = async (deliveryId, paymentId) => {
       const orderId = uuidv4();
       const created = moment().format('x');
       const {dataSink} = dao;
       Logger.info(`Creating order ${orderId}`);
-      const order = {orderId, created, lastModified: created, customerId: dao.options.customerId};
+      const order = {orderId, created, lastModified: created, customerId: dao.options.customerId, deliveryId, paymentId};
       const addOrderRowEvent = createAddOrderRowEvent(order);
       await dao.subscriptionStrategy.editTable(dataSink, [addOrderRowEvent]);
       await dao.rowEventObservable.filter(row => row.orderId == orderId).timeoutWithError(5000, new Error('Could not detect created order in 5 seconds')).toPromise();

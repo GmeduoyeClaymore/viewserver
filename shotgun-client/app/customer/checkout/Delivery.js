@@ -1,66 +1,49 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import * as constants from 'common/dao/ActionConstants';
-import {connect} from 'react-redux';
 import {View, Text, Slider} from 'react-native';
 import ActionButton from '../../common/components/ActionButton';
 import {ListItem, Radio, Right} from 'native-base';
 
-class Delivery extends Component {
+export default class Delivery extends Component{
+  static propTypes = {
+    navigation: PropTypes.object
+  };
+  
+  static navigationOptions = {header: null};
+
   constructor(props) {
     super(props);
     this.setIsDeliveryRequired = this.setIsDeliveryRequired.bind(this);
     this.state = {
-      isDeliveryRequired: true
+      isDeliveryRequired: true,
+      eta: 72,
+      paymentId: props.navigation.state.params.paymentId
     };
   }
 
-  setIsDeliveryRequired(isDeliveryRequired){
-    this.setState({isDeliveryRequired});
-  }
-
   render() {
-    const {navigation, delivery} = this.props;
-
-    const setEta = (eta) => this.props.dispatch({type: constants.UPDATE_DELIVERY, delivery: {eta}});
-    const getDestination =  () => this.state.isDeliveryRequired ? 'DeliveryOptions' : 'OrderConfirmation';
+    const {navigation} = this.props;
+    const {eta, isDeliveryRequired} = this.state;
+    const destination = isDeliveryRequired ? 'DeliveryOptions' : 'OrderConfirmation';
 
     return <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>Delivery Instructions</Text>
       <ListItem>
         <Text>Store Pickup</Text>
         <Right>
-          <Radio selected={!this.state.isDeliveryRequired} onPress={() => this.setIsDeliveryRequired(false)}/>
+          <Radio selected={!isDeliveryRequired} onPress={() => this.setState({isDeliveryRequired: false})}/>
         </Right>
       </ListItem>
       <ListItem>
         <Text>Shotgun Delivery</Text>
         <Right>
-          <Radio selected={this.state.isDeliveryRequired} onPress={() => this.setIsDeliveryRequired(true)}/>
+          <Radio selected={isDeliveryRequired} onPress={() => this.setState({isDeliveryRequired: true})}/>
         </Right>
       </ListItem>
 
-      <Text>{`Required within ${delivery.eta} hours`}</Text>
-      <Slider minimumValue={1} maximumValue={72} step={1} value={delivery.eta} onValueChange={val => setEta(val)}/>
-      <ActionButton buttonText="Next" icon={null} action={() => navigation.navigate(getDestination())}/>
+      <Text>{`Required within ${eta} hours`}</Text>
+      <Slider minimumValue={1} maximumValue={72} step={1} value={eta} onValueChange={val => this.setState({eta: val})}/>
+      <ActionButton buttonText="Next" icon={null} action={() => navigation.navigate(destination, this.state)}/>
     </View>;
   }
 }
-
-Delivery.PropTypes = {
-  status: PropTypes.object,
-  delivery: PropTypes.object
-};
-
-Delivery.navigationOptions = {header: null};
-
-const mapStateToProps = ({CheckoutReducer}) => ({
-  status: CheckoutReducer.status,
-  delivery: CheckoutReducer.delivery
-});
-
-export default connect(
-  mapStateToProps
-)(Delivery);
-
-

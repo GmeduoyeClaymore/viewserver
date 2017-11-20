@@ -18,8 +18,10 @@ const createUpdateCustomerEvent = (args) => {
 };
 
 export default class CustomerDaoContext{
-  constructor(client, options = {}) {
+  constructor(client, paymentCardsDao, deliveryAddressDao, options = {}) {
     this.client = client;
+    this.paymentCardsDao = paymentCardsDao;
+    this.deliveryAddressDao = deliveryAddressDao;
     this.options = options;
   }
 
@@ -67,7 +69,7 @@ export default class CustomerDaoContext{
   }
 
   extendDao(dao){
-    dao.addOrUpdateCustomer = async (customer) => {
+    dao.addOrUpdateCustomer = async (customer, paymentCard, deliveryAddress) => {
       let customerRowEvent;
       const {dataSink, subscriptionStrategy} = dao;
       const {schema} = dataSink;
@@ -95,6 +97,10 @@ export default class CustomerDaoContext{
       const modifiedRows = await subscriptionStrategy.editTable(dataSink, [customerRowEvent]);
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
       const result = await dao.rowEventObservable.filter(row => row.customerId == customerId).timeoutWithError(5000, new Error(`Could not modification to customer id ${customerId} in 5 seconds`)).toPromise();
+
+      await this.paymentCardsDao.addOrUpdatePaymentCard(newCustomer.customerId, paymentCard);
+      await this.deliveryAddressDao.addOrUpdateDeliveryAddress(newCustomer.customerId, deliveryAddress);
+
       return result;
     };
   }

@@ -19,11 +19,12 @@ export default class CustomerServiceFactory {
     this.register = this.register.bind(this);
   }
 
-  async register(daoContext, customerId){
+  register(daoContext, customerId){
     const dao = new Dao(daoContext);
     const {dispatch} = this;
     dispatch(registerDao(dao));
     dispatch(updateSubscriptionAction(dao.name, {customerId}));
+    return dao;
   }
   async create(customerId){
     if (this.customerService){
@@ -31,14 +32,14 @@ export default class CustomerServiceFactory {
     }
     this.register(new ProductCategoryDao(this.client), customerId);
     this.register(new OrderItemsDao(this.client), customerId);
-    this.register(new OrderDao(this.client), customerId);
-    this.register(new CustomerDao(this.client), customerId);
-    this.register(new PaymentCardsDao(this.client), customerId);
-    this.register(new DeliveryAddressDao(this.client), customerId);
-    this.register(new DeliveryDao(this.client), customerId);
+    const orderDao = this.register(new OrderDao(this.client), customerId);
+    const paymentCardsDao = this.register(new PaymentCardsDao(this.client), customerId);
+    const deliveryAddressDao = this.register(new DeliveryAddressDao(this.client), customerId);
+    this.register(new CustomerDao(this.client, paymentCardsDao, deliveryAddressDao), customerId);
+    const deliveryDao = this.register(new DeliveryDao(this.client), customerId);
     this.register(new CartSummaryDao(this.client), customerId);
     this.register(new ProductDao(this.client));
-    this.register(new CartItemsDao(this.client), customerId);
+    this.register(new CartItemsDao(this.client, orderDao, deliveryDao), customerId);
   }
 }
 

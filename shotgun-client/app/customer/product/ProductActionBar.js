@@ -5,7 +5,7 @@ import ActionButton from '../../common/components/ActionButton.js';
 import icon from '../../common/assets/basket-fill.png';
 import {isOperationPending, getOperationError} from 'common/dao';
 import {connect} from 'react-redux';
-import {addItemToCartAction} from 'customer/actions/CartActions';
+import {addItemToCartAction} from 'customer/actions/CustomerActions';
 
 class ProductActionBar extends Component {
     static PropTypes = {

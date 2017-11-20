@@ -26,9 +26,11 @@ const createUpdateCartRowEvent = (tableKey, columnValues) => {
 };
 
 export default class CartItemsDaoContext{
-  constructor(client, options = {}) {
+  constructor(client, orderdao, deliveryDao, options = {}) {
     this.client = client;
     this.options = options;
+    this.orderdao = orderdao;
+    this.deliveryDao = deliveryDao;
   }
 
   get defaultOptions(){
@@ -75,6 +77,7 @@ export default class CartItemsDaoContext{
   }
 
   extendDao(dao){
+    const _this = this;
     dao.addItemToCart = async ({productId, quantity, customerId}) => {
       let cartRowEvent;
       const {dataSink, subscriptionStrategy} = dao;
@@ -95,19 +98,22 @@ export default class CartItemsDaoContext{
       const result = await dao.rowEventObservable.filter(ev => ev.row.itemId === resultKey).take(1).timeoutWithError(5000, new Error(`Could not detect modification to cart item ${resultKey} in 5 seconds`)).toPromise();
       return result;
     };
-    dao.purchaseCartItems = async (orderId) => {
-      const {dataSink, subscriptionStrategy} = dao;
+    dao.purchaseCartItems = async (eta, paymentId, deliveryAddressId, deliveryType) => {
+        const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;
       if (rows.some(e => e.orderId !== undefined)){
         //defensive coding to make sure we're not updating existing order items by mistake
         Logger.error('Tried to update an item which already has an orderId this shouldnt happen!');
         return;
       }
+
+      const deliveryId = await _this.deliveryDao.createDelivery(deliveryAddressId, eta, deliveryType);
+      const orderId = await _this.orderDao.createOrder(deliveryId, paymentId);
       const rowEvents = rows.map(i => createUpdateCartRowEvent(i.itemId, {orderId}));
       await subscriptionStrategy.editTable(dataSink, rowEvents);
-      const result = await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(event => event.row.itemId === ev.tableKey).timeoutWithError(5000, new Error(`Could not modification to cart event ${ev.columnValues.itemId} in 5 seconds`)).toPromise()));
+      await Promise.all(rowEvents.map( ev => dao.rowEventObservable.filter(event => event.row.itemId === ev.tableKey).timeoutWithError(5000, new Error(`Could not detect modification to cart event ${ev.columnValues.itemId} in 5 seconds`)).toPromise()));
       Logger.info('Purchase cart item promise resolved');
-      return result;
+      return orderId;
     };
   }
 }

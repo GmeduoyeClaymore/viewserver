@@ -4,8 +4,9 @@ import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import ActionButton from '../../common/components/ActionButton';
 import icon from '../../common/assets/truck-fast.png';
+import {isAnyOperationPending, getDaoState} from 'common/dao';
 
-const Cart = ({navigation, cart, status}) => {
+const Cart = ({navigation, cart, busy}) => {
     const renderCartItem = (item) => {
       return <View key={item.key} style={{flexDirection: 'column', flex: 1}}>
         <Text>{`Product: ${item.name} - (${item.productId})`}</Text>
@@ -19,20 +20,21 @@ const Cart = ({navigation, cart, status}) => {
       {cart.items.map(c => renderCartItem(c))}
       <Text>{`Total Items ${cart.totalQuantity}`}</Text>
       <Text>{`Total Price ${cart.totalPrice}`}</Text>
-      {!status.busy ? <ActionButton buttonText="Proceed to Checkout" icon={icon} action={() => navigation.navigate('Payment')}/> : null}
+      {!busy ? <ActionButton buttonText="Proceed to Checkout" icon={icon} action={() => navigation.navigate('Payment')}/> : null}
     </View>;
 };
 
 Cart.PropTypes = {
-  status: PropTypes.object,
+  busy: PropTypes.bool,
   cart: PropTypes.object
 };
 
 Cart.navigationOptions = {header: null};
 
-const mapStateToProps = ({CheckoutReducer}) => ({
-  status: CheckoutReducer.status,
-  cart: CheckoutReducer.cart
+const mapStateToProps = (state, initialProps) => ({
+  cart: getDaoState(state, ['cart'], 'cartItemsDao'),
+  busy: isAnyOperationPending(state, { deliveryDao: 'createDelivery', orderDao: 'createOrder'}),
+  ...initialProps
 });
 
 export default connect(

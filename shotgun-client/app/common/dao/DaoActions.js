@@ -3,7 +3,7 @@ import {getDaoOptions} from './DaoStateUtils';
 import {isEqual} from 'common/utils';
 export const invokeDaoCommand = (daoName, method, options, continueWith) => {
     return {
-        type: INVOKE_DAO_COMMAND(daoName,method),
+        type: INVOKE_DAO_COMMAND(daoName, method),
         daoName,
         method,
         payload: options,

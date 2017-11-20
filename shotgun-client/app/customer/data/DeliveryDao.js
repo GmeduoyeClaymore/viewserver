@@ -57,12 +57,12 @@ export default class DeliveryDaoContext{
   }
 
   extendDao(dao){
-    dao.createDelivery = async () =>{
+    dao.createDelivery = async (deliveryAddressId, eta, type) =>{
           //create order object
         const created = moment().format('x');
         const {dataSink} = dao;
         const deliveryId = uuidv4();
-        const delivery =  {deliveryId, created, lastModified: created};
+        const delivery =  {deliveryId, created, lastModified: created, deliveryAddressId, eta, type};
         Logger.info(`Creating delivery ${deliveryId}`);
         const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
         await dao.subscriptionStrategy.editTable(dataSink, [addDeliveryRowEvent]);

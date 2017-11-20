@@ -2,29 +2,22 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {ScrollView} from 'react-native';
 import { Form, Button, Text, Item, Input, Label} from 'native-base';
-import CustomerDao from '../data/CustomerDao';
-import PaymentCardsDao from '../data/PaymentCardsDao';
-import DeliveryAddressDao from '../data/DeliveryAddressDao';
+import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
+import ErrorRegion from 'common/components/ErrorRegion';
+import uuidv4 from 'uuid/v4';
 
-const RegistrationConfirmation  = ({navigation, dispatch, screenProps}) => {
-  //TODO - don't like this needs reworking
-  const customerDao =  new CustomerDao(screenProps.client, dispatch);
-  const paymentCardsDao =  new PaymentCardsDao(screenProps.client, 0, dispatch);
-  const deliveryAddressDao =  new DeliveryAddressDao(screenProps.client, 0, dispatch);
-  //TODO - need to do this as we need to subscribe before we can send table edits currently
-  customerDao.subscribe(0);
-
+const RegistrationConfirmation  = ({navigation, dispatch, screenProps, errors}) => {
   const {context} = screenProps;
   const {customer, paymentCard, deliveryAddress} = context.state;
 
   const register = async () => {
-    const newCustomer = await customerDao.addOrUpdateCustomer(customer);
-    await paymentCardsDao.addOrUpdatePaymentCard(newCustomer.customerId, paymentCard);
-    await deliveryAddressDao.addOrUpdateDeliveryAddress(newCustomer.customerId, deliveryAddress);
-    //navigation.navigate('Home', {});
+    dispatch(addOrUpdateCustomer(customer, paymentCard, deliveryAddress), () => navigation.navigate('Home', {}));
+  };
+  const createServicesThenRegister = async () => {
+    dispatch(customerServicesRegistrationAction(screenProps.client, uuidv4(), register));
   };
 
-  return <ScrollView style={{flex: 1, flexDirection: 'column'}}>
+  return <ErrorRegion errors={errors}><ScrollView style={{flex: 1, flexDirection: 'column'}}>
     <Form>
     <Text>Personal Details</Text>
     <Item fixedLabel>
@@ -76,14 +69,19 @@ const RegistrationConfirmation  = ({navigation, dispatch, screenProps}) => {
       <Input value={`${paymentCard.expiryMonth}/${paymentCard.expiryYear}`} editable={false}/>
     </Item>
 
-    <Button onPress={register}>
+    <Button onPress={createServicesThenRegister}>
         <Text>Create Account</Text>
     </Button>
     </Form>
-  </ScrollView>;
+  </ScrollView></ErrorRegion>;
 };
 
 RegistrationConfirmation.navigationOptions = {title: 'Registration Confirmation'};
 
-export default connect(
-)(RegistrationConfirmation);
+const mapStateToProps = (state, initialProps) => ({
+  errors: getOperationError(state, 'customerDao', 'customerDao'),
+  busy: isAnyOperationPending(state, { customerDao: 'customerDao'}),
+  ...initialProps
+});
+
+export default connect(mapStateToProps)(RegistrationConfirmation);

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
-import ActionButton from '../../common/components/ActionButton';
+import ActionButton from 'common/components/ActionButton';
+import {getDaoCommandResult} from 'commmon/dao';
 
 const OrderComplete = ({navigation, order}) => {
   return <View style={{flex: 1, flexDirection: 'column'}}>
@@ -18,8 +19,9 @@ OrderComplete.PropTypes = {
 
 OrderComplete.navigationOptions = {header: null};
 
-const mapStateToProps = ({CheckoutReducer}) => ({
-  order: CheckoutReducer.order
+const mapStateToProps = (state, initialProps) => ({
+  orderId: getDaoCommandResult(state, 'purchaseCartItems', 'cartItemsDao'),
+  ...initialProps
 });
 
 export default connect(
