@@ -40,7 +40,7 @@ class Orders extends Component{
 
     constructor(props){
       super(props);
-      this.state = {isCompleted : true}
+      this.state = {isCompleted : false}
     }
     
     setIsCompleted(isCompleted){
