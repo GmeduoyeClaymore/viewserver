@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
 import {Spinner} from 'native-base';
 import PagingListView from 'common/components/PagingListView';
-import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, updateSubscriptionAction} from 'common/dao';
 import {connect} from 'react-redux';
 import ErrorRegion from 'common/components/ErrorRegion';
+import backIcon from '../../common/assets/back.png';
+import ActionButton from '../../common/components/ActionButton';
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
@@ -14,18 +17,16 @@ const styles = StyleSheet.create({
   separator: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#AAAAAA',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    height: 30
   }
 });
 
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-const navFuncFactory =  ({categoryId, category, navigation, isLeaf, shouldNavigateToProductPage}) =>  () => {
-  if (shouldNavigateToProductPage) {
-    navigation.navigate('ProductList', {category});
-  } else {
-    navigation.navigate('ProductCategoryList', {parentCategoryId: categoryId, parentCategory: category, isLeaf});
-  }
-};
 
 class ProductCategoryList extends Component{
   static propTypes = {
@@ -35,25 +36,25 @@ class ProductCategoryList extends Component{
     navigation: PropTypes.object
   };
 
-  static navigationOptions = ({navigation}) => {
-    const title = navigation.state.params !== undefined ? navigation.state.params.parentCategory : undefined;
-    const navOptions = {title};
-    if (title == undefined){
-      navOptions.header = null;
+  navFuncFactory({parentCategoryId, categoryId, category, navigation, isLeaf}) {
+    if (isLeaf == 'true') { //TODO - get isLeaf to be a proper bool in the ViewServer
+      navigation.navigate('ProductList', {category});
+    } else {
+      this.setNavigationState({parentCategoryId: categoryId, parentCategory: category, grandparentCategoryId: parentCategoryId});
     }
-    return navOptions;
-  };
+  }
+
+  setNavigationState({parentCategoryId, parentCategory, grandparentCategoryId}){
+    this.setState({parentCategoryId, parentCategory, grandparentCategoryId});
+  }
 
   constructor(props){
     super(props);
-    const {screenProps, navigation} = this.props;
-    const {dispatch} = screenProps;
-    const params = navigation.state.params || {};
-    const {isLeaf: shouldNavigateToProductPage} = params;
-    this.state = {};
+    const {navigation} = this.props;
+    this.state = {parentCategoryId: 'NONE', parentCategory: undefined};
     this.rowView = (row) => {
-      const {categoryId, category, isLeaf} = row;
-      return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={navFuncFactory({dispatch, navigation, categoryId, category, isLeaf, shouldNavigateToProductPage})} underlayColor={'#EEEEEE'}>
+      const {categoryId, category, isLeaf, parentCategoryId} = row;
+      return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navFuncFactory({navigation, categoryId, category, parentCategoryId, isLeaf})} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
         <Text>{`${category}`}</Text>
       </View>
@@ -62,28 +63,30 @@ class ProductCategoryList extends Component{
   }
 
   componentDidMount(){
-    this.updateSubs(this.props);
+    this.updateSubs(this.props, 'NONE');
   }
 
-  componentWillReceiveProps(nextProps){
-    const {parentCategoryId} = this.state;
-    if (nextProps.navigation.state.params && nextProps.navigation.state.params.parentCategoryId != parentCategoryId){
-      this.updateSubs(nextProps);
+  shouldComponentUpdate(nextProps, nextState){
+    if (this.state.parentCategoryId !== nextState.parentCategoryId) {
+      this.updateSubs(nextProps, nextState.parentCategoryId);
     }
+    return true;
   }
 
-  updateSubs(props){
-    const params = props.navigation.state.params || {};
-    const {parentCategoryId = 'NONE'} = params;
-    this.setState({options :{parentCategoryId}});
-    //dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}, () => this.setState({parentCategoryId})));
+  updateSubs(props, parentCategoryId){
+    const {screenProps: {dispatch}} = props;
+    dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId}));
   }
 
   render(){
-    const {busy, errors} = this.props;
-    const {options} = this.state;
+    const {busy, errors, options} = this.props;
+    const {parentCategory, grandparentCategoryId} = this.state;
     const {rowView} = this;
-    return busy ? <Paging/> : <ErrorRegion errors={errors}><PagingListView
+    return busy ? <Paging/> :
+      <View  style={{flexDirection: 'column', flex: 1}}>
+        {parentCategory ? <View style={styles.header}><ActionButton buttonText={null} icon={backIcon} action={() => this.setNavigationState({parentCategoryId: grandparentCategoryId})}/><Text>{parentCategory}</Text></View> : null}
+      <ErrorRegion errors={errors}>
+      <PagingListView
       style={styles.container}
       daoName='productCategoryDao'
       dataPath={['product', 'categories']}
@@ -92,13 +95,15 @@ class ProductCategoryList extends Component{
       rowView={rowView}
       paginationWaitingView={Paging}
       emptyView={NoItems}
-      headerView={() => null}
-    /></ErrorRegion>;
+      headerView={() => null}/>
+      </ErrorRegion>
+      </View>;
   }
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
+  options: getDaoOptions(state, 'productCategoryDao'),
   errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
 });
 

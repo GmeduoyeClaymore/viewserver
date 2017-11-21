@@ -33,7 +33,7 @@ export default class Dao {
                 this.subscriptionStrategy.dispose();
             }
             if (this.rowEventSubscription){
-                this.rowEventSubscription.dispose();
+                this.rowEventSubscription.unsubscribe();
             }
             this.dataSink = this.daoContext.createDataSink(newOptions);
             this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);

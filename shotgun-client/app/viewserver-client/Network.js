@@ -46,6 +46,11 @@ export default class Network {
   sendCommand(command) {
     return this.connection.sendCommand(command);
   }
+
+  removeOpenCommand(commandId) {
+    return this.connection.removeOpenCommand(commandId);
+  }
+
   sendMessage(message) {
     let messageWrapper = null;
         
