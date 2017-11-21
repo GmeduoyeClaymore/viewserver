@@ -47,6 +47,8 @@ class ProductList extends Component{
     this.rowView = (p) => {
       return (<ProductListItem key={p.productId} product={p} navigation={navigation}/>);
     };
+    this.renderSearchBar = () => 
+      <SearchBar onChange={this.handleSearch} />
   }
 
   handleSearch(searchText){
@@ -76,7 +78,7 @@ class ProductList extends Component{
       rowView={rowView}
       paginationWaitingView={Paging}
       emptyView={NoItems}
-      headerView={() => <SearchBar onChange={this.handleSearch} />}
+      headerView={this.renderSearchBar}
     />;
   }
 }
