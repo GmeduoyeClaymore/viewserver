@@ -30,15 +30,7 @@ class PagingListView extends Component{
     }
 
     componentWillMount(){
-      const limit = this.props.pageSize || 10;
-      const {options = {}} = this.props;
-      this.props.setOptions({...options, limit});
-    }
-
-    componentWillReceiveProps(newProps){
-      if (newProps.options && !isEqual(newProps.options, this.props.options)){
-        this.props.setOptions(newProps.options);
-      }
+      this.props.doPage(this.props.pageSize);
     }
 
     _onScroll(e){

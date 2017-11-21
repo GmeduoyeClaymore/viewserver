@@ -43,14 +43,17 @@ class ProductList extends Component{
     super(props);
     const {navigation, screenProps} = this.props;
     const {dispatch} = screenProps;
-    
-    this.search = (searchText) => {
-      dispatch(updateSubscriptionAction('productDao', {searchText}));
-    };
+    this.handleSearch = this.handleSearch.bind(this);
     this.rowView = (p) => {
       return (<ProductListItem key={p.productId} product={p} navigation={navigation}/>);
     };
   }
+
+  handleSearch(searchText){
+    const {screenProps} = this.props;
+    const {dispatch} = screenProps;
+    dispatch(updateSubscriptionAction('productDao', {searchText}));
+  };
 
   componentDidMount(){
     this.updateSubs(this.props);
@@ -63,7 +66,8 @@ class ProductList extends Component{
   }
 
   render(){
-    const {rowView, search} = this;
+    const {rowView, search, props} = this;
+    const {options = {}} = props;
     return <PagingListView
       style={styles.container}
       daoName='productDao'
@@ -72,7 +76,7 @@ class ProductList extends Component{
       rowView={rowView}
       paginationWaitingView={Paging}
       emptyView={NoItems}
-      headerView={() => <SearchBar onChange={search.bind(this)} />}
+      headerView={() => <SearchBar onChange={this.handleSearch} />}
     />;
   }
 }

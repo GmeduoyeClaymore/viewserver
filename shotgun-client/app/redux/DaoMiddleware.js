@@ -1,5 +1,5 @@
 
-import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_OPTIONS, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import Logger from 'common/Logger';
 const listMethodNames = (object, downToClass = Object) => {
     // based on code by Muhammad Umer, https://stackoverflow.com/a/31055217/441899
@@ -51,7 +51,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
         daoEventFunc = daoEventFunc.bind(dao);
         const sub = dao.observable.subscribe(daoEventFunc);
         let daoOptionFunc = c => {
-            dispatch({type: UPDATE_STATE(name), path: [name, 'options'], data: c});
+            dispatch({type: UPDATE_OPTIONS(name), path: [name, 'options'], data: c});
         };
         daoOptionFunc = daoOptionFunc.bind(dao);
         const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);

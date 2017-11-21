@@ -75,8 +75,7 @@ class ProductCategoryList extends Component{
   updateSubs(props){
     const params = props.navigation.state.params || {};
     const {parentCategoryId = 'NONE'} = params;
-    const options  = {...this.props.options, parentCategoryId};
-    this.setState({options});
+    this.setState({options :{parentCategoryId}});
     //dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}, () => this.setState({parentCategoryId})));
   }
 
@@ -100,7 +99,6 @@ class ProductCategoryList extends Component{
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
-  options: getDaoOptions(state, 'productCategoryDao'),
   errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
 });
 
