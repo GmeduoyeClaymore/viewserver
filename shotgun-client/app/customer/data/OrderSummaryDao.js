@@ -1,3 +1,4 @@
+import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 
 export default class OrderSummaryDaoContext{
@@ -5,8 +6,7 @@ export default class OrderSummaryDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
-    isCompleted: false,
-    columnsToSort: [{name: 'category', direction: 'asc'}]
+    isCompleted: false
   };
 
   constructor(client, options = {}) {
@@ -45,7 +45,7 @@ export default class OrderSummaryDaoContext{
   }
 
   createSubscriptionStrategy({customerId, isCompleted}, dataSink){
-    return new ReportSubscriptionStrategy(client, this.getReportContext({customerId, isCompleted}), dataSink);
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({customerId, isCompleted}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
@@ -53,8 +53,11 @@ export default class OrderSummaryDaoContext{
   }
 
   transformOptions(options){
-    if (typeof options.parentCategoryId === 'undefined'){
-      throw new Error('Parent category should be defined');
+    if (typeof options.customerId === 'undefined'){
+      throw new Error('customerId should be defined');
+    }
+    if (typeof options.isCompleted === 'undefined'){
+      throw new Error('isCompleted  should be defined');
     }
     return options;
   }

@@ -5,6 +5,7 @@ import { updateSubscriptionAction} from 'common/dao/DaoActions';
 import { connectAdvanced} from 'custom-redux';
 import { bindActionCreators} from 'redux';
 import { isEqual } from 'common/utils';
+import ErrorRegion from 'common/components/ErrorRegion';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
 const styles = StyleSheet.create({
   contentContainer: {
@@ -33,6 +34,13 @@ class PagingListView extends Component{
       this.props.doPage(this.props.pageSize);
     }
 
+    componentWillReceiveProps(newProps){
+      if(newProps.options != null && !isEqual(this.props.options, newProps.options)){
+          this.props.setOptions(newProps.options);
+      };
+      console.log("PagingProps-" + JSON.stringify(newProps.options));
+    }
+
     _onScroll(e){
       const windowHeight = Dimensions.get('window').height;
       const height = e.nativeEvent.contentSize.height;
@@ -52,15 +60,17 @@ class PagingListView extends Component{
     renderItem = (item) => this.props.rowView(item);
     
     render() {
-      const { data = [], emptyView, paginationWaitingView, headerView: HeaderView } = this.props;
+      const { data = [],errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
       return (
-        <View style={{flex: 1, flexDirection: 'column'}}>
+        <ErrorRegion errors={errors}>
+        <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
           <HeaderView/>
             {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
             {data.map( c => this.renderItem(c))}
             {this.props.busy ? paginationWaitingView() : null}
           </ScrollView >}
         </View>
+        </ErrorRegion>
       );
     }
 }
@@ -78,13 +88,13 @@ const selectorFactory = (dispatch, initializationProps) => {
     const daoPageResult = getDaoCommandResult(nextState, 'updateSubscription', daoName);
     const busy = daoPageStatus === 'start';
     const limit =  daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
-    const errorMessage = daoPageStatus === 'fail' ? daoPageResult : undefined;
+    const errors = daoPageStatus === 'fail' ? daoPageResult : undefined;
     const nextResult = {
       busy,
       data,
       doPage,
       setOptions,
-      errorMessage,
+      errors,
       limit,
       ...nextOwnProps
     };

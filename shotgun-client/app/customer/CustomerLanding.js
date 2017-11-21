@@ -80,7 +80,7 @@ class CustomerLanding extends Component {
     const {dispatch, client} = this;
     const screenProps = {client, dispatch};
     return <ConnectedCustomerLandingContent {...this.props} screenProps={screenProps}/>;
-  }
+    }
 }
 
 const CustomerLandingNavigator = StackNavigator(
