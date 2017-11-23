@@ -23,15 +23,15 @@ export default class OptionsMapper{
 
   static _parseDirection (direction) {
     switch (direction.toLowerCase()) {
-      case 'asc': {
-        return ProtoLoader.Dto.SortDirection.values.ASCENDING;
-      }
-      case 'desc': {
-        return ProtoLoader.Dto.SortDirection.values.DESCENDING;
-      }
-      default: {
-        throw new Error('Inew Error(nvalid sort direction ' + direction);
-      }
+    case 'asc': {
+      return ProtoLoader.Dto.SortDirection.values.ASCENDING;
+    }
+    case 'desc': {
+      return ProtoLoader.Dto.SortDirection.values.DESCENDING;
+    }
+    default: {
+      throw new Error('Inew Error(nvalid sort direction ' + direction);
+    }
     }
   }
 }

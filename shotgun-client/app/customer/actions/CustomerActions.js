@@ -13,43 +13,43 @@ import ProductDao from 'customer/data/ProductDao';
 import Dao from 'customer/data/DaoBase';
 
 const  register = (dispatch, daoContext, options, continueWith) => {
-    const dao = new Dao(daoContext);
-    dispatch(registerDao(dao));
-    dispatch(updateSubscriptionAction(dao.name, options, continueWith));
-    return dao;
+  const dao = new Dao(daoContext);
+  dispatch(registerDao(dao));
+  dispatch(updateSubscriptionAction(dao.name, options, continueWith));
+  return dao;
 };
 
 export const addItemToCartAction = ({quantity, productId}, continueWith) => {
-    return async (dispatch, getState) => {
-        const existingOptions = getDaoOptions(getState(), 'customerDao');
-        dispatch(invokeDaoCommand('cartItemsDao', 'addItemToCart', {quantity, productId, customerId: existingOptions.customerId }, continueWith));
-    };
+  return async (dispatch, getState) => {
+    const existingOptions = getDaoOptions(getState(), 'customerDao');
+    dispatch(invokeDaoCommand('cartItemsDao', 'addItemToCart', {quantity, productId, customerId: existingOptions.customerId }, continueWith));
+  };
 };
 
 export const customerServicesRegistrationAction = (client, customerId, continueWith) => {
-    return async (dispatch, getState) => {
-        const state = getState();
-        if (!state.getIn(['dao', 'customerDao'])){
-            register(dispatch, new ProductCategoryDao(client), {customerId});
-            register(dispatch, new OrderItemsDao(client), {customerId});
-            const orderDao = register(dispatch, new OrderDao(client), {customerId});
-            const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {customerId});
-            const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {customerId});
-            register(dispatch, new CustomerDao(client, paymentCardsDao, deliveryAddressDao), {customerId}, continueWith);
-            const deliveryDao = register(dispatch, new DeliveryDao(client), {customerId});
-            register(dispatch, new CartSummaryDao(client), {customerId});
-            register(dispatch, new ProductDao(client));
-            register(dispatch, new OrderSummaryDao(client), {customerId});
-            register(dispatch, new CartItemsDao(client, orderDao, deliveryDao), {customerId});
-        }
-        continueWith();
-    };
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (!state.getIn(['dao', 'customerDao'])){
+      register(dispatch, new ProductCategoryDao(client), {customerId});
+      register(dispatch, new OrderItemsDao(client), {customerId});
+      const orderDao = register(dispatch, new OrderDao(client), {customerId});
+      const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {customerId});
+      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {customerId});
+      register(dispatch, new CustomerDao(client, paymentCardsDao, deliveryAddressDao), {customerId}, continueWith);
+      const deliveryDao = register(dispatch, new DeliveryDao(client), {customerId});
+      register(dispatch, new CartSummaryDao(client), {customerId});
+      register(dispatch, new ProductDao(client));
+      register(dispatch, new OrderSummaryDao(client), {customerId});
+      register(dispatch, new CartItemsDao(client, orderDao, deliveryDao), {customerId});
+    }
+    continueWith();
+  };
 };
 
 export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId, deliveryType, continueWith) => {
-    return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId, deliveryType}, continueWith);
+  return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId, deliveryType}, continueWith);
 };
 
 export const addOrUpdateCustomer = (customer, paymentCard, deliveryAddress, continueWith) => {
-    return invokeDaoCommand('customerDao', 'addOrUpdateCustomer', {customer, paymentCard, deliveryAddress}, continueWith);
+  return invokeDaoCommand('customerDao', 'addOrUpdateCustomer', {customer, paymentCard, deliveryAddress}, continueWith);
 };

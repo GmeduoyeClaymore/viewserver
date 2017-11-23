@@ -140,27 +140,27 @@ export default class Network {
     if (statuses) {
       statuses.forEach((statusDto) => {
         switch (statusDto.status) {
-          case 1:
-          {
-            Logger.fine('Received schema reset');
-            if (handler.onSchemaReset){
-              handler.onSchemaReset();
-            }
-            break;
+        case 1:
+        {
+          Logger.fine('Received schema reset');
+          if (handler.onSchemaReset){
+            handler.onSchemaReset();
           }
-          case 0:
-          {
-            Logger.fine('Received data reset');
-            if (handler.onDataReset){
-              handler.onDataReset();
-            }
-            break;
+          break;
+        }
+        case 0:
+        {
+          Logger.fine('Received data reset');
+          if (handler.onDataReset){
+            handler.onDataReset();
           }
-          default:
-          {
-            Logger.warning('Received unknown status ' + statusDto.status);
-            break;
-          }
+          break;
+        }
+        default:
+        {
+          Logger.warning('Received unknown status ' + statusDto.status);
+          break;
+        }
         }
       });
     }
@@ -193,21 +193,21 @@ export default class Network {
 
       rowEvents.forEach(rowEvent => {
         switch (rowEvent.eventType) {
-          case 0: //add
-            row = RowMapper.fromDto(handler.schema, rowEvent.values);
-            Logger.fine('Row added', row);
-            handler.onRowAdded(rowEvent.rowId, row);
-            break;
-          case 1: //update
-            row = RowMapper.fromDto(handler.schema, rowEvent.values);
-            Logger.fine('Row updated', row);
-            handler.onRowUpdated(rowEvent.rowId, row);
-            break;
-          case 2: //remove
-            handler.onRowRemoved(rowEvent.rowId);
-            break;
-          default:
-            Logger.error('Unknown row event type received: ' + rowEvent.eventType);
+        case 0: //add
+          row = RowMapper.fromDto(handler.schema, rowEvent.values);
+          Logger.fine('Row added', row);
+          handler.onRowAdded(rowEvent.rowId, row);
+          break;
+        case 1: //update
+          row = RowMapper.fromDto(handler.schema, rowEvent.values);
+          Logger.fine('Row updated', row);
+          handler.onRowUpdated(rowEvent.rowId, row);
+          break;
+        case 2: //remove
+          handler.onRowRemoved(rowEvent.rowId);
+          break;
+        default:
+          Logger.error('Unknown row event type received: ' + rowEvent.eventType);
         }
       });
     }

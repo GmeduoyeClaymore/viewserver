@@ -5,12 +5,12 @@ export default class RowMapper{
     const value = rowValue[rowValue.value];
     try {
       switch (rowValue.value) {
-        case 'longValue':
-          return value;
-        case 'nullValue':
-          return undefined;
-        default:
-          return value;
+      case 'longValue':
+        return value;
+      case 'nullValue':
+        return undefined;
+      default:
+        return value;
       }
     } catch (error){
       Logger.error('error parsing value ' + JSON.stringify(rowValue));

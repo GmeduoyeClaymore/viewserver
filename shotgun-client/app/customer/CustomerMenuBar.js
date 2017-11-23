@@ -1,23 +1,21 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getDaoState} from 'common/dao';
-import { Button, Icon, Text, Spinner } from 'native-base';
+import {Button, Icon, Text, Spinner, Footer, FooterTab} from 'native-base';
+import { withRouter } from 'react-router';
 
-const CustomerMenuBar = ({navigation, summary}) => {
-    return <View style={styles.container}>
-      <Button transparent dark onPress={() => navigation.navigate('ProductCategoryList')}><Icon name='home'/></Button>
-      <Button transparent dark onPress={() => navigation.navigate('Cart')}><Icon name='cart'/>{summary.totalQuantity !== undefined ? <Text>{summary.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button>
-      <Button transparent dark onPress={() => navigation.navigate('Orders')}><Icon name='list'/></Button>
-      <Button transparent dark onPress={() => navigation.navigate('CustomerSettings')}><Icon name='settings'/></Button>
-    </View>;
+const CustomerMenuBar = ({history, match, summary}) => {
+  return <Footer style={styles.container}>
+    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/ProductCategoryList`)}><Icon name='home'/></Button></FooterTab>
+    <FooterTab><Button transparent dark onPress={() => {history.push(`${match.path}/Cart`);}}><Icon name='cart'/>{summary.totalQuantity !== undefined ? <Text>{summary.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button></FooterTab>
+    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/Orders`)}><Icon name='list'/></Button></FooterTab>
+    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/CustomerSettings`)}><Icon name='settings'/></Button></FooterTab>
+  </Footer>;
 };
 
 const styles = StyleSheet.create({
-  spinner: {
-    height: 10
-  },
   container: {
     backgroundColor: '#FFFFFF',
     paddingTop: 10,
@@ -40,7 +38,7 @@ const mapStateToProps = (state, initialProps) => ({
   ...initialProps
 });
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps
-)(CustomerMenuBar);
+)(CustomerMenuBar));
 

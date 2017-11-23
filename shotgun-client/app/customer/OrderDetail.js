@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
-import {getDaoState, updateSubscriptionAction} from 'common/dao';
+import {getDaoState, updateSubscriptionAction, isAnyLoading} from 'common/dao';
 import {Spinner} from 'native-base';
 
 class OrderDetail extends Component{
@@ -11,20 +11,18 @@ class OrderDetail extends Component{
   }
 
   componentWillMount(){
-    const {dispatch} = this.props;
-    const {isCompleted} = this.props.navigation.state.params;
-    dispatch(updateSubscriptionAction('orderSummaryDao', {isCompleted}));
+    const {dispatch, location} = this.props;
+    const {state = {}} = location;
+    const {orderId} = state;
+    dispatch(updateSubscriptionAction('orderItemsDao', {orderId}));
   }
 
   render() {
-    const {customer, busy} = this.props;
-    const {orderId, isCompleted} = this.props.navigation.state.params;
-    let orderType = 'complete';
+    const {busy, orders, orderItems = [], paymentCards, location} = this.props;
+    const {state = {}} = location;
+    const {orderId} = state;
 
-    if (!isCompleted) {
-      orderType = 'incomplete';
-    }
-    const orderSummary = orders[orderType].find(o => o.orderId == orderId);
+    const orderSummary = orders.find(o => o.orderId == orderId);
     const paymentCard = paymentCards.find(a => a.paymentId == orderSummary.paymentId);
 
     const renderOrderItem = (item) => {
@@ -38,11 +36,11 @@ class OrderDetail extends Component{
 
     return busy ? <Spinner/> : <View style={{flex: 1, flexDirection: 'column'}}>
       <Text>{orderSummary.orderId}</Text>
-    {customer.orderDetail.items.map(c => renderOrderItem(c))}
+      {orderItems.map(c => renderOrderItem(c))}
       <Text>{`Total Items ${orderSummary.totalQuantity}`}</Text>
       <Text>{`Total Price ${orderSummary.totalPrice}`}</Text>
       <Text>Payment {paymentCard.cardNumber}</Text>
-  </View>;
+    </View>;
   }
 }
 
@@ -51,11 +49,10 @@ OrderDetail.PropTypes = {
   paymentCards: PropTypes.object
 };
 
-OrderDetail.navigationOptions = {header: null};
-
 const mapStateToProps = (state, initialProps) => ({
-  paymentCards: getDaoState(state, ['paymentCards'], 'paymentCardsDao'),
-  orders: getDaoState(state, ['orders'], 'orderSummaryDao'),
+  paymentCards: getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao'),
+  orders: getDaoState(state, ['customer', 'orders'], 'orderSummaryDao'),
+  orderItems: getDaoState(state, ['customer', 'orderDetail', 'items'], 'orderItemsDao'),
   busy: isAnyLoading(state, ['orderSummaryDao', 'paymentCardsDao']),
   ...initialProps
 });

@@ -15,11 +15,11 @@ export default class OrderSummaryDaoContext{
   }
 
   get defaultOptions(){
-      return this.options;
+    return this.options;
   }
 
   get name(){
-      return 'orderSummaryDao';
+    return 'orderSummaryDao';
   }
 
   getReportContext({customerId, isCompleted}){
@@ -33,7 +33,7 @@ export default class OrderSummaryDaoContext{
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

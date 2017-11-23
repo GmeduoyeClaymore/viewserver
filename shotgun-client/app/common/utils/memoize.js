@@ -27,29 +27,29 @@ const defaultComparer = (arg1, arg2) => arg1 === arg2;
  * @return {Function}      The memoized function
  */
 export const memoize = (fn, comparer) => {
-	comparer = comparer || defaultComparer;
-	const cachedArgs = [];
-	let cachedResult = NEVER_SET;
-	return (...args) => {
-		// update cached args and check for state data
-		let stale = false || args.length !== cachedArgs.length;
-		for (let i = 0, n = args.length; i < n; i++) {
-			const arg = args[i];
-			let cachedArg;
-			if (i < cachedArgs.length) {
-				cachedArg = cachedArgs[i];
-				cachedArgs[i] = arg;
-			} else {
-				cachedArgs.push(arg);
-			}
-			stale |= !comparer(cachedArg, arg, i);
-		}
-		cachedArgs.length = args.length;
-		if (stale || cachedResult === NEVER_SET) {
-			cachedResult = fn(...args);
-		}
-		return cachedResult;
-	};
+  comparer = comparer || defaultComparer;
+  const cachedArgs = [];
+  let cachedResult = NEVER_SET;
+  return (...args) => {
+    // update cached args and check for state data
+    let stale = false || args.length !== cachedArgs.length;
+    for (let i = 0, n = args.length; i < n; i++) {
+      const arg = args[i];
+      let cachedArg;
+      if (i < cachedArgs.length) {
+        cachedArg = cachedArgs[i];
+        cachedArgs[i] = arg;
+      } else {
+        cachedArgs.push(arg);
+      }
+      stale |= !comparer(cachedArg, arg, i);
+    }
+    cachedArgs.length = args.length;
+    if (stale || cachedResult === NEVER_SET) {
+      cachedResult = fn(...args);
+    }
+    return cachedResult;
+  };
 };
 
 export default memoize;

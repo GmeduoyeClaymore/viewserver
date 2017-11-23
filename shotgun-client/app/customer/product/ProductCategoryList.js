@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
+import {View, StyleSheet, TouchableHighlight} from 'react-native';
+import {Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import {Spinner} from 'native-base';
 import PagingListView from 'common/components/PagingListView';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, updateSubscriptionAction} from 'common/dao';
 import {connect} from 'react-redux';
 import ErrorRegion from 'common/components/ErrorRegion';
-import backIcon from '../../common/assets/back.png';
-import ActionButton from '../../common/components/ActionButton';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,73 +30,77 @@ const NoItems = () => <View><Text>No items to display</Text></View>;
 class ProductCategoryList extends Component{
   static propTypes = {
     product: PropTypes.object,
-    dispatch: PropTypes.func,
-    screenProps: PropTypes.object,
-    navigation: PropTypes.object
+    dispatch: PropTypes.func
   };
 
-  navFuncFactory({parentCategoryId, categoryId, category, navigation, isLeaf}) {
+  navFuncFactory({categoryId, category, isLeaf}) {
+    const {history, match} = this.props;
+
     if (isLeaf == 'true') { //TODO - get isLeaf to be a proper bool in the ViewServer
-      navigation.navigate('ProductList', {category});
+      history.push(`${match.path}/ProductList`, {categoryId, category});
     } else {
-      this.setNavigationState({parentCategoryId: categoryId, parentCategory: category, grandparentCategoryId: parentCategoryId});
+      history.push(`${match.path}/ProductCategoryList`, {parentCategoryId: categoryId, parentCategory: category});
     }
   }
-
-  setNavigationState({parentCategoryId, parentCategory, grandparentCategoryId}){
-    this.setState({parentCategoryId, parentCategory, grandparentCategoryId});
-  }
-
   constructor(props){
     super(props);
-    const {navigation} = this.props;
-    this.state = {parentCategoryId: 'NONE', parentCategory: undefined};
     this.rowView = (row) => {
-      const {categoryId, category, isLeaf, parentCategoryId} = row;
-      return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navFuncFactory({navigation, categoryId, category, parentCategoryId, isLeaf})} underlayColor={'#EEEEEE'}>
-      <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
-        <Text>{`${category}`}</Text>
-      </View>
+      const {categoryId, category, isLeaf} = row;
+      return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navFuncFactory({categoryId, category, isLeaf})} underlayColor={'#EEEEEE'}>
+        <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
+          <Text>{`${category}`}</Text>
+        </View>
       </TouchableHighlight>;
     };
   }
 
   componentDidMount(){
-    this.updateSubs(this.props, 'NONE');
+    this.updateSubs('NONE');
   }
 
-  shouldComponentUpdate(nextProps, nextState){
-    if (this.state.parentCategoryId !== nextState.parentCategoryId) {
-      this.updateSubs(nextProps, nextState.parentCategoryId);
-    }
-    return true;
+  componentWillReceiveProps(nextProps){
+    const {state = {}} = nextProps.location;
+    //TODO - get rid of NONE and return it as undefined from the viewserver
+    const {parentCategoryId = 'NONE'} = state;
+
+    this.updateSubs(parentCategoryId);
   }
 
-  updateSubs(props, parentCategoryId){
-    const {screenProps: {dispatch}} = props;
+  updateSubs(parentCategoryId){
+    const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId}));
   }
 
   render(){
-    const {busy, errors, options} = this.props;
-    const {parentCategory, grandparentCategoryId} = this.state;
+    const {busy, errors, options, history, location} = this.props;
+    const {state = {}} = location;
+    const {parentCategory} = state;
     const {rowView} = this;
-    return busy ? <Paging/> :
-      <View  style={{flexDirection: 'column', flex: 1}}>
-        {parentCategory ? <View style={styles.header}><ActionButton buttonText={null} icon={backIcon} action={() => this.setNavigationState({parentCategoryId: grandparentCategoryId})}/><Text>{parentCategory}</Text></View> : null}
-      <ErrorRegion errors={errors}>
-      <PagingListView
-      style={styles.container}
-      daoName='productCategoryDao'
-      dataPath={['product', 'categories']}
-      pageSize={10}
-      options={options}
-      rowView={rowView}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      headerView={() => null}/>
-      </ErrorRegion>
-      </View>;
+    return busy ?  <Container><Paging/></Container> :
+      <Container>
+        {parentCategory ? <Header>
+          <Left>
+            <Button transparent>
+              <Icon name='arrow-back' onPress={() => history.goBack()} />
+            </Button>
+          </Left>
+          <Body><Title>{parentCategory}</Title></Body>
+        </Header> : null}
+        <Content>
+          <ErrorRegion errors={errors}>
+            <PagingListView
+              style={styles.container}
+              daoName='productCategoryDao'
+              dataPath={['product', 'categories']}
+              pageSize={10}
+              options={options}
+              rowView={rowView}
+              paginationWaitingView={Paging}
+              emptyView={NoItems}
+              headerView={() => null}/>
+          </ErrorRegion>
+        </Content>
+      </Container>;
   }
 }
 
@@ -107,7 +110,7 @@ const mapStateToProps = (state, nextOwnProps) => ({
   errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
 });
 
-const ConnectedProductCategoryList =  connect(mapStateToProps)(ProductCategoryList);
+const ConnectedProductCategoryList = connect(mapStateToProps)(ProductCategoryList);
 
 export default ConnectedProductCategoryList;
 

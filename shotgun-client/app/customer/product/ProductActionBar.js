@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, TextInput} from 'react-native';
-import ActionButton from '../../common/components/ActionButton.js';
-import icon from '../../common/assets/basket-fill.png';
+import {Text, Button} from 'native-base';
 import {isOperationPending, getOperationError} from 'common/dao';
 import {connect} from 'react-redux';
 import {addItemToCartAction} from 'customer/actions/CustomerActions';
@@ -43,7 +42,7 @@ class ProductActionBar extends Component {
             value = {itemCount + ''}
             maxLength = {10}  //setting limit of input
           />
-          {!busy ? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToCart}/> : null}
+          {!busy ? <Button onPress={this.addToCart}><Text>Add To Basket</Text></Button> : null}
         </View>
       );
     }

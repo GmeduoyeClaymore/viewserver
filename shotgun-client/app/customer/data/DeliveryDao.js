@@ -31,11 +31,11 @@ export default class DeliveryDaoContext{
   }
 
   get name(){
-      return 'delivery';
+    return 'delivery';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){
@@ -62,22 +62,22 @@ export default class DeliveryDaoContext{
 
   extendDao(dao){
     dao.createDelivery = async ({deliveryAddressId, eta, type}) =>{
-          //create order object
-        await dao.dataSink.waitForSchema();
-        const created = moment().format('x');
-        const deliveryId = uuidv4();
-        const customerId = dao.options.customerId;
-        if (typeof customerId === 'undefined'){
-          throw new Error('customerId should be defined');
-        }
-        const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, customerIdDelivery: customerId};
-        Logger.info(`Creating delivery ${deliveryId}`);
-        const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
-        const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();
-        await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
-        await promise;
-        Logger.info('Delivery created');
-        return deliveryId;
+      //create order object
+      await dao.dataSink.waitForSchema();
+      const created = moment().format('x');
+      const deliveryId = uuidv4();
+      const customerId = dao.options.customerId;
+      if (typeof customerId === 'undefined'){
+        throw new Error('customerId should be defined');
+      }
+      const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, customerIdDelivery: customerId};
+      Logger.info(`Creating delivery ${deliveryId}`);
+      const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
+      const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();
+      await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
+      await promise;
+      Logger.info('Delivery created');
+      return deliveryId;
     };
   }
 }

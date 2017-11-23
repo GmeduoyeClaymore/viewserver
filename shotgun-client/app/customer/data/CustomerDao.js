@@ -39,11 +39,11 @@ export default class CustomerDaoContext{
   }
 
   get name(){
-      return 'customerDao';
+    return 'customerDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

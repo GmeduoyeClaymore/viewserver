@@ -32,19 +32,18 @@ class PagingListView extends Component{
 
     componentWillMount(){
       const {options = {}, pageSize} = this.props;
-      if(typeof pageSize != undefined){
+      if (typeof pageSize != undefined){
         this.props.setOptions({...options, limit: pageSize });
-      }else{
+      } else {
         this.props.setOptions({...options});
       }
-      
     }
 
     componentWillReceiveProps(newProps){
-      if(newProps.options != null && !isEqual(this.props.options, newProps.options)){
-          this.props.setOptions(newProps.options);
-      };
-      console.log("PagingProps-" + JSON.stringify(newProps.options));
+      if (newProps.options !== null && !isEqual(this.props.options, newProps.options)){
+        this.props.setOptions(newProps.options);
+      }
+      console.log('PagingProps-' + JSON.stringify(newProps.options));
     }
 
     _onScroll(e){
@@ -66,16 +65,16 @@ class PagingListView extends Component{
     renderItem = (item) => this.props.rowView(item);
     
     render() {
-      const { data = [],errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
+      const { data = [], errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
       return (
         <ErrorRegion errors={errors}>
-        <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
-          <HeaderView/>
+          <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
+            <HeaderView/>
             {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
-            {data.map( c => this.renderItem(c))}
-            {this.props.busy ? paginationWaitingView() : null}
-          </ScrollView >}
-        </View>
+              {data.map( c => this.renderItem(c))}
+              {this.props.busy ? paginationWaitingView() : null}
+            </ScrollView >}
+          </View>
         </ErrorRegion>
       );
     }

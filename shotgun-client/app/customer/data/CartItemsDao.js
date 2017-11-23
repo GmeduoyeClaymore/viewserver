@@ -45,11 +45,11 @@ export default class CartItemsDaoContext{
   }
 
   get name(){
-      return 'cartItemsDao';
+    return 'cartItemsDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){
@@ -98,7 +98,7 @@ export default class CartItemsDaoContext{
       return result;
     };
     dao.purchaseCartItems = async ({eta, paymentId, deliveryAddressId, deliveryType}) => {
-        const {dataSink, subscriptionStrategy} = dao;
+      const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;
       if (rows.some(e => e.orderId !== undefined)){
         //defensive coding to make sure we're not updating existing order items by mistake

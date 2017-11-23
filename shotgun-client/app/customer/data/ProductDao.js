@@ -15,15 +15,15 @@ export default class ProductDaoContext{
   }
 
   get defaultOptions(){
-      return this.options;
+    return this.options;
   }
 
   get name(){
-      return 'productDao';
+    return 'productDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){
@@ -35,11 +35,11 @@ export default class ProductDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-      return new DataSourceSubscriptionStrategy(this.client, 'product', dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, 'product', dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions){
-      return !previousOptions;
+    return !previousOptions;
   }
 
   transformOptions(options){

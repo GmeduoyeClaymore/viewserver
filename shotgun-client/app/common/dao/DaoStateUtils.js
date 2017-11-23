@@ -1,47 +1,47 @@
 export const getDaoCommandStatus = (state, commandName, daoName) => {
-    return state.getIn(['dao', daoName, 'commands', commandName, 'status']);
+  return state.getIn(['dao', daoName, 'commands', commandName, 'status']);
 };
 export const getDaoCommandResult = (state, commandName, daoName) => {
-    return state.getIn(['dao', daoName, 'commands', commandName, 'message']);
+  return state.getIn(['dao', daoName, 'commands', commandName, 'message']);
 };
 export const getDaoState = (state, path, daoName) => {
-    return state.getIn(['dao', daoName, 'data', ...path]);
+  return state.getIn(['dao', daoName, 'data', ...path]);
 };
 export const getDaoOptions = (state, daoName) => {
-    return state.getIn(['dao', daoName, 'options']);
+  return state.getIn(['dao', daoName, 'options']);
 };
 
 export const isLoading = (state, daoName) => {
-    return isOperationPending(state, daoName, 'updateSubscription');
+  return isOperationPending(state, daoName, 'updateSubscription');
 };
 
 export const isOperationPending = (state, daoName, operationName) => {
-    const status = getDaoCommandStatus(state, operationName, daoName);
-    return status === null || status === 'start';
+  const status = getDaoCommandStatus(state, operationName, daoName);
+  return status === null || status === 'start';
 };
 
 export const getOperationError = (state, daoName, operationName) => {
-    const status = getDaoCommandStatus(state, operationName, daoName);
-    return status === 'fail' ? getDaoCommandResult(state, operationName, daoName) : undefined;
+  const status = getDaoCommandStatus(state, operationName, daoName);
+  return status === 'fail' ? getDaoCommandResult(state, operationName, daoName) : undefined;
 };
 
 export const getLoadingError = (state, daoName) => {
-    const status = getDaoCommandStatus(state, 'updateSubscription', daoName);
-    return status === 'fail' ? getDaoCommandResult(state, 'updateSubscription', daoName) : undefined;
+  const status = getDaoCommandStatus(state, 'updateSubscription', daoName);
+  return status === 'fail' ? getDaoCommandResult(state, 'updateSubscription', daoName) : undefined;
 };
 
 export const getLoadingErrors = (state, daoNames) => {
-    return daoNames.map(nm => getLoadingError(state, nm)).filter(err => err).join( '\n');
+  return daoNames.map(nm => getLoadingError(state, nm)).filter(err => err).join( '\n');
 };
 
 export const getOperationsErrors = (state, daoOperationPairs) => {
-    return Object.entries(daoOperationPairs).map( nm => getOperationError(state, nm[0], nm[1])).filter(err => err).join( '\n');
+  return Object.entries(daoOperationPairs).map( nm => getOperationError(state, nm[0], nm[1])).filter(err => err).join( '\n');
 };
 
 export const isAnyOperationPending = (state, daoOperationPairs) => {
-    return Object.entries(daoOperationPairs).some( nm => isOperationPending(state, nm[0], nm[1]));
+  return Object.entries(daoOperationPairs).some( nm => isOperationPending(state, nm[0], nm[1]));
 };
 
 export const isAnyLoading = (state, daoNames) => {
-    return daoNames.some( nm => isLoading(state, nm));
+  return daoNames.some( nm => isLoading(state, nm));
 };

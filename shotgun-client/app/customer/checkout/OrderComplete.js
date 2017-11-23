@@ -1,23 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {View, Text} from 'react-native';
-import ActionButton from 'common/components/ActionButton';
+import {Text, Container, Content, Header, Title, Body, Button} from 'native-base';
 import {getDaoCommandResult} from 'common/dao';
 
-const OrderComplete = ({navigation, orderId}) => {
-  return <View style={{flex: 1, flexDirection: 'column'}}>
-    <Text>Your Order Has Been Placed</Text>
-    <Text>{`Order Id ${orderId}`}</Text>
-    <ActionButton buttonText="Continue Shopping" icon={null} action={() => navigation.navigate('ProductCategoryList')}/>
-  </View>;
+const OrderComplete = ({history, orderId}) => {
+  return <Container>
+    <Header>
+      <Body><Title>Order Complete</Title></Body>
+    </Header>
+    <Content>
+      <Text>Your Order Has Been Placed</Text>
+      <Text>{`Order Id ${orderId}`}</Text>
+      <Button onPress={() => history.push('/CustomerLanding/ProductCategoryList')}><Text>Continue Shopping</Text></Button>
+    </Content>
+  </Container>;
 };
 
 OrderComplete.PropTypes = {
   order: PropTypes.object
 };
-
-OrderComplete.navigationOptions = {header: null};
 
 const mapStateToProps = (state, initialProps) => ({
   orderId: getDaoCommandResult(state, 'purchaseCartItems', 'cartItemsDao'),
