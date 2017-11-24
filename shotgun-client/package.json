@@ -20,6 +20,7 @@
     "protobufjs": "^6.8.0",
     "react": "16.0.0-alpha.12",
     "react-native": "0.48.4",
+    "react-native-easy-grid": "^0.1.15",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-native": "^4.2.0",

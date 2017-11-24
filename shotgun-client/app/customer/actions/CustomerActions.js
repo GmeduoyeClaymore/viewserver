@@ -12,6 +12,7 @@ import DeliveryDao from 'customer/data/DeliveryDao';
 import ProductDao from 'customer/data/ProductDao';
 import Dao from 'customer/data/DaoBase';
 
+
 const  register = (dispatch, daoContext, options, continueWith) => {
   const dao = new Dao(daoContext);
   dispatch(registerDao(dao));
@@ -23,6 +24,12 @@ export const addItemToCartAction = ({quantity, productId}, continueWith) => {
   return async (dispatch, getState) => {
     const existingOptions = getDaoOptions(getState(), 'customerDao');
     dispatch(invokeDaoCommand('cartItemsDao', 'addItemToCart', {quantity, productId, customerId: existingOptions.customerId }, continueWith));
+  };
+};
+
+export const updateCartItemQuantityAction = ({productId, quantity}, continueWith) => {
+  return async dispatch => {
+    dispatch(invokeDaoCommand('cartItemsDao', 'updateItemCartQuantity', {quantity, productId}, continueWith));
   };
 };
 

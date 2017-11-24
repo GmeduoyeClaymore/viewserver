@@ -25,6 +25,14 @@ const createUpdateCartRowEvent = (tableKey, columnValues) => {
   };
 };
 
+const createRemoveCartRowEvent = (tableKey) => {
+  return {
+    type: 2, // REMOVE
+    tableKey,
+    columnValues: {}
+  };
+};
+
 export default class CartItemsDaoContext{
   constructor(client, orderDao, deliveryDao, options = {}) {
     this.client = client;
@@ -97,6 +105,25 @@ export default class CartItemsDaoContext{
       const result = await dao.rowEventObservable.filter(ev => ev.row.itemId === resultKey).take(1).timeoutWithError(5000, new Error(`Could not detect modification to cart item ${resultKey} in 5 seconds`)).toPromise();
       return result;
     };
+    dao.updateItemCartQuantity = async ({productId, quantity}) => {
+      let cartRowEvent;
+      const {dataSink, subscriptionStrategy} = dao;
+      const {rows} = dataSink;
+      const existingRow = rows.find(r => r.productId === productId);
+      const resultKey = existingRow.itemId;
+      if (quantity > 0){
+        Logger.info(`Updating cart row ${existingRow.itemId} quantity to ${quantity}`);
+        cartRowEvent = createUpdateCartRowEvent(existingRow.itemId, {quantity});
+      } else {
+        Logger.info('Removing item from cart');
+        cartRowEvent = createRemoveCartRowEvent(existingRow.itemId);
+      }
+
+      await subscriptionStrategy.editTable([cartRowEvent]);
+      const result = await dao.rowEventObservable.filter(ev => ev.row.itemId === resultKey).take(1).timeoutWithError(5000, new Error(`Could not detect modification to cart item ${resultKey} in 5 seconds`)).toPromise();
+      return result;
+    };
+
     dao.purchaseCartItems = async ({eta, paymentId, deliveryAddressId, deliveryType}) => {
       const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;

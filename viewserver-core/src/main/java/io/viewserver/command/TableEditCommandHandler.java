@@ -218,8 +218,15 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
             final IRowEvent rowEventDto = rowEvents.get(i);
             try {
                 if (rowEventDto.getType().equals(IRowEvent.Type.Remove)) {
-                    int rowId = rowIdMap != null ? rowIdMap.remove(rowEventDto.getRowId()) : rowEventDto.getRowId();
-                    ((ITable) operator).removeRow(rowId);
+                    if(operator instanceof KeyedTable && rowEventDto.getKey() != null) {
+                        TableKey removeKey = new TableKey(rowEventDto.getKey());
+                        ((KeyedTable) operator).removeRow(removeKey);
+                        commandResult.setMessage("R "+ rowEventDto.getKey());
+                    }else{
+                        int rowId = rowIdMap != null ? rowIdMap.get(rowEventDto.getRowId()) : rowEventDto.getRowId();
+                        ((ITable) operator).removeRow(rowId);
+                        commandResult.setMessage("R "+ rowId);
+                    }
                     continue;
                 }
 

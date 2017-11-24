@@ -77,5 +77,6 @@ export default class App extends React.Component {
         </AndroidBackButton>
       </NativeRouter>
     </Provider>;
+
   }
 }
