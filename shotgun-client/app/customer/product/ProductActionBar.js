@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, TextInput} from 'react-native';
-import {Text, Button} from 'native-base';
+import ValidatingInput from 'common/components/ValidatingInput';
+import ValidatingButton from 'common/components/ValidatingButton';
+import {Text} from 'native-base';
+import {View} from 'react-native';
 import {isOperationPending, getOperationError} from 'common/dao';
 import {connect} from 'react-redux';
 import {addItemToCartAction} from 'customer/actions/CustomerActions';
+import yup from 'yup';
 
 class ProductActionBar extends Component {
     static PropTypes = {
@@ -16,37 +19,38 @@ class ProductActionBar extends Component {
       super(props);
       this.addToCart = this.addToCart.bind(this);
       this.state = {
-        itemCount: 1,
+        quantity: 1,
         busy: false
       };
     }
 
     addToCart() {
       const {dispatch, product} = this.props;
-      const {itemCount} = this.state;
+      const {quantity} = this.state;
       const {productId} = product;
-      dispatch(addItemToCartAction({productId, quantity: itemCount}));
+      dispatch(addItemToCartAction({productId, quantity}));
     }
 
-    onItemCountChange(itemCount) {
-      this.setState({itemCount});
+    onQuantityChange(quantity) {
+      this.setState({quantity});
     }
 
     render() {
-      const {busy, itemCount} = this.state;
+      const {busy, quantity} = this.state;
       return (
-        <View style={styles.container}>
-          <TextInput
-            keyboardType = 'numeric'
-            onChangeText = {(text)=> this.onItemCountChange(text)}
-            value = {itemCount + ''}
-            maxLength = {10}  //setting limit of input
-          />
-          {!busy ? <Button onPress={this.addToCart}><Text>Add To Basket</Text></Button> : null}
+        <View>
+          <ValidatingInput keyboardType = 'numeric' onChangeText={(value)=> this.onQuantityChange(value)} validationSchema={ProductActionBar.validationSchema.quantity} showIcons={false} validateOnMount={true} value={`${quantity}`}/>
+          <ValidatingButton onPress={this.addToCart} disabled={busy} validateOnMount={true} validationSchema={ProductActionBar.validationSchema.quantity} model={`${quantity}`}><Text>Add To Basket</Text></ValidatingButton>
         </View>
       );
     }
 }
+
+ProductActionBar.validationSchema = {
+  quantity: yup.string()
+    .matches(/^([1-9][0-9]{0,2})$/)
+    .required()
+};
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),
@@ -57,23 +61,3 @@ const mapStateToProps = (state, nextOwnProps) => ({
 const ConnectedProductActionBar =  connect(mapStateToProps)(ProductActionBar);
 
 export default ConnectedProductActionBar;
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#FAFAFF',
-    paddingVertical: 8
-  },
-  action: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  actionText: {
-    color: '#007AFF'
-  },
-  icon: {
-    height: 20,
-    width: 20
-  }
-});

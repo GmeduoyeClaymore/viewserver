@@ -22,7 +22,7 @@ export default class Logger {
     }
   };
 
-  static LogLevel = 3;
+  static LogLevel = 0;
 
   static log(logLevel, message, json){
     if (logLevel.level <= Logger.LogLevel) {
