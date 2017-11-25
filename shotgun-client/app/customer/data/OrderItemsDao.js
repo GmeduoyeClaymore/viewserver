@@ -20,11 +20,11 @@ export default class OrderItemsDaoContext{
   }
 
   get name(){
-      return 'orderItems';
+    return 'orderItemsDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

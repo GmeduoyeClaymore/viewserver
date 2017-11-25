@@ -41,11 +41,11 @@ export default class DeliveryAddressDaoContext{
   }
 
   get name(){
-      return 'deliveryAddressDao';
+    return 'deliveryAddressDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

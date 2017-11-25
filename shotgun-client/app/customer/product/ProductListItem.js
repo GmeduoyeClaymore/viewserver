@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
+import { withRouter } from 'react-router';
 
-const ProductListItem = ({navigation, product}) => {
+const ProductListItem = ({history, product}) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -21,7 +22,7 @@ const ProductListItem = ({navigation, product}) => {
     }
   });
 
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => navigation.navigate('ProductDetails', {product})} underlayColor={'#EEEEEE'}>
+  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => history.push('/CustomerLanding/ProductDetails', {product})} underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
       <Image source={require('../assets/cement.jpg')} style={styles.picture} />
       <View style={{flex: 1}}>
@@ -34,9 +35,9 @@ const ProductListItem = ({navigation, product}) => {
 
 ProductListItem.propTypes = {
   product: PropTypes.object,
-  navigation: PropTypes.object
+  history: PropTypes.object
 };
 
-export default ProductListItem;
+export default withRouter(ProductListItem);
 
 

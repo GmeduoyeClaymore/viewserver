@@ -11,7 +11,7 @@ export const UPDATE_REGISTRATION_PAYMENT_CARD = 'UPDATE_REGISTRATION_PAYMENT_CAR
 export const UPDATE_REGISTRATION_DELIVERY_ADDRESS = 'UPDATE_REGISTRATION_DELIVERY_ADDRESS';
 
 const getOr = (val, suffix = '') =>{
-    return val ? val.toUpperCase() + suffix : '';
+  return val ? val.toUpperCase() + suffix : '';
 };
 export const REGISTER_DAO_ACTION = (dao) => `REGISTER_DAO_${getOr(dao)}`;
 export const UNREGISTER_DAO_ACTION = (dao) => `UNREGISTER_DAO_${getOr(dao)}`;

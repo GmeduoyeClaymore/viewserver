@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
-import {Spinner} from 'native-base';
+import {Spinner, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import PagingListView from '../../common/components/PagingListView';
 import {connect} from 'react-redux';
@@ -29,57 +29,60 @@ class ProductList extends Component{
     navigation: PropTypes.object,
   };
 
-  static navigationOptions = ({navigation}) => {
-    const title = navigation.state.params !== undefined ? navigation.state.params.category : undefined;
-    const navOptions = {title};
-    //hide the header if this is not a sub category
-    if (title == undefined){
-      navOptions.header = null;
-    }
-    return navOptions;
-  };
 
   constructor(props){
     super(props);
-    const {navigation, screenProps} = this.props;
-    const {dispatch} = screenProps;
     this.handleSearch = this.handleSearch.bind(this);
     this.rowView = (p) => {
-      return (<ProductListItem key={p.productId} product={p} navigation={navigation}/>);
+      return (<ProductListItem key={p.productId} product={p}/>);
     };
-    this.renderSearchBar = () => 
-      <SearchBar onChange={this.handleSearch} />
+    this.renderSearchBar = () => <SearchBar onChange={this.handleSearch} />;
   }
 
   handleSearch(searchText){
-    const {screenProps} = this.props;
-    const {dispatch} = screenProps;
+    const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('productDao', {searchText}));
-  };
-
-  componentDidMount(){
-    this.updateSubs(this.props);
   }
 
-  updateSubs(props){
-    const {options = {}, screenProps: {dispatch}} = props;
-    const {categoryId} = options;
+  componentDidMount(){
+    this.updateSubs();
+  }
+
+  updateSubs(){
+    const {location, dispatch} = this.props;
+    const {state = {}} = location;
+    const {categoryId} = state;
     dispatch(updateSubscriptionAction('productDao', {categoryId}));
   }
 
   render(){
-    const {rowView, search, props} = this;
-    const {options = {}} = props;
-    return <PagingListView
-      style={styles.container}
-      daoName='productDao'
-      dataPath={['product', 'products']}
-      pageSize={10}
-      rowView={rowView}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      headerView={this.renderSearchBar}
-    />;
+    const {rowView} = this;
+    const {location, history} = this.props;
+    const {state = {}} = location;
+    const {category} = state;
+
+    return <Container>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name='arrow-back' onPress={() => history.goBack()} />
+          </Button>
+        </Left>
+        <Body><Title>{category}</Title></Body>
+      </Header>
+      <Content>
+        <PagingListView
+          style={styles.container}
+          daoName='productDao'
+          dataPath={['product', 'products']}
+          pageSize={10}
+          rowView={rowView}
+          paginationWaitingView={Paging}
+          emptyView={NoItems}
+          headerView={this.renderSearchBar}
+        />
+      </Content>
+    </Container>;
   }
 }
 

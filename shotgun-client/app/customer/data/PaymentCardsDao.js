@@ -41,11 +41,11 @@ export default class PaymentCardsDaoContext{
   }
 
   get name(){
-      return 'paymentCardsDao';
+    return 'paymentCardsDao';
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

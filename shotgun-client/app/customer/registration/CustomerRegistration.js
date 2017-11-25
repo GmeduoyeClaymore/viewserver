@@ -1,34 +1,29 @@
 import React, {Component} from 'react';
-import {StackNavigator} from 'react-navigation';
 import CustomerDetails from './CustomerDetails';
 import PaymentCardDetails from './PaymentCardDetails';
 import AddressDetails from './AddressDetails';
 import RegistrationConfirmation from './RegistrationConfirmation';
+import {Route, Redirect, Switch} from 'react-router-native';
+import {INITIAL_STATE} from './RegistrationInitialState';
 
-class CustomerRegistration extends Component {
-  constructor(){
+export default class CustomerRegistration extends Component {
+  constructor() {
     super();
-    this.state = {};
+  }
+
+  componentWillMount(){
+    this.state = INITIAL_STATE;
   }
 
   render() {
-    const screenProps = {context: this, client: this.props.screenProps.client};
+    const {match} = this.props;
 
-    return <CustomerRegistrationNavigator navigation={this.props.navigation}  screenProps={screenProps} />;
+    return <Switch>
+      <Route path={`${match.path}/CustomerDetails`} exact render={() => <CustomerDetails {...this.props} context={this}/>} />
+      <Route path={`${match.path}/AddressDetails`} exact render={() => <AddressDetails {...this.props} context={this}/>} />
+      <Route path={`${match.path}/PaymentCardDetails`} render={() => <PaymentCardDetails {...this.props} context={this}/>} />
+      <Route path={`${match.path}/RegistrationConfirmation`} render={() => <RegistrationConfirmation {...this.props} context={this}/>} />
+      <Redirect to={`${match.path}/CustomerDetails`}/>
+    </Switch>;
   }
 }
-
-const CustomerRegistrationNavigator = StackNavigator(
-  {
-    CustomerDetails: {screen: CustomerDetails},
-    AddressDetails: {screen: AddressDetails},
-    PaymentCardDetails: {screen: PaymentCardDetails},
-    RegistrationConfirmation: {screen: RegistrationConfirmation},
-  }, {
-    initialRouteName: 'CustomerDetails',
-    headerMode: 'screen'
-  });
-
-CustomerRegistration.router = CustomerRegistrationNavigator.router;
-
-export default CustomerRegistration;

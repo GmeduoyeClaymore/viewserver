@@ -5,18 +5,18 @@ import Logger from 'common/Logger';
 export default class RowEventMapper{
   static mapRowEventType(rowEventType) {
     switch (rowEventType) {
-      case RowEvent.EventType.ADD: {
-        return 0;
-      }
-      case RowEvent.EventType.UPDATE: {
-        return 1;
-      }
-      case RowEvent.EventType.REMOVE: {
-        return 2;
-      }
-      default : {
-        throw new Error();
-      }
+    case RowEvent.EventType.ADD: {
+      return 0;
+    }
+    case RowEvent.EventType.UPDATE: {
+      return 1;
+    }
+    case RowEvent.EventType.REMOVE: {
+      return 2;
+    }
+    default : {
+      throw new Error();
+    }
     }
   }
 
@@ -55,41 +55,41 @@ export default class RowEventMapper{
           throw new Error(`Unable to find column \"${key}\" id \"${columnId}\" on schemal ${JSON.stringify(dataSink.schema)}`);
         }
         switch (column.type) {
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
-          {
-            columnValue.booleanValue  = value;
-            break;
-          }
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BYTE:
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.SHORT:
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.INTEGER:
-          {
-            columnValue.intValue = value;
-            break;
-          }
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.LONG:
-          {
-            columnValue.longValue = value;
-            break;
-          }
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.FLOAT:
-          {
-            columnValue.floatValue = value;
-            break;
-          }
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.DOUBLE:
-          {
-            columnValue.doubleValue = value;
-            break;
-          }
-          case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.STRING:
-          {
-            columnValue.stringValue = value;
-            break;
-          }
-          default : {
-            throw new Error('Unable to map column type ' + column.type);
-          }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
+        {
+          columnValue.booleanValue  = value;
+          break;
+        }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BYTE:
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.SHORT:
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.INTEGER:
+        {
+          columnValue.intValue = value;
+          break;
+        }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.LONG:
+        {
+          columnValue.longValue = value;
+          break;
+        }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.FLOAT:
+        {
+          columnValue.floatValue = value;
+          break;
+        }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.DOUBLE:
+        {
+          columnValue.doubleValue = value;
+          break;
+        }
+        case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.STRING:
+        {
+          columnValue.stringValue = value;
+          break;
+        }
+        default : {
+          throw new Error('Unable to map column type ' + column.type);
+        }
         }
       }
       columnValueDtos.push(columnValue);

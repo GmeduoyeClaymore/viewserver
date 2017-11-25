@@ -9,6 +9,14 @@ export default class ValidatingInput extends Component {
     this.state = {touched: false, error: ''};
   }
 
+  async componentDidMount() {
+    const {validateOnMount = false} = this.props;
+
+    if (validateOnMount){
+      await this.onBlur();
+    }
+  }
+
   async onChangeText(value){
     this.formValueTouched();
     this.props.onChangeText(value);
@@ -30,19 +38,21 @@ export default class ValidatingInput extends Component {
   }
 
   getPlaceHolder(){
+    const {placeholder} = this.props;
     const errorMsg = this.state.touched === true ? this.state.error : '';
-    return `${this.props.placeholder} ${errorMsg}`;
+    return placeholder !== undefined ? `${placeholder} ${errorMsg}` : undefined;
   }
 
   render() {
     const isValid = this.state.touched === true && this.state.error === '';
     const isInvalid = this.state.touched === true &&  this.state.error !== '';
+    const {showIcons = true} = this.props;
 
     return (
       <Item error={isInvalid} success={isValid}>
-        <Input {...this.props} placeholder={this.getPlaceHolder()} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
-        {isValid ? <Icon name='checkmark-circle' /> : null}
-        {isInvalid ? <Icon name='close-circle' /> : null}
+        <Input {...this.props} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
+        {showIcons && isValid ? <Icon name='checkmark-circle' /> : null}
+        {showIcons && isInvalid ? <Icon name='close-circle' /> : null}
       </Item>
     );
   }
@@ -50,5 +60,5 @@ export default class ValidatingInput extends Component {
 
 ValidatingInput.propTypes = {
   validationSchema: PropTypes.object.isRequired,
-  placeholder: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
 };

@@ -16,11 +16,11 @@ export default class ProductCategoryDaoContext{
   }
 
   get defaultOptions(){
-      return this.options;
+    return this.options;
   }
 
   get name(){
-      return 'productCategoryDao';
+    return 'productCategoryDao';
   }
 
   getReportContext(parentCategoryId){
@@ -33,7 +33,7 @@ export default class ProductCategoryDaoContext{
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

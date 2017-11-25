@@ -10,6 +10,14 @@ export default class ValidatingButton extends Component {
     this.state = {isValid: false};
   }
 
+  async componentDidMount() {
+    const {validateOnMount = false} = this.props;
+
+    if (validateOnMount){
+      await this.validate(this.props.model);
+    }
+  }
+
   componentWillReceiveProps(nextProps){
     this.validate(nextProps.model);
   }
@@ -20,8 +28,10 @@ export default class ValidatingButton extends Component {
   }
 
   render() {
+    const disabled = !this.state.isValid || this.props.disabled;
+
     return (
-      <Button {...this.props} disabled={!this.state.isValid}>
+      <Button {...this.props} disabled={disabled}>
         {this.props.children}
       </Button>
     );
@@ -30,5 +40,5 @@ export default class ValidatingButton extends Component {
 
 ValidatingButton.propTypes = {
   validationSchema: PropTypes.object.isRequired,
-  model: PropTypes.object.isRequired
+  model: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired
 };

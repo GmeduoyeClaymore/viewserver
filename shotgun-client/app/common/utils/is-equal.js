@@ -1,18 +1,18 @@
 import {
-	isEqual as deepIsEqual
+  isEqual as deepIsEqual
 }
-from 'lodash';
+  from 'lodash';
 
 const isArrayEqual = (arrayA, arrayB) => {
-	if (arrayA.length !== arrayB.length) {
-		return false;
-	}
-	for (let i = 0, n = arrayA.length; i < n; i++) {
-		if (arrayA[i] !== arrayB[i]) {
-			return false;
-		}
-	}
-	return true;
+  if (arrayA.length !== arrayB.length) {
+    return false;
+  }
+  for (let i = 0, n = arrayA.length; i < n; i++) {
+    if (arrayA[i] !== arrayB[i]) {
+      return false;
+    }
+  }
+  return true;
 };
 
 /**
@@ -24,40 +24,40 @@ const isArrayEqual = (arrayA, arrayB) => {
  * @return {boolean}        true if the values are considered equal; otherwise, false.
  */
 export const isEqual = (objA, objB, deep) => {
-	if (deep) {
-		return deepIsEqual(objA, objB);
-	}
+  if (deep) {
+    return deepIsEqual(objA, objB);
+  }
 
-	// eslint-disable-next-line no-self-compare
-	if (objA === objB || (objA !== objA && objB !== objB)) { // covers NaN
-		return true;
-	}
+  // eslint-disable-next-line no-self-compare
+  if (objA === objB || (objA !== objA && objB !== objB)) { // covers NaN
+    return true;
+  }
 	
-	if (!objA || !objB || typeof objA !== 'object' || typeof objB !== 'object') {
-		return false;
-	}
+  if (!objA || !objB || typeof objA !== 'object' || typeof objB !== 'object') {
+    return false;
+  }
 	
-	// handle array case
-	if (Array.isArray(objA)) {
-		return Array.isArray(objB) && isArrayEqual(objA, objB);
-	} else if (Array.isArray(objB)) {
-		return false;
-	}
+  // handle array case
+  if (Array.isArray(objA)) {
+    return Array.isArray(objB) && isArrayEqual(objA, objB);
+  } else if (Array.isArray(objB)) {
+    return false;
+  }
 
-	const keysA = Object.keys(objA);
-	const keysB = Object.keys(objB);
-	if (keysA.length !== keysB.length) {
-		return false;
-	}
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
 
-	for (let i = 0, n = keysA.length; i < n; i ++) {
-		const key = keysA[i];
-		if (!objB.hasOwnProperty(key) || objA[key] !== objB[key]) {
-			return false;
-		}
-	}
+  for (let i = 0, n = keysA.length; i < n; i ++) {
+    const key = keysA[i];
+    if (!objB.hasOwnProperty(key) || objA[key] !== objB[key]) {
+      return false;
+    }
+  }
 
-	return true;
+  return true;
 };
 
 export default isEqual;

@@ -13,11 +13,11 @@ export default class CartSummaryDaoContext{
   }
 
   get defaultOptions(){
-      return this.options;
+    return this.options;
   }
 
   get name(){
-      return 'cartSummaryDao';
+    return 'cartSummaryDao';
   }
 
   getReportContext(customerId){
@@ -30,7 +30,7 @@ export default class CartSummaryDaoContext{
   }
 
   createDataSink(){
-      return new RxDataSink();
+    return new RxDataSink();
   }
 
   mapDomainEvent(event, dataSink){

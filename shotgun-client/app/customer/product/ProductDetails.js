@@ -1,39 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
+import {Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import ProductActionBar from './ProductActionBar';
-import ActionButton from '../../common/components/ActionButton';
-import backIcon from '../../common/assets/back.png';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {isOperationPending, getOperationError} from 'common/dao';
 import {connect} from 'react-redux';
 
-const ProductDetails = ({navigation, screenProps, errors}) => {
-    const {dispatch} = screenProps;
-    const { product } = navigation.state.params;
-    if (product) {
-      return (
-        <ErrorRegion errors={errors}>
-          <View style={styles.container}>
-            <Image source={require('../assets/cement.jpg')} style={styles.picture} />
-            <View style={styles.header}>
-              <ActionButton buttonText={null} icon={backIcon} action={() => navigation.goBack()}/>
-              <Text style={styles.bigText}>{product.name}</Text>
-            </View>
-            <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
-            <ProductActionBar product={product} dispatch={dispatch}/>
-          </View>
-        </ErrorRegion>
-      );
-    }
-    return null;
+const ProductDetails = ({location, history, dispatch, errors}) => {
+  const {state = {}} = location;
+  const {product} = state;
+  return <Container>
+    <Header>
+      <Left>
+        <Button transparent>
+          <Icon name='arrow-back' onPress={() => history.goBack()} />
+        </Button>
+      </Left>
+      <Body><Title>{product.name}</Title></Body>
+    </Header>
+    <Content>
+      <ErrorRegion errors={errors}>
+        <View style={styles.container}>
+          <Image source={require('../assets/cement.jpg')} style={styles.picture} />
+          <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>
+          <ProductActionBar product={product} dispatch={dispatch}/>
+        </View>
+      </ErrorRegion>
+    </Content>
+  </Container>;
 };
 
 ProductDetails.PropTypes = {
   product: PropTypes.object
 };
-
-ProductDetails.navigationOptions = {header: null};
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),

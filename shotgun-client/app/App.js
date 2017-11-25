@@ -1,8 +1,6 @@
 import React from 'react';
-import {View} from 'react-native';
-import {Spinner, Text} from 'native-base';
+import {Container, Spinner, Text} from 'native-base';
 import {Provider} from 'react-redux';
-import {StackNavigator} from 'react-navigation';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
 import Logger from 'common/Logger';
@@ -10,6 +8,7 @@ import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import PrincipalService from './common/services/PrincipalService';
 import CustomerLanding from './customer/CustomerLanding';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
+import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
 
 const store = configureStore();
 
@@ -36,6 +35,7 @@ export default class App extends React.Component {
     try {
       await ProtoLoader.loadAll();
       await this.setCustomerId();
+      this.setInitialRoot();
       Logger.debug('Mounting App Component');
       await sleep(2000);
       await this.client.connect();
@@ -52,39 +52,37 @@ export default class App extends React.Component {
     this.customerId = await PrincipalService.getCustomerIdFromDevice();
   }
 
+  setInitialRoot(){
+    if (this.customerId == undefined){
+      App.INITIAL_ROOT_NAME = '/CustomerRegistration';
+    } else {
+      App.INITIAL_ROOT_NAME = '/CustomerLanding';
+      Logger.info(`Loading with customer id ${this.customerId}`);
+    }
+  }
+
   render() {
     if (!this.state.isReady) {
       return <Spinner/>;
     } else if (!this.state.isConnected){
-      return  <View style={{flexDirection: 'column', flex: 1}}>
+      return  <Container style={{flexDirection: 'column', flex: 1}}>
         <Text>Uh-oh spaghetti-Os. Unable to connect to the server</Text>
-      </View>;
+      </Container>;
     }
-
-    if (this.customerId == undefined){
-      App.INITIAL_ROOT_NAME = 'Registration';
-    } else {
-      App.INITIAL_ROOT_NAME = 'Home';
-      Logger.info(`Loading with customer id ${this.customerId}`);
-    }
-
-    const screenProps = {client: this.client, customerId: this.customerId, dispatch: this.dispatch};
-
-    //TODO - change the home screen based on the current application mode
-    const AppNavigator = StackNavigator(
-      {
-        Root: {screen: App},
-        Home: { screen: CustomerLanding },
-        Registration: { screen: CustomerRegistration }
-      }, {
-        initialRouteName: App.INITIAL_ROOT_NAME,
-        headerMode: 'none'
-      });
+    const globalProps = {client: this.client, customerId: this.customerId, dispatch: this.dispatch};
 
     return <Provider store={store}>
-      <View style={{flexDirection: 'column', flex: 1}}>
-      <AppNavigator screenProps={screenProps} />
-    </View>
+      <NativeRouter>
+        <AndroidBackButton>
+          <Switch>
+            <Route path="/Root" component={App}/>
+            <Route path="/CustomerRegistration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
+            <Route path="/CustomerLanding" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+            <Redirect to={App.INITIAL_ROOT_NAME}/>
+          </Switch>
+        </AndroidBackButton>
+      </NativeRouter>
     </Provider>;
+
   }
 }
