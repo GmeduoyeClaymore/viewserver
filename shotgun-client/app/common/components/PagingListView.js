@@ -67,11 +67,12 @@ class PagingListView extends Component{
     
     render() {
       const { data = [],errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
+      const {_onScroll} = this;
       return (
         <ErrorRegion errors={errors}>
         <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
           <HeaderView/>
-            {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
+            {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={_onScroll}>
             {data.map( c => this.renderItem(c))}
             {this.props.busy ? paginationWaitingView() : null}
           </ScrollView >}

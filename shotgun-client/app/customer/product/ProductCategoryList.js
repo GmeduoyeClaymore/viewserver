@@ -90,7 +90,7 @@ class ProductCategoryList extends Component{
       style={styles.container}
       daoName='productCategoryDao'
       dataPath={['product', 'categories']}
-      pageSize={10}
+      pageSize={11}
       options={options}
       rowView={rowView}
       paginationWaitingView={Paging}

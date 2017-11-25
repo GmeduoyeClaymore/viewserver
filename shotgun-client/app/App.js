@@ -13,6 +13,10 @@ import CustomerRegistration from './customer/registration/CustomerRegistration';
 
 const store = configureStore();
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'Home';
 
@@ -22,18 +26,20 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false
     };
-    this.client = new Client('ws://localhost:8080/');
-    this.applicationMode = 'customer';
-    this.dispatch = store.dispatch;
+    //this.client = new Client('ws://localhost:8080/');
+    //this.applicationMode = 'customer';
+    //this.dispatch = store.dispatch;
   }
 
-  async componentWillMount() {
+  async componentxxDidMount() {
     let isConnected = false;
     try {
       await ProtoLoader.loadAll();
       await this.setCustomerId();
       Logger.debug('Mounting App Component');
+      await sleep(2000);
       await this.client.connect();
+      await sleep(2000);
       isConnected = true;
     } catch (error){
       Logger.debug('Unable to connect to server');

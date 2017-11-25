@@ -14,7 +14,7 @@ export default CustomerDetails  = ({navigation, screenProps}) => {
   };
 
   return <Form style={{display: 'flex', flex: 1}}>
-    <ValidatingInput placeholder="First Name" value={customer.firstName} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={CustomerDetails.validationSchema.firstName} maxLength={30}/>
+    <ValidatingInput placeholder="First ame" value={customer.firstName} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={CustomerDetails.validationSchema.firstName} maxLength={30}/>
     <ValidatingInput placeholder="Last Name" value={customer.lastName}  onChangeText={(value) => onChangeText('lastName', value)} validationSchema={CustomerDetails.validationSchema.lastName} maxLength={30}/>
     <ValidatingInput placeholder="Email" keyboardType='email-address' value={customer.email} onChangeText={(value) => onChangeText('email', value)} validationSchema={CustomerDetails.validationSchema.email} maxLength={30}/>
     <ValidatingInput placeholder="Phone Number" keyboardType='phone-pad' value={customer.contactNo} onChangeText={(value) => onChangeText('contactNo', value)} validationSchema={CustomerDetails.validationSchema.contactNo}/>
