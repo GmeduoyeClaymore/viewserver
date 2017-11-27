@@ -1,6 +1,6 @@
 import {REGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import {getDaoOptions} from './DaoStateUtils';
-import {isEqual} from 'common/utils';
+import {isEqual} from 'lodash';
 
 export const invokeDaoCommand = (daoName, method, options, continueWith) => {
   return {

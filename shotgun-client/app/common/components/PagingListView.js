@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
 import { connectAdvanced} from 'custom-redux';
 import { bindActionCreators} from 'redux';
-import { isEqual } from 'common/utils';
+import { isEqual } from 'lodash';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
 const styles = StyleSheet.create({

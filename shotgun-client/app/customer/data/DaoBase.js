@@ -2,7 +2,7 @@ import Logger from 'common/Logger';
 import Rx from 'rxjs/Rx';
 import * as crx from 'common/rx';
 import {page} from 'common/dao/DaoExtensions';
-import {isEqual} from 'common/utils';
+import {isEqual} from 'lodash';
 export default class Dao {
   constructor(daoContext) {
     this.daoContext = daoContext;

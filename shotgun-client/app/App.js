@@ -12,10 +12,6 @@ import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-ro
 
 const store = configureStore();
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'Home';
 
@@ -25,21 +21,20 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false
     };
-    //this.client = new Client('ws://localhost:8080/');
-    //this.applicationMode = 'customer';
-    //this.dispatch = store.dispatch;
+    this.client = new Client('ws://localhost:8080/');
+    this.applicationMode = 'customer';
+    this.dispatch = store.dispatch;
   }
 
-  async componentxxDidMount() {
+  async componentDidMount() {
     let isConnected = false;
     try {
+      Logger.debug('Mounting App Component');
       await ProtoLoader.loadAll();
-      await this.setCustomerId();
+      await this.client.connect();
       this.setInitialRoot();
       Logger.debug('Mounting App Component');
-      await sleep(2000);
-      await this.client.connect();
-      await sleep(2000);
+      
       isConnected = true;
     } catch (error){
       Logger.debug('Unable to connect to server');

@@ -7,11 +7,8 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './RegistrationInitialState';
 
 export default class CustomerRegistration extends Component {
-  constructor() {
-    super();
-  }
-
-  componentWillMount(){
+  constructor(props) {
+    super(props);
     this.state = INITIAL_STATE;
   }
 
