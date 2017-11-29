@@ -1,5 +1,5 @@
-import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import RxDataSink from '../../common/dataSinks/RxDataSink';
+import DataSourceSubscriptionStrategy from '../subscriptionStrategies/DataSourceSubscriptionStrategy';
+import RxDataSink from '../dataSinks/RxDataSink';
 
 export default class ProductDaoContext{
   static OPTIONS = {

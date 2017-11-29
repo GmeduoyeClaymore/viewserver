@@ -47,7 +47,7 @@ export default class Delivery extends Component{
 
         <Text>{`Required within ${delivery.eta} hours`}</Text>
         <Slider minimumValue={1} maximumValue={72} step={1} value={delivery.eta} onValueChange={val => onChangeText('eta', val)}/>
-        <Button onPress={() => history.push(`/CustomerLanding/Checkout/${destination}`)}><Text>Next</Text></Button>
+        <Button onPress={() => history.push(`/Customer/Checkout/${destination}`)}><Text>Next</Text></Button>
       </Content>
     </Container>;
   }

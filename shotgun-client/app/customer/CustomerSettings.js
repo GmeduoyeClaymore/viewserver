@@ -4,12 +4,12 @@ import PrincipalService from '../common/services/PrincipalService';
 
 const CustomerSettings = ({history}) => {
   const signOut = async() => {
-    await PrincipalService.removeCustomerIdFromDevice();
+    await PrincipalService.removeUserIdFromDevice();
     history.push('/Root');
   };
 
   const setId = async() => {
-    await PrincipalService.setCustomerIdOnDevice('4BBuxi');
+    await PrincipalService.setUserIdOnDevice('4BBuxi');
     history.push('/Root');
   };
 

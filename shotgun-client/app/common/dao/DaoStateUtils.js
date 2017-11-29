@@ -11,6 +11,10 @@ export const getDaoOptions = (state, daoName) => {
   return state.getIn(['dao', daoName, 'options']);
 };
 
+export const getAllDaos = (state) => {
+  return state.getIn(['dao']);
+};
+
 export const isLoading = (state, daoName) => {
   return isOperationPending(state, daoName, 'updateSubscription');
 };

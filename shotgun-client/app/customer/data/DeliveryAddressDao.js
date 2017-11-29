@@ -1,7 +1,7 @@
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import {forEach} from 'lodash';
 import uuidv4 from 'uuid/v4';
 
@@ -57,23 +57,23 @@ export default class DeliveryAddressDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_ADDRESS_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.DELIVERY_ADDRESS_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    const {customerId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerId == \"${customerId}\"`};
+    return {...options, filterExpression: `userId == \"${userId}\"`};
   }
 
   extendDao(dao){
-    dao.addOrUpdateDeliveryAddress = async ({customerId, deliveryAddress}) => {
+    dao.addOrUpdateDeliveryAddress = async ({userId, deliveryAddress}) => {
       const {dataSink, subscriptionStrategy} = dao;
       const schema = await dataSink.waitForSchema();
       const customer = dataSink.rows[0];
@@ -85,7 +85,7 @@ export default class DeliveryAddressDaoContext{
         deliveryAddressObject[field] = deliveryAddress[field];
       });
   
-      deliveryAddressObject.customerId = customerId;
+      deliveryAddressObject.userId = userId;
   
       if (deliveryAddressObject.deliveryAddressId == undefined) {
         deliveryAddressObject.deliveryAddressId = uuidv4();

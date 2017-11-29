@@ -22,7 +22,7 @@ const ProductListItem = ({history, product}) => {
     }
   });
 
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => history.push('/CustomerLanding/ProductDetails', {product})} underlayColor={'#EEEEEE'}>
+  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => history.push('/Customer/ProductDetails', {product})} underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
       <Image source={require('../assets/cement.jpg')} style={styles.picture} />
       <View style={{flex: 1}}>

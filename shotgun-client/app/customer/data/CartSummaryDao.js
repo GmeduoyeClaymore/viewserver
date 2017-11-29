@@ -20,11 +20,11 @@ export default class CartSummaryDaoContext{
     return 'cartSummaryDao';
   }
 
-  getReportContext(customerId){
+  getReportContext(userId){
     return {
       reportId: 'cartSummary',
       parameters: {
-        customerId
+        userId
       }
     };
   }
@@ -38,17 +38,17 @@ export default class CartSummaryDaoContext{
     return summaryRow !== undefined ? {totalPrice: summaryRow.totalPrice, totalQuantity: summaryRow.totalQuantity} : {totalPrice: 0, totalQuantity: 0};
   }
 
-  createSubscriptionStrategy({customerId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(customerId), dataSink);
+  createSubscriptionStrategy({userId}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(userId), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    if (typeof options.customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    if (typeof options.userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
     return options;
   }

@@ -28,7 +28,7 @@ public class OrderItemsDataSource {
                         .withColumns(Arrays.asList(
                                 new Column("itemId", "itemId", ColumnType.String),
                                 new Column("orderId", "orderId", ColumnType.String),
-                                new Column("customerId", "customerId", ColumnType.String),
+                                new Column("userId", "userId", ColumnType.String),
                                 new Column("productId", "productId", ColumnType.String),
                                 new Column("quantity", "quantity", ColumnType.Int)
                         ))

@@ -1,16 +1,16 @@
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import uuidv4 from 'uuid/v4';
 
-const createAddOrderItemRowEvent = (productId, quantity, customerId) =>{
+const createAddOrderItemRowEvent = (productId, quantity, userId) =>{
   return {
     type: 0, // ADD
     columnValues: {
       orderId: null,
       itemId: uuidv4(),
-      customerId,
+      userId,
       productId,
       quantity
     }
@@ -69,23 +69,23 @@ export default class CartItemsDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.ORDER_ITEM_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    const {customerId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerId like \"${customerId}\" && orderId == null`};
+    return {...options, filterExpression: `userId like \"${userId}\" && orderId == null`};
   }
 
   extendDao(dao){
-    dao.addItemToCart = async ({productId, quantity, customerId}) => {
+    dao.addItemToCart = async ({productId, quantity, userId}) => {
       let cartRowEvent;
       const {dataSink, subscriptionStrategy} = dao;
       const {rows} = dataSink;
@@ -97,7 +97,7 @@ export default class CartItemsDaoContext{
         cartRowEvent = createUpdateCartRowEvent(existingRow.itemId, {quantity: parseInt(existingRow.quantity, 10) + parseInt(quantity, 10)});
       } else {
         Logger.info('Adding item to cart');
-        cartRowEvent = createAddOrderItemRowEvent(productId, quantity, customerId);
+        cartRowEvent = createAddOrderItemRowEvent(productId, quantity, userId);
         resultKey = cartRowEvent.columnValues.itemId;
       }
 

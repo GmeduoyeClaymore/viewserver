@@ -1,4 +1,4 @@
-deliveryAddressId,customerId,isDefault,line1,line2,city,country,postcode
+deliveryAddressId,userId,isDefault,line1,line2,city,country,postcode
 2188552d-9fe1-462f-bbd3-ca296c968884,2BBui,TRUE,1 Mickey Mouse Rd,Streatham,London,UK,SE4 1TL
 cae3510a-81a2-4425-b56c-5ef78721dd78,3AOra,TRUE,2 Mickey Mouse Rd,Clapham,London,UK,S4 4BL
 38213090-ae17-4ba5-a2bb-16a1e27ed1f0,4LPea,TRUE,3 Mickey Mouse Rd,Brockley,London,UK,SE9 2DD

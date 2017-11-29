@@ -1,4 +1,4 @@
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
 import Logger from 'common/Logger';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
@@ -47,19 +47,19 @@ export default class OrdersDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.ORDER_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    const {customerId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerId == \"${customerId}\"`};
+    return {...options, filterExpression: `userId == \"${userId}\"`};
   }
 
   extendDao(dao){
@@ -67,7 +67,7 @@ export default class OrdersDaoContext{
       const orderId = uuidv4();
       const created = moment().format('x');
       Logger.info(`Creating order ${orderId}`);
-      const order = {orderId, lastModified: created, customerId: dao.options.customerId, deliveryId, paymentId, status: OrderStatuses.PLACED};
+      const order = {orderId, lastModified: created, userId: dao.options.userId, deliveryId, paymentId, status: OrderStatuses.PLACED};
       const addOrderRowEvent = createAddOrderRowEvent(order);
       const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error(`Could not detect created order in 5 seconds "${orderId}"`)).toPromise();
       await Promise.all([dao.subscriptionStrategy.editTable([addOrderRowEvent]), promise]);

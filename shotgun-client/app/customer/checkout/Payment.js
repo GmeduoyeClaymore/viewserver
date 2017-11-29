@@ -46,7 +46,7 @@ class Payment extends Component {
         <Picker selectedValue={paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
           {paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
         </Picker>
-        <Button onPress={() => history.push('/CustomerLanding/Checkout/Delivery')}><Text>Next</Text></Button>
+        <Button onPress={() => history.push('/Customer/Checkout/Delivery')}><Text>Next</Text></Button>
       </Content>
     </Container>;
   }

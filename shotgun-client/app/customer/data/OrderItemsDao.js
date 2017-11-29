@@ -1,6 +1,6 @@
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 
 export default class OrderItemsDaoContext{
   constructor(client, options = {}) {
@@ -38,22 +38,22 @@ export default class OrderItemsDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.ORDER_ITEM_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.ORDER_ITEM_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    const {customerId, orderId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId, orderId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
     if (typeof orderId === 'undefined'){
       throw new Error('orderId should be defined');
     }
-    return {...options, filterExpression: `customerId == \"${customerId}\" && orderId == "${orderId}"`};
+    return {...options, filterExpression: `userId == \"${userId}\" && orderId == "${orderId}"`};
   }
 }
 

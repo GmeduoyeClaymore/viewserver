@@ -8,12 +8,14 @@ import {Spinner, Form, Text, Button, Item, Label, Input, Content, Header, Left, 
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 const RegistrationConfirmation  = ({context, history,  dispatch, client, errors, busy}) => {
-  const {customer, paymentCard, deliveryAddress} = context.state;
+  const {user, paymentCard, deliveryAddress} = context.state;
 
   const register = async () => {
-    dispatch(addOrUpdateCustomer(customer, paymentCard, deliveryAddress, () => history.push('/Root')));
+    dispatch(addOrUpdateCustomer(user, paymentCard, deliveryAddress, () => history.push('/Root')));
   };
+
   const createServicesThenRegister = async () => {
+    //TODO - dont like that we have to register stuff here
     dispatch(customerServicesRegistrationAction(client, uuidv4(), register));
   };
 
@@ -33,19 +35,19 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
           <Text>Personal Details</Text>
           <Item fixedLabel>
             <Label>First Name</Label>
-            <Input value={customer.firstName} editable={false}/>
+            <Input value={user.firstName} editable={false}/>
           </Item>
           <Item fixedLabel>
             <Label>Last Name</Label>
-            <Input value={customer.lastName} editable={false}/>
+            <Input value={user.lastName} editable={false}/>
           </Item>
           <Item fixedLabel>
             <Label>Email</Label>
-            <Input value={customer.email} editable={false}/>
+            <Input value={user.email} editable={false}/>
           </Item>
           <Item fixedLabel>
             <Label>Phone Number</Label>
-            <Input value={customer.contactNo} editable={false}/>
+            <Input value={user.contactNo} editable={false}/>
           </Item>
 
           <Text>Address Details</Text>

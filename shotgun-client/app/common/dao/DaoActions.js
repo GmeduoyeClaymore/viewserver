@@ -1,4 +1,4 @@
-import {REGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import {getDaoOptions} from './DaoStateUtils';
 import {isEqual} from 'lodash';
 
@@ -38,6 +38,13 @@ export const registerDao = (dao) => {
     type: REGISTER_DAO_ACTION(dao.name),
     name: dao.name,
     dao
+  };
+};
+
+export const unregisterDao = (daoName) => {
+  return {
+    type: UNREGISTER_DAO_ACTION(daoName),
+    name: daoName
   };
 };
 

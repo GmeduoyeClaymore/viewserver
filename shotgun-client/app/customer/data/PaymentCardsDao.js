@@ -1,4 +1,4 @@
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
@@ -57,26 +57,26 @@ export default class PaymentCardsDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.PAYMENT_CARDS_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.PAYMENT_CARDS_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    if (typeof options.customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    if (typeof options.userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerId == \"${options.customerId}\"`};
+    return {...options, filterExpression: `userId == \"${options.userId}\"`};
   }
 
   extendDao(dao){
-    dao.addOrUpdatePaymentCard = async({customerId, paymentCard}) =>{
+    dao.addOrUpdatePaymentCard = async({userId, paymentCard}) =>{
       const {dataSink, subscriptionStrategy} = dao;
       const schema = await dataSink.waitForSchema();
       let paymentCardRowEvent;
-      const customer = dataSink.rows[0];
+      const existingCard = dataSink.rows[0];
   
       Logger.info(`Adding paymentCard schema is ${JSON.stringify(schema)}`);
       const paymentCardObject = {};
@@ -85,13 +85,13 @@ export default class PaymentCardsDaoContext{
         paymentCardObject[field] = paymentCard[field];
       });
   
-      paymentCardObject.customerId = customerId;
+      paymentCardObject.userId = userId;
   
       if (paymentCardObject.paymentId == undefined) {
         paymentCardObject.paymentId = uuidv4();
       }
   
-      if (customer == undefined){
+      if (existingCard == undefined){
         Logger.info(`Adding paymentCard ${JSON.stringify(paymentCardObject)}`);
         paymentCardRowEvent = createAddPaymentCardEvent(paymentCardObject);
       } else {

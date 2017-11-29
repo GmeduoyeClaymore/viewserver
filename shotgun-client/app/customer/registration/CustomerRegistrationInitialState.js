@@ -1,9 +1,10 @@
 export const INITIAL_STATE = {
-  customer: {
+  user: {
     firstName: undefined,
     lastName: undefined,
     email: undefined,
-    contactNo: undefined
+    contactNo: undefined,
+    type: 'customer'
   },
   deliveryAddress: {
     line1: undefined,
@@ -21,14 +22,15 @@ export const INITIAL_STATE = {
     isDefault: true
   }
 };
-
 /*
+
 export const INITIAL_STATE = {
-  customer: {
+  user: {
     firstName: 'Paul',
     lastName: 'Graves',
     email: 'test@test.com',
-    contactNo: '07733362799'
+    contactNo: '07733362799',
+    type:'customer'
   },
   deliveryAddress: {
     line1: '129 Drakefield Road',

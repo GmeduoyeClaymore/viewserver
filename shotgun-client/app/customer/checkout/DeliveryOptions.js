@@ -63,7 +63,7 @@ class DeliveryOptions extends Component {
         <Picker selectedValue={delivery.deliveryAddressId} onValueChange={(itemValue) => this.onChangeValue('deliveryAddressId', itemValue)}>
           {deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
         </Picker>
-        <Button onPress={() =>  history.push('/CustomerLanding/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
+        <Button onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
       </Content>
     </Container>;
   }

@@ -32,7 +32,7 @@ public class
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("deliveryAddressId", "deliveryAddressId", ColumnType.String),
-                                        new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("userId", "userId", ColumnType.String),
                                         new Column("isDefault", "isDefault", ColumnType.Bool),
                                         new Column("line1", "line1", ColumnType.String),
                                         new Column("line2", "line2", ColumnType.String),

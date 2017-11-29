@@ -1,27 +1,14 @@
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {forEach} from 'lodash';
 import PrincipalService from 'common/services/PrincipalService';
 
-const createAddCustomerEvent = (args) => {
-  return {
-    type: 0, // ADD
-    columnValues: args
-  };
-};
-
-const createUpdateCustomerEvent = (args) => {
-  return {
-    type: 1, // UPDATE
-    columnValues: args
-  };
-};
-
 export default class CustomerDaoContext{
-  constructor(client, paymentCardsDao, deliveryAddressDao, options = {}) {
+  constructor(client, userDao, paymentCardsDao, deliveryAddressDao, options = {}) {
     this.client = client;
+    this.userDao = userDao;
     this.paymentCardsDao = paymentCardsDao;
     this.deliveryAddressDao = deliveryAddressDao;
     this.options = options;
@@ -55,58 +42,45 @@ export default class CustomerDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.CUSTOMER_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.USER_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId;
+    return !previousOptions || previousOptions.userId != newOptions.userId;
   }
 
   transformOptions(options){
-    const {customerId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerId == \"${customerId}\"`};
+    return {...options, filterExpression: `userId == \"${userId}\"`};
   }
 
   extendDao(dao){
     dao.addOrUpdateCustomer = async ({customer, paymentCard, deliveryAddress}) => {
-      let customerRowEvent;
-      const {dataSink, subscriptionStrategy} = dao;
+      const {dataSink} = dao;
       const schema = await dataSink.waitForSchema();
-      const {customerId} = dao.options;
+      const {userId} = dao.options;
       Logger.info(`Adding customer schema is ${JSON.stringify(schema)}`);
 
       //TODO - tidy this up using lodash or similar
-      const customerObject = {};
+      const user = {};
       forEach(schema, value => {
         const field = value.name;
-        customerObject[field] = customer[field];
+        user[field] = customer[field];
       });
 
-      if (customerObject.customerId == undefined) {
-        customerObject.customerId = customerId;
+      if (user.userId == undefined) {
+        user.userId = userId;
       }
 
-      if (!dataSink.rows.length){
-        Logger.info(`Adding customer ${JSON.stringify(customerObject)}`);
-        customerRowEvent = createAddCustomerEvent(customerObject);
-      } else {
-        Logger.info(`Updating customer ${JSON.stringify(customerObject)}`);
-        customerRowEvent = createUpdateCustomerEvent(customerObject);
-      }
+      await this.userDao.addOrUpdateUser({user});
+      await this.paymentCardsDao.addOrUpdatePaymentCard({userId: user.userId, paymentCard});
+      await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId: user.userId, deliveryAddress});
 
-      const promise = dao.rowEventObservable.filter(ev => ev.row.customerId == customerId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to customer id ${customerId} in 5 seconds`)).toPromise();
-      await Promise.all([promise, subscriptionStrategy.editTable([customerRowEvent])]);
-      Logger.info('Add customer promise resolved');
-
-      await this.paymentCardsDao.addOrUpdatePaymentCard({customerId: customerObject.customerId, paymentCard});
-      await this.deliveryAddressDao.addOrUpdateDeliveryAddress({customerId: customerObject.customerId, deliveryAddress});
-
-      await PrincipalService.setCustomerIdOnDevice(customerObject.customerId);
-
-      return customerObject.customerId;
+      await PrincipalService.setUserIdOnDevice(user.userId);
+      return user.userId;
     };
   }
 }

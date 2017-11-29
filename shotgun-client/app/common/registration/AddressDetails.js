@@ -2,8 +2,8 @@ import React from 'react';
 import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
-import ValidatingInput from '../../common/components/ValidatingInput';
-import ValidatingButton from '../../common/components/ValidatingButton';
+import ValidatingInput from '../components/ValidatingInput';
+import ValidatingButton from '../components/ValidatingButton';
 
 export default AddressDetails  = ({context, history, match}) => {
   const {deliveryAddress = {}} = context.state;

@@ -7,10 +7,9 @@ import ProductDetails from './product/ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
 import Cart from './Cart';
-
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
-import { customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
+import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import CustomerSettings from './CustomerSettings';
 import {isAnyLoading} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -45,17 +44,17 @@ const mapStateToProps = (state, nextOwnProps) => ({
 const CustomerLandingContent = ({busy, ...props}) => {
   const {match} = props;
 
-  return busy ? <Content><Text>Loading Application.....</Text></Content> :
+  return busy ? <Content><Text>Loading Customer Landing.....</Text></Content> :
     <Container>
       <Switch>
-        <Route path={`${match.path}/ProductCategoryList`} exact render={() => <ProductCategoryList {...props} />}/>
-        <Route path={`${match.path}/ProductList`} exact render={() => <ProductList {...props} />}/>
-        <Route path={`${match.path}/ProductDetails`} exact render={() => <ProductDetails {...props} />}/>
-        <Route path={`${match.path}/Cart`} exact render={() => <Cart {...props} />}/>
-        <Route path={`${match.path}/Checkout`} render={() => <Checkout {...props} />}/>
-        <Route path={`${match.path}/Orders`} exact render={() => <Orders {...props} />}/>
-        <Route path={`${match.path}/OrderDetail`} exact render={() => <OrderDetail {...props} />}/>
-        <Route path={`${match.path}/CustomerSettings`} exact render={() => <CustomerSettings {...props} />}/>
+        <Route path={`${match.path}/ProductCategoryList`} exact component={ProductCategoryList}/>
+        <Route path={`${match.path}/ProductList`} exact component={ProductList}/>
+        <Route path={`${match.path}/ProductDetails`} exact component={ProductDetails}/>
+        <Route path={`${match.path}/Cart`} exact component={Cart}/>
+        <Route path={`${match.path}/Checkout`} component={Checkout}/>
+        <Route path={`${match.path}/Orders`} exact component={Orders}/>
+        <Route path={`${match.path}/OrderDetail`} exact component={OrderDetail}/>
+        <Route path={`${match.path}/CustomerSettings`} exact component={CustomerSettings}/>
         <Redirect to={`${match.path}/${CustomerLanding.INITIAL_ROOT_NAME}`}/>
       </Switch>
       <CustomerMenuBar/>
@@ -75,8 +74,8 @@ export default class CustomerLanding extends Component {
   }
 
   async componentWillMount() {
-    const {dispatch, customerId, client} = this.props;
-    dispatch(customerServicesRegistrationAction(client, customerId, () => this.setState({isReady: true})));
+    const {dispatch, userId, client} = this.props;
+    dispatch(customerServicesRegistrationAction(client, userId, () => this.setState({isReady: true})));
   }
 
   render() {

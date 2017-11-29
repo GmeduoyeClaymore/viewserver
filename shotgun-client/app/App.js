@@ -6,14 +6,18 @@ import Client from './viewserver-client/Client';
 import Logger from 'common/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import PrincipalService from './common/services/PrincipalService';
-import CustomerLanding from './customer/CustomerLanding';
+import LandingCommon from './LandingCommon';
+import RegistrationCommon from './RegistrationCommon';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
+import DriverRegistration from './driver/registration/DriverRegistration';
+import CustomerLanding from './customer/CustomerLanding';
+import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
 
 const store = configureStore();
 
 export default class App extends React.Component {
-  static INITIAL_ROOT_NAME = 'Home';
+  static INITIAL_ROOT_NAME = 'LandingCommon';
 
   constructor() {
     super();
@@ -22,7 +26,6 @@ export default class App extends React.Component {
       isConnected: false
     };
     this.client = new Client('ws://localhost:8080/');
-    this.applicationMode = 'customer';
     this.dispatch = store.dispatch;
   }
 
@@ -31,10 +34,10 @@ export default class App extends React.Component {
     try {
       Logger.debug('Mounting App Component');
       await ProtoLoader.loadAll();
-      await this.client.connect();
+      await this.setUserId();
       this.setInitialRoot();
       Logger.debug('Mounting App Component');
-      
+      await this.client.connect();
       isConnected = true;
     } catch (error){
       Logger.debug('Unable to connect to server');
@@ -43,16 +46,16 @@ export default class App extends React.Component {
     this.setState({ isReady: true, isConnected });
   }
 
-  async setCustomerId(){
-    this.customerId = await PrincipalService.getCustomerIdFromDevice();
+  async setUserId(){
+    this.userId = await PrincipalService.getUserIdFromDevice();
   }
 
   setInitialRoot(){
-    if (this.customerId == undefined){
-      App.INITIAL_ROOT_NAME = '/CustomerRegistration';
+    if (this.userId == undefined){
+      App.INITIAL_ROOT_NAME = '/RegistrationCommon';
     } else {
-      App.INITIAL_ROOT_NAME = '/CustomerLanding';
-      Logger.info(`Loading with customer id ${this.customerId}`);
+      App.INITIAL_ROOT_NAME = '/LandingCommon';
+      Logger.info(`Loading with customer id ${this.userId}`);
     }
   }
 
@@ -64,20 +67,23 @@ export default class App extends React.Component {
         <Text>Uh-oh spaghetti-Os. Unable to connect to the server</Text>
       </Container>;
     }
-    const globalProps = {client: this.client, customerId: this.customerId, dispatch: this.dispatch};
+    const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};
 
     return <Provider store={store}>
       <NativeRouter>
         <AndroidBackButton>
           <Switch>
             <Route path="/Root" component={App}/>
-            <Route path="/CustomerRegistration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
-            <Route path="/CustomerLanding" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+            <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
+            <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
+            <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
+            <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
+            <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+            <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
             <Redirect to={App.INITIAL_ROOT_NAME}/>
           </Switch>
         </AndroidBackButton>
       </NativeRouter>
     </Provider>;
-
   }
 }
