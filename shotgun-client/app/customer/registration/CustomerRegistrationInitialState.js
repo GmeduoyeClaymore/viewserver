@@ -22,8 +22,8 @@ export const INITIAL_STATE = {
     isDefault: true
   }
 };
-/*
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',

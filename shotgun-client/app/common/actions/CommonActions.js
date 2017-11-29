@@ -21,7 +21,7 @@ export const unregisterAllDaos = () => {
 
 
 export const commonServicesRegistrationAction = (client, userId, continueWith) => {
-  return async (dispatch) => {
+  return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});
     register(dispatch, new VehicleTypeDao(client), {userId}, continueWith);
   };

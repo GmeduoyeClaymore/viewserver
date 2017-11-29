@@ -4,14 +4,14 @@ import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/action
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
 import Logger from 'common/Logger';
-import {Text, Content} from 'native-base';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 class LandingCommon extends Component {
   constructor(props) {
     super(props);
   }
 
-  async componentWillMount() {
+  componentWillMount() {
     const {dispatch, userId, client} = this.props;
     dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client, userId));
@@ -21,10 +21,9 @@ class LandingCommon extends Component {
     const {busy, user} = this.props;
 
     //TODO - for some reason when busy is false the user object is still not populated
-    if (busy || !user){
-      return <Content><Text>Logging You In.....</Text></Content>;
+    if (busy){
+      return <LoadingScreen text="Logging You In"/>;
     }
-
     switch (user.type){
     case 'driver':
       return <Redirect to="/Driver/Landing"/>;

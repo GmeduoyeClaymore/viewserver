@@ -6,7 +6,8 @@ import DriverSettings from './DriverSettings';
 import {driverServicesRegistrationAction } from 'driver/actions/DriverActions';
 import {isAnyLoading} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
-import {Text, Content, Container} from 'native-base';
+import {Container} from 'native-base';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 class DriverLanding extends Component {
   static INITIAL_ROOT_NAME = 'DriverOrders';
@@ -23,7 +24,7 @@ class DriverLanding extends Component {
   render() {
     const {match, busy} = this.props;
 
-    return busy ? <Content><Text>Loading Driver Landing.....</Text></Content> :
+    return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
         <Switch>
           <Route path={`${match.path}/DriverOrders`} exact component={DriverOrders}/>

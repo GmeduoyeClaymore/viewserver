@@ -48,6 +48,21 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
   };
 };
 
+//Load the minimal set of services we need in order to register a customer.
+export const loadCustomerRegistrationServices = (client, userId, continueWith) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (!state.getIn(['dao', 'customerDao'])){
+      const userDao = register(dispatch, new UserDao(client), {userId});
+      const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
+      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
+      register(dispatch, new CustomerDao(client, userDao, paymentCardsDao, deliveryAddressDao), {userId}, continueWith);
+    } else if (continueWith) {
+      continueWith();
+    }
+  };
+};
+
 export const purchaseCartItemsAction = (eta, paymentId, deliveryAddressId, deliveryType, continueWith) => {
   return invokeDaoCommand('cartItemsDao', 'purchaseCartItems', {eta, paymentId, deliveryAddressId, deliveryType}, continueWith);
 };

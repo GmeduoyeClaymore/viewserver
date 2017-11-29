@@ -1,11 +1,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {ScrollView} from 'react-native';
-import { addOrUpdateCustomer, customerServicesRegistrationAction } from 'customer/actions/CustomerActions';
+import {addOrUpdateCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import uuidv4 from 'uuid/v4';
-import {Spinner, Form, Text, Button, Item, Label, Input, Content, Header, Left, Body, Container, Icon, Title} from 'native-base';
-import {isAnyOperationPending, getOperationError} from 'common/dao';
+import {Form, Text, Button, Item, Label, Input, Content, Header, Left, Body, Container, Icon, Title} from 'native-base';
+import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 const RegistrationConfirmation  = ({context, history,  dispatch, client, errors, busy}) => {
   const {user, paymentCard, deliveryAddress} = context.state;
@@ -16,13 +17,13 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
 
   const createServicesThenRegister = async () => {
     //TODO - dont like that we have to register stuff here
-    dispatch(customerServicesRegistrationAction(client, uuidv4(), register));
+    dispatch(loadCustomerRegistrationServices(client, uuidv4(), register));
   };
 
-  return <Container>
+  return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
     <Header>
       <Left>
-        <Button transparent>
+        <Button transparent disabled={busy}>
           <Icon name='arrow-back' onPress={() => history.goBack()} />
         </Button>
       </Left>
@@ -30,7 +31,6 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
     </Header>
     <Content>
       <ErrorRegion errors={errors}><ScrollView style={{flex: 1, flexDirection: 'column'}}>
-        {busy ? <Spinner/> : null}
         <Form>
           <Text>Personal Details</Text>
           <Item fixedLabel>
@@ -82,7 +82,7 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
             <Input value={`${paymentCard.expiryMonth}/${paymentCard.expiryYear}`} editable={false}/>
           </Item>
 
-          <Button onPress={createServicesThenRegister}>
+          <Button disabled={busy} onPress={createServicesThenRegister}>
             <Text>Create Account</Text>
           </Button>
         </Form>
@@ -94,7 +94,7 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
 
 const mapStateToProps = (state, initialProps) => ({
   errors: getOperationError(state, 'customerDao', 'addOrUpdateCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}),
+  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}) || isAnyLoading(state, ['userDao', 'paymentCardsDao', 'deliveryAddressDao', 'customerDao']),
   ...initialProps
 });
 

@@ -34,7 +34,7 @@ class ProductCategoryList extends Component{
   };
 
   navFuncFactory({categoryId, category, isLeaf}) {
-    const {history, match} = this.props;
+    const {history} = this.props;
 
     if (isLeaf == 'true') { //TODO - get isLeaf to be a proper bool in the ViewServer
       history.push('/Customer/ProductList', {categoryId, category});

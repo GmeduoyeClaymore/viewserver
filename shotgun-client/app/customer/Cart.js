@@ -8,7 +8,7 @@ import {isAnyOperationPending, getDaoState} from 'common/dao';
 import {updateCartItemQuantityAction} from 'customer/actions/CustomerActions';
 import Currency from 'common/components/Currency';
 
-const Cart = ({history, match, cart, busy, summary, dispatch}) => {
+const Cart = ({history, cart, busy, summary, dispatch}) => {
   const updateQuantity = (productId, quantity) => {
     dispatch(updateCartItemQuantityAction({productId, quantity}));
   };

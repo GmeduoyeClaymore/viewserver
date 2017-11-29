@@ -75,7 +75,6 @@ export default class DriverDaoContext{
       await this.vehicleDao.addOrUpdateVehicle({userId: user.userId, vehicle});
 
       await PrincipalService.setUserIdOnDevice(user.userId);
-
       return user.userId;
     };
   }

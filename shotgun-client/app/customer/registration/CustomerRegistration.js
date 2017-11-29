@@ -5,7 +5,7 @@ import AddressDetails from '../../common/registration/AddressDetails';
 import RegistrationConfirmation from './CustomerRegistrationConfirmation';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
-import {Text, Content} from 'native-base';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 export default class CustomerRegistration extends Component {
   constructor(props) {
@@ -16,7 +16,7 @@ export default class CustomerRegistration extends Component {
   render() {
     const {match, busy} = this.props;
 
-    return busy ? <Content><Text>Loading Driver Registration.....</Text></Content> : <Switch>
+    return busy ? <LoadingScreen text="Loading Customer Registration"/> : <Switch>
       <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
       <Route path={`${match.path}/AddressDetails`} exact render={() => <AddressDetails {...this.props} context={this}/>} />
       <Route path={`${match.path}/PaymentCardDetails`} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />

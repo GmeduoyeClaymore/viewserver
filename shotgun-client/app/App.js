@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Spinner, Text} from 'native-base';
+import {Container, Text} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -13,6 +13,7 @@ import DriverRegistration from './driver/registration/DriverRegistration';
 import CustomerLanding from './customer/CustomerLanding';
 import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 const store = configureStore();
 
@@ -61,7 +62,7 @@ export default class App extends React.Component {
 
   render() {
     if (!this.state.isReady) {
-      return <Spinner/>;
+      return <LoadingScreen text="Connecting"/>;
     } else if (!this.state.isConnected){
       return  <Container style={{flexDirection: 'column', flex: 1}}>
         <Text>Uh-oh spaghetti-Os. Unable to connect to the server</Text>
