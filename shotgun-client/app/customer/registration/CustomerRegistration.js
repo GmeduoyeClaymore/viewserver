@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import CustomerDetails from './CustomerDetails';
+import UserDetails from '../../common/registration/UserDetails';
 import PaymentCardDetails from './PaymentCardDetails';
-import AddressDetails from './AddressDetails';
-import RegistrationConfirmation from './RegistrationConfirmation';
+import AddressDetails from '../../common/registration/AddressDetails';
+import RegistrationConfirmation from './CustomerRegistrationConfirmation';
 import {Route, Redirect, Switch} from 'react-router-native';
-import {INITIAL_STATE} from './RegistrationInitialState';
+import {INITIAL_STATE} from './CustomerRegistrationInitialState';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 export default class CustomerRegistration extends Component {
   constructor(props) {
@@ -13,14 +14,14 @@ export default class CustomerRegistration extends Component {
   }
 
   render() {
-    const {match} = this.props;
+    const {match, busy} = this.props;
 
-    return <Switch>
-      <Route path={`${match.path}/CustomerDetails`} exact render={() => <CustomerDetails {...this.props} context={this}/>} />
+    return busy ? <LoadingScreen text="Loading Customer Registration"/> : <Switch>
+      <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
       <Route path={`${match.path}/AddressDetails`} exact render={() => <AddressDetails {...this.props} context={this}/>} />
-      <Route path={`${match.path}/PaymentCardDetails`} render={() => <PaymentCardDetails {...this.props} context={this}/>} />
-      <Route path={`${match.path}/RegistrationConfirmation`} render={() => <RegistrationConfirmation {...this.props} context={this}/>} />
-      <Redirect to={`${match.path}/CustomerDetails`}/>
+      <Route path={`${match.path}/PaymentCardDetails`} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
+      <Route path={`${match.path}/RegistrationConfirmation`} exact render={() => <RegistrationConfirmation {...this.props} context={this}/>} />
+      <Redirect to={`${match.path}/UserDetails`}/>
     </Switch>;
   }
 }

@@ -1,4 +1,4 @@
-itemId,orderId,customerId,productId,quantity
+itemId,orderId,userId,productId,quantity
 2943a86c-40c7-4102-af36-080e4806ecae,bcc1376a-70c7-43f7-af35-c8b934f76640,4BBuxi,PROD_BrB44,2
 016b004e-6b1a-49c8-aab7-83e25c3205a3,8706cac2-0486-494d-9f6f-f379548152f8,4BBuxi,PROD_BrB45,1
 78f9f987-57b7-4dbd-a2fb-444931639f94,aad2996e-05a2-4428-8dd2-216398ce84b3,4BBuxi,PROD_BrB45,1

@@ -22,11 +22,11 @@ export default class OrderSummaryDaoContext{
     return 'orderSummaryDao';
   }
 
-  getReportContext({customerId, isCompleted}){
+  getReportContext({userId, isCompleted}){
     return {
       reportId: 'orderSummary',
       parameters: {
-        customerId,
+        userId,
         isCompleted
       }
     };
@@ -44,17 +44,17 @@ export default class OrderSummaryDaoContext{
     };
   }
 
-  createSubscriptionStrategy({customerId, isCompleted}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({customerId, isCompleted}), dataSink);
+  createSubscriptionStrategy({userId, isCompleted}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId, isCompleted}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.customerId != newOptions.customerId || previousOptions.isCompleted != newOptions.isCompleted;
+    return !previousOptions || previousOptions.userId != newOptions.userId || previousOptions.isCompleted != newOptions.isCompleted;
   }
 
   transformOptions(options){
-    if (typeof options.customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    if (typeof options.userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
     if (typeof options.isCompleted === 'undefined'){
       throw new Error('isCompleted  should be defined');

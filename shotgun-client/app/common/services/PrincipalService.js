@@ -2,33 +2,33 @@ import Logger from 'common/Logger';
 import {AsyncStorage} from 'react-native';
 
 export default class PrincipalService {
-  static customerIdKey = '@shotgun:customerId';
+  static userIdKey = '@shotgun:userId';
 
-  static async getCustomerIdFromDevice(){
+  static async getUserIdFromDevice(){
     try {
-      const customerId = await AsyncStorage.getItem(PrincipalService.customerIdKey);
-      return customerId;
+      const userId = await AsyncStorage.getItem(PrincipalService.userIdKey);
+      return userId;
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error getting customer id from device');
+      Logger.error('Error getting user id from device');
     }
   }
 
-  static async setCustomerIdOnDevice(customerId){
+  static async setUserIdOnDevice(userId){
     try {
-      await AsyncStorage.setItem(PrincipalService.customerIdKey, customerId);
+      await AsyncStorage.setItem(PrincipalService.userIdKey, userId);
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error saving customer id on device');
+      Logger.error('Error saving user id on device');
     }
   }
 
-  static async removeCustomerIdFromDevice(){
+  static async removeUserIdFromDevice(){
     try {
-      await AsyncStorage.removeItem(PrincipalService.customerIdKey);
+      await AsyncStorage.removeItem(PrincipalService.userIdKey);
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error removing customer id from device');
+      Logger.error('Error removing user id from device');
     }
   }
 }

@@ -1,4 +1,4 @@
-customerId,paymentId,isDefault,cardNumber,expiryDate
+userId,paymentId,isDefault,cardNumber,expiryDate
 4BBuxi,3ca86235-561e-4615-9622-3869bbdfcace,FALSE,**** **** **** 1234,Nov-19
 4BBuxi,0fdf506a-fe6b-4fb5-9e00-53da2112add9,TRUE,**** **** **** 1235,Jan-18
 3AOra,abd2dffe-5f49-420b-b7cb-3d2ad44fe276,FALSE,**** **** **** 1236,Jan-19

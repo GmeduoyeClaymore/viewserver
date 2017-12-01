@@ -42,7 +42,8 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
 
   const registerDao = ({name, dao}) => {
     if (DAOS[name]){
-      throw new Error(`A DAO with name ${name} has already been registered`);
+      //TODO - I think re-registering is fine...
+      //throw new Error(`A DAO with name ${name} has already been registered`);
     }
     DAOS[name] = dao;
     let daoEventFunc = c => {
@@ -68,6 +69,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
     DAOS[name] = undefined;
     DAO_SUBSCRIPTIONS[name] = undefined;
     DAO_OPTIONS_SUBSCRIPTIONS[name] = undefined;
+    dispatch({type: UPDATE_STATE(name), path: [name], data: undefined});
     return getState();
   };
 

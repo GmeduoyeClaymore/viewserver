@@ -1,3 +1,5 @@
+import Logger from 'common/Logger';
+
 export const getDaoCommandStatus = (state, commandName, daoName) => {
   return state.getIn(['dao', daoName, 'commands', commandName, 'status']);
 };
@@ -9,6 +11,19 @@ export const getDaoState = (state, path, daoName) => {
 };
 export const getDaoOptions = (state, daoName) => {
   return state.getIn(['dao', daoName, 'options']);
+};
+
+export const getAllDaos = (state) => {
+  return state.getIn(['dao']);
+};
+
+export const getDao = (state, daoName) => {
+  const dao = state.getIn(['dao', daoName]);
+
+  if (dao == undefined){
+    Logger.warning(`getDao for dao ${daoName} could not find dao`);
+  }
+  return dao;
 };
 
 export const isLoading = (state, daoName) => {
@@ -43,5 +58,5 @@ export const isAnyOperationPending = (state, daoOperationPairs) => {
 };
 
 export const isAnyLoading = (state, daoNames) => {
-  return daoNames.some( nm => isLoading(state, nm));
+  return daoNames.some( dao => getDao(state, dao) == undefined) || daoNames.some( nm => isLoading(state, nm));
 };

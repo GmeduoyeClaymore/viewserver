@@ -34,12 +34,12 @@ class ProductCategoryList extends Component{
   };
 
   navFuncFactory({categoryId, category, isLeaf}) {
-    const {history, match} = this.props;
+    const {history} = this.props;
 
     if (isLeaf == 'true') { //TODO - get isLeaf to be a proper bool in the ViewServer
-      history.push(`${match.path}/ProductList`, {categoryId, category});
+      history.push('/Customer/ProductList', {categoryId, category});
     } else {
-      history.push(`${match.path}/ProductCategoryList`, {parentCategoryId: categoryId, parentCategory: category});
+      history.push('/Customer/ProductCategoryList', {parentCategoryId: categoryId, parentCategory: category});
     }
   }
   constructor(props){

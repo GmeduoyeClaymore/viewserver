@@ -13,10 +13,10 @@ public class CartSummaryReport {
         public static ReportDefinition getReportDefinition() {
         return new ReportDefinition(ID, "cartSummary")
                 .withDataSource(OrderItemsDataSource.NAME)
-                .withParameter("customerId", "Customer Id", String[].class)
+                .withParameter("userId", "User Id", String[].class)
                 .withNodes(
                         new FilterNode("customerFilter")
-                                .withExpression("customerId == \"{customerId}\" && orderId == null")
+                                .withExpression("userId == \"{userId}\" && orderId == null")
                                 .withConnection("#input", null, Constants.IN),
                         new GroupByNode("totalsGroupBy")
                                 .withGroupByColumns("orderId")

@@ -1,4 +1,5 @@
-import {invokeDaoCommand, getDaoOptions, registerDao, updateSubscriptionAction} from 'common/dao';
+import {invokeDaoCommand, getDaoOptions} from 'common/dao';
+import {register} from 'common/actions/CommonActions';
 import OrderItemsDao from 'customer/data/OrderItemsDao';
 import CartItemsDao from 'customer/data/CartItemsDao';
 import CartSummaryDao from 'customer/data/CartSummaryDao';
@@ -9,21 +10,13 @@ import DeliveryAddressDao from 'customer/data/DeliveryAddressDao';
 import ProductCategoryDao from 'customer/data/ProductCategoryDao';
 import OrderSummaryDao from 'customer/data/OrderSummaryDao';
 import DeliveryDao from 'customer/data/DeliveryDao';
-import ProductDao from 'customer/data/ProductDao';
-import Dao from 'customer/data/DaoBase';
-
-
-const  register = (dispatch, daoContext, options, continueWith) => {
-  const dao = new Dao(daoContext);
-  dispatch(registerDao(dao));
-  dispatch(updateSubscriptionAction(dao.name, options, continueWith));
-  return dao;
-};
+import ProductDao from 'common/dao/ProductDao';
+import UserDao from 'common/dao/UserDao';
 
 export const addItemToCartAction = ({quantity, productId}, continueWith) => {
   return async (dispatch, getState) => {
     const existingOptions = getDaoOptions(getState(), 'customerDao');
-    dispatch(invokeDaoCommand('cartItemsDao', 'addItemToCart', {quantity, productId, customerId: existingOptions.customerId }, continueWith));
+    dispatch(invokeDaoCommand('cartItemsDao', 'addItemToCart', {quantity, productId, userId: existingOptions.userId }, continueWith));
   };
 };
 
@@ -33,23 +26,40 @@ export const updateCartItemQuantityAction = ({productId, quantity}, continueWith
   };
 };
 
-export const customerServicesRegistrationAction = (client, customerId, continueWith) => {
+export const customerServicesRegistrationAction = (client, userId, continueWith) => {
   return async (dispatch, getState) => {
     const state = getState();
     if (!state.getIn(['dao', 'customerDao'])){
-      register(dispatch, new ProductCategoryDao(client), {customerId});
-      register(dispatch, new OrderItemsDao(client), {customerId});
-      const orderDao = register(dispatch, new OrderDao(client), {customerId});
-      const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {customerId});
-      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {customerId});
-      register(dispatch, new CustomerDao(client, paymentCardsDao, deliveryAddressDao), {customerId}, continueWith);
-      const deliveryDao = register(dispatch, new DeliveryDao(client), {customerId});
-      register(dispatch, new CartSummaryDao(client), {customerId});
+      register(dispatch, new ProductCategoryDao(client), {userId});
+      register(dispatch, new OrderItemsDao(client), {userId});
+      const userDao = register(dispatch, new UserDao(client), {userId});
+      const orderDao = register(dispatch, new OrderDao(client), {userId});
+      const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
+      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
+      const deliveryDao = register(dispatch, new DeliveryDao(client), {userId});
+      register(dispatch, new CartSummaryDao(client), {userId});
       register(dispatch, new ProductDao(client));
-      register(dispatch, new OrderSummaryDao(client), {customerId});
-      register(dispatch, new CartItemsDao(client, orderDao, deliveryDao), {customerId});
+      register(dispatch, new OrderSummaryDao(client), {userId});
+      register(dispatch, new CartItemsDao(client, orderDao, deliveryDao), {userId});
+      register(dispatch, new CustomerDao(client, userDao, paymentCardsDao, deliveryAddressDao), {userId}, continueWith);
+    } else if (continueWith) {
+      continueWith();
     }
-    continueWith();
+  };
+};
+
+//Load the minimal set of services we need in order to register a customer.
+export const loadCustomerRegistrationServices = (client, userId, continueWith) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (!state.getIn(['dao', 'customerDao'])){
+      const userDao = register(dispatch, new UserDao(client), {userId});
+      const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
+      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
+      register(dispatch, new CustomerDao(client, userDao, paymentCardsDao, deliveryAddressDao), {userId}, continueWith);
+    } else if (continueWith) {
+      continueWith();
+    }
   };
 };
 

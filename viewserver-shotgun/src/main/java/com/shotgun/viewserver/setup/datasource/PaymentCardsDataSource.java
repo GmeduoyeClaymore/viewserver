@@ -31,7 +31,7 @@ PaymentCardsDataSource {
                 )
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
-                                        new Column("customerId", "customerId", ColumnType.String),
+                                        new Column("userId", "userId", ColumnType.String),
                                         new Column("paymentId", "paymentId", ColumnType.String),
                                         new Column("isDefault", "isDefault", ColumnType.Bool),
                                         new Column("cardNumber", "cardNumber", ColumnType.String),

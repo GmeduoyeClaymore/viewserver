@@ -16,12 +16,12 @@ public class OrderSummaryReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderSummary")
                         .withDataSource(OrderItemsDataSource.NAME)
-                        .withParameter("customerId", "Customer Id", String[].class)
+                        .withParameter("userId", "User Id", String[].class)
                         .withParameter("isCompleted", "Is Order Complete", Boolean[].class)
                         .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("customerId == \"{customerId}\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null)")
+                                        .withExpression("userId == \"{userId}\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
                                 new GroupByNode("totalsGroupBy")
                                         .withGroupByColumns("orderId")

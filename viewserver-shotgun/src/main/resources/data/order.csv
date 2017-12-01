@@ -1,4 +1,4 @@
-orderId,created,lastModified,customerId,orderFulfillmentId,status,paymentId
+orderId,created,lastModified,userId,orderFulfillmentId,status,paymentId
 3c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,4BBuxi,,COMPLETED,3ca86235-561e-4615-9622-3869bbdfcace
 e8b24421-86c0-460e-a77a-11e25847ca6f,02/01/2017 08:30,02/01/2017 08:30,4BBuxi,,COMPLETED,3ca86235-561e-4615-9622-3869bbdfcace
 41392611-e805-4315-84ad-a8f51555bf1a,03/01/2017 08:30,03/01/2017 08:30,4BBuxi,,COMPLETED,3ca86235-561e-4615-9622-3869bbdfcace

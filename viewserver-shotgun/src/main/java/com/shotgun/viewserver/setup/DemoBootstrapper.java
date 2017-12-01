@@ -18,7 +18,7 @@ public class DemoBootstrapper extends BootstrapperBase {
     @Override
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
-        dataSources.add(CustomerDataSource.getDataSource());
+        dataSources.add(UserDataSource.getDataSource());
         dataSources.add(DeliveryAddressDataSource.getDataSource());
         dataSources.add(DriverDataSource.getDataSource());
         dataSources.add(MerchantDataSource.getDataSource());
@@ -32,6 +32,8 @@ public class DemoBootstrapper extends BootstrapperBase {
         dataSources.add(ProductDataSource.getDataSource());
         dataSources.add(ProductCategoryDataSource.getDataSource());
         dataSources.add(StatusDataSource.getDataSource());
+        dataSources.add(VehicleDataSource.getDataSource());
+        dataSources.add(VehicleTypeDataSource.getDataSource());
         return dataSources;
     }
 

@@ -1,0 +1,9 @@
+vehicleTypeId,bodyType,capacity,payload,description
+4a943b20-1c27-4495-a530-772307079692,Compact,2,500,"Compact Van - Citroen Nemo, Peugeot Bipper or Similar"
+ef17c21e-77d8-43e0-8091-bc2f9fe8e327,Small,3,800,"Small Van - Ford Transit Connect, Vauxhall Combo or Similar"
+843930b8-e72f-4860-ae72-cca6e8bfe403,Medium,9,1100,"Medium Panel Van - Ford Transit SWB, Volkswagen Transporter SWB or Similar"
+0aab9ff8-5685-4be2-8b1f-33ef0a7f2480,LWB,12,1200,Long Wheel Base Van - Ford Transit LWB or Similar LWB
+f5aeba1a-7c58-4635-88f1-76153bf5d26c,Extra LWB,13,1400,Extra Long Wheel Base Van - Mercedes Sprinter XLWB or Ford Transit Jumbo
+2cacd831-fa76-4ef9-a057-b18894c259ac,Luton Van,15,1100,3.5 Tonne Luton Van
+30257d56-b35b-48ee-a40f-bb102c077ab9,Luton Lorry,26,2500,7.5 Tonne Luton Lorry
+75dd63d6-8444-41f3-841f-f0b6f341d31c,Dropside,0,1500,Dropside Truck

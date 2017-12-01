@@ -9,7 +9,7 @@ import ErrorRegion from 'common/components/ErrorRegion';
 
 const OrderConfirmation = ({dispatch, history, errors, busy, payment, delivery, paymentCard, deliveryAddress, cart, summary}) => {
   const purchase = async() => {
-    dispatch(purchaseCartItemsAction(delivery.eta, payment.paymentId, delivery.deliveryAddressId, delivery.deliveryType,  () => history.push('/CustomerLanding/Checkout/OrderComplete')));
+    dispatch(purchaseCartItemsAction(delivery.eta, payment.paymentId, delivery.deliveryAddressId, delivery.deliveryType,  () => history.push('/Customer/Checkout/OrderComplete')));
   };
 
   const renderCartItem = (item) => {

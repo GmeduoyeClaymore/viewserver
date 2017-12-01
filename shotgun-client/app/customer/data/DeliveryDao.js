@@ -1,4 +1,4 @@
-import * as FieldMappings from 'common/constants/TableNames';
+import * as TableNames from 'common/constants/TableNames';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import Logger from 'common/Logger';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
@@ -31,7 +31,7 @@ export default class DeliveryDaoContext{
   }
 
   get name(){
-    return 'delivery';
+    return 'deliveryDao';
   }
 
   createDataSink(){
@@ -45,7 +45,7 @@ export default class DeliveryDaoContext{
   }
 
   createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, FieldMappings.DELIVERY_TABLE_NAME, dataSink);
+    return new DataSourceSubscriptionStrategy(this.client, TableNames.DELIVERY_TABLE_NAME, dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions/*, newOptions*/){
@@ -53,11 +53,11 @@ export default class DeliveryDaoContext{
   }
 
   transformOptions(options){
-    const {customerId} = options;
-    if (typeof customerId === 'undefined'){
-      throw new Error('customerId should be defined');
+    const {userId} = options;
+    if (typeof userId === 'undefined'){
+      throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `customerIdDelivery like \"${customerId}\"`};
+    return {...options, filterExpression: `userIdDelivery like \"${userId}\"`};
   }
 
   extendDao(dao){
@@ -66,11 +66,11 @@ export default class DeliveryDaoContext{
       await dao.dataSink.waitForSchema();
       const created = moment().format('x');
       const deliveryId = uuidv4();
-      const customerId = dao.options.customerId;
-      if (typeof customerId === 'undefined'){
-        throw new Error('customerId should be defined');
+      const userId = dao.options.userId;
+      if (typeof userId === 'undefined'){
+        throw new Error('userId should be defined');
       }
-      const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, customerIdDelivery: customerId};
+      const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, userIdDelivery: userId};
       Logger.info(`Creating delivery ${deliveryId}`);
       const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
       const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();

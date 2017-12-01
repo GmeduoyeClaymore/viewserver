@@ -8,7 +8,7 @@ import {isAnyOperationPending, getDaoState} from 'common/dao';
 import {updateCartItemQuantityAction} from 'customer/actions/CustomerActions';
 import Currency from 'common/components/Currency';
 
-const Cart = ({history, match, cart, busy, summary, dispatch}) => {
+const Cart = ({history, cart, busy, summary, dispatch}) => {
   const updateQuantity = (productId, quantity) => {
     dispatch(updateCartItemQuantityAction({productId, quantity}));
   };
@@ -36,7 +36,7 @@ const Cart = ({history, match, cart, busy, summary, dispatch}) => {
       <Col><Text>{`Total Items ${summary.totalQuantity}`}</Text></Col>
       <Col><Text>Total Price <Currency value={summary.totalPrice}/></Text></Col>
     </Row>
-    <Button disabled={busy || summary.totalQuantity == 0} onPress={() => history.push(`${match.path}/Checkout`)}><Text>Proceed to Checkout</Text></Button>
+    <Button disabled={busy || summary.totalQuantity == 0} onPress={() => history.push('/Customer/Checkout')}><Text>Proceed to Checkout</Text></Button>
   </Grid>;
 };
 

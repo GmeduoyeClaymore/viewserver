@@ -26,7 +26,7 @@ OrderDataSource {
                         new Column("created", "created", ColumnType.DateTime),
                         new Column("lastModified", "lastModified", ColumnType.DateTime),
                         new Column("status", "status", ColumnType.String),
-                        new Column("customerId", "customerId", ColumnType.String),
+                        new Column("userId", "userId", ColumnType.String),
                         new Column("paymentId", "paymentId", ColumnType.String),
                         new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
                         new Column("deliveryId", "deliveryId", ColumnType.String)
