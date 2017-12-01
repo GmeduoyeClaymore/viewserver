@@ -12,11 +12,12 @@ import LoadingScreen from 'common/components/LoadingScreen';
 class DriverRegistration extends Component {
   constructor() {
     super();
+    this.state = INITIAL_STATE;
   }
 
   componentWillMount(){
     const {dispatch, client} = this.props;
-    this.state = INITIAL_STATE;
+    this.setState(INITIAL_STATE);
     dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client));
   }

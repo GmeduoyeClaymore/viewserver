@@ -15,9 +15,16 @@ class ProductActionBar extends Component {
       orderItemsDao: PropTypes.object
     };
 
+    static validationSchema = {
+      quantity: yup.string()
+        .matches(/^([1-9][0-9]{0,2})$/)
+        .required()
+    };
+
     constructor(props){
       super(props);
       this.addToCart = this.addToCart.bind(this);
+      this.onQuantityChange = this.onQuantityChange.bind(this);
       this.state = {
         quantity: 1,
         busy: false
@@ -46,11 +53,7 @@ class ProductActionBar extends Component {
     }
 }
 
-ProductActionBar.validationSchema = {
-  quantity: yup.string()
-    .matches(/^([1-9][0-9]{0,2})$/)
-    .required()
-};
+
 
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),

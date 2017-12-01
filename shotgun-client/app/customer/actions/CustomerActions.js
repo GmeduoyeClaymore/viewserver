@@ -52,7 +52,7 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
 export const loadCustomerRegistrationServices = (client, userId, continueWith) => {
   return async (dispatch, getState) => {
     const state = getState();
-    if (!state.getIn(['dao', 'customerDao'])){
+    if (!state.getIn(['dao', 'userDao'])){
       const userDao = register(dispatch, new UserDao(client), {userId});
       const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
       const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});

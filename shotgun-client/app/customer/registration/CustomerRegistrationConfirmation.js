@@ -94,7 +94,7 @@ const RegistrationConfirmation  = ({context, history,  dispatch, client, errors,
 
 const mapStateToProps = (state, initialProps) => ({
   errors: getOperationError(state, 'customerDao', 'addOrUpdateCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}) || isAnyLoading(state, ['userDao', 'paymentCardsDao', 'deliveryAddressDao', 'customerDao']),
+  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}),
   ...initialProps
 });
 

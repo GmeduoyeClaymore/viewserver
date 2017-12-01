@@ -16,7 +16,7 @@ export const driverServicesRegistrationAction = (client, userId, continueWith) =
     }
   };
 };
-
+  
 export const addOrUpdateDriver = (driver, vehicle, continueWith) => {
   return invokeDaoCommand('driverDao', 'addOrUpdateDriver', {driver, vehicle}, continueWith);
 };

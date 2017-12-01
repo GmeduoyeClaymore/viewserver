@@ -36,7 +36,8 @@ export default class VehiclesDaoContext{
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
-      flags: undefined
+      flags: undefined,
+      ...this.options
     };
   }
 

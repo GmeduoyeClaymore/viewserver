@@ -10,10 +10,11 @@ import {INITIAL_STATE} from './CheckoutInitialState';
 export default class Checkout extends Component {
   constructor(){
     super();
+    this.state = INITIAL_STATE;
   }
 
   componentWillMount(){
-    this.state = INITIAL_STATE;
+    this.setState(INITIAL_STATE);
   }
 
   render() {
