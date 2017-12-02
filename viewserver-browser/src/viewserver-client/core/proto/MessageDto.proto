@@ -1,0 +1,16 @@
+option java_package = "io.viewserver.messages.protobuf.dto";
+option java_outer_classname = "MessageMessage";
+
+import "HeartbeatDto.proto";
+import "core/CommandDto.proto";
+import "CommandResultDto.proto";
+import "TableEventDto.proto";
+
+message MessageDto {
+    oneof message {
+        HeartbeatDto heartbeat = 1;
+        CommandDto command = 2;
+        CommandResultDto commandResult = 3;
+        TableEventDto tableEvent = 4;
+    }
+}

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<!--
+/*
   ~ Copyright 2016 Claymore Minds Limited and Niche Solutions (UK) Limited
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +12,13 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+*/
 
-<config>
-    <viewserver>
-        <servers>
-            <master>
-                <database>%user.home%/viewserver-demo</database>
+option java_package = "io.viewserver.messages.protobuf.dto";
+option java_outer_classname = "CommandResultMessage";
 
-                <endpoints>
-                    <endpoint>tcp://0.0.0.0:18000</endpoint>
-                    <endpoint>ipc://master.viewserver.ipc</endpoint>
-                    <endpoint>ws://127.0.0.1:8081</endpoint>
-                </endpoints>
-            </master>
-
-            <slaves>0</slaves>
-        </servers>
-    </viewserver>
-</config>
+message CommandResultDto {
+    required uint32 id = 1;
+    required bool success = 2;
+    optional string message = 3;
+}
