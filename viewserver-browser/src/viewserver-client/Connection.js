@@ -2,13 +2,13 @@ import Logger from 'common/Logger';
 import ProtoLoader from './core/ProtoLoader';
 
 export default class Connection {
-  constructor(uri, network) {
+  constructor(uri, network, autoReconnect) {
     this._uri = uri;
     this._network = network;
     this._commandId = 1;
     this._openCommands = [];
     this._isOpen = false;
-    this._autoReconnect = false;
+    this._autoReconnect = autoReconnect;
     this._forcedClose = false;
     this.handleSocketOpen = this.handleSocketOpen.bind(this);
     this.handleSocketClosed = this.handleSocketClosed.bind(this);
@@ -18,11 +18,13 @@ export default class Connection {
     static CONNECTION_ATTEMPT_DELAY = 500; // The maximum amount of time to wait for the socket to open before giving up
     static CONNECTING_RETRY_ATTEMPTS = 5;
 
-    connect(autoReconnect) {
-      this._autoReconnect = autoReconnect;
-      return new Promise((resolve, reject) => {
-        this.tryConnect(1, resolve, reject);
-      });
+    connect() {
+      if(!this.connectionPromise){
+        this.connectionPromise = new Promise((resolve, reject) => {
+          this.tryConnect(1, resolve, reject);
+        });
+      }
+      return this.connectionPromise;
     }
 
     tryConnect(attemptCounter, resolve, reject){
@@ -39,6 +41,7 @@ export default class Connection {
 
       this._socket.onerror = () => {
         if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS){
+          this.connectionPromise  = undefined;
           reject(`Unable to detect open web socket to ${this._uri} after ${Connection.CONNECTING_RETRY_ATTEMPTS} retries`);
         } else {
           Logger.debug(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);

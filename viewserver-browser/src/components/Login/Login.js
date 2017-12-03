@@ -9,6 +9,7 @@ import ErrorRegion from 'common-components/ErrorRegion'
 import ValidatingInput from 'common-components/ValidatingInput' 
 import { TextInput, SelectBox, resetUID } from 'common-components/inputs';
 import { login } from 'common/actions/CommonActions';
+import { registerDataDaos } from 'global-actions/GlobalActions';
 import {validationSchema}  from 'common/dao/LoginDao'
 
 const Login = (props) => {
@@ -26,12 +27,17 @@ const Settings_mapStateToProps = (state, props) => { return {
   ...props,
   ...state.Login
 } }
+
+const subscibeToData = (dispatch) => {
+    dispatch(registerDataDaos());
+}
+
 const Settings_mapDispatchToProps = (dispatch) => { return {
   saveSettings: (settings) => {
     config.set('Login.username', settings.username);
     config.set('Login.password', settings.password);
     config.set('Login.url', settings.url);
-    dispatch(login(settings));
+    dispatch(login(settings, subscibeToData(dispatch)));
   }
 } }
 class LoginForm extends Component {
@@ -68,9 +74,9 @@ class LoginForm extends Component {
         </header>
 
         <div className="padded">
-          <ValidatingInput validationSchema={validationSchema} label="Username" placeholder="Username" value={this.state.username} onChange={ (value) => { this.setState({username: value}); } } />
-          <ValidatingInput validationSchema={validationSchema} label="Password" placeholder="Password" value={this.state.password} onChange={ (value) => { this.setState({password: value}); } } />
-          <ValidatingInput validationSchema={validationSchema} label="Url" value={this.state.url} onChange={ (value) => { this.setState({url: value}); } } options={[
+          <ValidatingInput validationSchema={validationSchema.username} label="Username" placeholder="Username" value={this.state.username} onChange={ (value) => { this.setState({username: value}); } } />
+          <ValidatingInput validationSchema={validationSchema.password} label="Password" placeholder="Password" value={this.state.password} onChange={ (value) => { this.setState({password: value}); } } />
+          <ValidatingInput validationSchema={validationSchema.url} label="Url" value={this.state.url} onChange={ (value) => { this.setState({url: value}); } } options={[
             {value: "localhost:8081", label: "DEV"},
           ]} />
         </div>

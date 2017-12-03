@@ -1,8 +1,10 @@
 import Logger from 'common/Logger';
-import Rx from 'rxjs/Rx';
-import * as crx from 'common/rx';
+import {Rx} from 'common/rx';
+
 import {page} from 'common/dao/DaoExtensions';
 import {isEqual} from 'lodash';
+import {GetConnectedClientFromLoginDao} from 'common/dao/loginUtils'
+
 export default class Dao {
   constructor(daoContext) {
     this.daoContext = daoContext;
@@ -15,7 +17,7 @@ export default class Dao {
     this.name = daoContext.name;
     this.page = page(this);
     this.updateSubscription = this.updateSubscription.bind(this);
-    this.crx = crx;//force this to load
+    this.setRegistrationContext = this.setRegistrationContext.bind(this);
   }
     
   get observable(){
@@ -26,9 +28,17 @@ export default class Dao {
     return this.optionsSubject;
   }
 
+  setRegistrationContext(registrationContext){
+    this.daoContext.registrationContext = registrationContext;
+  }
+
   async updateSubscription(options){
     const newOptions = {...this.options, ...options};
+    if (isEqual(this.options, newOptions) && this.isSubscribed){
+      return Promise.resolve("Options remain unchanged");
+    }
     if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy){
+      this.isSubscribed = false;
       if (this.subscriptionStrategy){
         this.subscriptionStrategy.dispose();
       }
@@ -36,7 +46,8 @@ export default class Dao {
         this.rowEventSubscription.unsubscribe();
       }
       this.dataSink = this.daoContext.createDataSink(newOptions);
-      this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
+      const client = await GetConnectedClientFromLoginDao(this.daoContext);
+      this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(client, newOptions, this.dataSink);
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       const _this = this;
@@ -45,14 +56,13 @@ export default class Dao {
     }
         
     try {
-      if (isEqual(this.options, newOptions)){
-        return Promise.resolve();
-      }
+      
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
       this.subscriptionStrategy.updateSubscription(optionsMessage);
+      this.isSubscribed = true;
     } catch (error){
       return Promise.reject(error);
     }

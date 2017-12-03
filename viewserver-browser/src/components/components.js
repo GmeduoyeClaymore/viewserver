@@ -9,6 +9,22 @@ import DaoMiddleware from 'custom-redux/DaoMiddleware';
 const Immutable = require("seamless-immutable");
 import {combineReducers} from 'redux-seamless-immutable';
 import {UPDATE_STATE, UPDATE_COMMAND_STATUS, UPDATE_OPTIONS} from 'common/dao/ActionConstants';
+import {setLocale} from 'yup/lib/customLocale';
+import * as crx from 'common/rx';
+this.crx = crx;//force this to load
+
+setLocale({
+  mixed: {
+    required: 'is required',
+    max: 'is too long',
+    min: 'is too short',
+    matches: 'fails to match the pattern'
+  },
+  string: {
+    email: 'is not a valid email',
+    url: 'is not a valid url'
+  }
+});
 
 const dao = (state = {}, action) => {
   if (action.type && (action.type.startsWith(UPDATE_STATE('')) || action.type.startsWith(UPDATE_OPTIONS('')) || action.type.startsWith(UPDATE_COMMAND_STATUS('')))){
@@ -23,6 +39,7 @@ const allComponents = require.context('./', true, /component\.js$/);
 // Grab the redux reducer function from the components's 'component' file, as well as the component itself
 let reducers = {};
 let components = {};
+let actions = {};
 allComponents.keys().forEach( ( path ) => {
   let name = path.split('/')[1];
   let thisComponent = allComponents( path );
@@ -30,6 +47,9 @@ allComponents.keys().forEach( ( path ) => {
     console.warn(`Component "${name}" is in an invalid format, ignoring. Found at: "${path}"`);
   }
   components[ name ] = thisComponent.component;
+  if(thisComponent.actions){
+    actions[ name ] = thisComponent.actions;
+  }
   if ( thisComponent.reducer ) {
     reducers[ name ] = thisComponent.reducer;
   }

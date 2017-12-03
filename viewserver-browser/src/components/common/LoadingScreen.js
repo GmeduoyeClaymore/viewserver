@@ -3,8 +3,12 @@ import { ScaleLoader } from 'react-spinners';
 import {PropTypes} from 'prop-types';
 
 export default class LoadingScreen extends Component{
-  constructor(){
-    super();
+  static propTypes = {
+    text: PropTypes.string
+  };
+  
+  constructor(props){
+    super(props);
   }
 
   render() {
@@ -28,6 +32,3 @@ const styles = {
   }
 };
 
-LoadingScreen.PropTypes = {
-  text: PropTypes.number.isRequired
-};

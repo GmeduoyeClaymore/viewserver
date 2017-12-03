@@ -1,6 +1,7 @@
 
 import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_OPTIONS, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
 import Logger from 'common/Logger';
+import {Rx} from 'common/rx'
 const listMethodNames = (object, downToClass = Object) => {
   // based on code by Muhammad Umer, https://stackoverflow.com/a/31055217/441899
   let props = [];
@@ -39,11 +40,16 @@ export default ({ getState, dispatch }) => {
   const DAO_SUBSCRIPTIONS = {};
   const DAO_OPTIONS_SUBSCRIPTIONS = {};
   const DAOS = {};
+  const DAO_REGISTRATION_CONTEXT = {
+    daos : DAOS,
+    registrationSubject : new Rx.Subject()
+  }
 
   const registerDao = ({name, dao}) => {
     if (DAOS[name]){
       //TODO - I think re-registering is fine...
-      //throw new Error(`A DAO with name ${name} has already been registered`);
+      //Yep it's fine just as long as you unregister the old one first :)
+      unRegisterDao({name})
     }
     DAOS[name] = dao;
     let daoEventFunc = c => {
@@ -58,6 +64,10 @@ export default ({ getState, dispatch }) => {
     const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);
     DAO_SUBSCRIPTIONS[name] = sub;
     DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
+    if(dao.setRegistrationContext){
+      dao.setRegistrationContext(DAO_REGISTRATION_CONTEXT);
+    }
+    DAO_REGISTRATION_CONTEXT.registrationSubject.next(dao);
     return getState();
   };
 

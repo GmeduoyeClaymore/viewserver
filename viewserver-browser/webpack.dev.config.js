@@ -23,6 +23,9 @@ module.exports = {
       common: path.resolve(__dirname, 'src/common/'),
       'viewserver-client': path.resolve(__dirname, 'src/viewserver-client/'),
       'custom-redux': path.resolve(__dirname, 'src/redux/'),
+      'components': path.resolve(__dirname, 'src/components/'),
+      'global-actions': path.resolve(__dirname, 'src/actions'),
+      'dao': path.resolve(__dirname, 'src/dao'),
       'common-components': path.resolve(__dirname, 'src/components/common'),
     }
   },

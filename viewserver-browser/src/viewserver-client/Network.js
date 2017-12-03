@@ -7,11 +7,11 @@ import TableMetaDataMapper from './mappers/TableMetaDataMapper';
 export default class Network {
   constructor(connectionUrl) {
     this.connectionUrl = connectionUrl;
+    this.connection = new Connection(this.connectionUrl, this);
   }
 
   connect(){
     Logger.debug(`Creating connection to ${this.connectionUrl}`);
-    this.connection = new Connection(this.connectionUrl, this);
     return this.connection.connect();
   }
     

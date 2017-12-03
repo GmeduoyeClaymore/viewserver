@@ -30,6 +30,7 @@ const AppRouter = () => {
     <Switch>
       <Route exact path="/" component={Home} />
       <Route path="/login" component={components.Login} />
+      <Route path="/operatorGroupView" component={components.OperatorGroupView} />
     </Switch>
   );
 }

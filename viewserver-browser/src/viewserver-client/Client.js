@@ -19,7 +19,7 @@ export default class Client {
   }
 
   get connected(){
-    return this.network.connected();
+    return this.network.connected;
   }
 
   authenticate (type, tokens, eventhandlers) {

@@ -46,8 +46,8 @@ export default class ValidatingInput extends Component {
   }
 
   render() {
-    const isValid = this.state.touched === true && this.state.error === '';
-    const isInvalid = this.state.touched === true &&  this.state.error !== '';
+    const isValid = this.state.touched === true && !this.state.error;
+    const isInvalid = this.state.touched === true &&  !!this.state.error;
     const {showIcons = true,input} = this.props;
     const Input = input || TextInput;
 
