@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {getDaoCommandStatus, getDaoState, isLoading, getLoadingError} from 'common/dao';
 import { ClipLoader } from 'react-spinners';
-import {actions as groupViewActions} from 'components/OperatorGroupView/component';
+
 
 const errorStyle = {
   color : 'red'
@@ -23,11 +23,6 @@ const Settings_mapStateToProps = (state, props) => { return {
   ...props
 } }
 
-
-
-const selectOperatorGroup = (dispatch,daoName,options) => () => {
-  dispatch(groupViewActions.selectGroup({daoName, dataPath : [], options}));
-}
 
 const Menu = ({dispatch,loggedIn,dataSources,dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
   return (
@@ -52,8 +47,8 @@ const DataSources = ({dataSources = [], loading, icon, loadingErrors, dispatch})
 </NavLink>
 )};
 
-const DataSourceLink = ({name,dispatch}) => (
-  <NavLink to={"/operatorGroupView" + name} className="nav-group-item" activeClassName="active" exact={true} onClick={selectOperatorGroup(dispatch,"operatorListDao",{operatorName : `datataSources/${name}`})}>
+const DataSourceLink = ({name, path,dispatch}) => (
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" activeClassName="active" exact={true}>
     {name}
   </NavLink>
 );
@@ -68,7 +63,7 @@ const Reports = ({reports = [], loading, icon, loadingErrors}) => (
 );
 
 const ReportsLink = ({name}) => (
-  <NavLink to={"/reports" + name} className="nav-group-item" activeClassName="active" exact={true}>
+  <NavLink to={"/reports"} className="nav-group-item" activeClassName="active" exact={true}>
     {name}
   </NavLink>
 );

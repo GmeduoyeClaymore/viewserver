@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {View, ScrollView, StyleSheet, Dimensions } from 'react';
 import PropTypes from 'prop-types';
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
-import { connectAdvanced} from 'custom-redux';
 import { bindActionCreators} from 'redux';
+import connectAdvanced from 'custom-redux/connectAdvanced';
 import { isEqual } from 'lodash';
 import ErrorRegion from 'common-components/ErrorRegion';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
@@ -62,18 +62,16 @@ class PagingListView extends Component{
       this.props.doPage(newLimit);
     }
     
-    renderItem = (item) => this.props.rowView(item);
-    
     render() {
-      const { data = [], errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
+      const { data = [], errors, rowView : RowView, emptyView : EmptyView, paginationWaitingView : PaginationWaitingView, headerView: HeaderView, ...rest} = this.props;
       return (
         <ErrorRegion errors={errors}>
           <div style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
             <HeaderView/>
-            {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
-              {data.map( c => this.renderItem(c))}
-              {this.props.busy ? paginationWaitingView() : null}
-            </ScrollView >}
+            {(data.length === 0 && !this.props.busy)  ? <EmptyView/> : <div style={{flex: 1, flexDirection: 'column', overflow : 'scroll'}} onScroll={this._onScroll}>
+              {data.map( c => <RowView row={c} {...rest}/>)}
+              {this.props.busy ? <PaginationWaitingView {...rest}/> : null}
+            </div >}
           </div>
         </ErrorRegion>
       );
@@ -110,8 +108,7 @@ const selectorFactory = (dispatch, initializationProps) => {
     return result;
   };
 };
-
-export default connectAdvanced(
+const connection = connectAdvanced(
   selectorFactory
-)(PagingListView);
-
+);
+export default connection(PagingListView);

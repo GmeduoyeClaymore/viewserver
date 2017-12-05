@@ -24,6 +24,7 @@ module.exports = {
       'viewserver-client': path.resolve(__dirname, 'src/viewserver-client/'),
       'custom-redux': path.resolve(__dirname, 'src/redux/'),
       'components': path.resolve(__dirname, 'src/components/'),
+      'canv-grid': path.resolve(__dirname, 'src/components/common/grid'),
       'global-actions': path.resolve(__dirname, 'src/actions'),
       'dao': path.resolve(__dirname, 'src/dao'),
       'common-components': path.resolve(__dirname, 'src/components/common'),

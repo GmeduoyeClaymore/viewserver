@@ -10,6 +10,7 @@ export default class Dao {
     this.daoContext = daoContext;
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
+    this.dataSinkRegistered = new Rx.Subject();
     this.options = this.daoContext.defaultOptions;
     if (this.daoContext.extendDao){
       this.daoContext.extendDao(this);
@@ -26,6 +27,13 @@ export default class Dao {
     
   get optionsObservable(){
     return this.optionsSubject;
+  }
+
+  async getDataSink(){
+    if(this.dataSink){
+      return this.dataSink;
+    }
+    return this.dataSinkRegistered.take(1).toPromise();
   }
 
   setRegistrationContext(registrationContext){
@@ -46,6 +54,7 @@ export default class Dao {
         this.rowEventSubscription.unsubscribe();
       }
       this.dataSink = this.daoContext.createDataSink(newOptions);
+      this.dataSinkRegistered.next(this.dataSink);
       const client = await GetConnectedClientFromLoginDao(this.daoContext);
       this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(client, newOptions, this.dataSink);
 

@@ -37,7 +37,9 @@ import gnu.trove.map.hash.TObjectLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -377,7 +379,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
                 if (lastPing > -1) {
-                    if (now - lastPing > interval) {
+                    if (now - lastPing > (interval *2) ) {
                         // timeout!
                         log.debug("Session {} timed out!", peerSession.getConnectionId());
                         // TODO: correctly handle client-to-server sessions

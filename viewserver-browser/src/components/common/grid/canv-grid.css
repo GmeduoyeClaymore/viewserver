@@ -1,0 +1,182 @@
+.canv-grid {
+  	position: relative;
+  	overflow: hidden;
+  	width: 100%;
+  	height: 100%;
+  	display: block;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.canv-grid__canvas {
+  	display: block;
+  	opacity: 1;
+  	overflow: hidden;
+  	margin: 0;
+  	padding: 0;
+    font-family: 'Open Sans';
+    box-sizing: border-box;
+}
+
+.canv-grid__scroll {
+  	left:0px;
+	top: 0px;
+  	right: 0px;
+  	bottom: 0px;
+  	padding: 0;
+  	margin: 0;
+  	overflow: auto;
+  	position: absolute;
+    box-sizing: border-box;    
+}
+
+.canv-grid__scroll::selection {
+    background:transparent;
+}
+
+
+.canv-grid-show-overflow .canv-grid__scroll {
+    overflow-x: scroll;
+}
+
+.canv-grid__scroll__content {
+	 height: 40000px;
+   box-sizing: border-box;
+}
+
+.canv-grid__tooltip {
+    position:absolute;
+    font-family:'Segoe UI', Tahoma;
+    font-size:12px;
+    color:#333333;
+    padding:0 5px 2px 5px;
+    border:1px solid #767676;
+    border-radius:3px;
+    background: linear-gradient(to bottom, #ffffff 0%,#E4E5F0 100%);
+    box-shadow:3px 3px 2px rgba(0,0,0,0.33);
+    max-width:500px;
+    max-height:64px; /*MAX ROWS 4 */
+    overflow:auto;
+    visibility: hidden;
+}
+
+.canv-grid__header__cell {
+  	box-sizing: border-box;
+  	position: relative;
+  	display: inline-block;
+  	vertical-align: top;
+  	margin: 0;
+  	padding: 0;
+  	font-weight: normal;
+  	border-right: 1px solid rgba(255, 255, 255,.1);
+  	line-height: 18px;
+   	overflow: hidden;
+}
+
+.canv-grid__header__cell:hover {
+    background-color: rgba(0, 102, 204, 0.4);
+}
+
+.canv-grid__header__cell-sortable:hover {
+    cursor: pointer;
+}
+
+.canv-grid__header__cell__sort-indicator {
+	position: absolute;
+  	top: 0;
+  	left: 4px;
+  	width: 8px;
+    bottom:0;
+  	cursor: default;
+  	font-size: small;
+  	line-height: 15px;
+}
+
+.canv-grid__header__cell__abs-indicator {
+  position: absolute;
+  right: 3px;
+  font-size: 9px;
+  background-color: #008580;
+  height: 11px;
+  line-height: 9px;
+  top: 3px;
+  padding: 0 3px;
+  border-radius: 2px;
+  text-shadow: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  pointer-events: none;
+}
+
+.canv-grid__header__cell__content {
+    box-sizing: border-box;
+    font-weight: normal;
+    line-height: 18px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.canv-grid__header__cell__title {
+    padding: 0 0 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.canv-grid__header__cell__resize-handle {
+    position: absolute;
+    top:0;
+    right:-4px;
+    width:8px;
+    bottom:0;
+    cursor: url(../resources/cur-resize-EW.png) 7 7, auto;
+    background-color: rgba(180,180,180,0.05);
+    z-index:1;
+}
+
+.canv-grid__header__row {
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    background: #253038;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.canv-grid-container--focused .canv-grid__header__row {
+	background: #00716d;
+}
+
+.canv-grid-container {
+	display: flex;
+	flexDirection: column;
+	flex: 1;
+	overflow: hidden;
+    border-top:1px solid rgba(255,255,255,.1);
+}
+
+.canv-grid{
+    border-top:1px solid rgba(255,255,255,.1);
+}
+
+.canv-grid:focus {
+    outline: none;
+}
+
+.canv-grid div:focus {
+    outline: none;
+}
+
+.canv-grid__header__cell__settings {
+    display:none;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 0;
+    align-self: center;
+}
+
+.canv-grid__header__cell:hover .canv-grid__header__cell__settings {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.85);
+}

@@ -6,7 +6,7 @@ export const getDaoCommandStatus = (state, commandName, daoName) => {
 export const getDaoCommandResult = (state, commandName, daoName) => {
   return state.getIn(['dao', daoName, 'commands', commandName, 'message']);
 };
-export const getDaoState = (state, path, daoName) => {
+export const getDaoState = (state, path = [], daoName) => {
   return state.getIn(['dao', daoName, 'data', ...path]);
 };
 export const getDaoOptions = (state, daoName) => {
@@ -17,7 +17,7 @@ export const getAllDaos = (state) => {
   return state.getIn(['dao']);
 };
 
-export const getDao = (state, daoName) => {
+export const getDaoContext = (state, daoName) => {
   const dao = state.getIn(['dao', daoName]);
 
   if (dao == undefined){

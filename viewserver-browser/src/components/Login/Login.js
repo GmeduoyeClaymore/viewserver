@@ -11,6 +11,9 @@ import { TextInput, SelectBox, resetUID } from 'common-components/inputs';
 import { login } from 'common/actions/CommonActions';
 import { registerDataDaos } from 'global-actions/GlobalActions';
 import {validationSchema}  from 'common/dao/LoginDao'
+import { withRouter } from 'react-router';
+import {stringify,parse} from 'query-string';
+import decodeComponent from 'decode-uri-component';
 
 const Login = (props) => {
   return (
@@ -28,18 +31,29 @@ const Settings_mapStateToProps = (state, props) => { return {
   ...state.Login
 } }
 
-const subscibeToData = (dispatch) => {
-    dispatch(registerDataDaos());
+const subscibeToData = (dispatch, continueWith) => {
+    dispatch(registerDataDaos(continueWith));
 }
 
-const Settings_mapDispatchToProps = (dispatch) => { return {
+const Settings_mapDispatchToProps = (dispatch, props) => { 
+  const {search} = props.location;
+  let returnPath;
+  if(search){
+    returnPath = parse(decodeComponent(search));
+  }
+  return {
   saveSettings: (settings) => {
     config.set('Login.username', settings.username);
     config.set('Login.password', settings.password);
     config.set('Login.url', settings.url);
-    dispatch(login(settings, subscibeToData(dispatch)));
+    dispatch(login(settings, subscibeToData(dispatch, returnPath ? props.history.push(returnPath) : undefined)));
   }
 } }
+
+const selectOperatorGroup = (dispatch,daoName,options, props) => () => {
+  dispatch(groupViewActions.selectGroup({daoName, dataPath : [], options}));
+}
+
 class LoginForm extends Component {
   constructor( props ) {
     super( props );
@@ -59,6 +73,10 @@ class LoginForm extends Component {
   save(state){
     this.originalState = state;
     this.props.saveSettings( state );
+  }
+
+  componentDidMount(){
+    this.props.saveSettings( this.state );
   }
   render() {
     const {busy,errors} = this.props;
@@ -91,4 +109,4 @@ class LoginForm extends Component {
     );
   }
 }
-export default connect(Settings_mapStateToProps, Settings_mapDispatchToProps)(Login);
+export default withRouter(connect(Settings_mapStateToProps, Settings_mapDispatchToProps)(Login));

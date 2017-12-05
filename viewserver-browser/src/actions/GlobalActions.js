@@ -4,7 +4,7 @@ import GenericOperatorDaoContext from 'dao/GenericOperatorDaoContext';
 
 
 
-export const registerDataDaos = (client) => {
+export const registerDataDaos = (continueWith) => {
   return async (dispatch, getState) => {
     const state = getState();
     if (!state.getIn(['dao', 'dataSourceDao'])){
@@ -12,7 +12,9 @@ export const registerDataDaos = (client) => {
       register(dispatch, new GenericOperatorDaoContext("reportsDao", {operatorName : "/report_registry"}));
       register(dispatch, new GenericOperatorDaoContext("sessionsDao", {operatorName : "/sessions"}));
       register(dispatch, new GenericOperatorDaoContext("operatorListDao", {}));
-    } else if (continueWith) {
+      register(dispatch, new GenericOperatorDaoContext("operatorContentsDao", {}));
+    } 
+    if(continueWith){
       continueWith();
     }
   };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 
 
@@ -14,8 +14,8 @@ const Core = () => {
         <div className="window">
           <div className="window-content">
             <div className="pane-group">
-              <div className="pane-sm sidebar"><components.Menu /></div>
-              <div className="pane padded"><AppRouter /></div>
+              <div className="pane-sm flex-col sidebar"><components.Menu /></div>
+              <div className="pane flex-col padded"><AppRouter /></div>
             </div>
           </div>
           <components.Footer />
@@ -28,9 +28,8 @@ const Core = () => {
 const AppRouter = () => {
   return (
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route path="/login" component={components.Login} />
-      <Route path="/operatorGroupView" component={components.OperatorGroupView} />
+      <Route path="/login" exact component={components.Login} />
+      <Route path="/operatorGroupView" exact  component={components.OperatorGroupView} />
     </Switch>
   );
 }
