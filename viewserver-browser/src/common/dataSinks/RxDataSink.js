@@ -4,7 +4,7 @@ import DataSink from './DataSink';
 
 export default class RxDataSink extends DataSink{
   static SNAPSHOT_COMPLETE = 'SnapshotComplete';
-  static DATA_RESET = 'SnapshotComplete';
+  static DATA_RESET = 'DataReset';
   static TOTAL_ROW_COUNT = 'TotalRowCount';
   static SCHEMA_RESET = 'SchemaReset';
   static ROW_ADDED = 'RowAdded';
@@ -55,12 +55,12 @@ export default class RxDataSink extends DataSink{
   onRowAdded(rowId, row){
     super.onRowAdded(rowId, row);
     row.rowId = rowId;
-    this._dataSinkUpdated.next({Type: RxDataSink.ROW_ADDED, row});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_ADDED, row, rowId});
   }
   onRowUpdated(rowId, row){
     super.onRowUpdated(rowId, row);
     row.rowId = rowId;
-    this._dataSinkUpdated.next({Type: RxDataSink.ROW_UPDATED, row: this.rows[rowId]});
+    this._dataSinkUpdated.next({Type: RxDataSink.ROW_UPDATED, rowId, row: this.rows[rowId]});
   }
   onRowRemoved(rowId){
     const rowToRemove = this.rows[rowId];

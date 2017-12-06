@@ -19,8 +19,8 @@ const styles ={
   }
 };
 
-const rowView = ({row,onRowClick}) => {
-  return (<div onClick={() => onRowClick(row)} key={row.rowId}>
+const rowView = ({onRowClick, row,...rest}) => {
+  return (<div onClick={() => onRowClick(row,rest)} key={row.rowId}>
     {JSON.stringify(row)}
   </div>)
 };
@@ -97,9 +97,8 @@ class OperatorGroupView extends Component{
     this.props.checkLogin(() => this.subscribeTooperatorcontents(({operatorGroup,operator})));
   }
 
-  onRowClick(row){
+  onRowClick(row, {history}){
     const {path} = row;
-    const {history} = this.props;
     this.props.selectOperator({operator : path});
   }
 
@@ -125,13 +124,14 @@ class OperatorGroupView extends Component{
   }
 
   renderOperators(){
-    const {context={},mode} = this.props;
+    const {context={},mode,history} = this.props;
     return mode === 'table' ? <PagingListView
             daoName="operatorListDao"
             dataPath={[]}
             style={styles.container}
             rowView={rowView}
-            onRowClick={this.onRowClick}
+            history={history}
+            onRowClick={this.onRowClick.bind(this)}
             paginationWaitingView={LoadingScreen}
             emptyView={noItems}
             pageSize={10}
@@ -141,7 +141,7 @@ class OperatorGroupView extends Component{
     const {operatorListDaoReady,operatorContentsDaoReady}  = this.props;
     return <div className="flex flex-col"> 
                 {operatorListDaoReady ? this.renderOperators() : null}
-                {operatorContentsDaoReady ? null : null}
+                {operatorContentsDaoReady ? this.renderGrid() : null}
             </div>
   }
 }

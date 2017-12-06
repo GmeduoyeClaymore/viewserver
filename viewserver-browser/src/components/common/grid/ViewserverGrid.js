@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import Grid from './grid';
+import Grid from './GridView';
 import { isEqual, debounce } from 'lodash';
 import DaoDataSource from './DaoDataSource';
 import {DAO_REGISTRATION_CONTEXT} from 'custom-redux/DaoMiddleware'
 import { renderColumnHeaderContent } from './ViewServerGridColumnHeader';
+import Logger from 'common/Logger';
+
 
 const CONTAINER_STYLE = { display: 'flex', flexDirection: 'column', flex: '1', overflow: 'hidden' };
 
@@ -46,10 +48,16 @@ export default class ViewServerGrid extends Component {
     }
 
     async componentWillMount(){
+        Logger.info(`Waiting for registration of Dao ${this.props.daoName}`)
         const dao = await this.getDao(this.props.daoName);
+        Logger.info(`Waiting for creation of dataSink for DAO ${this.props.daoName}`)
         const dataSink = await dao.getDataSink();
         const dataSource = new DaoDataSource(dao);
         this.setState({dataSource});
+    }
+
+    componentWillUnmount(){
+        Logger.info("Unmounting grid");
     }
 
     async getDao(daoName){
@@ -66,12 +74,13 @@ export default class ViewServerGrid extends Component {
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
-        return <Grid ref={ grid => {this.grid = grid}}
+        return <div ref={grid => {this.gridContainer = grid}} className="flex-col">{this.gridContainer ? <Grid ref={ grid => {this.grid = grid}}
             rowHeight={this.context.userHeight}
             headerHeight={baselineHeight}
+            element={this.gridContainer}
             fontSize={baselineHeight}
             columns={this.state.columns}
-            dataSource={this.dataSource}
+            dataSource={dataSource}
             onColumnResized={this.handleColumnResized}
             onColumnHeaderClick={this.handleColumnHeaderClick}
             onContextMenu={this.handleContextMenu}
@@ -84,7 +93,7 @@ export default class ViewServerGrid extends Component {
                     filters: this.state.inlineFilters,
                     onFilterChange: this.handleInlineFilterChange
                 }}
-        ></Grid>
+        ></Grid> : null }</div>
     }
 
     handleContextMenu(){

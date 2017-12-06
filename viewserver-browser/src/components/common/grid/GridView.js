@@ -264,7 +264,7 @@ export default class GridView extends Component {
         this.selectionBehavior = new RowRangeSelectionBehavior();
         this.selectionBehavior.onDragStart.subscribe(this.handleSelectionDragStart.bind(this));
 
-        const grid = this.grid = new Grid(this.refs.container.element, {
+        const grid = this.grid = new Grid(ReactDom.findDOMNode(this.container), {
             ...this.props,
             // use state derived columns and metrics
             columns: this.state.columns,
@@ -289,7 +289,7 @@ export default class GridView extends Component {
     ensureColumnSizes() {
         const { grid } = this;
         if (grid.dataSource.size === 0) {
-            const eventEntry = this.grid.dataSource.onChanged.add(() => {
+            const eventEntry = this.grid.dataSource.onChanged.subscribe(() => {
                 if (grid.dataSource.size > 0) {
                     this.autoSizeColumns();
                     eventEntry.unsubscribe();
@@ -381,7 +381,7 @@ export default class GridView extends Component {
                 onColumnHeaderClick={this.handleColumnHeaderClick}
                 onColumnHeaderContextMenu={this.handleColumnHeaderHeaderContextMenu}>
             </Header>
-            <Autosizer ref="container" onResize={this.updateLayout}>
+            <Autosizer ref={container => {this.container = container}} onResize={this.updateLayout}>
                 <div className="canv-grid-content-body" style={style} />
             </Autosizer>
         </div>;

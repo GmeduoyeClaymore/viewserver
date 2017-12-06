@@ -12,6 +12,8 @@ import CanvasDrawing from './CanvasDrawing';
 import tooltipBehavior from './tooltipBehavior';
 import StyleSheet from './StyleSheet';
 import ColumnPaintingStrategy from './ColumnPaintingStrategy';
+import ReactDOM from 'react-dom'
+import EventSource from './EventSource'
 
 const GridTemplate = `<div class="canv-grid" >
 	 	<div class="canv-grid__scroll" tabIndex="0">
@@ -59,7 +61,7 @@ export default class Grid {
 
 		// create view port
 		this.viewPort = new GridViewPort(0, 0, this.options.columnMetrics, this.options.rowMetrics);
-		this.viewPort.onModified.add(this._updateVisibleRange, this);
+		this.viewPort.onModified.subscribe(this._updateVisibleRange.bind(this));
 
 		// dirty region management
 		this._dirtyRanges = new DirtyRangeManager();
@@ -285,8 +287,8 @@ export default class Grid {
 			this.resizeSubscription = 
 			this.dataSource = value;
 			if (value) {
-				this.resizeSubscription = value.onResized.subscribe(this._onDataSourceResized);
-				this.onChangedSubscription = value.onChanged.subscribe(this.invalidate);
+				this.resizeSubscription = value.onResized.subscribe(this._onDataSourceResized.bind(this));
+				this.onChangedSubscription = value.onChanged.subscribe(this.invalidate.bind(this));
 			}
 
 			this._onDataSourceChanged();
@@ -298,7 +300,9 @@ export default class Grid {
 	}
 
 	_onDataSourceResized() {
-		this._setRowCount(this.dataSource.size);
+		if(this.dataSource){
+			this._setRowCount(this.dataSource.size);
+		}
 	}
 
 	_setRowCount(value) {
@@ -432,7 +436,7 @@ export default class Grid {
 					switch (feature) {
 						case 'Selection':
 							this.isSelected = behavior.isSelected.bind(behavior);
-							behavior.onChanged.add(this._onSelectionChanged, this);
+							behavior.onChanged.subscribe(this._onSelectionChanged.bind(this));
 							break;
 					}
 				});
@@ -493,7 +497,7 @@ export default class Grid {
 
 		// make disposable
 		this._bindDomEvent(viewPort, 'scroll')
-			.add(this._handleScrolled, this);
+			.subscribe(this._handleScrolled.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
 		const { _createMouseEvent } = this;
@@ -515,15 +519,15 @@ export default class Grid {
 		this._selectionChanged = new Rx.Subject();
 
 		// bind to track enter/leave/click at cell level
-		this.onMouseDown.add(this._handleMouseDown, this);
-		this.onMouseMove.add(this._handleMouseMove, this);
+		this.onMouseDown.subscribe(this._handleMouseDown.bind(this));
+		this.onMouseMove.subscribe(this._handleMouseMove.bind(this));
 		// don't expose these directly, we need to do some work before dispatching
 		this._bindDomEvent(grid, 'mouseout', _createMouseEvent)
-			.add(this._handleMouseOut, this);
+			.subscribe(this._handleMouseOut.bind(this));
 		this._bindDomEvent(grid, 'click', _createMouseEvent)
-			.add(this._handleClick, this);
+			.subscribe(this._handleClick.bind(this));
 		this._bindDomEvent(grid, 'dblclick', _createMouseEvent)
-			.add(this._handleDblClick, this);
+			.subscribe(this._handleDblClick.bind(this));
 
 		// keyboard handling
 		this._keyDown = this._bindDomEvent(container, 'keydown');
@@ -735,16 +739,16 @@ export default class Grid {
 				return;
 			}
 		}
-		this.invalidate(range.rowStart, range.colStart, range.rowEnd, range.colEnd);
+		this.invalidate(range);
 	}
 
-	invalidateRows(start, end) {
-		this.invalidate(start, 0, end, this.columns.length - 1);
+	invalidateRows(rowStart, rowEnd) {
+		this.invalidate({rowStart, colStart: 0, rowEnd, colEnd : this.columns.length - 1});
 	}
 
 	invalidateRow(index) {
 		if (index >= 0 && index < this.rowMetrics.count) {
-			this.invalidate(index, 0, index, this.columns.length - 1);
+			this.invalidate({rowStart : index, colStart: 0, rowEnd  : index, colEnd : this.columns.length - 1});
 		}
 	}
 

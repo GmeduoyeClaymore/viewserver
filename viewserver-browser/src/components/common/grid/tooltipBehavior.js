@@ -5,6 +5,7 @@ export default function tooltipBehavior({ delay }) {
 	let _hoverCell = new Cell();
 	let _hoverTimeoutHandle = 0;
 	let _delay = delay || 500;
+	let _subscriptions = [];
 
 	function _beginHover() {
 		_hoverTimeoutHandle = setTimeout(() => {
@@ -56,14 +57,13 @@ export default function tooltipBehavior({ delay }) {
 			}
 
 			_grid = grid;
-			_grid.onMouseEnter.add(_handleMouseEnter);
-			_grid.onMouseLeave.add(_handleMouseLeave);
+			_subscriptions.push(_grid.onMouseEnter.subscribe(_handleMouseEnter));
+			_subscriptions.push(_grid.onMouseLeave.subscribe(_handleMouseLeave));
 		},
 
 		detach() {
 			_cancelHover();
-			_grid.onMouseEnter.remove(_handleMouseEnter);
-			_grid.onMouseLeave.remove(_handleMouseLeave);
+			_subscriptions.forEach(sub => sub.unsubscribe());
 			_grid = null;
 		}
 	}

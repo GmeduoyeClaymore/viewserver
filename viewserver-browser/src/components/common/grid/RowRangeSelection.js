@@ -285,10 +285,10 @@ export class RowRangeSelectionBehavior {
 	attach(grid) {
 		this._grid = grid;
 
-		grid.onMouseDown.add(this.handleMouseDown, this);
-		grid.onMouseMove.add(this.handleMouseMove, this);
-		grid.onMouseUp.add(this.handleMouseUp, this);
-		grid.onKeyDown.add(this.handleKeyDown, this);
+		grid.onMouseDown.subscribe(this.handleMouseDown.bind(this));
+		grid.onMouseMove.subscribe(this.handleMouseMove.bind(this));
+		grid.onMouseUp.subscribe(this.handleMouseUp.bind(this));
+		grid.onKeyDown.subscribe(this.handleKeyDown.bind(this));
 
 		return ['Selection'];
 	}

@@ -69,7 +69,7 @@ class PagingListView extends Component{
           <div style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
             <HeaderView/>
             {(data.length === 0 && !this.props.busy)  ? <EmptyView/> : <div style={{flex: 1, flexDirection: 'column', overflow : 'scroll'}} onScroll={this._onScroll}>
-              {data.map( c => <RowView row={c} {...rest}/>)}
+              {data.map( c => <RowView key={c.rowId} row={c} {...rest}/>)}
               {this.props.busy ? <PaginationWaitingView {...rest}/> : null}
             </div >}
           </div>

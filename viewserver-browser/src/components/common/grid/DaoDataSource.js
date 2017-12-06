@@ -1,27 +1,27 @@
 import {Rx} from 'common/rx';
+import RxDataSink from 'common/dataSinks/RxDataSink';
 
 export default class DaoDataSource{
     constructor(dao){
         this.dao = dao;
-        this.dataSink = dao.dataSink;
         this.view = {}
         this.view.request = this.handleDataRequest.bind(this);
         this.dataRequestedSubject = new Rx.Subject();
         this.onResized = new Rx.Subject();
         this.onChanged = new Rx.Subject();
         this.columnsChanged = new Rx.Subject();
+        this.dao.rawDataObservable.subscribe(this.handleDataSinkUpdate.bind(this));
     }
-
   
     handleDataSinkUpdate(evt){
         switch(evt.Type) {
             case RxDataSink.SNAPSHOT_COMPLETE:
-                this.onChanged(this.pendingRequest)
+                this.onChanged.next(this.getPendingRequest())
                 this.pendingSnapshotComplete = false;
                 this.pendingRequest = undefined;
                 break;
             case RxDataSink.DATA_RESET:
-                this.onChanged({rowStart : 0, rowEnd : this.dataSink.rows.size,colStart : undefined,colEnd : undefined})
+                this.onChanged.next({rowStart : 0, rowEnd : this.dao.dataSink.rows.length,colStart : undefined,colEnd : undefined})
                 break;
             case RxDataSink.TOTAL_ROW_COUNT:
                 this.onResized.next();
@@ -32,8 +32,8 @@ export default class DaoDataSource{
             case RxDataSink.ROW_UPDATED:
             case RxDataSink.ROW_REMOVED:
                 if(!this.pendingSnapshotComplete){
-                    const rowIndex = this.dataSink._getRowIndex(evt.rowId);
-                    this.onChanged({rowStart : rowIndex ,rowEnd : rowIndex  + 1,colStart : undefined,colEnd : undefined})
+                    const rowIndex = this.dao.dataSink._getRowIndex(evt.rowId);
+                    this.onChanged.next({rowStart : rowIndex ,rowEnd : rowIndex  + 1,colStart : undefined,colEnd : undefined})
                 }
             case RxDataSink.COLUMN_REMOVED:
             case RxDataSink.COLUMN_ADDED:
@@ -45,10 +45,28 @@ export default class DaoDataSource{
         }
     }
 
+    getPendingRequest(){
+        if(this.pendingRequest){
+            return this.pendingRequest;
+        }
+        if(!this.dao.options){
+            throw new Error("not sure how you can have a snapshot complete with no options on the dao")
+        }
+        return this.createPendingRequestFromOptions(this.dao.options);
+    }
+
+    createPendingRequestFromOptions({offset,limit}){
+        return {rowStart : offset, rowEnd : limit};
+    }
+
     handleDataRequest(rowStart,rowEnd,colStart,colEnd){
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
         this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
+    }
+
+    get dataSink(){
+        return this.dao.dataSink || {};
     }
 
     get(index){
@@ -60,7 +78,15 @@ export default class DaoDataSource{
     }
 
     get columns(){
-        return this.dataSink.schema.columns;
+        return this.dataSink.schema ? this.mapColumns(this.dataSink.schema.columns) : [];
+    }
+
+    mapColumns(cols = []){
+        const result = [];
+        cols.forEach(
+            col => result.push({...col, width : 100})
+        );
+        return result;
     }
 
     getKey(row){

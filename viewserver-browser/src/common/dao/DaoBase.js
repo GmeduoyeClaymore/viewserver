@@ -9,6 +9,7 @@ export default class Dao {
   constructor(daoContext) {
     this.daoContext = daoContext;
     this.subject = new Rx.Subject();
+    this.rawDataSubject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.dataSinkRegistered = new Rx.Subject();
     this.options = this.daoContext.defaultOptions;
@@ -23,6 +24,10 @@ export default class Dao {
     
   get observable(){
     return this.subject;
+  }
+    
+  get rawDataObservable(){
+    return this.rawDataSubject;
   }
     
   get optionsObservable(){
@@ -53,6 +58,9 @@ export default class Dao {
       if (this.rowEventSubscription){
         this.rowEventSubscription.unsubscribe();
       }
+      if (this.rawDataEventSubscription){
+        this.rawDataEventSubscription.unsubscribe();
+      }
       this.dataSink = this.daoContext.createDataSink(newOptions);
       this.dataSinkRegistered.next(this.dataSink);
       const client = await GetConnectedClientFromLoginDao(this.daoContext);
@@ -61,6 +69,7 @@ export default class Dao {
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       const _this = this;
       this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink)).subscribe(ev => this.subject.next(ev));
+      this.rawDataEventSubscription = this.dataSink.dataSinkUpdated.subscribe(ev => this.rawDataSubject.next(ev));
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);
     }
         

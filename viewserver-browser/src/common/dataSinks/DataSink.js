@@ -60,6 +60,9 @@ export default class DataSink {
 
   onRowUpdated(rowId, row){
     const rowIndex = this._getRowIndex(rowId);
+    if(!~rowIndex){
+      Logger.info('Row not updated as couldnt get index for row ' + rowId);
+    }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
     Logger.info('Row updated - ' + JSON.stringify(row));
   }
@@ -105,7 +108,8 @@ export default class DataSink {
   _getRowIndex(rowId){
     const rowIndex = this.idIndexes[rowId];
     if (typeof rowIndex === 'undefined'){
-      throw new Error("Attempting to remove a row that doesn't exist " + rowId + ' with ' + JSON.stringify(row));
+      Logger.error("Unable to get index from row id" + rowId);
+      return -1;
     }
     return rowIndex;
   }
