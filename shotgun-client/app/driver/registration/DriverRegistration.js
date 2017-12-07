@@ -29,7 +29,7 @@ class DriverRegistration extends Component {
       <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...rest} context={this} next="VehicleDetails"/>} />
       <Route path={`${match.path}/VehicleDetails`} exact render={() => <VehicleDetails {...rest} context={this}/>} />
       <Route path={`${match.path}/DriverRegistrationConfirmation`} exact render={() => <DriverRegistrationConfirmation {...rest} context={this}/>} />
-      <Redirect to={`${match.path}/DriverRegistrationConfirmation`}/>
+      <Redirect to={`${match.path}/UserDetails`}/>
     </Switch>;
   }
 }

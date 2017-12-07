@@ -1,4 +1,4 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -21,9 +21,10 @@
     cvv: undefined,
     isDefault: true
   }
-};*/
+};
 
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
@@ -48,3 +49,4 @@ export const INITIAL_STATE = {
   }
 };
 
+*/

@@ -1,5 +1,7 @@
-1 - Follow instructions at https://facebook.github.io/react-native/docs/getting-started.html "Building Projects with Native Code"
-2 - Run Android studio and start IOS emulator as instructed
+1 - Install the Android SDK v 23 and SDK build tools v 23.0.1 (by installing the Android Studio https://developer.android.com/studio/index.html)
+2 - Set ANDROID_HOME env variable to the SDK location
+3 - Download and extract the Android NDK http://dl.google.com/android/repository/android-ndk-r10e-windows-x86_64.zip (extracting it to the same place as the SDK is best)
+4 - Set ANDROID_NDK and ANDROID_NDK_HOME env variable to the NDK location
 3 - Ensure view server is running
 4 - Run npm install
-5 - Run chmod 777 run_androidsim_app.sh; ./run_androidsim_app.sh ANDROID_SIM_EMULATOR_NAME
+5 - Run npm run start-app or open the 'android' folder in Android studio and hit run or debug

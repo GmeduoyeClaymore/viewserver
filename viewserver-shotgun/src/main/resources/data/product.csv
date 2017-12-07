@@ -1,4 +1,6 @@
 productId,name,description,categoryId,price,rating
+PROD_Delivery,Delivery,Point to Point Item Delivery,,0,0
+PROD_Disposal,Waste Disposal,Pickup and disposal of waste,,0,0
 PROD_CeCppb2,General Purpose Cement,"For general purpose use in concrete, mortar, render and screed.",c1f5d05d-911d-4305-a26e-287938b1bd03,549,80
 PROD_CeCplb3,Mastercrete Cement 20kg,A CEM II Portland-composite cement suitable for most applications,c1f5d05d-911d-4305-a26e-287938b1bd03,635,60
 PROD_CeCplb4,Extra Rapid Cement 10kg,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes,c1f5d05d-911d-4305-a26e-287938b1bd03,1279,80
