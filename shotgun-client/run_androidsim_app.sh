@@ -1,14 +1,15 @@
-EMULATOR=$1
-
 if [ -n "$EMULATOR" ]; then
-    echo "Starting $EMULATOR"
-	emulator -avd $EMULATOR &
-	sleep 10
+   EMULATOR=$1
 else
-	echo "No AVD specified please specify AVD from list below"
-	emulator -list-avds
+	DEVICES=( $(emulator -list-avds 2>&1 ) )
+	EMULATOR=( ${DEVICES[0]} )
+	echo "No AVD specified running emulator $EMULATOR"
 fi
 
+echo "Starting $EMULATOR"
+emulator -avd $EMULATOR &
+sleep 10
+
 adb reverse tcp:7007 tcp:7007
-adb reverse tcp:8080 tcp:8080
+adb reverse tcp:6060 tcp:6060
 react-native run-android

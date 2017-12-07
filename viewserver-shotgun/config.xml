@@ -9,7 +9,7 @@
                 <endpoints>
                     <endpoint>tcp://0.0.0.0:18000</endpoint>
                     <!--<endpoint>ipc://master.viewserver.ipc</endpoint>-->
-                    <endpoint>ws://0.0.0.0:8081</endpoint>
+                    <endpoint>ws://0.0.0.0:6060</endpoint>
                 </endpoints>
             </master>
 

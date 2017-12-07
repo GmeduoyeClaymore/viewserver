@@ -24,7 +24,7 @@
                 <endpoints>
                     <endpoint>tcp://0.0.0.0:18000</endpoint>
                     <endpoint>ipc://master.viewserver.ipc</endpoint>
-                    <endpoint>ws://127.0.0.1:8081</endpoint>
+                    <endpoint>ws://127.0.0.1:6060</endpoint>
                 </endpoints>
             </master>
 

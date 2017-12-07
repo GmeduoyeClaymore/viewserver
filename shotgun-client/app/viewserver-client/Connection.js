@@ -137,8 +137,8 @@ export default class Connection {
         return;
       }
 
-  
-      const msg = ProtoLoader.Dto.MessageDto.decode(evt.data);
+
+      const msg = ProtoLoader.Dto.MessageDto.decode(new Uint8Array(evt.data));
       Logger.fine('decoded');
 
       switch (msg.message) {
