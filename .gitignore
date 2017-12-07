@@ -30,5 +30,4 @@ node_modules
 out
 threadDumps
 /shotgun-client/haste-map-react-native-packager-*
-shotgun-client/android/.gradle
 
