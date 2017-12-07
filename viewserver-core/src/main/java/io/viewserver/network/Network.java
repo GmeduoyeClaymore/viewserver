@@ -379,7 +379,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
                 if (lastPing > -1) {
-                    if (now - lastPing > (interval *2) ) {
+                    if (now - lastPing > (interval) ) {
                         // timeout!
                         log.debug("Session {} timed out!", peerSession.getConnectionId());
                         // TODO: correctly handle client-to-server sessions

@@ -24,6 +24,9 @@ class LandingCommon extends Component {
     if (busy){
       return <LoadingScreen text="Logging You In"/>;
     }
+    if(!user){
+      return <LoadingScreen text="Cannot find user on server clear storage then try again"/>;
+    }
     switch (user.type){
     case 'driver':
       return <Redirect to="/Driver/Landing"/>;

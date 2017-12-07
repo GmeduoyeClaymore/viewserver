@@ -53,7 +53,13 @@ export default class ViewServerGrid extends Component {
         Logger.info(`Waiting for creation of dataSink for DAO ${this.props.daoName}`)
         const dataSink = await dao.getDataSink();
         const dataSource = new DaoDataSource(dao);
+        dataSource.columnsChanged.subscribe(this.setColumns.bind(this));
         this.setState({dataSource});
+    }
+
+    setColumns(columns){
+        const {dataSource} = this.state;
+        this.setState({columns : dataSource.columns});
     }
 
     componentWillUnmount(){

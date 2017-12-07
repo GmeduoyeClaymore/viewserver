@@ -26,7 +26,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false
     };
-    this.client = new Client('ws://localhost:8080/');
+    this.client = new Client('ws://localhost:6060/');
     this.dispatch = store.dispatch;
   }
 

@@ -1,5 +1,6 @@
 import {Rx} from 'common/rx';
 import RxDataSink from 'common/dataSinks/RxDataSink';
+import Logger from 'common/Logger';
 
 export default class DaoDataSource{
     constructor(dao){
@@ -59,10 +60,14 @@ export default class DaoDataSource{
         return {rowStart : offset, rowEnd : limit};
     }
 
-    handleDataRequest(rowStart,rowEnd,colStart,colEnd){
+    async handleDataRequest(rowStart,rowEnd,colStart,colEnd){
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
-        this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
+        try{
+            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
+        }catch(exception){
+            Logger.warn(`Issue updating subscription ${exception}. Options have been updated though.`)
+        }
     }
 
     get dataSink(){
@@ -78,18 +83,18 @@ export default class DaoDataSource{
     }
 
     get columns(){
-        return this.dataSink.schema ? this.mapColumns(this.dataSink.schema.columns) : [];
+        return this.dataSink.schema ? this.mapColumns(this.dataSink.schema) : [];
     }
 
-    mapColumns(cols = []){
+    mapColumns(cols = {}){
         const result = [];
-        cols.forEach(
-            col => result.push({...col, width : 100})
+        Object.values(cols).forEach(
+            col => result.push({...col,key:col.name, title: col.name, width : 100})
         );
         return result;
     }
 
     getKey(row){
-        return row.rowId;
+        return row ? row.rowId : undefined;
     }
 }

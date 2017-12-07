@@ -124,13 +124,14 @@ export default class HeaderCell extends Component {
             width: width + 'px'
         };
 
+
+        const sortIndicator = column.sorted && column.sortable ? ' ' + (column.sorted === 'asc' ? '↑' : '↓') : '';
+
         const cellContentStyle = {
             lineHeight: height + 'px',
             fontSize: fontSize,
             paddingLeft: sortIndicator && 14
         };
-
-        const sortIndicator = column.sorted && column.sortable ? ' ' + (column.sorted === 'asc' ? '↑' : '↓') : '';
 
         // render
         return <div className={cx(cellClassName, 'HeaderCell')}

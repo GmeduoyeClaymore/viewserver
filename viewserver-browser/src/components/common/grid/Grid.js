@@ -108,10 +108,7 @@ export default class Grid {
 	}
 
 	get columns() {
-		if(!this.dataSource){
-			return [];
-		}
-		return this.dataSource.columns;
+		return this.options.columns;
 	}
 
 	get onClick() {
@@ -375,35 +372,35 @@ export default class Grid {
 		this._updateViewPortData();
 	}
 
-	_mergeOptions(target, options) {
-		let { columnMetrics, rowMetrics, rowHeight, dataSource, ...rest } = options;
-		const {columns } = this;
+	_mergeOptions(existingOptions, newOptions) {
+		let { columnMetrics, rowMetrics, rowHeight, dataSource, ...rest } = newOptions;
+		const {columns } = newOptions;
 
-		const parsed = {
+		const modifiedOptions = {
 			// take current options
-			...target,
+			...existingOptions,
 			// copy the rest (e.g. ones we don't care about so much)
 			...rest
 		};
 
 		// select columns to use
-		parsed.columns = columns || target.columns || [];
+		modifiedOptions.columns = columns || existingOptions.columns || [];
 
 		// select columnsf metrics to use
-		if (parsed.columns !== target.columns) {
+		if (modifiedOptions.columns !== existingOptions.columns) {
 			columnMetrics = columnMetrics || new ColumnMetrics(columns);
 		}
-		parsed.columnMetrics = columnMetrics || target.columnMetrics;
+		modifiedOptions.columnMetrics = columnMetrics || existingOptions.columnMetrics;
 
 		// select datasource
-		parsed.dataSource = dataSource || target.dataSource;
-		const rowCount = parsed.dataSource && parsed.dataSource.size || 0;
+		modifiedOptions.dataSource = dataSource || existingOptions.dataSource;
+		const rowCount = modifiedOptions.dataSource && modifiedOptions.dataSource.size || 0;
 
 		// select row metrics to use (can be based on explicit row metrics or rowHeight)
-		if (!rowMetrics && rowHeight && (!target.rowMetrics || target.rowMetrics.rowHeight !== rowHeight)) {
+		if (!rowMetrics && rowHeight && (!existingOptions.rowMetrics || existingOptions.rowMetrics.rowHeight !== rowHeight)) {
 			rowMetrics = new RowMetrics(rowHeight, rowCount);
 		}
-		parsed.rowMetrics = rowMetrics = rowMetrics || target.rowMetrics || new RowMetrics(24, rowCount);
+		modifiedOptions.rowMetrics = rowMetrics = rowMetrics || existingOptions.rowMetrics || new RowMetrics(24, rowCount);
 
 		// update row metrics count
 		let isModified = false;
@@ -413,8 +410,8 @@ export default class Grid {
 		}
 
 		// determine whether anything was modified
-		if (Object.getOwnPropertyNames(parsed).some(name => target[name] !== parsed[name])){
-			Object.assign(target, parsed);
+		if (Object.getOwnPropertyNames(modifiedOptions).some(name => existingOptions[name] !== modifiedOptions[name])){
+			Object.assign(existingOptions, modifiedOptions);
 			isModified = true;
 		}
 
