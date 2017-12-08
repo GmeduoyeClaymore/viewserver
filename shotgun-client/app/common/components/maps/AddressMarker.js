@@ -1,22 +1,19 @@
-import React, {Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import React from 'react';
+import {View, Text} from 'react-native';
 
-export default class PriceMarker extends Component {
-  render() {
-    const {address} = this.props;
-    return (
-      <View style={styles.container}>
-        <View style={styles.bubble}>
-          <Text numberOfLines={1} style={styles.amount}>{address}</Text>
-        </View>
-        <View style={styles.arrowBorder} />
-        <View style={styles.arrow} />
+export default AddressMarker = ({address}) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.bubble}>
+        <Text numberOfLines={1} style={styles.amount}>{address}</Text>
       </View>
-    );
-  }
-}
+      <View style={styles.arrowBorder} />
+      <View style={styles.arrow} />
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flexDirection: 'column',
     alignSelf: 'flex-start',
@@ -52,4 +49,4 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: -0.5,
   },
-});
+};
