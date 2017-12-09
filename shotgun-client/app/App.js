@@ -34,14 +34,16 @@ export default class App extends React.Component {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
+      this.setState({ error : undefined});
       await ProtoLoader.loadAll();
-      await this.setUserId();
       this.setInitialRoot();
       Logger.debug('Mounting App Component');
       await this.client.connect();
       isConnected = true;
+      await this.setUserId()
     } catch (error){
-      Logger.debug('Unable to connect to server');
+      Logger.debug('Connection error - ' + error);
+      this.setState({ error});
     }
     Logger.debug('App Component Mounted');
     this.setState({ isReady: true, isConnected });
@@ -61,11 +63,12 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (!this.state.isReady) {
+    const {isReady,isConnected,error} = this.state;
+    if (!isReady) {
       return <LoadingScreen text="Connecting"/>;
-    } else if (!this.state.isConnected){
+    } else if (!isConnected){
       return  <Container style={{flexDirection: 'column', flex: 1}}>
-        <Text>Uh-oh spaghetti-Os. Unable to connect to the server</Text>
+        <Text>{error}</Text>
       </Container>;
     }
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};

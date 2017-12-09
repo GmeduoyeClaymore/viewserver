@@ -16,3 +16,7 @@ Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
 Rx.Observable.prototype.filterRowEvents = function () {
   return this.filter(ev => !!~DOMAIN_EVENT_TYPES.indexOf(ev.Type));
 };
+
+Promise.prototype.timeoutWithError = function(timeout, error){
+  return Rx.Observable.fromPromise(this).take(1).timeoutWithError(timeout, error).toPromise();
+}

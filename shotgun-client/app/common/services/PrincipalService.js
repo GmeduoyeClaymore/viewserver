@@ -6,11 +6,11 @@ export default class PrincipalService {
 
   static async getUserIdFromDevice(){
     try {
-      const userId = await AsyncStorage.getItem(PrincipalService.userIdKey);
+      const userId = await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(5000,'Unable to find get userid within 5 second timespan');
       return userId;
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error getting user id from device');
+      Logger.error('Error getting user id from device ' + error);
     }
   }
 
