@@ -26,6 +26,7 @@ release.properties
 *.iml
 .tmp
 
+npm-debug.log
 node_modules
 out
 threadDumps

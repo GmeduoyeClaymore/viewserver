@@ -30,12 +30,14 @@ build/
 local.properties
 *.iml
 .gradle
-
+android/build
 # node.js
 #
 node_modules/
+
 npm-debug.log
 yarn-error.log
+package-lock_.json
 
 
 # BUCK
