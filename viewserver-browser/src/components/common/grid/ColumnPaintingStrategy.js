@@ -1,10 +1,10 @@
 import CanvasDrawing from './CanvasDrawing';
 
 class ColumnDrawing {
-	constructor(columnIndex, column) {
+	constructor(columnIndex, columnDefinition) {
 		this.rows = [];
 		this.columnIndex = columnIndex;
-		this.column = column;
+		this.columnDefinition = columnDefinition;
 		this.rowIndex = -1;
 	}
 
@@ -41,9 +41,9 @@ class GridPaintContext {
 		this.timestamp = Date.now();
 	}
 
-	setCell(dataSource, rowIndex, columnIndex) {
+	setCell(columnDefinitions, dataSource, rowIndex, columnIndex) {
 		this.dataSource = dataSource;
-		this.column = dataSource.columns[columnIndex];
+		this.column = columnDefinitions[columnIndex];
 		this.columnIndex = columnIndex;
 		this.row = dataSource.get(rowIndex);
 		this.rowIndex = rowIndex;
@@ -85,7 +85,7 @@ export default class ColumnPaintingStrategy {
 
 			// store the column drawing object
 			result = items[index] = new ColumnDrawing(columnIndex,
-				this.grid.columns[columnIndex]);
+				this.grid.columnDefinitions[columnIndex]);
 		}
 
 		// return
@@ -94,8 +94,8 @@ export default class ColumnPaintingStrategy {
 
 	renderColumn(item) {
 		const visibleRange = this.visibleRange;
-		const {dataSource} = this.grid;
-		const renderer = item.column.render;
+		const {dataSource, columnDefinitions} = this.grid;
+		const renderer = item.columnDefinition.render;
 
 		/*
 			We clip by column (trusting cells not to draw out of their bounds horizontally) as this
@@ -107,9 +107,9 @@ export default class ColumnPaintingStrategy {
 			const rowIndex = item.rows[i];
 			const row = dataSource.get(rowIndex);
 			if (row) {
-				this._context.setCell(dataSource, rowIndex, item.columnIndex);
+				this._context.setCell(columnDefinitions, dataSource, rowIndex, item.columnIndex);
 				const bounds = this.viewPort.clientRectFromRange(rowIndex, item.columnIndex, rowIndex, item.columnIndex);
-				item.column.render(this._context, bounds);
+				item.columnDefinition.render(this._context, bounds);
 				if (this._context.isAnimated) {
 					this.grid._dirtyAnimationRanges.invalidate(rowIndex, item.columnIndex, rowIndex, item.columnIndex);
 				}

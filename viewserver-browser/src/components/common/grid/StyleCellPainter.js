@@ -7,7 +7,7 @@ export const DEFAULT_STYLE = Style.create({
 	borderRightWidth: 1,
 	borderBottomWidth: 1,
 	borderColor: 'white',
-	color: 'white',
+	color: 'black',
 	marginLeft: 6,
 	marginRight: 6
 });

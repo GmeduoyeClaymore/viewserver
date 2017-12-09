@@ -66,7 +66,7 @@ export default class DaoDataSource{
         try{
             await this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
         }catch(exception){
-            Logger.warn(`Issue updating subscription ${exception}. Options have been updated though.`)
+            Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
         }
     }
 

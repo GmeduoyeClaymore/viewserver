@@ -39,16 +39,16 @@ export default class GridView extends Component {
     }
 
     mergeState(props) {
-        const columns = (props.columns && ColumnDefinition.from(props.columns)) || [];
+        const columnDefinitions = (props.columns && ColumnDefinition.from(props.columns)) || [];
         return {
-            columns,
+            columnDefinitions,
             columnInfo: {
                 // set default resize index
                 resizeIndex: -1,
                 // inherit any existing state
                 ...(this.state && this.state.columnInfo),
                 // override metrics as columns have changed
-                metrics: new ColumnMetrics(columns)
+                metrics: new ColumnMetrics(columnDefinitions)
             },
             scrollLeft: this.state && this.state.scrollLeft || 0
         }
@@ -95,10 +95,10 @@ export default class GridView extends Component {
     }
 
     autoSizeColumn = (colIndex, tempSpan) => {
-        const { columns } = this.state;
-        const column = columns[colIndex];
+        const { columnDefinitions } = this.state;
+        const columnDefinition = columnDefinitions[colIndex];
 
-        if (!column.resizable) {
+        if (!columnDefinition.resizable) {
             return;
         }
 
@@ -110,12 +110,12 @@ export default class GridView extends Component {
             destroyTempSpan = true;
         }
 
-        tempSpan.innerText = `${column.title}00000`; // extra 00 because we need to make room for the settings cog icon
+        tempSpan.innerText = `${columnDefinition.title}00000`; // extra 00 because we need to make room for the settings cog icon
         const desiredHeaderWidth = tempSpan.offsetWidth;
         let longestCharCount = 0, longestString = '';
         for (let i = dataSource.view.rowFrom; i < dataSource.view.rowToExclusive; i++) {
             const row = dataSource.get(i);
-            const value = row && row[column.key];
+            const value = row && row[columnDefinition.key];
             if (value !== null && typeof value !== 'undefined') {
                 const string = String(value);
                 if (string.length > longestCharCount) {
@@ -134,9 +134,9 @@ export default class GridView extends Component {
     }
 
     autoSizeColumns = () => {
-        const { columns } = this.state;
+        const { columnDefinitions } = this.state;
         const tempSpan = createTempSpan(this.props);
-        columns.forEach((x, i) => this.autoSizeColumn(i, tempSpan));
+        columnDefinitions.forEach((x, i) => this.autoSizeColumn(i, tempSpan));
         tempSpan.remove();
     }
 
@@ -158,19 +158,19 @@ export default class GridView extends Component {
     }
 
     handleColumnAutoSize(col) {
-        const { columns } = this.state;
-        this.autoSizeColumn(columns.indexOf(col));
+        const { columnDefinitions } = this.state;
+        this.autoSizeColumn(columnDefinitions.indexOf(col));
     }
 
     handleColumnResize(col, width) {
-        let { columnInfo, columns } = this.state;
+        let { columnInfo, columnDefinitions } = this.state;
         let updated = false;
 
-        if (columnInfo.resizeIndex === -1 || columns[columnInfo.resizeIndex] !== col) {
+        if (columnInfo.resizeIndex === -1 || columnDefinitions[columnInfo.resizeIndex] !== col) {
             this._suspendRenderHandle = this._suspendRenderHandle || this.grid.suspendRendering();
             columnInfo = {
                 ...columnInfo,
-                resizeIndex: columns.indexOf(col)
+                resizeIndex: columnDefinitions.indexOf(col)
             };
             updated = true;
         }
@@ -253,7 +253,7 @@ export default class GridView extends Component {
 
             // now set the final state metrics/columns
             options.columnMetrics = state.columnInfo.metrics;
-            options.columns = state.columns;
+            options.columnDefinitions = state.columnDefinitions;
         }
 
         // let grid process changes
@@ -267,7 +267,7 @@ export default class GridView extends Component {
         const grid = this.grid = new Grid(ReactDom.findDOMNode(this.container), {
             ...this.props,
             // use state derived columns and metrics
-            columns: this.state.columns,
+            columnDefinitions: this.state.columnDefinitions,
             columnMetrics: this.state.columnInfo.metrics,
             behaviors: [
                 this.selectionBehavior
@@ -346,6 +346,10 @@ export default class GridView extends Component {
         });
     }
 
+    setState(nextState){
+        super.setState(nextState);
+    }
+
     handleBlur(e) {
         this.setState({
             focused: false
@@ -353,7 +357,7 @@ export default class GridView extends Component {
     }
 
     render() {
-        const { columns, columnInfo, scrollLeft } = this.state;
+        const { columnDefinitions, columnInfo, scrollLeft } = this.state;
         const { rowHeight, headerHeight, fontSize, renderHeaderCell, renderHeaderCellProps, renderHeaderCellTitle, dataTestType } = this.props;
         const className = cx('canv-grid-container', {
             'canv-grid-container--focused': this.state.focused
@@ -362,12 +366,10 @@ export default class GridView extends Component {
             ref="root"
             className={className}
             tabIndex="0"
-            onFocus={this.handleFocus}
-            onBlur={this.handleBlur}
             style={style} >
             <Header
                 ref={header => this.header = header}
-                columns={columns}
+                columns={columnDefinitions}
                 renderCell={renderHeaderCell}
                 renderCellProps={renderHeaderCellProps}
                 renderCellTitle={renderHeaderCellTitle}

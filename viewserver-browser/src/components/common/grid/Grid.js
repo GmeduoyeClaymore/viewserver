@@ -26,10 +26,10 @@ const GridTemplate = `<div class="canv-grid" >
 const styles = {
 	row: StyleSheet.create({
 		odd: {
-			background: 'rgb(37, 48, 56)'
+			background: 'rgb(255, 255, 255)'
 		},
 		even: {
-			background: 'rgb(48, 58, 66)'
+			background: 'rgb(255, 255, 255)'
 		},
 		hover: {
 			background: '#269793'
@@ -107,8 +107,8 @@ export default class Grid {
 		return this.viewPort.columnMetrics;
 	}
 
-	get columns() {
-		return this.options.columns;
+	get columnDefinitions() {
+		return this.options.columnDefinitions;
 	}
 
 	get onClick() {
@@ -374,7 +374,7 @@ export default class Grid {
 
 	_mergeOptions(existingOptions, newOptions) {
 		let { columnMetrics, rowMetrics, rowHeight, dataSource, ...rest } = newOptions;
-		const {columns } = newOptions;
+		const {columnDefinitions } = newOptions;
 
 		const modifiedOptions = {
 			// take current options
@@ -384,11 +384,11 @@ export default class Grid {
 		};
 
 		// select columns to use
-		modifiedOptions.columns = columns || existingOptions.columns || [];
+		modifiedOptions.columnDefinitions = columnDefinitions || existingOptions.columnDefinitions || [];
 
 		// select columnsf metrics to use
-		if (modifiedOptions.columns !== existingOptions.columns) {
-			columnMetrics = columnMetrics || new ColumnMetrics(columns);
+		if (modifiedOptions.columnDefinitions !== existingOptions.columnDefinitions) {
+			columnMetrics = columnMetrics || new ColumnMetrics(columnDefinitions);
 		}
 		modifiedOptions.columnMetrics = columnMetrics || existingOptions.columnMetrics;
 
@@ -456,7 +456,7 @@ export default class Grid {
 			Notify (don't send added and removed yet as
 			these are NOT accurate but good enough to render correctly, needs fixing)
 		*/
-		this._selectionChanged.dispatch();
+		this._selectionChanged.next();
 	}
 
 	_addDisposable(value) {
@@ -548,7 +548,7 @@ export default class Grid {
 	}
 
 	_getColumn(columnIndex) {
-		return columnIndex >= 0 && columnIndex < this.columns.length ? this.columns[columnIndex] : undefined;
+		return columnIndex >= 0 && columnIndex < this.columnDefinitions.length ? this.columnDefinitions[columnIndex] : undefined;
 	}
 
 	_getRowData(rowIndex) {
@@ -572,7 +572,7 @@ export default class Grid {
 		// extract column
 		let column;
 		if (columnIndex >= 0) {
-			column = this.columns[columnIndex];
+			column = this.columnDefinitions[columnIndex];
 		}
 
 		// extract row data
@@ -658,7 +658,7 @@ export default class Grid {
 
 			// leaving a cell?
 			if (oldValue.isValid) {
-				this._mouseLeave.dispatch({
+				this._mouseLeave.next({
 					...e,
 					columnIndex: oldValue.columnIndex,
 					rowIndex: oldValue.rowIndex,
@@ -705,7 +705,7 @@ export default class Grid {
 			   There should be no need to reset tracking as we are verifying that there are at least
 			   two mouse downs on the same cell within the timeframe of a native "click".
 			*/
-			this._click.dispatch(e);
+			this._click.next(e);
 		}
 	}
 
@@ -716,7 +716,7 @@ export default class Grid {
 				There should be no need to reset tracking as we are verifying that there are at least
 			   two mouse downs on the same cell within the timeframe of a native "dblclick".
 			*/
-			this._dblClick.dispatch(e);
+			this._dblClick.next(e);
 		}
 	}
 
@@ -740,12 +740,12 @@ export default class Grid {
 	}
 
 	invalidateRows(rowStart, rowEnd) {
-		this.invalidate({rowStart, colStart: 0, rowEnd, colEnd : this.columns.length - 1});
+		this.invalidate({rowStart, colStart: 0, rowEnd, colEnd : this.columnDefinitions.length - 1});
 	}
 
 	invalidateRow(index) {
 		if (index >= 0 && index < this.rowMetrics.count) {
-			this.invalidate({rowStart : index, colStart: 0, rowEnd  : index, colEnd : this.columns.length - 1});
+			this.invalidate({rowStart : index, colStart: 0, rowEnd  : index, colEnd : this.columnDefinitions.length - 1});
 		}
 	}
 
@@ -819,7 +819,7 @@ export default class Grid {
 	_renderBackground() {
 		const { visibleRange, viewPort, context } = this;
 
-		context.fillStyle = 'rgb(37, 48, 56)';
+		context.fillStyle = 'rgb(255, 255, 255)';
 		context.beginPath();
 		if (visibleRange) {
 			var rect = viewPort.clientRectFromRange(
@@ -932,7 +932,7 @@ export default class Grid {
 
 	_handleScrolled(e) {
 		this._updateViewPortLocation();
-		this._scroll.dispatch({
+		this._scroll.next({
 			trigger: e,
 			left: this.viewPort.left,
 			top: this.viewPort.top

@@ -19,11 +19,11 @@ export default function tooltipBehavior({ delay }) {
 	}
 
 	function _getToolTip() {
-		const { dataSource, columns } = _grid;
+		const { dataSource, columnDefinitions } = _grid;
 		const row = dataSource.get(_hoverCell.rowIndex);
 		if (row) {
-			const column = columns[_hoverCell.columnIndex];
-			return column && column.getToolTip && column.getToolTip(row) || null;
+			const columnDefinition = columnDefinitions[_hoverCell.columnIndex];
+			return columnDefinition && columnDefinition.getToolTip && columnDefinition.getToolTip(row) || null;
 		}
 	}
 

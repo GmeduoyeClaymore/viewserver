@@ -19,7 +19,7 @@ export default class ColumnDefinition {
 				if (column instanceof ColumnDefinition) {
 					return column;
 				}
-
+``
 				if (typeof column === 'string') {
 					return new ColumnDefinition({
 						...options,
@@ -97,6 +97,10 @@ export default class ColumnDefinition {
 
 	getRenderer() {
 		return defaultPaint;
+	}
+
+	render(ctxt, paint){
+		return this.getRenderer()(ctxt, paint);
 	}
 }
 

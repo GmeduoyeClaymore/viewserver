@@ -19,7 +19,7 @@ const Login = (props) => {
   return (
     <div>
       <h1>Login To ViewServer</h1>
-      <LoginForm url="localhost:8081" username="foo" password="bar" {...props}/>
+      <LoginForm url="localhost:6060" username="foo" password="bar" {...props}/>
     </div>
   );
 }
@@ -95,7 +95,7 @@ class LoginForm extends Component {
           <ValidatingInput validationSchema={validationSchema.username} label="Username" placeholder="Username" value={this.state.username} onChange={ (value) => { this.setState({username: value}); } } />
           <ValidatingInput validationSchema={validationSchema.password} label="Password" placeholder="Password" value={this.state.password} onChange={ (value) => { this.setState({password: value}); } } />
           <ValidatingInput validationSchema={validationSchema.url} label="Url" value={this.state.url} onChange={ (value) => { this.setState({url: value}); } } options={[
-            {value: "localhost:8081", label: "DEV"},
+            {value: "localhost:6060", label: "DEV"},
           ]} />
         </div>
 
