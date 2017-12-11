@@ -1,6 +1,9 @@
 // Modules
 import React from 'react';
 import { render } from 'react-dom';
+import {webFrame}  from 'electron';
+
+
 
 // Global CSS
 import "./assets/css/globals.css";
@@ -13,6 +16,10 @@ import { components } from './components/components.js';
 let root = document.createElement('div');
 root.id = "root";
 document.body.appendChild( root );
+webFrame.setZoomFactor(1)
+webFrame.setVisualZoomLevelLimits(1, 1);
+webFrame.setLayoutZoomLevelLimits(0, 0);
+
 
 // Now we can render our application into it. Main entry point is always the 'Core' component
 render( <components.Core />, document.getElementById('root') );

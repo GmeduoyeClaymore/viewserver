@@ -21,6 +21,7 @@ export default class LoginDao {
     this.subject = new Rx.Subject();
     this.clientsubject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
+    this.rawDataSubject = new Rx.Subject();
     this.name = "loginDao";
 
     this.login = this.login.bind(this);
@@ -32,6 +33,10 @@ export default class LoginDao {
     
   get optionsObservable(){
     return this.optionsSubject;
+  }
+    
+  get rawDataObservable(){
+    return this.rawDataSubject;
   }
 
   async login(options){

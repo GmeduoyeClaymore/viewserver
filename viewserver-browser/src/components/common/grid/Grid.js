@@ -494,6 +494,7 @@ export default class Grid {
 
 		// make disposable
 		this._bindDomEvent(viewPort, 'scroll')
+			.debounceTime(5)
 			.subscribe(this._handleScrolled.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
@@ -540,7 +541,7 @@ export default class Grid {
 
 	_unbindElement() {
 		// clear disposables
-		this._disposables.forEach(x => x.dispose());
+		this._disposables.forEach(x => x.unsubscribe());
 		this._disposables.length = 0;
 
 		// remove content

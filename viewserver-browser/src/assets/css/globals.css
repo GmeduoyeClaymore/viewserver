@@ -8,7 +8,6 @@
 
 .flex{
   flex : 1
-  
 }
 
 
@@ -131,7 +130,7 @@ top: 3px;
 padding: 0 3px;
 border-radius: 2px;
 text-shadow: none;
-border: 1px solid rgb(255, 255, 255);;
+border: 1px solid rgba(255,255,255,0.2);
 pointer-events: none;
 }
 
@@ -157,7 +156,7 @@ pointer-events: none;
   right:-4px;
   width:8px;
   bottom:0;
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(180,180,180,0.05);
   z-index:1;
 }
 
@@ -166,7 +165,7 @@ pointer-events: none;
   overflow: hidden;
   width: 100%;
   position: relative;
-  background: rgba(255, 255, 255, 0.6);
+  background: transparent;
   user-select: none;
   -webkit-user-select: none;
 }

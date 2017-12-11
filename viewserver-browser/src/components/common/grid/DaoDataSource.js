@@ -1,5 +1,5 @@
 import {Rx} from 'common/rx';
-import RxDataSink from 'common/dataSinks/RxDataSink';
+import * as RxConstants from 'common/rx';
 import Logger from 'common/Logger';
 
 export default class DaoDataSource{
@@ -16,32 +16,32 @@ export default class DaoDataSource{
   
     handleDataSinkUpdate(evt){
         switch(evt.Type) {
-            case RxDataSink.SNAPSHOT_COMPLETE:
+            case RxConstants.SNAPSHOT_COMPLETE:
                 this.onChanged.next(this.getPendingRequest())
                 this.pendingSnapshotComplete = false;
                 this.pendingRequest = undefined;
                 break;
-            case RxDataSink.DATA_RESET:
+            case RxConstants.DATA_RESET:
                 this.onChanged.next({rowStart : 0, rowEnd : this.dao.dataSink.rows.length,colStart : undefined,colEnd : undefined})
                 break;
-            case RxDataSink.TOTAL_ROW_COUNT:
+            case RxConstants.TOTAL_ROW_COUNT:
                 this.onResized.next();
                 break;
-            case RxDataSink.SCHEMA_RESET:
+            case RxConstants.SCHEMA_RESET:
                 break;
-            case RxDataSink.ROW_ADDED:
-            case RxDataSink.ROW_UPDATED:
-            case RxDataSink.ROW_REMOVED:
+            case RxConstants.ROW_ADDED:
+            case RxConstants.ROW_UPDATED:
+            case RxConstants.ROW_REMOVED:
                 if(!this.pendingSnapshotComplete){
                     const rowIndex = this.dao.dataSink._getRowIndex(evt.rowId);
                     this.onChanged.next({rowStart : rowIndex ,rowEnd : rowIndex  + 1,colStart : undefined,colEnd : undefined})
                 }
-            case RxDataSink.COLUMN_REMOVED:
-            case RxDataSink.COLUMN_ADDED:
+            case RxConstants.COLUMN_REMOVED:
+            case RxConstants.COLUMN_ADDED:
                 this.columnsChanged.next();
                 break;
-            case RxDataSink.ERROR:
-            case RxDataSink.SUCCESS:
+            case RxConstants.ERROR:
+            case RxConstants.SUCCESS:
                 break;
         }
     }
@@ -64,7 +64,7 @@ export default class DaoDataSource{
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
         try{
-            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
+            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd+1});
         }catch(exception){
             Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
         }
@@ -75,7 +75,7 @@ export default class DaoDataSource{
     }
 
     get(index){
-        return this.dataSink.rows[index];
+        return this.dataSink.rows.find(r => r.rank === index);
     }
 
     get size(){
@@ -89,7 +89,7 @@ export default class DaoDataSource{
     mapColumns(cols = {}){
         const result = [];
         Object.values(cols).forEach(
-            col => result.push({...col,key:col.name, title: col.name, width : 100})
+            col => result.push({...col,key:col.name, title: col.name, width : 180})
         );
         return result;
     }

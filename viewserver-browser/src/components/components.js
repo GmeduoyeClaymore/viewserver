@@ -3,12 +3,11 @@ import electron from 'electron';
 import { createHashHistory } from 'history';
 import { applyMiddleware, createStore, compose } from 'redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
-import rootReducer from 'custom-redux/RootReducer';
 import thunk from 'redux-thunk';
 import DaoMiddleware from 'custom-redux/DaoMiddleware';
 const Immutable = require("seamless-immutable");
 import {combineReducers} from 'redux-seamless-immutable';
-import {UPDATE_STATE, UPDATE_COMMAND_STATUS, UPDATE_OPTIONS} from 'common/dao/ActionConstants';
+import {UPDATE_STATE, UPDATE_COMMAND_STATUS, UPDATE_OPTIONS, UPDATE_TOTAL_SIZE} from 'common/dao/ActionConstants';
 import {setLocale} from 'yup/lib/customLocale';
 import * as crx from 'common/rx';
 this.crx = crx;//force this to load
@@ -27,7 +26,7 @@ setLocale({
 });
 
 const dao = (state = {}, action) => {
-  if (action.type && (action.type.startsWith(UPDATE_STATE('')) || action.type.startsWith(UPDATE_OPTIONS('')) || action.type.startsWith(UPDATE_COMMAND_STATUS('')))){
+  if (action.type && (action.type.startsWith(UPDATE_STATE('')) || action.type.startsWith(UPDATE_OPTIONS('')) || action.type.startsWith(UPDATE_TOTAL_SIZE(''))|| action.type.startsWith(UPDATE_COMMAND_STATUS('')))){
     return state.setIn(action.path || [], action.data);
   }
   return state;

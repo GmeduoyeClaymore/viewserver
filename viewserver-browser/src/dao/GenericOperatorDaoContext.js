@@ -41,6 +41,10 @@ export default class GenericOperatorDaoContext{
     return !previousOptions || previousOptions.operatorName != newOptions.operatorName;
   }
 
+  extendDao(dao){
+    dao._observable = dao.subject.throttleTime(100)
+  }
+
   transformOptions(options){
     const {operatorName} = options;
     if (!operatorName ){

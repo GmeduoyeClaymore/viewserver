@@ -116,15 +116,18 @@ export default class Network {
     const command = this.openCommands[tableEvent.id];
 
     if (!command) {
-      Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire ' + JSON.stringify(this.openCommands));
+      Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire ');
       return;
     }
 
     const tableMetaData = TableMetaDataMapper.fromDto(tableEvent.metaData);
 
     if (command.handler) {
+
       if (command.handler.onTotalRowCount){
-        command.handler.onTotalRowCount(tableMetaData.totalSize);
+        if(typeof tableMetaData.totalSize !== 'undefined'){
+          command.handler.onTotalRowCount(tableMetaData.totalSize);
+        }
       } else {
         Logger.warning('couldnt find total row count handler');
       }

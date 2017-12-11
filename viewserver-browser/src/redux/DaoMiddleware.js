@@ -1,7 +1,9 @@
 
-import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_OPTIONS, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_OPTIONS, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND, UPDATE_TOTAL_SIZE} from 'common/dao/ActionConstants';
+import RxDataSink from 'common/dataSinks/RxDataSink';
 import Logger from 'common/Logger';
 import {Rx} from 'common/rx'
+import * as RxConstants from 'common/rx';
 
 const DAO_SUBSCRIPTIONS = {};
 const DAO_OPTIONS_SUBSCRIPTIONS = {};
@@ -61,10 +63,13 @@ export default ({ getState, dispatch }) => {
     let daoOptionFunc = c => {
       dispatch({type: UPDATE_OPTIONS(name), path: [name, 'options'], data: c});
     };
-    daoOptionFunc = daoOptionFunc.bind(dao);
     const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);
-    DAO_SUBSCRIPTIONS[name] = sub;
-    DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
+    let daoTotalFunc = ev => {
+      const {count} = ev;
+      dispatch({type: UPDATE_TOTAL_SIZE(name), path: [name, 'total'], data: {count}});
+    };
+    const totalSub = dao.rawDataObservable.filter(ev => ev.Type === RxConstants.TOTAL_ROW_COUNT).subscribe(daoTotalFunc);
+    DAO_SUBSCRIPTIONS[name] = [sub, optionsSub, totalSub];
     if(dao.setRegistrationContext){
       dao.setRegistrationContext(DAO_REGISTRATION_CONTEXT);
     }
@@ -76,7 +81,7 @@ export default ({ getState, dispatch }) => {
     if (!DAOS[name]){
       return;
     }
-    DAO_SUBSCRIPTIONS[name].unsubscribe();
+    DAO_SUBSCRIPTIONS[name].forEach(c=>  c.unsubscribe());
     DAOS[name] = undefined;
     DAO_SUBSCRIPTIONS[name] = undefined;
     DAO_OPTIONS_SUBSCRIPTIONS[name] = undefined;

@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 public class CsvDataAdapter implements IDataAdapter {
     private static final Logger log = LoggerFactory.getLogger(CsvDataAdapter.class);
     protected String fileName;
-    protected int multiple = 1;
+    protected int multiple;
     protected final CsvRecordWrapper recordWrapper;
 
     public CsvDataAdapter() {

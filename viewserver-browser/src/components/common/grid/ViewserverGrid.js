@@ -8,7 +8,7 @@ import Logger from 'common/Logger';
 
 
 const CONTAINER_STYLE = { display: 'flex', flexDirection: 'column', flex: '1', overflow: 'hidden' };
-
+const ROW_HEIGHT = 12;
 function setState(state) {
     this.state = {
         ...this.state,
@@ -75,13 +75,13 @@ export default class ViewServerGrid extends Component {
     }
 
     render() {
-        let baselineHeight = this.context.userHeight + 2;
+        let baselineHeight = ROW_HEIGHT + 2;
         const {dataSource} = this.state;
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
-        return <div ref={grid => {this.gridContainer = grid}} className="flex-col">{this.gridContainer ? <Grid ref={ grid => {this.grid = grid}}
-            rowHeight={this.context.userHeight}
+        return <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">{this.gridContainer ? <Grid ref={ grid => {this.grid = grid}}
+            rowHeight={ROW_HEIGHT}
             headerHeight={baselineHeight}
             element={this.gridContainer}
             fontSize={baselineHeight}

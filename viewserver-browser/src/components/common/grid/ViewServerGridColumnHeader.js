@@ -71,7 +71,7 @@ class ViewServerGridColumnHeaderContent extends Component {
         return showFilter ? (
             <div className="ViewServerGridColumnHeader flex" style={this.style}>
                 {this.renderTitle()}
-                <div className="display-flex flex" style={{ background: 'red' }}>
+                <div className="display-flex flex">
                     <input onClick={this.handleFilterClick} style={InputStyle} onChange={this.handleFilterChanged} value={filter} />
                 </div>
             </div>

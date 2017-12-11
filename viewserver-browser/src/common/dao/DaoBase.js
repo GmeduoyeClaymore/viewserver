@@ -20,10 +20,11 @@ export default class Dao {
     this.page = page(this);
     this.updateSubscription = this.updateSubscription.bind(this);
     this.setRegistrationContext = this.setRegistrationContext.bind(this);
+    this._observable = this.subject;
   }
     
   get observable(){
-    return this.subject;
+    return this._observable;
   }
     
   get rawDataObservable(){
