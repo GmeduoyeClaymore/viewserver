@@ -53,8 +53,6 @@ class ProductActionBar extends Component {
     }
 }
 
-
-
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isOperationPending(state, 'cartItemsDao', 'addItemToCart'),
   errors: getOperationError(state, 'cartItemsDao', 'addItemToCart'),

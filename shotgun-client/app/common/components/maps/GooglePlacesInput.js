@@ -1,33 +1,48 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {View, Text} from 'react-native';
 import GooglePlacesAutocomplete from './GooglePlacesAutocomplete';
 
-export default GooglePlacesInput = ({apiKey, onSelect, style, ...props}) => {
-  return (
-    <GooglePlacesAutocomplete
-      {...props}
-      minLength={2}
-      autoFocus={false}
-      returnKeyType={'search'}
-      listViewDisplayed='auto'
-      fetchDetails={true}
-      renderDescription={row => ResultDescription(row)}
-      renderRow={row => ResultRow(row)} // custom description render
-      onPress={(data, details = null) => onSelect(details)}
-      query={{
-        key: apiKey,
-        language: 'en'
-      }}
-      styles={{...styles, container: style}}
-      currentLocation={false}
-      nearbyPlacesAPI='GooglePlacesSearch'
-      GooglePlacesSearchQuery={{
-        rankby: 'distance'
-      }}
-      debounce={200}
-    />
-  );
-};
+export default class GooglePlacesInput extends Component {
+  constructor (props) {
+    super(props);
+  }
+
+  triggerBlur(){
+    this.input.triggerBlur();
+  }
+
+  render(){
+    const {apiKey, onSelect, style, ...props} = this.props;
+
+    return (
+      <GooglePlacesAutocomplete
+        {...props}
+        ref={c => {this.input = c;}}
+        minLength={2}
+        autoFocus={false}
+        returnKeyType={'search'}
+        listViewDisplayed='auto'
+        fetchDetails={true}
+        renderDescription={row => ResultDescription(row)}
+        renderRow={row => ResultRow(row)} // custom description render
+        onPress={(data, details = null) => onSelect(details)}
+        query={{
+          key: apiKey,
+          language: 'en',
+          types: 'address',
+          components: 'country:uk'
+        }}
+        styles={{...styles, container: style}}
+        currentLocation={false}
+        nearbyPlacesAPI='GooglePlacesSearch'
+        GooglePlacesSearchQuery={{
+          rankby: 'distance'
+        }}
+        debounce={200}
+      />
+    );
+  }
+}
 
 const ResultDescription = (row) => {
   return row.structured_formatting.main_text;

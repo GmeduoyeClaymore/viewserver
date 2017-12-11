@@ -28,7 +28,7 @@ setLocale({
 });
 
 class CustomerLanding extends Component {
-  static INITIAL_ROOT_NAME = 'Checkout';
+  static INITIAL_ROOT_NAME = 'ProductSelect';
 
   constructor(props) {
     super(props);

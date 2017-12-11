@@ -202,9 +202,8 @@ export default class GooglePlacesAutocomplete extends Component {
           this._requestNearby(position.coords.latitude, position.coords.longitude);
         }
       },
-      (error) => {
+      () => {
         this._disableRowLoaders();
-        alert(error.message);
       },
       options
     );
@@ -472,7 +471,8 @@ export default class GooglePlacesAutocomplete extends Component {
           // console.warn("google places autocomplete: request could not be completed or has been aborted");
         }
       };
-      request.open('GET', 'https://maps.googleapis.com/maps/api/place/autocomplete/json?&input=' + encodeURIComponent(text) + '&' + Qs.stringify(this.props.query));
+      const url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?&input=' + encodeURIComponent(text) + '&' + Qs.stringify(this.props.query);
+      request.open('GET', url);
       if (this.props.query.origin !== null) {
         request.setRequestHeader('Referer', this.props.query.origin);
       }
@@ -497,9 +497,7 @@ export default class GooglePlacesAutocomplete extends Component {
   _handleChangeText = (text) => {
     this._onChangeText(text);
 
-    const onChangeText = this.props
-      && this.props.textInputProps
-      && this.props.textInputProps.onChangeText;
+    const onChangeText = this.props && this.props.onChangeText;
 
     if (onChangeText) {
       onChangeText(text);

@@ -5,7 +5,7 @@ import {addOrUpdateCustomer, loadCustomerRegistrationServices} from 'customer/ac
 import ErrorRegion from 'common/components/ErrorRegion';
 import uuidv4 from 'uuid/v4';
 import {Form, Text, Button, Item, Label, Input, Content, Header, Left, Body, Container, Icon, Title} from 'native-base';
-import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 import LoadingScreen from 'common/components/LoadingScreen';
 
 const RegistrationConfirmation  = ({context, history,  dispatch, client, errors, busy}) => {

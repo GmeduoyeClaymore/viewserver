@@ -1,6 +1,5 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   delivery: {
-    isDeliveryRequired: true,
     eta: 72,
     deliveryType: 'ROADSIDE',
     deliveryId: undefined,
@@ -24,8 +23,9 @@
   payment: {
     paymentId: undefined
   }
-};*/
+};
 
+/*
 export const INITIAL_STATE = {
   delivery: {
     isDeliveryRequired: true,
@@ -52,4 +52,4 @@ export const INITIAL_STATE = {
   payment: {
     paymentId: undefined
   }
-};
+};*/

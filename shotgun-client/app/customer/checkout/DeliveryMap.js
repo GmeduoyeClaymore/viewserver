@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {Container} from 'native-base';
-import {merge} from 'lodash';
+import {Container, Button, Text} from 'native-base';
+import {merge, assign} from 'lodash';
 import {getDaoCommandResult} from 'common/dao';
 import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
@@ -23,6 +23,7 @@ class DeliveryMap extends Component {
   constructor(props) {
     super(props);
     this.onGetCurrentPositionSuccess = this.onGetCurrentPositionSuccess.bind(this);
+    this.closeInputs = this.closeInputs.bind(this);
 
     this.state = {
       busy: true,
@@ -36,7 +37,11 @@ class DeliveryMap extends Component {
   }
 
   componentWillMount(){
-    navigator.geolocation.getCurrentPosition(this.onGetCurrentPositionSuccess, undefined, {enableHighAccuracy: true});
+    try {
+      navigator.geolocation.getCurrentPosition(this.onGetCurrentPositionSuccess, undefined, {enableHighAccuracy: true});
+    } catch (ex){
+      Logger.warning('Error when accessing user location');
+    }
   }
 
   onGetCurrentPositionSuccess(position){
@@ -54,21 +59,36 @@ class DeliveryMap extends Component {
     this.updateMapRegion(location.lat, location.lng);
   }
 
+  onChangeText(type, text){
+    if (text == undefined || text == '') {
+      this.clearLocation(type);
+    }
+  }
+
+  clearLocation(type){
+    const {delivery} = this.props.context.state;
+    this.props.context.setState({delivery: assign({}, delivery, {[type]: {name: undefined, place_id: undefined, location: {latitude: undefined, longitude: undefined}}})});
+  }
+
   updateMapRegion(latitude, longitude){
     this.map.animateToCoordinate({latitude, longitude}, 1);
   }
 
+  closeInputs(){
+    this.destinationInput.triggerBlur();
+    this.originInput.triggerBlur();
+  }
+
   render() {
+    const {history, context} = this.props;
     const {region, busy} = this.state;
-    const {delivery} = this.props.context.state;
+    const {delivery} = context.state;
     const {origin, destination} = delivery;
 
     const showDirections = origin.place_id !== undefined && destination.place_id !== undefined;
-
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
 
-
-      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region}>
+      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={this.closeInputs}>
         {showDirections ? <MapViewDirections origin={origin.location} destination={destination.location} apikey={API_KEY} strokeWidth={3} onReady={(result) => {
           this.map.fitToCoordinates(result.coordinates,  {
             edgePadding: {
@@ -88,8 +108,9 @@ class DeliveryMap extends Component {
         </MapView.Marker> : null}
       </MapView>
 
-      <GooglePlacesInput apiKey={API_KEY} onSelect={details => this.onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/>
-      <GooglePlacesInput apiKey={API_KEY} onSelect={details => this.onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
+      <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('destination', text)} onSelect={details => this.onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/>
+      <GooglePlacesInput ref={c => {this.originInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('origin', text)}  onSelect={details => this.onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
+      {origin.place_id && destination.place_id ? <Button onPress={() => history.push('/Customer/Checkout/Payment')} style={styles.doneButton}><Text>Done</Text></Button> : null}
     </Container>;
   }
 }
@@ -97,6 +118,18 @@ class DeliveryMap extends Component {
 const styles = {
   map: {
     flex: 1
+  },
+  doneButton: {
+    flex: 1,
+    marginBottom: 2,
+    marginLeft: 20,
+    marginRight: 20,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   originInput: {
     flex: 1,

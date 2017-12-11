@@ -22,7 +22,6 @@ export default class Checkout extends Component {
     return <Switch>
       <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/Payment'} exact render={() => <Payment {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/Delivery'} exact render={() => <Delivery {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...this.props} context={this}/>} />
