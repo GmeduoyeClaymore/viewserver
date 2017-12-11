@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
+import Products from 'common/constants/Products';
 import {connect} from 'react-redux';
 import {Container, Button, Text} from 'native-base';
 import {merge, assign} from 'lodash';
@@ -23,7 +24,6 @@ class DeliveryMap extends Component {
   constructor(props) {
     super(props);
     this.onGetCurrentPositionSuccess = this.onGetCurrentPositionSuccess.bind(this);
-    this.closeInputs = this.closeInputs.bind(this);
 
     this.state = {
       busy: true,
@@ -82,10 +82,13 @@ class DeliveryMap extends Component {
   render() {
     const {history, context} = this.props;
     const {region, busy} = this.state;
-    const {delivery} = context.state;
+    const {delivery, order} = context.state;
     const {origin, destination} = delivery;
 
     const showDirections = origin.place_id !== undefined && destination.place_id !== undefined;
+    const showDoneButton = origin.place_id !== undefined && (order.productId == Products.DISPOSAL || destination.place_id);
+    const showDestinationInput = order.productId == Products.DELIVERY;
+
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
 
       <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={this.closeInputs}>
@@ -108,9 +111,9 @@ class DeliveryMap extends Component {
         </MapView.Marker> : null}
       </MapView>
 
-      <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('destination', text)} onSelect={details => this.onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/>
+      {showDestinationInput ? <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('destination', text)} onSelect={details => this.onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
       <GooglePlacesInput ref={c => {this.originInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('origin', text)}  onSelect={details => this.onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
-      {origin.place_id && destination.place_id ? <Button onPress={() => history.push('/Customer/Checkout/Payment')} style={styles.doneButton}><Text>Done</Text></Button> : null}
+      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text>Done</Text></Button> : null}
     </Container>;
   }
 }

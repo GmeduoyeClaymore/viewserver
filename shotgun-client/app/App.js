@@ -1,5 +1,6 @@
 import React from 'react';
-import {Container, Text, Content, Button} from 'native-base';
+import {UIManager} from 'react-native';
+import {Container, Text} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -16,6 +17,7 @@ import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-ro
 import LoadingScreen from 'common/components/LoadingScreen';
 import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
 const store = configureStore();
+UIManager.setLayoutAnimationEnabledExperimental(true);
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'LandingCommon';

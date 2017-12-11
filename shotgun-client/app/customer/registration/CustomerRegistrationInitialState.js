@@ -15,10 +15,8 @@ export const INITIAL_STATE = {
     isDefault: true
   },
   paymentCard: {
-    cardNumber: undefined,
-    expiryMonth: undefined,
-    expiryYear: undefined,
-    cvv: undefined,
+    token: undefined,
+    type: undefined,
     isDefault: true
   }
 };

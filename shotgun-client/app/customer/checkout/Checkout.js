@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import Payment from './Payment';
 import DeliveryMap from './DeliveryMap';
-import Delivery from './Delivery';
+import ProductSelect from './ProductSelect';
 import DeliveryOptions from './DeliveryOptions';
 import OrderConfirmation from './OrderConfirmation';
 import OrderComplete from './OrderComplete';
@@ -20,12 +19,12 @@ export default class Checkout extends Component {
 
   render() {
     return <Switch>
+      <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/Payment'} exact render={() => <Payment {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...this.props} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/DeliveryMap'}/>
+      <Redirect to={'/Customer/Checkout/ProductSelect'}/>
     </Switch>;
   }
 }

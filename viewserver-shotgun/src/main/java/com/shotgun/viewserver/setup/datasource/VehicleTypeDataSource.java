@@ -32,7 +32,8 @@ public class
                                         new Column("bodyType", "bodyType", ColumnType.String),
                                         new Column("capacity", "capacity", ColumnType.Int),
                                         new Column("payload", "payload", ColumnType.Int),
-                                        new Column("description", "description", ColumnType.String)
+                                        new Column("description", "description", ColumnType.String),
+                                        new Column("image", "image", ColumnType.String)
                                 ))
                                 .withKeyColumns("vehicleTypeId")
                 )

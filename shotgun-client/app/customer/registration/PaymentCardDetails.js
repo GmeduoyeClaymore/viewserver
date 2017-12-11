@@ -1,43 +1,64 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
-import yup from 'yup';
-import ValidatingInput from '../../common/components/ValidatingInput';
-import ValidatingButton from '../../common/components/ValidatingButton';
-import {merge} from 'lodash';
+import {LiteCreditCardInput} from 'react-native-credit-card-input';
+import PaymentService from 'common/services/PaymentService';
 
-export default PaymentCardDetails  = ({context, history, match}) => {
-  const {paymentCard = {}} = context.state;
+export default class PaymentCardDetails extends Component {
+  constructor(props) {
+    super(props);
 
-  const onChangeText = async (field, value) => {
-    context.setState({paymentCard: merge(paymentCard, {[field]: value})});
-  };
+    this.onCardDetailsChange.bind(this);
+    this.saveCardDetails.bind(this);
 
-  return <Container>
-    <Header>
-      <Left>
-        <Button transparent>
-          <Icon name='arrow-back' onPress={() => history.goBack()} />
-        </Button>
-      </Left>
-      <Body><Title>Payment Card Details</Title></Body>
-    </Header>
-    <Content>
-      <Form style={{display: 'flex', flex: 1}}>
-        <ValidatingInput placeholder="Card Number" value={paymentCard.cardNumber} onChangeText={(value) => onChangeText('cardNumber', value)} validationSchema={PaymentCardDetails.validationSchema.cardNumber} max={16}/>
-        <ValidatingInput placeholder="Expiry Month - MM" value={paymentCard.expiryMonth} onChangeText={(value) => onChangeText('expiryMonth', value)}  validationSchema={PaymentCardDetails.validationSchema.expiryMonth}/>
-        <ValidatingInput placeholder="Expiry Year - YYYY" value={paymentCard.expiryYear} onChangeText={(value) => onChangeText('expiryYear', value)}  validationSchema={PaymentCardDetails.validationSchema.expiryYear}/>
-        <ValidatingInput placeholder="CVV" value={paymentCard.cvv} onChangeText={(value) => onChangeText('cvv', value)} validationSchema={PaymentCardDetails.validationSchema.cvv} maxLength={3}/>
-        <ValidatingButton  onPress={() => history.push(`${match.path}/RegistrationConfirmation`)}  validationSchema={yup.object(PaymentCardDetails.validationSchema)} model={paymentCard}>
-          <Text>Next</Text>
-        </ValidatingButton>
-      </Form>
-    </Content>
-  </Container>;
-};
+    this.state = {
+      valid: false,
+    };
+  }
 
-PaymentCardDetails.validationSchema = {
-  cardNumber: yup.string().required().max(16).min(16),
-  expiryMonth: yup.string().required().max(2).min(2),
-  expiryYear: yup.string().required().max(4).min(2),
-  cvv: yup.string().required().max(3).min(3)
-};
+  onCardDetailsChange(details){
+    if (details.valid == true){
+      const {number, expiry, cvc, type} = details.values;
+      this.setState({valid: details.valid, paymentCard: {number, expiry, cvc, type}});
+    }
+  }
+
+  async saveCardDetails(){
+    const {history, context, match} = this.props;
+    const {number, expiry, cvc, type} = this.state.paymentCard;
+    const expiryTokens = expiry.split('/');
+
+    const token = await PaymentService.createCardToken(number,  expiryTokens[0], expiryTokens[1], cvc);
+
+    console.log('TOKEN=' + token);
+    context.setState({paymentCard: {
+      token,
+      type,
+      isDefault: true
+    }});
+
+    history.push(`${match.path}/RegistrationConfirmation`);
+  }
+
+  render(){
+    const {valid} = this.state;
+
+    return <Container>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          </Button>
+        </Left>
+        <Body><Title>Payment Card Details</Title></Body>
+      </Header>
+      <Content>
+        <Form style={{display: 'flex', flex: 1}}>
+          <LiteCreditCardInput autoFocus={true} onChange={(details) => this.onCardDetailsChange(details)}/>
+          <Button onPress={() => this.saveCardDetails()} disabled={!valid}>
+            <Text>Next</Text>
+          </Button>
+        </Form>
+      </Content>
+    </Container>;
+  }
+}

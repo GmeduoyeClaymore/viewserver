@@ -7,7 +7,6 @@ import {getDaoState} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 
-const DEFAULT_DELIVERY_ADDRESSES = [];
 
 class DeliveryOptions extends Component {
   constructor(props) {
@@ -16,24 +15,27 @@ class DeliveryOptions extends Component {
   }
 
   componentDidMount(){
-    const {deliveryAddresses} = this.props;
-    const defaultAddress = deliveryAddresses.find(c => c.isDefault) || deliveryAddresses[0];
-    if (defaultAddress){
-      this.onChangeValue('deliveryAddressId', defaultAddress.deliveryAddressId);
+    const {paymentCards} = this.props;
+    const defaultCard = paymentCards.find(c => c.isDefault) || paymentCards[0];
+    if (defaultCard){
+      this.setCard(defaultCard.paymentId);
     }
+  }
+
+  setCard(paymentId){
+    this.props.context.setState({payment: {paymentId}});
   }
 
   onChangeValue(field, value) {
     const {context} = this.props;
     const {delivery} = context.state;
 
-    const delivery2 = merge(delivery, {[field]: value});
-    this.props.context.setState({delivery: delivery2});
+    this.props.context.setState({delivery: merge({}, delivery, {[field]: value})});
   }
 
   render() {
-    const {deliveryAddresses, history, context} = this.props;
-    const {delivery} = context.state;
+    const {paymentCards, history, context, vehicleTypes} = this.props;
+    const {delivery, payment} = context.state;
 
     return <Container>
       <Header>
@@ -45,6 +47,12 @@ class DeliveryOptions extends Component {
         <Body><Title>Delivery Instructions</Title></Body>
       </Header>
       <Content>
+        <Text>What size van?</Text>
+        <Picker selectedValue={delivery.vehicleTypeId} onValueChange={(itemValue) => this.onChangeValue('vehicleTypeId', itemValue)}>
+          <Picker.Item label="--Select Vehicle Type--"/>
+          {vehicleTypes.map(c => <Picker.Item  key={c.vehicleTypeId} label={c.bodyType} value={c.vehicleTypeId} />)}
+        </Picker>
+
         <Text>Where do you want it?</Text>
         <ListItem>
           <Text>Roadside Delivery</Text>
@@ -59,10 +67,10 @@ class DeliveryOptions extends Component {
           </Right>
         </ListItem>
 
-        <Text>Delivery Address</Text>
-        <Picker selectedValue={delivery.deliveryAddressId} onValueChange={(itemValue) => this.onChangeValue('deliveryAddressId', itemValue)}>
-          {deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
+        <Picker selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
+          {paymentCards.map(c => <Picker.Item  key={c.paymentId} label={`${c.cardNumber}  ${c.expiryDate}`} value={c.paymentId} />)}
         </Picker>
+
         <Button onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
       </Content>
     </Container>;
@@ -70,11 +78,12 @@ class DeliveryOptions extends Component {
 }
 
 DeliveryOptions.PropTypes = {
-  deliveryAddresses: PropTypes.array
+  paymentCards: PropTypes.array
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  deliveryAddresses: getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao') || DEFAULT_DELIVERY_ADDRESSES,
+  paymentCards: getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao'),
+  vehicleTypes: getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao'),
   ...initialProps
 });
 

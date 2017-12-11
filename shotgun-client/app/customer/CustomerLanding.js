@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {setLocale} from 'yup/lib/customLocale';
-import ProductSelect from './product/ProductSelect';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
-import Cart from './Cart';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
@@ -28,7 +26,7 @@ setLocale({
 });
 
 class CustomerLanding extends Component {
-  static INITIAL_ROOT_NAME = 'ProductSelect';
+  static INITIAL_ROOT_NAME = 'Checkout';
 
   constructor(props) {
     super(props);
@@ -45,11 +43,6 @@ class CustomerLanding extends Component {
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>
-          {/*  <Route path={`${match.path}/ProductCategoryList`} exact component={ProductCategoryList}/>
-          <Route path={`${match.path}/ProductList`} exact component={ProductList}/>
-          <Route path={`${match.path}/ProductDetails`} exact component={ProductDetails}/>*/}
-          <Route path={`${match.path}/ProductSelect`} exact component={ProductSelect}/>
-          <Route path={`${match.path}/Cart`} exact component={Cart}/>
           <Route path={`${match.path}/Checkout`} component={Checkout}/>
           <Route path={`${match.path}/Orders`} exact component={Orders}/>
           <Route path={`${match.path}/OrderDetail`} exact component={OrderDetail}/>

@@ -1,10 +1,17 @@
 export const INITIAL_STATE = {
+  order: {
+    orderId: undefined,
+    productId: undefined,
+  },
   delivery: {
     eta: 72,
     deliveryType: 'ROADSIDE',
+    handlers: 0,
+    vehicleTypeId: undefined,
     deliveryId: undefined,
     origin: {
       name: undefined,
+      flatNumber: undefined,
       place_id: undefined,
       location: {
         latitude: undefined,
@@ -13,6 +20,7 @@ export const INITIAL_STATE = {
     },
     destination: {
       name: undefined,
+      flatNumber: undefined,
       place_id: undefined,
       location: {
         latitude: undefined,
