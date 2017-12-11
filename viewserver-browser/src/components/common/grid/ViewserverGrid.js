@@ -4,10 +4,23 @@ import { isEqual, debounce } from 'lodash';
 import DaoDataSource from './DaoDataSource';
 import {DAO_REGISTRATION_CONTEXT} from 'custom-redux/DaoMiddleware'
 import { renderColumnHeaderContent } from './ViewServerGridColumnHeader';
+import GenericOperatorDaoContext from 'dao/GenericOperatorDaoContext';
 import Logger from 'common/Logger';
+import Dao from 'common/dao/DaoBase';
+import { ScaleLoader } from 'react-spinners';
 
 
 const CONTAINER_STYLE = { display: 'flex', flexDirection: 'column', flex: '1', overflow: 'hidden' };
+const MODAL_STYLE = {
+    zIndex: 1, /* Sit on top */
+    left: '50%',
+    top: '50%',
+    width: '100%', /* Full width */
+    height: '100%', /* Full height */
+    overflow: 'auto', /* Enable scroll if needed */
+    backgroundColor: 'rgb(0,0,0)', /* Fallback color */
+    backgroundColor: 'rgba(255,255,255,0.4)' /* Black w/ opacity */
+}
 const ROW_HEIGHT = 12;
 function setState(state) {
     this.state = {
@@ -45,18 +58,34 @@ export default class ViewServerGrid extends Component {
             this.updateInlineFilters(inlineFilters && inlineFilters.filters);
         }
         this.state = state;
+     
     }
 
     async componentWillMount(){
         Logger.info(`Waiting for registration of Dao ${this.props.daoName}`)
-        const dao = await this.getDao(this.props.daoName);
-        Logger.info(`Waiting for creation of dataSink for DAO ${this.props.daoName}`)
-        const dataSink = await dao.getDataSink();
-        const dataSource = new DaoDataSource(dao);
+        this.dao = await this.getDao(this.props.daoName);
+        const {updateSubscription} = this.dao;
+        const dataSource = new DaoDataSource(this.dao);
+        this.dao.updateSubscription = opt => this.busy(updateSubscription(opt));
         dataSource.columnsChanged.subscribe(this.setColumns.bind(this));
         this.setState({dataSource});
     }
 
+    componentWillReceiveProps(newProps){
+        if(!isEqual(newProps.options, this.props.options)){
+            this.busy(this.dao.updateSubscription(newProps.options));
+        }
+    }
+
+    async busy(promise){
+        try{
+            this.setState({busy : true})
+            await promise;
+        }finally{
+            this.setState({busy : false})
+        }
+        
+    }
     setColumns(columns){
         const {dataSource} = this.state;
         this.setState({columns : dataSource.columns});
@@ -67,20 +96,20 @@ export default class ViewServerGrid extends Component {
     }
 
     async getDao(daoName){
-        const result = DAO_REGISTRATION_CONTEXT.daos[daoName];
-        if(!result){
-            result = await DAO_REGISTRATION_CONTEXT.registrationSubject.filter(d => d.name == daoName).take(1).toPromise();
-        }
-        return result;
+        const context = new GenericOperatorDaoContext(daoName, {});
+        return new Dao(context);
     }
 
     render() {
         let baselineHeight = ROW_HEIGHT + 2;
-        const {dataSource} = this.state;
+        const {dataSource, busy} = this.state;
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
-        return <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">{this.gridContainer ? <Grid ref={ grid => {this.grid = grid}}
+        return <div style={{position : 'relative'}} ref={grid => {this.gridContainer = grid}} className="flex flex-col">
+            {busy ? <div style={{position : 'absolute', ...MODAL_STYLE}}><ScaleLoader/></div> : null}
+            {this.gridContainer ? 
+            <Grid ref={ grid => {this.grid = grid}}
             rowHeight={ROW_HEIGHT}
             headerHeight={baselineHeight}
             element={this.gridContainer}

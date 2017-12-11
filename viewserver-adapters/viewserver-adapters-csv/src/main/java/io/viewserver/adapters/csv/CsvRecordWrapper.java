@@ -23,10 +23,12 @@ import io.viewserver.datasource.DataSource;
 import javolution.text.TypeFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,8 +73,10 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
         this.dataSource = dataSource;
     }
 
+
     @Override
     public Object getValue(String columnName) {
+
         Column column = dataSource.getSchema().getColumn(columnName);
         switch (column.getType()) {
             case Bool: {
@@ -100,7 +104,11 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
                 return getDouble(columnName);
             }
             case String: {
-                return getString(columnName);
+                String value = getString(columnName);
+                if(columnName.equals("productId") ){
+                    return  UUID.randomUUID().toString() + "_" + value;
+                }
+                return value;
             }
             case Date: {
                 return getDate(columnName);

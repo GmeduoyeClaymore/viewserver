@@ -58,6 +58,7 @@ class LoginForm extends Component {
   constructor( props ) {
     super( props );
     this.state = {
+      
       username: props.username,
       password: props.password,
       url: props.url

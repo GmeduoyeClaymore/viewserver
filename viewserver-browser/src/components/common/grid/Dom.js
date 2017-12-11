@@ -33,6 +33,10 @@ export function setSize(element, width, height) {
 	if (style.width !== w || style.height !== h) {
 		style.width = w;
 		style.height = h;
+		if(element.children[1]){
+			element.children[1].height = h
+			element.children[1].width = w
+		}
 		return true;
 	}
 	return false;

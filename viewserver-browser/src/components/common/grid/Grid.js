@@ -494,7 +494,7 @@ export default class Grid {
 
 		// make disposable
 		this._bindDomEvent(viewPort, 'scroll')
-			.debounceTime(5)
+			.debounceTime(50)
 			.subscribe(this._handleScrolled.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
@@ -932,12 +932,16 @@ export default class Grid {
 	}
 
 	_handleScrolled(e) {
+		require('electron').webFrame.setZoomFactor(1)
+		const susp = this.suspendRendering();
 		this._updateViewPortLocation();
+		susp.dispose();
 		this._scroll.next({
 			trigger: e,
 			left: this.viewPort.left,
 			top: this.viewPort.top
 		});
+		 
 	}
 }
 

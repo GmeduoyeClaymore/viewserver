@@ -116,11 +116,12 @@ class OperatorGroupView extends Component{
   subscribeTooperatorcontents({operatorGroup,operator}){
     const {updateSubscription} = this.props;
     updateSubscription("operatorListDao", {operatorName : operatorGroup})
-    updateSubscription("operatorContentsDao", {operatorName : operator})
+    //updateSubscription("operatorContentsDao", {operatorName : operator})
   }
 
   renderGrid(){
-    return <ViewServerGrid daoName="operatorContentsDao"/>
+    const {operator : operatorName} = this.props;
+    return <ViewServerGrid daoName="operatorContentsDao" options={{operatorName}} />
   }
 
   renderOperators(){
@@ -141,7 +142,7 @@ class OperatorGroupView extends Component{
     const {operatorListDaoReady,operatorContentsDaoReady}  = this.props;
     return <div className="flex flex-col"> 
                 {operatorListDaoReady ? this.renderOperators() : null}
-                {operatorContentsDaoReady ? this.renderGrid() : null}
+                {this.renderGrid()}
             </div>
   }
 }

@@ -1,9 +1,10 @@
 import Logger from 'common/Logger'
+import {DAO_REGISTRATION_CONTEXT} from 'custom-redux/DaoMiddleware'
 
 export const GetConnectedClientFromLoginDao = async daoContext => {
-    const {registrationContext} = daoContext;
+    const registrationContext = DAO_REGISTRATION_CONTEXT;
     if(!registrationContext){
-        throw new Exception("no registration context set this should happen when you register this dao")
+        throw new Error("no registration context set ensure you have registered the Dao middleware")
     }
     let {loginDao} = registrationContext.daos;
     if(!loginDao){

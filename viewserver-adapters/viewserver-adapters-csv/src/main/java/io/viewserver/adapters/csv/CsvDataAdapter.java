@@ -39,7 +39,11 @@ public class CsvDataAdapter implements IDataAdapter {
     protected final CsvRecordWrapper recordWrapper;
 
     public CsvDataAdapter() {
-        recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
+        recordWrapper = getCsvRecordWrapper();
+    }
+
+    protected CsvRecordWrapper getCsvRecordWrapper() {
+        return new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
     }
 
     @Override
