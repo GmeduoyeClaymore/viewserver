@@ -1,10 +1,14 @@
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
     email: undefined,
     contactNo: undefined,
-    type: 'customer'
+    password: undefined,
+    type: 'customer',
+    stripeCustomerId: undefined,
+    stripeDefaultPaymentSource: undefined
   },
   deliveryAddress: {
     line1: undefined,
@@ -13,23 +17,20 @@ export const INITIAL_STATE = {
     country: undefined,
     postcode: undefined,
     isDefault: true
-  },
-  paymentCard: {
-    token: undefined,
-    type: undefined,
-    isDefault: true
   }
 };
+*/
 
-
-/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
     lastName: 'Graves',
     email: 'test@test.com',
     contactNo: '07733362799',
-    type:'customer'
+    type: 'customer',
+    password: 'test',
+    stripeCustomerId: undefined,
+    stripeDefaultPaymentSource: undefined
   },
   deliveryAddress: {
     line1: '129 Drakefield Road',
@@ -37,14 +38,10 @@ export const INITIAL_STATE = {
     city: 'London',
     country: 'UK',
     postcode: 'SW17 8RS',
+    googlePlaceId: '',
+    latitude: 0,
+    longitude: 0,
     isDefault: true
-  },
-  paymentCard: {
-    cardNumber: '1234567890123456',
-    expiryMonth: '01',
-    expiryYear: '19',
-    cvv: '123'
   }
 };
 
-*/

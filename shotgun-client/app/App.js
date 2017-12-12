@@ -45,7 +45,6 @@ export default class App extends React.Component {
       this.setState({ error : undefined});
       await ProtoLoader.loadAll();
       this.setInitialRoot();
-      Logger.debug('Mounting App Component');
       await this.client.connect();
       isConnected = true;
       await this.setUserId()
@@ -59,6 +58,7 @@ export default class App extends React.Component {
 
   async setUserId(){
     this.userId = await PrincipalService.getUserIdFromDevice();
+    Logger.debug(`Got user id ${this.userId} from device`);
   }
 
   setInitialRoot(){

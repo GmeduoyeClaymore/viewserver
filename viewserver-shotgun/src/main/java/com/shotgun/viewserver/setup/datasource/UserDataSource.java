@@ -32,13 +32,16 @@ public class
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("userId", "userId", ColumnType.String),
-                                        new Column("title", "title", ColumnType.String),
+                                        new Column("created", "created", ColumnType.DateTime),
+                                        new Column("lastModified", "lastModified", ColumnType.DateTime),
                                         new Column("firstName", "firstName", ColumnType.String),
                                         new Column("lastName", "lastName", ColumnType.String),
                                         new Column("password", "password", ColumnType.String),
                                         new Column("contactNo", "contactNo", ColumnType.String),
                                         new Column("email", "email", ColumnType.String),
-                                        new Column("type", "type", ColumnType.String)
+                                        new Column("type", "type", ColumnType.String),
+                                        new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
+                                        new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )

@@ -23,17 +23,6 @@ public class OrderItemsDataSource {
                 CsvDataAdapter dataAdapter = new CsvDataAdapter();
                 dataAdapter.setFileName("data/orderItem.csv");
 
-
-                Schema schema = new Schema()
-                        .withColumns(Arrays.asList(
-                                new Column("itemId", "itemId", ColumnType.String),
-                                new Column("orderId", "orderId", ColumnType.String),
-                                new Column("userId", "userId", ColumnType.String),
-                                new Column("productId", "productId", ColumnType.String),
-                                new Column("quantity", "quantity", ColumnType.Int)
-                        ))
-                        .withKeyColumns("itemId");
-
                 return new DataSource()
                         .withName(NAME)
                         .withDataLoader(
@@ -43,18 +32,16 @@ public class OrderItemsDataSource {
                                         null
                                 )
                         )
-                        .withSchema(schema
-                        ).withNodes(
-                                new JoinNode("productJoin")
-                                        .withLeftJoinColumns("productId")
-                                        .withRightJoinColumns("productId")
-                                        .withConnection(NAME, Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
-                                new CalcColNode("cartItems")
-                                        .withCalculations(new CalcColOperator.CalculatedColumn("totalPrice", "quantity * price"))
-                                        .withConnection("productJoin")
-                        )
-                .withOutput("cartItems")
-                .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
+                        .withSchema(new Schema()
+                                .withColumns(Arrays.asList(
+                                        new Column("orderItemId", "orderItemId", ColumnType.String),
+                                        new Column("orderId", "orderId", ColumnType.String),
+                                        new Column("userId", "userId", ColumnType.String),
+                                        new Column("productId", "productId", ColumnType.String),
+                                        new Column("quantity", "quantity", ColumnType.Int)
+                                ))
+                                .withKeyColumns("orderItemId"))
+                        .withOutput(NAME)
+                        .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
         }
 }

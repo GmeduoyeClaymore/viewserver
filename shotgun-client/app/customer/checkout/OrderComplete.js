@@ -12,7 +12,7 @@ const OrderComplete = ({history, orderId}) => {
     <Content>
       <Text>Your Order Has Been Placed</Text>
       <Text>{`Order Id ${orderId}`}</Text>
-      <Button onPress={() => history.push('/Customer/ProductCategoryList')}><Text>Continue Shopping</Text></Button>
+      <Button onPress={() => history.push('/Customer/ProductSelect')}><Text>Continue Shopping</Text></Button>
     </Content>
   </Container>;
 };
@@ -22,7 +22,7 @@ OrderComplete.PropTypes = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  orderId: getDaoCommandResult(state, 'purchaseCartItems', 'cartItemsDao'),
+  orderId: getDaoCommandResult(state, 'checkout', 'customerDao'),
   ...initialProps
 });
 

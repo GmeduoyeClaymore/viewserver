@@ -1,5 +1,6 @@
 import CommandExecutedPromise from '../../common/promises/CommandExecutedPromise';
-import {debounce} from 'lodash';
+import {debounce, pickBy} from 'lodash';
+
 export default class DataSourceSubscriptionStrategyStrategy{
   constructor(client, path, dataSink){
     this.client = client;
@@ -12,7 +13,8 @@ export default class DataSourceSubscriptionStrategyStrategy{
 
   editTable(rowEvents){
     const commandExecutedPromise = new CommandExecutedPromise();
-    this.client.editTable(`/datasources/${this.path}/${this.path}`, this.dataSink, rowEvents, commandExecutedPromise);
+    const cleanedRowEvents = this.cleanColumnValues(rowEvents);
+    this.client.editTable(`/datasources/${this.path}/${this.path}`, this.dataSink, cleanedRowEvents, commandExecutedPromise);
     return commandExecutedPromise;
   }
 
@@ -28,5 +30,14 @@ export default class DataSourceSubscriptionStrategyStrategy{
     if (this.subscribeCommand && this.dataSink){
       this.client.unsubscribe(this.subscribeCommand.id, this.dataSink);
     }
+  }
+
+  //removes all undefined values from the columnValues
+  cleanColumnValues(rowEvents){
+    rowEvents.forEach(r => {
+      r.columnValues = pickBy(r.columnValues, v => v !== undefined);
+    });
+
+    return rowEvents;
   }
 }

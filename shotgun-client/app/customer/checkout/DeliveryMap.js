@@ -18,6 +18,15 @@ const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const EMPTY_LOCATION =  {
+  flatNumber: undefined,
+  line1: undefined,
+  city: undefined,
+  postCode: undefined,
+  googlePlaceId: undefined,
+  latitude: undefined,
+  longitude: undefined
+};
 
 
 class DeliveryMap extends Component {
@@ -50,34 +59,6 @@ class DeliveryMap extends Component {
     this.setState({busy: false, region: merge(this.state.region, {latitude, longitude})});
   }
 
-  onLocationSelect(type, details){
-    const {name, place_id, geometry} = details;
-    const {location} = geometry;
-    const {delivery} = this.props.context.state;
-
-    this.props.context.setState({delivery: merge({}, delivery, {[type]: {name, place_id, location: {latitude: location.lat, longitude: location.lng}}})});
-    this.updateMapRegion(location.lat, location.lng);
-  }
-
-  onChangeText(type, text){
-    if (text == undefined || text == '') {
-      this.clearLocation(type);
-    }
-  }
-
-  clearLocation(type){
-    const {delivery} = this.props.context.state;
-    this.props.context.setState({delivery: assign({}, delivery, {[type]: {name: undefined, place_id: undefined, location: {latitude: undefined, longitude: undefined}}})});
-  }
-
-  updateMapRegion(latitude, longitude){
-    this.map.animateToCoordinate({latitude, longitude}, 1);
-  }
-
-  closeInputs(){
-    this.destinationInput.triggerBlur();
-    this.originInput.triggerBlur();
-  }
 
   render() {
     const {history, context} = this.props;
@@ -85,13 +66,56 @@ class DeliveryMap extends Component {
     const {delivery, order} = context.state;
     const {origin, destination} = delivery;
 
-    const showDirections = origin.place_id !== undefined && destination.place_id !== undefined;
-    const showDoneButton = origin.place_id !== undefined && (order.productId == Products.DISPOSAL || destination.place_id);
+    const showDirections = origin.googlePlaceId !== undefined && destination.googlePlaceId !== undefined;
+    const showDoneButton = origin.googlePlaceId !== undefined && (order.productId == Products.DISPOSAL || destination.googlePlaceId);
     const showDestinationInput = order.productId == Products.DELIVERY;
+
+    const onLocationSelect = (type, details) => {
+      const {name, place_id, geometry, address_components} = details;
+      const {location} = geometry;
+      const {delivery} = this.props.context.state;
+      const city = address_components.find(c => c.types.includes('postal_town'));
+      const postCode = address_components.find(c => c.types.includes('postal_code'));
+
+      const newLocation =  {
+        line1: name,
+        city: city !== undefined ? city.long_name : undefined,
+        postCode: postCode !== undefined ? postCode.long_name : undefined,
+        googlePlaceId: place_id,
+        latitude: location.lat,
+        longitude: location.lng};
+
+      Logger.info(`Setting location to ${JSON.stringify(newLocation)}`);
+
+      context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
+      updateMapRegion(location.lat, location.lng);
+    };
+
+    const onChangeText = (type, text) => {
+      if (text == undefined || text == '') {
+        clearLocation(type);
+      }
+    };
+
+    const clearLocation = (type) => {
+      context.setState({delivery: assign({}, delivery, {[type]: EMPTY_LOCATION})});
+    };
+
+    const updateMapRegion = (latitude, longitude) => {
+      this.map.animateToCoordinate({latitude, longitude}, 1);
+    };
+
+    const closeInputs = () => {
+      this.originInput.triggerBlur(); W;
+
+      if (showDestinationInput) {
+        this.destinationInput.triggerBlur();
+      }
+    };
 
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
 
-      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={this.closeInputs}>
+      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={closeInputs}>
         {showDirections ? <MapViewDirections origin={origin.location} destination={destination.location} apikey={API_KEY} strokeWidth={3} onReady={(result) => {
           this.map.fitToCoordinates(result.coordinates,  {
             edgePadding: {
@@ -102,17 +126,17 @@ class DeliveryMap extends Component {
             }});
         }}/> : null}
 
-        {origin.place_id ? <MapView.Marker coordinate={origin.location}>
-          <AddressMarker address={origin.name} />
+        {origin.googlePlaceId ? <MapView.Marker coordinate={{...origin}}>
+          <AddressMarker address={origin.line1} />
         </MapView.Marker> : null}
 
-        {destination.place_id ? <MapView.Marker coordinate={destination.location}>
-          <AddressMarker address={destination.name} />
+        {destination.googlePlaceId ? <MapView.Marker coordinate={{...destination}}>
+          <AddressMarker address={destination.line1} />
         </MapView.Marker> : null}
       </MapView>
 
-      {showDestinationInput ? <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('destination', text)} onSelect={details => this.onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
-      <GooglePlacesInput ref={c => {this.originInput = c;}} apiKey={API_KEY} onChangeText={(text) => this.onChangeText('origin', text)}  onSelect={details => this.onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
+      {showDestinationInput ? <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
+      <GooglePlacesInput ref={c => {this.originInput = c;}} apiKey={API_KEY} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
       {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text>Done</Text></Button> : null}
     </Container>;
   }
@@ -155,7 +179,6 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  orderId: getDaoCommandResult(state, 'purchaseCartItems', 'cartItemsDao'),
   ...initialProps
 });
 

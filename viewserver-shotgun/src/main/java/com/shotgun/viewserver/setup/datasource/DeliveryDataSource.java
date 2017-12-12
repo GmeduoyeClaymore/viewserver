@@ -31,13 +31,13 @@ DeliveryDataSource {
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("deliveryId", "deliveryId", ColumnType.String),
-                                        new Column("customerIdDelivery", "customerIdDelivery", ColumnType.String),
-                                        new Column("deliveryAddressId", "deliveryAddressId", ColumnType.String),
+                                        new Column("userIdDelivery", "userIdDelivery", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                        new Column("orderFulfillmentId", "orderFulfillmentId", ColumnType.String),
+                                        new Column("vehicleTypeId", "vehicleTypeId", ColumnType.String),
                                         new Column("driverId", "driverId", ColumnType.String),
-                                        new Column("type", "type", ColumnType.String),
+                                        new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
+                                        new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
                                         new Column("eta", "eta", ColumnType.Int),
                                         new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int)
                                 ))

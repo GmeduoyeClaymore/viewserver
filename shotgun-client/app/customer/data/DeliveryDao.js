@@ -61,8 +61,7 @@ export default class DeliveryDaoContext{
   }
 
   extendDao(dao){
-    dao.createDelivery = async ({deliveryAddressId, eta, type}) =>{
-      //create order object
+    dao.createDelivery = async (delivery) =>{
       await dao.dataSink.waitForSchema();
       const created = moment().format('x');
       const deliveryId = uuidv4();
@@ -70,9 +69,9 @@ export default class DeliveryDaoContext{
       if (typeof userId === 'undefined'){
         throw new Error('userId should be defined');
       }
-      const delivery =  {deliveryId, lastModified: created, deliveryAddressId, eta, type, userIdDelivery: userId};
+      const deliveryObj =  {...delivery, deliveryId, lastModified: created, userIdDelivery: userId};
       Logger.info(`Creating delivery ${deliveryId}`);
-      const addDeliveryRowEvent = createAddDeliveryRowEvent(delivery);
+      const addDeliveryRowEvent = createAddDeliveryRowEvent(deliveryObj);
       const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();
       await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
       await promise;

@@ -4,6 +4,7 @@ import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {forEach} from 'lodash';
 import PrincipalService from 'common/services/PrincipalService';
+import moment from 'moment';
 
 const createAddUserEvent = (args) => {
   return {
@@ -28,7 +29,7 @@ export default class UserDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 20,
+      limit: 1,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -72,6 +73,7 @@ export default class UserDaoContext{
       const {dataSink, subscriptionStrategy} = dao;
       const schema = await dataSink.waitForSchema();
       const {userId} = dao.options;
+      const lastModified = moment().format('x');
       Logger.info(`Adding user schema is ${JSON.stringify(schema)}`);
 
       //TODO - tidy this up using lodash or similar
@@ -81,12 +83,15 @@ export default class UserDaoContext{
         userObject[field] = user[field];
       });
 
+      userObject.lastModified = lastModified;
+
       if (userObject.userId == undefined) {
         userObject.userId = userId;
       }
 
       if (!dataSink.rows.length){
         Logger.info(`Adding user ${JSON.stringify(userObject)}`);
+        userObject.created = lastModified;
         userRowEvent = createAddUserEvent(userObject);
       } else {
         Logger.info(`Updating user ${JSON.stringify(userObject)}`);

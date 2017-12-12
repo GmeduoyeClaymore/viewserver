@@ -42,7 +42,7 @@ export default class RowEventMapper{
         columnId = key;
       }
       if (typeof columnId === 'undefined' ){
-        Logger.warning(`Unable to find column ${key} on schemal ${JSON.stringify(dataSink.schema)}`);
+        Logger.warning(`Unable to find column ${key} on schema ${JSON.stringify(dataSink.schema)}`);
         return;
       }
       const columnValue = ProtoLoader.Dto.RowEventDto.ColumnValue.create({columnId});
@@ -52,7 +52,7 @@ export default class RowEventMapper{
         const column = dataSink.getColumn(columnId);
         Logger.debug(`!!! Row mapper found column "${JSON.stringify(column)}"`);
         if (!column){
-          throw new Error(`Unable to find column \"${key}\" id \"${columnId}\" on schemal ${JSON.stringify(dataSink.schema)}`);
+          throw new Error(`Unable to find column \"${key}\" id \"${columnId}\" on schema ${JSON.stringify(dataSink.schema)}`);
         }
         switch (column.type) {
         case ProtoLoader.Dto.SchemaChangeDto.AddColumn.ColumnType.BOOLEAN:
