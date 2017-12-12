@@ -30,6 +30,7 @@ export default class App extends React.Component {
     this.makePayment = this.makePayment.bind(this);
     this.dispatch = store.dispatch;
     this.success = this.success.bind(this);
+    this.successReject = this.successReject.bind(this);
     this.noController = this.noController.bind(this);
     this.invalidArgs = this.invalidArgs.bind(this);
     this.errorWithinExecution = this.errorWithinExecution.bind(this);
@@ -83,6 +84,10 @@ export default class App extends React.Component {
     this.client.invokeJSONCommand(`paymentController`, "process", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
   }
 
+  successReject(commandExecutedPromise){
+    this.client.invokeJSONCommand(`paymentController`, "reject", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
+  }
+
   noController(commandExecutedPromise){
     this.client.invokeJSONCommand(`paymentControllerx`, "process", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
   }
@@ -106,7 +111,8 @@ export default class App extends React.Component {
     }
     return  <Container style={{flexDirection: 'column', flex: 1}}>
       <Text>{ "Result of executing command is " + JSON.stringify(paymentResult)}</Text>
-    <Button  onPress={() => this.makePayment(this.success)}><Text>Success Payment</Text></Button>
+    <Button  onPress={() => this.makePayment(this.success)}><Text>Success Process Payment</Text></Button>
+    <Button  onPress={() => this.makePayment(this.successReject)}><Text>Success Reject Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.noController)}><Text>No Controller Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.invalidArgs)}><Text>Invalid Serialized Args</Text></Button>
     <Button  onPress={() => this.makePayment(this.errorWithinExecution)}><Text>Error Within execution</Text></Button>

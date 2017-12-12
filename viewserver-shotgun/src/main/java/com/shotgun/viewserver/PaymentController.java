@@ -11,7 +11,15 @@ public class PaymentController{
         if(credentials.name.equals("error")){
             throw new RuntimeException("Error caused by parameter name !!!!");
         }
-        return new PaymentResponse("myDemoResponse" + credentials.name,credentials.address);
+        return new PaymentResponse("SUCCESS processResponse" + credentials.name,credentials.address);
+    }
+
+    @ControllerAction(path = "reject")
+    public PaymentResponse rejectPayment(PaymentCredentials credentials){
+        if(credentials.name.equals("error")){
+            throw new RuntimeException("Error caused by parameter name !!!!");
+        }
+        return new PaymentResponse("SUCCESS rejectResponse" + credentials.name,credentials.address);
     }
 
 }
