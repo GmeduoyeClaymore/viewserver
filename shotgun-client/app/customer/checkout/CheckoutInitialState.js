@@ -1,4 +1,4 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   order: {
     orderId: undefined,
     productId: undefined,
@@ -30,8 +30,9 @@
   payment: {
     paymentId: undefined
   }
-};*/
+};
 
+/*
 export const INITIAL_STATE = {
   order: {
     orderId: undefined,
@@ -63,3 +64,4 @@ export const INITIAL_STATE = {
     paymentId: '12345'
   }
 };
+*/
