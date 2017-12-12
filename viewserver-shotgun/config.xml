@@ -3,7 +3,7 @@
     <viewserver>
         <servers>
             <master>
-                <bootstrapper>com.shotgun.viewserver.setup.DemoBootstrapper</bootstrapper>
+                <bootstrapper>com.shotgun.viewserver.setup.ShotgunBootstrapper</bootstrapper>
                 <database>%user.home%/viewserver-shotgun</database>
 
                 <endpoints>

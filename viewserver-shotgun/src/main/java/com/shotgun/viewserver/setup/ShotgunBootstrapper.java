@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by nick on 10/09/15.
  */
-public class DemoBootstrapper extends BootstrapperBase {
+public class ShotgunBootstrapper extends BootstrapperBase {
     @Override
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();

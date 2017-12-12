@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         ViewServerLauncher launcher = new ViewServerLauncher<IViewServerConfiguration>(
                 new XmlViewServerConfiguration(System.getProperty("viewserver.configurationFile", "config.xml")),
-                DemoViewServerMaster::new);
+                ShotgunViewServerMaster::new);
         launcher.launch(args);
     }
 }
