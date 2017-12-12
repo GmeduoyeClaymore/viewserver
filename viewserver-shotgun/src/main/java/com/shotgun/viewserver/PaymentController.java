@@ -7,11 +7,11 @@ import io.viewserver.command.ControllerAction;
 public class PaymentController{
 
     @ControllerAction(path = "process")
-    public String processPayment(PaymentCredentials credentials){
+    public PaymentResponse processPayment(PaymentCredentials credentials){
         if(credentials.name.equals("error")){
             throw new RuntimeException("Error caused by parameter name !!!!");
         }
-        return "myDemoResponse" + credentials.name + "" + credentials.address;
+        return new PaymentResponse("myDemoResponse" + credentials.name,credentials.address);
     }
 
 }
