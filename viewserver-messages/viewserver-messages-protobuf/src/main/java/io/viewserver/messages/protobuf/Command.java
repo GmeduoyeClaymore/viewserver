@@ -16,6 +16,7 @@
 
 package io.viewserver.messages.protobuf;
 
+import com.google.protobuf.Extension;
 import io.viewserver.messages.IPoolableMessage;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.PoolableMessage;
@@ -71,7 +72,12 @@ public class Command extends PoolableMessage<Command> implements ICommand<Comman
                         clazz, ICommandExtension.class.getName()));
             }
             extension = (ICommandExtension)extensionInstance;
-            extension.setDto(commandDto.getExtension(CommandRegistry.INSTANCE.getExtension(clazz)));
+            Extension<CommandMessage.CommandDto,?> extension1 = CommandRegistry.INSTANCE.getExtension(clazz);
+            if(extension1 == null){
+                throw new IllegalArgumentException(String.format("Unable to find extension for class %s",
+                        clazz));
+            }
+            extension.setDto(commandDto.getExtension(extension1));
         }
         return (T) extension;
     }

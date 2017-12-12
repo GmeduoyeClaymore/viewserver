@@ -1,5 +1,6 @@
 package com.shotgun.viewserver;
 
+import io.viewserver.command.ControllerJSONCommandHandler;
 import io.viewserver.server.IViewServerMasterConfiguration;
 import io.viewserver.server.ViewServerMaster;
 
@@ -14,6 +15,8 @@ public class DemoViewServerMaster extends ViewServerMaster {
     @Override
     protected void initCommandHandlerRegistry() {
         super.initCommandHandlerRegistry();
-
+        this.registerController(new PaymentController());
     }
 }
+
+

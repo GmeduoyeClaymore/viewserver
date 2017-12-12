@@ -74,6 +74,7 @@ public class Message extends PoolableMessage<Message> implements IMessage<Messag
         MessagePool.getInstance().createPool(ITableMetadata.IValue.class, TableMetadata.Value::new);
 
         MessagePool.getInstance().createPool(ITableEditCommand.class, TableEditCommand::new);
+        MessagePool.getInstance().createPool(IGenericJSONCommand.class, GenericJSONCommand::new);
         MessagePool.getInstance().createPool(ITableEditCommand.ICreationConfig.class, TableEditCommand.CreationConfig::new);
 
         MessagePool.getInstance().createPool(IUpdateDimensionMapCommand.IDataSource.class, UpdateDimensionMapCommand.DataSource::new);

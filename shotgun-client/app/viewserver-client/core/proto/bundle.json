@@ -274,6 +274,30 @@
         }
       }
     },
+    "GenericJSONCommandDto": {
+      "fields": {
+        "payload": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "action": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "path": {
+          "rule": "required",
+          "type": "string",
+          "id": 3
+        }
+      }
+    },
+    "genericJSONCommand": {
+      "type": "GenericJSONCommandDto",
+      "id": 405,
+      "extend": "CommandDto"
+    },
     "GroupByConfigDto": {
       "fields": {
         "groupByColumn": {

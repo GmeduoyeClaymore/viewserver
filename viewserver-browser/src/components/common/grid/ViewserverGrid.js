@@ -63,10 +63,8 @@ export default class ViewServerGrid extends Component {
 
     async componentWillMount(){
         Logger.info(`Waiting for registration of Dao ${this.props.daoName}`)
-        this.dao = await this.getDao(this.props.daoName);
-        const {updateSubscription} = this.dao;
-        const dataSource = new DaoDataSource(this.dao);
-        this.dao.updateSubscription = opt => this.busy(updateSubscription(opt));
+        this.dao = this.dao || await this.getDao(this.props.daoName);
+        const dataSource = new DaoDataSource(this.dao);      
         dataSource.columnsChanged.subscribe(this.setColumns.bind(this));
         this.setState({dataSource});
     }
@@ -97,7 +95,10 @@ export default class ViewServerGrid extends Component {
 
     async getDao(daoName){
         const context = new GenericOperatorDaoContext(daoName, {});
-        return new Dao(context);
+        const dao = new Dao(context);
+        const {updateSubscription} = dao;
+        dao.updateSubscription = opt => this.busy(updateSubscription(opt));
+        return dao; 
     }
 
     render() {

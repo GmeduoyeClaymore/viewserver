@@ -76,11 +76,13 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
     private final TableFactoryRegistry tableFactoryRegistry = new TableFactoryRegistry();
     private final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
     private SystemReportExecutor systemReportExecutor;
+    private ControllerJSONCommandHandler controllerHandler;
 
     public ViewServerMaster(String name, IViewServerMasterConfiguration configuration) {
         super(name);
         this.configuration = configuration;
         localStorageDataAdapterFactory = new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath());
+        controllerHandler = new ControllerJSONCommandHandler();
     }
 
     public ReportRegistry getReportRegistry() {
@@ -325,9 +327,13 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         commandHandlerRegistry.register("subscribeReport", new SubscribeReportHandler(dimensionMapper, getDataSourceRegistry(), reportRegistry, getSubscriptionManager(), distributionManager, configurator, executionPlanRunner, reportContextRegistry, systemReportExecutor));
         commandHandlerRegistry.register("subscribeDataSource", new SubscribeDataSourceHandler(getDataSourceRegistry(), getSubscriptionManager(), distributionManager, configurator, executionPlanRunner));
         commandHandlerRegistry.register("subscribeDimension", new SubscribeDimensionHandler(dimensionMapper, getDataSourceRegistry(), reportRegistry, getSubscriptionManager(), distributionManager, getServerExecutionContext().getOperatorFactoryRegistry(), configurator, executionPlanRunner));
-
+        commandHandlerRegistry.register("genericJSON", this.controllerHandler);
         commandHandlerRegistry.register("executeSql", new ExecuteSqlCommandHandler(getSubscriptionManager(),
                 distributionManager, configurator, executionPlanRunner, getServerExecutionContext().getSummaryRegistry()));
+    }
+
+    public void registerController(Object controller){
+        this.controllerHandler.registerController(controller);
     }
 
     @Override

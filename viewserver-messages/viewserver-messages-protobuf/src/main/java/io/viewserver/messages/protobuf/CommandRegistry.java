@@ -46,6 +46,7 @@ public class CommandRegistry {
         registerExtension(IUpdateDimensionMapCommand.class, UpdateDimensionMapCommandMessage.updateDimensionMapCommand);
         registerExtension(IRegisterDataSourceCommand.class, RegisterDataSourceCommandMessage.registerDataSourceCommand);
         registerExtension(IConfigurateCommand.class, ConfiguratorMessage.configurator);
+        registerExtension(IGenericJSONCommand.class, GenericJSONCommandMessage.genericJSONCommand);
     }
 
     public Extension<CommandMessage.CommandDto, ?> getExtension(Class clazz) {

@@ -17,6 +17,7 @@ export default class ProtoLoader{
       ProtoLoader._dto.CommandDto = root.lookupType('CommandDto');
       ProtoLoader._dto.MessageDto = root.lookupType('MessageDto');
       ProtoLoader._dto.RowEventDto = root.lookupType('RowEventDto');
+      ProtoLoader._dto.GenericJSONCommandDto = root.lookupType('GenericJSONCommandDto');
       ProtoLoader._dto.SchemaChangeDto = root.lookupType('SchemaChangeDto');
       ProtoLoader._dto.HeartbeatDto = root.lookupType('HeartbeatDto');
       ProtoLoader._dto.SubscribeCommandDto = root.lookupType('SubscribeCommandDto');

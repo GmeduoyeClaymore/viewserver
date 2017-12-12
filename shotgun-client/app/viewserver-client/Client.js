@@ -124,6 +124,24 @@ export default class Client {
     return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   };
 
+  invokeJSONCommand = function (controllerName, action, payload, eventHandlers) {
+    Logger.info(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+    
+    if (!controllerName){
+      throw new Error('Controller name is required');
+    }
+    if (!action){
+      throw new Error('Action name is required');
+    }
+
+    const jsonCommand = ProtoLoader.Dto.GenericJSONCommandDto.create({
+      payload : JSON.stringify(payload),
+      action,
+      path : controllerName,
+    });
+    return this.sendCommand('genericJSON', jsonCommand, false, eventHandlers);
+  };
+
   sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
     const command = new Command(commandName, commandDto);
     command.handler = eventHandlers;
