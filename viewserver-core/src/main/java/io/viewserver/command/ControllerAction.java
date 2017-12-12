@@ -13,4 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ControllerAction {
     String path();
+    boolean isSynchronous() default true;
 }

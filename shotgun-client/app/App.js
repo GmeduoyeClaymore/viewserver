@@ -112,7 +112,7 @@ export default class App extends React.Component {
     return  <Container style={{flexDirection: 'column', flex: 1}}>
       <Text>{ "Result of executing command is " + JSON.stringify(paymentResult)}</Text>
     <Button  onPress={() => this.makePayment(this.success)}><Text>Success Process Payment</Text></Button>
-    <Button  onPress={() => this.makePayment(this.successReject)}><Text>Success Reject Payment</Text></Button>
+    <Button  onPress={() => this.makePayment(this.successReject)}><Text>Success ASYNC Reject Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.noController)}><Text>No Controller Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.invalidArgs)}><Text>Invalid Serialized Args</Text></Button>
     <Button  onPress={() => this.makePayment(this.errorWithinExecution)}><Text>Error Within execution</Text></Button>

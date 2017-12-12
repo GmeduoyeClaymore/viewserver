@@ -14,8 +14,10 @@ public class ControllerActionEntry{
     private Method method;
     private Object controller;
     private static ObjectMapper mapper = new ObjectMapper();
+    private ControllerAction an;
 
     public ControllerActionEntry(Method method, Object controller, ControllerAction an, Controller controllerAttribute) {
+        this.an = an;
         if(method.getParameterTypes().length > 1){
             throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". All actions must have a single parameter at most");
         }
@@ -31,6 +33,10 @@ public class ControllerActionEntry{
         }
         this.method = method;
         this.controller = controller;
+    }
+
+    public boolean isSynchronous(){
+        return an.isSynchronous();
     }
 
     public String invoke(String param){

@@ -15,7 +15,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
     @Override
     protected void initCommandHandlerRegistry() {
         super.initCommandHandlerRegistry();
-        this.registerController(new PaymentController());
+        this.registerController(new PaymentController(getServerExecutionContext()));
     }
 }
 
