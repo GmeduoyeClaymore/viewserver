@@ -27,7 +27,7 @@ export default class PaymentDao{
   async createPaymentCustomer(paymentCustomer){
     const commandExecutedPromise = new GenericJSONCommandPromise();
     this.client.invokeJSONCommand('paymentController', 'createPaymentCustomer', paymentCustomer, commandExecutedPromise);
-    const paymentResponse =  await commandExecutedPromise.promise.timeoutWithError(2000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 2 seconds`));
+    const paymentResponse =  await commandExecutedPromise.promise.timeoutWithError(5000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 5 seconds`));
     Logger.debug(`Got stripe payment details ${JSON.stringify(paymentResponse)}`)
     this.subject.next(paymentResponse);
     return paymentResponse;

@@ -1,4 +1,4 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -15,8 +15,9 @@
     postcode: undefined,
     isDefault: true
   }
-};*/
+};
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
@@ -31,11 +32,12 @@ export const INITIAL_STATE = {
     line2: 'Tooting',
     city: 'London',
     country: 'UK',
-    postcode: 'SW17 8RS',
+    postCode: 'SW17 8RS',
     googlePlaceId: '',
     latitude: 0,
     longitude: 0,
     isDefault: true
   }
 };
+*/
 

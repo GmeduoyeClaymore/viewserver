@@ -4,7 +4,6 @@ import Products from 'common/constants/Products';
 import {connect} from 'react-redux';
 import {Container, Button, Text} from 'native-base';
 import {merge, assign} from 'lodash';
-import {getDaoCommandResult} from 'common/dao';
 import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
@@ -12,6 +11,7 @@ import GooglePlacesInput from 'common/components/maps/GooglePlacesInput';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'react-native-maps-directions';
 import { withRouter } from 'react-router';
+import MapService from 'common/services/MapService';
 
 const API_KEY = 'AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M';
 const { width, height } = Dimensions.get('window');
@@ -71,24 +71,12 @@ class DeliveryMap extends Component {
     const showDestinationInput = order.productId == Products.DELIVERY;
 
     const onLocationSelect = (type, details) => {
-      const {name, place_id, geometry, address_components} = details;
-      const {location} = geometry;
       const {delivery} = this.props.context.state;
-      const city = address_components.find(c => c.types.includes('postal_town'));
-      const postCode = address_components.find(c => c.types.includes('postal_code'));
-
-      const newLocation =  {
-        line1: name,
-        city: city !== undefined ? city.long_name : undefined,
-        postCode: postCode !== undefined ? postCode.long_name : undefined,
-        googlePlaceId: place_id,
-        latitude: location.lat,
-        longitude: location.lng};
-
+      const newLocation = MapService.parseGooglePlacesData(details);
       Logger.info(`Setting location to ${JSON.stringify(newLocation)}`);
 
       context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
-      updateMapRegion(location.lat, location.lng);
+      updateMapRegion(newLocation.latitude, newLocation.longitude);
     };
 
     const onChangeText = (type, text) => {
@@ -106,7 +94,7 @@ class DeliveryMap extends Component {
     };
 
     const closeInputs = () => {
-      this.originInput.triggerBlur(); W;
+      this.originInput.triggerBlur();
 
       if (showDestinationInput) {
         this.destinationInput.triggerBlur();
@@ -159,22 +147,26 @@ const styles = {
     justifyContent: 'center'
   },
   originInput: {
-    flex: 1,
-    height: 200,
-    margin: 2,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0
+    container: {
+      flex: 1,
+      height: 200,
+      margin: 2,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0
+    }
   },
   destinationInput: {
-    flex: 1,
-    height: 200,
-    margin: 2,
-    position: 'absolute',
-    top: 50,
-    left: 0,
-    right: 0
+    container: {
+      flex: 1,
+      height: 200,
+      margin: 2,
+      position: 'absolute',
+      top: 50,
+      left: 0,
+      right: 0
+    }
   }
 };
 
