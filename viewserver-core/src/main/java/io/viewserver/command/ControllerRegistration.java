@@ -15,7 +15,11 @@ public class ControllerRegistration{
             throw new RuntimeException("Controller must be specified");
         }
        this.controller = getControllerAnnotation(controller);
-       this.actions = getActions(controller);
+        try{
+            this.actions = getActions(controller);
+        }catch (Exception ex){
+            throw new RuntimeException(String.format("Problem constructing controller \"%s\"",this.controller.name()));
+        }
     }
 
     public String getName(){
