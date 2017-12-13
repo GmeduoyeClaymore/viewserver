@@ -88,6 +88,14 @@ export default class App extends React.Component {
     this.client.invokeJSONCommand(`paymentController`, "reject", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
   }
 
+  successVoid(commandExecutedPromise){
+    this.client.invokeJSONCommand(`paymentController`, "void", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
+  }
+
+  successNoParams(commandExecutedPromise){
+    this.client.invokeJSONCommand(`paymentController`, "noParams", undefined, commandExecutedPromise);
+  }
+
   noController(commandExecutedPromise){
     this.client.invokeJSONCommand(`paymentControllerx`, "process", {name: "fooname", address: "fooAddress"}, commandExecutedPromise);
   }
@@ -113,6 +121,8 @@ export default class App extends React.Component {
       <Text>{ "Result of executing command is " + JSON.stringify(paymentResult)}</Text>
     <Button  onPress={() => this.makePayment(this.success)}><Text>Success Process Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.successReject)}><Text>Success ASYNC Reject Payment</Text></Button>
+    <Button  onPress={() => this.makePayment(this.successVoid)}><Text>Success Void Payment</Text></Button>
+    <Button  onPress={() => this.makePayment(this.successNoParams)}><Text>Success No PArams Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.noController)}><Text>No Controller Payment</Text></Button>
     <Button  onPress={() => this.makePayment(this.invalidArgs)}><Text>Invalid Serialized Args</Text></Button>
     <Button  onPress={() => this.makePayment(this.errorWithinExecution)}><Text>Error Within execution</Text></Button>

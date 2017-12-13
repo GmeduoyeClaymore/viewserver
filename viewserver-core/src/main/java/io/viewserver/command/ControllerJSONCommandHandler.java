@@ -49,7 +49,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                 throw new RuntimeException("Unable to find action named \"" + data.getAction() + "\" in controller named \"" + controllerName + "\" containing actions \"" + String.join(",",registration.getActions().keySet()) + "\"" );
             }
             String payload = data.getPayload();
-            ListenableFuture<String> invoke = invoke(entry, payload);
+            ListenableFuture<String> invoke = invoke(entry, payload, ControllerContext.create(peerSession));
             invoke.addListener(new Runnable() {
                 @Override
                 public void run() {
@@ -69,14 +69,23 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
         }
     }
 
-    private ListenableFuture<String> invoke(ControllerActionEntry entry, String payload) {
+    private synchronized ListenableFuture<String> invoke(ControllerActionEntry entry, String payload,ControllerContext context) {
         if(entry.isSynchronous()){
-            return Futures.immediateFuture(entry.invoke(payload));
+            try(ControllerContext ctxt = ControllerContext.create(context)){
+                return Futures.immediateFuture(entry.invoke(payload));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return asyncExecutor.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                return entry.invoke(payload);
+                try(ControllerContext ctxt = ControllerContext.create(context)){
+                    return entry.invoke(payload);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
     }

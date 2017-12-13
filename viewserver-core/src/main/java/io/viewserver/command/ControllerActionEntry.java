@@ -21,14 +21,14 @@ public class ControllerActionEntry{
         if(method.getParameterTypes().length > 1){
             throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". All actions must have a single parameter at most");
         }
-        this.parameterType = method.getParameterTypes()[0];
+        this.parameterType = method.getParameterTypes().length == 1 ? method.getParameterTypes()[0] : null;
         this.returnType = method.getReturnType();
 
-        if(!mapper.canSerialize(this.parameterType)){
+        if(this.parameterType != null && !mapper.canSerialize(this.parameterType)){
             throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". unable to serialize argument type \"" + this.parameterType + "\"");
         }
 
-        if(!mapper.canSerialize(this.returnType)){
+        if(this.returnType != null && !mapper.canSerialize(this.returnType)){
             throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". unable to serialize return type " + this.returnType);
         }
         this.method = method;
@@ -42,7 +42,10 @@ public class ControllerActionEntry{
     public String invoke(String param){
         Object arg = fromString(param, this.parameterType);
         try {
-            Object result = method.invoke(this.controller, arg);
+            Object result = this.parameterType == null ? method.invoke(this.controller) : method.invoke(this.controller, arg);
+            if(this.returnType == null){
+                return null;
+            }
             return toString(result, this.returnType);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -52,6 +55,9 @@ public class ControllerActionEntry{
     }
 
     public static Object fromString(String ser,Class<?> aType){
+        if(aType == null){
+            return null;
+        }
         try {
             return mapper.readValue(ser, aType);
         } catch (JsonProcessingException e) {
