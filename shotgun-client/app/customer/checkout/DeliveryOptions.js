@@ -20,6 +20,12 @@ class DeliveryOptions extends Component {
     };
   }
 
+  componentWillMount(){
+    const {dispatch, user} = this.props;
+
+    dispatch(getPaymentCards(user.stripeCustomerId));
+  }
+
   async componentDidMount(){
     const {stripeDefaultPaymentSource} = this.props.user;
     const defaultCard = this.props.paymentCards.find(c => c.id == stripeDefaultPaymentSource) || paymentCards[0];
@@ -117,8 +123,6 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
-  getPaymentCards(user.stripeCustomerId)
-
   return {
     busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}),
     paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao'),
