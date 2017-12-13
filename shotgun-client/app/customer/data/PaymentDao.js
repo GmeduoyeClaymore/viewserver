@@ -28,18 +28,16 @@ export default class PaymentDao{
   }
 
   async createPaymentCustomer(paymentCustomer){
-    const commandExecutedPromise = new GenericJSONCommandPromise();
-    this.client.invokeJSONCommand('paymentController', 'createPaymentCustomer', paymentCustomer, commandExecutedPromise);
-    const paymentResponse =  await commandExecutedPromise.promise.timeoutWithError(5000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 5 seconds`));
+    const promise = this.client.invokeJSONCommand('paymentController', 'createPaymentCustomer', paymentCustomer);
+    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 5 seconds`));
     Logger.debug(`Got stripe payment details ${JSON.stringify(paymentResponse)}`)
     this.subject.next(paymentResponse);
     return paymentResponse;
   }
 
   async getCustomerPaymentCards(stripeCustomerToken){
-    const commandExecutedPromise = new GenericJSONCommandPromise();
-    this.client.invokeJSONCommand('paymentController', 'getPaymentCards', stripeCustomerToken, commandExecutedPromise);
-    const getCardsResponse =  await commandExecutedPromise.promise.timeoutWithError(2000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 2 seconds`));
+    const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards', stripeCustomerToken);
+    const getCardsResponse =  await promise.timeoutWithError(2000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 2 seconds`));
     Logger.debug(`Got stripe payment cards ${JSON.stringify(getCardsResponse)}`)
     this.rawDataSubject.next(getCardsResponse);
     return getCardsResponse;
