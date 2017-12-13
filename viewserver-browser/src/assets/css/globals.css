@@ -165,7 +165,6 @@ pointer-events: none;
   overflow: hidden;
   width: 100%;
   position: relative;
-  background: #253038;
   user-select: none;
   -webkit-user-select: none;
 }

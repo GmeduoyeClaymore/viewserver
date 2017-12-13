@@ -6,6 +6,7 @@ import RowEventMapper from './mappers/RowEventMapper';
 import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
 import Logger from 'common/Logger';
+import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
 
 export default class Client {
   constructor(url, protocol) {
@@ -124,7 +125,8 @@ export default class Client {
     return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   };
 
-  invokeJSONCommand = function (controllerName, action, payload, eventHandlers) {
+  invokeJSONCommand = function (controllerName, action, payload) {
+    const commandExecutedPromise = new GenericJSONCommandPromise();
     Logger.info(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
     
     if (!controllerName){
@@ -139,7 +141,8 @@ export default class Client {
       action,
       path : controllerName,
     });
-    return this.sendCommand('genericJSON', jsonCommand, false, eventHandlers);
+    this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
+    return commandExecutedPromise.promise; 
   };
 
   sendCommand = function (commandName, commandDto, continuous, eventHandlers) {

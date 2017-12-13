@@ -1,5 +1,6 @@
 package com.shotgun.viewserver;
 
+import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
@@ -17,12 +18,18 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "process", isSynchronous = true)
-    public PaymentResponse processPayment(PaymentCredentials credentials){
+     public PaymentResponse processPayment(PaymentCredentials credentials){
         if(credentials.name.equals("error")){
             throw new RuntimeException("Error caused by parameter name !!!!");
         }
         //TODO do whatever you want here we are on the correct thread
         return new PaymentResponse(ControllerContext.Current().getPeerSession().getConnectionId() + "-SUCCESS synch processResponse" + credentials.name,credentials.address);
+    }
+
+    @ControllerAction(path = "processWithArgs", isSynchronous = true)
+    public PaymentResponse processWithArgs(@ActionParam(name = "name")String name, @ActionParam(name = "age")int age, @ActionParam(name = "address")String address){
+
+        return new PaymentResponse(ControllerContext.Current().getPeerSession().getConnectionId() + "-SUCCESS synch processResponse name" + name + "age ",address);
     }
 
     @ControllerAction(path = "reject",isSynchronous = false)
