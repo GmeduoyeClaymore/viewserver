@@ -10,6 +10,9 @@ export default class PaymentDao{
     this.rawDataSubject = new Rx.Subject();
     this.name = 'paymentDao';
     this.createPaymentCustomer = this.createPaymentCustomer.bind(this);
+    this.getCustomerPaymentCards = this.getCustomerPaymentCards.bind(this);
+    this.updateSubscription = this.updateSubscription.bind(this);
+    this.subject.next();
   }
 
   get observable(){
@@ -40,6 +43,11 @@ export default class PaymentDao{
     Logger.debug(`Got stripe payment cards ${JSON.stringify(getCardsResponse)}`)
     this.rawDataSubject.next(getCardsResponse);
     return getCardsResponse;
+  }
+
+  async updateSubscription(){
+    this.subject.next();
+    return;
   }
 }
 
