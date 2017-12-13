@@ -26,13 +26,13 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "reject",isSynchronous = false)
-    public void rejectPayment(){
-        /*if(credentials.name.equals("error")){
+    public PaymentResponse rejectPayment(PaymentCredentials credentials){
+        if(credentials.name.equals("error")){
             throw new RuntimeException("Error caused by parameter name !!!!");
-        }*/
+        }
         //TODO careful that you don't try to modify any operators from a background thread
         //serverExecutionContext.getReactor().scheduleTask();
-        //return new PaymentResponse(ControllerContext.Current().getPeerSession().getConnectionId() + "SUCCESS asynchronous rejectResponse" + credentials.name,credentials.address);
+        return new PaymentResponse(ControllerContext.Current().getPeerSession().getConnectionId() + "SUCCESS asynchronous rejectResponse" + credentials.name,credentials.address);
     }
 
     @ControllerAction(path = "void",isSynchronous = true)
