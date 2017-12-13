@@ -45,11 +45,11 @@ class DeliveryOptions extends Component {
   }
 
   render() {
-    const {history, context, vehicleTypes, paymentCards = []} = this.props;
+    const {history, context, vehicleTypes, busy, paymentCards = []} = this.props;
     const {delivery, payment} = context.state;
     const {requireHelp} = this.state;
 
-    return <Container>
+    return busy ? null : <Container>
       <Header>
         <Left>
           <Button transparent>

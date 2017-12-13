@@ -14,13 +14,13 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
     const state = getState();
     if (!state.getIn(['dao', 'customerDao'])){
       const userDao = register(dispatch, new UserDao(client), {userId});
-    //  const orderDao = register(dispatch, new OrderDao(client), {userId});
-    //  const orderItemsDao = register(dispatch, new OrderItemsDao(client), {userId});
+      const orderDao = register(dispatch, new OrderDao(client), {userId});
+      const orderItemsDao = register(dispatch, new OrderItemsDao(client), {userId});
       const paymentDao = registerNakedDao(dispatch, new PaymentDao(client), {userId});
-    //  const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
-    //  const deliveryDao = register(dispatch, new DeliveryDao(client), {userId});
-      //register(dispatch, new OrderSummaryDao(client), {userId});
-    //  register(dispatch, new CustomerDao(client, userDao, paymentDao, deliveryAddressDao, deliveryDao, orderDao, orderItemsDao), {userId}, continueWith);
+      const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
+      const deliveryDao = register(dispatch, new DeliveryDao(client), {userId});
+      register(dispatch, new OrderSummaryDao(client), {userId});
+      register(dispatch, new CustomerDao(client, userDao, paymentDao, deliveryAddressDao, deliveryDao, orderDao, orderItemsDao), {userId}, continueWith);
     } else if (continueWith) {
       continueWith();
     }
