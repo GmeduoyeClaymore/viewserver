@@ -29,10 +29,11 @@ export default class GooglePlacesInput extends Component {
         query={{
           key: apiKey,
           language: 'en',
-          types: 'address',
+          types: ['address'],
           components: 'country:uk'
         }}
-        styles={{...styles, container: style}}
+        getDefaultValue={() => this.props.value || ''}
+        styles={{...styles, ...style}}
         currentLocation={false}
         nearbyPlacesAPI='GooglePlacesSearch'
         GooglePlacesSearchQuery={{

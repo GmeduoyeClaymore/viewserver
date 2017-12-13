@@ -17,10 +17,15 @@ export default class ValidatingInput extends Component {
     }
   }
 
+  async componentWillReceiveProps(nextProps){
+    if (nextProps.value !== this.props.value) {
+      this.formValueTouched();
+      await this.validate(nextProps.value);
+    }
+  }
+
   async onChangeText(value){
-    this.formValueTouched();
     this.props.onChangeText(value);
-    await this.validate(value);
   }
 
   async onBlur(){
