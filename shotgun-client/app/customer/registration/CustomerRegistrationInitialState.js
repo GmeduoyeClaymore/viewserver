@@ -1,4 +1,4 @@
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -6,8 +6,6 @@ export const INITIAL_STATE = {
     contactNo: undefined,
     password: undefined,
     type: 'customer',
-    stripeCustomerId: undefined,
-    stripeDefaultPaymentSource: undefined
   },
   deliveryAddress: {
     line1: undefined,
@@ -17,9 +15,9 @@ export const INITIAL_STATE = {
     postcode: undefined,
     isDefault: true
   }
-};
+};*/
 
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
     lastName: 'Graves',
@@ -27,8 +25,6 @@ export const INITIAL_STATE = {
     contactNo: '07733362799',
     type: 'customer',
     password: 'test',
-    stripeCustomerId: undefined,
-    stripeDefaultPaymentSource: undefined
   },
   deliveryAddress: {
     line1: '129 Drakefield Road',
@@ -41,5 +37,5 @@ export const INITIAL_STATE = {
     longitude: 0,
     isDefault: true
   }
-};*/
+};
 

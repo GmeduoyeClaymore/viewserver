@@ -155,6 +155,11 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>5.22.1</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

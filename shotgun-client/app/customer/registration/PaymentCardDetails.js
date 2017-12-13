@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
-import PaymentService from 'common/services/PaymentService';
-import {merge} from 'lodash';
 import uuidv4 from 'uuid/v4';
-import {addOrUpdateCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
+import {addCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
@@ -15,42 +13,30 @@ class PaymentCardDetails extends Component {
     this.onCardDetailsChange.bind(this);
 
     this.state = {
-      valid: false,
-      paymentCard: {
-        number: undefined,
-        expiry: undefined,
-        cvc: undefined
-      }
+      valid: false
     };
   }
 
   onCardDetailsChange(details){
     if (details.valid == true){
-      const {number, expiry, cvc, type} = details.values;
-      this.setState({valid: details.valid, paymentCard: {number, expiry, cvc, type}});
+      const {number, expiry, cvc} = details.values;
+      const expiryTokens = expiry.split('/');
+      this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
     }
   }
 
   render(){
     const {history, busy, errors, context, dispatch, client} = this.props;
-    const {number, expiry, cvc} = this.state.paymentCard;
     const {valid} = this.state;
 
     const saveCardDetails = async() => {
-      const {user} = context.state;
-      const expiryTokens = expiry.split('/');
-      const cardToken = await PaymentService.createCardToken(number,  expiryTokens[0], expiryTokens[1], cvc);
-      const stripeCustomerId = await PaymentService.createCustomer(cardToken, user.email);
-      context.setState({user: merge({}, user, {stripeCustomerId, stripeDefaultPaymentSource: cardToken})});
-
       //TODO - set busy when calling stripe
-      //TODO - error handling for stripe card and customer creation
       await createServicesThenRegister();
     };
 
     const register = async() => {
       const {user, deliveryAddress} = context.state;
-      dispatch(addOrUpdateCustomer(user, deliveryAddress, () => history.push('/Root')));
+      dispatch(addCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
     };
 
     const createServicesThenRegister = async() => {
@@ -82,8 +68,8 @@ class PaymentCardDetails extends Component {
 }
 
 const mapStateToProps = (state, initialProps) => ({
-  errors: getOperationError(state, 'customerDao', 'addOrUpdateCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'addOrUpdateCustomer'}),
+  errors: getOperationError(state, 'customerDao', 'addCustomer'),
+  busy: isAnyOperationPending(state, { customerDao: 'addCustomer'}),
   ...initialProps
 });
 

@@ -17,14 +17,10 @@
 
 package io.viewserver.messages.protobuf;
 
-import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.PoolableMessage;
 import io.viewserver.messages.command.IGenericJSONCommand;
-import io.viewserver.messages.command.ITableEditCommand;
 import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.GenericJSONCommandMessage;
-import io.viewserver.messages.protobuf.dto.TableEditCommandMessage;
-import io.viewserver.messages.tableevent.ITableEvent;
 
 
 /**

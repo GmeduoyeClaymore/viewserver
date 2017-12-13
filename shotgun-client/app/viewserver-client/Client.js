@@ -135,9 +135,9 @@ export default class Client {
     }
 
     const jsonCommand = ProtoLoader.Dto.GenericJSONCommandDto.create({
-      payload : JSON.stringify(payload),
+      payload: JSON.stringify(payload),
       action,
-      path : controllerName,
+      path: controllerName,
     });
     return this.sendCommand('genericJSON', jsonCommand, false, eventHandlers);
   };

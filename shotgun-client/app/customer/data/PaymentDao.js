@@ -1,0 +1,45 @@
+import Logger from 'common/Logger';
+import Rx from 'rxjs/Rx';
+import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
+
+export default class PaymentDao{
+  constructor(client) {
+    this.client = client;
+    this.subject = new Rx.Subject();
+    this.optionsSubject = new Rx.Subject();
+    this.rawDataSubject = new Rx.Subject();
+    this.name = 'paymentDao';
+    this.createPaymentCustomer = this.createPaymentCustomer.bind(this);
+  }
+
+  get observable(){
+    return this.subject;
+  }
+
+  get optionsObservable(){
+    return this.optionsSubject;
+  }
+
+  get rawDataObservable(){
+    return this.rawDataSubject;
+  }
+
+  async createPaymentCustomer(paymentCustomer){
+    const commandExecutedPromise = new GenericJSONCommandPromise();
+    this.client.invokeJSONCommand('paymentController', 'createPaymentCustomer', paymentCustomer, commandExecutedPromise);
+    const paymentResponse =  await commandExecutedPromise.promise.timeoutWithError(2000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 2 seconds`));
+    Logger.debug(`Got stripe payment details ${JSON.stringify(paymentResponse)}`)
+    this.subject.next(paymentResponse);
+    return paymentResponse;
+  }
+
+  async getCustomerPaymentCards(stripeCustomerToken){
+    const commandExecutedPromise = new GenericJSONCommandPromise();
+    this.client.invokeJSONCommand('paymentController', 'getPaymentCards', stripeCustomerToken, commandExecutedPromise);
+    const getCardsResponse =  await commandExecutedPromise.promise.timeoutWithError(2000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 2 seconds`));
+    Logger.debug(`Got stripe payment cards ${JSON.stringify(getCardsResponse)}`)
+    this.rawDataSubject.next(getCardsResponse);
+    return getCardsResponse;
+  }
+}
+

@@ -50,10 +50,10 @@ OrderDetail.PropTypes = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  paymentCards: getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao'),
+  paymentCards: getDaoState(state, ['customer', 'paymentCards'], 'paymentDao'),
   orders: getDaoState(state, ['customer', 'orders'], 'orderSummaryDao'),
   orderItems: getDaoState(state, ['customer', 'orderDetail', 'items'], 'orderItemsDao'),
-  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentCardsDao']),
+  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentDao']),
   ...initialProps
 });
 

@@ -81,7 +81,7 @@ Orders.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => ({
   orders: getDaoState(state, ['orders'], 'orderSummaryDao'),
-  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentCardsDao']),
+  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentDao']),
   ...initialProps
 });
 

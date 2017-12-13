@@ -46,7 +46,7 @@ const mapStateToProps = (state, initialProps) => {
   const {delivery, payment, order} = context.state;
 
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
- /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao');*/
+ /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentDao');*/
   const deliveryAddress = deliveryAddresses ? deliveryAddresses.find(a => a.deliveryAddressId == delivery.deliveryAddressId) : {};
  /* const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};*/
   

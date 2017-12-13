@@ -1,9 +1,9 @@
-import {invokeDaoCommand, getDaoOptions} from 'common/dao';
-import {register} from 'common/actions/CommonActions';
+import {invokeDaoCommand} from 'common/dao';
+import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderItemsDao from 'customer/data/OrderItemsDao';
 import OrderDao from 'customer/data/OrderDao';
 import CustomerDao from 'customer/data/CustomerDao';
-import PaymentCardsDao from 'customer/data/PaymentCardsDao';
+import PaymentDao from 'customer/data/PaymentDao';
 import DeliveryAddressDao from 'customer/data/DeliveryAddressDao';
 import OrderSummaryDao from 'customer/data/OrderSummaryDao';
 import DeliveryDao from 'customer/data/DeliveryDao';
@@ -16,11 +16,11 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
       const userDao = register(dispatch, new UserDao(client), {userId});
       const orderDao = register(dispatch, new OrderDao(client), {userId});
       const orderItemsDao = register(dispatch, new OrderItemsDao(client), {userId});
-      //const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
+      const paymentDao = registerNakedDao(dispatch, new PaymentDao(client), {userId});
       const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
       const deliveryDao = register(dispatch, new DeliveryDao(client), {userId});
       //register(dispatch, new OrderSummaryDao(client), {userId});
-      register(dispatch, new CustomerDao(client, userDao, undefined, deliveryAddressDao, deliveryDao, orderDao, orderItemsDao), {userId}, continueWith);
+      register(dispatch, new CustomerDao(client, userDao, paymentDao, deliveryAddressDao, deliveryDao, orderDao, orderItemsDao), {userId}, continueWith);
     } else if (continueWith) {
       continueWith();
     }
@@ -33,9 +33,9 @@ export const loadCustomerRegistrationServices = (client, userId, continueWith) =
     const state = getState();
     if (!state.getIn(['dao', 'userDao'])){
       const userDao = register(dispatch, new UserDao(client), {userId});
-    //  const paymentCardsDao = register(dispatch, new PaymentCardsDao(client), {userId});
+      const paymentsDao = registerNakedDao(dispatch, new PaymentDao(client), {userId});
       const deliveryAddressDao = register(dispatch, new DeliveryAddressDao(client), {userId});
-      register(dispatch, new CustomerDao(client, userDao, undefined, deliveryAddressDao), {userId}, continueWith);
+      register(dispatch, new CustomerDao(client, userDao, paymentsDao, deliveryAddressDao), {userId}, continueWith);
     } else if (continueWith) {
       continueWith();
     }
@@ -46,6 +46,10 @@ export const checkout = (order, payment, delivery, continueWith) => {
   return invokeDaoCommand('customerDao', 'checkout', {order, payment, delivery}, continueWith);
 };
 
-export const addOrUpdateCustomer = (customer, deliveryAddress, continueWith) => {
-  return invokeDaoCommand('customerDao', 'addOrUpdateCustomer', {customer, deliveryAddress}, continueWith);
+export const addCustomer = (customer, deliveryAddress, paymentCard, continueWith) => {
+  return invokeDaoCommand('customerDao', 'addCustomer', {customer, deliveryAddress, paymentCard}, continueWith);
+};
+
+export const getPaymentCards = (stripeCustomerToken, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', {stripeCustomerToken}, continueWith);
 };
