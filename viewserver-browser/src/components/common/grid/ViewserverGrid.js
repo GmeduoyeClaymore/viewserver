@@ -103,7 +103,7 @@ export default class ViewServerGrid extends Component {
             return <div>Awaiting registration of data source</div>;
         }
         return <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">
-            {busy ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
+            {busy && false ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
             {this.gridContainer ? 
             <Grid ref={ grid => {this.grid = grid}}
             rowHeight={ROW_HEIGHT}

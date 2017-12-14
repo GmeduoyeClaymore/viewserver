@@ -99,7 +99,8 @@ class OperatorGroupView extends Component{
 
   onRowClick(row, {history}){
     const {path} = row;
-    this.props.selectOperator({operator : path});
+    const {operatorGroup} = this.props;
+    this.props.selectOperator({operatorGroup, operator : path});
   }
 
   componentWillReceiveProps(props){

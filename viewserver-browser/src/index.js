@@ -17,6 +17,7 @@ let root = document.createElement('div');
 root.id = "root";
 document.body.appendChild( root );
 webFrame.setZoomFactor(1)
+webFrame.setZoomLevelLimits(1, 1);
 webFrame.setVisualZoomLevelLimits(1, 1);
 webFrame.setLayoutZoomLevelLimits(0, 0);
 
