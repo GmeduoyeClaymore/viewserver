@@ -137,7 +137,9 @@ class OperatorGroupView extends Component{
     const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName}  = this.props;
     return <div className="flex flex-col"> 
                 {operatorListDaoReady ? this.renderOperators() : null}
+                <div style={{position : 'relative'}} className="flex flex-col">
                 <ViewServerGrid daoName="operatorContentsDao" options={{operatorName}} />
+                </div>
             </div>
   }
 }

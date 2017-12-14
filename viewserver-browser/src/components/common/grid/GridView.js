@@ -284,6 +284,7 @@ export default class GridView extends Component {
         grid.onContextMenu.subscribe(this.handleContextMenu.bind(this));
         grid.onClick.subscribe(this.handleClick.bind(this));
         grid.onScroll.subscribe(this.handleScroll.bind(this));
+        grid.onScroll.subscribe(this.handleScrollStart.bind(this));
         grid.onDblClick.subscribe(this.handleDblClick.bind(this));
         grid.onSelectionChanged.subscribe(this.handleSelectionChanged.bind(this));
         grid.onMouseDown.subscribe(this.handleMouseDown.bind(this));
@@ -318,9 +319,18 @@ export default class GridView extends Component {
     }
 
     handleScroll() {
-		require('electron').webFrame.setZoomFactor(1)        this.setState({
+        require('electron').webFrame.setZoomFactor(1)        
+        this.setState({
             scrollLeft: -this.grid.viewPort.left
         });
+        
+    }
+
+    handleScrollStart(){
+        const {onScrollStarted} = this.props;
+        if(onScrollStarted){
+            onScrollStarted();
+        }
     }
 
     handleContextMenu(e) {

@@ -58,6 +58,7 @@ export default class ViewServerGrid extends Component {
             filters: false,
             onFilterChange: this.handleInlineFilterChange
         }
+        this.handleScrollStarted = this.handleScrollStarted.bind(this);
     }
 
     async componentWillMount(){
@@ -101,7 +102,7 @@ export default class ViewServerGrid extends Component {
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
-        return <div style={{position : 'relative'}} ref={grid => {this.gridContainer = grid}} className="flex flex-col">
+        return <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">
             {busy ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
             {this.gridContainer ? 
             <Grid ref={ grid => {this.grid = grid}}
@@ -114,11 +115,16 @@ export default class ViewServerGrid extends Component {
             onColumnResized={this.handleColumnResized}
             onColumnHeaderClick={this.handleColumnHeaderClick}
             onContextMenu={this.handleContextMenu}
+            onScrollStarted={this.handleScrollStarted}
             onColumnHeaderContextMenu={this.handleColumnHeaderContextMenu}
             onColumnStyleUpdated={this.handleColumnStyleUpdated}
             renderHeaderCell={this.renderTitleText}
             renderHeaderCellProps={this.renderCellHeaderProps}
         ></Grid> : null }</div>
+    }
+
+    handleScrollStarted(){
+        //this.setState({busy : true});
     }
 
     handleContextMenu(){

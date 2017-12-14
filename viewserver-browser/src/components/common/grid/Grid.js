@@ -123,6 +123,10 @@ export default class Grid {
 		return this._scroll;
 	}
 
+	get onScrollStart() {
+		return this._scrollStart;
+	}
+
 	get onMouseDown() {
 		return this._mouseDown;
 	}
@@ -494,9 +498,12 @@ export default class Grid {
 			this.element || grid;
 
 		// make disposable
-		/*this._bindDomEvent(viewPort, 'scroll', undefined, false)
-			.debounceTime(500)
-			.subscribe(this._handleScrolled.bind(this));*/
+		const scrolling = this._bindDomEvent(viewPort, 'scroll', undefined, false);
+
+
+		scrolling.debounceTime(100).subscribe(this._handleScrolled.bind(this));
+		scrolling.subscribe(this._handleScrollStart.bind(this));
+		//this._bindDomEvent(viewPort, 'mousewheel').subscribe(this._handleScrolled.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
 		const { _createMouseEvent } = this;
@@ -515,6 +522,7 @@ export default class Grid {
 		this._click = new Rx.Subject();
 		this._dblClick = new Rx.Subject();
 		this._scroll = new Rx.Subject();
+		this._scrollStart = new Rx.Subject();
 		this._selectionChanged = new Rx.Subject();
 
 		// bind to track enter/leave/click at cell level
@@ -945,7 +953,8 @@ export default class Grid {
 	}
 
 	_handleScrolled(e) {
-		require('electron').webFrame.setZoomFactor(1)		const susp = this.suspendRendering();
+		require('electron').webFrame.setZoomFactor(1)		
+		const susp = this.suspendRendering();
 		this._updateViewPortLocation();
 		susp.dispose();
 		this._scroll.next({
@@ -954,6 +963,14 @@ export default class Grid {
 			top: this.viewPort.top
 		});
 		 
+	}
+
+	_handleScrollStart(e) {
+		this._scroll.next({
+			trigger: e,
+			left: this.viewPort.left,
+			top: this.viewPort.top
+		});
 	}
 }
 
