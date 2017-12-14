@@ -70,7 +70,7 @@ export default class App extends React.Component {
       return <LoadingScreen text="Connecting"/>;
     } else if (!isConnected){
       return  <Container style={{flexDirection: 'column', flex: 1}}>
-        <Text>{error}</Text>
+        <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
       </Container>;
     }
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};

@@ -119,11 +119,6 @@ class OperatorGroupView extends Component{
     //updateSubscription("operatorContentsDao", {operatorName : operator})
   }
 
-  renderGrid(){
-    const {operator : operatorName} = this.props;
-    return <ViewServerGrid daoName="operatorContentsDao" options={{operatorName}} />
-  }
-
   renderOperators(){
     const {context={},mode,history} = this.props;
     return mode === 'table' ? <PagingListView
@@ -139,10 +134,10 @@ class OperatorGroupView extends Component{
             headerView={headerView}/> : <div>Render operator graph</div>;
   }
   render(){
-    const {operatorListDaoReady,operatorContentsDaoReady}  = this.props;
+    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName}  = this.props;
     return <div className="flex flex-col"> 
                 {operatorListDaoReady ? this.renderOperators() : null}
-                {this.renderGrid()}
+                <ViewServerGrid daoName="operatorContentsDao" options={{operatorName}} />
             </div>
   }
 }

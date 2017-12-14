@@ -13,8 +13,8 @@ import { ScaleLoader } from 'react-spinners';
 const CONTAINER_STYLE = { display: 'flex', flexDirection: 'column', flex: '1', overflow: 'hidden' };
 const MODAL_STYLE = {
     zIndex: 1, /* Sit on top */
-    left: '50%',
-    top: '50%',
+    left: '0',
+    top: '0',
     width: '100%', /* Full width */
     height: '100%', /* Full height */
     overflow: 'auto', /* Enable scroll if needed */
@@ -22,12 +22,6 @@ const MODAL_STYLE = {
     backgroundColor: 'rgba(255,255,255,0.4)' /* Black w/ opacity */
 }
 const ROW_HEIGHT = 12;
-function setState(state) {
-    this.state = {
-        ...this.state,
-        ...state
-    };
-}
 
 export default class ViewServerGrid extends Component {
     static propTypes = {
@@ -45,7 +39,6 @@ export default class ViewServerGrid extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.setState = setState;
         const state = {
             columns: this.dataSource && this.dataSource.columns || [],
             inlineFiltersVisible: false
@@ -58,32 +51,30 @@ export default class ViewServerGrid extends Component {
             this.updateInlineFilters(inlineFilters && inlineFilters.filters);
         }
         this.state = state;
-     
+        this.disposables = [];
+        this.renderCellHeaderProps = {
+            onColumnStyleUpdated: this.handleColumnStyleUpdated,
+            showFilter: false,
+            filters: false,
+            onFilterChange: this.handleInlineFilterChange
+        }
     }
 
     async componentWillMount(){
         Logger.info(`Waiting for registration of Dao ${this.props.daoName}`)
         this.dao = this.dao || await this.getDao(this.props.daoName);
         const dataSource = new DaoDataSource(this.dao);      
-        dataSource.columnsChanged.subscribe(this.setColumns.bind(this));
+        this.disposables.push(dataSource.onDataRequested.subscribe(busy => this.setState({busy})));
+        this.disposables.push(dataSource.columnsChanged.debounceTime(50).subscribe(this.setColumns.bind(this)));
         this.setState({dataSource});
     }
 
     componentWillReceiveProps(newProps){
         if(!isEqual(newProps.options, this.props.options)){
-            this.busy(this.dao.updateSubscription(newProps.options));
+            this.dao.updateSubscription(newProps.options);
         }
     }
 
-    async busy(promise){
-        try{
-            this.setState({busy : true})
-            await promise;
-        }finally{
-            this.setState({busy : false})
-        }
-        
-    }
     setColumns(columns){
         const {dataSource} = this.state;
         this.setState({columns : dataSource.columns});
@@ -91,14 +82,17 @@ export default class ViewServerGrid extends Component {
 
     componentWillUnmount(){
         Logger.info("Unmounting grid");
+        this.disposables.forEach(dis => dis.unsubscribe())
     }
 
     async getDao(daoName){
         const context = new GenericOperatorDaoContext(daoName, {});
         const dao = new Dao(context);
-        const {updateSubscription} = dao;
-        dao.updateSubscription = opt => this.busy(updateSubscription(opt));
         return dao; 
+    }
+
+    renderTitleText({column}){
+        return <div>{column.title}</div>
     }
 
     render() {
@@ -108,7 +102,7 @@ export default class ViewServerGrid extends Component {
             return <div>Awaiting registration of data source</div>;
         }
         return <div style={{position : 'relative'}} ref={grid => {this.gridContainer = grid}} className="flex flex-col">
-            {busy ? <div style={{position : 'absolute', ...MODAL_STYLE}}><ScaleLoader/></div> : null}
+            {busy ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
             {this.gridContainer ? 
             <Grid ref={ grid => {this.grid = grid}}
             rowHeight={ROW_HEIGHT}
@@ -122,13 +116,8 @@ export default class ViewServerGrid extends Component {
             onContextMenu={this.handleContextMenu}
             onColumnHeaderContextMenu={this.handleColumnHeaderContextMenu}
             onColumnStyleUpdated={this.handleColumnStyleUpdated}
-            renderHeaderCell={renderColumnHeaderContent}
-            renderHeaderCellProps={{
-                    onColumnStyleUpdated: this.handleColumnStyleUpdated,
-                    showFilter: this.state.inlineFiltersVisible,
-                    filters: this.state.inlineFilters,
-                    onFilterChange: this.handleInlineFilterChange
-                }}
+            renderHeaderCell={this.renderTitleText}
+            renderHeaderCellProps={this.renderCellHeaderProps}
         ></Grid> : null }</div>
     }
 

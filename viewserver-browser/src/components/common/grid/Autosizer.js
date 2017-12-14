@@ -1,5 +1,5 @@
 import React, {Component, PropTypes, cloneElement} from 'react';
-
+import EventSource from './EventSource'
 const listeners = [];
 let isNotifying = false;
 
@@ -15,6 +15,8 @@ const observer = new MutationObserver(function() {
         }, 0);
     }
 });
+
+
 
 function addListener(listener) {
     if (listeners.push(listener) === 1) {
@@ -54,6 +56,9 @@ export default class Autosizer extends Component {
         this._update = this._update.bind(this);
         this._bindElement = this._bindElement.bind(this);
         this.element = null;
+        this.disposables = [];
+        this.disposables.push(EventSource.fromDOM(window,'resize',this._update).subscribe(this._update));
+        
     }
 
     _update() {
@@ -80,6 +85,7 @@ export default class Autosizer extends Component {
 
     componentWillUnmount() {
         removeListener(this._update);
+        this.disposables.forEach(c=> c.unsubscribe());
     }
 
     render() {

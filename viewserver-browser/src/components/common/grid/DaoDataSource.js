@@ -10,6 +10,7 @@ export default class DaoDataSource{
         this.dataRequestedSubject = new Rx.Subject();
         this.onResized = new Rx.Subject();
         this.onChanged = new Rx.Subject();
+        this.onDataRequested = new Rx.Subject();
         this.columnsChanged = new Rx.Subject();
         this.dao.rawDataObservable.subscribe(this.handleDataSinkUpdate.bind(this));
     }
@@ -64,9 +65,12 @@ export default class DaoDataSource{
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
         try{
-            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd+1});
+            this.onDataRequested.next(true)
+            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
         }catch(exception){
             Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
+        }finally{
+            this.onDataRequested.next(false)
         }
     }
 

@@ -82,16 +82,19 @@ class ViewServerGridColumnHeaderContent extends Component {
         return null;
     }
 
+    renderTitleText(column, props){
+        return <div>{column.title}</div>
+    }
+
     renderTitle = () => {
         const {
             column,
-            onColumnStyleUpdated,
-            renderTitle
+            onColumnStyleUpdated
         } = this.props;
 
         return (
             <div className="header-container display-flex flex justify-space-between">
-                {renderTitle(column, this.props)}
+                {this.renderTitleText(column, this.props)}
                 {this.renderStyleEditor(column, onColumnStyleUpdated)}
             </div>
         );

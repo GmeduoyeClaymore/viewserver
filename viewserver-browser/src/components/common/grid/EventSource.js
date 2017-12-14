@@ -262,7 +262,7 @@ export default class EventSource {
                     observer.next(transformed);
                 }
             } : (el,ev) => observer.next(ev);
-            element.addEventListener(event, dispatch, !!capture);
+            element.addEventListener(event, dispatch, {useCapture : !!capture, passive: true});
             return () => {
                 element.removeEventListener(event, dispatch);
             };

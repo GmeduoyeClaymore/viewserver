@@ -320,7 +320,7 @@ export default class Grid {
 	_updateViewPortData() {
 		const { visibleRange, dataSource } = this;
 		if (visibleRange && dataSource && dataSource.view) {
-			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd + 1, visibleRange.colStart, visibleRange.colEnd + 1);
+			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd, visibleRange.colStart, visibleRange.colEnd + 1);
 		}
 	}
 
@@ -348,7 +348,8 @@ export default class Grid {
 
 	_updateViewPortSize() {
 		const { canvas, viewPort } = this.refs;
-		const { clientWidth, clientHeight } = viewPort;
+		const clientWidth = viewPort.clientWidth;
+		const clientHeight = viewPort.clientHeight;
 
 		if (dom.setSize(canvas, clientWidth, clientHeight)) {
 			// if canvas size is changed then ensure we fully configure the canvas
@@ -493,9 +494,9 @@ export default class Grid {
 			this.element || grid;
 
 		// make disposable
-		this._bindDomEvent(viewPort, 'scroll')
-			.debounceTime(50)
-			.subscribe(this._handleScrolled.bind(this));
+		/*this._bindDomEvent(viewPort, 'scroll', undefined, false)
+			.debounceTime(500)
+			.subscribe(this._handleScrolled.bind(this));*/
 
 		// expose events to outside world (via _this.createMouseEvent transform)
 		const { _createMouseEvent } = this;
@@ -541,11 +542,23 @@ export default class Grid {
 
 	_unbindElement() {
 		// clear disposables
-		this._disposables.forEach(x => x.unsubscribe());
+		this._disposables.forEach(x => this.getRid(x));
 		this._disposables.length = 0;
 
 		// remove content
 		this.element.innerHTML = null;
+	}
+
+	getRid(x){
+		if(x.unsubscribe){
+			x.unsubscribe()
+		}
+		else if(x.dispose){
+			x.dispose()
+		}
+		else{
+			console.error("Unable to get rid of element " + x);
+		}
 	}
 
 	_getColumn(columnIndex) {
@@ -932,8 +945,7 @@ export default class Grid {
 	}
 
 	_handleScrolled(e) {
-		require('electron').webFrame.setZoomFactor(1)
-		const susp = this.suspendRendering();
+		require('electron').webFrame.setZoomFactor(1)		const susp = this.suspendRendering();
 		this._updateViewPortLocation();
 		susp.dispose();
 		this._scroll.next({
