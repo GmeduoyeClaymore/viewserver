@@ -242,6 +242,12 @@ export default class GridView extends Component {
             this.grid.updateLayout();
         }
     }
+    //There may be a couple of places left that are calling this but I have removed some alreaady.
+    scrollRowIntoView(idx){
+        if (this.grid) {
+            this.grid.scrollRowIntoView(idx);
+        }
+    }
 
     componentWillReceiveProps(nextProps) {
         const options = {

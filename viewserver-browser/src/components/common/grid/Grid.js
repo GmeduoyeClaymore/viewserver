@@ -14,7 +14,7 @@ import StyleSheet from './StyleSheet';
 import ColumnPaintingStrategy from './ColumnPaintingStrategy';
 import ReactDOM from 'react-dom'
 import EventSource from './EventSource'
-
+import Logger from 'common/Logger';
 const GridTemplate = `<div class="canv-grid" >
 	 	<div class="canv-grid__scroll" tabIndex="0">
 	 		<div class="canv-grid__scroll__content" tabIndex="0"></div>
@@ -938,17 +938,20 @@ export default class Grid {
 
 	scrollRowIntoView(rowIndex) {
 		const { viewPort } = this;
-
+		try{
 		// locate the row rectangle
-		const rect = viewPort.rectFromCell(rowIndex, 0);
+			const rect = viewPort.rectFromCell(rowIndex, 0);
 
-		//	 calculate the amount to move by
-		let scrollDown = rect.bottom - (viewPort.top + viewPort.height);
-		let scrollUp = viewPort.top - rect.top;
-		if (scrollUp >= 0) {
-			this.refs.viewPort.scrollTop -= scrollUp;
-		} else if (scrollDown >= 0) {
-			this.refs.viewPort.scrollTop += scrollDown;
+			//	 calculate the amount to move by
+			let scrollDown = rect.bottom - (viewPort.top + viewPort.height);
+			let scrollUp = viewPort.top - rect.top;
+			if (scrollUp >= 0) {
+				this.refs.viewPort.scrollTop -= scrollUp;
+			} else if (scrollDown >= 0) {
+				this.refs.viewPort.scrollTop += scrollDown;
+			}
+		}catch(exception){
+			Logger.error(exception);
 		}
 		// TODO: handle both (middle, edge case)
 	}

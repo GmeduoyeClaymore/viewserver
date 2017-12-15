@@ -1,6 +1,7 @@
 import {Rx} from 'common/rx';
 import * as RxConstants from 'common/rx';
 import Logger from 'common/Logger';
+import {debounce} from 'lodash';
 
 export default class DaoDataSource{
     constructor(dao){
@@ -14,6 +15,9 @@ export default class DaoDataSource{
         this.columnsChanged = new Rx.Subject();
         this.dao.rawDataObservable.subscribe(this.handleDataSinkUpdate.bind(this));
         this.columnSorting = {};
+        const {updateSubscription} = this;
+        this.undebouncedUpdateSubscrption = updateSubscription;
+        this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
     }
 
     static DIRECTION_CYCLE=['asc','desc',undefined];
@@ -67,14 +71,14 @@ export default class DaoDataSource{
     async handleDataRequest(rowStart,rowEnd,colStart,colEnd){
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
-        await this.updateSubscription({offset : rowStart, limit : rowEnd+1});
+        await this.updateSubscription({offset : rowStart, limit : rowEnd});
     }
 
     async sort(key, direction){
 
         const sortDirection = direction && !!~ DaoDataSource.DIRECTION_CYCLE.indexOf(direction) ? direction : this.cycleDirection(key);
         this.columnSorting[key] = sortDirection;
-        await this.updateSubscription({columnsToSort : this.getViewServerColumnSorting()});
+        await this.updateSubscription();
         this.columnsChanged.next();
     }
 
@@ -103,7 +107,7 @@ export default class DaoDataSource{
     async updateSubscription(options){
         try{
             this.onDataRequested.next(true)
-            await this.dao.updateSubscription(options);
+            await this.dao.updateSubscription({...options,columnsToSort : options.columnsToSort || this.getViewServerColumnSorting()});
         }catch(exception){
             Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
         }finally{
