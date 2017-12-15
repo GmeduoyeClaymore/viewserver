@@ -50,6 +50,6 @@ export const addCustomer = (customer, deliveryAddress, paymentCard, continueWith
   return invokeDaoCommand('customerDao', 'addCustomer', {customer, deliveryAddress, paymentCard}, continueWith);
 };
 
-export const getPaymentCards = (stripeCustomerToken, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', {stripeCustomerToken}, continueWith);
+export const getPaymentCards = (customerToken, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', {customerToken}, continueWith);
 };

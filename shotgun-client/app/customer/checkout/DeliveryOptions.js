@@ -7,8 +7,8 @@ import {Icon, Button, Container, Form, Label, Item, Header, Text, Title, Body, L
 import {getDaoState} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
-import {getPaymentCards} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending} from 'common/dao';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 class DeliveryOptions extends Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class DeliveryOptions extends Component {
 
   async componentDidMount(){
     const {stripeDefaultPaymentSource} = this.props.user;
-    const defaultCard = this.props.paymentCards.find(c => c.id == stripeDefaultPaymentSource) || paymentCards[0];
+    const defaultCard = this.props.paymentCards.find(c => c.id == stripeDefaultPaymentSource) || this.props.paymentCards[0];
     if (defaultCard){
       this.setCard(defaultCard.id);
     }
@@ -49,7 +49,7 @@ class DeliveryOptions extends Component {
     const {delivery, payment} = context.state;
     const {requireHelp} = this.state;
 
-    return busy ? null : <Container>
+    return busy ? <LoadingScreen text="Loading Customer Cards"/> : <Container>
       <Header>
         <Left>
           <Button transparent>
@@ -93,7 +93,7 @@ class DeliveryOptions extends Component {
 
         <Text>Pay with card</Text>
         <Picker selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
-          {paymentCards.map(c => <Picker.Item key={c.paymentId} label={`${c.number}  ${c.expiry}`} value={c.paymentId} />)}
+          {paymentCards.map(c => <Picker.Item key={c.id} label={`************${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
         </Picker>
         <Button onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
       </Form>
@@ -115,18 +115,13 @@ const styles = {
   }
 };
 
-const mapStateToProps = (state, initialProps) => {
-  const user = getDaoState(state, ['user'], 'userDao');
-  getPaymentCards(user.stripeCustomerId)
-
-  return {
-    busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}),
-    paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao'),
-    vehicleTypes: getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao'),
-    user,
-    ...initialProps
-  };
-};
+const mapStateToProps = (state, initialProps) => ({
+  busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}),
+  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || [],
+  vehicleTypes: getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao'),
+  user: getDaoState(state, ['user'], 'userDao'),
+  ...initialProps
+});
 
 export default withRouter(connect(
   mapStateToProps

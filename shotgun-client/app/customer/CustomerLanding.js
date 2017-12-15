@@ -5,9 +5,9 @@ import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
-import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
+import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import CustomerSettings from './CustomerSettings';
-import {isAnyLoading} from 'common/dao';
+import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
@@ -33,8 +33,9 @@ class CustomerLanding extends Component {
   }
 
   async componentWillMount() {
-    const {dispatch, userId, client} = this.props;
+    const {dispatch, userId, client, user} = this.props;
     dispatch(customerServicesRegistrationAction(client, userId));
+    dispatch(getPaymentCards(user.stripeCustomerId));
   }
 
   render() {
@@ -55,7 +56,9 @@ class CustomerLanding extends Component {
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['vehicleTypeDao', 'paymentDao']), ...nextOwnProps
+  busy: isAnyLoading(state, ['vehicleTypeDao', 'paymentDao', 'userDao']),
+  user: getDaoState(state, ['user'], 'userDao'),
+  ...nextOwnProps
 });
 
 export default connect(mapStateToProps)(CustomerLanding);
