@@ -79,7 +79,7 @@ export default class GridViewPort extends ViewPort {
 			return null;
 		}
 
-		return new Range(rowStart, colStart, rowEnd -1, colEnd);			
+		return new Range(rowStart, colStart, rowEnd, colEnd);			
 	}
 
 	rangeFromClientRect(rect) {

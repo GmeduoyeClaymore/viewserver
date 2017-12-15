@@ -53,6 +53,8 @@ function wrapDebug(name, original) {
 
 export default class Grid {
 	constructor(element, options) {
+		require('electron').webFrame.setZoomFactor(1)	
+		require('electron').webFrame.setZoomLevelLimits(1,1)	
 		this.element = element;
 		this._disposables = [];
 
@@ -324,7 +326,7 @@ export default class Grid {
 	_updateViewPortData() {
 		const { visibleRange, dataSource } = this;
 		if (visibleRange && dataSource && dataSource.view) {
-			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd, visibleRange.colStart, visibleRange.colEnd + 1);
+			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd + 1, visibleRange.colStart, visibleRange.colEnd + 1);
 		}
 	}
 
@@ -501,9 +503,13 @@ export default class Grid {
 		const scrolling = this._bindDomEvent(viewPort, 'scroll', undefined, false);
 
 
-		scrolling.debounceTime(100).subscribe(this._handleScrolled.bind(this));
+		scrolling.debounceTime(10).subscribe(this._handleScrolled.bind(this));
 		scrolling.subscribe(this._handleScrollStart.bind(this));
-		//this._bindDomEvent(viewPort, 'mousewheel').subscribe(this._handleScrolled.bind(this));
+
+		const mousewheel = this._bindDomEvent(viewPort, 'mousewheel');
+
+		mousewheel.debounceTime(50).subscribe(this._handleMouseWheelStart.bind(this));
+		mousewheel.debounceTime(100).subscribe(this._handleMouseWheelFinish.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
 		const { _createMouseEvent } = this;
@@ -953,7 +959,10 @@ export default class Grid {
 	}
 
 	_handleScrolled(e) {
-		require('electron').webFrame.setZoomFactor(1)		
+		if(this.blockSrolling){
+			return;
+		}
+			
 		const susp = this.suspendRendering();
 		this._updateViewPortLocation();
 		susp.dispose();
@@ -965,12 +974,23 @@ export default class Grid {
 		 
 	}
 
+	_handleMouseWheelStart(e){
+		require('electron').webFrame.setZoomFactor(1)
+		this.blockSrolling = true;
+		this.refs.viewPort.scrollTop += e.deltaY > 0 ? 10 : -10;
+		e.preventDefault();
+	}
+
+	_handleMouseWheelFinish(e){
+		this.blockSrolling = false;
+		const susp = this.suspendRendering();
+		this._updateViewPortLocation();
+		susp.dispose();
+		e.preventDefault();
+	}
+
 	_handleScrollStart(e) {
-		this._scroll.next({
-			trigger: e,
-			left: this.viewPort.left,
-			top: this.viewPort.top
-		});
+		
 	}
 }
 
