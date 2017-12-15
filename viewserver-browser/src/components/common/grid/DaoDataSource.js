@@ -13,7 +13,10 @@ export default class DaoDataSource{
         this.onDataRequested = new Rx.Subject();
         this.columnsChanged = new Rx.Subject();
         this.dao.rawDataObservable.subscribe(this.handleDataSinkUpdate.bind(this));
+        this.columnSorting = {};
     }
+
+    static DIRECTION_CYCLE=['asc','desc',undefined];
   
     handleDataSinkUpdate(evt){
         switch(evt.Type) {
@@ -64,9 +67,43 @@ export default class DaoDataSource{
     async handleDataRequest(rowStart,rowEnd,colStart,colEnd){
         this.pendingSnapshotComplete = true;
         this.pendingRequest = {rowStart,rowEnd,colStart,colEnd};
+        await this.updateSubscription({offset : rowStart, limit : rowEnd+1});
+    }
+
+    async sort(key, direction){
+
+        const sortDirection = direction && !!~ DaoDataSource.DIRECTION_CYCLE.indexOf(direction) ? direction : this.cycleDirection(key);
+        this.columnSorting[key] = sortDirection;
+        await this.updateSubscription({columnsToSort : this.getViewServerColumnSorting()});
+        this.columnsChanged.next();
+    }
+
+    cycleDirection(key){
+        const existingDirection = this.columnSorting[key];
+        let directionIndex = 0;
+        if(!existingDirection){
+            directionIndex=0;
+        }else{
+            const idx = DaoDataSource.DIRECTION_CYCLE.indexOf(existingDirection);
+            directionIndex = ~idx ? ((idx + 1) % 3) : 0 //If You can't understand what this is doing then you are obviously not a genius
+        }
+        return DaoDataSource.DIRECTION_CYCLE[directionIndex];
+    }
+
+    getSorting(key){
+        return this.columnSorting[key];
+    }
+
+    getViewServerColumnSorting(){
+        const result = []
+        Object.keys(this.columnSorting).filter(col => typeof this.dataSink.getColumnId(col) != 'undefined' && this.columnSorting[col]).forEach(col => result.push({name : col,direction : this.columnSorting[col]}));
+        return result;
+    }
+
+    async updateSubscription(options){
         try{
             this.onDataRequested.next(true)
-            await this.dao.updateSubscription({offset : rowStart, limit : rowEnd});
+            await this.dao.updateSubscription(options);
         }catch(exception){
             Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
         }finally{
@@ -93,7 +130,7 @@ export default class DaoDataSource{
     mapColumns(cols = {}){
         const result = [];
         Object.values(cols).forEach(
-            col => result.push({...col,key:col.name, title: col.name, width : 180})
+            col => result.push({...col,key:col.name, title: col.name, width : 180, sortable : true, sorted: this.getSorting(col.name)})
         );
         return result;
     }

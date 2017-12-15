@@ -43,7 +43,7 @@ export default class GridView extends Component {
     }
 
     mergeState(props) {
-        const columnDefinitions = (props.columns && ColumnDefinition.from(props.columns)) || [];
+        const columnDefinitions = props.columns ? ColumnDefinition.from(props.columns) : [];
         return {
             columnDefinitions,
             columnInfo: {

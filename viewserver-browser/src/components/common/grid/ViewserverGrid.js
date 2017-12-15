@@ -54,7 +54,7 @@ export default class ViewServerGrid extends Component {
         this.disposables = [];
         this.renderCellHeaderProps = {
             onColumnStyleUpdated: this.handleColumnStyleUpdated,
-            showFilter: false,
+            showFilter: true,
             filters: false,
             onFilterChange: this.handleInlineFilterChange
         }
@@ -67,6 +67,8 @@ export default class ViewServerGrid extends Component {
         const dataSource = new DaoDataSource(this.dao);      
         this.disposables.push(dataSource.onDataRequested.subscribe(busy => this.setState({busy})));
         this.disposables.push(dataSource.columnsChanged.debounceTime(50).subscribe(this.setColumns.bind(this)));
+        this.disposables.push(dataSource.onResized.debounceTime(500).subscribe(this.setSummary.bind(this)));
+        this.disposables.push(dataSource.onChanged.debounceTime(500).subscribe(this.setSummary.bind(this)));
         this.setState({dataSource});
     }
 
@@ -79,6 +81,11 @@ export default class ViewServerGrid extends Component {
     setColumns(columns){
         const {dataSource} = this.state;
         this.setState({columns : dataSource.columns});
+    }
+    setSummary(){
+        const {dataSource} = this.state;
+        const summary = {size: dataSource.size, options: dataSource.dao.options};
+        this.setState({summary});
     }
 
     componentWillUnmount(){
@@ -98,29 +105,32 @@ export default class ViewServerGrid extends Component {
 
     render() {
         let baselineHeight = ROW_HEIGHT + 2;
-        const {dataSource, busy} = this.state;
+        const {dataSource, busy, summary ={}} = this.state;
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
-        return <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">
-            {busy && false ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
-            {this.gridContainer ? 
-            <Grid ref={ grid => {this.grid = grid}}
-            rowHeight={ROW_HEIGHT}
-            headerHeight={baselineHeight}
-            element={this.gridContainer}
-            fontSize={baselineHeight}
-            columns={this.state.columns}
-            dataSource={dataSource}
-            onColumnResized={this.handleColumnResized}
-            onColumnHeaderClick={this.handleColumnHeaderClick}
-            onContextMenu={this.handleContextMenu}
-            onScrollStarted={this.handleScrollStarted}
-            onColumnHeaderContextMenu={this.handleColumnHeaderContextMenu}
-            onColumnStyleUpdated={this.handleColumnStyleUpdated}
-            renderHeaderCell={this.renderTitleText}
-            renderHeaderCellProps={this.renderCellHeaderProps}
-        ></Grid> : null }</div>
+        return <div className="flex flex-col">
+                <div>{`Operator size is ${summary.size}. Options are ${JSON.stringify(summary.options)}`}</div>
+                <div ref={grid => {this.gridContainer = grid}} className="flex flex-col">
+                {busy && false ? <div style={{position : 'absolute', ...MODAL_STYLE}}><div style={{position : 'absolute', top : '50%', left: '50%', height: 400, width: 500}}><ScaleLoader size={50}/></div></div> : null}
+                {this.gridContainer ? 
+                <Grid ref={ grid => {this.grid = grid}}
+                rowHeight={ROW_HEIGHT}
+                headerHeight={baselineHeight}
+                element={this.gridContainer}
+                fontSize={baselineHeight}
+                columns={this.state.columns}
+                dataSource={dataSource}
+                onColumnResized={this.handleColumnResized}
+                onColumnHeaderClick={this.handleColumnHeaderClick.bind(this)}
+                onContextMenu={this.handleContextMenu}
+                onScrollStarted={this.handleScrollStarted}
+                onColumnHeaderContextMenu={this.handleColumnHeaderContextMenu}
+                onColumnStyleUpdated={this.handleColumnStyleUpdated}
+                renderHeaderCell={renderColumnHeaderContent}
+                renderHeaderCellProps={this.renderCellHeaderProps}
+            ></Grid> : null }</div>
+        </div>;
     }
 
     handleScrollStarted(){
@@ -149,12 +159,9 @@ export default class ViewServerGrid extends Component {
     }
 
     handleColumnHeaderClick(column) {
-        const { settings } = this.props;
-        if (settings && column.sortable && settings.toggleSort(column.key, true)) {
-            column = settings.getColumn(column.key);
-            this.dataSource.sort(column.key, column.sorted);
-            // do we really need to update the columns?
-            this._updateColumns(this.props);
+        const {dataSource, busy} = this.state;
+        if (column.sortable) {
+            dataSource.sort(column.key);
         }
     }
 

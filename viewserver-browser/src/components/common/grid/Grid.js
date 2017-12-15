@@ -326,7 +326,7 @@ export default class Grid {
 	_updateViewPortData() {
 		const { visibleRange, dataSource } = this;
 		if (visibleRange && dataSource && dataSource.view) {
-			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd, visibleRange.colStart, visibleRange.colEnd + 1);
+			dataSource.view.request(visibleRange.rowStart, visibleRange.rowEnd + 1, visibleRange.colStart, visibleRange.colEnd + 1);
 		}
 	}
 
