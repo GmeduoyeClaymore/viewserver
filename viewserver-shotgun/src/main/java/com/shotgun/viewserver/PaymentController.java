@@ -67,12 +67,12 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "getPaymentCards", isSynchronous = true)
-    public GetPaymentCardsResponse getPaymentCards(String customerToken){
+    public GetPaymentCardsResponse getPaymentCards(GetPaymentCardsRequest paymentCardsRequest){
         try {
             HashMap<String, Object> sourcesParams = new HashMap<>();
             sourcesParams.put("object", "card");
-            ExternalAccountCollection cards = Customer.retrieve(customerToken).getSources().list(sourcesParams);
-            logger.debug("Got {} stripe cards for customerToken {}", cards.getCount(), customerToken);
+            ExternalAccountCollection cards = Customer.retrieve(paymentCardsRequest.customerToken).getSources().list(sourcesParams);
+            logger.debug("Got {} stripe cards for paymentCardsRequest {}", cards.getCount(), paymentCardsRequest);
             return new GetPaymentCardsResponse(cards.getData().stream().map(a -> (Card)a).collect(Collectors.toList()));
         } catch (Exception e) {
             //TODO - better error handling around this
