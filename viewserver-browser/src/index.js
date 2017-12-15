@@ -17,6 +17,7 @@ let root = document.createElement('div');
 root.id = "root";
 document.body.appendChild( root );
 webFrame.setZoomFactor(1)
+webFrame.setZoomLevelLimits(1, 1);
 webFrame.setVisualZoomLevelLimits(1, 1);
 webFrame.setLayoutZoomLevelLimits(0, 0);
 
@@ -25,10 +26,10 @@ webFrame.setLayoutZoomLevelLimits(0, 0);
 render( <components.Core />, document.getElementById('root') );
 
 // Hot Module Replacement API
-if (module.hot) {
+/*if (module.hot) {
   // If an update is in one of the React components we've included, we can attempt an HMR
   // Note: we are using the only-hot so the app will NOT forcefully reload if it fails
   module.hot.accept( './components/components.js', () => {
     render( <components.Core />, document.getElementById('root') );
   });
-}
+}*/

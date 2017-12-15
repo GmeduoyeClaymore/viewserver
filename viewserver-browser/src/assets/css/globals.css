@@ -33,6 +33,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  image-rendering: 'high-quality';
 }
 
 .canv-grid__canvas {
@@ -165,7 +166,6 @@ pointer-events: none;
   overflow: hidden;
   width: 100%;
   position: relative;
-  background: #253038;
   user-select: none;
   -webkit-user-select: none;
 }

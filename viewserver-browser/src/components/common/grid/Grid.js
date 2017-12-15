@@ -53,6 +53,8 @@ function wrapDebug(name, original) {
 
 export default class Grid {
 	constructor(element, options) {
+		require('electron').webFrame.setZoomFactor(1)	
+		require('electron').webFrame.setZoomLevelLimits(1,1)	
 		this.element = element;
 		this._disposables = [];
 
@@ -121,6 +123,10 @@ export default class Grid {
 
 	get onScroll() {
 		return this._scroll;
+	}
+
+	get onScrollStart() {
+		return this._scrollStart;
 	}
 
 	get onMouseDown() {
@@ -348,7 +354,8 @@ export default class Grid {
 
 	_updateViewPortSize() {
 		const { canvas, viewPort } = this.refs;
-		const { clientWidth, clientHeight } = viewPort;
+		const clientWidth = viewPort.clientWidth;
+		const clientHeight = viewPort.clientHeight;
 
 		if (dom.setSize(canvas, clientWidth, clientHeight)) {
 			// if canvas size is changed then ensure we fully configure the canvas
@@ -493,9 +500,16 @@ export default class Grid {
 			this.element || grid;
 
 		// make disposable
-		this._bindDomEvent(viewPort, 'scroll')
-			.debounceTime(50)
-			.subscribe(this._handleScrolled.bind(this));
+		const scrolling = this._bindDomEvent(viewPort, 'scroll', undefined, false);
+
+
+		scrolling.debounceTime(10).subscribe(this._handleScrolled.bind(this));
+		scrolling.subscribe(this._handleScrollStart.bind(this));
+
+		const mousewheel = this._bindDomEvent(viewPort, 'mousewheel');
+
+		mousewheel.debounceTime(50).subscribe(this._handleMouseWheelStart.bind(this));
+		mousewheel.debounceTime(100).subscribe(this._handleMouseWheelFinish.bind(this));
 
 		// expose events to outside world (via _this.createMouseEvent transform)
 		const { _createMouseEvent } = this;
@@ -514,6 +528,7 @@ export default class Grid {
 		this._click = new Rx.Subject();
 		this._dblClick = new Rx.Subject();
 		this._scroll = new Rx.Subject();
+		this._scrollStart = new Rx.Subject();
 		this._selectionChanged = new Rx.Subject();
 
 		// bind to track enter/leave/click at cell level
@@ -541,11 +556,23 @@ export default class Grid {
 
 	_unbindElement() {
 		// clear disposables
-		this._disposables.forEach(x => x.unsubscribe());
+		this._disposables.forEach(x => this.getRid(x));
 		this._disposables.length = 0;
 
 		// remove content
 		this.element.innerHTML = null;
+	}
+
+	getRid(x){
+		if(x.unsubscribe){
+			x.unsubscribe()
+		}
+		else if(x.dispose){
+			x.dispose()
+		}
+		else{
+			console.error("Unable to get rid of element " + x);
+		}
 	}
 
 	_getColumn(columnIndex) {
@@ -932,7 +959,10 @@ export default class Grid {
 	}
 
 	_handleScrolled(e) {
-		require('electron').webFrame.setZoomFactor(1)
+		if(this.blockSrolling){
+			return;
+		}
+			
 		const susp = this.suspendRendering();
 		this._updateViewPortLocation();
 		susp.dispose();
@@ -942,6 +972,25 @@ export default class Grid {
 			top: this.viewPort.top
 		});
 		 
+	}
+
+	_handleMouseWheelStart(e){
+		require('electron').webFrame.setZoomFactor(1)
+		this.blockSrolling = true;
+		this.refs.viewPort.scrollTop += e.deltaY > 0 ? 10 : -10;
+		e.preventDefault();
+	}
+
+	_handleMouseWheelFinish(e){
+		this.blockSrolling = false;
+		const susp = this.suspendRendering();
+		this._updateViewPortLocation();
+		susp.dispose();
+		e.preventDefault();
+	}
+
+	_handleScrollStart(e) {
+		
 	}
 }
 

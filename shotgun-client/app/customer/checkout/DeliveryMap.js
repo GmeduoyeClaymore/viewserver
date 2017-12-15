@@ -59,7 +59,6 @@ class DeliveryMap extends Component {
     this.setState({busy: false, region: merge(this.state.region, {latitude, longitude})});
   }
 
-
   render() {
     const {history, context} = this.props;
     const {region, busy} = this.state;
@@ -75,8 +74,8 @@ class DeliveryMap extends Component {
       const newLocation = MapService.parseGooglePlacesData(details);
       Logger.info(`Setting location to ${JSON.stringify(newLocation)}`);
 
-      context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
       updateMapRegion(newLocation.latitude, newLocation.longitude);
+      context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
     };
 
     const onChangeText = (type, text) => {
@@ -104,7 +103,7 @@ class DeliveryMap extends Component {
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
 
       <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={closeInputs}>
-        {showDirections ? <MapViewDirections origin={origin.location} destination={destination.location} apikey={API_KEY} strokeWidth={3} onReady={(result) => {
+        {showDirections ? <MapViewDirections origin={{latitude: origin.latitude, longitude: origin.longitude}} destination={{latitude: destination.latitude, longitude: destination.longitude}} apikey={API_KEY} strokeWidth={3} onReady={(result) => {
           this.map.fitToCoordinates(result.coordinates,  {
             edgePadding: {
               right: Math.round(width / 20) + 100,
