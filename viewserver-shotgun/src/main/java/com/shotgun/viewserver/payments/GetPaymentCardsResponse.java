@@ -1,4 +1,4 @@
-package com.shotgun.viewserver;
+package com.shotgun.viewserver.payments;
 
 import com.stripe.model.Card;
 

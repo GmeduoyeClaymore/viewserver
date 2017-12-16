@@ -4,13 +4,11 @@ import yup from 'yup';
 import {merge} from 'lodash';
 import ValidatingInput from '../components/ValidatingInput';
 import ValidatingButton from '../components/ValidatingButton';
-import GooglePlacesInput from 'common/components/maps/GooglePlacesInput';
+import PlacesInput from 'common/components/maps/PlacesInput';
 import MapService from 'common/services/MapService';
 
-//TODO - get this from the manifest
-const API_KEY = 'AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M';
 
-export default AddressDetails  = ({context, history, match}) => {
+export default AddressDetails  = ({context, history, match, client}) => {
   const {deliveryAddress = {}} = context.state;
 
   const onLocationSelect = (details) => {
@@ -45,7 +43,7 @@ export default AddressDetails  = ({context, history, match}) => {
         <Text>Confirm</Text>
       </ValidatingButton>
     </Form>
-    <GooglePlacesInput ref={c => {this.addressInput = c;}} apiKey={API_KEY} onSelect={onLocationSelect} value={deliveryAddress.line1} style={styles.addressInput}  placeholder='Search for your home address'/>
+    <PlacesInput ref={c => {this.addressInput = c;}} client={client} onSelect={onLocationSelect} value={deliveryAddress.line1} style={styles.addressInput}  placeholder='Search for your home address'/>
   </Container>;
 };
 

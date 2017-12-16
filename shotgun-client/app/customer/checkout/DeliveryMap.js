@@ -7,13 +7,12 @@ import {merge, assign} from 'lodash';
 import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
-import GooglePlacesInput from 'common/components/maps/GooglePlacesInput';
+import PlacesInput from 'common/components/maps/PlacesInput';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'react-native-maps-directions';
 import { withRouter } from 'react-router';
 import MapService from 'common/services/MapService';
 
-const API_KEY = 'AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M';
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
@@ -122,8 +121,8 @@ class DeliveryMap extends Component {
         </MapView.Marker> : null}
       </MapView>
 
-      {showDestinationInput ? <GooglePlacesInput ref={c => {this.destinationInput = c;}} apiKey={API_KEY} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
-      <GooglePlacesInput ref={c => {this.originInput = c;}} apiKey={API_KEY} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
+      {showDestinationInput ? <PlacesInput ref={c => {this.destinationInput = c;}} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
+      <PlacesInput ref={c => {this.originInput = c;}} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
       {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text>Done</Text></Button> : null}
     </Container>;
   }

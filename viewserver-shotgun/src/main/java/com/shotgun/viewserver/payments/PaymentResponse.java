@@ -1,4 +1,4 @@
-package com.shotgun.viewserver;
+package com.shotgun.viewserver.payments;
 
 public class PaymentResponse{
     String foo;

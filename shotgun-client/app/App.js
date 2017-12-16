@@ -38,7 +38,9 @@ export default class App extends React.Component {
       Logger.debug('Mounting App Component');
       this.setState({ error: undefined});
       await ProtoLoader.loadAll();
-      await this.setUserId();
+      try {
+        await this.setUserId();
+      } catch (error){};
       this.setInitialRoot();
       await this.client.connect();
       isConnected = true;

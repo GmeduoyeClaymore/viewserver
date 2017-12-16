@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {View, Text} from 'react-native';
-import GooglePlacesAutocomplete from './GooglePlacesAutocomplete';
+import PlacesAutocomplete from './PlacesAutocomplete';
 
-export default class GooglePlacesInput extends Component {
+export default class PlacesInput extends Component {
   constructor (props) {
     super(props);
   }
@@ -12,10 +12,10 @@ export default class GooglePlacesInput extends Component {
   }
 
   render(){
-    const {apiKey, onSelect, style, ...props} = this.props;
+    const {onSelect, style, client, ...props} = this.props;
 
     return (
-      <GooglePlacesAutocomplete
+      <PlacesAutocomplete
         {...props}
         ref={c => {this.input = c;}}
         minLength={2}
@@ -23,22 +23,13 @@ export default class GooglePlacesInput extends Component {
         returnKeyType={'search'}
         listViewDisplayed='auto'
         fetchDetails={true}
+        client={client}
         renderDescription={row => ResultDescription(row)}
         renderRow={row => ResultRow(row)} // custom description render
         onPress={(data, details = null) => onSelect(details)}
-        query={{
-          key: apiKey,
-          language: 'en',
-          types: ['address'],
-          components: 'country:uk'
-        }}
         getDefaultValue={() => this.props.value || ''}
         styles={{...styles, ...style}}
         currentLocation={false}
-        nearbyPlacesAPI='GooglePlacesSearch'
-        GooglePlacesSearchQuery={{
-          rankby: 'distance'
-        }}
         debounce={200}
       />
     );

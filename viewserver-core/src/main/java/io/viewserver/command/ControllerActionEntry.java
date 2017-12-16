@@ -185,6 +185,7 @@ public class ControllerActionEntry{
 
     public static String toString(Object ser,Class<?> aType){
         try {
+
             return mapper.writerFor(aType).writeValueAsString(ser);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to serialize object \"" + ser + "\"",e);

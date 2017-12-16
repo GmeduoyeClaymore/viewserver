@@ -26,9 +26,9 @@ class DriverRegistration extends Component {
     const {match, busy, ...rest} = this.props;
 
     return busy ? <LoadingScreen text="Loading Driver Registration"/> : <Switch>
-      <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...rest} context={this} next="VehicleDetails"/>} />
-      <Route path={`${match.path}/VehicleDetails`} exact render={() => <VehicleDetails {...rest} context={this}/>} />
-      <Route path={`${match.path}/DriverRegistrationConfirmation`} exact render={() => <DriverRegistrationConfirmation {...rest} context={this}/>} />
+      <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...rest} match={match} context={this} next="VehicleDetails"/>} />
+      <Route path={`${match.path}/VehicleDetails`} exact render={() => <VehicleDetails {...rest} match={match} context={this}/>} />
+      <Route path={`${match.path}/DriverRegistrationConfirmation`} exact render={() => <DriverRegistrationConfirmation {...rest} match={match} context={this}/>} />
       <Redirect to={`${match.path}/UserDetails`}/>
     </Switch>;
   }

@@ -62,6 +62,9 @@ public class SumFactory implements ISummaryFactory {
 
         private ISummary createInternalSummary(ISummaryContext context) {
             ColumnHolder valueColumnHolder = context.getInboundSchema().getColumnHolder(target);
+            if(valueColumnHolder == null){
+                throw new RuntimeException("Unable to find column holder for name \"" + target + "\"");
+            }
             if (columnType == null) {
                 columnType = valueColumnHolder.getType();
             }
