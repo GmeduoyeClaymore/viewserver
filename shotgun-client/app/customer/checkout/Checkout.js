@@ -6,6 +6,7 @@ import OrderConfirmation from './OrderConfirmation';
 import OrderComplete from './OrderComplete';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
+import Client from 'viewserver-client/Client';
 
 export default class Checkout extends Component {
   constructor(){
@@ -13,18 +14,17 @@ export default class Checkout extends Component {
     this.state = INITIAL_STATE;
   }
 
-  componentWillMount(){
-    this.setState(INITIAL_STATE);
-  }
 
   render() {
+    const client = Client.Current;
+    const controlProps = {client, ...this.props};
     return <Switch>
-      <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...this.props} context={this}/>} />
-      <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...this.props} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/DeliveryOptions'}/>
+      <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...controlProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...controlProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...controlProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...controlProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...controlProps} context={this}/>} />
+      <Redirect to={'/Customer/Checkout/DeliveryMap'}/>
     </Switch>;
   }
 }

@@ -9,10 +9,15 @@ import Logger from 'common/Logger';
 import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
 
 export default class Client {
+  static Current;
   constructor(url, protocol) {
     this.url = url;
     this.protocol = protocol;
     this.network = new Network(this.url);
+  }
+
+  static setCurrent(client){
+    Client.Current = client;
   }
 
   connect(){

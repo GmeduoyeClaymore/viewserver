@@ -17,7 +17,6 @@ class DriverRegistration extends Component {
 
   componentWillMount(){
     const {dispatch, client} = this.props;
-    this.setState(INITIAL_STATE);
     dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client));
   }

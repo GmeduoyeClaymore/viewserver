@@ -26,9 +26,10 @@ export default class App extends React.Component {
     super();
     this.state = {
       isReady: false,
-      isConnected: false
+      isConnected: false,
     };
     this.client = new Client('ws://localhost:6060/');
+    Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
   }
 
@@ -36,7 +37,6 @@ export default class App extends React.Component {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
-      this.setState({ error: undefined});
       await ProtoLoader.loadAll();
       try {
         await this.setUserId();
