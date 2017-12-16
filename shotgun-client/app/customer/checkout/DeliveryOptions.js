@@ -41,7 +41,7 @@ class DeliveryOptions extends Component {
     const {context} = this.props;
     const {delivery} = context.state;
 
-    this.props.context.setState({delivery: merge({}, delivery, {[field]: value})});
+    context.setState({delivery: merge({}, delivery, {[field]: value})});
   }
 
   render() {
@@ -95,7 +95,7 @@ class DeliveryOptions extends Component {
         <Picker selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
           {paymentCards.map(c => <Picker.Item key={c.id} label={`************${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
         </Picker>
-        <Button onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
+        <Button onPress={() =>  history.push('/Customer/Checkout/ItemDetails')}><Text>Next</Text></Button>
       </Form>
     </Container>;
   }

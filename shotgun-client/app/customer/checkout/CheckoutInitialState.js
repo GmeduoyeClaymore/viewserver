@@ -2,6 +2,8 @@ export const INITIAL_STATE = {
   order: {
     orderId: undefined,
     productId: undefined,
+    notes: undefined,
+    image: undefined
   },
   delivery: {
     eta: 72,

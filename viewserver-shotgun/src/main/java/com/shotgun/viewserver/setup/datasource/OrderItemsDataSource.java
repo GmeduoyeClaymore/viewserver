@@ -38,6 +38,8 @@ public class OrderItemsDataSource {
                                         new Column("orderId", "orderId", ColumnType.String),
                                         new Column("userId", "userId", ColumnType.String),
                                         new Column("productId", "productId", ColumnType.String),
+                                        new Column("notes", "notes", ColumnType.String),
+                                        new Column("imageUrl", "imageUrl", ColumnType.String),
                                         new Column("quantity", "quantity", ColumnType.Int)
                                 ))
                                 .withKeyColumns("orderItemId"))
