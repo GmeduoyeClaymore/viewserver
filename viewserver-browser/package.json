@@ -11,7 +11,7 @@
   "license": "MIT",
   "main": "main.js",
   "scripts": {
-    "dev": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js",
+    "dev": "webpack-dev-server --host 0.0.0.0 --config=./webpack.dev.config.js",
     "prod": "webpack --progress --config webpack.build.config.js && electron --noDevServer .",
     "build": "webpack --progress --config webpack.build.config.js",
     "package": "webpack --config webpack.build.config.js",

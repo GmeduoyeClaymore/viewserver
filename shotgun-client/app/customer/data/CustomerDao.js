@@ -6,11 +6,14 @@ import {forEach} from 'lodash';
 import PrincipalService from 'common/services/PrincipalService';
 
 export default class CustomerDaoContext{
-  constructor(client, userDao, paymentCardsDao, deliveryAddressDao, options = {}) {
+  constructor(client, userDao, paymentDao, deliveryAddressDao, deliveryDao, orderDao, orderItemsDao, options = {}) {
     this.client = client;
     this.userDao = userDao;
-    this.paymentCardsDao = paymentCardsDao;
+    this.paymentDao = paymentDao;
     this.deliveryAddressDao = deliveryAddressDao;
+    this.orderDao = orderDao;
+    this.orderItemsDao = orderItemsDao;
+    this.deliveryDao = deliveryDao;
     this.options = options;
   }
 
@@ -58,7 +61,7 @@ export default class CustomerDaoContext{
   }
 
   extendDao(dao){
-    dao.addOrUpdateCustomer = async ({customer, paymentCard, deliveryAddress}) => {
+    dao.addCustomer = async ({customer, paymentCard, deliveryAddress}) => {
       const {dataSink} = dao;
       const schema = await dataSink.waitForSchema();
       const {userId} = dao.options;
@@ -75,12 +78,29 @@ export default class CustomerDaoContext{
         user.userId = userId;
       }
 
+      const createPaymentCustomerResp = await this.paymentDao.createPaymentCustomer({email: user.email, paymentCard});
+
+      user.stripeCustomerId = createPaymentCustomerResp.customerId;
+      user.stripeDefaultSourceId = createPaymentCustomerResp.paymentToken;
+
       await this.userDao.addOrUpdateUser({user});
-      await this.paymentCardsDao.addOrUpdatePaymentCard({userId: user.userId, paymentCard});
       await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId: user.userId, deliveryAddress});
 
       await PrincipalService.setUserIdOnDevice(user.userId);
       return user.userId;
+    };
+
+    dao.checkout = async ({order, payment, delivery}) => {
+      const {userId} = dao.options;
+      const {origin, destination, ...restDelivery} = delivery;
+
+      const originDeliveryAddressId = await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: origin});
+      const destinationDeliveryAddressId = destination.line1 !== undefined ? await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: destination}) : undefined;
+
+      const deliveryId = await this.deliveryDao.createDelivery({...restDelivery, originDeliveryAddressId, destinationDeliveryAddressId});
+      const orderId = await this.orderDao.createOrder({deliveryId, paymentId: payment.paymentId});
+      await this.orderItemsDao.addOrderItem({orderId, productId: order.productId, userId});
+      return orderId;
     };
   }
 }

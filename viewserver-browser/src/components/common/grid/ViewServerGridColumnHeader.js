@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 const InputStyle = {
     width: '100%',
     border: 'none',
-    background: 'rgb(24,31,37)',
     boxShadow: 'inset 0px 0px 4px 1px rgba(0,0,0,.8), inset 0 1px 0 0 rgba(255,255,255,.15),inset 0 -1px 0 0 rgba(255,255,255,.15)',
     padding: '0 3px'
 }

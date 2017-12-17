@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import UserDetails from '../../common/registration/UserDetails';
 import PaymentCardDetails from './PaymentCardDetails';
 import AddressDetails from '../../common/registration/AddressDetails';
-import RegistrationConfirmation from './CustomerRegistrationConfirmation';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import LoadingScreen from 'common/components/LoadingScreen';
@@ -20,7 +19,6 @@ export default class CustomerRegistration extends Component {
       <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
       <Route path={`${match.path}/AddressDetails`} exact render={() => <AddressDetails {...this.props} context={this}/>} />
       <Route path={`${match.path}/PaymentCardDetails`} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
-      <Route path={`${match.path}/RegistrationConfirmation`} exact render={() => <RegistrationConfirmation {...this.props} context={this}/>} />
       <Redirect to={`${match.path}/UserDetails`}/>
     </Switch>;
   }

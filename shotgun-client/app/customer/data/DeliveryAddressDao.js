@@ -4,6 +4,7 @@ import Logger from 'common/Logger';
 import * as TableNames from 'common/constants/TableNames';
 import {forEach} from 'lodash';
 import uuidv4 from 'uuid/v4';
+import moment from 'moment';
 
 const createAddDeliveryAddressEvent = (deliveryAddress) =>{
   return {
@@ -17,6 +18,7 @@ const createAddDeliveryAddressEvent = (deliveryAddress) =>{
 const createUpdateDeliveryAddressEvent = (deliveryAddress) => {
   return {
     type: 1, // UPDATE
+    tableKey: deliveryAddress.deliveryAddressId,
     columnValues: {
       ...deliveryAddress
     }
@@ -76,7 +78,8 @@ export default class DeliveryAddressDaoContext{
     dao.addOrUpdateDeliveryAddress = async ({userId, deliveryAddress}) => {
       const {dataSink, subscriptionStrategy} = dao;
       const schema = await dataSink.waitForSchema();
-      const customer = dataSink.rows[0];
+      const existingDeliveryAddress = dataSink.rows.find(r => r.googlePlaceId == deliveryAddress.googlePlaceId);
+      const date = moment().format('x');
       let deliveryAddressRowEvent;
       Logger.info(`Adding deliveryAddress schema is ${JSON.stringify(schema)}`);
       const deliveryAddressObject = {};
@@ -86,23 +89,23 @@ export default class DeliveryAddressDaoContext{
       });
   
       deliveryAddressObject.userId = userId;
-  
-      if (deliveryAddressObject.deliveryAddressId == undefined) {
+
+      if (existingDeliveryAddress == undefined){
         deliveryAddressObject.deliveryAddressId = uuidv4();
-      }
-  
-      if (customer == undefined){
+        deliveryAddressObject.created = date;
         Logger.info(`Adding deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
         deliveryAddressRowEvent = createAddDeliveryAddressEvent(deliveryAddressObject);
       } else {
+        deliveryAddressObject.deliveryAddressId = existingDeliveryAddress.deliveryAddressId;
+        deliveryAddressObject.lastUsed = date;
         Logger.info(`Updating deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
         deliveryAddressRowEvent = createUpdateDeliveryAddressEvent(deliveryAddressObject);
       }
-      const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryAddressId == deliveryAddressObject.deliveryAddressId).take(1).timeoutWithError(5000, new Error(`Could not detect created delivery address id ${deliveryAddressObject.deliveryAddressId} in 5 seconds`)).toPromise();
-      const modifiedRows = await subscriptionStrategy.editTable([deliveryAddressRowEvent]);
+      const result = dao.rowEventObservable.filter(ev => ev.row.deliveryAddressId == deliveryAddressObject.deliveryAddressId).take(1).timeoutWithError(5000, new Error(`Could not detect created delivery address id ${deliveryAddressObject.deliveryAddressId} in 5 seconds`)).toPromise();
+      await subscriptionStrategy.editTable([deliveryAddressRowEvent]);
+      const modifiedRows = await result;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      await promise;
-      return modifiedRows;
+      return modifiedRows.row.deliveryAddressId;
     };
   }
 }

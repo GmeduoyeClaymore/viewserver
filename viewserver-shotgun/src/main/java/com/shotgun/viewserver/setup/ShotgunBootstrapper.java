@@ -1,7 +1,6 @@
 package com.shotgun.viewserver.setup;
 
 import com.shotgun.viewserver.setup.datasource.*;
-import com.shotgun.viewserver.setup.report.CartSummaryReport;
 import com.shotgun.viewserver.setup.report.OrderSummaryReport;
 import com.shotgun.viewserver.setup.report.ProductCategoryReport;
 import io.viewserver.report.ReportDefinition;
@@ -22,7 +21,6 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(DeliveryAddressDataSource.getDataSource());
         dataSources.add(DriverDataSource.getDataSource());
         dataSources.add(MerchantDataSource.getDataSource());
-        dataSources.add(PaymentCardsDataSource.getDataSource());
         dataSources.add(DeliveryDataSource.getDataSource());
         dataSources.add(MerchantProductInventoryDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());
@@ -40,8 +38,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     @Override
     protected Map<String, ReportDefinition> getReportDefinitions() {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
-        reportDefinitions.put(CartSummaryReport.ID, CartSummaryReport.getReportDefinition());
-        reportDefinitions.put(OrderSummaryReport.ID, OrderSummaryReport.getReportDefinition());
+       // reportDefinitions.put(OrderSummaryReport.ID, OrderSummaryReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
 
         return reportDefinitions;

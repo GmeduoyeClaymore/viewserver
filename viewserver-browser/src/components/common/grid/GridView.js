@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import Grid from './Grid';
-import Header from './Header';
+import Header from './HeaderRow';
 import ColumnDefinition from './ColumnDefinition';
 import ColumnMetrics from './ColumnMetrics';
 import { RowRangeSelectionBehavior } from './RowRangeSelection';
 import cx from 'classnames';
 import Autosizer from './Autosizer';
+import {isEqual} from 'lodash';
 
 // TODO: hack
 const style = { display: 'flex', flexDirection: 'column', flex: '1 1 auto', overflow: 'hidden', position: 'relative' };
@@ -35,11 +36,14 @@ export default class GridView extends Component {
         this.handleCopy = this.handleCopy.bind(this);
         this.handleFocus = this.handleFocus.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
+        this.updateLayout = this.updateLayout.bind(this);
         this._suspendRenderHandle = null;
+
+        console.log("Column definitions are " + this.state.columnDefinitions.length);
     }
 
     mergeState(props) {
-        const columnDefinitions = (props.columns && ColumnDefinition.from(props.columns)) || [];
+        const columnDefinitions = props.columns ? ColumnDefinition.from(props.columns) : [];
         return {
             columnDefinitions,
             columnInfo: {
@@ -233,9 +237,15 @@ export default class GridView extends Component {
 
     //No longer needs to be public.
     //There may be a couple of places left that are calling this but I have removed some alreaady.
-    updateLayout = (e) => {
+    updateLayout(e){
         if (this.grid) {
             this.grid.updateLayout();
+        }
+    }
+    //There may be a couple of places left that are calling this but I have removed some alreaady.
+    scrollRowIntoView(idx){
+        if (this.grid) {
+            this.grid.scrollRowIntoView(idx);
         }
     }
 
@@ -247,8 +257,9 @@ export default class GridView extends Component {
         };
 
         // as actual columns can be derived we need to merge state first
-        if (this.props.columns !== nextProps.columns) {
+        if (!isEqual(this.props.columns,nextProps.columns)) {
             const state = this.mergeState(nextProps)
+            console.log("Column definitions are " + state.columnDefinitions.length);
             this.setState(state);
 
             // now set the final state metrics/columns
@@ -279,6 +290,7 @@ export default class GridView extends Component {
         grid.onContextMenu.subscribe(this.handleContextMenu.bind(this));
         grid.onClick.subscribe(this.handleClick.bind(this));
         grid.onScroll.subscribe(this.handleScroll.bind(this));
+        grid.onScroll.subscribe(this.handleScrollStart.bind(this));
         grid.onDblClick.subscribe(this.handleDblClick.bind(this));
         grid.onSelectionChanged.subscribe(this.handleSelectionChanged.bind(this));
         grid.onMouseDown.subscribe(this.handleMouseDown.bind(this));
@@ -313,10 +325,18 @@ export default class GridView extends Component {
     }
 
     handleScroll() {
-        require('electron').webFrame.setZoomFactor(1)
+        require('electron').webFrame.setZoomFactor(1)        
         this.setState({
             scrollLeft: -this.grid.viewPort.left
         });
+        
+    }
+
+    handleScrollStart(){
+        const {onScrollStarted} = this.props;
+        if(onScrollStarted){
+            onScrollStarted();
+        }
     }
 
     handleContextMenu(e) {

@@ -1,41 +1,55 @@
 import React, {Component} from 'react';
+import {Switch} from 'react-native';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Picker} from 'react-native';
-import {ListItem, Radio, Right, Container, Content, Header, Text, Title, Body, Left, Button, Icon} from 'native-base';
+import {Picker, Slider} from 'react-native';
+import {Icon, Button, Container, Form, Label, Item, Header, Text, Title, Body, Left} from 'native-base';
 import {getDaoState} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
-
-const DEFAULT_DELIVERY_ADDRESSES = [];
+import {isAnyOperationPending} from 'common/dao';
+import LoadingScreen from 'common/components/LoadingScreen';
 
 class DeliveryOptions extends Component {
   constructor(props) {
     super(props);
     this.onChangeValue = this.onChangeValue.bind(this);
+    this.setRequireHelp = this.setRequireHelp.bind(this);
+    this.state = {
+      requireHelp: false
+    };
   }
 
-  componentDidMount(){
-    const {deliveryAddresses} = this.props;
-    const defaultAddress = deliveryAddresses.find(c => c.isDefault) || deliveryAddresses[0];
-    if (defaultAddress){
-      this.onChangeValue('deliveryAddressId', defaultAddress.deliveryAddressId);
+  async componentDidMount(){
+    const {stripeDefaultPaymentSource} = this.props.user;
+    const defaultCard = this.props.paymentCards.find(c => c.id == stripeDefaultPaymentSource) || this.props.paymentCards[0];
+    if (defaultCard){
+      this.setCard(defaultCard.id);
     }
+  }
+
+  setCard(paymentId){
+    this.props.context.setState({payment: {paymentId}});
+  }
+
+  setRequireHelp(requireHelp){
+    this.setState({requireHelp});
+    this.onChangeValue('noRequiredForOffload', 0);
   }
 
   onChangeValue(field, value) {
     const {context} = this.props;
     const {delivery} = context.state;
 
-    const delivery2 = merge(delivery, {[field]: value});
-    this.props.context.setState({delivery: delivery2});
+    this.props.context.setState({delivery: merge({}, delivery, {[field]: value})});
   }
 
   render() {
-    const {deliveryAddresses, history, context} = this.props;
-    const {delivery} = context.state;
+    const {history, context, vehicleTypes, busy, paymentCards = []} = this.props;
+    const {delivery, payment} = context.state;
+    const {requireHelp} = this.state;
 
-    return <Container>
+    return busy ? <LoadingScreen text="Loading Customer Cards"/> : <Container>
       <Header>
         <Left>
           <Button transparent>
@@ -44,37 +58,68 @@ class DeliveryOptions extends Component {
         </Left>
         <Body><Title>Delivery Instructions</Title></Body>
       </Header>
-      <Content>
-        <Text>Where do you want it?</Text>
-        <ListItem>
-          <Text>Roadside Delivery</Text>
-          <Right>
-            <Radio selected={delivery.deliveryType == 'ROADSIDE'} onPress={() => this.onChangeValue('deliveryType', 'ROADSIDE')}/>
-          </Right>
-        </ListItem>
-        <ListItem>
-          <Text>Carry-in Delivery</Text>
-          <Right>
-            <Radio selected={delivery.deliveryType == 'CARRYIN'} onPress={() => this.onChangeValue('deliveryType', 'CARRYIN')}/>
-          </Right>
-        </ListItem>
+      <Form>
+        <Text>What size van?</Text>
+        <Picker selectedValue={delivery.vehicleTypeId} onValueChange={(itemValue) => this.onChangeValue('vehicleTypeId', itemValue)}>
+          <Picker.Item label="--Select Vehicle Type--"/>
+          {vehicleTypes.map(c => <Picker.Item  key={c.vehicleTypeId} label={c.bodyType} value={c.vehicleTypeId} />)}
+        </Picker>
 
-        <Text>Delivery Address</Text>
-        <Picker selectedValue={delivery.deliveryAddressId} onValueChange={(itemValue) => this.onChangeValue('deliveryAddressId', itemValue)}>
-          {deliveryAddresses.map(a => <Picker.Item  key={a.deliveryAddressId} label={a.line1} value={a.deliveryAddressId} />)}
+        <Text>{`Required within ${delivery.eta} hours`}</Text>
+        <Slider minimumValue={1} maximumValue={72} step={1} value={delivery.eta} onValueChange={val => this.onChangeValue('eta', val)}/>
+
+        <Item fixedLabel>
+          <Label>Do you require help with this item</Label>
+          <Switch onValueChange={this.setRequireHelp} value={requireHelp}/>
+        </Item>
+        {requireHelp ? <Item fixedLabel>
+          <Label>How many people</Label>
+          <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 1)} >
+            <Text>1</Text>
+            <Icon name='man' style={styles.manIcon}/>
+          </Button>
+          <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 2)} >
+            <Text>2</Text>
+            <Icon name='man' style={styles.manIcon}/>
+            <Icon name='man' style={styles.manIcon}/>
+          </Button>
+          <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 3)} >
+            <Text>3</Text>
+            <Icon name='man' style={styles.manIcon}/>
+            <Icon name='man' style={styles.manIcon}/>
+            <Icon name='man' style={styles.manIcon}/>
+          </Button>
+        </Item> : null}
+
+        <Text>Pay with card</Text>
+        <Picker selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
+          {paymentCards.map(c => <Picker.Item key={c.id} label={`************${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
         </Picker>
         <Button onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')}><Text>Next</Text></Button>
-      </Content>
+      </Form>
     </Container>;
   }
 }
 
 DeliveryOptions.PropTypes = {
-  deliveryAddresses: PropTypes.array
+  paymentCards: PropTypes.array,
+  user: PropTypes.object
+};
+
+const styles = {
+  manIcon: {
+    marginLeft: 0,
+    marginRight: 0,
+    paddingLeft: 0,
+    paddingRight: 0
+  }
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  deliveryAddresses: getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao') || DEFAULT_DELIVERY_ADDRESSES,
+  busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}),
+  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || [],
+  vehicleTypes: getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao'),
+  user: getDaoState(state, ['user'], 'userDao'),
   ...initialProps
 });
 

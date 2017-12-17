@@ -33,10 +33,6 @@ export function setSize(element, width, height) {
 	if (style.width !== w || style.height !== h) {
 		style.width = w;
 		style.height = h;
-		if(element.children[1]){
-			element.children[1].height = h
-			element.children[1].width = w
-		}
 		return true;
 	}
 	return false;
@@ -45,10 +41,14 @@ export function setSize(element, width, height) {
 export function setCanvasSize(canvas, context, width, height, ratio) {
     if (isNaN(ratio)) { 
         ratio = window.devicePixelRatio || 1 / context.backingStorePixelRatio || 1; 
-    }
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
+	}
+	
+	const finalWidth =  width * ratio;
+	const finalHeight =  height * ratio;
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
     setSize(canvas, width, height);
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+	//context.setTransform(ratio, 0, 0, ratio, 0, 0);
+	context.scale(ratio, ratio);
     return ratio;
 }

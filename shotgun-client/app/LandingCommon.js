@@ -5,6 +5,7 @@ import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
+import PermissionsService from 'common/services/PermissionsService';
 
 class LandingCommon extends Component {
   constructor(props) {
@@ -17,10 +18,13 @@ class LandingCommon extends Component {
     dispatch(commonServicesRegistrationAction(client, userId));
   }
 
+  componentDidMount(){
+    PermissionsService.requestLocationPermission();
+  }
+
   render() {
     const {busy, user} = this.props;
 
-    //TODO - for some reason when busy is false the user object is still not populated
     if (busy){
       return <LoadingScreen text="Logging You In"/>;
     }

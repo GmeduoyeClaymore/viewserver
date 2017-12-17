@@ -1,43 +1,76 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
-import yup from 'yup';
-import ValidatingInput from '../../common/components/ValidatingInput';
-import ValidatingButton from '../../common/components/ValidatingButton';
-import {merge} from 'lodash';
+import {LiteCreditCardInput} from 'react-native-credit-card-input';
+import uuidv4 from 'uuid/v4';
+import {addCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
+import ErrorRegion from 'common/components/ErrorRegion';
+import {connect} from 'react-redux';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 
-export default PaymentCardDetails  = ({context, history, match}) => {
-  const {paymentCard = {}} = context.state;
+class PaymentCardDetails extends Component {
+  constructor(props) {
+    super(props);
+    this.onCardDetailsChange.bind(this);
 
-  const onChangeText = async (field, value) => {
-    context.setState({paymentCard: merge(paymentCard, {[field]: value})});
-  };
+    this.state = {
+      valid: false
+    };
+  }
 
-  return <Container>
-    <Header>
-      <Left>
-        <Button transparent>
-          <Icon name='arrow-back' onPress={() => history.goBack()} />
-        </Button>
-      </Left>
-      <Body><Title>Payment Card Details</Title></Body>
-    </Header>
-    <Content>
-      <Form style={{display: 'flex', flex: 1}}>
-        <ValidatingInput placeholder="Card Number" value={paymentCard.cardNumber} onChangeText={(value) => onChangeText('cardNumber', value)} validationSchema={PaymentCardDetails.validationSchema.cardNumber} max={16}/>
-        <ValidatingInput placeholder="Expiry Month - MM" value={paymentCard.expiryMonth} onChangeText={(value) => onChangeText('expiryMonth', value)}  validationSchema={PaymentCardDetails.validationSchema.expiryMonth}/>
-        <ValidatingInput placeholder="Expiry Year - YYYY" value={paymentCard.expiryYear} onChangeText={(value) => onChangeText('expiryYear', value)}  validationSchema={PaymentCardDetails.validationSchema.expiryYear}/>
-        <ValidatingInput placeholder="CVV" value={paymentCard.cvv} onChangeText={(value) => onChangeText('cvv', value)} validationSchema={PaymentCardDetails.validationSchema.cvv} maxLength={3}/>
-        <ValidatingButton  onPress={() => history.push(`${match.path}/RegistrationConfirmation`)}  validationSchema={yup.object(PaymentCardDetails.validationSchema)} model={paymentCard}>
-          <Text>Next</Text>
-        </ValidatingButton>
-      </Form>
-    </Content>
-  </Container>;
-};
+  onCardDetailsChange(details){
+    if (details.valid == true){
+      const {number, expiry, cvc} = details.values;
+      const expiryTokens = expiry.split('/');
+      this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
+    }
+  }
 
-PaymentCardDetails.validationSchema = {
-  cardNumber: yup.string().required().max(16).min(16),
-  expiryMonth: yup.string().required().max(2).min(2),
-  expiryYear: yup.string().required().max(4).min(2),
-  cvv: yup.string().required().max(3).min(3)
-};
+  render(){
+    const {history, busy, errors, context, dispatch, client} = this.props;
+    const {valid} = this.state;
+
+    const saveCardDetails = async() => {
+      //TODO - set busy when calling stripe
+      await createServicesThenRegister();
+    };
+
+    const register = async() => {
+      const {user, deliveryAddress} = context.state;
+      dispatch(addCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
+    };
+
+    const createServicesThenRegister = async() => {
+      //TODO - dont like that we have to register stuff here
+      dispatch(loadCustomerRegistrationServices(client, uuidv4(), register));
+    };
+
+    return <Container>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          </Button>
+        </Left>
+        <Body><Title>Payment Card Details</Title></Body>
+      </Header>
+      <Content>
+        <ErrorRegion errors={errors}>
+          <Form style={{display: 'flex', flex: 1}}>
+            <LiteCreditCardInput autoFocus={true} onChange={(details) => this.onCardDetailsChange(details)}/>
+            <Button onPress={() => saveCardDetails()} disabled={!valid || busy}>
+              <Text>Next</Text>
+            </Button>
+          </Form>
+        </ErrorRegion>
+      </Content>
+    </Container>;
+  }
+}
+
+const mapStateToProps = (state, initialProps) => ({
+  errors: getOperationError(state, 'customerDao', 'addCustomer'),
+  busy: isAnyOperationPending(state, { customerDao: 'addCustomer'}),
+  ...initialProps
+});
+
+export default connect(mapStateToProps)(PaymentCardDetails);

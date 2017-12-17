@@ -1,4 +1,4 @@
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -13,10 +13,10 @@ export const INITIAL_STATE = {
     model: 'fromAPI',
     vehicleTypeId: undefined
   }
-};
+};*/
 
 
-/*
+
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
@@ -33,4 +33,4 @@ export const INITIAL_STATE = {
     vehicleTypeId: '30257d56-b35b-48ee-a40f-bb102c077ab9'
   }
 };
-*/
+

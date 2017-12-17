@@ -6,10 +6,9 @@ import {getDaoState} from 'common/dao';
 import {Button, Icon, Text, Spinner, Footer, FooterTab} from 'native-base';
 import { withRouter } from 'react-router';
 
-const CustomerMenuBar = ({history, match, summary}) => {
+const CustomerMenuBar = ({history, match}) => {
   return <Footer style={styles.container}>
-    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/ProductCategoryList`)}><Icon name='home'/></Button></FooterTab>
-    <FooterTab><Button transparent dark onPress={() => {history.push(`${match.path}/Cart`);}}><Icon name='cart'/>{summary.totalQuantity !== undefined ? <Text>{summary.totalQuantity}</Text> : <Spinner style={styles.spinner}/>}</Button></FooterTab>
+    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/ProductSelect`)}><Icon name='home'/></Button></FooterTab>
     <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/Orders`)}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/CustomerSettings`)}><Icon name='settings'/></Button></FooterTab>
   </Footer>;
@@ -33,8 +32,6 @@ CustomerMenuBar.PropTypes = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  cart: getDaoState(state, ['cart'], 'cartItemsDao'),
-  summary: getDaoState(state, [], 'cartSummaryDao') || {},
   ...initialProps
 });
 

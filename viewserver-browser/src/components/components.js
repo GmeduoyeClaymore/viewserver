@@ -91,7 +91,7 @@ let middlewares = [
 ];
 
 // Development adds logging, must be last
-if ( process.env.NODE_ENV !== "production") {
+if ( false && process.env.NODE_ENV !== "production") {
   middlewares.push( require('redux-logger')({
     // Change this configuration to your liking
     duration: true, collapsed: true

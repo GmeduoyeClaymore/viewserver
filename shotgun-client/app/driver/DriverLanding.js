@@ -17,8 +17,8 @@ class DriverLanding extends Component {
   }
 
   componentWillMount(){
-    const {dispatch, client, userId} = this.props; 
-    dispatch(driverServicesRegistrationAction(client,userId)); 
+    const {dispatch, client, userId} = this.props;
+    dispatch(driverServicesRegistrationAction(client, userId));
   }
 
   render() {

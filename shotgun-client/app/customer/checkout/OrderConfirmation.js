@@ -3,22 +3,13 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {View} from 'react-native';
 import {Spinner,  Container, Content, Header, Text, Title, Body, Left, Button, Icon} from 'native-base';
-import {purchaseCartItemsAction} from 'customer/actions/CustomerActions';
-import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
+import {checkout} from 'customer/actions/CustomerActions';
+import {getDaoState, isAnyOperationPending, getOperationError, isAnyLoading} from 'common/dao';
 import ErrorRegion from 'common/components/ErrorRegion';
 
-const OrderConfirmation = ({dispatch, history, errors, busy, payment, delivery, paymentCard, deliveryAddress, cart, summary}) => {
+const OrderConfirmation = ({dispatch, history, errors, busy, order, payment, delivery}) => {
   const purchase = async() => {
-    dispatch(purchaseCartItemsAction(delivery.eta, payment.paymentId, delivery.deliveryAddressId, delivery.deliveryType,  () => history.push('/Customer/Checkout/OrderComplete')));
-  };
-
-  const renderCartItem = (item) => {
-    return  <View key={item.key} style={{flexDirection: 'column', flex: 1}}>
-      <Text>{`Product: ${item.name} - (${item.productId})`}</Text>
-      <Text>{`Quantity: ${item.quantity}`}</Text>
-      <Text>{`Price: ${item.price}`}</Text>
-      <Text>{`Total: ${item.totalPrice}`}</Text>
-    </View>;
+    dispatch(checkout(order, payment, delivery, () => history.push('/Customer/Checkout/OrderComplete')));
   };
 
   return <Container>
@@ -32,11 +23,8 @@ const OrderConfirmation = ({dispatch, history, errors, busy, payment, delivery, 
     </Header>
     <Content>
       <ErrorRegion errors={errors}><View style={{flex: 1, flexDirection: 'column'}}>
-        {cart.items.map(c => renderCartItem(c))}
-        <Text>{`Total Items ${summary.totalQuantity}`}</Text>
-        <Text>{`Total Price ${summary.totalPrice}`}</Text>
-        <Text>Payment {paymentCard.cardNumber}</Text>
-        <Text>Delivery Details {deliveryAddress.line1}</Text>
+      {/*  <Text>Payment {paymentCard.cardNumber}</Text>*/}
+
         <Text>Delivery Requested in {delivery.eta} hours</Text>
         {!busy ? <Button onPress={purchase}><Text>Place Order</Text></Button> :  <Spinner />}
       </View></ErrorRegion>
@@ -55,22 +43,21 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment} = context.state;
+  const {delivery, payment, order} = context.state;
 
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
-  const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentCardsDao');
+ /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentDao');*/
   const deliveryAddress = deliveryAddresses ? deliveryAddresses.find(a => a.deliveryAddressId == delivery.deliveryAddressId) : {};
-  const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};
+ /* const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};*/
   
   return {
-    cart: getDaoState(state, ['cart'], 'cartItemsDao'),
-    summary: getDaoState(state, [], 'cartSummaryDao'),
-    errors: getOperationError(state, 'cartItemsDao', 'purchaseCartItems'),
+    errors: getOperationError(state, 'customerDao', 'checkout'),
     deliveryAddress,
-    paymentCard,
+    order,
+ /*   paymentCard,*/
     delivery,
     payment,
-    busy: isAnyOperationPending(state, { cartItemsDao: 'purchaseCartItems'}),
+    busy: isAnyOperationPending(state, { customerDao: 'checkout'})  || isAnyLoading(state, ['deliveryAddressDao', 'orderItemsDao']),
     ...initialProps
   };
 };

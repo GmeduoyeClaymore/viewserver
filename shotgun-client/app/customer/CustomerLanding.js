@@ -1,17 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {setLocale} from 'yup/lib/customLocale';
-import ProductList from './product/ProductList';
-import ProductCategoryList from './product/ProductCategoryList';
-import ProductDetails from './product/ProductDetails';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
-import Cart from './Cart';
 import Orders from './Orders';
 import OrderDetail from './OrderDetail';
-import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
+import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import CustomerSettings from './CustomerSettings';
-import {isAnyLoading} from 'common/dao';
+import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
@@ -30,28 +26,25 @@ setLocale({
 });
 
 class CustomerLanding extends Component {
-  static INITIAL_ROOT_NAME = 'ProductCategoryList';
+  static INITIAL_ROOT_NAME = 'Checkout';
 
   constructor(props) {
     super(props);
   }
 
   async componentWillMount() {
-    const {dispatch, userId, client} = this.props;
+    const {dispatch, userId, client, user} = this.props;
     dispatch(customerServicesRegistrationAction(client, userId));
+    dispatch(getPaymentCards(user.stripeCustomerId));
   }
 
   render() {
-    const {match, busy} = this.props;
+    const {match, busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>
-          <Route path={`${match.path}/ProductCategoryList`} exact component={ProductCategoryList}/>
-          <Route path={`${match.path}/ProductList`} exact component={ProductList}/>
-          <Route path={`${match.path}/ProductDetails`} exact component={ProductDetails}/>
-          <Route path={`${match.path}/Cart`} exact component={Cart}/>
-          <Route path={`${match.path}/Checkout`} component={Checkout}/>
+          <Route path={`${match.path}/Checkout`} exact render={() => <Checkout client={client}/>}/>
           <Route path={`${match.path}/Orders`} exact component={Orders}/>
           <Route path={`${match.path}/OrderDetail`} exact component={OrderDetail}/>
           <Route path={`${match.path}/CustomerSettings`} exact component={CustomerSettings}/>
@@ -63,15 +56,9 @@ class CustomerLanding extends Component {
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, [
-    'orderItemsDao',
-    'cartItemsDao',
-    'cartSummaryDao',
-    'orderDao',
-    'customerDao',
-    'paymentCardsDao',
-    'deliveryAddressDao',
-    'deliveryDao']), ...nextOwnProps
+  busy: isAnyLoading(state, ['vehicleTypeDao', 'paymentDao', 'userDao']),
+  user: getDaoState(state, ['user'], 'userDao'),
+  ...nextOwnProps
 });
 
 export default connect(mapStateToProps)(CustomerLanding);

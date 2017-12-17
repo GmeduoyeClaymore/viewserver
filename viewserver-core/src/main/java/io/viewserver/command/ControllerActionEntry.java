@@ -74,7 +74,7 @@ public class ControllerActionEntry{
     }
 
     public String invoke(String param){
-        Object arg = fromString(param, this.parameterType);
+        Object arg = fromString(param, this.parameterType, this.an.path());
         try {
             Object result;
             if(this.actionParams != null && actionParams.size() > 0){
@@ -170,21 +170,22 @@ public class ControllerActionEntry{
         return null;
     }
 
-    public static Object fromString(String ser,Class<?> aType){
+    public static Object fromString(String ser,Class<?> aType, String action){
         if(aType == null){
             return null;
         }
         try {
             return mapper.readValue(ser, aType);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to deserialize object \"" + ser + "\"",e);
+            throw new RuntimeException("Unable to deserialize object \"" + ser + "\" in action " + action,e);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to deserialize object \"" + ser + "\"",e);
+            throw new RuntimeException("Unable to deserialize object \"" + ser + "\" in action " + action,e);
         }
     }
 
     public static String toString(Object ser,Class<?> aType){
         try {
+
             return mapper.writerFor(aType).writeValueAsString(ser);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to serialize object \"" + ser + "\"",e);
