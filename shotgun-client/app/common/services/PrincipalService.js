@@ -19,7 +19,7 @@ export default class PrincipalService {
       await AsyncStorage.setItem(PrincipalService.userIdKey, userId).timeoutWithError(5000, 'Unable to find set userid within 5 second timespan');
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error saving user id on device');
+      Logger.error('Error saving user id on device ' + error);
     }
   }
 
@@ -28,7 +28,7 @@ export default class PrincipalService {
       await AsyncStorage.removeItem(PrincipalService.userIdKey);
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error removing user id from device');
+      Logger.error('Error removing user id from device' + error);
     }
   }
 }
