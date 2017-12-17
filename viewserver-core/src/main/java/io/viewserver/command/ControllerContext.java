@@ -39,36 +39,40 @@ public class ControllerContext implements AutoCloseable{
         current.set(null);
     }
 
-    public static ConcurrentHashMap<String,Object> getParams(){
+    private static ConcurrentHashMap<String,Object> getParams(){
         return contextParams.get(current.get().getPeerSession());
     }
 
     public static void set(String name, Object value) {
-        ConcurrentHashMap<String,Object> params = getParams();
-        if(params == null){
-            params = new ConcurrentHashMap<>();
-            IPeerSession peerSession1 = current.get().getPeerSession();
-            peerSession1.addDisconnectionHandler(new PeerSession.IDisconnectionHandler() {
-                @Override
-                public void handleDisconnect(IPeerSession peerSession) {
-                    try{
-                        contextParams.remove(peerSession1);
+        IPeerSession peerSession1 = current.get().getPeerSession();
+        synchronized (peerSession1){
+            ConcurrentHashMap<String,Object> params = getParams();
+            if(params == null){
+                params = new ConcurrentHashMap<>();
+                peerSession1.addDisconnectionHandler(new PeerSession.IDisconnectionHandler() {
+                    @Override
+                    public void handleDisconnect(IPeerSession peerSession) {
+                        try{
+                            contextParams.remove(peerSession1);
+                        }
+                        finally {
+                            peerSession1.removeDisconnectionHandler(this);
+                        }
                     }
-                    finally {
-                        peerSession1.removeDisconnectionHandler(this);
-                    }
-                }
-            });
-            contextParams.put(peerSession1, params);
+                });
+                contextParams.put(peerSession1, params);
+            }
+            params.put(name,value);
         }
-        params.put(name,value);
     }
 
     public static Object get(String name) {
-        ConcurrentHashMap<String,Object> params = getParams();
-        if(params == null){
-            return null;
+        synchronized (current.get().getPeerSession()){
+            ConcurrentHashMap<String,Object> params = getParams();
+            if(params == null){
+                return null;
+            }
+            return params.get(name);
         }
-        return params.get(name);
     }
 }
