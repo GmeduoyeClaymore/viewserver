@@ -7,6 +7,9 @@ public class DirectionRequest{
     private String destination;
     private String mode;
 
+    public DirectionRequest() {
+    }
+
     public DirectionRequest(String origin, String destination, String mode) {
         this.origin = origin;
         this.destination = destination;

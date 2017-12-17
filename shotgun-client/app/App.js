@@ -38,11 +38,9 @@ export default class App extends React.Component {
     try {
       Logger.debug('Mounting App Component');
       await ProtoLoader.loadAll();
-      try {
-        await this.setUserId();
-      } catch (error){};
-      this.setInitialRoot();
       await this.client.connect();
+      await this.setUserId();
+      this.setInitialRoot();
       isConnected = true;
     } catch (error){
       Logger.debug('Connection error - ' + error);
@@ -53,7 +51,7 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    this.userId = await PrincipalService.getUserIdFromDevice();
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

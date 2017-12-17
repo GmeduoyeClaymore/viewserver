@@ -1,6 +1,9 @@
 package io.viewserver.command;
 
 import io.viewserver.network.IPeerSession;
+import io.viewserver.network.PeerSession;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Gbemiga on 13/12/17.
@@ -8,6 +11,7 @@ import io.viewserver.network.IPeerSession;
 public class ControllerContext implements AutoCloseable{
     private IPeerSession peerSession;
     private static ThreadLocal<ControllerContext> current = new ThreadLocal<>();
+    private static ConcurrentHashMap<IPeerSession,ConcurrentHashMap<String,Object>> contextParams = new ConcurrentHashMap<>();
 
     private ControllerContext(IPeerSession peerSession) {
         this.peerSession = peerSession;
@@ -33,5 +37,38 @@ public class ControllerContext implements AutoCloseable{
     @Override
     public void close() throws Exception {
         current.set(null);
+    }
+
+    public static ConcurrentHashMap<String,Object> getParams(){
+        return contextParams.get(current.get().getPeerSession());
+    }
+
+    public static void set(String name, Object value) {
+        ConcurrentHashMap<String,Object> params = getParams();
+        if(params == null){
+            params = new ConcurrentHashMap<>();
+            IPeerSession peerSession1 = current.get().getPeerSession();
+            peerSession1.addDisconnectionHandler(new PeerSession.IDisconnectionHandler() {
+                @Override
+                public void handleDisconnect(IPeerSession peerSession) {
+                    try{
+                        contextParams.remove(peerSession1);
+                    }
+                    finally {
+                        peerSession1.removeDisconnectionHandler(this);
+                    }
+                }
+            });
+            contextParams.put(peerSession1, params);
+        }
+        params.put(name,value);
+    }
+
+    public static Object get(String name) {
+        ConcurrentHashMap<String,Object> params = getParams();
+        if(params == null){
+            return null;
+        }
+        return params.get(name);
     }
 }

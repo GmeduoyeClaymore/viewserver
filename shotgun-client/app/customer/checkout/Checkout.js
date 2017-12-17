@@ -14,17 +14,17 @@ export default class Checkout extends Component {
     this.state = INITIAL_STATE;
   }
 
-
   render() {
     const client = Client.Current;
     const controlProps = {client, ...this.props};
-    return <Switch>
+    return <DeliveryMap {...controlProps} context={this}/>;
+    /*return <Switch>
       <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...controlProps} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...controlProps} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...controlProps} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...controlProps} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...controlProps} context={this}/>} />
       <Redirect to={'/Customer/Checkout/DeliveryMap'}/>
-    </Switch>;
+    </Switch>;*/
   }
 }
