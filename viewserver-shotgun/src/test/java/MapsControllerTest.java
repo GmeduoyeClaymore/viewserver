@@ -26,7 +26,7 @@ public class MapsControllerTest {
     }
 
     @Test
-    public void canRequestDireactions(){
+    public void canRequestDirections(){
         System.out.println(sut.mapDirectionRequest(new DirectionRequest("W6 8NQ", "E5 9QR","driving")));
     }
 

@@ -29,7 +29,7 @@ public class PaymentController{
         Stripe.apiKey = apiKey.getPrivateKey();
     }
 
-    @ControllerAction(path = "createPaymentCustomer", isSynchronous = true)
+    @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
     public HashMap<String, Object> createPaymentCustomer(PaymentCustomer paymentCustomer){
         String cardToken = createCardToken(paymentCustomer.getPaymentCard());
         Map<String, Object> customerParams = new HashMap<>();
@@ -48,7 +48,7 @@ public class PaymentController{
         }
     }
 
-    @ControllerAction(path = "addPaymentCard", isSynchronous = true)
+    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
     public String addPaymentCard(PaymentCard paymentCard){
         try {
             String cardToken = createCardToken(paymentCard);
@@ -63,7 +63,7 @@ public class PaymentController{
         }
     }
 
-    @ControllerAction(path = "getPaymentCards", isSynchronous = true)
+    @ControllerAction(path = "getPaymentCards", isSynchronous = false)
     public List<Card> getPaymentCards(String customerToken){
         try {
             HashMap<String, Object> sourcesParams = new HashMap<>();
