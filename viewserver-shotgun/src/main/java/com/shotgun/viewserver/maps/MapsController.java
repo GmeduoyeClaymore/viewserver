@@ -19,7 +19,7 @@ public class MapsController {
 
     private static TypeReference<HashMap<String,Object>> dictionaryType = new TypeReference<HashMap<String,Object>>() {};
     private static ObjectMapper mapper = new ObjectMapper();
-    private MapsControllerKey contollerKey;
+    private MapsControllerKey controllerKey;
     private static final Logger logger = LoggerFactory.getLogger(MapsController.class);
 
     String NEARBY_URL_DEFAULT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
@@ -29,34 +29,35 @@ public class MapsController {
     String DIRECTION_URL = "https://maps.googleapis.com/maps/api/directions/json";
     String AUTO_COMPLETE_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 
-    public MapsController(MapsControllerKey contollerKey) {
-        this.contollerKey = contollerKey;
+    public MapsController(MapsControllerKey controllerKey) {
+        this.controllerKey = controllerKey;
     }
+
 
     @ControllerAction(path = "requestNearbyPlaces", isSynchronous = false)
     public HashMap<String,Object> requestNearbyPlaces(NearbyPlaceRequest request){
-        String url = this.contollerKey.isSupportsReverveGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
-        return getResponse(request, execute("GET", url, request.toQueryString(contollerKey.getKey(), contollerKey.isSupportsReverveGeocoding())),true);
+        String url = this.controllerKey.isSupportsReverveGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
+        return getResponse(request, execute("GET", url, request.toQueryString(controllerKey.getKey(), controllerKey.isSupportsReverveGeocoding())),true);
     }
 
     @ControllerAction(path = "mapPlaceRequest", isSynchronous = false)
     public HashMap<String,Object> mapPlaceRequest(PlaceRequest request){
-        return getResponse(request, execute("GET", PLACE_URL, request.toQueryString(contollerKey.getKey())),true);
+        return getResponse(request, execute("GET", PLACE_URL, request.toQueryString(controllerKey.getKey())),true);
     }
 
     @ControllerAction(path = "mapDirectionRequest", isSynchronous = false)
     public HashMap<String,Object> mapDirectionRequest(DirectionRequest request){
-        HashMap<String, Object> get = getResponse(request, execute("GET",DIRECTION_URL , request.toQueryString(contollerKey.getKey())),false);
+        HashMap<String, Object> get = getResponse(request, execute("GET",DIRECTION_URL , request.toQueryString(controllerKey.getKey())),false);
         List<String> routes = (List<String>) get.get("routes");
         if(routes== null|| routes.size() == 0){
-            throw new RuntimeException("No rouutes found");
+            throw new RuntimeException("No routes found");
         }
         return get;
     }
 
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)
     public HashMap<String,Object> makeAutoCompleteRequest(MapRequest request){
-        return getResponse(request, execute("GET",AUTO_COMPLETE_URL , request.toQueryString(contollerKey.getKey())),true);
+        return getResponse(request, execute("GET",AUTO_COMPLETE_URL , request.toQueryString(controllerKey.getKey())),true);
     }
 
     private HashMap<String, Object> getResponse(Object request, String response, boolean allowZeroResults) {

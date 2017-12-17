@@ -19,20 +19,19 @@ import java.util.stream.Collectors;
 @Controller(name = "paymentController")
 public class PaymentController{
 
-    private String STRIPE_PUBLIC_KEY = "pk_test_BUWd5f8iUuxmbTT5MqsdOlmk";
-    private String STRIPE_PRIVATE_KEY = "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4";
+
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+    private StripeApiKey apiKey;
 
     //TODO example of injecting server execution context for our async commands
 
-    public PaymentController() {
-
-        //TODO - move the key to the config.xml file
-        Stripe.apiKey = STRIPE_PRIVATE_KEY;
+    public PaymentController(StripeApiKey apiKey) {
+        this.apiKey = apiKey;
+        Stripe.apiKey = apiKey.getPrivateKey();
     }
 
     @ControllerAction(path = "createPaymentCustomer", isSynchronous = true)
-    public CreatePaymentCustomerResponse createPaymentCustomer(PaymentCustomer paymentCustomer){
+    public HashMap<String, Object> createPaymentCustomer(PaymentCustomer paymentCustomer){
         String cardToken = createCardToken(paymentCustomer.getPaymentCard());
         Map<String, Object> customerParams = new HashMap<>();
         customerParams.put("email", paymentCustomer.getEmail());
@@ -41,15 +40,17 @@ public class PaymentController{
         try {
             Customer customer = Customer.create(customerParams);
             logger.debug("Added stripe payment customer with id {}", customer.getId());
-            return new CreatePaymentCustomerResponse(customer.getId(), cardToken);
+            HashMap<String, Object> result  = new HashMap<>();
+            result.put("customerId",customer.getId());
+            result.put("paymentToken",cardToken);
+            return result;
         } catch (Exception e) {
-            //TODO - better error handling around this
             throw new RuntimeException(e);
         }
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = true)
-    public AddPaymentCardResponse addPaymentCard(PaymentCard paymentCard){
+    public String addPaymentCard(PaymentCard paymentCard){
         try {
             String cardToken = createCardToken(paymentCard);
             Customer customer = Customer.retrieve(paymentCard.customerToken);
@@ -57,9 +58,8 @@ public class PaymentController{
             params.put("source", cardToken);
             customer.getSources().create(params);
             logger.debug("Added stripe payment card with token {}", cardToken);
-            return new AddPaymentCardResponse(cardToken);
+            return cardToken;
         } catch (Exception e) {
-            //TODO - better error handling around this
             throw new RuntimeException(e);
         }
     }
@@ -73,13 +73,12 @@ public class PaymentController{
             logger.debug("Got {} stripe cards for customerToken {}", cards.getCount(), customerToken);
             return new GetPaymentCardsResponse(cards.getData().stream().map(a -> (Card)a).collect(Collectors.toList()));
         } catch (Exception e) {
-            //TODO - better error handling around this
             throw new RuntimeException(e);
         }
     }
 
     private String createCardToken(PaymentCard paymentCard){
-        RequestOptions requestOptions = RequestOptions.builder().setApiKey(STRIPE_PUBLIC_KEY).build();
+        RequestOptions requestOptions = RequestOptions.builder().setApiKey(this.apiKey.getPublicKey()).build();
 
         Map<String, Object> tokenParams = new HashMap<>();
         Map<String, Object> cardParams = new HashMap<>();
@@ -94,7 +93,6 @@ public class PaymentController{
             logger.debug("Created stripe payment with token {}", token.getId());
             return token.getId();
         } catch (Exception e) {
-            //TODO - better error handling around this
             throw new RuntimeException(e);
         }
     }
