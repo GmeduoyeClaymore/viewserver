@@ -1,5 +1,6 @@
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.payments.*;
+import com.stripe.model.Card;
 import org.apache.logging.log4j.core.util.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -9,6 +10,7 @@ import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Gbemiga on 17/12/17.
@@ -45,8 +47,8 @@ public class PaymentControllerTest {
 
     @Test
     public void C_canGetPaymentCards(){
-        GetPaymentCardsResponse paymentCards = sut.getPaymentCards(this.customerId);
-        assertTrue(paymentCards.getPaymentCards().size() > 0);
+        List<Card> paymentCards = sut.getPaymentCards(this.customerId);
+        assertTrue(paymentCards.size() > 0);
     }
 
 

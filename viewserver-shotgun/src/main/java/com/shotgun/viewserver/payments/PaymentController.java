@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,6 @@ public class PaymentController{
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private StripeApiKey apiKey;
-
-    //TODO example of injecting server execution context for our async commands
 
     public PaymentController(StripeApiKey apiKey) {
         this.apiKey = apiKey;
@@ -65,13 +64,13 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "getPaymentCards", isSynchronous = true)
-    public GetPaymentCardsResponse getPaymentCards(String customerToken){
+    public List<Card> getPaymentCards(String customerToken){
         try {
             HashMap<String, Object> sourcesParams = new HashMap<>();
             sourcesParams.put("object", "card");
             ExternalAccountCollection cards = Customer.retrieve(customerToken).getSources().list(sourcesParams);
             logger.debug("Got {} stripe cards for customerToken {}", cards.getCount(), customerToken);
-            return new GetPaymentCardsResponse(cards.getData().stream().map(a -> (Card)a).collect(Collectors.toList()));
+            return cards.getData().stream().map(a -> (Card)a).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

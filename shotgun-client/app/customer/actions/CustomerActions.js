@@ -51,5 +51,5 @@ export const addCustomer = (customer, deliveryAddress, paymentCard, continueWith
 };
 
 export const getPaymentCards = (customerToken, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', {customerToken}, continueWith);
+  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', customerToken, continueWith);
 };
