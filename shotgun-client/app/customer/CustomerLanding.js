@@ -39,12 +39,12 @@ class CustomerLanding extends Component {
   }
 
   render() {
-    const {match, busy} = this.props;
+    const {match, busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>
-          <Route path={`${match.path}/Checkout`} exact component={Checkout}/>
+          <Route path={`${match.path}/Checkout`} exact render={() => <Checkout client={client}/>}/>
           <Route path={`${match.path}/Orders`} exact component={Orders}/>
           <Route path={`${match.path}/OrderDetail`} exact component={OrderDetail}/>
           <Route path={`${match.path}/CustomerSettings`} exact component={CustomerSettings}/>

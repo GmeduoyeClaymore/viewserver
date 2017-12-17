@@ -6,7 +6,6 @@ import OrderConfirmation from './OrderConfirmation';
 import OrderComplete from './OrderComplete';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
-import Client from 'viewserver-client/Client';
 
 export default class Checkout extends Component {
   constructor(){
@@ -15,8 +14,7 @@ export default class Checkout extends Component {
   }
 
   render() {
-    const client = Client.Current;
-    const controlProps = {client, ...this.props};
+    const controlProps = {...this.props};
     return <DeliveryMap {...controlProps} context={this}/>;
     /*return <Switch>
       <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...controlProps} context={this}/>} />
