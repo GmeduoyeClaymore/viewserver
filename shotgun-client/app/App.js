@@ -6,7 +6,7 @@ import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
 import Logger from 'common/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
-import PrincipalService from './common/services/PrincipalService';
+// import PrincipalService from './common/services/PrincipalService';
 import LandingCommon from './LandingCommon';
 import RegistrationCommon from './RegistrationCommon';
 import CustomerRegistration from './customer/registration/CustomerRegistration';

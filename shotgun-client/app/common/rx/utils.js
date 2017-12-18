@@ -19,4 +19,4 @@ Rx.Observable.prototype.filterRowEvents = function () {
 
 Promise.prototype.timeoutWithError = function(timeout, error){
   return Rx.Observable.fromPromise(this).take(1).timeoutWithError(timeout, error).toPromise();
-}
+};

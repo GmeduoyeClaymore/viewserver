@@ -147,7 +147,7 @@ export default class Client {
       path: controllerName,
     });
     this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
-    return commandExecutedPromise.promise; 
+    return commandExecutedPromise.promise;
   };
 
   sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
