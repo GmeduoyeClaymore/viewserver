@@ -42,8 +42,8 @@ export const loadCustomerRegistrationServices = (client, userId, continueWith) =
   };
 };
 
-export const checkout = (order, payment, delivery, continueWith) => {
-  return invokeDaoCommand('customerDao', 'checkout', {order, payment, delivery}, continueWith);
+export const checkout = (orderItem, payment, delivery, continueWith) => {
+  return invokeDaoCommand('customerDao', 'checkout', {orderItem, payment, delivery}, continueWith);
 };
 
 export const addCustomer = (customer, deliveryAddress, paymentCard, continueWith) => {

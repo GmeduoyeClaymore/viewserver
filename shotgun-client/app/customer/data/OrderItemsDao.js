@@ -3,15 +3,15 @@ import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSo
 import * as TableNames from 'common/constants/TableNames';
 import uuidv4 from 'uuid/v4';
 import Logger from 'common/Logger';
+import * as BucketNames from 'common/constants/BucketNames';
 
-const createAddOrderItemRowEvent = (orderItemId, orderId, productId, userId) =>{
+const createAddOrderItemRowEvent = (orderId, orderItem, userId) =>{
   return {
     type: 0, // ADD
     columnValues: {
       orderId,
-      orderItemId,
       userId,
-      productId,
+      ...orderItem,
       quantity: 1
     }
   };
@@ -72,18 +72,25 @@ export default class OrderItemsDaoContext{
     return {...options, filterExpression: `userId == \"${userId}\"` + (orderId !== undefined ? `&& orderId == "${orderId}"` : '')};
   }
 
+  async saveImage(imageData){
+    const fileName = uuidv4();
+    const imageUrl = await this.client.invokeJSONCommand('imageController', 'saveToS3', {imageData, fileName, bucketName: BucketNames.ORDER_IMAGES});
+    return imageUrl;
+  }
+
   extendDao(dao){
-    dao.addOrderItem = async ({orderId, productId, userId}) => {
-      Logger.info(`Adding product ${productId} to order ${orderId}`);
+    dao.addOrderItem = async ({orderId, orderItem, userId}) => {
+      Logger.info(`Adding product ${orderItem.productId} to order ${orderId}`);
       const {subscriptionStrategy} = dao;
-      const orderItemId = uuidv4();
-      const cartRowEvent = createAddOrderItemRowEvent(orderItemId, orderId, productId, userId);
+     // orderItem.orderItemId = uuidv4();
+      orderItem.imageUrl = await this.saveImage(orderItem.imageData);
+     /* const cartRowEvent = createAddOrderItemRowEvent(orderId, orderItem, userId);
 
       const result = dao.rowEventObservable.filter(ev => ev.row.orderItemId === orderItemId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to order item ${orderItemId} in 5 seconds`)).toPromise();
       await subscriptionStrategy.editTable([cartRowEvent]);
       const modifiedRows = await result;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return modifiedRows.row.orderItemId;
+      return modifiedRows.row.orderItemId;*/
     };
   }
 }

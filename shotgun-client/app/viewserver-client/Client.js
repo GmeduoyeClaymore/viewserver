@@ -132,7 +132,7 @@ export default class Client {
 
   invokeJSONCommand = function (controllerName, action, payload) {
     const commandExecutedPromise = new GenericJSONCommandPromise();
-    Logger.info(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+    Logger.debug(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
     
     if (!controllerName){
       throw new Error('Controller name is required');

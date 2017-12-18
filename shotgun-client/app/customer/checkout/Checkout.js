@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import DeliveryMap from './DeliveryMap';
 import ProductSelect from './ProductSelect';
 import DeliveryOptions from './DeliveryOptions';
-//import ItemDetails from './ItemDetails';
+import ItemDetails from './ItemDetails';
 import OrderConfirmation from './OrderConfirmation';
 import OrderComplete from './OrderComplete';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -19,10 +19,10 @@ export default class Checkout extends Component {
       <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...this.props} context={this}/>} />
-      {/* <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...this.props} context={this}/>} />*/}
+      <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...this.props} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/ProductSelect'}/>
+      <Redirect to={'/Customer/Checkout/ItemDetails'}/>
     </Switch>;
   }
 }

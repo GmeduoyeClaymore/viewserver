@@ -4,7 +4,7 @@ import {merge} from 'lodash';
 
 const ProductSelect = ({context, history}) => {
   const selectProduct = (productId) => {
-    context.setState({order: merge({}, context.state.order, {productId})});
+    context.setState({orderItem: merge({}, context.state.orderItem, {productId})});
     history.push('/Customer/Checkout/DeliveryMap');
   };
 

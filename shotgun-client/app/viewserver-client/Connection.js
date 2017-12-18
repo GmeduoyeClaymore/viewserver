@@ -119,10 +119,10 @@ export default class Connection {
         reason = 'Unknown reason';
       }
 
-      Logger.debug(`Network Disconnected ${reason}`);
+      Logger.warning(`Network Disconnected ${reason}`);
 
       if (this._autoReconnect == true && !this._forcedClose){
-        Logger.debug('Attempting auto reconnect');
+        Logger.info('Attempting auto reconnect');
         this.connect(this._autoReconnect);
       }
 

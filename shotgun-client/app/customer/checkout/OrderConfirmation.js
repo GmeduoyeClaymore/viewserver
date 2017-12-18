@@ -4,12 +4,12 @@ import {connect} from 'react-redux';
 import {View} from 'react-native';
 import {Spinner,  Container, Content, Header, Text, Title, Body, Left, Button, Icon} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
-import {getDaoState, isAnyOperationPending, getOperationError, isAnyLoading} from 'common/dao';
+import {isAnyOperationPending, getOperationError, isAnyLoading} from 'common/dao';
 import ErrorRegion from 'common/components/ErrorRegion';
 
-const OrderConfirmation = ({dispatch, history, errors, busy, order, payment, delivery}) => {
+const OrderConfirmation = ({dispatch, history, errors, busy, orderItem, payment, delivery}) => {
   const purchase = async() => {
-    dispatch(checkout(order, payment, delivery, () => history.push('/Customer/Checkout/OrderComplete')));
+    dispatch(checkout(orderItem, payment, delivery, () => history.push('/Customer/Checkout/OrderComplete')));
   };
 
   return <Container>
@@ -23,8 +23,6 @@ const OrderConfirmation = ({dispatch, history, errors, busy, order, payment, del
     </Header>
     <Content>
       <ErrorRegion errors={errors}><View style={{flex: 1, flexDirection: 'column'}}>
-        {/*  <Text>Payment {paymentCard.cardNumber}</Text>*/}
-
         <Text>Delivery Requested in {delivery.eta} hours</Text>
         {!busy ? <Button onPress={purchase}><Text>Place Order</Text></Button> :  <Spinner />}
       </View></ErrorRegion>
@@ -33,31 +31,21 @@ const OrderConfirmation = ({dispatch, history, errors, busy, order, payment, del
 };
 
 OrderConfirmation.PropTypes = {
-  status: PropTypes.object,
-  cart: PropTypes.object,
-  summary: PropTypes.object,
-  order: PropTypes.object,
+  orderItem: PropTypes.object,
   delivery: PropTypes.object,
   customer: PropTypes.object
 };
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, order} = context.state;
+  const {delivery, payment, orderItem} = context.state;
 
-  const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
-  /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentDao');*/
-  const deliveryAddress = deliveryAddresses ? deliveryAddresses.find(a => a.deliveryAddressId == delivery.deliveryAddressId) : {};
-  /* const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};*/
-  
   return {
     errors: getOperationError(state, 'customerDao', 'checkout'),
-    deliveryAddress,
-    order,
-    /*   paymentCard,*/
+    orderItem,
     delivery,
     payment,
-    busy: isAnyOperationPending(state, { customerDao: 'checkout'})  || isAnyLoading(state, ['deliveryAddressDao', 'orderItemsDao']),
+    busy: isAnyOperationPending(state, { customerDao: 'checkout'})  || isAnyLoading(state, ['orderItemsDao']),
     ...initialProps
   };
 };

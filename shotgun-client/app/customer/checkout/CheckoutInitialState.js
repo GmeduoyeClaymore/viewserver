@@ -1,9 +1,9 @@
+/*
 export const INITIAL_STATE = {
-  order: {
-    orderId: undefined,
+  orderItem: {
     productId: undefined,
     notes: undefined,
-    image: undefined
+    imageData: undefined
   },
   delivery: {
     eta: 72,
@@ -33,11 +33,12 @@ export const INITIAL_STATE = {
     paymentId: undefined
   }
 };
+*/
 
-/*
 export const INITIAL_STATE = {
-  order: {
-    orderId: undefined,
+  orderItem: {
+    notes: 'some notes are here',
+    imageData: undefined,
     productId: 'PROD_Disposal',
   },
   delivery: {
@@ -66,4 +67,3 @@ export const INITIAL_STATE = {
     paymentId: '12345'
   }
 };
-*/

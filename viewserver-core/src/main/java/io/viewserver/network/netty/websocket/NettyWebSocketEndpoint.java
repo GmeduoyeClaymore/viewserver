@@ -126,7 +126,7 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
                             pipeline.addLast(serverSslContext.newHandler(ch.alloc()));
                         }
                         pipeline.addLast(new HttpServerCodec());
-                        pipeline.addLast(new HttpObjectAggregator(65536));
+                        pipeline.addLast(new HttpObjectAggregator(1 << 30));
 //                        pipeline.addLast(new WebSocketServerCompressionHandler());
                         pipeline.addLast("websocket", new WebSocketServerProtocolHandler("/"));
                         pipeline.addLast(new ChannelInboundHandlerAdapter() {
