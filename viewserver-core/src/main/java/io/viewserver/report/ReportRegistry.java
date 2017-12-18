@@ -23,8 +23,10 @@ import io.viewserver.datasource.IDataLoader;
 import io.viewserver.datasource.ILocalStorageDataAdapterFactory;
 import io.viewserver.datasource.LocalKeyedTableUpdater;
 import io.viewserver.operators.table.*;
+import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.util.ViewServerException;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -50,6 +52,21 @@ public class ReportRegistry {
     private ListeningExecutorService dataLoaderExecutor;
     private KeyedTable reportTable;
 
+    private KeyedTable defaultReportTable() {
+        KeyedTable keyedTable = new KeyedTable(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), new TableKeyDefinition(ID_COL));
+        keyedTable.initialise(50);
+        return keyedTable;
+    }
+
+    private static Schema getSchema() {
+        Schema schema = new Schema();
+        schema.addColumn(ColumnHolderUtils.createColumnHolder(ID_COL, io.viewserver.schema.column.ColumnType.String));
+        schema.addColumn(ColumnHolderUtils.createColumnHolder(JSON_COL, io.viewserver.schema.column.ColumnType.String));
+        schema.addColumn(ColumnHolderUtils.createColumnHolder(DATASOURCE_COL, io.viewserver.schema.column.ColumnType.String));
+        schema.addColumn(ColumnHolderUtils.createColumnHolder(NAME_COL, io.viewserver.schema.column.ColumnType.String));
+        return schema;
+    }
+
     private IJsonSerialiser serialiser;
 
     public ReportRegistry(ICatalog systemCatalog, ExecutionContext executionContext, IJsonSerialiser serialiser,
@@ -60,7 +77,6 @@ public class ReportRegistry {
         this.dataLoaderExecutor = dataLoaderExecutor;
 
         this.dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "Reports", 100);
-        loadReports();
     }
 
     public void register(ReportDefinition report) {
@@ -88,27 +104,18 @@ public class ReportRegistry {
         return serialiser.deserialise(reportDefinitionJson, ReportDefinition.class);
     }
 
-    private void loadReports() {
+    public void loadReports() {
         LocalKeyedTableUpdater tableUpdater = new LocalKeyedTableUpdater(executionContext, systemCatalog);
         tableUpdater.setTableKeyDefinition(new TableKeyDefinition("id"));
         dataLoader.configure(tableUpdater,
                 null, null, null, null, executionContext);
-        final ListenableFuture<?> future = dataLoaderExecutor.submit(() -> {
-            dataLoader.createTable();
-            dataLoader.load();
-            reportTable = (KeyedTable) dataLoader.getTable();
-            reportTable.setSystemOperator(true);
-        });
-        Futures.addCallback(future, new FutureCallback<Object>() {
-            @Override
-            public void onSuccess(Object result) {
-            }
+        dataLoader.createTable();
+        dataLoader.load();
+        reportTable = (KeyedTable) dataLoader.getTable();
+        reportTable.setSystemOperator(true);
+    }
 
-            @Override
-            public void onFailure(Throwable t) {
-                log.error("Fatal error - could not load report definitions", t);
-                // TODO: what shall we do now?
-            }
-        });
+    public void defaultRegistry() {
+        this.reportTable =  defaultReportTable();
     }
 }

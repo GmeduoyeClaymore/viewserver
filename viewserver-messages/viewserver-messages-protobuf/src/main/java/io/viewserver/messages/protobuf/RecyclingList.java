@@ -43,6 +43,10 @@ public abstract class RecyclingList<TMessage extends IRecyclableMessage, TDto> i
 
     protected abstract void doAdd(Object dto);
 
+    public List<TDto> getDtoList() {
+        return dtoList;
+    }
+
     @Override
     public int size() {
         return dtoList != null ? dtoList.size() : 0;
@@ -60,7 +64,19 @@ public abstract class RecyclingList<TMessage extends IRecyclableMessage, TDto> i
 
     @Override
     public Iterator<TMessage> iterator() {
-        throw new UnsupportedOperationException();
+        return new Iterator<TMessage>() {
+            Iterator<TDto> dtoListIterator = dtoList.iterator();
+            @Override
+            public boolean hasNext() {
+                return dtoListIterator.hasNext();
+            }
+            @Override
+            public TMessage next() {
+                final TMessage message = getMessage();
+                message.setDto(dtoListIterator.next());
+                return (TMessage) message.retain();
+            }
+        };
     }
 
     @Override

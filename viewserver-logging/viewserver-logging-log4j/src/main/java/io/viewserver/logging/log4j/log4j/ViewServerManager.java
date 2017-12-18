@@ -66,7 +66,7 @@ public class ViewServerManager extends AbstractManager {
             }
         }
 
-        client.editTable(tableName, Collections.singletonList(RowEvent.addRow(values)), false);
+        client.editTable(tableName, Collections.singletonList(RowEvent.addRow(values)),null,null,false);
     }
 
     private static class ViewServerManagerFactory implements ManagerFactory<ViewServerManager, ViewServerManagerFactoryData> {

@@ -19,8 +19,14 @@ package io.viewserver.server.steps;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.RowEvent;
 import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ColumnType;
 import io.viewserver.execution.ReportContext;
+import io.viewserver.messages.MessagePool;
+import io.viewserver.messages.command.ITableEditCommand;
 import io.viewserver.messages.common.ValueLists;
+import io.viewserver.messages.config.IRollingTableConfig;
+import io.viewserver.operators.table.ProtoRollingTableConfig;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.MapReader;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.FutureCallback;
@@ -240,7 +246,19 @@ public class ViewServerClientSteps {
 
             return RowEvent.addRow(values);
         });
-        clientContext.client.editTable(tableName, rowEvents, true).get();
+        List<io.viewserver.client.Column> tableColumns = new ArrayList<>();
+        Map<String, String> record = records.get(0);
+        for(String column : record.keySet()){
+            Column col = serverContext.dataSource.getSchema().getColumn(column);
+            io.viewserver.schema.column.ColumnType type = ColumnHolderUtils.getType(col.getType());
+            tableColumns.add(new io.viewserver.client.Column(column, type == io.viewserver.schema.column.ColumnType.String ? io.viewserver.schema.column.ColumnType.Int : type));
+        }
+        /*ITableEditCommand.ICreationConfig creationConfig= MessagePool.getInstance().get(ITableEditCommand.ICreationConfig.class);
+        IRollingTableConfig rollingTableConfig = MessagePool.getInstance().get(IRollingTableConfig.class);
+        rollingTableConfig.setSize(records.size());
+        creationConfig.setTableType("RollingTable");
+        creationConfig.setConfig(new ProtoRollingTableConfig(rollingTableConfig));*/
+        clientContext.client.editTable(tableName, rowEvents, tableColumns,null, true).get();
     }
 
     private void assertClientConnected() throws Exception {

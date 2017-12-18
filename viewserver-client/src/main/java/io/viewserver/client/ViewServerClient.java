@@ -386,14 +386,29 @@ public class ViewServerClient implements AutoCloseable {
         return future;
     }
 
-    public ListenableFuture<Boolean> editTable(String tableName, Iterable<RowEvent> rowEvents, boolean reset) {
+    public ListenableFuture<Boolean> editTable(String tableName, Iterable<RowEvent> rowEvents, List<Column> columns,ITableEditCommand.ICreationConfig creationConfig, boolean reset) {
+
         ITableEditCommand tableEditCommand = MessagePool.getInstance().get(ITableEditCommand.class)
+                .setCreationConfig(creationConfig)
                 .setTableName(tableName);
 
         ITableEvent tableEvent = tableEditCommand.getTableEvent()
                 .setId(-1)
                 .setInitSize(-1)
                 .setExecutionCycle(-1);
+
+        if(columns != null){
+            ISchemaChange schemaChangeBuilder = tableEvent.getSchemaChange()
+                    .setSchemaSize(columns.size());
+            for (Column column : columns) {
+                final ISchemaChange.IAddColumn addColumn = MessagePool.getInstance().get(ISchemaChange.IAddColumn.class)
+                        .setName(column.getName())
+                        .setType(column.getColumnType().serialise());
+                schemaChangeBuilder.getAddColumns().add(addColumn);
+                addColumn.release();
+            }
+        }
+
         if (reset) {
             final IStatus status = MessagePool.getInstance().get(IStatus.class).setStatusId(IStatus.StatusId.DataReset);
             tableEvent.getStatuses().add(status);

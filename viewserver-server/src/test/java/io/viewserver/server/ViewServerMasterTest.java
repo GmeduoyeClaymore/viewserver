@@ -32,7 +32,7 @@ public class ViewServerMasterTest extends ViewServerMaster implements INodeMonit
     @Override
     protected void initialise() {
         super.initialise();
-
+        //reportRegistry.defaultRegistry();
         distributionManager.addNodeMonitor(this, true);
         distributionManager.setProcessNodeChangesDelay(0);
         distributionManager.setMinimumSlaves(2);

@@ -130,6 +130,9 @@ public class TableEditCommand extends PoolableMessage<TableEditCommand> implemen
         if (this.creationConfig != null) {
             this.creationConfig.release();
         }
+        if(creationConfig == null){
+            return this;
+        }
         this.creationConfig = (CreationConfig) creationConfig.retain();
         return this;
     }
@@ -193,7 +196,7 @@ public class TableEditCommand extends PoolableMessage<TableEditCommand> implemen
 
         @Override
         public Object getConfig() {
-            throw new UnsupportedOperationException();
+            return getCreationConfigDtoBuilder().getConfig();
         }
 
         @Override

@@ -33,7 +33,6 @@ public class MapsController {
         this.controllerKey = controllerKey;
     }
 
-
     @ControllerAction(path = "requestNearbyPlaces", isSynchronous = false)
     public HashMap<String,Object> requestNearbyPlaces(NearbyPlaceRequest request){
         String url = this.controllerKey.isSupportsReverveGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
@@ -96,7 +95,7 @@ public class MapsController {
             connection.setRequestProperty("Content-Length",
                     Integer.toString(urlParameters.getBytes().length));
             connection.setRequestProperty("Content-Language", "en-US");
-            connection.setConnectTimeout(10000);
+            connection.setConnectTimeout(2000);
 
             connection.setUseCaches(false);
             connection.setDoOutput(true);
@@ -107,7 +106,6 @@ public class MapsController {
             wr.writeBytes(urlParameters);
             wr.close();
 
-            //Get Response
             InputStream is = connection.getInputStream();
             InputStream errorStream = connection.getErrorStream();
             if(connection.getResponseCode() != 200){
