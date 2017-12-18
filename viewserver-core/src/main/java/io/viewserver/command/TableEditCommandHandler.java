@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -65,7 +66,8 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
     @Override
     protected void handleCommand(Command command, ITableEditCommand data, IPeerSession peerSession, CommandResult commandResult) {
         try {
-            String tableName = data.getTableName();
+            String tableName1 = data.getTableName();
+            String tableName = tableName1;
             ITableEditCommand.Operation operation = data.getOperation();
             if (operation == null) {
                 operation = ITableEditCommand.Operation.Edit;
@@ -161,10 +163,11 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                 }
             }
 
+            Iterator iterator = data.getTableEvent().getRowEvents().iterator();
             if (willReset && operator instanceof IInputOperator) {
-                ((IInputOperator)operator).deferOperation(() -> performRowOperations(data, commandResult, operator, finalDataSource, peerSession));
+                ((IInputOperator)operator).deferOperation(() -> performRowOperations(tableName1, iterator, commandResult, operator, finalDataSource, peerSession));
             } else {
-                performRowOperations(data, commandResult, operator, dataSource, peerSession);
+                performRowOperations(tableName1, iterator, commandResult, operator, dataSource, peerSession);
             }
         } catch(Exception e) {
             if (peerSession.shouldLog()) {
@@ -176,8 +179,10 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
 
     private IOperator createTable(ITableEditCommand data, ICatalog catalog, ExecutionContext executionContext) {
         ITableEditCommand.ICreationConfig creationConfig = data.getCreationConfig();
-        if (creationConfig == null) {
-            return new Table(data.getTableName(), executionContext, catalog, new Schema(), new ChunkedColumnStorage(1024));
+        if (creationConfig == null || creationConfig.getTableType() == null  || "".equals(creationConfig.getTableType())) {
+            Table table = new Table(data.getTableName(), executionContext, catalog, new Schema(), new ChunkedColumnStorage(1024));
+            table.setAllowDataReset(true);
+            return table;
         }
 
         // TODO: make table creation dynamic based on creation config
@@ -186,8 +191,8 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
         if (tableFactory == null) {
             throw new UnsupportedOperationException(String.format("Unknown table type '%s'", tableType));
         }
-
-        throw new UnsupportedOperationException("Needs re-working for new message stuff");
+        return (IOperator) tableFactory.create(data.getTableName(),executionContext, catalog,new Schema(),creationConfig);
+        //throw new UnsupportedOperationException("Needs re-working for new message stuff");
 
 //        Object config;
 //        try {
@@ -208,14 +213,12 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
 //        return (IOperator) tableFactory.create(data.getTableName(), executionContext, catalog, new Schema(), tableFactory.getProtoConfigWrapper(config));
     }
 
-    private void performRowOperations(ITableEditCommand data, CommandResult commandResult, final IOperator operator, final IDataSource dataSource, IPeerSession peerSession) {
+    private void performRowOperations(String tableName,Iterator<IRowEvent> rowEvents,CommandResult commandResult, final IOperator operator, final IDataSource dataSource, IPeerSession peerSession) {
         TIntIntHashMap rowIdMap = (TIntIntHashMap) operator.getMetadata("rowIdMap");
-        final List<IRowEvent> rowEvents = data.getTableEvent().getRowEvents();
-        StringBuilder resultMessage = new StringBuilder();
-
-        final int rowEventCount = rowEvents.size();
-        for (int i = 0; i < rowEventCount; i++) {
-            final IRowEvent rowEventDto = rowEvents.get(i);
+        int rowEventCount = 0;
+        while (rowEvents.hasNext()) {
+            final IRowEvent rowEventDto = rowEvents.next();
+            rowEventCount++;
             try {
                 if (rowEventDto.getType().equals(IRowEvent.Type.Remove)) {
                     if(operator instanceof KeyedTable && rowEventDto.getKey() != null) {
@@ -414,8 +417,8 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
         }
 
         if (peerSession.shouldLog()) {
-            log.debug("{} row events processed for table '{}' - row count = {}", data.getTableEvent().getRowEvents().size(),
-                    data.getTableName(), ((ITable) operator).getOutput().getRowCount());
+            log.debug("{} row events processed for table '{}' - row count = {}", rowEventCount,
+                    tableName, ((ITable) operator).getOutput().getRowCount());
         }
 
         IReactor reactor = peerSession.getExecutionContext().getReactor();

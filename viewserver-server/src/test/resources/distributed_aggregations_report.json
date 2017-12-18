@@ -17,11 +17,12 @@
   "output" : "group",
   "id" : "distributed_aggregations_report",
   "name" : "distributed_aggregations_report",
-  "parameters" : [ ],
-  "calculations" : [ {
+  "parameters" : {},
+  "calculations" : {
+    "value_included" : {
     "name" : "value_included",
     "expression" : "if(include, value, 0)"
-  } ],
+    }},
   "measures" : {
     "average" : {
       "name" : "average",

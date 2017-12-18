@@ -5,8 +5,8 @@
     "cardinality" : "Int",
     "aggregator" : true
   } ],
-  "dataAdapter" : {
-    "@class" : "io.viewserver.adapters.common.EmptyTableDataAdapter",
+  "dataLoader" : {
+    "@class" : "io.viewserver.adapters.common.EmptyTableDataLoader",
     "name" : "distributed_aggregations"
   },
   "schema" : {

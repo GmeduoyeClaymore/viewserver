@@ -87,6 +87,6 @@ public class RClient extends ViewServerClient {
             }
             rowEvents.add(RowEvent.addRow(values));
         }
-        return editTable(tableName, rowEvents, true).get();
+        return editTable(tableName, rowEvents,null,null,true).get();
     }
 }

@@ -151,6 +151,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 
     @Test
     public void blahTest() throws Exception {
+        new Message();
         try (TestViewServerClient client = new TestViewServerClient("client", new NettyTcpEndpoint("tcp://localhost:18000"))) {
             Options options = new Options();
             options.setOffset(0);

@@ -58,6 +58,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -130,6 +131,7 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         ReportDistributor reportDistributor = new ReportDistributor(getServerExecutionContext(), getServerCatalog(), reportContextRegistry, systemReportExecutor);
         distributionManager.addNodeMonitor(reportDistributor, false);
         reportContextRegistry.setDistributionManager(distributionManager);
+        reportRegistry.loadReports();
 
         super.initialise();
 

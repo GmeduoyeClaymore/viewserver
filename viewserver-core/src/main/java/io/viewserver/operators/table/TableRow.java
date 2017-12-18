@@ -128,7 +128,8 @@ public class TableRow implements ITableRow {
 
     @Override
     public void setString(String name, String value) {
-        getColumn(name, ColumnType.String, (IWritableColumnString) null).setString(rowId, value);
+        IWritableColumnString column = getColumn(name, ColumnType.String, (IWritableColumnString) null);
+        column.setString(rowId, value);
     }
 
     @Override

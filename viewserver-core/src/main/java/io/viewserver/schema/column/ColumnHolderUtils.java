@@ -16,6 +16,8 @@
 
 package io.viewserver.schema.column;
 
+import io.viewserver.datasource.Column;
+
 /**
  * Created by nickc on 26/09/2014.
  */
@@ -196,6 +198,42 @@ public class ColumnHolderUtils {
             }
             case String: {
                 return new ColumnMetadataString();
+            }
+            default: {
+                throw new IllegalArgumentException("Cannot create metadata for column of unknown type " + columnType);
+            }
+        }
+    }
+
+
+    public static io.viewserver.schema.column.ColumnType getType(io.viewserver.datasource.ColumnType columnType) {
+        switch (columnType) {
+            case Bool: {
+                return io.viewserver.schema.column.ColumnType.Bool;
+            }
+            case NullableBool: {
+                return ColumnType.NullableBool;
+            }
+            case Byte: {
+                return ColumnType.Byte;
+            }
+            case Short: {
+                return ColumnType.Short;
+            }
+            case Int: {
+                return ColumnType.Int;
+            }
+            case Long: {
+                return ColumnType.Long;
+            }
+            case Float: {
+                return ColumnType.Float;
+            }
+            case Double: {
+                return ColumnType.Double;
+            }
+            case String: {
+                return ColumnType.String;
             }
             default: {
                 throw new IllegalArgumentException("Cannot create metadata for column of unknown type " + columnType);
