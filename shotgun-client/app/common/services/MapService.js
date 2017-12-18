@@ -1,4 +1,3 @@
-import { PermissionsAndroid } from 'react-native';
 import Logger from 'common/Logger';
 
 export default class MapService {

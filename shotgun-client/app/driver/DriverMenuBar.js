@@ -2,8 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {getDaoState} from 'common/dao';
-import {Button, Icon, Text, Spinner, Footer, FooterTab} from 'native-base';
+import {Button, Icon, Footer, FooterTab} from 'native-base';
 import { withRouter } from 'react-router';
 
 const DriverMenuBar = ({history, match}) => {

@@ -75,6 +75,7 @@ class DeliveryMap extends Component {
 
       updateMapRegion(newLocation.latitude, newLocation.longitude);
       context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
+      console.log(context.state.delivery);
     };
 
     const onChangeText = (type, text) => {

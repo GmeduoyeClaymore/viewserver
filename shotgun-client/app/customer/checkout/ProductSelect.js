@@ -5,7 +5,6 @@ import {merge} from 'lodash';
 const ProductSelect = ({context, history}) => {
   const selectProduct = (productId) => {
     context.setState({order: merge({}, context.state.order, {productId})});
-    //dispatch(addItemToCartAction({productId, quantity: 1}));
     history.push('/Customer/Checkout/DeliveryMap');
   };
 

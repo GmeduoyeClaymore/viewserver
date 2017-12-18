@@ -325,7 +325,7 @@ export default class PlacesAutocomplete extends Component {
     if (text.length >= this.props.minLength) {
       try {
         const responseJSON = await this.props.client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
-          input: encodeURIComponent(text),
+          input: text,
           language: 'en'
         });
         this._results = responseJSON.predictions;

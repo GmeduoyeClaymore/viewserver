@@ -23,7 +23,7 @@ const OrderConfirmation = ({dispatch, history, errors, busy, order, payment, del
     </Header>
     <Content>
       <ErrorRegion errors={errors}><View style={{flex: 1, flexDirection: 'column'}}>
-      {/*  <Text>Payment {paymentCard.cardNumber}</Text>*/}
+        {/*  <Text>Payment {paymentCard.cardNumber}</Text>*/}
 
         <Text>Delivery Requested in {delivery.eta} hours</Text>
         {!busy ? <Button onPress={purchase}><Text>Place Order</Text></Button> :  <Spinner />}
@@ -46,15 +46,15 @@ const mapStateToProps = (state, initialProps) => {
   const {delivery, payment, order} = context.state;
 
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
- /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentDao');*/
+  /* const paymentCards =  getDaoState(state, ['customer', 'paymentCards'], 'paymentDao');*/
   const deliveryAddress = deliveryAddresses ? deliveryAddresses.find(a => a.deliveryAddressId == delivery.deliveryAddressId) : {};
- /* const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};*/
+  /* const paymentCard = paymentCards ? paymentCards.find(a => a.paymentId == payment.paymentId) : {};*/
   
   return {
     errors: getOperationError(state, 'customerDao', 'checkout'),
     deliveryAddress,
     order,
- /*   paymentCard,*/
+    /*   paymentCard,*/
     delivery,
     payment,
     busy: isAnyOperationPending(state, { customerDao: 'checkout'})  || isAnyLoading(state, ['deliveryAddressDao', 'orderItemsDao']),

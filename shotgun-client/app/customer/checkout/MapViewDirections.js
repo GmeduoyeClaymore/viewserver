@@ -32,7 +32,9 @@ class MapViewDirections extends Component {
 	}
 
 	decode(t, e) {
-	  for (var n, o, u = 0, l = 0, r = 0, d = [], h = 0, i = 0, a = null, c = Math.pow(10, e || 5); u < t.length;) {
+  	const d = [];
+
+	  for (let n, o, u = 0, l = 0, r = 0, h = 0, i = 0, a = null, c = Math.pow(10, e || 5); u < t.length;) {
 	    a = null, h = 0, i = 0;
 	    do a = t.charCodeAt(u++) - 63, i |= (31 & a) << h, h += 5; while (a >= 32);
 	    n = 1 & i ? ~(i >> 1) : i >> 1, h = i = 0;
@@ -40,7 +42,7 @@ class MapViewDirections extends Component {
 	    o = 1 & i ? ~(i >> 1) : i >> 1, l += n, r += o, d.push([l / c, r / c]);
 	  }
 
-	  return d = d.map((t) => {
+	  return d.map((t) => {
 	    return {
 	      latitude: t[0],
 	      longitude: t[1]
@@ -49,11 +51,14 @@ class MapViewDirections extends Component {
 	}
 
 	fetchAndRenderRoute = () => {
+	  const {
+	    onReady,
+	    onError,
+	  } = this.props;
+
 	  let {
 	    origin,
 	    destination,
-	    onReady,
-	    onError,
 	  } = this.props;
 
 	  if (origin.latitude && origin.longitude) {
@@ -98,14 +103,7 @@ class MapViewDirections extends Component {
 	  if (!this.state.coordinates) {
 	    return null;
 	  }
-	  const {
-	    origin,
-	    destination,
-	    onReady,
-	    onError,
-	    ...props
-	  } = this.props;
-	  return <MapView.Polyline coordinates={this.state.coordinates} {...props} />;
+	  return <MapView.Polyline coordinates={this.state.coordinates} {...this.props} />;
 	}
 }
 
