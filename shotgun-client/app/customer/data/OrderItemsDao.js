@@ -73,8 +73,8 @@ export default class OrderItemsDaoContext{
   }
 
   async saveImage(imageData){
-    const fileName = uuidv4();
-    const imageUrl = await this.client.invokeJSONCommand('imageController', 'saveToS3', {imageData, fileName, bucketName: BucketNames.ORDER_IMAGES});
+    const fileName = `${BucketNames.ORDER_IMAGES}/${uuidv4()}.jpg`;
+    const imageUrl = await this.client.invokeJSONCommand('imageController', 'saveToS3', {imageData, fileName, bucketName: BucketNames.SHOTGUN_BUCKET});
     return imageUrl;
   }
 
@@ -82,15 +82,19 @@ export default class OrderItemsDaoContext{
     dao.addOrderItem = async ({orderId, orderItem, userId}) => {
       Logger.info(`Adding product ${orderItem.productId} to order ${orderId}`);
       const {subscriptionStrategy} = dao;
-     // orderItem.orderItemId = uuidv4();
-      orderItem.imageUrl = await this.saveImage(orderItem.imageData);
-     /* const cartRowEvent = createAddOrderItemRowEvent(orderId, orderItem, userId);
+      orderItem.orderItemId = uuidv4();
 
-      const result = dao.rowEventObservable.filter(ev => ev.row.orderItemId === orderItemId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to order item ${orderItemId} in 5 seconds`)).toPromise();
+      if (orderItem.imageData !== undefined) {
+        orderItem.imageUrl = await this.saveImage(orderItem.imageData);
+      }
+
+      const cartRowEvent = createAddOrderItemRowEvent(orderId, orderItem, userId);
+
+      const result = dao.rowEventObservable.filter(ev => ev.row.orderItemId === orderItem.orderItemId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to order item ${orderItem.orderItemId} in 5 seconds`)).toPromise();
       await subscriptionStrategy.editTable([cartRowEvent]);
       const modifiedRows = await result;
       Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return modifiedRows.row.orderItemId;*/
+      return modifiedRows.row.orderItemId;
     };
   }
 }

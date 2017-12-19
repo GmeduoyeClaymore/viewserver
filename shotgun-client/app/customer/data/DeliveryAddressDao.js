@@ -93,6 +93,7 @@ export default class DeliveryAddressDaoContext{
       if (existingDeliveryAddress == undefined){
         deliveryAddressObject.deliveryAddressId = uuidv4();
         deliveryAddressObject.created = date;
+        deliveryAddressObject.lastUsed = date;
         Logger.info(`Adding deliveryAddress ${JSON.stringify(deliveryAddressObject)}`);
         deliveryAddressRowEvent = createAddDeliveryAddressEvent(deliveryAddressObject);
       } else {

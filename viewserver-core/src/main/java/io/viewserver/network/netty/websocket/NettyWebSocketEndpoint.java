@@ -56,6 +56,7 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
     private File keyFile;
     private String keyPassword;
     private boolean bypassCertificateChecks;
+    private final int MAX_MESSAGE_SIZE_BYTES = 5242880; //set the maximum message size to 5Mb
 
     public NettyWebSocketEndpoint(String url) {
         this(url, null, null);
@@ -128,7 +129,7 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
                         pipeline.addLast(new HttpServerCodec());
                         pipeline.addLast(new HttpObjectAggregator(1 << 30));
 //                        pipeline.addLast(new WebSocketServerCompressionHandler());
-                        pipeline.addLast("websocket", new WebSocketServerProtocolHandler("/"));
+                        pipeline.addLast("websocket", new WebSocketServerProtocolHandler("/", null, false, MAX_MESSAGE_SIZE_BYTES));
                         pipeline.addLast(new ChannelInboundHandlerAdapter() {
                             @Override
                             public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {

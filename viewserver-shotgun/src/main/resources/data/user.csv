@@ -1,5 +1,5 @@
-userId,firstName,lastName,contactNo,email,type
-2BBui,Bob,Builder,0207 12345,Bob.Builder@email.com,customer
+userId,firstName,lastName,contactNo,email,type,stripeCustomerId, stripeDefaultSourceId
+2BBui,Bob,Builder,0207 12345,Bob.Builder@email.com,customer,cus_Bxeiko7yw4hcgH,card_1BZjOtJf2h7PvwlulrG7Lrbx
 3AOra,Amy,Orange,0207 12346,Amy.Orange@email.com,customer
 4LPea,Loreta,Pear,0207 12347,Loreta.Pear@email.com,customer
 5FMan,Fabio,Mango,0207 12348,Fabio.Mango@email.com,customer

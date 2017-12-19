@@ -41,7 +41,7 @@ public class
                                         new Column("line2", "line2", ColumnType.String),
                                         new Column("city", "city", ColumnType.String),
                                         new Column("country", "country", ColumnType.String),
-                                        new Column("postcode", "postcode", ColumnType.String),
+                                        new Column("postCode", "postCode", ColumnType.String),
                                         new Column("latitude", "latitude", ColumnType.Double),
                                         new Column("longitude", "longitude", ColumnType.Double),
                                         new Column("googlePlaceId", "googlePlaceId", ColumnType.String)

@@ -94,12 +94,11 @@ export default class CustomerDaoContext{
       const {userId} = dao.options;
       const {origin, destination, ...restDelivery} = delivery;
 
-    //  const originDeliveryAddressId = await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: origin});
-    //  const destinationDeliveryAddressId = destination.line1 !== undefined ? await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: destination}) : undefined;
+      const originDeliveryAddressId = await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: origin});
+      const destinationDeliveryAddressId = destination.line1 !== undefined ? await this.deliveryAddressDao.addOrUpdateDeliveryAddress({userId, deliveryAddress: destination}) : undefined;
 
-     // const deliveryId = await this.deliveryDao.createDelivery({...restDelivery, originDeliveryAddressId, destinationDeliveryAddressId});
-   //   const orderId = await this.orderDao.createOrder({deliveryId, paymentId: payment.paymentId});
-      orderId = undefined;
+      const deliveryId = await this.deliveryDao.createDelivery({...restDelivery, originDeliveryAddressId, destinationDeliveryAddressId});
+      const orderId = await this.orderDao.createOrder({deliveryId, paymentId: payment.paymentId});
       await this.orderItemsDao.addOrderItem({orderId, orderItem, userId});
       return orderId;
     };

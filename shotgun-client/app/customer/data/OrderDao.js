@@ -67,7 +67,7 @@ export default class OrdersDaoContext{
       const orderId = uuidv4();
       const created = moment().format('x');
       Logger.info(`Creating order ${orderId}`);
-      const order = {orderId, lastModified: created, userId: dao.options.userId, deliveryId, paymentId, status: OrderStatuses.PLACED};
+      const order = {orderId, created, lastModified: created, userId: dao.options.userId, deliveryId, paymentId, status: OrderStatuses.PLACED};
       const addOrderRowEvent = createAddOrderRowEvent(order);
       const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error(`Could not detect created order in 5 seconds "${orderId}"`)).toPromise();
       await Promise.all([dao.subscriptionStrategy.editTable([addOrderRowEvent]), promise]);

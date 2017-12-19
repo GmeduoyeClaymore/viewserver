@@ -61,12 +61,12 @@ class DeliveryMap extends Component {
   render() {
     const {history, context, client} = this.props;
     const {region, busy} = this.state;
-    const {delivery, order} = context.state;
+    const {delivery, orderItem} = context.state;
     const {origin, destination} = delivery;
 
     const showDirections = origin.googlePlaceId !== undefined && destination.googlePlaceId !== undefined;
-    const showDoneButton = origin.googlePlaceId !== undefined && (order.productId == Products.DISPOSAL || destination.googlePlaceId);
-    const showDestinationInput = order.productId == Products.DELIVERY;
+    const showDoneButton = origin.googlePlaceId !== undefined && (orderItem.productId == Products.DISPOSAL || destination.googlePlaceId);
+    const showDestinationInput = orderItem.productId == Products.DELIVERY;
 
     const onLocationSelect = (type, details) => {
       const {delivery} = this.props.context.state;
@@ -75,7 +75,6 @@ class DeliveryMap extends Component {
 
       updateMapRegion(newLocation.latitude, newLocation.longitude);
       context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
-      console.log(context.state.delivery);
     };
 
     const onChangeText = (type, text) => {

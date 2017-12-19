@@ -38,7 +38,6 @@ export default class Network {
   send(buffer) {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(buffer);
-     // this.socket.onclose = (evt) => {console.log(evt); console.error('CLOSED');}
     } else {
       Logger.error('Web socket is not open! (state=' + this.socket.readyState + ')');
     }

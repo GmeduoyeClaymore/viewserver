@@ -22,7 +22,7 @@ export default class Checkout extends Component {
       <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...this.props} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderComplete'} exact render={() => <OrderComplete {...this.props} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/ItemDetails'}/>
+      <Redirect to={'/Customer/Checkout/ProductSelect'}/>
     </Switch>;
   }
 }
