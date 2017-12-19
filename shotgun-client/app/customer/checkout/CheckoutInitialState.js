@@ -2,6 +2,7 @@ export const INITIAL_STATE = {
   orderItem: {
     productId: undefined,
     notes: undefined,
+    imageUrl: undefined,
     imageData: undefined
   },
   delivery: {
@@ -36,8 +37,9 @@ export const INITIAL_STATE = {
 /*
 export const INITIAL_STATE = {
   orderItem: {
-    notes: 'some notes are here',
+    notes: 'some notes are here \n there are a lot of them',
     imageData: undefined,
+    imageUrl: undefined,
     productId: 'PROD_Disposal',
   },
   delivery: {
