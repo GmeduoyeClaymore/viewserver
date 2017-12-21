@@ -18,6 +18,7 @@ package io.viewserver.operators.table;
 
 import io.viewserver.catalog.Catalog;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
@@ -131,7 +132,7 @@ public class TablePartitionOperatorTests {
 
     @Test
     public void cannotSetPartitionValue() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        IExecutionContext executionContext = new ExecutionContext(1);
         Catalog catalog = new Catalog(executionContext);
 
         Table table = createTable(executionContext, catalog);
@@ -148,7 +149,7 @@ public class TablePartitionOperatorTests {
         executionContext.commit();
     }
 
-    private Table createTable(ExecutionContext executionContext, Catalog catalog) {
+    private Table createTable(IExecutionContext executionContext, Catalog catalog) {
         Schema schema = new Schema();
         schema.addColumn("market", ColumnType.Int);
         schema.addColumn("notional", ColumnType.Int);

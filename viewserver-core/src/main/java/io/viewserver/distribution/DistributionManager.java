@@ -22,7 +22,7 @@ import io.viewserver.collections.*;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.ICommandResultListener;
 import io.viewserver.command.MultiCommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.datasource.*;
 import io.viewserver.messages.MessagePool;
@@ -47,7 +47,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
     private final Map<IInitialiseSlaveCommand.Type, List<ViewServerNode>> nodesByType = new HashMap<>();
     private IDataSourceRegistry<? extends IDataSource> dataSourceRegistry;
     private IJsonSerialiser jsonSerialiser;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private DimensionMapper dimensionMapper;
     private ICatalog catalog;
     private IInitialiseSlaveCommand.Type nodeType;
@@ -63,7 +63,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
     public DistributionManager(IInitialiseSlaveCommand.Type nodeType,
                                IDataSourceRegistry dataSourceRegistry,
                                IJsonSerialiser jsonSerialiser,
-                               ExecutionContext executionContext,
+                               IExecutionContext executionContext,
                                DimensionMapper dimensionMapper,
                                ICatalog catalog) {
         this.nodeType = nodeType;

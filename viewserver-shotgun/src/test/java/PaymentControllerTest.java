@@ -48,7 +48,7 @@ public class PaymentControllerTest {
     @Test
     public void C_canGetPaymentCards(){
         List<Card> paymentCards = sut.getPaymentCards(this.customerId);
-        assertTrue(paymentCards.size() > 0);
+        assertTrue(paymentCards.size() == 2);
     }
 
 

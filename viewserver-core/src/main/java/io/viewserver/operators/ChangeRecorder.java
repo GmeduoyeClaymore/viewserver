@@ -18,7 +18,7 @@ package io.viewserver.operators;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.SchemaChange;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -32,7 +32,7 @@ import java.util.List;
 public class ChangeRecorder extends OperatorBase {
     private Input input;
 
-    public ChangeRecorder(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public ChangeRecorder(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         input = new Input(Constants.IN, this);

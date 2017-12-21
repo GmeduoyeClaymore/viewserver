@@ -18,7 +18,7 @@ package io.viewserver.execution.context;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.distribution.ViewServerNode;
@@ -35,7 +35,7 @@ import java.util.Map;
 public interface IExecutionPlanContext {
     ICatalog getCatalog();
 
-    ExecutionContext getExecutionContext();
+    IExecutionContext  getExecutionContext();
 
     void setCatalog(ICatalog catalog);
 
@@ -47,7 +47,7 @@ public interface IExecutionPlanContext {
 
     String getInputOutputName();
 
-    void setExecutionContext(ExecutionContext executionContext);
+    void setExecutionContext(IExecutionContext executionContext);
 
     void setAggregating(boolean aggregating);
 

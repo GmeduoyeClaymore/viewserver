@@ -16,7 +16,7 @@
 
 package io.viewserver.datasource;
 
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.distribution.IStripingStrategy;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.nodes.IGraphNode;
@@ -102,7 +102,7 @@ public class DataSource extends DataSourceBase {
         return this;
     }
 
-    public void initialise(DimensionMapper dimensionMapper, ITableUpdater tableUpdater, FunctionRegistry functionRegistry, IExpressionParser expressionParser, ExecutionContext executionContext) {
+    public void initialise(DimensionMapper dimensionMapper, ITableUpdater tableUpdater, FunctionRegistry functionRegistry, IExpressionParser expressionParser, IExecutionContext executionContext) {
         this.getDataLoader().configure(tableUpdater, dimensionMapper, this, functionRegistry, expressionParser, executionContext);
         createTable();
     }

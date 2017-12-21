@@ -18,6 +18,7 @@ package io.viewserver.catalog;
 
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -58,7 +59,7 @@ public class CatalogHolder implements ICatalog {
     }
 
     @Override
-    public ExecutionContext getExecutionContext() {
+    public IExecutionContext getExecutionContext() {
         return owner.getExecutionContext();
     }
 

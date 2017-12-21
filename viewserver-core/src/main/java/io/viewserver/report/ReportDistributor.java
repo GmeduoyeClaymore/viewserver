@@ -19,7 +19,7 @@ package io.viewserver.report;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.distribution.INodeMonitor;
 import io.viewserver.distribution.ViewServerNode;
 import io.viewserver.execution.ReportContext;
@@ -31,13 +31,13 @@ import java.util.List;
  * Created by nick on 10/11/15.
  */
 public class ReportDistributor implements INodeMonitor {
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
     private final ICatalog catalog;
     private final ReportContextRegistry reportContextRegistry;
     private final SystemReportExecutor systemReportExecutor;
     private int nodeCount;
 
-    public ReportDistributor(ExecutionContext executionContext, ICatalog catalog, ReportContextRegistry reportContextRegistry,
+    public ReportDistributor(IExecutionContext executionContext, ICatalog catalog, ReportContextRegistry reportContextRegistry,
                              SystemReportExecutor systemReportExecutor) {
         this.executionContext = executionContext;
         this.catalog = catalog.getChild("graphNodes");

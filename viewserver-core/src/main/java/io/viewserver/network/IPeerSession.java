@@ -19,7 +19,7 @@ package io.viewserver.network;
 import io.viewserver.authentication.AuthenticationToken;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.IMessage;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
 
@@ -51,7 +51,7 @@ public interface IPeerSession {
 
     void fireDisconnection();
 
-    ExecutionContext getExecutionContext();
+    IExecutionContext getExecutionContext();
 
     ICatalog getSessionCatalog();
 

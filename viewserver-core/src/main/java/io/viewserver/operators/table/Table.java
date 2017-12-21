@@ -19,7 +19,7 @@ package io.viewserver.operators.table;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.ChangeQueue;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
@@ -34,7 +34,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     private ITableStorage storage;
     protected TableRow tableRow;
 
-    public Table(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage) {
+    public Table(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage) {
         super(name, executionContext, catalog);
         this.storage = storage;
 

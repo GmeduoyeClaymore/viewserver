@@ -310,6 +310,7 @@ public class ChangeQueue implements IChangeQueue {
 
     public static class Cursor implements IRowFlags {
         private IChangeQueue changeQueue;
+        private int executionCount;
         private int queuePtr;
         private int rowId;
         private boolean advance;

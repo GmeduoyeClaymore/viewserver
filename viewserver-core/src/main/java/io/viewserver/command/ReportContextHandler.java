@@ -16,11 +16,7 @@
 
 package io.viewserver.command;
 
-import io.viewserver.Constants;
-import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.ExecutionContext;
 import io.viewserver.datasource.DataSourceStatus;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSource;
@@ -29,15 +25,9 @@ import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.InvalidReportContextException;
 import io.viewserver.execution.ReportContext;
-import io.viewserver.execution.context.ReportContextExecutionPlanContext;
-import io.viewserver.execution.nodes.UnEnumNode;
-import io.viewserver.network.IPeerSession;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
 import io.viewserver.util.ViewServerException;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class ReportContextHandler<TCommand> extends SubscriptionHandlerBase<TCommand>{
     protected IDataSourceRegistry dataSourceRegistry;

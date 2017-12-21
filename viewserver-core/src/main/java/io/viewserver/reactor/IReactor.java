@@ -45,10 +45,8 @@ public interface IReactor {
 
     void scheduleTask(ITask task, long delay, long frequency);
 
-    boolean isReactorThread();
-
-    String getOwnerThreadName();
-
     <V> void addCallback(ListenableFuture<V> future,
                          FutureCallback<? super V> callback);
+
+    void start();
 }

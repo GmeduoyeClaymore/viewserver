@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.authentication.AuthenticationToken;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.InputOperatorBase;
 import io.viewserver.operators.OutputBase;
@@ -43,7 +43,7 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
     private TIntObjectHashMap<IPeerSession> sessionsById = new TIntObjectHashMap<>();
     private Output output;
 
-    public SessionManager(ExecutionContext executionContext, ICatalog catalog) {
+    public SessionManager(IExecutionContext executionContext, ICatalog catalog) {
         super(OPERATOR_NAME, executionContext, catalog);
 
         output = new Output(Constants.OUT, this);

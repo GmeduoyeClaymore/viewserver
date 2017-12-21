@@ -1,0 +1,1 @@
+java -jar -Xmx7G -Xms7G -XX:StringTableSize=1000003 viewsserver-shotgun-0.8.0-SNAPSHOT-jar-with-dependencies.jar $1

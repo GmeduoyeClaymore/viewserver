@@ -35,11 +35,14 @@ import io.viewserver.execution.plan.UnionTransposeMultiContextHandler;
 import io.viewserver.expression.function.IUserDefinedFunction;
 import io.viewserver.messages.command.IInitialiseSlaveCommand;
 import io.viewserver.network.IEndpoint;
+import io.viewserver.network.Network;
 import io.viewserver.network.netty.inproc.NettyInProcEndpoint;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.table.RollingTableFactory;
 import io.viewserver.operators.table.TableFactoryRegistry;
 import io.viewserver.operators.unenum.UnEnumOperatorFactory;
+import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
 import io.viewserver.report.ReportContextRegistry;
 import io.viewserver.report.ReportDistributor;
 import io.viewserver.report.ReportRegistry;
@@ -332,6 +335,11 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         commandHandlerRegistry.register("genericJSON", this.controllerHandler);
         commandHandlerRegistry.register("executeSql", new ExecuteSqlCommandHandler(getSubscriptionManager(),
                 distributionManager, configurator, executionPlanRunner, getServerExecutionContext().getSummaryRegistry()));
+    }
+
+    @Override
+    protected IReactor getReactor(Network serverNetwork) {
+        return new EventLoopReactor(super.getName(), serverNetwork);
     }
 
     public void registerController(Object controller){

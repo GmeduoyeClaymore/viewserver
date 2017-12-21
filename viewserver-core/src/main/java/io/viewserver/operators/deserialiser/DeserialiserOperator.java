@@ -21,7 +21,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.ICommandResultListener;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.messages.MessagePool;
@@ -65,7 +65,7 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
     private final List<ITableEvent> pendingTableEvents = new ArrayList<>();
     private final List<ITableEvent> pendingTableEventsCopy = new ArrayList<>();
 
-    public DeserialiserOperator(String name, ExecutionContext executionContext, ICatalog catalog, IPeerSession peerSession, String target, ITableStorage tableStorage) {
+    public DeserialiserOperator(String name, IExecutionContext executionContext, ICatalog catalog, IPeerSession peerSession, String target, ITableStorage tableStorage) {
         super(name, executionContext, catalog);
         this.peerSession = peerSession;
         this.target = target;

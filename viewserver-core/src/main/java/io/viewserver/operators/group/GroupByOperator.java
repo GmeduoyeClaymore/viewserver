@@ -19,7 +19,7 @@ package io.viewserver.operators.group;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.operators.*;
 import io.viewserver.operators.group.summary.ISummaryContext;
@@ -57,7 +57,7 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
     private ArrayList<TIntHashSet> groupIdToRowIds = new ArrayList<>(8);
     private int[] groupIdComponents;
 
-    public GroupByOperator(String name, ExecutionContext executionContext, ICatalog catalog, SummaryRegistry summaryRegistry, ITableStorage tableStorage) {
+    public GroupByOperator(String name, IExecutionContext executionContext, ICatalog catalog, SummaryRegistry summaryRegistry, ITableStorage tableStorage) {
         super(name, executionContext, catalog);
         this.summaryRegistry = summaryRegistry;
         this.tableStorage = tableStorage;

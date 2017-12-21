@@ -19,6 +19,7 @@ package io.viewserver.steps;
 import io.viewserver.Constants;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.factories.*;
 import io.viewserver.operators.ChangeRecorder;
@@ -43,7 +44,7 @@ import java.util.Map;
  */
 public class TestMixerContext {
     private final Catalog catalog;
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
     private final FunctionRegistry functionRegistry;
     private final SummaryRegistry summaryRegistry;
     private final ChunkedColumnStorage tableStorage;

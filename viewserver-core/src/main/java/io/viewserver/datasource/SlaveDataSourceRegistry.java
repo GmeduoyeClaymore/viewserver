@@ -17,14 +17,14 @@
 package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 
 /**
  * Created by nick on 18/02/2015.
  */
 public class SlaveDataSourceRegistry extends DataSourceRegistryBase<SlaveDataSource> {
-    public SlaveDataSourceRegistry(ICatalog systemCatalog, ExecutionContext executionContext, IJsonSerialiser serialiser) {
+    public SlaveDataSourceRegistry(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser) {
         super(systemCatalog, executionContext, serialiser, SlaveDataSource.class);
     }
 }

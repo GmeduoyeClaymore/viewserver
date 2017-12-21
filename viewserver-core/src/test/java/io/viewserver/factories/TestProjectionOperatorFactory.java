@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.operators.projection.ProjectionOperator;
@@ -29,14 +29,14 @@ import java.util.*;
  * Created by bemm on 01/12/2014.
  */
 public class TestProjectionOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
 
     public static String PROJECTION_PARAM_NAME = "projections";
     public static String INCLUDED_COLUMNS = "included";
     public static String EXCLUDED_COLUMNS = "excluded";
 
-    public TestProjectionOperatorFactory(ExecutionContext executionContext, ICatalog catalog) {
+    public TestProjectionOperatorFactory(IExecutionContext executionContext, ICatalog catalog) {
         this.executionContext = executionContext;
         this.catalog = catalog;
     }

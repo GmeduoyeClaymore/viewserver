@@ -28,6 +28,8 @@ import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
 import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
@@ -46,7 +48,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canAddRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 
@@ -93,7 +95,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canUpdateRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -155,7 +157,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canRemoveRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -207,7 +209,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canAddAndRemoveProducers() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 
@@ -287,11 +289,11 @@ public class UnionOperatorTest {
 
     @Test
     public void tearDownBehaviour() throws Throwable {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 
-        EventLoopReactor reactor = new EventLoopReactor("reactor", new Network(null, executionContext, catalog, null));
+        IReactor reactor = new EventLoopReactor("reactor", new Network(null, executionContext, catalog, null));
         executionContext.setReactor(reactor);
 
         Schema schema = new Schema();
@@ -367,7 +369,7 @@ public class UnionOperatorTest {
 
     @Test
     public void throwsWhenAdditionalSchemaMissingColumns() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 

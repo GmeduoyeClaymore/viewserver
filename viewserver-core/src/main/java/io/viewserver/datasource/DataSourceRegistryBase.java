@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.Utils;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
@@ -47,14 +47,14 @@ import java.util.function.Consumer;
  */
 public abstract class DataSourceRegistryBase<T extends IDataSource> extends KeyedTable implements IDataSourceRegistry<T>, ICatalog {
     protected final ICatalog systemCatalog;
-    protected final ExecutionContext executionContext;
+    protected final IExecutionContext executionContext;
     private final IJsonSerialiser serialiser;
     private Class<T> clazz;
     private final List<IDataSourceListener> listeners = new ArrayList<>();
     private final TIntObjectHashMap<T> dataSourcesById = new TIntObjectHashMap<>();
     private final CatalogHolder catalogHolder;
 
-    protected DataSourceRegistryBase(ICatalog systemCatalog, ExecutionContext executionContext, IJsonSerialiser serialiser, Class<T> clazz) {
+    protected DataSourceRegistryBase(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser, Class<T> clazz) {
         super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinition());
         this.systemCatalog = systemCatalog;
         this.executionContext = executionContext;

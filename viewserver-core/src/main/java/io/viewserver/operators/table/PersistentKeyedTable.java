@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.IWritableDataAdapter;
 import io.viewserver.schema.ITableStorage;
@@ -34,7 +34,7 @@ public class PersistentKeyedTable extends KeyedTable {
     private boolean isLoadingData;
     private final DirtyTrackingTableRow dirtyTrackingTableRow;
 
-    public PersistentKeyedTable(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema,
+    public PersistentKeyedTable(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema,
                                 ITableStorage storage, TableKeyDefinition tableKeyDefinition, IWritableDataAdapter dataAdapter) {
         super(name, executionContext, catalog, schema, storage, tableKeyDefinition);
         this.dataAdapter = dataAdapter;

@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
@@ -36,7 +36,7 @@ public class KeyedTable extends Table {
     protected TableKeyDefinition tableKeyDefinition;
     private TObjectIntHashMap<Object> keys = new TObjectIntHashMap<>(8, 0.75f, -1);
 
-    public KeyedTable(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, TableKeyDefinition tableKeyDefinition) {
+    public KeyedTable(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, TableKeyDefinition tableKeyDefinition) {
         super(name, executionContext, catalog, schema, storage);
 
         if (tableKeyDefinition == null) {

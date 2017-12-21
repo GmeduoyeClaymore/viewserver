@@ -16,12 +16,12 @@
 
 package io.viewserver.reactor;
 
+import com.google.common.util.concurrent.*;
 import io.viewserver.messages.IMessage;
 import io.viewserver.network.IChannel;
 import io.viewserver.network.INetworkAdapter;
 import io.viewserver.network.INetworkMessageWheel;
 import io.viewserver.network.Network;
-import com.google.common.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +31,8 @@ import java.util.concurrent.*;
 /**
  * Created by nickc on 06/10/2014.
  */
-public class EventLoopReactor implements IReactor, IReactorCommandListener, INetworkMessageListener {
-    private static final Logger log = LoggerFactory.getLogger(EventLoopReactor.class);
+public class MultiThreadedEventLoopReactor implements IReactor, IReactorCommandListener, INetworkMessageListener {
+    private static final Logger log = LoggerFactory.getLogger(MultiThreadedEventLoopReactor.class);
     public static final byte CONTROL_REFRESH = 0;
     public static final byte CONTROL_WAKEUP = 1;
     public static final byte CONTROL_SHUTDOWN = 2;
@@ -43,7 +43,6 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     private final Network network;
     private int nextJobId = 0;
     private final PriorityBlockingQueue<Job> jobQueue;
-    private Thread runThread;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private final ListeningScheduledExecutorService executor;
     private final IReactorCommandWheel commandWheel;
@@ -51,7 +50,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     private ScheduledFuture<?> nextLoop;
     private boolean shuttingDown;
 
-    public EventLoopReactor(String name, Network network) {
+    public MultiThreadedEventLoopReactor(String name, Network network, int threadCount) {
         this.name = name;
         this.network = network;
 
@@ -61,7 +60,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
         loopTasks = new PriorityBlockingQueue<>(8, getLoopTaskComparator());
         loopTasksCopy = new PriorityBlockingQueue<>(8, getLoopTaskComparator());
 
-        executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadScheduledExecutor(r -> runThread = new Thread(r, "reactor-" + name)));
+        executor = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(threadCount,new ThreadFactoryBuilder().setNameFormat("multi-threaded-reactor-%d").build()));
 
         commandWheel = new SimpleReactorCommandWheel();
         commandWheel.registerReactorCommandListener(this);
@@ -123,10 +122,10 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     public void start() {
         network.getNetworkAdapter().start();
 
-        scheduleLoop(timeUntilNextLoop, false);
+        scheduleLoop(timeUntilNextLoop);
     }
 
-    private void scheduleLoop(long delay, boolean force) {
+    private void scheduleLoop(long delay) {
         if (shuttingDown) {
             return;
         }
@@ -140,7 +139,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
                 nextLoop = null;
             }
             nextLoop = executor.schedule(() -> {
-                synchronized (EventLoopReactor.this) {
+                synchronized (MultiThreadedEventLoopReactor.this) {
                     nextLoop = null;
                 }
                 loop();
@@ -162,7 +161,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
             timeUntilNextLoop = timeUntilNextLoop < 0 ? 0 : timeUntilNextLoop;
         }
 
-        scheduleLoop(timeUntilNextLoop, true);
+        scheduleLoop(timeUntilNextLoop);
 
         log.trace("Exited loop()");
     }
@@ -253,7 +252,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
 
     @Override
     public void scheduleTask(ITask task, long delay, long frequency) {
-        if (delay <= 0 && Thread.currentThread() == runThread) {
+        if (delay <= 0) {
             try {
                 task.execute();
             } catch (Throwable ex) {
@@ -265,7 +264,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
         if (delay <= 0) {
             wakeUp();
         } else if (delay < (nextLoop != null ? nextLoop.getDelay(TimeUnit.MILLISECONDS) : LOOP_FREQUENCY)) {
-            scheduleLoop(delay, false);
+            scheduleLoop(delay);
         }
     }
 
@@ -275,7 +274,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
         switch (control) {
             case CONTROL_WAKEUP: {
                 log.trace("{} - Received WAKEUP", name);
-                scheduleLoop(0, false);
+                scheduleLoop(0);
                 break;
             }
             case CONTROL_SHUTDOWN: {
@@ -333,7 +332,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     public void onNetworkMessage(IChannel channel, IMessage msg) {
         ListenableFuture<?> future = executor.submit(() -> {
             if (network.receiveMessage(channel, msg)) {
-                EventLoopReactor.this.wakeUp();
+                MultiThreadedEventLoopReactor.this.wakeUp();
             }
             msg.release();
         });
@@ -348,7 +347,6 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
             }
         });
     }
-
 
     @Override
     public <V> void addCallback(ListenableFuture<V> future,

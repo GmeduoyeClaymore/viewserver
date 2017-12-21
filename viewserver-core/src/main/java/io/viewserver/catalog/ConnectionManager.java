@@ -18,7 +18,7 @@ package io.viewserver.catalog;
 
 import io.viewserver.Constants;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnStringBase;
@@ -39,7 +39,7 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
     private TIntObjectHashMap<Link> links = new TIntObjectHashMap<>(8, 0.75f, -1);
     private IntHashSet linkHashes = new IntHashSet(8, 0.75f, -1);
 
-    public ConnectionManager(ExecutionContext executionContext, ICatalog catalog) {
+    public ConnectionManager(IExecutionContext executionContext, ICatalog catalog) {
         super(OPERATOR_NAME, executionContext, catalog);
 
         executionContext.getMetadataRegistry().addListener(this, true);

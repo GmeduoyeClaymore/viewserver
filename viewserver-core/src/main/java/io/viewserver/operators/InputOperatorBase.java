@@ -17,19 +17,17 @@
 package io.viewserver.operators;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nickc on 29/09/2014.
- */
+
 public abstract class InputOperatorBase extends OperatorBase implements IInputOperator {
     private boolean allowDataReset;
     private final List<Runnable> deferredOperations = new ArrayList<>();
 
-    protected InputOperatorBase(String name, ExecutionContext executionContext, ICatalog catalog) {
+    protected InputOperatorBase(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
     }

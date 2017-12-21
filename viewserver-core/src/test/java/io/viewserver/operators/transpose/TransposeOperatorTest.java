@@ -40,7 +40,7 @@ import java.util.Map;
 public class TransposeOperatorTest {
     @Test
     public void canAddRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 
@@ -104,7 +104,7 @@ public class TransposeOperatorTest {
 
     @Test
     public void canRemoveRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 
@@ -172,7 +172,7 @@ public class TransposeOperatorTest {
 
     @Test
     public void testCalcColumn() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        ExecutionContext executionContext = new ExecutionContext(1);
 
         Catalog catalog = new Catalog(executionContext);
 

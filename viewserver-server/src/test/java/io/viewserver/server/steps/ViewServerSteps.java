@@ -20,7 +20,8 @@ import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.network.netty.inproc.NettyInProcEndpoint;
-import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.server.ViewServerMasterTest;
 import io.viewserver.server.ViewServerSlave;
@@ -46,14 +47,14 @@ public class ViewServerSteps {
     @After
     public void afterScenario() {
         for (ViewServerSlave slave : viewServerContext.slaves) {
-            EventLoopReactor reactor = slave.getServerReactor();
+            IReactor reactor = slave.getServerReactor();
             reactor.shutDown();
             reactor.waitForShutdown();
         }
         viewServerContext.slaves.clear();
 
         if (viewServerContext.master != null) {
-            EventLoopReactor reactor = viewServerContext.master.getServerReactor();
+            IReactor reactor = viewServerContext.master.getServerReactor();
             reactor.shutDown();
             reactor.waitForShutdown();
             viewServerContext.master = null;

@@ -7,6 +7,10 @@ import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
+import io.viewserver.network.Network;
+import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.server.IViewServerMasterConfiguration;
 import io.viewserver.server.ViewServerMaster;
 
@@ -26,6 +30,11 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(new LoginController());
         this.registerController(new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu")));
     }
+
+    /*@Override
+    protected IReactor getReactor(Network serverNetwork) {
+        return new MultiThreadedEventLoopReactor(getName(),serverNetwork,4);
+    }*/ 
 }
 
 

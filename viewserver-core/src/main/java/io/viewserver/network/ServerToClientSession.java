@@ -19,7 +19,7 @@ package io.viewserver.network;
 import io.viewserver.authentication.AuthenticationToken;
 import io.viewserver.authentication.LoggerAuthenticationHandler;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 
 /**
  * Created by nickc on 04/11/2014.
@@ -27,7 +27,7 @@ import io.viewserver.core.ExecutionContext;
 public class ServerToClientSession extends PeerSession {
     private ICatalog sessionCatalog;
 
-    public ServerToClientSession(IChannel channel, ExecutionContext executionContext, ICatalog systemCatalog,
+    public ServerToClientSession(IChannel channel, IExecutionContext executionContext, ICatalog systemCatalog,
                                  ICatalog sessionCatalog, Network network, int connectionId, IMessageManager messageManager) {
         super(channel, executionContext, systemCatalog, network, connectionId, messageManager);
         this.sessionCatalog = sessionCatalog;

@@ -39,6 +39,8 @@ import io.viewserver.network.netty.NettyNetworkAdapter;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
 import io.viewserver.operators.deserialiser.IDeserialiserEventHandler;
 import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -67,7 +69,7 @@ public class ViewServerClient implements AutoCloseable {
     private final String name;
     private IEndpoint endpoint;
     private Network network;
-    private EventLoopReactor reactor;
+    private IReactor reactor;
     private ListenableFuture<IPeerSession> connectFuture;
     private SettableFuture<IPeerSession> authenticateFuture = SettableFuture.create();
     private CommandHandlerRegistry commandHandlerRegistry;
@@ -87,9 +89,6 @@ public class ViewServerClient implements AutoCloseable {
         return connectFuture;
     }
 
-    public String getReactorThreadName() {
-        return reactor.getOwnerThreadName();
-    }
 
     public CommandHandlerRegistry getCommandHandlerRegistry() {
         return commandHandlerRegistry;
@@ -155,8 +154,8 @@ public class ViewServerClient implements AutoCloseable {
         return future;
     }
 
-    protected EventLoopReactor initReactor(Network serverNetwork) {
-        EventLoopReactor serverReactor = new EventLoopReactor(name, serverNetwork);
+    protected IReactor initReactor(Network serverNetwork) {
+        IReactor serverReactor = new EventLoopReactor(name, serverNetwork);
         executionContext.setReactor(serverReactor);
         return serverReactor;
     }

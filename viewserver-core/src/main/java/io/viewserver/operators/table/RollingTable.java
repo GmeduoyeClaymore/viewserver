@@ -18,7 +18,7 @@ package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.BoundedFifoBufferInt;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 
@@ -28,7 +28,7 @@ import io.viewserver.schema.Schema;
 public class RollingTable extends Table {
     private final BoundedFifoBufferInt rows;
 
-    public RollingTable(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, int size) {
+    public RollingTable(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, int size) {
         super(name, executionContext, catalog, schema, storage);
         rows = new BoundedFifoBufferInt(size);
     }

@@ -27,17 +27,17 @@ public class NearbyPlaceRequest{
         this.longtitude = longtitude;
     }
 
-    public String toQueryString(String key,boolean advanced){
-        String locationParam = advanced ? "latlng" : "location";
-        return String.format("%s=%s,%s&key=%s&rankby=%s",locationParam,this.lattitude,this.longtitude,key,this.rankby);
-    }
-
     public String getRankby() {
         return rankby;
     }
 
     public void setRankby(String rankby) {
         this.rankby = rankby;
+    }
+
+    public String toQueryString(String key,boolean advanced){
+        String locationParam = advanced ? "latlng" : "location";
+        return String.format("%s=%s,%s&key=%s&rankby=%s",locationParam,this.lattitude,this.longtitude,key,this.rankby);
     }
 
     @Override

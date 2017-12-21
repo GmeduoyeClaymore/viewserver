@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class TestCalcColOperatorFactory implements ITestOperatorFactory{
 
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private FunctionRegistry registry;
 
@@ -43,7 +43,7 @@ public class TestCalcColOperatorFactory implements ITestOperatorFactory{
     public static String CALC_COLUMN_REGEX = "calcColumnRegex";
     public static String CALC_EXPRESSION_PARAM_NAME = "calcExpression";
 
-    public TestCalcColOperatorFactory(ExecutionContext executionContext, ICatalog catalog, FunctionRegistry registry) {
+    public TestCalcColOperatorFactory(IExecutionContext executionContext, ICatalog catalog, FunctionRegistry registry) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.registry = registry;

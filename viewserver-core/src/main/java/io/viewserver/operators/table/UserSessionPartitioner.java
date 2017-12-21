@@ -18,7 +18,7 @@ package io.viewserver.operators.table;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.SessionManager;
 import io.viewserver.operators.*;
@@ -35,7 +35,7 @@ public class UserSessionPartitioner extends ConfigurableOperatorBase<IUserSessio
     private Table sourceTable;
     private String userIdColumnName;
 
-    public UserSessionPartitioner(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public UserSessionPartitioner(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         input = new Input(Constants.IN, this);

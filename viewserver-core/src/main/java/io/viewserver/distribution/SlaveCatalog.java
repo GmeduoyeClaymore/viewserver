@@ -19,7 +19,7 @@ package io.viewserver.distribution;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.CatalogOutput;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.tableevent.IRowEvent;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.IOperator;
@@ -43,11 +43,11 @@ public class SlaveCatalog extends DeserialiserOperator implements ICatalog {
     private final TIntObjectHashMap<String> operatorNamesByRowId = new TIntObjectHashMap<>(8, 0.75f, -1);
     private final Map<String, IOperator> operators = new HashMap<>();
 
-    public SlaveCatalog(IPeerSession peerSession, ExecutionContext executionContext, ICatalog catalog) {
+    public SlaveCatalog(IPeerSession peerSession, IExecutionContext executionContext, ICatalog catalog) {
         this(peerSession.getCatalogName(), executionContext, catalog, peerSession, "/");
     }
 
-    private SlaveCatalog(String name, ExecutionContext executionContext, ICatalog catalog, IPeerSession peerSession, String target) {
+    private SlaveCatalog(String name, IExecutionContext executionContext, ICatalog catalog, IPeerSession peerSession, String target) {
         super(name, executionContext, catalog, peerSession, target, new ChunkedColumnStorage(1024));
         connect();
     }

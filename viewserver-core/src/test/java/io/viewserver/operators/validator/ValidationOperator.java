@@ -18,7 +18,7 @@ package io.viewserver.operators.validator;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.InputBase;
 import io.viewserver.operators.OperatorBase;
@@ -38,7 +38,7 @@ public class ValidationOperator extends OperatorBase{
     private List validationActions = new ArrayList<>();
     private List expectedActions;
 
-    public ValidationOperator(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public ValidationOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
         input = new Input(Constants.IN, this);
         addInput(input);
@@ -73,12 +73,13 @@ public class ValidationOperator extends OperatorBase{
     private DataTable convertToTable(List expectedActions,String[] keys) {
         List<HashMap<String,Object>> rows = getRows(expectedActions);
         List<List<String>>tableData = new ArrayList<>();
-        List<String> keysList = Arrays.asList(keys);
-        ValidationUtils.orderColumns(keysList);
+        List<String> keysList = ValidationUtils.getKeys(keys);
         tableData.add(keysList);
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
             for(String key : keys){
+                if(ValidationUtils.IGNORED_COLUMNS.contains(key))
+                    continue;
                 Object val = row.get(key);
                 if(val == null){
                     result.add("");
@@ -101,12 +102,31 @@ public class ValidationOperator extends OperatorBase{
         String[] keys = getKeys(result);
         for(Map<String,Object> entry : result){
             for(String key : keys){
+                if(ValidationUtils.IGNORED_COLUMNS.contains(key))
+                    continue;
                 if(!entry.containsKey(key) || entry.get(key) == null || "null".equals(entry.get(key))){
                     entry.put(key,"");
                 }
             }
         }
+        result.sort(new Comparator<HashMap<String, Object>>() {
+            @Override
+            public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
+                Object id1 = o1.get("id");
+                Object id2 = o2.get("id");
+                if(id1 == null && id2 != null){
+                    return -1;
+                }
+                if(id2 == null && id1 != null){
+                    return 1;
+                }
 
+                if(id1 == null && id2 == null){
+                    return 0;
+                }
+                return id1.toString().compareTo(id2.toString());
+            }
+        });
         return result;
     }
 
@@ -180,10 +200,12 @@ public class ValidationOperator extends OperatorBase{
             int count = columnHolders.size();
             for (int i = 0; i < count; i++) {
                 ColumnHolder holder = columnHolders.get(i);
-                Object value = !ValidationAction.Remove.equals(action) ? ColumnHolderUtils.getValue(holder, row) : null;
-                values.put(holder.getName(), value);
-                if(holder.supportsPreviousValues()) {
-                    previous.put(holder.getName(),!action.equals(ValidationAction.Remove) ? getPreviousValue(row, holder) : null);
+                if(holder != null){
+                    Object value = !ValidationAction.Remove.equals(action) ? ColumnHolderUtils.getValue(holder, row) : null;
+                    values.put(holder.getName(), value);
+                    if(holder.supportsPreviousValues()) {
+                        previous.put(holder.getName(),!action.equals(ValidationAction.Remove) ? getPreviousValue(row, holder) : null);
+                    }
                 }
             }
             return new ValidationOperatorRow(row, values, previous, action);

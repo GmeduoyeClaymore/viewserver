@@ -17,7 +17,7 @@
 package io.viewserver.catalog;
 
 import io.viewserver.Constants;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.InputOperatorBase;
@@ -31,7 +31,7 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     private final CatalogOutput output;
     private final CatalogHolder catalogHolder;
 
-    public Catalog(ExecutionContext executionContext) {
+    public Catalog(IExecutionContext executionContext) {
         this("/", executionContext, null);
     }
 
@@ -39,7 +39,7 @@ public class Catalog extends InputOperatorBase implements ICatalog {
         this(name, parent.getExecutionContext(), parent);
     }
 
-    private Catalog(String name, ExecutionContext executionContext, ICatalog parent) {
+    private Catalog(String name, IExecutionContext executionContext, ICatalog parent) {
         super(name, executionContext, parent);
 
         catalogHolder = new CatalogHolder(this);

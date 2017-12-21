@@ -19,7 +19,7 @@ package io.viewserver.operators.calccol;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.ColumnType;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.HookingContext;
@@ -52,7 +52,7 @@ public class CalcColOperator extends ConfigurableOperatorBase<ICalcColConfig> {
     private final List<CalculatedColumn> regexColumns = new ArrayList<>();
     private final TIntObjectHashMap<String> expressions = new TIntObjectHashMap<>();
 
-    public CalcColOperator(String name, ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage, IExpressionParser expressionParser) {
+    public CalcColOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage, IExpressionParser expressionParser) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
         this.expressionParser = expressionParser;

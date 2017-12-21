@@ -17,7 +17,7 @@
 package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Dimension;
 import io.viewserver.datasource.DimensionMapper;
@@ -41,7 +41,6 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntIntHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -177,7 +176,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
         }
     }
 
-    private IOperator createTable(ITableEditCommand data, ICatalog catalog, ExecutionContext executionContext) {
+    private IOperator createTable(ITableEditCommand data, ICatalog catalog, IExecutionContext executionContext) {
         ITableEditCommand.ICreationConfig creationConfig = data.getCreationConfig();
         if (creationConfig == null || creationConfig.getTableType() == null  || "".equals(creationConfig.getTableType())) {
             Table table = new Table(data.getTableName(), executionContext, catalog, new Schema(), new ChunkedColumnStorage(1024));

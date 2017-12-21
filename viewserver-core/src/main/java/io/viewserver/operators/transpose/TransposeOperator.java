@@ -19,7 +19,7 @@ package io.viewserver.operators.transpose;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
@@ -49,7 +49,7 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
     private IntHashSet keys;
     private int[] keyComponents;
 
-    public TransposeOperator(String name, ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public TransposeOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
 

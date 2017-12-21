@@ -17,7 +17,7 @@
 package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.union.UnionOperator;
 import io.viewserver.schema.ITableStorage;
@@ -28,11 +28,11 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestUnionOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private ITableStorage tableStorage;
 
-    public TestUnionOperatorFactory(ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public TestUnionOperatorFactory(IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.tableStorage = tableStorage;

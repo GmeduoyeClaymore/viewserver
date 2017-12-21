@@ -18,8 +18,8 @@ package io.viewserver.report;
 
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Hasher;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
@@ -52,7 +52,7 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
     private final ICatalog catalogHolder;
     private IDistributionManager distributionManager;
 
-    public ReportContextRegistry(ExecutionContext executionContext, ICatalog catalog, ITableStorage storage) {
+    public ReportContextRegistry(IExecutionContext executionContext, ICatalog catalog, ITableStorage storage) {
         super(OPERATOR_NAME, executionContext, catalog, getSchema(), storage, new TableKeyDefinition(COL_ID));
         initialise(256);
 

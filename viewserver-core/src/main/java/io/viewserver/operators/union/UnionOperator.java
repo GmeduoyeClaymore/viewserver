@@ -22,7 +22,7 @@ import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.collections.LongHashSet;
 import io.viewserver.collections.LongIterator;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NumberUtils;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
@@ -53,7 +53,7 @@ public class UnionOperator extends ConfigurableOperatorBase<IUnionConfig> {
     private ITableStorage tableStorage;
     private final Set<Input> resettingInputs = new HashSet<>();
 
-    public UnionOperator(String name, ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public UnionOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
 

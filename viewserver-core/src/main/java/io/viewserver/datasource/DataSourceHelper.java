@@ -19,7 +19,7 @@ package io.viewserver.datasource;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
@@ -36,7 +36,7 @@ import java.util.List;
  * Created by nickc on 21/11/2014.
  */
 public class DataSourceHelper {
-    public static void runDataSourceExecutionPlan(IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, ExecutionContext executionContext, ICatalog catalog, IDistributionManager distributionManager, CommandResult commandResult) {
+    public static void runDataSourceExecutionPlan(IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, IExecutionContext executionContext, ICatalog catalog, IDistributionManager distributionManager, CommandResult commandResult) {
         Configurator configurator = executionContext.getConfigurator();
         ExecutionPlanRunner executionPlanRunner = new ExecutionPlanRunner(configurator, distributionManager);
         DataSourceExecutionPlanContext dataSourceExecutionPlanContext = new DataSourceExecutionPlanContext(dataSource);

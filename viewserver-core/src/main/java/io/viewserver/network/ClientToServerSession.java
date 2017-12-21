@@ -17,13 +17,13 @@
 package io.viewserver.network;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 
 /**
  * Created by nickc on 04/11/2014.
  */
 public class ClientToServerSession extends PeerSession {
-    public ClientToServerSession(IChannel channel, ExecutionContext executionContext, ICatalog systemCatalog, Network network,
+    public ClientToServerSession(IChannel channel, IExecutionContext executionContext, ICatalog systemCatalog, Network network,
                                  int connectionId, IMessageManager messageManager) {
         super(channel, executionContext, systemCatalog, network, connectionId, messageManager);
     }

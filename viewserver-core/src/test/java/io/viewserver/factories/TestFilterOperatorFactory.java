@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.filter.FilterOperator;
@@ -30,14 +30,14 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestFilterOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private FunctionRegistry registry;
 
     public static String FILTER_MODE_PARAM_NAME = "filterMode";
     public static String FILTER_EXPRESSION_PARAM_NAME = "filterExpression";
 
-    public TestFilterOperatorFactory( ExecutionContext executionContext, ICatalog catalog,FunctionRegistry registry) {
+    public TestFilterOperatorFactory( IExecutionContext executionContext, ICatalog catalog,FunctionRegistry registry) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.registry = registry;

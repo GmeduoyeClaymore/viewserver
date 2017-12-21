@@ -20,7 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IConfigurableOperatorFactory;
 import io.viewserver.operators.IOperator;
 
@@ -33,10 +33,10 @@ public abstract class TestOperatorFactory implements ITestOperatorFactory{
 
     private final String operatorType;
     private IConfigurableOperatorFactory configurableOperatorFactory;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
 
-    public TestOperatorFactory(IConfigurableOperatorFactory configurableOperatorFactory1, ExecutionContext executionContext, ICatalog catalog) {
+    public TestOperatorFactory(IConfigurableOperatorFactory configurableOperatorFactory1, IExecutionContext  executionContext, ICatalog catalog) {
         this.configurableOperatorFactory = configurableOperatorFactory1;
         this.executionContext = executionContext;
         this.catalog = catalog;

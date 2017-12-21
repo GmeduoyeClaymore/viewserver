@@ -24,6 +24,7 @@ import io.viewserver.command.SubscriptionManager;
 import io.viewserver.command.UnsubscribeHandler;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.IDataSource;
@@ -38,6 +39,8 @@ import io.viewserver.network.SimpleNetworkMessageWheel;
 import io.viewserver.network.netty.NettyNetworkAdapter;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +52,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public abstract class ViewServerBase<TDataSource extends IDataSource> {
     private static final Logger log = LoggerFactory.getLogger(ViewServerBase.class);
-    private final ExecutionContext serverExecutionContext = new ExecutionContext();
+    private final IExecutionContext serverExecutionContext = new ExecutionContext();
     private final Catalog serverCatalog = new Catalog(serverExecutionContext);
     protected final IJsonSerialiser jsonSerialiser = new JacksonSerialiser();
     private final String name;
@@ -59,7 +62,7 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
     protected Configurator configurator;
     protected IDistributionManager distributionManager;
     private Network serverNetwork;
-    private EventLoopReactor serverReactor;
+    private IReactor serverReactor;
     protected IDataSourceRegistry<TDataSource> dataSourceRegistry;
     private final SubscriptionManager subscriptionManager = new SubscriptionManager();
 
@@ -71,7 +74,7 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
         commandHandlerRegistry = new CommandHandlerRegistry();
     }
 
-    public ExecutionContext getServerExecutionContext() {
+    public IExecutionContext getServerExecutionContext() {
         return serverExecutionContext;
     }
 
@@ -87,7 +90,7 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
         return serverNetwork;
     }
 
-    public EventLoopReactor getServerReactor() {
+    public IReactor getServerReactor() {
         return serverReactor;
     }
 
@@ -139,11 +142,13 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
         commandHandlerRegistry.register("configurate", new ConfigurateCommandHandler());
     }
 
-    private EventLoopReactor initReactor(Network serverNetwork) {
-        EventLoopReactor serverReactor = new EventLoopReactor(name, serverNetwork);
+    private IReactor initReactor(Network serverNetwork) {
+        IReactor serverReactor = getReactor(serverNetwork);
         serverExecutionContext.setReactor(serverReactor);
         return serverReactor;
     }
+
+    protected abstract IReactor getReactor(Network serverNetwork);
 
     public IDataSourceRegistry<TDataSource> getDataSourceRegistry() {
         return dataSourceRegistry;

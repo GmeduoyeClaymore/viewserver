@@ -17,7 +17,7 @@
 package io.viewserver.operators;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 
 import java.util.List;
 import java.util.Map;
@@ -48,7 +48,7 @@ public interface IOperator {
 
     String getPath();
 
-    ExecutionContext getExecutionContext();
+    IExecutionContext getExecutionContext();
 
     void onAfterCommit();
 

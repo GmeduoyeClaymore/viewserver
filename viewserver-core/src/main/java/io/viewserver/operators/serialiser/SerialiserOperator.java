@@ -19,7 +19,7 @@ package io.viewserver.operators.serialiser;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.SubscriptionManager;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.ColumnType;
 import io.viewserver.execution.Options;
@@ -53,7 +53,7 @@ public class SerialiserOperator extends OperatorBase {
     private boolean snapshotComplete;
     private IMessage pendingMessage;
 
-    public SerialiserOperator(String name, ExecutionContext executionContext, ICatalog catalog,
+    public SerialiserOperator(String name, IExecutionContext executionContext, ICatalog catalog,
                               IMessageManager messageManager, SubscriptionManager subscriptionManager, int connectionId,
                               int commandId, Options options) {
         super(name, executionContext, catalog);

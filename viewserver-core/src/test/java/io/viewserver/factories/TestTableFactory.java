@@ -17,7 +17,7 @@
 package io.viewserver.factories;
 
 import io.viewserver.catalog.Catalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.Schema;
@@ -40,11 +40,11 @@ public class TestTableFactory implements ITestOperatorFactory {
     private static final Logger logger = LoggerFactory.getLogger(TestMixerContext.class);
 
     private final Catalog catalog;
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
 
     public static String RECORDS_PARAM_NAME = "records";
 
-    public TestTableFactory(ExecutionContext executionContext, Catalog catalog) {
+    public TestTableFactory(IExecutionContext executionContext, Catalog catalog) {
         this.executionContext = executionContext;
         this.catalog = catalog;
     }

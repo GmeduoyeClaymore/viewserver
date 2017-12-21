@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
@@ -28,7 +28,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 public class LocalKeyedTableUpdater extends LocalTableUpdater implements IKeyedTableUpdater {
     protected TableKeyDefinition tableKeyDefinition;
 
-    public LocalKeyedTableUpdater(ExecutionContext executionContext, ICatalog catalog) {
+    public LocalKeyedTableUpdater(IExecutionContext executionContext, ICatalog catalog) {
         super(executionContext, catalog);
     }
 

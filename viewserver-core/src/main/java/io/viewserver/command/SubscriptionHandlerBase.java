@@ -20,13 +20,12 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.IExecutionPlanContext;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
-import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.execution.nodes.UnEnumNode;
 import io.viewserver.execution.plan.UserExecutionPlan;
 import io.viewserver.network.IPeerSession;
@@ -88,7 +87,7 @@ public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBa
         operator.getOutput(executionPlanContext.getInputOutputName()).plugIn(serialiser.getInput());
     }
 
-    protected IConfiguratorSpec.OperatorSpec getUnEnumSpec(ExecutionContext executionContext, ICatalog catalog, OptionsExecutionPlanContext executionPlanContext, CommandResult commandResult){
+    protected IConfiguratorSpec.OperatorSpec getUnEnumSpec(IExecutionContext executionContext, ICatalog catalog, OptionsExecutionPlanContext executionPlanContext, CommandResult commandResult){
         // unenum
         UnEnumNode unEnumNode = new UnEnumNode("unenum", executionPlanContext.getDataSource())
                 .withConnection(executionPlanContext.getInputOperator(), executionPlanContext.getInputOutputName(), Constants.IN);

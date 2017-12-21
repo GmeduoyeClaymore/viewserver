@@ -17,14 +17,14 @@
 package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.Schema;
 
 /**
  * Created by nick on 01/10/15.
  */
 public interface ITableFactory<TTable extends ITable, TConfig> {
-    TTable create(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema, TConfig config);
+    TTable create(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, TConfig config);
 
     Class<TTable> getTableClass();
 

@@ -22,6 +22,7 @@ import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.SubscriptionEventHandlerBase;
 import io.viewserver.command.CommandHandlerRegistry;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
@@ -31,6 +32,7 @@ import io.viewserver.network.Network;
 import io.viewserver.network.netty.tcp.NettyTcpEndpoint;
 import io.viewserver.operators.filter.FilterOperator;
 import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.server.steps.TestViewServerClient;
 import com.google.common.io.Resources;
 import org.junit.Before;
@@ -501,7 +503,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 
     @Test
     public void testReactorMonitor() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext();
+        IExecutionContext executionContext = new ExecutionContext();
         Catalog catalog = new Catalog(executionContext);
         EventLoopReactor reactor = new EventLoopReactor("reactor", new Network(new CommandHandlerRegistry(), executionContext, catalog, null));
         executionContext.setReactor(reactor);

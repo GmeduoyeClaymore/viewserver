@@ -19,7 +19,7 @@ package io.viewserver.network;
 import io.viewserver.authentication.AuthenticationToken;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.IMessage;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -40,7 +40,7 @@ public abstract class PeerSession implements IPeerSession {
     protected final IMessageManager messageManager;
     private TIntObjectHashMap<Command> openCommands = new TIntObjectHashMap<>();
     private final int connectionId;
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
     private final ICatalog systemCatalog;
     private Set<IDisconnectionHandler> disconnectionHandlers;
     private final List<IDisconnectionHandler> disconnectionHandlersCopy = new ArrayList<>();
@@ -52,7 +52,7 @@ public abstract class PeerSession implements IPeerSession {
     private boolean isTornDown;
     private int nextCommandId = 0;
 
-    protected PeerSession(IChannel channel, ExecutionContext executionContext, ICatalog systemCatalog, Network network, int connectionId,
+    protected PeerSession(IChannel channel, IExecutionContext  executionContext, ICatalog systemCatalog, Network network, int connectionId,
                           IMessageManager messageManager) {
         this.channel = channel;
         this.network = network;
@@ -188,7 +188,7 @@ public abstract class PeerSession implements IPeerSession {
     }
 
     @Override
-    public ExecutionContext getExecutionContext() {
+    public IExecutionContext  getExecutionContext() {
         return executionContext;
     }
 

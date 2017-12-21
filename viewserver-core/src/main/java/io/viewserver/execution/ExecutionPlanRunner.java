@@ -23,8 +23,8 @@ import io.viewserver.command.MultiCommandResult;
 import io.viewserver.configurator.ConfiguratorSpec;
 import io.viewserver.configurator.IConfigurator;
 import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Hasher;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.distribution.DistributedSummaryHelper;
@@ -67,7 +67,7 @@ public class ExecutionPlanRunner {
     }
 
     public <TContext extends IExecutionPlanContext> void executePlan(IExecutionPlan<TContext> executionPlan, TContext context,
-                                                                     ExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
+                                                                     IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
         if (distributionManager == null) {
             throw new ViewServerException("distributionManager is null");
         }

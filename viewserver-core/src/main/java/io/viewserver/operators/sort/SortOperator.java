@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.SchemaChange;
@@ -52,7 +52,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
     private IComparer comparer;
     private final IntHashSet outputRows = new IntHashSet(128, 0.75f, -1);
 
-    public SortOperator(String name, ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public SortOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
 

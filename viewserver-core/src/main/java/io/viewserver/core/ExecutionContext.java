@@ -26,6 +26,7 @@ import io.viewserver.operators.IOperator;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.ITask;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +37,13 @@ import java.util.List;
 /**
  * Created by nickc on 29/09/2014.
  */
-public class ExecutionContext {
+public class ExecutionContext implements IExecutionContext{
     private static final Logger log = LoggerFactory.getLogger(ExecutionContext.class);
     private final List<IInputOperator> inputOperators = new ArrayList<>();
     private final List<IOperator> operators = new ArrayList<>();
     private final MetadataRegistry metadataRegistry;
     private final SummaryRegistry summaryRegistry;
-    private int executionCount = 0;
+    private ThreadLocal<Integer> executionCount = ThreadLocal.withInitial(() -> 0);
     private IReactor reactor;
     private boolean committing;
     private final List<IOperator> tearDownQueue = new ArrayList<>();
@@ -51,8 +52,14 @@ public class ExecutionContext {
     private final Configurator configurator;
     private IExpressionParser expressionParser;
     private boolean paused;
+    private int numberThreads;
 
-    public ExecutionContext() {
+
+    public ExecutionContext(){
+        this(1);
+    }
+    public ExecutionContext(int numberThreads) {
+        this.numberThreads = numberThreads;
         this.functionRegistry = new FunctionRegistry();
         this.expressionParser = new AntlrExpressionParser(functionRegistry);
         this.summaryRegistry = new SummaryRegistry();
@@ -126,7 +133,7 @@ public class ExecutionContext {
             log.warn("Slow commit {} took {}ms", executionCount, finish - start);
         }
 
-        executionCount++;
+        executionCount.set(executionCount.get() + 1);
     }
 
     private void commitInputOperators() {
@@ -145,6 +152,18 @@ public class ExecutionContext {
         if (log.isTraceEnabled()) {
             log.trace("Spent {}ms in onAfterCommit()", (System.nanoTime() - start) / 1000000f);
         }
+    }
+
+
+
+    @Override
+    public void submit(Runnable work, int delay) {
+        this.reactor.scheduleTask(new ITask() {
+            @Override
+            public void execute() {
+                work.run();
+            }
+        },delay,0);
     }
 
     public void register(IOperator operator) {
@@ -176,7 +195,7 @@ public class ExecutionContext {
     }
 
     public int getExecutionCount() {
-        return executionCount;
+        return executionCount.get();
     }
 
     public void setReactor(IReactor reactor) {
@@ -206,11 +225,7 @@ public class ExecutionContext {
     }
 
     public void tearDownOperator(IOperator operator) {
-        if (reactor.isReactorThread() && !committing) {
-            operator.doTearDown();
-        } else {
-            tearDownQueue.add(operator);
-        }
+        tearDownQueue.add(operator);
     }
 
     public IExpressionParser getExpressionParser() {

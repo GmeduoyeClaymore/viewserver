@@ -20,7 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandHandlerRegistry;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.ICommandHandler;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.IMessage;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.command.ICommand;
@@ -37,9 +37,7 @@ import gnu.trove.map.hash.TObjectLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +46,7 @@ import java.util.List;
 public class Network implements PeerSession.IDisconnectionHandler {
     private static final Logger log = LoggerFactory.getLogger(Network.class);
     private final ICatalog catalog;
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
     private int nextConnectionId = 0;
     private CommandHandlerRegistry commandHandlerRegistry;
     private IReactor reactor;
@@ -57,7 +55,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     private final SessionManager sessionManager;
     private final INetworkAdapter networkAdapter;
 
-    public Network(CommandHandlerRegistry commandHandlerRegistry, ExecutionContext executionContext, ICatalog catalog,
+    public Network(CommandHandlerRegistry commandHandlerRegistry, IExecutionContext executionContext, ICatalog catalog,
                    INetworkAdapter networkAdapter) {
         this.commandHandlerRegistry = commandHandlerRegistry;
         this.executionContext = executionContext;

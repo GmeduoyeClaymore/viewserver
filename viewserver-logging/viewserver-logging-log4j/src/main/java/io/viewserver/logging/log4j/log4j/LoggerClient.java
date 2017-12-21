@@ -19,7 +19,8 @@ package io.viewserver.logging.log4j.log4j;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.network.Command;
 import io.viewserver.network.Network;
-import io.viewserver.reactor.EventLoopReactor;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.logging.log4j.ThreadContext;
 
@@ -34,8 +35,8 @@ public class LoggerClient extends ViewServerClient {
     }
 
     @Override
-    protected EventLoopReactor initReactor(Network serverNetwork) {
-        EventLoopReactor reactor = super.initReactor(serverNetwork);
+    protected IReactor initReactor(Network serverNetwork) {
+        IReactor reactor = super.initReactor(serverNetwork);
         reactor.scheduleTask(() -> {
             ThreadContext.put("loggerReactor", "true");
         }, 0, -1);

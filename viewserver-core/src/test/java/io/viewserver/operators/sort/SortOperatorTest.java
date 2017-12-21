@@ -20,6 +20,7 @@ import io.viewserver.BenchmarkTestBase;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
@@ -46,7 +47,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                ExecutionContext executionContext = new ExecutionContext();
+                IExecutionContext executionContext = new ExecutionContext(1);
 
                 Catalog catalog = new Catalog(executionContext);
 
@@ -61,7 +62,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
 
                 benchmarks.startBenchmark("populate table");
                 final Random random = new Random(new Date().getTime());
-                for (int i = 0; i < 1500000; i++) {
+                for (int i = 0; i < 2500000; i++) {
                     table.addRow(new ITableRowUpdater() {
                         @Override
                         public void setValues(ITableRow row) {
@@ -109,7 +110,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                ExecutionContext executionContext = new ExecutionContext();
+                ExecutionContext executionContext = new ExecutionContext(1);
 
                 Catalog catalog = new Catalog(executionContext);
 

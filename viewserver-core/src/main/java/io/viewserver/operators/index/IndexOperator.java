@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.operators.*;
 import io.viewserver.operators.sort.RadixSort;
@@ -43,7 +43,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     private final Set<String> indexedColumns = new HashSet<>();
     private EWAHCompressedBitmap allRows = new EWAHCompressedBitmap();
 
-    public IndexOperator(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public IndexOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         input = new Input(Constants.IN, this);

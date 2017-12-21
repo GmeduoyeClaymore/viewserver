@@ -16,7 +16,6 @@
 
 package io.viewserver;
 
-import io.viewserver.Constants;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;

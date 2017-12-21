@@ -46,7 +46,7 @@ public class DataLoader implements IDataLoader {
     private ITableUpdater tableUpdater;
     private FunctionRegistry functionRegistry;
     private IExpressionParser expressionParser;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     protected DimensionMapper dimensionMapper;
     protected DataSource dataSource;
     private final RowUpdater rowUpdater;
@@ -110,7 +110,7 @@ public class DataLoader implements IDataLoader {
     }
 
     @Override
-    public void configure(ITableUpdater tableUpdater, DimensionMapper dimensionMapper, DataSource dataSource, FunctionRegistry functionRegistry, IExpressionParser expressionParser, ExecutionContext executionContext) {
+    public void configure(ITableUpdater tableUpdater, DimensionMapper dimensionMapper, DataSource dataSource, FunctionRegistry functionRegistry, IExpressionParser expressionParser, IExecutionContext executionContext) {
         this.dimensionMapper = dimensionMapper;
         this.dataSource = dataSource;
         this.tableUpdater = tableUpdater;

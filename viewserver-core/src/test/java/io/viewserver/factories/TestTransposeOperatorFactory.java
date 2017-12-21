@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.transpose.ITransposeConfig;
 import io.viewserver.operators.transpose.TransposeOperator;
@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestTransposeOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private ITableStorage tableStorage;
 
@@ -40,7 +40,7 @@ public class TestTransposeOperatorFactory implements ITestOperatorFactory{
     public static String PIVOT_VALUES_PARAM_NAME = "pivotValues";
 
 
-    public TestTransposeOperatorFactory(ExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public TestTransposeOperatorFactory(IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.tableStorage = tableStorage;

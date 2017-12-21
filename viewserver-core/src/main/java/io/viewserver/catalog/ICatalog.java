@@ -16,7 +16,7 @@
 
 package io.viewserver.catalog;
 
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 
 /**
@@ -27,7 +27,7 @@ public interface ICatalog {
 
     ICatalog getParent();
 
-    ExecutionContext getExecutionContext();
+    IExecutionContext getExecutionContext();
 
     void registerOperator(IOperator operator);
 

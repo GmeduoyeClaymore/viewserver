@@ -16,7 +16,7 @@
 
 package io.viewserver.datasource;
 
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.table.ITable;
@@ -42,7 +42,7 @@ public interface IDataLoader {
     @JsonIgnore
     SettableFuture<Boolean> getLoadDataFuture();
 
-    void configure(ITableUpdater tableUpdater, DimensionMapper dimensionMapper, DataSource dataSource, FunctionRegistry functionRegistry, IExpressionParser expressionParser, ExecutionContext executionContext);
+    void configure(ITableUpdater tableUpdater, DimensionMapper dimensionMapper, DataSource dataSource, FunctionRegistry functionRegistry, IExpressionParser expressionParser, IExecutionContext executionContext);
 
     void createTable();
 

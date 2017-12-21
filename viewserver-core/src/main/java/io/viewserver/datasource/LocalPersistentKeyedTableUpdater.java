@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.PersistentKeyedTable;
@@ -31,7 +31,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 public class LocalPersistentKeyedTableUpdater extends LocalKeyedTableUpdater {
     private IWritableDataAdapter writableDataAdapter;
 
-    public LocalPersistentKeyedTableUpdater(ExecutionContext executionContext, ICatalog catalog, IWritableDataAdapter writableDataAdapter) {
+    public LocalPersistentKeyedTableUpdater(IExecutionContext executionContext, ICatalog catalog, IWritableDataAdapter writableDataAdapter) {
         super(executionContext, catalog);
         this.writableDataAdapter = writableDataAdapter;
     }

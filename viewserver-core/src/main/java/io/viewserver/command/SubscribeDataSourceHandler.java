@@ -16,11 +16,9 @@
 
 package io.viewserver.command;
 
-import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.ExecutionContext;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.datasource.SlaveDataSource;
@@ -28,21 +26,13 @@ import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
-import io.viewserver.execution.context.ReportContextExecutionPlanContext;
-import io.viewserver.execution.nodes.UnEnumNode;
 import io.viewserver.messages.command.IInitialiseSlaveCommand;
-import io.viewserver.messages.command.ISubscribeCommand;
 import io.viewserver.messages.command.ISubscribeDataSourceCommand;
-import io.viewserver.messages.command.ISubscribeDimensionCommand;
 import io.viewserver.messages.config.IProjectionConfig;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
-import io.viewserver.operators.IOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by nickc on 07/10/2014.

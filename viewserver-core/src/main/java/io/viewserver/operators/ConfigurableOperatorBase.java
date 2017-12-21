@@ -18,7 +18,7 @@ package io.viewserver.operators;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public abstract class ConfigurableOperatorBase<TConfig> extends OperatorBase imp
     protected TConfig pendingConfig;
     protected List<CommandResult> pendingConfigResults = new ArrayList<>();
 
-    protected ConfigurableOperatorBase(String name, ExecutionContext executionContext, ICatalog catalog) {
+    protected ConfigurableOperatorBase(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
     }
 

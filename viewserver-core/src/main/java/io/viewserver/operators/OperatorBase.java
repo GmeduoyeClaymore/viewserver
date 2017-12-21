@@ -17,7 +17,7 @@
 package io.viewserver.operators;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,17 +29,20 @@ import java.util.*;
 public abstract class OperatorBase implements IOperator {
     private static final Logger log = LoggerFactory.getLogger(OperatorBase.class);
     private final String name;
-    private final ExecutionContext executionContext;
+    private final IExecutionContext executionContext;
     private ICatalog catalog;
+
     private final Map<String, IOutput> outputsByName = new HashMap<>();
     private final List<IOutput> outputs = new ArrayList<>();
     private final Map<String, IInput> inputsByName = new LinkedHashMap<>();
     private final List<IInput> inputs = new ArrayList<>();
-    private int lastExecutionCount = -1;
-    private int commitDependencyCount = 0;
-    private int inputsReadyCount = 0;
     protected boolean isSchemaResetRequested = true;
     protected boolean isDataResetRequested = true;
+
+    private int lastExecutionCount = -1;
+    private int commitDependencyCount = 0;
+    private volatile int inputsReadyCount = 0;
+
     private boolean isTornDown;
     private boolean initialised;
     private boolean isDataRefreshRequested;
@@ -52,7 +55,7 @@ public abstract class OperatorBase implements IOperator {
     private Throwable lastSchemaError;
     private Throwable lastDataError;
 
-    protected OperatorBase(String name, ExecutionContext executionContext, ICatalog catalog) {
+    protected OperatorBase(String name, IExecutionContext executionContext, ICatalog catalog) {
         if (name.contains("/") && catalog != null) {
             throw new IllegalArgumentException("Operator names may not contain slashes.");
         }
@@ -107,7 +110,7 @@ public abstract class OperatorBase implements IOperator {
     }
 
     @Override
-    public ExecutionContext getExecutionContext() {
+    public IExecutionContext getExecutionContext() {
         return executionContext;
     }
 
@@ -163,11 +166,11 @@ public abstract class OperatorBase implements IOperator {
                 commitDependencyCount++;
             }
 
-            lastExecutionCount = executionContext.getExecutionCount();
+            lastExecutionCount = getExecutionContext().getExecutionCount();
         }
         inputsReadyCount++;
         if (inputsReadyCount == commitDependencyCount) {
-            commit();
+            executionContext.submit(() -> commit(), 0);
         }
     }
 

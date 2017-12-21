@@ -18,7 +18,7 @@ package io.viewserver.operators.unenum;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Dimension;
 import io.viewserver.datasource.IDataSource;
@@ -38,7 +38,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
     private Output output;
     private List<String> dimensions;
 
-    public UnEnumOperator(String name, ExecutionContext executionContext, ICatalog catalog, IDimensionMapper dimensionMapper) {
+    public UnEnumOperator(String name, IExecutionContext executionContext, ICatalog catalog, IDimensionMapper dimensionMapper) {
         super(name, executionContext, catalog);
         this.dimensionMapper = dimensionMapper;
 

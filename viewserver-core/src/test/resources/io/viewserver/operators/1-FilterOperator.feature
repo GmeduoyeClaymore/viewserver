@@ -250,7 +250,7 @@ Feature: Filter operator fixture
     Then operator "defaultFilter1" output "out" is
       | ~Action   | ~Name | ~ColumnType | ~TEId | id | market  | product  | time             |
       | DataReset |       |             |       |    |         |          |                  |
-      | RowAdd    |       |             | 1     | 2  | Market1 | Product3 | -822337203477580 |
+      | RowAdd    |       |             | 0     | 2  | Market1 | Product3 | -822337203477580 |
     And commit
 
   Scenario: When filtered column removed filter is un applied
@@ -276,8 +276,8 @@ Feature: Filter operator fixture
       | ColumnRemove | code    | Int         | 4     |         |      |                     |            |    |         |         |          |       |                      |
       | ColumnRemove | product | String      | 2     |         |      |                     |            |    |         |         |          |       |                      |
       | DataReset    |         |             |       |         |      |                     |            |    |         |         |          |       |                      |
-      | RowAdd       |         |             | 0     | 127     |      | -32.45682768726487  | -4.234897  | 1  | Market1 |         | 32767    | false | 9223372036854775806  |
-      | RowAdd       |         |             | 1     | -127    |      | 34.238476924128584  | 3.878476   | 0  | Market1 |         | -32768   | true  | -9223372036854775808 |
+      | RowAdd       |         |             | 0     | -127    |      | 34.238476924128584  | 3.878476   | 0  | Market1 |         | -32768   | true  | -9223372036854775808 |
+      | RowAdd       |         |             | 1     | 127     |      | -32.45682768726487  | -4.234897  | 1  | Market1 |         | 32767    | false | 9223372036854775806  |
       | RowAdd       |         |             | 2     | 10      |      | 4444.556350097544   | 5.1873984  | 2  | Market1 |         | 234      | true  | -822337203477580     |
       | RowAdd       |         |             | 3     | 0       |      | -54874.247687687486 | -35.187397 | 3  | Market1 |         | 23230    | false | 7223372036775806     |
       | RowAdd       |         |             | 4     | 120     |      | 478.345             | 65.64235   | 4  | Market1 |         | -6540    | true  | 8223372036775805     |

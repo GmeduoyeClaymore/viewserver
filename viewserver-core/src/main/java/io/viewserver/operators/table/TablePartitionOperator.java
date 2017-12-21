@@ -18,7 +18,7 @@ package io.viewserver.operators.table;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.expression.tree.equals.*;
 import io.viewserver.expression.tree.literal.*;
@@ -37,7 +37,7 @@ public class TablePartitionOperator extends FilterOperator implements ITable {
     private ColumnHolder partitionColumnHolder;
     private PartitionTableRow tableRow;
 
-    public TablePartitionOperator(String name, ExecutionContext executionContext, ICatalog catalog, String partitionColumnName, Object partitionValue) {
+    public TablePartitionOperator(String name, IExecutionContext executionContext, ICatalog catalog, String partitionColumnName, Object partitionValue) {
         super(name, executionContext, catalog, null);
         this.partitionColumnName = partitionColumnName;
         this.partitionValue = partitionValue;

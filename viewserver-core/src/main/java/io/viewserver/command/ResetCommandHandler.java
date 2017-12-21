@@ -17,7 +17,7 @@
 package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.datasource.IDimensionMapper;
 import io.viewserver.distribution.IDistributionManager;
@@ -35,7 +35,7 @@ public class ResetCommandHandler implements ICommandHandler {
 
     public ResetCommandHandler(IDataSourceRegistry dataSourceRegistry,
                                IDistributionManager distributionManager,
-                               ExecutionContext executionContext,
+                               IExecutionContext executionContext,
                                ICatalog systemCatalog,
                                IDimensionMapper dimensionMapper) {
         resetter = new Resetter(systemCatalog, dataSourceRegistry, distributionManager, executionContext, dimensionMapper);

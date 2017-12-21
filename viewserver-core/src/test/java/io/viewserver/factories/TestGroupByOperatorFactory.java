@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.group.GroupByOperator;
 import io.viewserver.operators.group.IGroupByConfig;
@@ -33,7 +33,7 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestGroupByOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private SummaryRegistry registry;
     private ITableStorage tableStorage;
@@ -43,7 +43,7 @@ public class TestGroupByOperatorFactory implements ITestOperatorFactory{
     public static String SUMMARY_FUNCTION_PARAM_NAME = "summaryFunction";
     public static String SUMMARY_ARGUMENT_PARAM_NAME = "summaryArgument";
 
-    public TestGroupByOperatorFactory(ExecutionContext executionContext, ICatalog catalog, SummaryRegistry registry,ITableStorage tableStorage) {
+    public TestGroupByOperatorFactory(IExecutionContext  executionContext, ICatalog catalog, SummaryRegistry registry,ITableStorage tableStorage) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.registry = registry;

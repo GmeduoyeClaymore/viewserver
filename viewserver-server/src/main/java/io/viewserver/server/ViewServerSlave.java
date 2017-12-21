@@ -25,12 +25,10 @@ import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.messages.command.IRegisterSlaveCommand;
-import io.viewserver.network.Command;
-import io.viewserver.network.IEndpoint;
-import io.viewserver.network.IPeerSession;
-import io.viewserver.network.PeerSession;
+import io.viewserver.network.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
+import io.viewserver.reactor.EventLoopReactor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +105,11 @@ public class ViewServerSlave extends ViewServerBase<SlaveDataSource> implements 
         commandHandlerRegistry.register("initialiseSlave",
                 new InitialiseSlaveCommandHandler(commandHandlerRegistry, getDataSourceRegistry(),
                         getSubscriptionManager(), jsonSerialiser, configurator, executionPlanRunner, dimensionMapUpdater, dimensionMapper));
+    }
+
+    @Override
+    protected EventLoopReactor getReactor(Network serverNetwork) {
+        return new EventLoopReactor(super.getName(), serverNetwork);
     }
 
     @Override

@@ -17,7 +17,7 @@
 package io.viewserver.report;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.datasource.IDataLoader;
 import io.viewserver.datasource.ILocalStorageDataAdapterFactory;
@@ -28,9 +28,6 @@ import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.util.ViewServerException;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +45,7 @@ public class ReportRegistry {
     private final IDataLoader dataLoader;
 
     private ICatalog systemCatalog;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ListeningExecutorService dataLoaderExecutor;
     private KeyedTable reportTable;
 
@@ -69,7 +66,7 @@ public class ReportRegistry {
 
     private IJsonSerialiser serialiser;
 
-    public ReportRegistry(ICatalog systemCatalog, ExecutionContext executionContext, IJsonSerialiser serialiser,
+    public ReportRegistry(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser,
                           ILocalStorageDataAdapterFactory localStorageDataAdapterFactory, ListeningExecutorService dataLoaderExecutor){
         this.serialiser = serialiser;
         this.systemCatalog = systemCatalog;

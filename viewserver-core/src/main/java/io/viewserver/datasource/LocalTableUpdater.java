@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -28,11 +28,11 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
  * Created by nickc on 25/11/2014.
  */
 public class LocalTableUpdater implements ITableUpdater {
-    protected final ExecutionContext executionContext;
+    protected final IExecutionContext executionContext;
     protected final ICatalog catalog;
     protected ITable table;
 
-    public LocalTableUpdater(ExecutionContext executionContext, ICatalog catalog) {
+    public LocalTableUpdater(IExecutionContext executionContext, ICatalog catalog) {
         this.executionContext = executionContext;
         this.catalog = catalog;
     }

@@ -20,7 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
 import io.viewserver.configurator.IConfiguratorSpec.OperatorSpec.Operation;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class Configurator implements IConfigurator {
     }
 
     @Override
-    public void process(IConfiguratorSpec configurator, ExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
+    public void process(IConfiguratorSpec configurator, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
         ConfiguratorState state = new ConfiguratorState(configurator, executionContext, catalog, commandResult);
 
         try {
@@ -226,11 +226,11 @@ public class Configurator implements IConfigurator {
         public IConfiguratorSpec.OperatorSpec operatorSpec;
         public ICatalog catalog;
         private final Set<IOperator> operatorsToRemove = new HashSet<>();
-        public final ExecutionContext executionContext;
+        public final IExecutionContext executionContext;
         public final Set<IOperator> newOperators = new HashSet<>();
         public MultiCommandResult configureResult;
 
-        public ConfiguratorState(IConfiguratorSpec configurator, ExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
+        public ConfiguratorState(IConfiguratorSpec configurator, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
             this.configurator = configurator;
             this.executionContext = executionContext;
             this.catalog = catalog;

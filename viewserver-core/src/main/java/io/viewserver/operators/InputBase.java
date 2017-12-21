@@ -113,7 +113,6 @@ public abstract class InputBase implements IInput {
     // used when e.g. a new column is added, and therefore every row must be updated
     protected void onDataRefresh(IChangeQueue changeQueue) {
         onDataChange(changeQueue);
-
         ColumnFlagWrapper wrapper = new ColumnFlagWrapper(changeQueue);
         IRowSequence allRows = getProducer().getAllRows();
         while (allRows.moveNext()) {

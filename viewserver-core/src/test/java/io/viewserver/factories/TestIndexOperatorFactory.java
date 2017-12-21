@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.index.IIndexConfig;
@@ -33,14 +33,14 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestIndexOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
     private SummaryRegistry registry;
     private ITableStorage tableStorage;
 
     public static String INDEX_PARAM_NAME = "index";
 
-    public TestIndexOperatorFactory(ExecutionContext executionContext, ICatalog catalog) {
+    public TestIndexOperatorFactory(IExecutionContext executionContext, ICatalog catalog) {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.registry = registry;

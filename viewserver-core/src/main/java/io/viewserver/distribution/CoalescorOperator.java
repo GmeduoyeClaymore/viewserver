@@ -22,7 +22,7 @@ import io.viewserver.catalog.CatalogOutput;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.*;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -54,7 +54,7 @@ public class CoalescorOperator extends OperatorBase implements IConfigurableOper
     private boolean configured;
     private boolean distributed;
 
-    public CoalescorOperator(String name, ExecutionContext executionContext, ICatalog catalog, IDistributionManager distributionManager,
+    public CoalescorOperator(String name, IExecutionContext executionContext, ICatalog catalog, IDistributionManager distributionManager,
                              SummaryRegistry summaryRegistry) {
         super(name, executionContext, catalog);
         this.distributionManager = distributionManager;

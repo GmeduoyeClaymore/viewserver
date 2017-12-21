@@ -19,7 +19,7 @@ package io.viewserver.operators.filter;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionBool;
@@ -49,7 +49,7 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
     private BitSet filteredColumns;
     private final IntHashSet outputRows;
 
-    public FilterOperator(String name, ExecutionContext executionContext, ICatalog catalog, IExpressionParser expressionParser) {
+    public FilterOperator(String name, IExecutionContext executionContext, ICatalog catalog, IExpressionParser expressionParser) {
         super(name, executionContext, catalog);
         this.expressionParser = expressionParser;
 

@@ -19,7 +19,7 @@ package io.viewserver.execution.context;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.distribution.ViewServerNode;
@@ -37,7 +37,7 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
     private ICatalog catalog;
     private String inputOperator;
     private String inputOutputName;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private boolean aggregating;
     private ParameterHelper parameterHelper;
     private List<IGraphNode> graphNodes = new ArrayList<>();
@@ -80,12 +80,12 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
     }
 
     @Override
-    public ExecutionContext getExecutionContext() {
+    public IExecutionContext getExecutionContext() {
         return executionContext;
     }
 
     @Override
-    public void setExecutionContext(ExecutionContext executionContext) {
+    public void setExecutionContext(IExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
 

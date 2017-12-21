@@ -18,7 +18,7 @@ package io.viewserver.distribution;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.IRowFlags;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class DistributionOperator extends ConfigurableOperatorBase<IDistribution
     private IDistributionManager distributionManager;
     private IDataDistributor dataDistributor;
 
-    public DistributionOperator(String name, ExecutionContext executionContext, ICatalog catalog,
+    public DistributionOperator(String name, IExecutionContext executionContext, ICatalog catalog,
                                 IDistributionManager distributionManager) {
         super(name, executionContext, catalog);
         this.distributionManager = distributionManager;

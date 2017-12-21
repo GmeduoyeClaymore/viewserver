@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 
@@ -26,7 +26,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
  */
 public class RollingTableFactory implements ITableFactory<RollingTable, IRollingTableConfig> {
     @Override
-    public RollingTable create(String name, ExecutionContext executionContext, ICatalog catalog, Schema schema, IRollingTableConfig config) {
+    public RollingTable create(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, IRollingTableConfig config) {
         return new RollingTable(name, executionContext, catalog, schema, new ChunkedColumnStorage(1024), config.size());
     }
 

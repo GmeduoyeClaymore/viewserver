@@ -18,7 +18,7 @@ package io.viewserver.factories;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.join.IColumnNameResolver;
 import io.viewserver.operators.join.IJoinConfig;
@@ -30,13 +30,13 @@ import java.util.Map;
  * Created by bemm on 01/12/2014.
  */
 public class TestJoinOperatorFactory implements ITestOperatorFactory{
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private ICatalog catalog;
 
     public static String JOIN_LEFT_COLUMN_PARAM_NAME = "leftColumn";
     public static String JOIN_RIGHT_COLUMN_PARAM_NAME = "rightColumn";
 
-    public TestJoinOperatorFactory(ExecutionContext executionContext, ICatalog catalog) {
+    public TestJoinOperatorFactory(IExecutionContext executionContext, ICatalog catalog) {
         this.executionContext = executionContext;
         this.catalog = catalog;
     }

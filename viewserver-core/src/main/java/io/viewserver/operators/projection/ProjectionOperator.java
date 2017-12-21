@@ -21,7 +21,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.changequeue.IMappedChangeQueue;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.ColumnHolder;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class ProjectionOperator extends ConfigurableOperatorBase<IProjectionConf
     private Map<String, IProjectionConfig.ProjectionColumn> projectionColumns = new HashMap<>();
     private Map<IProjectionConfig.ProjectionColumn, Pattern> regexProjectionColumns = new HashMap<>();
 
-    public ProjectionOperator(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public ProjectionOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         input = new Input(Constants.IN, this);

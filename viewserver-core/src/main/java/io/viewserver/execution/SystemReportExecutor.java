@@ -19,7 +19,7 @@ package io.viewserver.execution;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.DataSourceStatus;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSource;
@@ -65,7 +65,7 @@ public class SystemReportExecutor {
         this.reportRegistry = reportRegistry;
     }
 
-    public ReportContextExecutionPlanContext executeContext(ReportContext reportContext, ExecutionContext executionContext, ICatalog systemCatalog, CommandResult commandResult, String prefix, CommandResult remoteConfigurationResult, List<ViewServerNode> viewServerNodes) {
+    public ReportContextExecutionPlanContext executeContext(ReportContext reportContext, IExecutionContext executionContext, ICatalog systemCatalog, CommandResult commandResult, String prefix, CommandResult remoteConfigurationResult, List<ViewServerNode> viewServerNodes) {
         IExecutionPlan activeExecutionPlan;
         ReportContextExecutionPlanContext activeExecutionPlanContext;
 

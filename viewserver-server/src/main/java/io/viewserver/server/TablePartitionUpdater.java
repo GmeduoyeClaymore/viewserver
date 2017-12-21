@@ -18,7 +18,7 @@ package io.viewserver.server;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.LocalTableUpdater;
 import io.viewserver.datasource.PartitionConfig;
 import io.viewserver.operators.table.ITable;
@@ -31,7 +31,7 @@ import io.viewserver.schema.Schema;
 public class TablePartitionUpdater extends LocalTableUpdater {
     private final PartitionConfig partitionConfig;
 
-    public TablePartitionUpdater(ExecutionContext executionContext, ICatalog catalog, PartitionConfig partitionConfig) {
+    public TablePartitionUpdater(IExecutionContext executionContext, ICatalog catalog, PartitionConfig partitionConfig) {
         super(executionContext, catalog);
         this.partitionConfig = partitionConfig;
     }

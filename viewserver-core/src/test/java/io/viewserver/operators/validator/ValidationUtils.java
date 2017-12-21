@@ -19,6 +19,7 @@ package io.viewserver.operators.validator;
 import io.viewserver.schema.column.ColumnType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by bemm on 01/12/2014.
@@ -205,5 +206,12 @@ public class ValidationUtils {
 
             }
         }
+    }
+
+    public static List<String> getKeys(String[] keys) {
+        List<String> keysList = Arrays.asList(keys);
+        keysList = keysList.stream().filter(key -> !IGNORED_COLUMNS.contains(key)).collect(Collectors.toList());
+        ValidationUtils.orderColumns(keysList);
+        return keysList;
     }
 }

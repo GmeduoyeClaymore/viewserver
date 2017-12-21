@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.collections.LongHashSet;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NumberUtils;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.*;
@@ -57,7 +57,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
     private boolean alwaysResolveNames;
     private int[] joinKeyComponents;
 
-    public JoinOperator(String name, ExecutionContext executionContext, ICatalog catalog) {
+    public JoinOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         leftInput = new Input("left", this, true);

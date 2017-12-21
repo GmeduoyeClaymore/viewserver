@@ -17,7 +17,7 @@
 package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.core.ExecutionContext;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.messages.command.IInitialiseSlaveCommand;
@@ -37,11 +37,11 @@ public class Resetter {
     private ICatalog systemCatalog;
     private IDataSourceRegistry<? extends IDataSource> dataSourceRegistry;
     private IDistributionManager distributionManager;
-    private ExecutionContext executionContext;
+    private IExecutionContext executionContext;
     private IDimensionMapper dimensionMapper;
 
     public Resetter(ICatalog systemCatalog, IDataSourceRegistry dataSourceRegistry,
-                    IDistributionManager distributionManager, ExecutionContext executionContext,
+                    IDistributionManager distributionManager, IExecutionContext executionContext,
                     IDimensionMapper dimensionMapper) {
         this.systemCatalog = systemCatalog;
         this.dataSourceRegistry = dataSourceRegistry;
