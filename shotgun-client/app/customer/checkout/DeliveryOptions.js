@@ -52,7 +52,7 @@ class DeliveryOptions extends Component {
     return busy ? <LoadingScreen text="Loading Customer Cards"/> : <Container>
       <Header>
         <Left>
-          <Button transparent>
+          <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()} />
           </Button>
         </Left>

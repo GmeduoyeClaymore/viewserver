@@ -68,7 +68,7 @@ public class PaymentController{
             HashMap<String, Object> sourcesParams = new HashMap<>();
             sourcesParams.put("object", "card");
             ExternalAccountCollection cards = Customer.retrieve(customerToken).getSources().list(sourcesParams);
-            logger.debug("Got {} stripe cards for customerToken {}", cards.getCount(), customerToken);
+            logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), customerToken);
             return cards.getData().stream().map(a -> (Card)a).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException(e);

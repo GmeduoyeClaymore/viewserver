@@ -15,7 +15,6 @@ const CustomerMenuBar = ({history, match}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     paddingTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between'

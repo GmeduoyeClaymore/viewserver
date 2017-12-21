@@ -105,9 +105,9 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
             }
             case String: {
                 String value = getString(columnName);
-                if(columnName.equals("productId") ){
+                /*if(columnName.equals("productId") ){
                     return  UUID.randomUUID().toString() + "_" + value;
-                }
+                }*/
                 return value;
             }
             case Date: {

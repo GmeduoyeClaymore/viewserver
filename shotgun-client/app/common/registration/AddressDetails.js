@@ -27,7 +27,7 @@ export default AddressDetails  = ({context, history, match, client}) => {
   return <Container style={{flex: 1}} >
     <Header>
       <Left>
-        <Button transparent>
+        <Button>
           <Icon name='arrow-back' onPress={() => history.goBack()} />
         </Button>
       </Left>

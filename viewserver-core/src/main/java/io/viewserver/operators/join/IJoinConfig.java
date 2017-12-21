@@ -25,6 +25,7 @@ public interface IJoinConfig {
     String[] getRightJoinColumns();
     boolean isRightJoinOuter();
     IColumnNameResolver getColumnNameResolver();
-
+    String getLeftPrefix();
+    String getRightPrefix();
     boolean getAlwaysResolveNames();
 }

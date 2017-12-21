@@ -38,7 +38,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     @Override
     protected Map<String, ReportDefinition> getReportDefinitions() {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
-       // reportDefinitions.put(OrderSummaryReport.ID, OrderSummaryReport.getReportDefinition());
+        reportDefinitions.put(OrderSummaryReport.ID, OrderSummaryReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
 
         return reportDefinitions;

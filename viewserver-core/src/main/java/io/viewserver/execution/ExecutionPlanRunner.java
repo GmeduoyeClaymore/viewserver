@@ -38,6 +38,7 @@ import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.command.IConfigurateCommand;
 import io.viewserver.messages.command.IInitialiseSlaveCommand;
 import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.operators.join.IColumnNameResolver;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.IGraphDefinition;
 import io.viewserver.util.ViewServerException;
@@ -45,9 +46,6 @@ import io.viewserver.util.ViewServerException;
 import java.util.*;
 import java.util.function.Consumer;
 
-/**
- * Created by nickc on 31/10/2014.
- */
 public class ExecutionPlanRunner {
     private IConfigurator configurator;
     private IDistributionManager distributionManager;

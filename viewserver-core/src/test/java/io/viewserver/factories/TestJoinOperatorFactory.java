@@ -89,6 +89,16 @@ public class TestJoinOperatorFactory implements ITestOperatorFactory{
             }
 
             @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
+                return null;
+            }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return false;
             }

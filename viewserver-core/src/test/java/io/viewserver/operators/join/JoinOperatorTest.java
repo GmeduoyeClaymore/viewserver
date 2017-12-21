@@ -102,6 +102,16 @@ public class JoinOperatorTest {
             }
 
             @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
+                return null;
+            }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return false;
             }
@@ -202,6 +212,16 @@ public class JoinOperatorTest {
             }
 
             @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
+                return null;
+            }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return false;
             }
@@ -282,6 +302,16 @@ public class JoinOperatorTest {
 
             @Override
             public IColumnNameResolver getColumnNameResolver() {
+                return null;
+            }
+
+            @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
                 return null;
             }
 
@@ -393,6 +423,16 @@ public class JoinOperatorTest {
             }
 
             @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
+                return null;
+            }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return false;
             }
@@ -484,6 +524,16 @@ public class JoinOperatorTest {
             }
 
             @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
+                return null;
+            }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return false;
             }
@@ -555,6 +605,16 @@ public class JoinOperatorTest {
 
             @Override
             public IColumnNameResolver getColumnNameResolver() {
+                return null;
+            }
+
+            @Override
+            public String getLeftPrefix() {
+                return null;
+            }
+
+            @Override
+            public String getRightPrefix() {
                 return null;
             }
 

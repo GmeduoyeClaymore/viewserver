@@ -39,7 +39,44 @@ export default class OrderSummaryDaoContext{
   mapDomainEvent(event, dataSink){
     return {
       customer: {
-        orders: dataSink.rows,
+        orders: dataSink.rows.map(r => this.mapOrderSummary(r)),
+      }
+    };
+  }
+
+  mapOrderSummary(orderSummary){
+    return {
+      orderId: orderSummary.orderId,
+      status: orderSummary.status,
+      orderItem: {
+        productId: orderSummary.productId,
+        notes: orderSummary.notes,
+        imageUrl: orderSummary.imageUrl,
+      },
+      delivery: {
+        eta: orderSummary.eta,
+        noRequiredForOffload: orderSummary.noRequiredForOffload,
+        vehicleTypeId: orderSummary.vehicleTypeId,
+        deliveryId: orderSummary.deliveryId,
+        origin: {
+          flatNumber: orderSummary.originFlatNumber,
+          line1: orderSummary.originLine1,
+          city: orderSummary.originCity,
+          postCode: orderSummary.originPostCode,
+          latitude: orderSummary.originLatitude,
+          longitude: orderSummary.originLongitude
+        },
+        destination: {
+          flatNumber: orderSummary.destinationFlatNumber,
+          line1: orderSummary.destinationLine1,
+          city: orderSummary.destinationCity,
+          postCode: orderSummary.destinationPostCode,
+          latitude: orderSummary.destinationLatitude,
+          longitude: orderSummary.destinationLongitude
+        }
+      },
+      payment: {
+        paymentId: orderSummary.paymentId
       }
     };
   }

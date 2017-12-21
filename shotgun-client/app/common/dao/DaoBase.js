@@ -43,7 +43,7 @@ export default class Dao {
       this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink)).subscribe(ev => this.subject.next(ev));
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);
     }
-        
+
     try {
       if (isEqual(this.options, newOptions)){
         return Promise.resolve();
@@ -52,14 +52,16 @@ export default class Dao {
       Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
+      const snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
       this.subscriptionStrategy.updateSubscription(optionsMessage);
+
+      Logger.info('!!!!!Waiting for snapshot complete!!!!');
+      const result = await snapshotPromise;
+      Logger.info('!!!!!Completed snapshot complete!!!!');
+      return result;
     } catch (error){
       return Promise.reject(error);
     }
-    Logger.info('!!!!!Waiting for snapshot complete!!!!');
-    const result = await this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
-    Logger.info('!!!!!Completed snapshot complete!!!!');
-    return result;
   }
 }
 

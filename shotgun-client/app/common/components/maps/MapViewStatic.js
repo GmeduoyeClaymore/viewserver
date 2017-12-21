@@ -14,8 +14,9 @@ export default class MapViewStatic extends Component {
 
   async componentDidMount() {
     const {client, origin, destination} = this.props;
-    const showDirections = origin.latitude !== undefined && destination.latitude !== undefined;
+    const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
 
+    console.log(showDirections);
     if (showDirections){
       const route = await fetchRoute(client, {latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude});
       this.setState({route});
@@ -33,7 +34,7 @@ export default class MapViewStatic extends Component {
       }
 
       const markerParams = markers.reduce((prev, curr, i) => {
-        const location = curr.latitude !== undefined ? `${curr.latitude},${curr.longitude}` : '';
+        const location = curr.line1 !== undefined ? `${curr.latitude},${curr.longitude}` : '';
         return (i !== 0 ?  prev + '|' : '') + location;
       }, '');
       return `size:tiny|${markerParams}`;

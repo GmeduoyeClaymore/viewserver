@@ -47,7 +47,7 @@ class PaymentCardDetails extends Component {
     return <Container>
       <Header>
         <Left>
-          <Button transparent>
+          <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()}/>
           </Button>
         </Left>

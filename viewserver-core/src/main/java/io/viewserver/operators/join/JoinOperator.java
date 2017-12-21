@@ -22,6 +22,7 @@ import io.viewserver.collections.IntHashSet;
 import io.viewserver.collections.LongHashSet;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NumberUtils;
+import io.viewserver.execution.JoinColumnNamer;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.*;
 import gnu.trove.iterator.TIntIterator;
@@ -116,6 +117,13 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
         }
         columnNameResolver = config.getColumnNameResolver();
         alwaysResolveNames = config.getAlwaysResolveNames();
+
+        String leftPrefix = config.getLeftPrefix();
+        String rightPrefix = config.getRightPrefix();
+
+        if(leftPrefix != null || rightPrefix != null){
+            columnNameResolver = new JoinColumnNamer(leftPrefix, rightPrefix);
+        }
 
 //        log.trace("{} - processed config - ljc={}, rjc={}", getName(),
 //                Arrays.asList(leftJoinColumns),

@@ -116,7 +116,7 @@ export default class Network {
     const command = this.openCommands[tableEvent.id];
 
     if (!command) {
-      Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire ' + JSON.stringify(this.openCommands));
+      Logger.warning('Could not find command: ' + tableEvent.id + ' subscription has most likely been cancelled while data on the wire');
       return;
     }
 

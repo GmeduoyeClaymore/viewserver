@@ -17,7 +17,7 @@ ProductDataSource {
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
         dataAdapter.setFileName("data/product.csv");
-        dataAdapter.setMultiple(50000);
+        //dataAdapter.setMultiple(50000);
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("productId", "productId", ColumnType.String),

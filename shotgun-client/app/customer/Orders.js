@@ -1,79 +1,183 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-import {Spinner} from 'native-base';
+import {View, Text, StyleSheet} from 'react-native';
 import PagingListView from '../common/components/PagingListView';
-import moment from 'moment';
-import {Container, Content, Button} from 'native-base';
+import { withRouter } from 'react-router';
+import {Container, Content, Button, Spinner, Header, Body, Title, Item, Icon, Grid, Row, Col, Tabs, Tab, List, ListItem} from 'native-base';
 import {getDaoState, isAnyLoading} from 'common/dao';
+import shotgun from '../native-base-theme/variables/shotgun';
+import {getFriendlyOrderStatusName, OrderStatuses} from 'common/constants/OrderStatuses';
 
-const styles = StyleSheet.create({
+class Orders extends Component{
+  constructor(props){
+    super(props);
+    this.state = {isCompleted: true};
+  }
+    
+  setIsCompleted(isCompleted){
+    if (this.state.isCompleted !== isCompleted) {
+      this.setState({isCompleted});
+    }
+  }
+
+  render(){
+    const {isCompleted} = this.state;
+    const {history} = this.props;
+
+    const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
+    const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;
+
+    const CtaView = ({orderSummary}) => {
+      const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
+      const isInProgress = orderSummary.status == OrderStatuses.PICKEDUP;
+      const isDelivery = orderSummary.productId == 'PROD_Delivery';
+
+      if (isComplete){
+        return null;
+      }
+
+      if (isInProgress){
+        return <Col style={styles.ctaContainer}>
+          <Button style={styles.trackButton} onPress={() => console.log('Should go to track driver screen')}>
+            <Text style={styles.primaryText}>Track Driver</Text>
+            <Icon style={styles.primaryText} name='arrow-forward' />
+          </Button>
+        </Col>;
+      }
+      return <Col style={styles.ctaContainer}>
+        <Button style={styles.cancelButton} onPress={() => console.log('Should cancel order')}>
+          <Text style={styles.dangerText}>Cancel {isDelivery ? 'delivery' : 'collection'}</Text>
+        </Button>
+      </Col>;
+    };
+
+    const rowView = (orderSummary) => {
+      const {orderItem, delivery, orderId, status} = orderSummary
+      const {origin, destination} = delivery;
+
+      const isDelivery = orderItem.productId == 'PROD_Delivery';
+
+      return <ListItem key={orderId}>
+        <Grid>
+          <Row size={50} onPress={() => history.push('/Customer/OrderDetail', {orderSummary})}>
+            <Col size={10}><Icon name={isDelivery ? 'car' : 'trash'} /></Col>
+            <Col size={70}>
+              <Row><Text>Order: #1234 eta: {orderItem.productId}</Text></Row>
+              <Row>
+                <Text>{origin.line1}, {origin.postCode}</Text>
+                {isDelivery ? <Text>{destination.line1}, {destination.postCode}</Text> : null}
+              </Row>
+            </Col>
+            <Col size={20}><Text>Details ></Text></Col>
+          </Row>
+          <Row size={50}>
+            <Col style={styles.statusContainer}><Text style={styles.status}>{getFriendlyOrderStatusName(status)}</Text></Col>
+            <CtaView orderSummary={orderSummary}/>
+          </Row>
+        </Grid>
+      </ListItem>;
+    };
+
+    return <Container>
+      <Header hasTabs>
+        <Body><Title>My Jobs</Title></Body>
+      </Header>
+      <Tabs initialPage={isCompleted ? 1 : 0} style={{flex: 0}} {...styles.tabsStyle} onChangeTab={({i}) => this.setIsCompleted(i == 1)}>
+        <Tab {...styles.tabStyle} heading="Live Jobs"/>
+        <Tab {...styles.tabStyle} heading="Complete"/>
+      </Tabs>
+      <Content>
+        <List>
+          <PagingListView
+            daoName='orderSummaryDao'
+            dataPath={['customer', 'orders']}
+            style={styles.container}
+            rowView={rowView}
+            options={{isCompleted}}
+            paginationWaitingView={Paging}
+            emptyView={NoItems}
+            pageSize={10}
+            headerView={() => null}
+          />
+        </List>
+      </Content>
+    </Container>;
+  }
+}
+
+const styles = {
   container: {
     backgroundColor: '#FFFFFF',
     display: 'flex',
     alignItems: 'flex-start',
   },
+  orderItemRow: {
+    height: 90
+  },
+  tabsStyle: {
+    tabBarUnderlineStyle: {
+      backgroundColor: 'blue',
+    }
+  },
+  tabStyle: {
+    tabStyle: {
+      backgroundColor: shotgun.brandPrimary
+    },
+    activeTabStyle: {
+      backgroundColor: shotgun.brandPrimary
+    },
+    textStyle: {
+      color: shotgun.textColor
+    },
+    activeTextStyle: {
+      color: shotgun.textColor
+    }
+  },
+  primaryText: {
+    color: shotgun.textColor
+  },
+  dangerText: {
+    color: shotgun.brandDanger
+  },
+  status: {
+    color: shotgun.inverseTextColor
+  },
+  statusContainer: {
+    backgroundColor: shotgun.brandSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ctaContainer: {
+    borderTopWidth: 1,
+    borderColor: '#f4f4f4',
+    backgroundColor: shotgun.brandPrimary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  trackButton: {
+    margin: 0,
+    borderRadius: 0,
+    flex: 1,
+    backgroundColor: shotgun.brandPrimary,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    margin: 0,
+    borderRadius: 0,
+    flex: 1,
+    backgroundColor: shotgun.brandPrimary,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   separator: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#AAAAAA',
   }
-});
-
-class Orders extends Component{
-  constructor(props){
-    super(props);
-    this.state = {isCompleted: false};
-  }
-    
-  setIsCompleted(isCompleted){
-    this.setState({isCompleted});
-  }
-
-  render(){
-    const {isCompleted} = this.state;
-    const {history, match} = this.props;
-
-    const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
-    const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;
-    const rowView = (order) => {
-      const created = moment(order.created);
-
-      return <TouchableHighlight key={order.orderId} style={{flex: 1, flexDirection: 'row'}} onPress={() => history.push(`${match.path}/OrderDetail`, {orderId: order.orderId})} underlayColor={'#EEEEEE'}>
-        <View style={{flexDirection: 'column', display: 'flex', flex: 1, padding: 0}}>
-          <Text>{`Order: ${order.orderId}`}</Text>
-          <Text>{`£${order.totalPrice} (${order.totalQuantity} items) ${order.status}`}</Text>
-          <Text>{`${created.format('DD/MM/YYYY HH:mmZ')}`}</Text>
-        </View>
-      </TouchableHighlight>;
-    };
-
-
-    return <Container>
-      <View style={{flexDirection: 'row', height: 25}}>
-        <Button  onPress={() => this.setIsCompleted(false)}><Text>Pending</Text></Button>
-        <Button onPress={() => this.setIsCompleted(true)}><Text>Complete</Text></Button>
-      </View>
-      {/*Render a big area underneath them for some reason<Tabs initialPage={0} onChangeTab={({ref}) => ref.props.onPress()}>
-            <Tab heading="Pending" onPress={() => this.setIsCompleted(false)}/>
-            <Tab heading="Complete" onPress={() => this.setIsCompleted(true)}/>
-          </Tabs>*/}
-      <Content>
-        <PagingListView
-          daoName='orderSummaryDao'
-          dataPath={['customer', 'orders']}
-          style={styles.container}
-          rowView={rowView}
-          options={{isCompleted}}
-          paginationWaitingView={Paging}
-          emptyView={NoItems}
-          pageSize={10}
-          headerView={() => null}
-        />
-      </Content>
-    </Container>;
-  }
-}
+};
 
 Orders.PropTypes = {
   customer: PropTypes.object
@@ -85,6 +189,6 @@ const mapStateToProps = (state, initialProps) => ({
   ...initialProps
 });
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps
-)(Orders);
+)(Orders));

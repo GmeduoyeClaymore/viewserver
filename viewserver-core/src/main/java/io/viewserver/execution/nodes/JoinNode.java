@@ -16,6 +16,7 @@
 
 package io.viewserver.execution.nodes;
 
+import io.viewserver.execution.JoinColumnNamer;
 import io.viewserver.execution.ParameterHelper;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.messages.config.IOperatorConfig;
@@ -35,6 +36,8 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
     private boolean isRightJoinOuter;
     private IColumnNameResolver columnNameResolver;
     private boolean alwaysResolveNames;
+    private String leftPrefix;
+    private String rightPrefix;
 
     public JoinNode() {
         super();
@@ -66,6 +69,17 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
 
     public JoinNode withColumnNameResolver(IColumnNameResolver columnNameResolver) {
         this.columnNameResolver = columnNameResolver;
+        return this;
+    }
+
+    public JoinNode withColumnPrefixes(String leftPrefix, String rightPrefix){
+        this.leftPrefix = leftPrefix;
+        this.rightPrefix = rightPrefix;
+        return this;
+    }
+
+    public JoinNode withColumnPrefixes(String leftPrefix){
+        this.leftPrefix = leftPrefix;
         return this;
     }
 
@@ -103,6 +117,12 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
             }
 
             @Override
+            public String getLeftPrefix() { return leftPrefix; }
+
+            @Override
+            public String getRightPrefix() { return rightPrefix; }
+
+            @Override
             public boolean getAlwaysResolveNames() {
                 return alwaysResolveNames;
             }
@@ -133,6 +153,38 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
     public JoinNode withRightJoinOuter() {
         this.isRightJoinOuter = true;
         return this;
+    }
+
+    public IColumnNameResolver getColumnNameResolver() {
+        return columnNameResolver;
+    }
+
+    public void setColumnNameResolver(IColumnNameResolver columnNameResolver) {
+        this.columnNameResolver = columnNameResolver;
+    }
+
+    public String getLeftPrefix() {
+        return leftPrefix;
+    }
+
+    public void setLeftPrefix(String leftPrefix) {
+        this.leftPrefix = leftPrefix;
+    }
+
+    public String getRightPrefix() {
+        return rightPrefix;
+    }
+
+    public void setRightPrefix(String rightPrefix) {
+        this.rightPrefix = rightPrefix;
+    }
+
+    public boolean isAlwaysResolveNames() {
+        return alwaysResolveNames;
+    }
+
+    public void setAlwaysResolveNames(boolean alwaysResolveNames) {
+        this.alwaysResolveNames = alwaysResolveNames;
     }
 
     public String[] getLeftJoinColumns() {
