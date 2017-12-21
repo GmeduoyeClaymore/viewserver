@@ -9,7 +9,7 @@ import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
 import PlacesInput from 'common/components/maps/PlacesInput';
 import AddressMarker from 'common/components/maps/AddressMarker';
-import MapViewDirections from './MapViewDirections';
+import MapViewDirections from '../../common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import MapService from 'common/services/MapService';
 
