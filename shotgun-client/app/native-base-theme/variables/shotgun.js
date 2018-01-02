@@ -11,20 +11,27 @@ const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 
 export default {
   // Color
   brandPrimary: '#ffffff',
-  brandSecondary: '#4a8bfc',
+  brandSecondary: '#0cf5b6',
+  brandLight: '#647479',
+  brandDark: '#13181a',
+  brandDanger: '#ff585f',
+
   brandInfo: '#62B1F6',
   brandSuccess: '#5cb85c',
-  brandDanger: '#d9534f',
   brandWarning: '#f0ad4e',
   brandSidebar: '#252932',
-  brandDark: '#000000',
-  brandLight: '#000000',
+
+  hairline: '#dce3e6',
+  silver: '#c0c9cc',
+  blue: '#1279ff',
+  lightBlue: '#a5ccff',
+  gold: '#ffbd24',
+  darkGreen: '#017564',
 
   // Text
-  textColor: '#000000',
-  inverseTextColor: '#ffffff',
+  textColor: this.brandDark,
+  inverseTextColor: this.brandPrimary,
   noteFontSize: 14,
-
 
   platformStyle,
   platform,
@@ -71,7 +78,7 @@ export default {
   },
 
   get btnPrimaryBg() {
-    return this.brandPrimary;
+    return this.brandSecondary;
   },
   get btnPrimaryColor() {
     return this.inverseTextColor;
@@ -126,7 +133,7 @@ export default {
   cardDefaultBg: '#fff',
 
   // Font
-  fontFamily: platform === 'ios' ? 'System' : 'Roboto',
+  fontFamily: 'TLCircular-Book',
   fontSizeBase: 15,
 
   get fontSizeH1() {

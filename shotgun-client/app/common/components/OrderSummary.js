@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {Dimensions, Image} from 'react-native';
-import {Text, List, ListItem, H3} from 'native-base';
+import {Text, List, ListItem, H3, Grid, Col, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
+import moment from 'moment';
 
 export default class OrderSummary extends Component{
   constructor(){
@@ -28,6 +29,23 @@ export default class OrderSummary extends Component{
       {destination.line1 !== undefined ? <ListItem>
         <Text>{destination.line1}, {destination.postCode}</Text>
       </ListItem> : null}
+
+      <ListItem>
+        <Grid>
+          <Col>
+            <Row><Text>Needed</Text></Row>
+            <Row><Text>{moment(delivery.eta).format('Do MMM')}</Text></Row>
+          </Col>
+          <Col>
+            <Row>
+              <Text>at</Text>
+            </Row>
+            <Row>
+              <Text>{moment(delivery.eta).format('HH:mm')}</Text>
+            </Row>
+          </Col>
+        </Grid>
+      </ListItem>
 
       <ListItem>
         <H3>Help required?</H3>

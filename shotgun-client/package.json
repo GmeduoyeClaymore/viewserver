@@ -28,6 +28,7 @@
     "react-native-image-picker": "0.26.7",
     "react-native-maps": "0.18.3",
     "react-native-maps-directions": "1.1.0",
+    "react-native-modal": "^4.1.1",
     "react-redux": "5.0.6",
     "react-router": "4.2.0",
     "react-router-native": "4.2.0",

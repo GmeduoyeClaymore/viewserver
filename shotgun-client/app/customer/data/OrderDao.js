@@ -24,7 +24,7 @@ export default class OrdersDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 0,
+      limit: 100,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -70,8 +70,16 @@ export default class OrdersDaoContext{
       const order = {orderId, created, lastModified: created, userId: dao.options.userId, deliveryId, paymentId, status: OrderStatuses.PLACED};
       const addOrderRowEvent = createAddOrderRowEvent(order);
       const promise = dao.rowEventObservable.filter(ev => ev.row.orderId == orderId).take(1).timeoutWithError(5000, new Error(`Could not detect created order in 5 seconds "${orderId}"`)).toPromise();
-      await Promise.all([dao.subscriptionStrategy.editTable([addOrderRowEvent]), promise]);
-      Logger.info('Order created');
+
+
+      await dao.subscriptionStrategy.editTable([addOrderRowEvent]);
+
+      const val = await promise;
+      console.log(val);
+
+
+     // await Promise.all([dao.subscriptionStrategy.editTable([addOrderRowEvent]), promise]);
+      Logger.info(`Order ${orderId} created`);
       return orderId;
     };
   }

@@ -6,7 +6,7 @@ export const INITIAL_STATE = {
     imageData: undefined
   },
   delivery: {
-    eta: 72,
+    eta: undefined,
     noRequiredForOffload: 0,
     vehicleTypeId: undefined,
     deliveryId: undefined,
@@ -43,7 +43,7 @@ export const INITIAL_STATE = {
     productId: 'PROD_Disposal',
   },
   delivery: {
-    eta: 72,
+    eta: new Date(),
     noRequiredForOffload: 0,
     vehicleTypeId: '12323232',
     deliveryId: undefined,

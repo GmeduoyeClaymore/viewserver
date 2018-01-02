@@ -69,13 +69,14 @@ export default class DeliveryDaoContext{
       if (typeof userId === 'undefined'){
         throw new Error('userId should be defined');
       }
-      const deliveryObj =  {...delivery, deliveryId, lastModified: created, userIdDelivery: userId};
+      delivery.eta = moment(delivery.eta).format('x');
+      const deliveryObj =  {...delivery, deliveryId, created, lastModified: created, userIdDelivery: userId};
       Logger.info(`Creating delivery ${deliveryId}`);
       const addDeliveryRowEvent = createAddDeliveryRowEvent(deliveryObj);
       const promise = dao.rowEventObservable.filter(ev => ev.row.deliveryId == deliveryId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to delivery ${deliveryId} created in 5 seconds`)).toPromise();
-      await dao.subscriptionStrategy.editTable([addDeliveryRowEvent]);
-      await promise;
-      Logger.info('Delivery created');
+      await Promise.all([dao.subscriptionStrategy.editTable([addDeliveryRowEvent]), promise]);
+      Logger.info(`Delivery ${deliveryId} created`);
+
       return deliveryId;
     };
   }

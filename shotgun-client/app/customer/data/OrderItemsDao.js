@@ -26,7 +26,7 @@ export default class OrderItemsDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 0,
+      limit: 100,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering

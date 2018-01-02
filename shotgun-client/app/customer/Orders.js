@@ -8,6 +8,7 @@ import {Container, Content, Button, Spinner, Header, Body, Title, Item, Icon, Gr
 import {getDaoState, isAnyLoading} from 'common/dao';
 import shotgun from '../native-base-theme/variables/shotgun';
 import {getFriendlyOrderStatusName, OrderStatuses} from 'common/constants/OrderStatuses';
+import moment from 'moment';
 
 class Orders extends Component{
   constructor(props){
@@ -63,7 +64,7 @@ class Orders extends Component{
           <Row size={50} onPress={() => history.push('/Customer/OrderDetail', {orderSummary})}>
             <Col size={10}><Icon name={isDelivery ? 'car' : 'trash'} /></Col>
             <Col size={70}>
-              <Row><Text>Order: #1234 eta: {orderItem.productId}</Text></Row>
+              <Row><Text>{moment(delivery.eta).format('Do MMM HH:mm')}</Text></Row>
               <Row>
                 <Text>{origin.line1}, {origin.postCode}</Text>
                 {isDelivery ? <Text>{destination.line1}, {destination.postCode}</Text> : null}

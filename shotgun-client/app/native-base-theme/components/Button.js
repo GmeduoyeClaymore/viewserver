@@ -283,13 +283,13 @@ export default (variables = variable) => {
       shadowOpacity: null,
 
       'NativeBase.Text': {
-        color: variables.btnPrimaryBg,
+        color: variables.brandDark,
       },
       'NativeBase.Icon': {
-        color: variables.btnPrimaryBg,
+        color: variables.brandDark,
       },
       'NativeBase.IconNB': {
-        color: variables.btnPrimaryBg,
+        color: variables.brandDark,
       },
       '.dark': {
         'NativeBase.Text': {
