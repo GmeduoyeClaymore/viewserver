@@ -29,6 +29,12 @@ class DeliveryOptions extends Component {
     };
   }
 
+  componentWillMount(){
+    if (this.props.defaultCard !== undefined) {
+      this.setCard(this.props.defaultCard);
+    }
+  }
+
   componentWillReceiveProps(nextProps){
     if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined){
       this.setCard(nextProps.defaultCard);
@@ -36,7 +42,7 @@ class DeliveryOptions extends Component {
   }
 
   setCard(selectedCard){
-    this.props.context.setState({payment: {paymentId: selectedCard.paymentId}});
+    this.props.context.setState({payment: {paymentId: selectedCard.id}});
     this.setState({selectedCard});
   }
 
@@ -88,7 +94,8 @@ class DeliveryOptions extends Component {
           </Grid>
         </ListItem>
         <ListItem padded onPress={() => this.toggleDatePicker(true)}>
-          {delivery.eta !== undefined ? [<Icon key="icon" paddedIcon name="time"/>, <Text key="text">{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text>] : <Text>Set a collection time</Text>}
+          <Icon paddedIcon name="time"/>
+          {delivery.eta !== undefined ? <Text>{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
           <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('eta', date)} {...datePickerOptions}/>
         </ListItem>
         <ListItem padded >

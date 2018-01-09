@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row, Icon} from 'native-base';
 import moment from 'moment';
 import Products from 'common/constants/Products';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
 import { withRouter } from 'react-router';
 
 class OrderRequest extends Component {
@@ -12,11 +11,9 @@ class OrderRequest extends Component {
 
   render() {
     const {orderSummary, history, next} = this.props;
-    const {delivery, status} = orderSummary;
+    const {delivery} = orderSummary;
     const {origin, destination, noRequiredForOffload} = delivery;
     const isRowDelivery = orderSummary.orderItem.productId == Products.DELIVERY;
-
-    const isComplete = status == OrderStatuses.COMPLETED;
 
     return <ListItem style={styles.orderRequest} onPress={() => history.push(next, {orderSummary})}>
       <Grid>
@@ -30,7 +27,6 @@ class OrderRequest extends Component {
           </Col>
           <Col size={25} style={styles.priceRow}>
             <Text style={styles.price}>£XX.XX <Icon name="arrow-forward"/></Text>
-            {!isComplete ? <Text note style={styles.estimate}>estimated</Text> : null}
           </Col>
         </Row>
         <Row size={25}>

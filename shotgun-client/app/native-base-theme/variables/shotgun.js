@@ -122,7 +122,7 @@ export default {
     return this.inverseTextColor;
   },
   get btnTextSize() {
-    return 18;
+    return 14;
   },
   get btnTextSizeLarge() {
     return this.fontSizeBase * 1.5;

@@ -12,6 +12,9 @@ export default (variables = variable) => {
     '.time': {
       fontSize: 12,
       color: variables.coolGrey
+    },
+    '.grey': {
+      color: variables.coolGrey
     }
   };
 

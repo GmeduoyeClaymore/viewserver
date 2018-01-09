@@ -88,7 +88,7 @@ const styles = {
   },
   image: {
     aspectRatio: 1.2,
-    borderRadius: 8
+    borderRadius: 4
   },
   imageButton: {
     height: 150

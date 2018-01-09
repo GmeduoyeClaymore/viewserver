@@ -74,18 +74,17 @@ export default (variables = variable) => {
     },
 
     '.danger': {
-      '.bordered': {
-        'NativeBase.Text': {
-          color: variables.btnDangerBg,
-        },
-        'NativeBase.Icon': {
-          color: variables.btnDangerBg,
-        },
-        'NativeBase.IconNB': {
-          color: variables.btnDangerBg,
-        },
+      'NativeBase.Text': {
+        color: variables.brandPrimary,
       },
-      backgroundColor: variables.btnDangerBg,
+      backgroundColor: variables.brandDanger,
+    },
+
+    '.track': {
+      'NativeBase.Text': {
+        color: variables.brandPrimary,
+      },
+      backgroundColor: variables.darkGreen,
     },
 
     '.block': {
@@ -205,7 +204,7 @@ export default (variables = variable) => {
       lineHeight: variables.btnLineHeight,
       paddingHorizontal: 16,
       backgroundColor: 'transparent',
-      // childPosition: 1
+      fontWeight: 'bold'
     },
 
     'NativeBase.Icon': {

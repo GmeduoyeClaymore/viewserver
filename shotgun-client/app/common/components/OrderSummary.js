@@ -22,7 +22,7 @@ export default class OrderSummary extends Component{
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
 
     return <List>
-      <ListItem style={{justifyContent: 'center', borderBottomWidth: 0, marginTop: 20}}>
+      <ListItem style={styles.mapListItem}>
         <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
       </ListItem>
 
@@ -46,7 +46,7 @@ export default class OrderSummary extends Component{
         <Grid>
           <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
           <Row><Text>{orderItem.notes}</Text></Row>
-          {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row><Image source={{uri: orderItem.imageUrl}} style={styles.image}/></Row> : null}
+          {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: orderItem.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
         </Grid>
       </ListItem>
     </List>;
@@ -54,8 +54,14 @@ export default class OrderSummary extends Component{
 }
 
 const styles = {
+  mapListItem: {
+    justifyContent: 'center',
+    borderBottomWidth: 0,
+    marginTop: 20
+  },
   image: {
-    flex: 1,
+    aspectRatio: 1.2,
+    borderRadius: 4,
     height: 180,
     marginTop: 25
   },

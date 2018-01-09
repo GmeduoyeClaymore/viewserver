@@ -24,8 +24,9 @@ export default class MapViewStatic extends Component {
 
   render(){
     const rootUrl = 'https://maps.googleapis.com/maps/api/staticmap';
-    const scale = 2;
     const { width, height, origin, destination} = this.props;
+    const scale = 2;
+    const zoom = destination.line1 == undefined ? '&zoom=14' : '';
 
     const getMarkerParams = (markers) => {
       if (markers == undefined){
@@ -46,12 +47,12 @@ export default class MapViewStatic extends Component {
 
       return `color:0x000000ff|weight:3|${pathParams}`;
     };
-    const staticMapsUrl = `${rootUrl}?scale=${scale}&size=${width}x${height}&markers=${getMarkerParams([origin, destination])}&path=${getPath()}`;
+    const staticMapsUrl = `${rootUrl}?style=feature:poi|visibility:off${zoom}&scale=${scale}&size=${width}x${height}&markers=${getMarkerParams([origin, destination])}&path=${getPath()}`;
 
-    return <Image style={[...styles, this.props.style, {width, height}]} source={{uri: staticMapsUrl}} />;
+    return <Image style={[styles, this.props.style, {width, height}]} source={{uri: staticMapsUrl}} />;
   }
 }
 
 const styles = {
-  borderRadius: 3
+  borderRadius: 4
 };

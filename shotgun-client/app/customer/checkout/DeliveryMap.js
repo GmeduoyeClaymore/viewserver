@@ -106,7 +106,7 @@ class DeliveryMap extends Component {
 
       {showDestinationInput ? <PlacesInput client={client} ref={c => {this.destinationInput = c;}} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
       <PlacesInput client={client} ref={c => {this.originInput = c;}} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
-      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text>Done</Text></Button> : null}
+      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text uppercase={false}>Done</Text></Button> : null}
     </Container>;
   }
 }
