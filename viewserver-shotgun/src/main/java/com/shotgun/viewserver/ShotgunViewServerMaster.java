@@ -3,6 +3,8 @@ package com.shotgun.viewserver;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
+import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
+import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.user.CustomerController;
 import com.shotgun.viewserver.user.DriverController;
 import com.shotgun.viewserver.images.ImageController;
@@ -40,13 +42,10 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(new DeliveryController());
         this.registerController(new DeliveryAddressController());
         this.registerController(new OrderItemController());
+        this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c")));
         this.registerController(new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu")));
     }
 
-    /*@Override
-    protected IReactor getReactor(Network serverNetwork) {
-        return new MultiThreadedEventLoopReactor(getName(),serverNetwork,4);
-    }*/ 
 }
 
 

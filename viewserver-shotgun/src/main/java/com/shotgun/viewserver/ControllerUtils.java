@@ -1,5 +1,7 @@
 package com.shotgun.viewserver;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import io.viewserver.command.ControllerContext;
@@ -10,10 +12,83 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ControllerUtils{
+
+    private static final Logger logger = LoggerFactory.getLogger(ControllerUtils.class);
+
+    private static TypeReference<HashMap<String,Object>> dictionaryType = new TypeReference<HashMap<String,Object>>() {};
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    public static HashMap<String,Object> mapDefault(String json){
+        HashMap<String,Object> map = null;
+        try {
+            map = mapper.readValue(json,dictionaryType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return map;
+    }
+
+
+    public static String execute(String method, String targetURL, String urlParameters) {
+        HttpURLConnection connection = null;
+        URL url = null;
+        try {
+            //Create connection
+
+            url = new URL(targetURL + (method.equals("GET") ? "?" + urlParameters : ""));
+            logger.info("Making request to: {}",url);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(method);
+
+            connection.setRequestProperty("Content-Length",
+                    Integer.toString(urlParameters.getBytes().length));
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setConnectTimeout(2000);
+
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+
+
+            InputStream is = connection.getInputStream();
+            InputStream errorStream = connection.getErrorStream();
+            if(connection.getResponseCode() != 200){
+                throw new RuntimeException("Problem executing request " + getString(errorStream));
+            }
+            String string = getString(is);
+            logger.info("Response to request \"{}\" is \"{}\"",url,string);
+            return string;
+        } catch (Exception e) {
+            logger.error(String.format("Problem making request to: %s",url),e);
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    private static String getString(InputStream is) throws IOException {
+        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+        String line;
+        while ((line = rd.readLine()) != null) {
+            response.append(line);
+        }
+        rd.close();
+        return response.toString();
+    }
+
     public static ITable getTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
         if (!(table instanceof ITable)) {

@@ -56,13 +56,13 @@ export default class App extends React.Component {
   async setUserId(){
     //this.userId = undefined;
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 
   setInitialRoot(){
     if (this.userId == undefined){
-      App.INITIAL_ROOT_NAME = '/RegistrationCommon';
+      App.INITIAL_ROOT_NAME = '/Driver/Registration';
     } else {
       App.INITIAL_ROOT_NAME = '/LandingCommon';
       Logger.info(`Loading with customer id ${this.userId}`);
