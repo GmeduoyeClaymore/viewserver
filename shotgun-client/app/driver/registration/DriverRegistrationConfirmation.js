@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {ScrollView} from 'react-native';
-import {addOrUpdateDriver, driverServicesRegistrationAction} from 'driver/actions/DriverActions';
+import {registerDriver, driverServicesRegistrationAction} from 'driver/actions/DriverActions';
 import uuidv4 from 'uuid/v4';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {Form, Text, Button, Item, Label, Input, Content, Header, Left, Body, Container, Icon, Title} from 'native-base';
@@ -12,7 +12,7 @@ const DriverRegistrationConfirmation  = ({context, history, dispatch, client, er
   const {user, vehicle} = context.state;
 
   const register = async () => {
-    dispatch(addOrUpdateDriver(user, vehicle, () => history.push('/Root')));
+    dispatch(registerDriver(user, vehicle, () => history.push('/Root')));
   };
 
   const createServicesThenRegister = async () => {

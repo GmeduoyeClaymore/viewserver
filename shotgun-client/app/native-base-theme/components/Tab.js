@@ -1,9 +1,7 @@
-import variable from "./../variables/platform";
-
-export default (variables = variable) => {
+export default () => {
   const tabTheme = {
     flex: 0,
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
     height: 0,
     width: 0
   };

@@ -12,6 +12,7 @@ import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from '../../common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import MapService from 'common/services/MapService';
+import {getDaoState, isAnyOperationPending} from 'common/dao';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -31,38 +32,20 @@ const EMPTY_LOCATION =  {
 class DeliveryMap extends Component {
   constructor(props) {
     super(props);
-    this.onGetCurrentPositionSuccess = this.onGetCurrentPositionSuccess.bind(this);
-
-    this.state = {
-      busy: true,
-      region: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA
-      }
-    };
   }
 
-  componentWillMount(){
-    try {
-      navigator.geolocation.getCurrentPosition(this.onGetCurrentPositionSuccess, undefined, {enableHighAccuracy: true});
-    } catch (ex){
-      Logger.warning('Error when accessing user location');
-    }
-  }
-
-  onGetCurrentPositionSuccess(position){
-    const {latitude, longitude} = position.coords;
-    Logger.info(`Got users position at ${latitude}, ${longitude}`);
-    this.setState({busy: false, region: merge(this.state.region, {latitude, longitude})});
-  }
 
   render() {
-    const {history, context, client} = this.props;
-    const {region, busy} = this.state;
+    const {history, context, client, busy, position} = this.props;
     const {delivery, orderItem} = context.state;
     const {origin, destination} = delivery;
+
+    const region = {
+      latitude: position.latitude,
+      longitude: position.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA
+    };
 
     const showDirections = origin.googlePlaceId !== undefined && destination.googlePlaceId !== undefined;
     const showDoneButton = origin.googlePlaceId !== undefined && (orderItem.productId == Products.DISPOSAL || destination.googlePlaceId);
@@ -169,6 +152,9 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
+  state,
+  position: getDaoState(state, ['position'], 'userDao'),
+  busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition'}),
   ...initialProps
 });
 

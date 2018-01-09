@@ -6,6 +6,7 @@ import com.stripe.model.Customer;
 import com.stripe.model.ExternalAccountCollection;
 import com.stripe.model.Token;
 import com.stripe.net.RequestOptions;
+import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import org.slf4j.Logger;
@@ -29,10 +30,10 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
-    public HashMap<String, Object> createPaymentCustomer(PaymentCustomer paymentCustomer){
-        String cardToken = createCardToken(paymentCustomer.getPaymentCard());
+    public HashMap<String, Object> createPaymentCustomer(@ActionParam(name = "emailAddress")String emailAddress, @ActionParam(name = "paymentCard")PaymentCard paymentCard){
+        String cardToken = createCardToken(paymentCard);
         Map<String, Object> customerParams = new HashMap<>();
-        customerParams.put("email", paymentCustomer.getEmail());
+        customerParams.put("email", emailAddress);
         customerParams.put("source", cardToken);
 
         try {
@@ -48,7 +49,7 @@ public class PaymentController{
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(PaymentCard paymentCard){
+    public String addPaymentCard(@ActionParam(name = "paymentCard")PaymentCard paymentCard){
         try {
             String cardToken = createCardToken(paymentCard);
             Customer customer = Customer.retrieve(paymentCard.customerToken);

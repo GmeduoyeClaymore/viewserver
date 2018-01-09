@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ControllerActionEntry{
@@ -97,7 +98,7 @@ public class ControllerActionEntry{
                                 }
 
                                 if(args[paramEntry.index] == null){//can we deserialialize it
-                                    args[paramEntry.index] = mapper.readValue((String)parameter,paramEntry.getType());
+                                    args[paramEntry.index] = mapper.readValue(getParameter(parameter),paramEntry.getType());
                                 }
                             }catch (Exception ex){
                                 throw new RuntimeException(String.format("Problem deserializing parameter named \"%s\"",paramEntry.getName()));
@@ -134,6 +135,17 @@ public class ControllerActionEntry{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String getParameter(Object parameter) {
+        if(parameter == null){
+            return null;
+        }
+        if(parameter instanceof String){
+            return (String) parameter;
+        }
+        return toString(parameter,parameter.getClass());
+
     }
 
     public static Class<?> toWrapperClass(Class<?> type) {

@@ -32,7 +32,7 @@ export default class VehiclesDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 100,
+      limit: 1,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -42,7 +42,7 @@ export default class VehiclesDaoContext{
   }
 
   get name(){
-    return 'vehiclesDao';
+    return 'vehicleDao';
   }
 
   createDataSink(){
@@ -51,9 +51,7 @@ export default class VehiclesDaoContext{
 
   mapDomainEvent(event, dataSink){
     return {
-      customer: {
-        vehicles: dataSink.rows
-      }
+      vehicle: dataSink.rows[0]
     };
   }
 

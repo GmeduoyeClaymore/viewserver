@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import Products from 'common/constants/Products';
 import {View, Text, StyleSheet} from 'react-native';
 import PagingListView from '../common/components/PagingListView';
 import { withRouter } from 'react-router';
-import {Container, Content, Button, Spinner, Header, Body, Title, Item, Icon, Grid, Row, Col, Tabs, Tab, List, ListItem} from 'native-base';
-import {getDaoState, isAnyLoading} from 'common/dao';
-import shotgun from '../native-base-theme/variables/shotgun';
+import {Container, Content, Button, Spinner, Header, Body, Title, Icon, Grid, Row, Col, Tabs, Tab, List, ListItem} from 'native-base';
+import {isAnyLoading} from 'common/dao';
+import shotgun from 'native-base-theme/variables/shotgun';
 import {getFriendlyOrderStatusName, OrderStatuses} from 'common/constants/OrderStatuses';
 import moment from 'moment';
 
-class Orders extends Component{
+class CustomerOrders extends Component{
   constructor(props){
     super(props);
     this.state = {isCompleted: true};
@@ -32,7 +33,7 @@ class Orders extends Component{
     const CtaView = ({orderSummary}) => {
       const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
       const isInProgress = orderSummary.status == OrderStatuses.PICKEDUP;
-      const isDelivery = orderSummary.productId == 'PROD_Delivery';
+      const isDelivery = orderSummary.productId == Products.DELIVERY;
 
       if (isComplete){
         return null;
@@ -54,14 +55,14 @@ class Orders extends Component{
     };
 
     const rowView = (orderSummary) => {
-      const {orderItem, delivery, orderId, status} = orderSummary
+      const {orderItem, delivery, orderId, status} = orderSummary;
       const {origin, destination} = delivery;
 
-      const isDelivery = orderItem.productId == 'PROD_Delivery';
+      const isDelivery = orderItem.productId == Products.DELIVERY;
 
       return <ListItem key={orderId}>
         <Grid>
-          <Row size={50} onPress={() => history.push('/Customer/OrderDetail', {orderSummary})}>
+          <Row size={50} onPress={() => history.push('/Customer/CustomerOrderDetail', {orderSummary})}>
             <Col size={10}><Icon name={isDelivery ? 'car' : 'trash'} /></Col>
             <Col size={70}>
               <Row><Text>{moment(delivery.eta).format('Do MMM HH:mm')}</Text></Row>
@@ -92,10 +93,10 @@ class Orders extends Component{
         <List>
           <PagingListView
             daoName='orderSummaryDao'
-            dataPath={['customer', 'orders']}
+            dataPath={['orders']}
             style={styles.container}
             rowView={rowView}
-            options={{isCompleted}}
+            options={{isCompleted, reportId: 'customerOrderSummary'}}
             paginationWaitingView={Paging}
             emptyView={NoItems}
             pageSize={10}
@@ -180,16 +181,15 @@ const styles = {
   }
 };
 
-Orders.PropTypes = {
+CustomerOrders.PropTypes = {
   customer: PropTypes.object
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  orders: getDaoState(state, ['orders'], 'orderSummaryDao'),
   busy: isAnyLoading(state, ['orderSummaryDao', 'paymentDao']),
   ...initialProps
 });
 
 export default withRouter(connect(
   mapStateToProps
-)(Orders));
+)(CustomerOrders));

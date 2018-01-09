@@ -16,7 +16,6 @@ export default class MapViewStatic extends Component {
     const {client, origin, destination} = this.props;
     const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
 
-    console.log(showDirections);
     if (showDirections){
       const route = await fetchRoute(client, {latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude});
       this.setState({route});
@@ -34,8 +33,8 @@ export default class MapViewStatic extends Component {
       }
 
       const markerParams = markers.reduce((prev, curr, i) => {
-        const location = curr.line1 !== undefined ? `${curr.latitude},${curr.longitude}` : '';
-        return (i !== 0 ?  prev + '|' : '') + location;
+        const location = curr.line1 !== undefined ? `${i !== 0 ? '|' : ''}${curr.latitude},${curr.longitude}` : '';
+        return prev + location;
       }, '');
       return `size:tiny|${markerParams}`;
     };
@@ -53,4 +52,6 @@ export default class MapViewStatic extends Component {
   }
 }
 
-const styles = {};
+const styles = {
+  borderRadius: 3
+};

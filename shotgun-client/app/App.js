@@ -16,7 +16,7 @@ import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
-import shotgun from './native-base-theme/variables/shotgun';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 const store = configureStore();
 
@@ -54,7 +54,9 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    //this.userId = undefined;
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

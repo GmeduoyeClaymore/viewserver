@@ -1,2 +1,3 @@
 userId,firstName,lastName,contactNo,email,type,stripeCustomerId, stripeDefaultSourceId
-2BBui,Bob,Builder,0207 12345,Bob.Builder@email.com,customer,cus_Bxeiko7yw4hcgH,card_1BZjOtJf2h7PvwlulrG7Lrbx
+2BBui,John,Customer,0207 12345,John.Customer@email.com,customer,cus_Bxeiko7yw4hcgH,card_1BZjOtJf2h7PvwlulrG7Lrbx
+3ABCD,Bob,Builder,0207 987654,Bob.Builder@email.com,driver,,

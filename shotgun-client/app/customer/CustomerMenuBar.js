@@ -1,29 +1,16 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {Button, Icon, Footer, FooterTab} from 'native-base';
 import { withRouter } from 'react-router';
 
 const CustomerMenuBar = ({history, match}) => {
-  return <Footer style={styles.container}>
-    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/ProductSelect`)}><Icon name='home'/></Button></FooterTab>
-    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/Orders`)}><Icon name='list'/></Button></FooterTab>
-    <FooterTab><Button transparent dark onPress={() => history.push(`${match.path}/CustomerSettings`)}><Icon name='settings'/></Button></FooterTab>
+  return <Footer>
+    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/ProductSelect`)}><Icon name='home'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/CustomerOrders`)}><Icon name='list'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/CustomerSettings`)}><Icon name='settings'/></Button></FooterTab>
   </Footer>;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#AAAAAA',
-  }
-});
 
 CustomerMenuBar.PropTypes = {
   cart: PropTypes.object

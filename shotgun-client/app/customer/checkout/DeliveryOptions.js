@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {Switch} from 'react-native';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Picker} from 'react-native';
-import {Icon, Button, Container, Form, Label, Item, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
+import {Icon, Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, CheckBox} from 'native-base';
 import {getDaoState} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
@@ -13,29 +12,32 @@ import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import ValidatingButton from 'common/components/ValidatingButton';
 import yup from 'yup';
+import Products from 'common/constants/Products';
+import CardIcon  from 'common/components/CardIcon';
 
 class DeliveryOptions extends Component {
   constructor(props) {
     super(props);
     this.onChangeValue = this.onChangeValue.bind(this);
     this.setRequireHelp = this.setRequireHelp.bind(this);
+    this.setCard = this.setCard.bind(this);
     this.state = {
       requireHelp: false,
       isDatePickerVisible: false,
+      selectedCard: undefined,
       date: undefined
     };
   }
 
-  async componentDidMount(){
-    const {stripeDefaultPaymentSource} = this.props.user;
-    const defaultCard = this.props.paymentCards.find(c => c.id == stripeDefaultPaymentSource) || this.props.paymentCards[0];
-    if (defaultCard){
-      this.setCard(defaultCard.id);
+  componentWillReceiveProps(nextProps){
+    if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined){
+      this.setCard(nextProps.defaultCard);
     }
   }
 
-  setCard(paymentId){
-    this.props.context.setState({payment: {paymentId}});
+  setCard(selectedCard){
+    this.props.context.setState({payment: {paymentId: selectedCard.paymentId}});
+    this.setState({selectedCard});
   }
 
   toggleDatePicker(isDatePickerVisible) {
@@ -54,9 +56,11 @@ class DeliveryOptions extends Component {
   }
 
   render() {
-    const {history, context, vehicleTypes, busy, paymentCards = []} = this.props;
-    const {delivery, payment} = context.state;
-    const {requireHelp, isDatePickerVisible} = this.state;
+    const {history, context, busy, paymentCards} = this.props;
+    const {delivery, payment, orderItem} = context.state;
+    const {origin, destination, noRequiredForOffload} = delivery;
+    const {requireHelp, isDatePickerVisible, selectedCard} = this.state;
+    const isDelivery = orderItem.productId == Products.DELIVERY;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
@@ -73,72 +77,81 @@ class DeliveryOptions extends Component {
             <Icon name='arrow-back' onPress={() => history.goBack()} />
           </Button>
         </Left>
-        <Body><Title>Delivery Instructions</Title></Body>
+        <Body><Title>Delivery Details</Title></Body>
       </Header>
       <Content>
-        <Form>
-          <Text>What size van?</Text>
-          <Picker selectedValue={delivery.vehicleTypeId} onValueChange={(itemValue) => this.onChangeValue('vehicleTypeId', itemValue)}>
-            <Picker.Item label="--Select Vehicle Type--"/>
-            {vehicleTypes.map(c => <Picker.Item  key={c.vehicleTypeId} label={c.bodyType} value={c.vehicleTypeId} />)}
+        <ListItem padded>
+          <Grid>
+            <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
+            {isDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
+            {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+          </Grid>
+        </ListItem>
+        <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+          {delivery.eta !== undefined ? [<Icon key="icon" paddedIcon name="time"/>, <Text key="text">{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text>] : <Text>Set a collection time</Text>}
+          <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('eta', date)} {...datePickerOptions}/>
+        </ListItem>
+        <ListItem padded >
+          <CardIcon brand={selectedCard.brand}/><Text>Pay with card</Text>
+          <Picker style={styles.cardPicker} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
+            {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c} />)}
           </Picker>
+        </ListItem>
+        <ListItem padded style={{borderBottomWidth: 0}} onPress={() => this.setRequireHelp(!requireHelp)}>
+          <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)}/>
+          <Text style={{paddingLeft: 10}}>Request extra people to help carry/lift your item(s)</Text>
+        </ListItem>
 
-          <Item onPress={() => this.toggleDatePicker(true)}>
-            <Grid>
-              <Col>
-                <Row><Text>Needed</Text></Row>
-                <Row><Text>{delivery.eta !== undefined ? moment(delivery.eta).format('Do MMM') : 'Choose date'}</Text></Row>
+        {requireHelp ? <ListItem paddedLeftRight style={{borderBottomWidth: 0, borderTopWidth: 0}}>
+          <Grid>
+            <Row>
+              <Text style={{paddingBottom: 15}}>How many people do you need?</Text>
+            </Row>
+            <Row>
+              <Col style={{marginRight: 10}}>
+                <Row>
+                  <Button personButton active={noRequiredForOffload == 1} onPress={() => this.onChangeValue('noRequiredForOffload', 1)} >
+                    <Icon name='man'/>
+                  </Button>
+                </Row>
+                <Row style={styles.personSelectTextRow}>
+                  <Text style={styles.personSelectText}>1</Text>
+                </Row>
+              </Col>
+              <Col style={{marginRight: 10}}>
+                <Row>
+                  <Button personButton active={noRequiredForOffload == 2} onPress={() => this.onChangeValue('noRequiredForOffload', 2)} >
+                    <Icon name='man'/>
+                  </Button>
+                </Row>
+                <Row style={styles.personSelectTextRow}>
+                  <Text style={styles.personSelectText}>2</Text>
+                </Row>
               </Col>
               <Col>
                 <Row>
-                  <Text>at</Text>
+                  <Button personButton active={noRequiredForOffload == 3} onPress={() => this.onChangeValue('noRequiredForOffload', 3)} >
+                    <Icon name='man'/>
+                  </Button>
                 </Row>
-                <Row>
-                  <Text>{delivery.eta !== undefined ? moment(delivery.eta).format('HH:mm') : 'Choose time'}</Text>
+                <Row style={styles.personSelectTextRow}>
+                  <Text style={styles.personSelectText}>3</Text>
                 </Row>
               </Col>
-            </Grid>
-            <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('eta', date)} {...datePickerOptions}/>
-          </Item>
+            </Row>
+          </Grid>
+        </ListItem> : null}
 
-          <Item fixedLabel>
-            <Label>Do you require help with this item</Label>
-            <Switch onValueChange={this.setRequireHelp} value={requireHelp}/>
-          </Item>
-          {requireHelp ? <Item fixedLabel>
-            <Label>How many people</Label>
-            <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 1)} >
-              <Text>1</Text>
-              <Icon name='man' style={styles.manIcon}/>
-            </Button>
-            <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 2)} >
-              <Text>2</Text>
-              <Icon name='man' style={styles.manIcon}/>
-              <Icon name='man' style={styles.manIcon}/>
-            </Button>
-            <Button transparent onPress={() => this.onChangeValue('noRequiredForOffload', 3)} >
-              <Text>3</Text>
-              <Icon name='man' style={styles.manIcon}/>
-              <Icon name='man' style={styles.manIcon}/>
-              <Icon name='man' style={styles.manIcon}/>
-            </Button>
-          </Item> : null}
-
-          <Text>Pay with card</Text>
-          <Picker selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
-            {paymentCards.map(c => <Picker.Item key={c.id} label={`************${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
-          </Picker>
-          <ValidatingButton onPress={() =>  history.push('/Customer/Checkout/ItemDetails')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
-            <Text>Next</Text>
-          </ValidatingButton>
-        </Form>
+        <ValidatingButton fullWidth padded iconRight onPress={() =>  history.push('/Customer/Checkout/VehicleDetails')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon name='arrow-forward'/>
+        </ValidatingButton>
       </Content>
     </Container>;
   }
 }
 
 const validationSchema = {
-  vehicleTypeId: yup.string().required(),
   eta: yup.date().required(),
 };
 
@@ -148,21 +161,34 @@ DeliveryOptions.PropTypes = {
 };
 
 const styles = {
-  manIcon: {
-    marginLeft: 0,
-    marginRight: 0,
-    paddingLeft: 0,
-    paddingRight: 0
+  cardPicker: {
+    width: 200,
+    height: 20
+  },
+  personSelectTextRow: {
+    justifyContent: 'center'
+  },
+  personSelectText: {
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
+    textAlign: 'center'
   }
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}),
-  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || [],
-  vehicleTypes: getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao'),
-  user: getDaoState(state, ['user'], 'userDao'),
-  ...initialProps
-});
+const mapStateToProps = (state, initialProps) => {
+  const user = getDaoState(state, ['user'], 'userDao');
+  const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
+  const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
+
+  return {
+    ...initialProps,
+    busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards'}) || defaultCard == undefined,
+    paymentCards,
+    user,
+    defaultCard
+  };
+};
 
 export default withRouter(connect(
   mapStateToProps

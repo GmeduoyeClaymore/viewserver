@@ -31,7 +31,7 @@ export default class PaymentDao{
 
   async getCustomerPaymentCards(stripeCustomerToken){
     const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards', stripeCustomerToken);
-    const paymentCards =  await promise.timeoutWithError(2000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 2 seconds`));
+    const paymentCards =  await promise.timeoutWithError(5000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 5 seconds`));
     Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
     const result = {paymentCards};
     this.subject.next(result);

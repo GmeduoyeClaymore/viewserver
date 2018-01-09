@@ -29,11 +29,8 @@ public class PaymentControllerTest {
 
     @Test
     public void A_canCreateCustomer(){
-        PaymentCustomer paymentCustomer = new PaymentCustomer();
-        paymentCustomer.setEmail("FOO@BAR.com");
         PaymentCard paymentCard = getPaymentCard("");
-        paymentCustomer.setPaymentCard(paymentCard);
-        HashMap<String,Object> result = sut.createPaymentCustomer(paymentCustomer);
+        HashMap<String,Object> result = sut.createPaymentCustomer("FOO@BAR.com", paymentCard);
         this.customerId = (String)result.get("customerId");
         assertNotNull(this.customerId);
         System.out.println(result);

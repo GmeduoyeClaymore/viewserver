@@ -1,19 +1,24 @@
-import {unregisterDao, registerDao, updateSubscriptionAction} from 'common/dao';
+import {unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
 import VehicleTypeDao from 'common/dao/VehicleTypeDao';
-import {getAllDaos} from 'common/dao';
+import {getAllDaos, invokeDaoCommand} from 'common/dao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
   const dao = new Dao(daoContext);
   dispatch(registerDao(dao));
-  dispatch(updateSubscriptionAction(dao.name, options, continueWith));
+
+  if (daoContext.subscribeOnCreate == undefined || daoContext.subscribeOnCreate == true) {
+    dispatch(updateSubscriptionAction(dao.name, options, continueWith));
+  } else {
+    dispatch(updateOptionsAction(dao.name, options, continueWith));
+  }
   return dao;
 };
 
-export const registerNakedDao = (dispatch, dao) => {
+export const registerNakedDao = (dispatch, dao, options, continueWith) => {
   dispatch(registerDao(dao));
-  dispatch(updateSubscriptionAction(dao.name));
+  dispatch(updateSubscriptionAction(dao.name, options, continueWith));
   return dao;
 };
 
@@ -25,6 +30,9 @@ export const unregisterAllDaos = () => {
   };
 };
 
+export const getCurrentPosition = () => {
+  return invokeDaoCommand('userDao', 'getCurrentPosition');
+};
 
 export const commonServicesRegistrationAction = (client, userId, continueWith) => {
   return (dispatch) => {

@@ -24,6 +24,8 @@ export default class UserDaoContext{
   constructor(client, options = {}) {
     this.client = client;
     this.options = options;
+    this.getPositionAsPromise = this.getPositionAsPromise.bind(this);
+    this.position = undefined;
   }
 
   get defaultOptions(){
@@ -47,7 +49,8 @@ export default class UserDaoContext{
 
   mapDomainEvent(event, dataSink){
     return {
-      user: dataSink.rows[0]
+      user: dataSink.rows[0],
+      position: this.position
     };
   }
 
@@ -65,6 +68,12 @@ export default class UserDaoContext{
       throw new Error('userId should be defined');
     }
     return {...options, filterExpression: `userId == \"${userId}\"`};
+  }
+
+  getPositionAsPromise(){
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {enableHighAccuracy: true});
+    });
   }
 
   extendDao(dao){
@@ -104,6 +113,12 @@ export default class UserDaoContext{
 
       await PrincipalService.setUserIdOnDevice(userObject.userId);
       return userObject.userId;
+    };
+    dao.getCurrentPosition = async () =>{
+      const position = await this.getPositionAsPromise();
+      Logger.info(`Got user position as ${JSON.stringify(position)}`);
+      this.position = position.coords;
+      dao.subject.next(this.mapDomainEvent(null, dao.dataSink));
     };
   }
 }

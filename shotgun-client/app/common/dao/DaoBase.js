@@ -15,6 +15,7 @@ export default class Dao {
     this.name = daoContext.name;
     this.page = page(this);
     this.updateSubscription = this.updateSubscription.bind(this);
+    this.updateOptions = this.updateOptions.bind(this);
     this.crx = crx;//force this to load
   }
     
@@ -24,6 +25,10 @@ export default class Dao {
     
   get optionsObservable(){
     return this.optionsSubject;
+  }
+
+  async updateOptions(options){
+    this.options = {...this.options, ...options};
   }
 
   async updateSubscription(options){

@@ -1,8 +1,6 @@
-import variable from "./../variables/platform";
-
-export default (variables = variable) => {
+export default () => {
   const labelTheme = {
-    ".focused": {
+    '.focused': {
       width: 0
     },
     fontSize: 17

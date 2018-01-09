@@ -1,4 +1,3 @@
-/*
 export const INITIAL_STATE = {
   user: {
     firstName: undefined,
@@ -6,7 +5,7 @@ export const INITIAL_STATE = {
     email: undefined,
     contactNo: undefined,
     password: undefined,
-    type: 'customer',
+    type: 'customer'
   },
   deliveryAddress: {
     line1: undefined,
@@ -17,8 +16,8 @@ export const INITIAL_STATE = {
     isDefault: true
   }
 };
-*/
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
@@ -34,10 +33,11 @@ export const INITIAL_STATE = {
     city: 'London',
     country: 'UK',
     postCode: 'SW17 8RS',
-    googlePlaceId: '',
-    latitude: 0,
-    longitude: 0,
+    googlePlaceId: '123456',
+    latitude: 15.1,
+    longitude: 16.3,
     isDefault: true
   }
 };
+*/
 

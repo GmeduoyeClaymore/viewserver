@@ -29,6 +29,17 @@ export const updateSubscriptionAction = (daoName, options, continueWith) => {
   };
 };
 
+export const updateOptionsAction = (daoName, options, continueWith) => {
+  return async (dispatch, getState) => {
+    const existingOptions = getDaoOptions(getState(), daoName);
+    if (!existingOptions || !isEqual(getExistingValues(existingOptions, options), options)){
+      dispatch(invokeDaoCommand(daoName, 'updateOptions', options, continueWith));
+    } else if (continueWith){
+      continueWith();
+    }
+  };
+};
+
 export const pageAction = (daoName, offset, limit) => {
   return invokeDaoCommand(daoName, 'page', {offset, limit});
 };

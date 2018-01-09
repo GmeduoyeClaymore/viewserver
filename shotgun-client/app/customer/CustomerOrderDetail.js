@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Container, Header, Left, Button, Icon, Body, Title, Content} from 'native-base';
 import OrderSummary from 'common/components/OrderSummary';
 
-class OrderDetail extends Component{
+class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
   }
@@ -35,5 +35,5 @@ const mapStateToProps = (state, initialProps) => ({
 
 export default connect(
   mapStateToProps
-)(OrderDetail);
+)(CustomerOrderDetail);
 

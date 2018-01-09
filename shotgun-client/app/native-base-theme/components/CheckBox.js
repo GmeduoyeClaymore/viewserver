@@ -1,29 +1,32 @@
-import variable from "./../variables/platform";
+import variable from './../variables/platform';
 
 export default (variables = variable) => {
   const checkBoxTheme = {
-    ".checked": {
-      "NativeBase.Icon": {
+    '.checked': {
+      borderColor: variables.checkboxBgColor,
+      'NativeBase.Icon': {
         color: variables.checkboxTickColor
       },
-      "NativeBase.IconNB": {
+      'NativeBase.IconNB': {
         color: variables.checkboxTickColor
       }
     },
-    "NativeBase.Icon": {
-      color: "transparent",
+    'NativeBase.Icon': {
+      color: 'transparent',
       lineHeight: variables.CheckboxIconSize,
       marginTop: variables.CheckboxIconMarginTop,
       fontSize: variables.CheckboxFontSize
     },
-    "NativeBase.IconNB": {
-      color: "transparent",
+    'NativeBase.IconNB': {
+      color: 'transparent',
       lineHeight: variables.CheckboxIconSize,
       marginTop: variables.CheckboxIconMarginTop,
-      fontSize: variables.CheckboxFontSize
+      fontSize: variables.CheckboxFontSize,
+      fontWeight: 'bold'
     },
     borderRadius: variables.CheckboxRadius,
-    overflow: "hidden",
+    borderColor: variables.checkboxBorderColor,
+    overflow: 'hidden',
     width: variables.checkboxSize,
     height: variables.checkboxSize,
     borderWidth: variables.CheckboxBorderWidth,

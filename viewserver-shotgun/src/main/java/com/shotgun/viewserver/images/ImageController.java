@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import io.viewserver.command.ActionParam;
@@ -38,7 +39,7 @@ public class ImageController {
         try {
             logger.debug(String.format("Uploading image %s to s3 bucket", fileName, bucketName));
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion("eu-west-2").withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
-            s3Client.putObject(new PutObjectRequest(bucketName, fileName, input, meta));
+            s3Client.putObject(new PutObjectRequest(bucketName, fileName, input, meta).withCannedAcl(CannedAccessControlList.PublicRead));
             URL url = s3Client.getUrl(bucketName, fileName);
             logger.debug(String.format("Uploaded image to s3 with url %s", url.toString()));
             return url.toString();

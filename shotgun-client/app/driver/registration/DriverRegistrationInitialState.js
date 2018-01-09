@@ -1,10 +1,11 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
     email: undefined,
     contactNo: undefined,
-    type: 'driver'
+    type: 'driver',
+    password: undefined
   },
   vehicle: {
     registrationNumber: undefined,
@@ -13,16 +14,18 @@
     model: 'fromAPI',
     vehicleTypeId: undefined
   }
-};*/
+};
 
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
     email: 'test@test.com',
     contactNo: '1234565656',
-    type: 'driver'
+    type: 'driver',
+    password: 'password'
   },
   vehicle: {
     registrationNumber: 'nx01ert',
@@ -33,3 +36,4 @@ export const INITIAL_STATE = {
   }
 };
 
+*/

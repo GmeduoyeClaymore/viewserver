@@ -18,6 +18,7 @@ package io.viewserver.expression.function;
 
 import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionDouble;
+import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,18 +29,19 @@ import org.slf4j.LoggerFactory;
 public class Distance implements IUserDefinedFunction, IExpressionDouble {
     private static final Logger log = LoggerFactory.getLogger(Serialize.class);
     private IExpressionDouble lat1, lat2, lng1, lng2;
-    public static final double R = 6372.8; // Radius of the world in Km
+    private IExpressionString unit;
 
     @Override
     public void setParameters(IExpression... parameters) {
-        if (parameters.length != 4) {
-            throw new IllegalArgumentException("Syntax: distance(<latitude1 (double)>, <longitude2 (double)>, <latitude2 (double)>, <longitude2 (double)>)");
+        if (parameters.length != 5) {
+            throw new IllegalArgumentException("Syntax: distance(<latitude1 (double)>, <longitude2 (double)>, <latitude2 (double)>, <longitude2 (double)>, <unit (string) M|K|N>)");
         }
 
         lat1 = (IExpressionDouble) parameters[0];
         lng1 = (IExpressionDouble) parameters[1];
         lat2 = (IExpressionDouble) parameters[2];
         lng2 = (IExpressionDouble) parameters[3];
+        unit = (IExpressionString) parameters[4];
     }
 
     @Override
@@ -49,18 +51,30 @@ public class Distance implements IUserDefinedFunction, IExpressionDouble {
 
     @Override
     public double getDouble(int row) {
-        return haversine(lat1.getDouble(row), lng1.getDouble(row), lat2.getDouble(row), lng2.getDouble(row));
+        return distance(lat1.getDouble(row), lng1.getDouble(row), lat2.getDouble(row), lng2.getDouble(row), unit.getString(row));
     }
 
-    private double haversine(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
+    private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        if (unit == "K") {
+            dist = dist * 1.609344;
+        } else if (unit == "N") {
+            dist = dist * 0.8684;
+        }
 
-        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        return R * c;
+        return (dist);
+    }
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
     }
 
 }

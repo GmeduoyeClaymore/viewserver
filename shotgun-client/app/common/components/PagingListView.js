@@ -9,7 +9,7 @@ import ErrorRegion from 'common/components/ErrorRegion';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
 const styles = StyleSheet.create({
   contentContainer: {
-    paddingVertical: 20
+    paddingVertical: 0
   }
 });
 

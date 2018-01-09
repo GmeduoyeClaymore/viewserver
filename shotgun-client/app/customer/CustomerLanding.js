@@ -3,14 +3,15 @@ import {connect} from 'react-redux';
 import {setLocale} from 'yup/lib/customLocale';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
-import Orders from './Orders';
-import OrderDetail from './OrderDetail';
+import CustomerOrders from './CustomerOrders';
+import CustomerOrderDetail from './CustomerOrderDetail';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import CustomerSettings from './CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
+import {getCurrentPosition} from 'common/actions/CommonActions';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -36,6 +37,7 @@ class CustomerLanding extends Component {
     const {dispatch, userId, client, user} = this.props;
     dispatch(customerServicesRegistrationAction(client, userId));
     dispatch(getPaymentCards(user.stripeCustomerId));
+    dispatch(getCurrentPosition());
   }
 
   render() {
@@ -45,8 +47,8 @@ class CustomerLanding extends Component {
       <Container>
         <Switch>
           <Route path={`${match.path}/Checkout`} render={() => <Checkout client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/Orders`} exact render={() => <Orders client={client} {...this.props}/>}/>
-          <Route path={'/Customer/OrderDetail'} exact render={() => <OrderDetail client={client} {...this.props}/>}/>
+          <Route path={`${match.path}/CustomerOrders`} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
+          <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={`${match.path}/CustomerSettings`} exact component={CustomerSettings}/>
           <Redirect to={`${match.path}/${CustomerLanding.INITIAL_ROOT_NAME}`}/>
         </Switch>

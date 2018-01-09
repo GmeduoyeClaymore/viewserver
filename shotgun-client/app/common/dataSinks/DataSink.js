@@ -71,7 +71,7 @@ export default DataSink = (superclass) => class extends superclass {
     this.idRows[rowId] = row;
     this.rows.push(row);
     this.dirtyRows.push(rowId);
-    Logger.fine(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    Logger.info(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
   }
 
   onRowUpdated(rowId, row){
@@ -91,6 +91,7 @@ export default DataSink = (superclass) => class extends superclass {
     if (!!~rowIndex){
       delete this.idIndexes[rowId];
       this.rows.splice(rowIndex, 1);
+      Logger.info(`Row ${rowId} removed`);
     }
   }
 

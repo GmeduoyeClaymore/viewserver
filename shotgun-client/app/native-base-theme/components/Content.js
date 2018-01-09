@@ -1,15 +1,16 @@
-import variable from "./../variables/platform";
+import variable from './../variables/platform';
 
 export default (variables = variable) => {
   const contentTheme = {
-    ".padder": {
-      padding: variables.contentPadding
+    '.padded': {
+      paddingLeft: variables.contentPadding,
+      paddingRight: variables.contentPadding
     },
     flex: 1,
-    backgroundColor: "transparent",
-    "NativeBase.Segment": {
+    backgroundColor: 'transparent',
+    'NativeBase.Segment': {
       borderWidth: 0,
-      backgroundColor: "transparent"
+      backgroundColor: 'transparent'
     }
   };
 

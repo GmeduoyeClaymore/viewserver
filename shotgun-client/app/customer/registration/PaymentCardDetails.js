@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import uuidv4 from 'uuid/v4';
-import {addCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
+import {registerCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
@@ -36,7 +36,7 @@ class PaymentCardDetails extends Component {
 
     const register = async() => {
       const {user, deliveryAddress} = context.state;
-      dispatch(addCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
+      dispatch(registerCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
     };
 
     const createServicesThenRegister = async() => {

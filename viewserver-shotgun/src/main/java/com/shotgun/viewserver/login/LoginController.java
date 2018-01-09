@@ -1,11 +1,10 @@
 package com.shotgun.viewserver.login;
 
-import com.shotgun.viewserver.LoginCredentials;
+import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
-import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
@@ -24,11 +23,8 @@ public class LoginController {
     @ControllerAction(path = "login", isSynchronous = true)
     public String login(@ActionParam(name = "username")String username,@ActionParam(name = "password")String password){
 
-        IOperator userTable = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(USER_TABLE_NAME);
-        if (!(userTable instanceof ITable)) {
-            throw new RuntimeException("Operator '" + USER_TABLE_NAME + "' is not a table");
-        }
-        IOutput output = ((ITable) userTable).getOutput();
+        ITable userTable = ControllerUtils.getTable(USER_TABLE_NAME);
+        IOutput output = userTable.getOutput();
         IRowSequence rows = (output.getAllRows());
 
         Schema schema = output.getSchema();

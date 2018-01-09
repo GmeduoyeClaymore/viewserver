@@ -8,8 +8,7 @@ const platform = Platform.OS;
 const platformStyle = undefined;
 const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 375;
 
-export default {
-  // Color
+const colors = {
   brandPrimary: '#ffffff',
   brandSecondary: '#0cf5b6',
   brandLight: '#647479',
@@ -23,15 +22,30 @@ export default {
 
   hairline: '#dce3e6',
   silver: '#c0c9cc',
+  coolGrey: '#8c9da1',
   blue: '#1279ff',
   lightBlue: '#a5ccff',
   gold: '#ffbd24',
-  darkGreen: '#017564',
+  darkGreen: '#017564'
+};
+
+export default {
+  ...colors,
 
   // Text
-  textColor: this.brandDark,
-  inverseTextColor: this.brandPrimary,
-  noteFontSize: 14,
+  textColor: colors.brandDark,
+  inverseTextColor: colors.brandPrimary,
+  DefaultFontSize: 14,
+  noteFontSize: 12,
+
+  //Tab style
+  tabsStyle: {
+    tabBarUnderlineStyle: {
+      backgroundColor: colors.blue,
+      height: 7,
+      borderRadius: 3.5
+    }
+  },
 
   platformStyle,
   platform,
@@ -52,17 +66,17 @@ export default {
   btnDisabledClr: '#f1f1f1',
 
   // CheckBox
-  CheckboxRadius: platform === 'ios' ? 13 : 0,
-  CheckboxBorderWidth: platform === 'ios' ? 1 : 2,
-  CheckboxPaddingLeft: platform === 'ios' ? 4 : 2,
+  CheckboxRadius: 2,
+  CheckboxBorderWidth: 2,
+  CheckboxPaddingLeft: 0,
   CheckboxPaddingBottom: platform === 'ios' ? 0 : 5,
-  CheckboxIconSize: platform === 'ios' ? 21 : 14,
-  CheckboxIconMarginTop: platform === 'ios' ? undefined : 1,
-  CheckboxFontSize: platform === 'ios' ? 23 / 0.9 : 18,
-  DefaultFontSize: 17,
-  checkboxBgColor: '#039BE5',
-  checkboxSize: 20,
-  checkboxTickColor: '#fff',
+  CheckboxIconSize: 13,
+  CheckboxIconMarginTop: 0,
+  CheckboxFontSize: 14,
+  checkboxBgColor: colors.brandSecondary,
+  checkboxBorderColor: colors.brandDark,
+  checkboxSize: 15,
+  checkboxTickColor: colors.brandDark,
 
   // Segment
   segmentBackgroundColor: platform === 'ios' ? '#F8F8F8' : '#3F51B5',
@@ -78,10 +92,10 @@ export default {
   },
 
   get btnPrimaryBg() {
-    return this.brandSecondary;
+    return colors.brandSecondary;
   },
   get btnPrimaryColor() {
-    return this.inverseTextColor;
+    return colors.brandDark;
   },
   get btnInfoBg() {
     return this.brandInfo;
@@ -108,7 +122,7 @@ export default {
     return this.inverseTextColor;
   },
   get btnTextSize() {
-    return platform === 'ios' ? this.fontSizeBase * 1.1 : this.fontSizeBase - 1;
+    return 18;
   },
   get btnTextSizeLarge() {
     return this.fontSizeBase * 1.5;
@@ -133,11 +147,11 @@ export default {
   cardDefaultBg: '#fff',
 
   // Font
-  fontFamily: 'TLCircular-Book',
-  fontSizeBase: 15,
+  fontFamily: platform === 'ios' ? 'System' : 'Roboto',
+  fontSizeBase: 14,
 
   get fontSizeH1() {
-    return this.fontSizeBase * 1.8;
+    return 54;
   },
   get fontSizeH2() {
     return this.fontSizeBase * 1.6;
@@ -147,25 +161,25 @@ export default {
   },
 
   // Footer
-  footerHeight: isIphoneX ? 89 : 55,
+  footerHeight: 50,
   footerDefaultBg: this.brandPrimary,
   footerPaddingBottom: isIphoneX ? 34 : 0,
 
   // FooterTab
-  tabBarTextColor: this.brandDark,
-  tabBarTextSize: platform === 'ios' ? 14 : 11,
+  tabBarTextColor: this.silver,
+  tabBarTextSize: 16,
   activeTab: platform === this.brandPrimary,
   sTabBarActiveTextColor: this.brandDark,
   tabBarActiveTextColor: this.brandDark,
   tabActiveBgColor: this.brandPrimary,
 
   // Tab
-  tabDefaultBg: platform === 'ios' ? '#F8F8F8' : '#3F51B5',
-  topTabBarTextColor: platform === 'ios' ? '#6b6b6b' : '#b3c7f9',
-  topTabBarActiveTextColor: platform === 'ios' ? '#007aff' : '#fff',
-  topTabActiveBgColor: platform === 'ios' ? '#cde1f9' : undefined,
-  topTabBarBorderColor: platform === 'ios' ? '#a7a6ab' : '#fff',
-  topTabBarActiveBorderColor: platform === 'ios' ? '#007aff' : '#fff',
+  tabDefaultBg: colors.brandPrimary,
+  topTabBarTextColor: colors.coolGrey,
+  topTabBarActiveTextColor: colors.brandDark,
+  topTabActiveBgColor: colors.brandPrimary,
+  topTabBarBorderColor: colors.brandPrimary,
+  topTabBarActiveBorderColor: colors.brandPrimary,
 
   // Header
   toolbarBtnColor: this.brandDark,
@@ -187,7 +201,7 @@ export default {
 
   // Icon
   iconFamily: 'Ionicons',
-  iconFontSize: platform === 'ios' ? 30 : 28,
+  iconFontSize: 16,
   iconMargin: 7,
   iconHeaderSize: platform === 'ios' ? 33 : 24,
 
@@ -214,7 +228,7 @@ export default {
 
   // Line Height
   btnLineHeight: 19,
-  lineHeightH1: 32,
+  lineHeightH1: 54,
   lineHeightH2: 27,
   lineHeightH3: 22,
   iconLineHeight: platform === 'ios' ? 37 : 30,
@@ -222,7 +236,7 @@ export default {
 
   // List
   listBg: '#fff',
-  listBorderColor: '#c9c9c9',
+  listBorderColor: colors.hairline,
   listDividerBg: '#f4f4f4',
   listItemHeight: 45,
   listBtnUnderlayColor: '#DDD',
@@ -261,22 +275,21 @@ export default {
 
   // Tabs
   tabBgColor: '#F8F8F8',
-  tabFontSize: 15,
+  tabFontSize: 16,
   tabTextColor: '#222222',
 
   // Title
   titleFontfamily: platform === 'ios' ? 'System' : 'Roboto_medium',
-  titleFontSize: platform === 'ios' ? 17 : 19,
+  titleFontSize: 30,
+  titleFontColor: colors.brandDark,
   subTitleFontSize: platform === 'ios' ? 12 : 14,
-  subtitleColor: this.brandDark,
+  subtitleColor: colors.brandDark,
 
-  // New Variable
-  titleFontColor: this.brandDark,
 
   // Other
   borderRadiusBase: platform === 'ios' ? 5 : 2,
   borderWidth: 1 / PixelRatio.getPixelSizeForLayoutSize(1),
-  contentPadding: 10,
+  contentPadding: 25,
 
   get darkenHeader() {
     return color(this.tabBgColor)

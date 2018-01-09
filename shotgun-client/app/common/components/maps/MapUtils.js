@@ -14,7 +14,7 @@ export const fetchRoute = async  (client, origin, destination) => {
     };
   }
   throw new Error('No routes returned');
-}
+};
 
 const decode = (t, e) => {
   const d = [];

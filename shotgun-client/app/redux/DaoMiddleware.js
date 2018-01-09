@@ -43,7 +43,8 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
   const registerDao = ({name, dao}) => {
     if (DAOS[name]){
       //TODO - I think re-registering is fine...
-      //throw new Error(`A DAO with name ${name} has already been registered`);
+      //Yep it's fine just as long as you unregister the old one first :)
+      unRegisterDao({name});
     }
     DAOS[name] = dao;
     let daoEventFunc = c => {

@@ -1,83 +1,57 @@
-import * as TableNames from 'common/constants/TableNames';
-import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
-import RxDataSink from 'common/dataSinks/RxDataSink';
-import {forEach} from 'lodash';
-import PrincipalService from 'common/services/PrincipalService';
+//import PrincipalService from 'common/services/PrincipalService';
+import Rx from 'rxjs/Rx';
 
-export default class DriverDaoContext{
-  constructor(client, userDao, vehicleDao, options = {}) {
+export default class DriverDao{
+  constructor(client) {
     this.client = client;
-    this.userDao = userDao;
-    this.vehicleDao = vehicleDao;
-    this.options = options;
+    this.name = 'driverDao';
+    this.subject = new Rx.Subject();
+    this.optionsSubject = new Rx.Subject();
+    this.updateSubscription = this.updateSubscription.bind(this);
+    this.registerDriver = this.registerDriver.bind(this);
+    this.acceptOrderRequest = this.acceptOrderRequest.bind(this);
+    this.startOrderRequest = this.startOrderRequest.bind(this);
+    this.cancelOrderRequest = this.cancelOrderRequest.bind(this);
+    this.subject.next();
+    this.options = {};
   }
 
-  get defaultOptions(){
-    return {
-      offset: 0,
-      limit: 20,
-      columnName: undefined,
-      columnsToSort: undefined,
-      filterMode: 2, //Filtering
-      flags: undefined,
-      ...this.options
-    };
+  get observable(){
+    return this.subject;
   }
 
-  get name(){
-    return 'driverDao';
+  get optionsObservable(){
+    return this.optionsSubject;
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  async updateSubscription(options){
+    this.options = {...this.options, ...options};
+    this.subject.next();
+    return;
   }
 
-  mapDomainEvent(){
-    return {
-    };
+  async registerDriver({driver, vehicle}){
+    Logger.info(`Registering driver ${driver.email}`);
+    const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle});
+    Logger.info(`Driver ${driverId} registered`);
+    //await PrincipalService.setUserIdOnDevice(driverId);
+    return driverId;
   }
 
-  createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, TableNames.USER_TABLE_NAME, dataSink);
+  async acceptOrderRequest({orderId}) {
+    const {userId} = this.options;
+    await this.client.invokeJSONCommand('driverController', 'acceptOrder', {driverId: userId, orderId});
   }
 
-  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.userId != newOptions.userId;
+  async startOrderRequest({orderId}){
+    const {userId} = this.options;
+    await this.client.invokeJSONCommand('driverController', 'startOrder', {driverId: userId, orderId});
   }
 
-  transformOptions(options){
-    const {userId} = options;
-    if (typeof userId === 'undefined'){
-      throw new Error('userId should be defined');
-    }
-    return {...options, filterExpression: `userId == \"${userId}\"`};
-  }
-
-  extendDao(dao){
-    dao.addOrUpdateDriver = async ({driver, vehicle}) => {
-      const {dataSink} = dao;
-      const schema = await dataSink.waitForSchema();
-      const {userId} = dao.options;
-      Logger.info(`Adding driver schema is ${JSON.stringify(schema)}`);
-
-      //TODO - tidy this up using lodash or similar
-      const user = {};
-      forEach(schema, value => {
-        const field = value.name;
-        user[field] = driver[field];
-      });
-
-      if (user.userId == undefined) {
-        user.userId = userId;
-      }
-
-      await this.userDao.addOrUpdateUser({user});
-      await this.vehicleDao.addOrUpdateVehicle({userId: user.userId, vehicle});
-
-      await PrincipalService.setUserIdOnDevice(user.userId);
-      return user.userId;
-    };
+  async cancelOrderRequest({orderId}){
+    const {userId} = this.options;
+    await this.client.invokeJSONCommand('driverController', 'cancelOrder', {driverId: userId, orderId});
   }
 }
 
