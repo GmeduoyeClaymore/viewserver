@@ -1,8 +1,8 @@
-package com.shotgun.viewserver.user;
+package com.shotgun.viewserver.delivery;
 
-public class Vehicle{
+public  class Vehicle{
+    private Dimensions dimensions;
     String vehicleId;
-    String userId;
     String registrationNumber;
     String colour;
     String make;
@@ -11,6 +11,23 @@ public class Vehicle{
 
 
     public Vehicle() {
+    }
+
+    public Vehicle(Dimensions dimensions,String make, String model, String vehicleTypeId,String colour, String reg) {
+        this.dimensions = dimensions;
+        this.model = model;
+        this.make = make;
+        this.vehicleTypeId = vehicleTypeId;
+        this.colour = colour;
+        this.registrationNumber = reg;
+    }
+
+    public Dimensions getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(Dimensions dimensions) {
+        this.dimensions = dimensions;
     }
 
     public String getVehicleTypeId() {
@@ -27,14 +44,6 @@ public class Vehicle{
 
     public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getRegistrationNumber() {
@@ -67,5 +76,18 @@ public class Vehicle{
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "dimensions=" + dimensions +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                ", colour='" + colour + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", vehicleTypeId='" + vehicleTypeId + '\'' +
+                '}';
     }
 }

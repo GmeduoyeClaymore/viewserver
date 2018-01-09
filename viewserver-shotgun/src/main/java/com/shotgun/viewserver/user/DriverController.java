@@ -2,9 +2,12 @@ package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.delivery.Vehicle;
+import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +27,7 @@ public class DriverController {
         VehicleController vehicleController = new VehicleController();
 
         String userId = userController.addOrUpdateUser(user);
-        vehicle.setUserId(userId);
+        ControllerContext.set("userId",userId);
         vehicleController.addOrUpdateVehicle(vehicle);
         log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
         return userId;

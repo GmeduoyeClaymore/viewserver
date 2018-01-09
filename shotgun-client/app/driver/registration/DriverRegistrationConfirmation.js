@@ -6,6 +6,7 @@ import uuidv4 from 'uuid/v4';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {Form, Text, Button, Item, Label, Input, Content, Header, Left, Body, Container, Icon, Title} from 'native-base';
 import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
+import {printDimensions, printWeight} from './VehicleDetails';
 import LoadingScreen from 'common/components/LoadingScreen';
 
 const DriverRegistrationConfirmation  = ({context, history, dispatch, client, errors, busy}) => {
@@ -57,6 +58,11 @@ const DriverRegistrationConfirmation  = ({context, history, dispatch, client, er
             <Label>Make & Model:</Label>
             <Input value={`${vehicle.make} ${vehicle.model}`} editable={false}/>
           </Item>
+          <Item fixedLabel>
+            <Label>Approx Dimensions:</Label>
+            <Text>{printDimensions(vehicle)}</Text>
+            <Text>{printWeight(vehicle)}</Text>
+          </Item>
           <Button disabled={busy} onPress={createServicesThenRegister}>
             <Text>Create Account</Text>
           </Button>
@@ -68,8 +74,8 @@ const DriverRegistrationConfirmation  = ({context, history, dispatch, client, er
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  errors: getOperationError(state, 'driverDao', 'addOrUpdateDriver'),
-  busy: isAnyOperationPending(state, { driverDao: 'addOrUpdateDriver'} || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao'])),
+  errors: getOperationError(state, 'driverDao', 'registerDriver'),
+  busy: isAnyOperationPending(state, { driverDao: 'registerDriver'} || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao'])),
   ...initialProps
 });
 
