@@ -42,7 +42,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(new DeliveryController());
         this.registerController(new DeliveryAddressController());
         this.registerController(new OrderItemController());
-        this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c")));
+        this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", true)));
         this.registerController(new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu")));
     }
 

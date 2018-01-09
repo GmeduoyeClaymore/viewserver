@@ -4,6 +4,7 @@ import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -17,7 +18,7 @@ public class DeliveryAddressController {
     private static String DELIVERY_ADDRESS_TABLE_NAME = "/datasources/deliveryAddress/deliveryAddress";
 
     @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
-    public String addOrUpdateDeliveryAddress(@ActionParam(name = "userId")String userId, @ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress){
+    public String addOrUpdateDeliveryAddress(@ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress){
         KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(DELIVERY_ADDRESS_TABLE_NAME);
         Date now = new Date();
         String newDeliveryAddressId = ControllerUtils.generateGuid();
@@ -27,6 +28,10 @@ public class DeliveryAddressController {
             if(deliveryAddress.getDeliveryAddressId() == null){
                 row.setString("deliveryAddressId", newDeliveryAddressId);
                 row.setLong("created", now.getTime());
+            }
+            String userId = (String) ControllerContext.get("userId");
+            if(userId == null){
+                throw new RuntimeException("User id must be set in the controller context before this method is called");
             }
             row.setString("userId", userId);
             row.setLong("lastUsed", now.getTime());

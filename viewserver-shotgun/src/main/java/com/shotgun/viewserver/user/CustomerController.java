@@ -8,6 +8,7 @@ import com.shotgun.viewserver.payments.StripeApiKey;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,8 @@ public class CustomerController {
 
         UserController userController = new UserController();
         String userId = userController.addOrUpdateUser(user);
-
-        deliveryAddressController.addOrUpdateDeliveryAddress(userId, deliveryAddress);
+        ControllerContext.set("userId", userId);
+        deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
 
         log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
         return userId;

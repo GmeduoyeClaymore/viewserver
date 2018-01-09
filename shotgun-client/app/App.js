@@ -62,7 +62,7 @@ export default class App extends React.Component {
 
   setInitialRoot(){
     if (this.userId == undefined){
-      App.INITIAL_ROOT_NAME = '/Driver/Registration';
+      App.INITIAL_ROOT_NAME = '/RegistrationCommon';
     } else {
       App.INITIAL_ROOT_NAME = '/LandingCommon';
       Logger.info(`Loading with customer id ${this.userId}`);

@@ -5,12 +5,18 @@ package com.shotgun.viewserver.delivery;
  */
 public class VehicleDetailsApiKey {
     private String key;
+    private boolean mock;
 
-    public VehicleDetailsApiKey(String key) {
+    public VehicleDetailsApiKey(String key, boolean mock) {
         this.key = key;
+        this.mock = mock;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public boolean isMock() {
+        return mock;
     }
 }

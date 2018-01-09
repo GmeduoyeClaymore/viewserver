@@ -1,0 +1,235 @@
+{"Request": {
+    "RequestGuid": "8d3fe420-733a-4036-83f4-10c79b705acb",
+    "PackageId": "1d73baf4-5947-4791-a5b4-e63c5f35a77b",
+    "PackageVersion": 2,
+    "ResponseVersion": 2,
+    "DataKeys": {
+        "Vrm": "YA61AYB"
+    }
+},
+    "Response": {
+        "StatusCode": "Success",
+        "StatusMessage": "Success",
+        "StatusInformation": {
+            "Lookup": {
+                "StatusCode": "Success",
+                "StatusMessage": "Success",
+                "AdviceTextList": []
+            }
+        },
+        "DataItems": {
+            "TechnicalDetails": {
+                "General": {
+                    "Engine": {
+                        "CylinderArrangement": "INLINE",
+                        "Bore": 86.0,
+                        "ValveGear": "DOHC",
+                        "ValvesPerCylinder": 4,
+                        "PrimaryFuelFlag": "Y",
+                        "Aspiration": "TURBO",
+                        "Description": "2.2 100PS TDCI-A",
+                        "Make": "FORD",
+                        "Stroke": 95.0,
+                        "NumberOfCylinders": 4,
+                        "Location": "FRONT"
+                    },
+                    "EuroStatus": "5",
+                    "DataVersionNumber": null,
+                    "TypeApprovalCategory": "N1",
+                    "DrivingAxle": "FRONT",
+                    "PowerDelivery": "NORMAL"
+                },
+                "Consumption": {
+                    "ExtraUrban": {
+                        "Lkm": 6.4,
+                        "Mpg": 44.1
+                    },
+                    "Combined": {
+                        "Lkm": 7.2,
+                        "Mpg": 39.2
+                    },
+                    "UrbanCold": {
+                        "Lkm": 8.5,
+                        "Mpg": 33.2
+                    }
+                },
+                "Performance": {
+                    "Acceleration": {
+                        "Mph": 99.0,
+                        "Kph": 99.0
+                    },
+                    "Power": {
+                        "Kw": 74.0,
+                        "Bhp": 98.6,
+                        "Rpm": 3500.0
+                    },
+                    "DataVersionNumber": null,
+                    "Torque": {
+                        "Rpm": 1300.0,
+                        "FtLb": 229.0,
+                        "Nm": 310.0
+                    },
+                    "MaxSpeed": {
+                        "Kph": 10.0,
+                        "Mph": 10.0
+                    },
+                    "Co2": 189.0
+                },
+                "Dimensions": {
+                    "PayloadVolume": 7.9,
+                    "RigidArtic": "RIGID",
+                    "CarLength": 4863.0,
+                    "DataVersionNumber": null,
+                    "Width": 1974.0,
+                    "Height": 2385.0,
+                    "GrossTrainWeight": null,
+                    "WheelBase": null,
+                    "GrossCombinedWeight": null,
+                    "NumberOfAxles": 2,
+                    "PayloadWeight": 1073.0,
+                    "KerbWeight": 1752.0,
+                    "UnladenWeight": 1752.0,
+                    "NumberOfSeats": null,
+                    "LoadLength": 2582.0,
+                    "BodyShape": "STANDARD ROOF",
+                    "GrossVehicleWeight": 2825.0
+                }
+            },
+            "SmmtDetails": {
+                "BodyStyle": "PANEL VAN",
+                "CabType": "DAY CAB",
+                "NominalEngineCapacity": 2.2,
+                "CountryOfOrigin": "TURKEY",
+                "DriveType": "4X2",
+                "VisibilityDate": "23/09/2011",
+                "MarketSectorCode": "DB",
+                "FuelType": "DIESEL",
+                "Transmission": "MANUAL",
+                "EngineCapacity": "2198",
+                "TerminateDate": null,
+                "SysSetupDate": "23/09/2011",
+                "Series": "V347M",
+                "Marque": "FORD",
+                "ModelVariant": "280 P/V",
+                "NumberOfDoors": null,
+                "DataVersionNumber": null,
+                "NumberOfGears": 6,
+                "MarqueCode": "MN",
+                "ModelCode": "303",
+                "Range": "TRANSIT"
+            },
+            "VehicleStatus": {
+                "MotVed": {
+                    "VedCo2Emissions": null,
+                    "MotDue": null,
+                    "VedCo2Band": null,
+                    "VedRate": {
+                        "FirstYear": {
+                            "TwelveMonth": null,
+                            "SixMonth": null
+                        },
+                        "PremiumVehicle": {
+                            "YearTwoToSix": {
+                                "SixMonth": null,
+                                "TwelveMonth": null
+                            }
+                        },
+                        "Standard": {
+                            "SixMonth": null,
+                            "TwelveMonth": null
+                        }
+                    },
+                    "VedBand": null,
+                    "VehicleStatus": null,
+                    "Message": null,
+                    "TaxDue": null
+                }
+            },
+            "VehicleRegistration": {
+                "FuelType": "DIESEL",
+                "Scrapped": false,
+                "EngineNumber": "BP13547",
+                "WheelPlan": "2 AXLE RIGID BODY",
+                "Exported": false,
+                "GrossWeight": 2825.0,
+                "CertificateOfDestructionIssued": null,
+                "MvrisMakeCode": "M1",
+                "Co2Emissions": null,
+                "MakeModel": "FORD TRANSIT 100 T280 FWD",
+                "DtpModelCode": "303",
+                "SeatingCapacity": 3,
+                "MvrisModelCode": "JMX",
+                "DoorPlan": "22",
+                "Model": "TRANSIT 100 T280 FWD",
+                "VinLast5": "13547",
+                "Transmission": "MANUAL 6 GEARS",
+                "Vin": "Contact your account manager for access to the full VIN value.",
+                "Colour": "WHITE",
+                "VinConfirmationFlag": null,
+                "YearOfManufacture": "2012",
+                "TransmissionCode": "M",
+                "GearCount": 6,
+                "DoorPlanLiteral": "PANEL VAN",
+                "PreviousVrmGb": null,
+                "DateFirstRegistered": "2012-02-27T00:00:00",
+                "DateExported": null,
+                "EngineCapacity": "2198",
+                "DtpMakeCode": "MN",
+                "PreviousVrmNi": null,
+                "VehicleClass": "LCV",
+                "Imported": false,
+                "VehicleUsedBeforeFirstRegistration": false,
+                "YearMonthFirstRegistered": "2012-02",
+                "MaxPermissibleMass": 2825.0,
+                "TransmissionType": "Manual",
+                "AbiBrokerNetCode": null,
+                "ImportNonEu": false,
+                "Make": "FORD",
+                "Vrm": "YA61AYB",
+                "DateOfLastUpdate": "2012-03-23T00:00:00",
+                "DateScrapped": null,
+                "DateFirstRegisteredUk": "2012-02-27T00:00:00"
+            },
+            "VehicleHistory": {
+                "ColourChangeCount": null,
+                "KeeperChangesList": [
+                    {
+                        "DateOfTransaction": "2017-12-24T00:00:00",
+                        "NumberOfPreviousKeepers": 1,
+                        "DateOfLastKeeperChange": "2017-12-13T00:00:00"
+                    }
+                ],
+                "V5CCertificateList": [
+                    {
+                        "CertificateDate": "2012-02-27T00:00:00"
+                    }
+                ],
+                "NumberOfPreviousKeepers": 1,
+                "PlateChangeList": null,
+                "V5CCertificateCount": 1,
+                "VicList": null,
+                "ColourChangeList": null,
+                "VicCount": 0,
+                "KeeperChangesCount": 1,
+                "PlateChangeCount": 0
+            },
+            "ClassificationDetails": {
+                "Smmt": {
+                    "Trim": "280 P/V",
+                    "Range": "TRANSIT",
+                    "Mvris": {
+                        "MakeCode": "M1",
+                        "ModelCode": "JMX"
+                    },
+                    "Make": "FORD"
+                },
+                "Dvla": {
+                    "Make": "FORD",
+                    "MakeCode": "MN",
+                    "Model": "TRANSIT 100 T280 FWD",
+                    "ModelCode": "303"
+                }
+            }
+        }
+    }
+}

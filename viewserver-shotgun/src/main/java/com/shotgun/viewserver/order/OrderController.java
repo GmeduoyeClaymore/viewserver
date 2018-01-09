@@ -10,6 +10,7 @@ import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -22,8 +23,14 @@ public class OrderController {
     private static String ORDER_TABLE_NAME = "/datasources/order/order";
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "userId")String userId, @ActionParam(name = "paymentId")String paymentId,
+    public String createOrder(@ActionParam(name = "paymentId")String paymentId,
                               @ActionParam(name = "delivery")Delivery delivery, @ActionParam(name = "orderItems")OrderItem[] orderItems){
+
+        String userId = (String) ControllerContext.get("userId");
+        if(userId == null){
+            throw new RuntimeException("User id must be set in the controller context before this method is called");
+        }
+
         KeyedTable orderTable = ControllerUtils.getKeyedTable(ORDER_TABLE_NAME);
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController();
         DeliveryController deliveryController = new DeliveryController();
@@ -31,8 +38,8 @@ public class OrderController {
 
 
         //add addresses
-        String originDeliveryAddressId = deliveryAddressController.addOrUpdateDeliveryAddress(userId, delivery.getOrigin());
-        String destinationDeliverAddressId = delivery.getDestination().getLine1() != null ? deliveryAddressController.addOrUpdateDeliveryAddress(userId, delivery.getDestination()) : null;
+        String originDeliveryAddressId = deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getOrigin());
+        String destinationDeliverAddressId = delivery.getDestination().getLine1() != null ? deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getDestination()) : null;
         delivery.getOrigin().setDeliveryAddressId(originDeliveryAddressId);
         delivery.getDestination().setDeliveryAddressId(destinationDeliverAddressId);
 

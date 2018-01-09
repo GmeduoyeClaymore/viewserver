@@ -1,5 +1,6 @@
 package com.shotgun.viewserver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mkammerer.argon2.Argon2;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -36,6 +38,18 @@ public class ControllerUtils{
             throw new RuntimeException(e);
         }
         return map;
+    }
+
+    public static String toString(Object ser){
+        if(ser == null){
+            return null;
+        }
+        try {
+
+            return mapper.writerFor(ser.getClass()).writeValueAsString(ser);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to serialize object \"" + ser + "\"",e);
+        }
     }
 
 
@@ -59,18 +73,21 @@ public class ControllerUtils{
             connection.setDoOutput(true);
 
 
-            InputStream is = connection.getInputStream();
+
             InputStream errorStream = connection.getErrorStream();
-            if(connection.getResponseCode() != 200){
+            if(connection.getResponseCode() == 401){
+                throw new RuntimeException("Authentication issue. Api key broken or you have run out of requests");
+            }
+            else if(connection.getResponseCode() != 200){
                 throw new RuntimeException("Problem executing request " + getString(errorStream));
             }
+            InputStream is = connection.getInputStream();
             String string = getString(is);
             logger.info("Response to request \"{}\" is \"{}\"",url,string);
             return string;
         } catch (Exception e) {
             logger.error(String.format("Problem making request to: %s",url),e);
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -78,7 +95,21 @@ public class ControllerUtils{
         }
     }
 
+    public static String urlToString(URL url) {
+        try{
+            InputStream is = new FileInputStream(new File(url.getFile()));
+            BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+            String line = buf.readLine(); StringBuilder sb = new StringBuilder(); while(line != null){ sb.append(line).append("\n"); line = buf.readLine(); }
+            return sb.toString();
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
     private static String getString(InputStream is) throws IOException {
+        if(is == null){
+            return "";
+        }
         BufferedReader rd = new BufferedReader(new InputStreamReader(is));
         StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
         String line;
