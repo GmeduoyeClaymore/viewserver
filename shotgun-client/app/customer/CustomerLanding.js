@@ -27,8 +27,6 @@ setLocale({
 });
 
 class CustomerLanding extends Component {
-  static INITIAL_ROOT_NAME = 'Checkout';
-
   constructor(props) {
     super(props);
   }
@@ -50,7 +48,7 @@ class CustomerLanding extends Component {
           <Route path={`${match.path}/CustomerOrders`} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={`${match.path}/CustomerSettings`} exact component={CustomerSettings}/>
-          <Redirect to={`${match.path}/${CustomerLanding.INITIAL_ROOT_NAME}`}/>
+          <Redirect to={`${match.path}/Checkout`}/>
         </Switch>
         <CustomerMenuBar/>
       </Container>;

@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import {View, Text} from 'react-native';
 import PagingListView from '../common/components/PagingListView';
 import { withRouter } from 'react-router';
-import {Container, Content, Spinner, Header, Body, Title, Tabs, Tab, List} from 'native-base';
+import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
 import {getDaoState} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
+import Tabs from 'common/components/Tabs';
 
 class DriverOrders extends Component{
   constructor(props){
@@ -23,6 +24,11 @@ class DriverOrders extends Component{
 
   render(){
     const {isCompleted} = this.state;
+
+    const reportOptions = {
+      isCompleted,
+      columnsToSort: [{ name: 'eta', direction: 'asc' }],
+      reportId: 'driverOrderSummary'};
 
     const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
     const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs assigned</Text></View>;
@@ -42,7 +48,7 @@ class DriverOrders extends Component{
             daoName='orderSummaryDao'
             dataPath={['orders']}
             rowView={RowView}
-            options={{isCompleted, reportId: 'driverOrderSummary'}}
+            options={reportOptions}
             paginationWaitingView={Paging}
             emptyView={NoItems}
             pageSize={10}
