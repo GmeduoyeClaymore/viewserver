@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {isAnyLoading} from 'common/dao';
 import UserDetails from 'common/registration/UserDetails';
 import VehicleDetails from './VehicleDetails';
-import DriverRegistrationConfirmation from './DriverRegistrationConfirmation';
+import OffloadDetails from './OffloadDetails';
+import DriverRegistrationLanding from './DriverRegistrationLanding';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
-import LoadingScreen from 'common/components/LoadingScreen';
 
 class DriverRegistration extends Component {
   constructor() {
@@ -22,19 +21,17 @@ class DriverRegistration extends Component {
   }
 
   render() {
-    const {match, busy, ...rest} = this.props;
-
-    return busy ? <LoadingScreen text="Loading Driver Registration"/> : <Switch>
-      <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...rest} match={match} context={this} next="VehicleDetails"/>} />
-      <Route path={`${match.path}/VehicleDetails`} exact render={() => <VehicleDetails {...rest} match={match} context={this}/>} />
-      <Route path={`${match.path}/DriverRegistrationConfirmation`} exact render={() => <DriverRegistrationConfirmation {...rest} match={match} context={this}/>} />
-      <Redirect to={`${match.path}/UserDetails`}/>
+    return <Switch>
+      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact render={() => <DriverRegistrationLanding {...this.props} context={this}/>} />
+      <Route path={'/Driver/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="VehicleDetails"/>} />
+      <Route path={'/Driver/Registration/VehicleDetails'} exact render={() => <VehicleDetails {...this.props} context={this}/>} />
+      <Route path={'/Driver/Registration/OffloadDetails'} exact render={() => <OffloadDetails {...this.props} context={this}/>} />
+      <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
     </Switch>;
   }
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['vehicleTypeDao']),
   ...nextOwnProps
 });
 

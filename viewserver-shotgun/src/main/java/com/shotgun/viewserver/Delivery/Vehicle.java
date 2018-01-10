@@ -8,7 +8,7 @@ public  class Vehicle{
     String make;
     String model;
     String vehicleTypeId;
-
+    Integer numAvailableForOffload;
 
     public Vehicle() {
     }
@@ -28,6 +28,14 @@ public  class Vehicle{
 
     public void setDimensions(Dimensions dimensions) {
         this.dimensions = dimensions;
+    }
+
+    public Integer getNumAvailableForOffload() {
+        return numAvailableForOffload;
+    }
+
+    public void setNumAvailableForOffload(Integer numAvailableForOffload) {
+        this.numAvailableForOffload = numAvailableForOffload;
     }
 
     public String getVehicleTypeId() {

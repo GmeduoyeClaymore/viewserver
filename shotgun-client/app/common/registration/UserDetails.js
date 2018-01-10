@@ -1,12 +1,12 @@
 import React from 'react';
-import { Form, Text, Content, Header, Body, Container, Title} from 'native-base';
+import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Icon, Item, Label} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
 import {merge} from 'lodash';
 
 export default UserDetails  = ({context, history, match, next}) => {
-  const {user = {}} = context.state;
+  const {user} = context.state;
 
   const onChangeText = async (field, value) => {
     context.setState({user: merge(user, {[field]: value})});
@@ -14,24 +14,66 @@ export default UserDetails  = ({context, history, match, next}) => {
 
   return <Container>
     <Header>
-      <Body><Title>Personal Details</Title></Body>
+      <Body><Title>Your Details</Title></Body>
     </Header>
     <Content>
-      <Form style={{display: 'flex', flex: 1}}>
-        <ValidatingInput placeholder="First Name" value={user.firstName} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={UserDetails.validationSchema.firstName} maxLength={30}/>
-        <ValidatingInput placeholder="Last Name" value={user.lastName} onChangeText={(value) => onChangeText('lastName', value)} validationSchema={UserDetails.validationSchema.lastName} maxLength={30}/>
-        <ValidatingInput placeholder="Password" secureTextEntry={true} value={user.password} onChangeText={(value) => onChangeText('password', value)} validationSchema={UserDetails.validationSchema.password} maxLength={30}/>
-        <ValidatingInput placeholder="Email" keyboardType='email-address' value={user.email} onChangeText={(value) => onChangeText('email', value)} validationSchema={UserDetails.validationSchema.email} maxLength={30}/>
-        <ValidatingInput placeholder="Phone Number" keyboardType='phone-pad' value={user.contactNo} onChangeText={(value) => onChangeText('contactNo', value)} validationSchema={UserDetails.validationSchema.contactNo}/>
-        <ValidatingButton onPress={() => history.push(`${match.path}/${next}`)} validationSchema={yup.object(UserDetails.validationSchema)} model={user}>
-          <Text>Next</Text>
-        </ValidatingButton>
-      </Form>
+      <Grid>
+        <Row>
+          <Col>
+            <Item stackedLabel first>
+              <Label>First name</Label>
+              <ValidatingInput bold value={user.firstName} validateOnMount={user.firstName !== undefined} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={validationSchema.firstName} maxLength={30}/>
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Item stackedLabel>
+              <Label>Last name</Label>
+              <ValidatingInput bold value={user.lastName} validateOnMount={user.lastName !== undefined} onChangeText={(value) => onChangeText('lastName', value)} validationSchema={validationSchema.lastName} maxLength={30}/>
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Item stackedLabel>
+              <Label>Phone number</Label>
+              <ValidatingInput bold keyboardType='phone-pad' validateOnMount={user.contactNo !== undefined} value={user.contactNo} onChangeText={(value) => onChangeText('contactNo', value)} validationSchema={validationSchema.contactNo}/>
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Item stackedLabel>
+              <Label>Email</Label>
+              <ValidatingInput bold keyboardType='email-address' validateOnMount={user.email !== undefined} value={user.email} onChangeText={(value) => onChangeText('email', value)} validationSchema={validationSchema.email} maxLength={30}/>
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Item stackedLabel last>
+              <Label>Create an account password</Label>
+              <ValidatingInput bold secureTextEntry={true} value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
+            </Item>
+          </Col>
+        </Row>
+      </Grid>
     </Content>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} style={styles.continueButton} onPress={() => history.push(`${match.path}/${next}`)} validationSchema={yup.object(validationSchema)} model={user}>
+      <Text uppercase={false}>Continue</Text>
+      <Icon name='arrow-forward'/>
+    </ValidatingButton>
   </Container>;
 };
 
-UserDetails.validationSchema = {
+const styles = {
+  continueButton: {
+    marginTop: 50
+  }
+};
+
+const validationSchema = {
   firstName: yup.string().required().max(30),
   lastName: yup.string().required().max(30),
   password: yup.string().required().max(30),

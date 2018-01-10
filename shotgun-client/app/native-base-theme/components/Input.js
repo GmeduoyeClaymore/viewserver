@@ -5,9 +5,13 @@ export default (variables = variable) => {
     '.multiline': {
       height: null,
     },
+    '.bold': {
+      fontWeight: 'bold',
+      fontSize: 18
+    },
     height: variables.inputHeightBase,
     color: variables.inputColor,
-    paddingLeft: 5,
+    paddingLeft: 0,
     paddingRight: 5,
     flex: 1,
     fontSize: variables.inputFontSize,

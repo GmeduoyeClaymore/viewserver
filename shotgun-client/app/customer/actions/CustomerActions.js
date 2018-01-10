@@ -1,9 +1,9 @@
 import {invokeDaoCommand} from 'common/dao';
 import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderDao from 'common/dao/OrderDao';
-import CustomerDao from 'customer/data/CustomerDao';
-import PaymentDao from 'customer/data/PaymentDao';
-import DeliveryAddressDao from 'customer/data/DeliveryAddressDao';
+import CustomerDao from 'customer/dao/CustomerDao';
+import PaymentDao from 'customer/dao/PaymentDao';
+import DeliveryAddressDao from 'customer/dao/DeliveryAddressDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import UserDao from 'common/dao/UserDao';
 
