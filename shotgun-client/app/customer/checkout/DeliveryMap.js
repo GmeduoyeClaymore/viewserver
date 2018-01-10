@@ -8,6 +8,7 @@ import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
 import PlacesInput from 'common/components/maps/PlacesInput';
+import PlacesLookupControl from 'common/components/maps/PlacesLookupControl';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from '../../common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
@@ -104,9 +105,10 @@ class DeliveryMap extends Component {
         </MapView.Marker> : null}
       </MapView>
 
-      {showDestinationInput ? <PlacesInput client={client} ref={c => {this.destinationInput = c;}} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
+      {showDestinationInput ?  <PlacesLookupControl client={client} addressLabel="Drop-off Location" OnAddressSeleted={details => onLocationSelect('destination', details)}/> : null}
       <PlacesInput client={client} ref={c => {this.originInput = c;}} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
       {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text>Done</Text></Button> : null}
+     
     </Container>;
   }
 }

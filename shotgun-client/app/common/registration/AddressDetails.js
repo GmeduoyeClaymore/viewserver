@@ -44,6 +44,7 @@ export default AddressDetails  = ({context, history, match, client}) => {
       </ValidatingButton>
     </Form>
     <PlacesInput ref={c => {this.addressInput = c;}} client={client} onSelect={onLocationSelect} value={deliveryAddress.line1} style={styles.addressInput}  placeholder='Search for your home address'/>
+
   </Container>;
 };
 
