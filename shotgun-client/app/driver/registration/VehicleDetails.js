@@ -1,87 +1,94 @@
 import React from 'react';
-import { Form, Text, Content, Header, Body, Container, Title, Item, Label} from 'native-base';
+import {Input, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Icon, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
 import ErrorRegion from 'common/components/ErrorRegion';
-import { withRouter } from 'react-router';
-import { debounce } from 'lodash';
+import {withRouter} from 'react-router';
+import shotgun from 'native-base-theme/variables/shotgun';
 
-
-export const printDimensions = (vehicle) =>{
-  if (!vehicle || !vehicle.dimensions){
-    return null;
-  }
+const VehicleDetails  = ({context, history, client}) => {
+  const {vehicle = {}, errors} = context.state;
   const {dimensions} = vehicle;
-  return `${dimensions.height}  x ${dimensions.width} x ${dimensions.length}`;
-};
 
-export const printWeight = (vehicle) =>{
-  if (!vehicle || !vehicle.dimensions){
-    return null;
-  }
-  const {dimensions} = vehicle;
-  return `${dimensions.weight}kg Max`;
-};
+  const onChangeText = async (field, value) => {
+    context.setState({vehicle: merge(vehicle, {[field]: value})});
+  };
 
-const requestVehicleDetails = (client, context, field, value) => async () => {
-  if (field === 'registrationNumber'){
+  const requestVehicleDetails = async() => {
     try {
-      const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', value);
+      const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
       context.setState({vehicle: vehicleDetails, errors: ''});
     } catch (error){
       context.setState({errors: error});
     }
-  }
-};
+  };
 
-const VehicleDetails  = ({context, history, client}) => {
-  const {vehicle = {}, errors} = context.state;
-
-  const onChangeText = async (field, value) => {
-    context.setState({vehicle: merge(vehicle, {[field]: value})}, debounce(requestVehicleDetails(client, context, field, value), 500) );
+  const printDimensions = () =>{
+    return `${Math.floor(dimensions.height / 1000)}m  x ${Math.floor(dimensions.width / 1000)}m x ${Math.floor(dimensions.length / 1000)}m`;
   };
 
   return <Container>
     <Header>
+      <Left>
+        <Button>
+          <Icon name='arrow-back' onPress={() => history.goBack()}/>
+        </Button>
+      </Left>
       <Body><Title>Vehicle Details</Title></Body>
     </Header>
     <Content>
-      <Form style={{display: 'flex', flex: 1}}>
-        <ErrorRegion errors={errors}>
-          <ValidatingInput placeholder="Registration Number" value={vehicle.registrationNumber} onChangeText={(value) => onChangeText('registrationNumber', value)} validationSchema={VehicleDetails.validationSchema.registrationNumber} maxLength={10}/>
-        </ErrorRegion>
-        <Item fixedLabel>
-          <Label>Make & Model:</Label>
-          <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
-        </Item>
-        <Item fixedLabel>
-          <Label>Colour:</Label>
-          <Text>{vehicle.colour}  </Text>
-        </Item>
-        <Item fixedLabel>
-          <Label>Approx Dimensions:</Label>
-          <Text>{printDimensions(vehicle)}</Text>
-          <Text>{printWeight(vehicle)}</Text>
-        </Item>
-        
-        <ValidatingButton onPress={() => history.push('/Driver/Registration/DriverRegistrationConfirmation')} validationSchema={yup.object(VehicleDetails.validationSchema)} model={vehicle}>
-          <Text>Next</Text>
-        </ValidatingButton>
-      </Form>
+      <Grid>
+        <Row>
+          <Col>
+            <ErrorRegion errors={errors}>
+              <Item stackedLabel first>
+                <Label>Vehicle registration</Label>
+                <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
+              </Item>
+            </ErrorRegion>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ValidatingButton fullWidth padded onPress={() => requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
+          </Col>
+        </Row>
+        {vehicle.make != undefined ? (<Row>
+          <Col>
+            <Row><Item stackedLabel vehicleDetails>
+              <Label>Vehicle model</Label>
+              <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
+            </Item></Row>
+            <Row><Item stackedLabel vehicleDetails>
+              <Label>Vehicle colour</Label>
+              <Text>{vehicle.colour}</Text>
+            </Item></Row>
+            <Row><Item stackedLabel vehicleDetails>
+              <Label>Approx dimensions</Label>
+              <Text>{printDimensions()}</Text>
+              <Text>{`${dimensions.weight}kg Max`}</Text>
+            </Item></Row>
+          </Col>
+        </Row>) : null}
+      </Grid>
     </Content>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Driver/Registration/OffloadDetails')} validationSchema={yup.object(validationSchema)} model={vehicle}>
+      <Text uppercase={false}>Continue</Text>
+      <Icon name='arrow-forward'/>
+    </ValidatingButton>
   </Container>;
 };
 
-VehicleDetails.validationSchema = {
-  registrationNumber: yup.string().required(), //TODO - number plate regex
+const validationSchema = {
+  //TODO - matches some invalid licenses
+  registrationNumber: yup.string().required().matches(/(^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)$/i),
   colour: yup.string().required(),
   make: yup.string().required(),
   model: yup.string().required(),
-  dimensions: yup.object().required(),
-  vehicleTypeId: yup.string().required()
+  dimensions: yup.object().required()
 };
 
 

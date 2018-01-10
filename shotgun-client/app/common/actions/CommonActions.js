@@ -1,7 +1,8 @@
 import {unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
-import VehicleTypeDao from 'common/dao/VehicleTypeDao';
+import CustomerDao from 'customer/dao/CustomerDao';
+import DriverDao from 'driver/dao/DriverDao';
 import {getAllDaos, invokeDaoCommand} from 'common/dao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
@@ -37,6 +38,7 @@ export const getCurrentPosition = () => {
 export const commonServicesRegistrationAction = (client, userId, continueWith) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});
-    register(dispatch, new VehicleTypeDao(client), {userId}, continueWith);
+    registerNakedDao(dispatch, new CustomerDao(client), {userId}, continueWith);
+    registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
 };

@@ -4,6 +4,13 @@ import variable from './../variables/platform';
 
 export default (variables = variable) => {
   const itemTheme = {
+    '.vehicleDetails': {
+      borderWidth: 0,
+      marginTop: 15,
+      'NativeBase.Label': {
+        marginBottom: 5
+      }
+    },
     '.floatingLabel': {
       'NativeBase.Input': {
         height: 60,
@@ -40,7 +47,10 @@ export default (variables = variable) => {
         right: null,
         paddingTop: 5,
         alignSelf: 'flex-start',
-        fontSize: variables.inputFontSize - 2,
+        fontSize: 12,
+      },
+      'NativeBase.Text': {
+        alignSelf: 'flex-start'
       },
       'NativeBase.Icon': {
         marginTop: 36,
@@ -51,6 +61,7 @@ export default (variables = variable) => {
         width: Platform.OS === 'ios' ? null : variables.deviceWidth - 25,
         fontSize: variables.inputFontSize,
       },
+      marginLeft: variables.contentPadding,
       flexDirection: null,
     },
     '.inlineLabel': {
@@ -165,7 +176,7 @@ export default (variables = variable) => {
         borderLeftWidth: 0,
         borderColor: variables.inputSuccessBorderColor,
       },
-      borderColor: variables.inputSuccessBorderColor,
+    /*  borderColor: variables.inputSuccessBorderColor,*/
     },
 
     '.error': {
@@ -189,7 +200,7 @@ export default (variables = variable) => {
         borderLeftWidth: 0,
         borderColor: variables.inputErrorBorderColor,
       },
-      borderColor: variables.inputErrorBorderColor,
+    /*  borderColor: variables.inputErrorBorderColor,*/
     },
     '.disabled': {
       'NativeBase.Icon': {
@@ -199,16 +210,25 @@ export default (variables = variable) => {
         color: '#384850',
       },
     },
+    '.last': {
+      marginLeft: 0,
+      paddingLeft: variables.contentPadding,
+    },
+    '.first': {
+      marginLeft: 0,
+      paddingLeft: variables.contentPadding,
+      borderTopWidth: 1
+    },
 
-    borderWidth: variables.borderWidth * 2,
+    borderBottomWidth: 0.5,
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderLeftWidth: 0,
-    borderColor: variables.inputBorderColor,
+    borderColor: variables.hairline,
     backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 2,
+    marginLeft: 0,
   };
 
   return itemTheme;

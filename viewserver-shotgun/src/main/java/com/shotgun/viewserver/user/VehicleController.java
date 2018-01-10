@@ -2,7 +2,6 @@ package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.Vehicle;
-import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -39,6 +38,7 @@ public class VehicleController {
             row.setString("model", vehicle.getModel());
             row.setString("dimensions", ControllerUtils.toString(vehicle.getDimensions()));
             row.setString("vehicleTypeId", vehicle.getVehicleTypeId());
+            row.setInt("numAvailableForOffload", vehicle.getNumAvailableForOffload());
         };
 
         if(vehicle.getVehicleId() != null){

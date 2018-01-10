@@ -30,7 +30,7 @@ class DriverOrderRequestDetail extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={12.00}/>
-        <Button fullWidth style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></Button>
+        <Button fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></Button>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
       </Content>
     </Container>;
@@ -39,8 +39,6 @@ class DriverOrderRequestDetail extends Component{
 
 const styles = {
   acceptButton: {
-    marginLeft: 25,
-    marginRight: 25,
     marginTop: 20,
     marginBottom: 10
   }

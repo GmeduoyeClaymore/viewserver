@@ -15,6 +15,9 @@ export default (variables = variable) => {
     },
     '.grey': {
       color: variables.coolGrey
+    },
+    '.subTitle': {
+      color: variables.brandLight
     }
   };
 

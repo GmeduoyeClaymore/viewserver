@@ -206,7 +206,7 @@ export default {
   iconHeaderSize: platform === 'ios' ? 33 : 24,
 
   // InputGroup
-  inputFontSize: 17,
+  inputFontSize: 14,
   inputBorderColor: '#D9D5DC',
   inputSuccessBorderColor: '#2b8339',
   inputErrorBorderColor: '#ed2f2f',
@@ -215,11 +215,11 @@ export default {
     return this.textColor;
   },
   get inputColorPlaceholder() {
-    return '#575757';
+    return colors.brandLight;
   },
 
   inputGroupMarginBottom: 10,
-  inputHeightBase: 50,
+  inputHeightBase: 40,
   inputPaddingLeft: 5,
 
   get inputPaddingLeftIcon() {

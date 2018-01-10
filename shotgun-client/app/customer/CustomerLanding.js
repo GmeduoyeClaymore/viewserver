@@ -56,7 +56,7 @@ class CustomerLanding extends Component {
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['vehicleTypeDao', 'paymentDao', 'userDao']),
+  busy: isAnyLoading(state, ['paymentDao', 'userDao']),
   user: getDaoState(state, ['user'], 'userDao'),
   ...nextOwnProps
 });

@@ -14,7 +14,7 @@ const ProductSelect = ({context, history}) => {
     <Content padded contentContainerStyle={styles.container}>
       <View style={styles.titleView}>
         <H1 style={styles.h1}>Start a new job</H1>
-        <Text style={styles.subTitle}>What kind of service do you need?</Text>
+        <Text subTitle>What kind of service do you need?</Text>
       </View>
       <View style={styles.productSelectView}>
         <Grid>
@@ -52,9 +52,6 @@ const styles = {
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: 30
-  },
-  subTitle: {
-    color: shotgun.brandLight
   },
   productSelectTextRow: {
     justifyContent: 'center'

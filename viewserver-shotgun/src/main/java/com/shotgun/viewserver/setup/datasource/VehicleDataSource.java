@@ -34,7 +34,8 @@ public class
                                         new Column("colour", "colour", ColumnType.String),
                                         new Column("make", "make", ColumnType.String),
                                         new Column("model", "model", ColumnType.String),
-                                        new Column("dimensions", "model", ColumnType.String),
+                                        new Column("dimensions", "dimensions", ColumnType.String),
+                                        new Column("numAvailableForOffload", "numAvailableForOffload", ColumnType.Int),
                                         new Column("vehicleTypeId", "vehicleTypeId", ColumnType.String)
                                 ))
                                 .withKeyColumns("vehicleId")

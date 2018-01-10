@@ -9,10 +9,10 @@ export const INITIAL_STATE = {
   },
   vehicle: {
     registrationNumber: undefined,
-    colour: 'fromAPI',
-    make: 'fromAPI',
-    model: 'fromAPI',
-    vehicleTypeId: undefined
+    colour: undefined,
+    make: undefined,
+    model: undefined,
+    numAvailableForOffload: undefined
   }
 };
 /*
@@ -30,7 +30,7 @@ export const INITIAL_STATE = {
     colour: 'fromAPI',
     make: 'fromAPI',
     model: 'fromAPI',
-    vehicleTypeId: '30257d56-b35b-48ee-a40f-bb102c077ab9'
+    numAvailableForOffload: 0
   }
 };*/
 

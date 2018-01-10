@@ -3,6 +3,7 @@ package com.shotgun.viewserver.delivery;
 import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import org.apache.commons.lang.WordUtils;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -51,16 +52,16 @@ public class VehicleDetailsController {
 
         Dimensions dim = new Dimensions(height,width,length,weight);
         String reg = (String)get(vehicleRegistration,"Vrm");
-        String make = (String)get(vehicleRegistration,"Make");
-        String model = (String)get(vehicleRegistration,"Model");
-        String color = (String)get(vehicleRegistration,"Colour");
+        String make = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Make"));
+        String model = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Model"));
+        String color = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Colour"));
         return new Vehicle(dim,make,model,vehicleTypeId,color,reg);
 
     }
 
     private String getJSON(VehicleDetailsQuery query) {
         if(apiKey.isMock()){
-            if(!query.getRegNo().contains("A")){
+            if(!query.getRegNo().toUpperCase().contains("A")){
                 throw new RuntimeException("Limited API reg no should contain the letter A");
             }
             URL resource = getClass().getClassLoader().getResource("mock//vehicleDetails.json");

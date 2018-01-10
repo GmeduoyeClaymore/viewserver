@@ -13,7 +13,17 @@ export default (variables = variable) => {
       borderWidth: 0
     },
 
-    '.primary': {
+    '.light': {
+      backgroundColor: variables.brandPrimary,
+      borderWidth: 1,
+      borderColor: variables.silver,
+      'NativeBase.Text': {
+        fontWeight: 'normal'
+      }
+    },
+
+
+   /* '.primary': {
       '.bordered': {
         'NativeBase.Text': {
           color: variables.btnPrimaryBg,
@@ -26,7 +36,7 @@ export default (variables = variable) => {
         },
       },
       backgroundColor: variables.btnPrimaryBg,
-    },
+    },*/
 
     '.success': {
       '.bordered': {
@@ -87,10 +97,10 @@ export default (variables = variable) => {
       backgroundColor: variables.darkGreen,
     },
 
-    '.block': {
+ /*   '.block': {
       justifyContent: 'center',
       alignSelf: 'stretch',
-    },
+    },*/
 
     '.transparent': {
       backgroundColor: 'transparent',
@@ -245,6 +255,16 @@ export default (variables = variable) => {
       alignSelf: 'stretch',
       justifyContent: 'center'
     },
+    '.padded': {
+      marginLeft: variables.contentPadding,
+      marginRight: variables.contentPadding
+    },
+
+    '.paddedBottom': {
+      marginLeft: variables.contentPadding,
+      marginRight: variables.contentPadding,
+      marginBottom: variables.contentPadding
+    },
     '.large': {
       width: '100%',
       aspectRatio: 1.5,
@@ -258,10 +278,6 @@ export default (variables = variable) => {
         fontSize: 50
       }
     },
-    '.padded': {
-      marginLeft: variables.contentPadding,
-      marginRight: variables.contentPadding
-    },
     '.personButton': {
       width: '100%',
       aspectRatio: 2,
@@ -269,7 +285,7 @@ export default (variables = variable) => {
       justifyContent: 'center',
       borderColor: variables.silver,
       borderWidth: 1,
-      borderRadius: 8,
+      borderRadius: 4,
       backgroundColor: variables.brandPrimary
     },
     '.photoButton': {
