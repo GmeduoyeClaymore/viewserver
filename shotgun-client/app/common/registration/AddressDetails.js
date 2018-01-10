@@ -5,14 +5,14 @@ import {merge} from 'lodash';
 import ValidatingInput from '../components/ValidatingInput';
 import ValidatingButton from '../components/ValidatingButton';
 import PlacesInput from 'common/components/maps/PlacesInput';
-import MapService from 'common/services/MapService';
+import MapUtils from 'common/services/MapUtils';
 
 
 export default AddressDetails  = ({context, history, match, client}) => {
   const {deliveryAddress = {}} = context.state;
 
   const onLocationSelect = (details) => {
-    const newLocation = MapService.parseGooglePlacesData(details);
+    const newLocation = MapUtils.parseGooglePlacesData(details);
     context.setState({deliveryAddress: newLocation});
   };
 

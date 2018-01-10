@@ -2,18 +2,15 @@ import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
 import Products from 'common/constants/Products';
 import {connect} from 'react-redux';
-import {Container, Button, Text} from 'native-base';
-import {merge, assign} from 'lodash';
+import {Container, Button, Text, Input, Content} from 'native-base';
 import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
-import PlacesInput from 'common/components/maps/PlacesInput';
-import PlacesLookupControl from 'common/components/maps/PlacesLookupControl';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from '../../common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import MapService from 'common/services/MapService';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
+import MapUtils from 'common/services/MapUtils';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -35,11 +32,33 @@ class DeliveryMap extends Component {
     super(props);
   }
 
+  clearLocation(type){
+    context.setState({[type]: EMPTY_LOCATION});
+  }
+
+  updateMapRegion({latitude, longitude}){
+    setTimeout(() => this.map.animateToCoordinate({latitude, longitude}, 1), 50);
+    return null;
+  }
+
+  onAddressSelected(addressKey){
+    return (details) => onLocationSelect(addressKey, details);
+  }
+
+
+  doAddressLookup(addressKey, addressLabel){
+    const {history} = this.props;
+    history.push('/Customer/Checkout/AddressLookup', {addressKey, addressLabel});
+  }
+
+
+  renderLookupControl(key, label, addressText){
+    return <Input onFocus={() => this.doAddressLookup(key, label)} value={addressText} placeholder={label} editable={true}/>;
+  }
 
   render() {
     const {history, context, client, busy, position} = this.props;
-    const {delivery, orderItem} = context.state;
-    const {origin, destination} = delivery;
+    const {orderItem, destination = {}, origin = {}} = context.state;
 
     const region = {
       latitude: position.latitude,
@@ -51,41 +70,9 @@ class DeliveryMap extends Component {
     const showDirections = origin.googlePlaceId !== undefined && destination.googlePlaceId !== undefined;
     const showDoneButton = origin.googlePlaceId !== undefined && (orderItem.productId == Products.DISPOSAL || destination.googlePlaceId);
     const showDestinationInput = orderItem.productId == Products.DELIVERY;
-
-    const onLocationSelect = (type, details) => {
-      const {delivery} = this.props.context.state;
-      const newLocation = MapService.parseGooglePlacesData(details);
-      Logger.info(`Setting location to ${JSON.stringify(newLocation)}`);
-
-      updateMapRegion(newLocation.latitude, newLocation.longitude);
-      context.setState({delivery: merge({}, delivery, {[type]: newLocation})});
-    };
-
-    const onChangeText = (type, text) => {
-      if (text == undefined || text == '') {
-        clearLocation(type);
-      }
-    };
-
-    const clearLocation = (type) => {
-      context.setState({delivery: assign({}, delivery, {[type]: EMPTY_LOCATION})});
-    };
-
-    const updateMapRegion = (latitude, longitude) => {
-      this.map.animateToCoordinate({latitude, longitude}, 1);
-    };
-
-    const closeInputs = () => {
-      this.originInput.triggerBlur();
-
-      if (showDestinationInput) {
-        this.destinationInput.triggerBlur();
-      }
-    };
-
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
 
-      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={closeInputs}>
+      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region}>
         {showDirections ? <MapViewDirections client={client} origin={{latitude: origin.latitude, longitude: origin.longitude}} destination={{latitude: destination.latitude, longitude: destination.longitude}} strokeWidth={3} onReady={(result) => {
           this.map.fitToCoordinates(result.coordinates,  {
             edgePadding: {
@@ -105,10 +92,12 @@ class DeliveryMap extends Component {
         </MapView.Marker> : null}
       </MapView>
 
-      {showDestinationInput ?  <PlacesLookupControl client={client} addressLabel="Drop-off Location" OnAddressSeleted={details => onLocationSelect('destination', details)}/> : null}
-      <PlacesInput client={client} ref={c => {this.originInput = c;}} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
+      <Content height={20}>
+      {showDestinationInput || true ? this.renderLookupControl('destination', 'Drop-off location', MapUtils.getAddressText(destination))  : null}
+     {this.renderLookupControl('origin', 'Pick-up Location', MapUtils.getAddressText(origin))}
       {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text uppercase={false}>Done</Text></Button> : null}
-     
+      </Content>
+      {this.updateMapRegion(position)}
     </Container>;
   }
 }
