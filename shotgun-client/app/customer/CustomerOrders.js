@@ -30,7 +30,7 @@ class CustomerOrders extends Component{
     const reportOptions = {
       isCompleted,
       columnsToSort: [{ name: 'eta', direction: 'asc' }],
-      reportId: 'customerOrderSummary'}
+      reportId: 'customerOrderSummary'};
 
     const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
     const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;

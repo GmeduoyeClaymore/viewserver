@@ -1,6 +1,23 @@
 import Logger from 'common/Logger';
 
-export default class MapService {
+export default class MapUtils {
+  static getAddressText(address){
+      const result = [];
+      if (address.flatNumber){
+          result.push('Fl' + address.flatNumber);
+      }
+      if (address.line1){
+          result.push(address.line1);
+      }
+      if (address.line2){
+          result.push(address.line2);
+      }
+      if (address.postCode){
+          result.push(address.postCode);
+      }
+      return result.join(',');
+  }
+
   static parseGooglePlacesData(details){
     try {
       const {name, place_id, geometry, address_components} = details;

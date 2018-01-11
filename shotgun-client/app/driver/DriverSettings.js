@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Text, Content } from 'native-base';
-import PrincipalService from '../common/services/PrincipalService';
+import PrincipalService from 'common/services/PrincipalService';
 
 const DriverSettings = ({history}) => {
   const signOut = async() => {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Input, Item, Icon} from 'native-base';
-import ValidationService from '../../common/services/ValidationService';
+import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
 
 export default class ValidatingInput extends Component {

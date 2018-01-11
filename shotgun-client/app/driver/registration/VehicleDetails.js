@@ -1,5 +1,5 @@
 import React from 'react';
-import {Input, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Icon, Grid, Row, Col} from 'native-base';
+import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Icon, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
@@ -7,7 +7,6 @@ import {merge} from 'lodash';
 import {connect} from 'react-redux';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {withRouter} from 'react-router';
-import shotgun from 'native-base-theme/variables/shotgun';
 
 const VehicleDetails  = ({context, history, client}) => {
   const {vehicle = {}, errors} = context.state;

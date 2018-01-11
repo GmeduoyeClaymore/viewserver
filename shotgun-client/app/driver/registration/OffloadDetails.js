@@ -1,15 +1,13 @@
 import React from 'react';
-import {Input, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Icon, Grid, Row, Col} from 'native-base';
+import {Text, Content, Header, Body, Container, Title, Left, Button, Icon, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
-import ErrorRegion from 'common/components/ErrorRegion';
 import {withRouter} from 'react-router';
 import shotgun from 'native-base-theme/variables/shotgun';
 import LoadingScreen from 'common/components/LoadingScreen';
-import {registerDriver, driverServicesRegistrationAction} from 'driver/actions/DriverActions';
+import {registerDriver} from 'driver/actions/DriverActions';
 import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
 
 const OffloadDetails  = ({context, history, busy, dispatch}) => {

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import { Form, Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
+import {Text, Content, Header, Left, Body, Container, Button, Icon, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
-import uuidv4 from 'uuid/v4';
-import {registerCustomer, loadCustomerRegistrationServices} from 'customer/actions/CustomerActions';
+import {registerCustomer} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';

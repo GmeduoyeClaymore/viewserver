@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {View, Text} from 'react-native';
-import PagingListView from '../common/components/PagingListView';
+import PagingListView from 'common/components/PagingListView';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
 import {getDaoState} from 'common/dao';

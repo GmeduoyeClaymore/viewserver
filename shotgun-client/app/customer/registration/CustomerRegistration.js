@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import CustomerRegistrationLanding from 'customer/registration/CustomerRegistrationLanding';
 import UserDetails from 'common/registration/UserDetails';
 import PaymentCardDetails from './PaymentCardDetails';
-import AddressDetails from 'common/registration/AddressDetails';
+import AddressDetails from 'customer/registration/AddressDetails';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';

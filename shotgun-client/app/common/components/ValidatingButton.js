@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Button} from 'native-base';
 import {PropTypes} from 'prop-types';
-import ValidationService from '../../common/services/ValidationService';
+import ValidationService from 'common/services/ValidationService';
 
 
 export default class ValidatingButton extends Component {

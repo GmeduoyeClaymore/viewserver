@@ -2,17 +2,17 @@ import React from 'react';
 import {Text, Header, Left, Body, Container, Button, Icon, Title, Content, Grid, Row, Col, Item, Label, Input} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
-import ValidatingInput from '../components/ValidatingInput';
-import ValidatingButton from '../components/ValidatingButton';
+import ValidatingInput from 'common/components/ValidatingInput';
+import ValidatingButton from 'common/components/ValidatingButton';
 import PlacesInput from 'common/components/maps/PlacesInput';
-import MapService from 'common/services/MapService';
+import MapUtils from 'common/services/MapUtils';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 export default AddressDetails  = ({context, history, client}) => {
   const {deliveryAddress = {}} = context.state;
 
   const onLocationSelect = (details) => {
-    const newLocation = MapService.parseGooglePlacesData(details);
+    const newLocation = MapUtils.parseGooglePlacesData(details);
     context.setState({deliveryAddress: newLocation});
   };
 
@@ -77,7 +77,7 @@ export default AddressDetails  = ({context, history, client}) => {
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('Customer/Registration/PaymentCardDetails')} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Customer/Registration/PaymentCardDetails')} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward'/>
     </ValidatingButton>
