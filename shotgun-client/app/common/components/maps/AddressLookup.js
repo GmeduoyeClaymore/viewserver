@@ -4,7 +4,7 @@ import moment from 'moment';
 import {Text, Button, Content, Header, Left, Body, Container, Icon, Title, Input} from 'native-base';
 import {connect} from 'react-redux';
 import {getDaoState} from 'common/dao';
-import MapUtils from 'common/services/MapUtils';
+import {getAddressText, parseGooglePlacesData} from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {debounce} from 'lodash';
 const MAX_RECENT_ADDRESSES = 10;
@@ -52,7 +52,7 @@ class AddressLookup extends Component{
 
     toSummary(address){
         return {
-            text: MapUtils.getAddressText(address),
+            text: getAddressText(address),
             city: this.getCity(address),
             address: {...address, googlePlaceId: address.googlePlacesId}
         };
@@ -84,7 +84,7 @@ class AddressLookup extends Component{
                 language: 'en'
               }).timeoutWithError(5000, 'Place request timed out');
 
-            this.OnAddressSeleted(MapUtils.parseGooglePlacesData(res.result));
+            this.OnAddressSeleted(parseGooglePlacesData(res.result));
         } catch (error){
             this.setState({error});
         }
@@ -102,7 +102,7 @@ class AddressLookup extends Component{
     }
 
     buildRowsFromResults(results){
-        return results.map(res => this.toSummary(MapUtils.parseGooglePlacesData(res)));
+        return results.map(res => this.toSummary(parseGooglePlacesData(res)));
     }
 
     async searchAutoCompleteSuggestions(value){

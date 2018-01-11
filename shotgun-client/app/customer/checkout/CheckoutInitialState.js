@@ -1,6 +1,6 @@
 export const INITIAL_STATE = {
   orderItem: {
-    productId: undefined,
+    productId: 'PROD_Delivery',
     notes: undefined,
     imageUrl: undefined,
     imageData: undefined

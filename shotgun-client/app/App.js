@@ -54,9 +54,9 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    this.userId = undefined;
+    //this.userId = undefined;
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 
@@ -92,8 +92,7 @@ export default class App extends React.Component {
               <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
               <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
               <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
-              <Redirect to="/Driver/Registration"/>
-             {/* <Redirect to={App.INITIAL_ROOT_NAME}/>*/}
+              <Redirect to={App.INITIAL_ROOT_NAME}/>
             </Switch>
           </StyleProvider>
         </AndroidBackButton>

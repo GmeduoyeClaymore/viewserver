@@ -2,25 +2,24 @@ import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
 import Products from 'common/constants/Products';
 import {connect} from 'react-redux';
-import {Container, Button, Text, Input, Content} from 'native-base';
+import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import LoadingScreen from 'common/components/LoadingScreen';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
-import MapUtils from 'common/services/MapUtils';
+import shotgun from 'native-base-theme/variables/shotgun';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const EMPTY_LOCATION =  {
+const EMPTY_LOCATION = {
   flatNumber: undefined,
   line1: undefined,
   city: undefined,
   postCode: undefined,
-  googlePlaceId: undefined,
   latitude: undefined,
   longitude: undefined
 };
@@ -31,33 +30,30 @@ class DeliveryMap extends Component {
     super(props);
   }
 
-  clearLocation(type){
+  clearLocation(type) {
     context.setState({[type]: EMPTY_LOCATION});
   }
 
-  updateMapRegion({latitude, longitude}){
+  updateMapRegion({latitude, longitude}) {
     setTimeout(() => this.map.animateToCoordinate({latitude, longitude}, 1), 50);
     return null;
   }
 
-  onAddressSelected(addressKey){
+  onAddressSelected(addressKey) {
     return (details) => onLocationSelect(addressKey, details);
   }
 
-
-  doAddressLookup(addressKey, addressLabel){
+  doAddressLookup(addressKey, addressLabel) {
     const {history} = this.props;
     history.push('/Customer/Checkout/AddressLookup', {addressKey, addressLabel});
   }
-
-
-  renderLookupControl(key, label, addressText){
-    return <Input onFocus={() => this.doAddressLookup(key, label)} value={addressText} placeholder={label} editable={true}/>;
-  }
-
+  
   render() {
     const {history, context, client, busy, position} = this.props;
     const {orderItem, destination = {}, origin = {}} = context.state;
+    const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
+    const disableDoneButton = origin.line1 == undefined || (orderItem.productId == Products.DELIVERY && destination.line1 == undefined);
+    const isDelivery = orderItem.productId == Products.DELIVERY;
 
     const region = {
       latitude: position.latitude,
@@ -66,85 +62,76 @@ class DeliveryMap extends Component {
       longitudeDelta: LONGITUDE_DELTA
     };
 
-    const showDirections = origin.googlePlaceId !== undefined && destination.googlePlaceId !== undefined;
-    const showDoneButton = origin.googlePlaceId !== undefined && (orderItem.productId == Products.DISPOSAL || destination.googlePlaceId);
-    const showDestinationInput = orderItem.productId == Products.DELIVERY;
+    const mapFitCoordinates = {
+      edgePadding: {
+        right: Math.round(width / 20) + 100,
+        bottom: Math.round(height / 20),
+        left: Math.round(width / 20) + 100,
+        top: Math.round(height / 20) + 300,
+      }
+    };
+
+    const getLocationText = (location, place, placeholder) =>  {
+      const style = location.line1 ? styles.locationText : styles.locationTextPlaceholder;
+      const text = location.line1 ? `${location.line1}, ${location.postCode}` : placeholder;
+      return <Text style={style} onPress={() => this.doAddressLookup(place, placeholder)}>{text}</Text>;
+    };
+
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
+      <Grid>
+        <Row size={85}>
+          <MapView ref={c => {this.map = c;}} style={{flex: 1}} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region}>
+            {showDirections ?
+              <MapViewDirections client={client} origin={{latitude: origin.latitude, longitude: origin.longitude}}
+                                 destination={{latitude: destination.latitude, longitude: destination.longitude}}
+                                 strokeWidth={3} onReady={(result) => {this.map.fitToCoordinates(result.coordinates, mapFitCoordinates);}}/> : null}
 
-      <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region}>
-        {showDirections ? <MapViewDirections client={client} origin={{latitude: origin.latitude, longitude: origin.longitude}} destination={{latitude: destination.latitude, longitude: destination.longitude}} strokeWidth={3} onReady={(result) => {
-          this.map.fitToCoordinates(result.coordinates,  {
-            edgePadding: {
-              right: Math.round(width / 20) + 100,
-              bottom: Math.round(height / 20),
-              left: Math.round(width / 20) + 100,
-              top: Math.round(height / 20) + 300,
-            }});
-        }}/> : null}
-
-        {origin.googlePlaceId ? <MapView.Marker coordinate={{...origin}}>
-          <AddressMarker address={origin.line1} />
-        </MapView.Marker> : null}
-
-        {destination.googlePlaceId ? <MapView.Marker coordinate={{...destination}}>
-          <AddressMarker address={destination.line1} />
-        </MapView.Marker> : null}
-      </MapView>
-
-      <Content height={20}>
-      {showDestinationInput || true ? this.renderLookupControl('destination', 'Drop-off location', MapUtils.getAddressText(destination))  : null}
-     {this.renderLookupControl('origin', 'Pick-up Location', MapUtils.getAddressText(origin))}
-      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text uppercase={false}>Done</Text></Button> : null}
-      </Content>
+            {origin.line1 ? <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker> : null}
+            {destination.line1 ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
+          </MapView>
+        </Row>
+      <Row size={15} style={styles.inputRow}>
+          <Col>
+            <Row>
+              <Icon name="pin" paddedIcon originPin/>
+              {getLocationText(origin, 'origin', 'Enter pick-up location')}
+            </Row>
+            {isDelivery ? <Row>
+              <Icon name="pin" paddedIcon/>
+              {getLocationText(destination, 'destination', 'Enter drop-off location')}
+            </Row> : null}
+          </Col>
+        </Row>
+      </Grid>
+      <Button fullWidth paddedBottom iconRight onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} disabled={disableDoneButton}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='arrow-forward'/>
+      </Button>
       {this.updateMapRegion(position)}
     </Container>;
   }
 }
 
 const styles = {
-  map: {
-    flex: 1
+  locationTextPlaceholder: {
+    color: shotgun.silver
   },
-  doneButton: {
-    flex: 1,
-    marginBottom: 2,
-    marginLeft: 20,
-    marginRight: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
+  locationText: {
+
   },
-  originInput: {
-    container: {
-      flex: 1,
-      height: 200,
-      margin: 2,
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0
-    }
-  },
-  destinationInput: {
-    container: {
-      flex: 1,
-      height: 200,
-      margin: 2,
-      position: 'absolute',
-      top: 50,
-      left: 0,
-      right: 0
-    }
+  inputRow: {
+    padding: shotgun.contentPadding,
+    shadowOffset: {width: 10, height: 10, },
+    shadowColor: 'black',
+    shadowOpacity: 1.0/*,
+    elevation: 3*/
   }
 };
 
 const mapStateToProps = (state, initialProps) => ({
   state,
   position: getDaoState(state, ['position'], 'userDao'),
-  busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition'}),
+  busy: isAnyOperationPending(state, {userDao: 'getCurrentPosition'}),
   ...initialProps
 });
 
