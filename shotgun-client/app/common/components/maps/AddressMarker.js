@@ -1,11 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 export default AddressMarker = ({address}) => {
   return (
     <View style={styles.container}>
       <View style={styles.bubble}>
-        <Text numberOfLines={1} style={styles.amount}>{address}</Text>
+        <Text numberOfLines={1} style={styles.address}>{address}</Text>
       </View>
       <View style={styles.arrowBorder} />
       <View style={styles.arrow} />
@@ -16,28 +17,29 @@ export default AddressMarker = ({address}) => {
 const styles = {
   container: {
     flexDirection: 'column',
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-start'
   },
   bubble: {
     flex: 0,
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    backgroundColor: '#FF5A5F',
+    backgroundColor: shotgun.brandSecondary,
     padding: 2,
     borderRadius: 3,
-    borderColor: '#D23F44',
+    borderColor: shotgun.brandSecondary,
     borderWidth: 0.5,
     width: 75
   },
-  amount: {
-    color: '#FFFFFF',
-    fontSize: 10
+  address: {
+    color: shotgun.brandDark,
+    fontSize: 10,
+    fontWeight: 'bold'
   },
   arrow: {
     backgroundColor: 'transparent',
     borderWidth: 4,
     borderColor: 'transparent',
-    borderTopColor: '#FF5A5F',
+    borderTopColor: shotgun.brandSecondary,
     alignSelf: 'center',
     marginTop: -9,
   },
@@ -45,7 +47,7 @@ const styles = {
     backgroundColor: 'transparent',
     borderWidth: 4,
     borderColor: 'transparent',
-    borderTopColor: '#D23F44',
+    borderTopColor: shotgun.brandSecondary,
     alignSelf: 'center',
     marginTop: -0.5,
   },

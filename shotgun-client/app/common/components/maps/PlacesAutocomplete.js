@@ -23,7 +23,7 @@ const defaultStyles = {
   },
   textInputContainer: {
     backgroundColor: '#C9C9CE',
-    height: 44,
+    height: 40,
     borderTopColor: '#7e7e7e',
     borderBottomColor: '#b5b5b5',
     borderTopWidth: 1 / PixelRatio.get(),
@@ -32,16 +32,11 @@ const defaultStyles = {
   },
   textInput: {
     backgroundColor: '#FFFFFF',
-    height: 28,
-    borderRadius: 5,
-    paddingTop: 4.5,
-    paddingBottom: 4.5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginTop: 7.5,
-    marginLeft: 8,
-    marginRight: 8,
-    fontSize: 15,
+    height: 40,
+    paddingLeft: 0,
+    paddingRight: 5,
+    lineHeight: 24,
+    fontSize: 18,
     flex: 1
   },
   poweredContainer: {

@@ -10,28 +10,22 @@ import {isAnyOperationPending, getOperationError} from 'common/dao';
 class PaymentCardDetails extends Component {
   constructor(props) {
     super(props);
-    this.onCardDetailsChange.bind(this);
 
     this.state = {
       valid: false
     };
   }
 
-  onCardDetailsChange(details){
-    if (details.valid == true){
-      const {number, expiry, cvc} = details.values;
-      const expiryTokens = expiry.split('/');
-      this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
-    }
-  }
-
   render(){
-    const {history, busy, errors, context, dispatch, client} = this.props;
+    const {history, busy, errors, context, dispatch} = this.props;
     const {valid} = this.state;
 
-    const saveCardDetails = async() => {
-      //TODO - set busy when calling stripe
-      await createServicesThenRegister();
+    const onCardDetailsChange = (details) => {
+      if (details.valid == true){
+        const {number, expiry, cvc} = details.values;
+        const expiryTokens = expiry.split('/');
+        this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
+      }
     };
 
     const register = async() => {
@@ -39,38 +33,32 @@ class PaymentCardDetails extends Component {
       dispatch(registerCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
     };
 
-    const createServicesThenRegister = async() => {
-      //TODO - dont like that we have to register stuff here
-      dispatch(loadCustomerRegistrationServices(client, uuidv4(), register));
-    };
-
     return <Container>
-      <Header>
+      <Header withButton>
         <Left>
           <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()}/>
           </Button>
         </Left>
-        <Body><Title>Payment Card Details</Title></Body>
+        <Body><Title>Payment Details</Title></Body>
       </Header>
       <Content>
         <ErrorRegion errors={errors}>
-          <Form style={{display: 'flex', flex: 1}}>
-            <LiteCreditCardInput autoFocus={true} onChange={(details) => this.onCardDetailsChange(details)}/>
-            <Button onPress={() => saveCardDetails()} disabled={!valid || busy}>
-              <Text>Next</Text>
-            </Button>
-          </Form>
+          <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
         </ErrorRegion>
       </Content>
+      <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid || busy}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='arrow-forward'/>
+      </Button>
     </Container>;
   }
 }
 
 const mapStateToProps = (state, initialProps) => ({
+  ...initialProps,
   errors: getOperationError(state, 'customerDao', 'addCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'addCustomer'}),
-  ...initialProps
+  busy: isAnyOperationPending(state, { customerDao: 'addCustomer'})
 });
 
 export default connect(mapStateToProps)(PaymentCardDetails);

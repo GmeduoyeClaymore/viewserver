@@ -2,14 +2,14 @@ import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
 import Products from 'common/constants/Products';
 import {connect} from 'react-redux';
-import {Container, Button, Text} from 'native-base';
+import {Container, Button, Text, Icon} from 'native-base';
 import {merge, assign} from 'lodash';
 import MapView from 'react-native-maps';
 import Logger from 'common/Logger';
 import LoadingScreen from 'common/components/LoadingScreen';
 import PlacesInput from 'common/components/maps/PlacesInput';
 import AddressMarker from 'common/components/maps/AddressMarker';
-import MapViewDirections from '../../common/components/maps/MapViewDirections';
+import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import MapService from 'common/services/MapService';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
@@ -83,7 +83,6 @@ class DeliveryMap extends Component {
     };
 
     return busy ? <LoadingScreen text="Loading Map"/> : <Container style={{flex: 1}}>
-
       <MapView ref={c => {this.map = c;}} style={styles.map} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region} onPress={closeInputs}>
         {showDirections ? <MapViewDirections client={client} origin={{latitude: origin.latitude, longitude: origin.longitude}} destination={{latitude: destination.latitude, longitude: destination.longitude}} strokeWidth={3} onReady={(result) => {
           this.map.fitToCoordinates(result.coordinates,  {
@@ -106,7 +105,7 @@ class DeliveryMap extends Component {
 
       {showDestinationInput ? <PlacesInput client={client} ref={c => {this.destinationInput = c;}} onChangeText={(text) => onChangeText('destination', text)} onSelect={details => onLocationSelect('destination', details)} style={styles.destinationInput} placeholder='Drop-off Location'/> : null}
       <PlacesInput client={client} ref={c => {this.originInput = c;}} onChangeText={(text) => onChangeText('origin', text)}  onSelect={details => onLocationSelect('origin', details)} style={styles.originInput} placeholder='Pick-up Location'/>
-      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} style={styles.doneButton}><Text uppercase={false}>Done</Text></Button> : null}
+      {showDoneButton ? <Button onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} fullWidth iconRight><Text uppercase={false}>Continue</Text><Icon name='arrow-forward'/></Button> : null}
     </Container>;
   }
 }
@@ -114,18 +113,6 @@ class DeliveryMap extends Component {
 const styles = {
   map: {
     flex: 1
-  },
-  doneButton: {
-    flex: 1,
-    marginBottom: 2,
-    marginLeft: 20,
-    marginRight: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
   },
   originInput: {
     container: {

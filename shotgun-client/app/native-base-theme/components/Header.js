@@ -89,8 +89,6 @@ export default (variables = variable) => {
           fontSize: variables.toolbarSearchIconSize,
           alignItems: 'center',
           marginTop: 2,
-          paddingRight: 10,
-          paddingLeft: 10,
         },
         'NativeBase.IconNB': {
           backgroundColor: 'transparent',
@@ -116,7 +114,6 @@ export default (variables = variable) => {
             fontWeight: '500',
           },
           paddingHorizontal: null,
-          paddingLeft: platform === 'ios' ? 10 : null,
         },
         paddingHorizontal: platform === 'ios' ? undefined : null,
         width: platform === 'ios' ? undefined : 0,
@@ -194,7 +191,7 @@ export default (variables = variable) => {
           color: variables.toolbarBtnColor,
         },
         alignSelf: null,
-        paddingHorizontal: variables.buttonPadding,
+        /*paddingHorizontal: variables.buttonPadding,*/
       },
       flex: 0,
       alignSelf: 'center',
@@ -252,7 +249,6 @@ export default (variables = variable) => {
         },
         '.transparent': {
           marginRight: -8,
-          paddingHorizontal: 15,
           borderRadius: 50,
           'NativeBase.Icon': {
             color: variables.toolbarBtnColor,
@@ -290,7 +286,6 @@ export default (variables = variable) => {
           color: variables.toolbarBtnColor,
         },
         alignSelf: null,
-        paddingHorizontal: variables.buttonPadding,
       },
       flex: 1,
       alignSelf: 'center',
@@ -298,9 +293,14 @@ export default (variables = variable) => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
     },
+    '.withButton': {
+      marginLeft: 0
+    },
+    marginLeft: variables.contentPadding,
+    marginRight: variables.contentPadding,
+    marginBottom: 15,
     backgroundColor: variables.toolbarDefaultBg,
     flexDirection: 'row',
-    paddingHorizontal: 10,
     justifyContent: 'center',
     paddingTop: platform === 'ios' ? (variables.isIphoneX ? 39 : 15) : 0,
     borderBottomWidth: platform === 'ios' ? 1 / PixelRatio.getPixelSizeForLayoutSize(1) : 0,

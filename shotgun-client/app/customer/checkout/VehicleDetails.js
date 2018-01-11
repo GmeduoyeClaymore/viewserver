@@ -21,9 +21,9 @@ class VehicleDetails extends Component {
     const {history} = this.props;
 
     return <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent>
+          <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()} />
           </Button>
         </Left>
@@ -53,12 +53,11 @@ class VehicleDetails extends Component {
             </Col>
           </Row>
         </Grid>
-
-        <Button fullWidth iconRight onPress={() =>  history.push('/Customer/Checkout/ItemDetails')}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
-        </Button>
       </Content>
+      <Button fullWidth iconRight paddedBottom onPress={() =>  history.push('/Customer/Checkout/ItemDetails')}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='arrow-forward'/>
+      </Button>
     </Container>;
   }
 }

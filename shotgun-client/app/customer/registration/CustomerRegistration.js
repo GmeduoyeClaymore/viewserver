@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import UserDetails from '../../common/registration/UserDetails';
+import CustomerRegistrationLanding from 'customer/registration/CustomerRegistrationLanding';
+import UserDetails from 'common/registration/UserDetails';
 import PaymentCardDetails from './PaymentCardDetails';
-import AddressDetails from '../../common/registration/AddressDetails';
+import AddressDetails from 'common/registration/AddressDetails';
+import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
-import LoadingScreen from 'common/components/LoadingScreen';
 
 export default class CustomerRegistration extends Component {
   constructor(props) {
@@ -12,14 +13,19 @@ export default class CustomerRegistration extends Component {
     this.state = INITIAL_STATE;
   }
 
-  render() {
-    const {match, busy} = this.props;
+  componentWillMount(){
+    const {dispatch, client} = this.props;
+    dispatch(unregisterAllDaos());
+    dispatch(commonServicesRegistrationAction(client));
+  }
 
-    return busy ? <LoadingScreen text="Loading Customer Registration"/> : <Switch>
-      <Route path={`${match.path}/UserDetails`} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
-      <Route path={`${match.path}/AddressDetails`} exact render={() => <AddressDetails {...this.props} context={this}/>} />
-      <Route path={`${match.path}/PaymentCardDetails`} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
-      <Redirect to={`${match.path}/UserDetails`}/>
+  render() {
+    return <Switch>
+      <Route path={'/Customer/Registration/CustomerRegistrationLanding'} exact render={() => <CustomerRegistrationLanding {...this.props} context={this}/>} />
+      <Route path={'/Customer/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
+      <Route path={'/Customer/Registration/AddressDetails'} exact render={() => <AddressDetails {...this.props} context={this}/>} />
+      <Route path={'/Customer/Registration/PaymentCardDetails'} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
+      <Redirect to={'/Customer/Registration/UserDetails'}/>
     </Switch>;
   }
 }

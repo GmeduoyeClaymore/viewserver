@@ -15,7 +15,7 @@ const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, 
   };
 
   return <Container>
-    <Header>
+    <Header withButton>
       <Left>
         <Button>
           <Icon name='arrow-back' onPress={() => history.goBack()} />
@@ -27,19 +27,10 @@ const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, 
       <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={12.00}/>
       <OrderSummary delivery={delivery} orderItem={orderItem} client={client}/>
       <ErrorRegion errors={errors}>
-        {!busy ? <Button onPress={purchase} fullWidth iconRight style={styles.placeButton}><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
+        {!busy ? <Button onPress={purchase} fullWidth iconRight padded><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
       </ErrorRegion>
     </Content>
   </Container>;
-};
-
-const styles = {
-  placeButton: {
-    marginLeft: 25,
-    marginRight: 25,
-    marginTop: 20,
-    marginBottom: 10
-  }
 };
 
 OrderConfirmation.PropTypes = {

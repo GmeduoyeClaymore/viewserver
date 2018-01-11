@@ -31,7 +31,7 @@ const ItemDetails = ({context, history}) => {
 
   return (
     <Container>
-      <Header>
+      <Header withButton>
         <Left>
           <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()} />
@@ -56,11 +56,11 @@ const ItemDetails = ({context, history}) => {
           </Grid>
         </Button> : null}
         <ValidatingInput style={styles.detailsInput} value={orderItem.notes} multiline={true} placeholder='Add a description of the item' onChangeText={(value) => onChangeValue('notes', value)} validateOnMount={true} validationSchema={validationSchema.notes} maxLength={200}/>
-        <ValidatingButton fullWidth iconRight onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
-        </ValidatingButton>
       </Content>
+      <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='arrow-forward'/>
+      </ValidatingButton>
     </Container>
   );
 };

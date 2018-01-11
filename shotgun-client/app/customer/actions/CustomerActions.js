@@ -8,31 +8,13 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import UserDao from 'common/dao/UserDao';
 
 export const customerServicesRegistrationAction = (client, userId, continueWith) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    if (!state.getIn(['dao', 'customerDao'])){
-      register(dispatch, new UserDao(client), {userId});
-      const orderDao = registerNakedDao(dispatch, new OrderDao(client), {userId});
-      registerNakedDao(dispatch, new PaymentDao(client), {userId});
-      register(dispatch, new DeliveryAddressDao(client), {userId});
-      register(dispatch, new OrderSummaryDao(client), {userId});
-      registerNakedDao(dispatch, new CustomerDao(client, orderDao), {userId}, continueWith);
-    } else if (continueWith) {
-      continueWith();
-    }
-  };
-};
-
-//Load the minimal set of services we need in order to register a customer.
-export const loadCustomerRegistrationServices = (client, userId, continueWith) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    if (!state.getIn(['dao', 'userDao'])){
-      register(dispatch, new UserDao(client), {userId});
-      registerNakedDao(dispatch, new CustomerDao(client), {userId}, continueWith);
-    } else if (continueWith) {
-      continueWith();
-    }
+  return async (dispatch) => {
+    register(dispatch, new UserDao(client), {userId});
+    const orderDao = registerNakedDao(dispatch, new OrderDao(client), {userId});
+    registerNakedDao(dispatch, new PaymentDao(client), {userId});
+    register(dispatch, new DeliveryAddressDao(client), {userId});
+    register(dispatch, new OrderSummaryDao(client), {userId});
+    registerNakedDao(dispatch, new CustomerDao(client, orderDao), {userId}, continueWith);
   };
 };
 

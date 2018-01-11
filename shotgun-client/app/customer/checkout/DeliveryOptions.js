@@ -77,9 +77,9 @@ class DeliveryOptions extends Component {
     };
 
     return busy ? <LoadingScreen text="Loading Customer Cards"/> : <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent>
+          <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()} />
           </Button>
         </Left>
@@ -148,12 +148,11 @@ class DeliveryOptions extends Component {
             </Row>
           </Grid>
         </ListItem> : null}
-
-        <ValidatingButton fullWidth padded iconRight onPress={() =>  history.push('/Customer/Checkout/VehicleDetails')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
-        </ValidatingButton>
       </Content>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  history.push('/Customer/Checkout/VehicleDetails')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='arrow-forward'/>
+      </ValidatingButton>
     </Container>;
   }
 }

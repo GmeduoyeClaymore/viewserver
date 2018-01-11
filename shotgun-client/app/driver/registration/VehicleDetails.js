@@ -31,7 +31,7 @@ const VehicleDetails  = ({context, history, client}) => {
   };
 
   return <Container>
-    <Header>
+    <Header withButton>
       <Left>
         <Button>
           <Icon name='arrow-back' onPress={() => history.goBack()}/>

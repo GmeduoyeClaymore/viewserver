@@ -20,7 +20,7 @@ class DriverOrderRequestDetail extends Component{
     };
 
     return <Container>
-      <Header>
+      <Header withButton>
         <Left>
           <Button>
             <Icon name='arrow-back' onPress={() => history.goBack()} />

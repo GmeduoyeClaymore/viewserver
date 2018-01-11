@@ -7,17 +7,12 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
 
 export const driverServicesRegistrationAction = (client, userId, continueWith) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    if (!state.getIn(['dao', 'driverDao'])){
-      register(dispatch, new UserDao(client), {userId});
-      register(dispatch, new VehicleDao(client), {userId});
-      register(dispatch, new OrderRequestDao(client));
-      register(dispatch, new OrderSummaryDao(client), {userId});
-      registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
-    } else if (continueWith) {
-      continueWith();
-    }
+  return async (dispatch) => {
+    register(dispatch, new UserDao(client), {userId});
+    register(dispatch, new VehicleDao(client), {userId});
+    register(dispatch, new OrderRequestDao(client));
+    register(dispatch, new OrderSummaryDao(client), {userId});
+    registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
 };
   

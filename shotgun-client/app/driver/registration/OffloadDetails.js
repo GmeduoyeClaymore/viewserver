@@ -25,7 +25,7 @@ const OffloadDetails  = ({context, history, busy, dispatch}) => {
   };
 
   return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
-    <Header>
+    <Header withButton>
       <Left>
         <Button>
           <Icon name='arrow-back' onPress={() => history.goBack()}/>
