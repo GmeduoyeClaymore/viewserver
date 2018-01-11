@@ -3,7 +3,6 @@ import bodyTheme from './Body';
 import leftTheme from './Left';
 import rightTheme from './Right';
 import headerTheme from './Header';
-import switchTheme from './Switch';
 import thumbnailTheme from './Thumbnail';
 import containerTheme from './Container';
 import contentTheme from './Content';
@@ -13,19 +12,16 @@ import subtitleTheme from './Subtitle';
 import inputGroupTheme from './InputGroup';
 import badgeTheme from './Badge';
 import checkBoxTheme from './CheckBox';
-import cardTheme from './Card';
 import radioTheme from './Radio';
 import h3Theme from './H3';
 import h2Theme from './H2';
 import h1Theme from './H1';
 import footerTheme from './Footer';
 import footerTabTheme from './FooterTab';
-import fabTheme from './Fab';
 import itemTheme from './Item';
 import labelTheme from './Label';
 import textAreaTheme from './Textarea';
 import textTheme from './Text';
-import toastTheme from './Toast';
 import tabTheme from './Tab';
 import tabBarTheme from './TabBar';
 import tabContainerTheme from './TabContainer';
@@ -36,7 +32,6 @@ import inputTheme from './Input';
 import swipeRowTheme from './SwipeRow';
 import segmentTheme from './Segment';
 import spinnerTheme from './Spinner';
-import cardItemTheme from './CardItem';
 import listItemTheme from './ListItem';
 import formTheme from './Form';
 import separatorTheme from './Separator';
@@ -88,18 +83,6 @@ export default (variables = variable) => {
 
     'NativeBase.Radio': {
       ...radioTheme(variables)
-    },
-
-    'NativeBase.Card': {
-      ...cardTheme()
-    },
-
-    'NativeBase.CardItem': {
-      ...cardItemTheme(variables)
-    },
-
-    'NativeBase.Toast': {
-      ...toastTheme(variables)
     },
 
     'NativeBase.H1': {
@@ -155,10 +138,6 @@ export default (variables = variable) => {
       ...spinnerTheme(variables)
     },
 
-    'NativeBase.Fab': {
-      ...fabTheme(variables)
-    },
-
     'NativeBase.Item': {
       ...itemTheme(variables)
     },
@@ -196,9 +175,6 @@ export default (variables = variable) => {
     },
     'NativeBase.TabContainer': {
       ...tabContainerTheme(variables)
-    },
-    'NativeBase.Switch': {
-      ...switchTheme(variables)
     },
     'NativeBase.Separator': {
       ...separatorTheme(variables)

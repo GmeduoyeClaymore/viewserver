@@ -26,7 +26,7 @@ class DriverRegistration extends Component {
       <Route path={'/Driver/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="VehicleDetails"/>} />
       <Route path={'/Driver/Registration/VehicleDetails'} exact render={() => <VehicleDetails {...this.props} context={this}/>} />
       <Route path={'/Driver/Registration/OffloadDetails'} exact render={() => <OffloadDetails {...this.props} context={this}/>} />
-      <Redirect to={'/Driver/Registration/VehicleDetails'}/>
+      <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
     </Switch>;
   }
 }

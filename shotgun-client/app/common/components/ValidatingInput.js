@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Input, Item, Icon} from 'native-base';
 import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 export default class ValidatingInput extends Component {
   constructor(){
@@ -55,7 +56,7 @@ export default class ValidatingInput extends Component {
 
     return (
       <Item error={isInvalid} success={isValid}>
-        <Input {...this.props} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
+        <Input {...this.props} placeholderTextColor={shotgun.silver} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
         {showIcons && isValid ? <Icon name='checkmark-circle' /> : null}
         {showIcons && isInvalid ? <Icon name='close-circle' /> : null}
       </Item>

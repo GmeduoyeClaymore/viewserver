@@ -25,7 +25,7 @@ export default class CustomerRegistration extends Component {
       <Route path={'/Customer/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="AddressDetails"/>} />
       <Route path={'/Customer/Registration/AddressDetails'} exact render={() => <AddressDetails {...this.props} context={this}/>} />
       <Route path={'/Customer/Registration/PaymentCardDetails'} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
-      <Redirect to={'/Customer/Registration/UserDetails'}/>
+      <Redirect to={'/Customer/Registration/CustomerRegistrationLanding'}/>
     </Switch>;
   }
 }
