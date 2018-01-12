@@ -301,6 +301,14 @@ export default (variables = variable) => {
         fontWeight: 'bold'
       }
     },
+    '.cancelButton': {
+      backgroundColor: variables.brandPrimary,
+      borderWidth: 1,
+      borderColor: variables.silver,
+      'NativeBase.Text': {
+        color: variables.brandDanger,
+      }
+    },
 
     paddingVertical: variables.buttonPadding,
     backgroundColor: variables.btnPrimaryBg,

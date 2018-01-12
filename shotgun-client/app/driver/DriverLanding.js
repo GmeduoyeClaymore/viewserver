@@ -15,8 +15,6 @@ import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
 
 class DriverLanding extends Component {
-  static INITIAL_ROOT_NAME = 'DriverOrderRequests';
-
   constructor(props) {
     super(props);
   }
@@ -28,18 +26,18 @@ class DriverLanding extends Component {
   }
 
   render() {
-    const {match, busy, client} = this.props;
+    const {busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
         <Switch>
-          <Route path={`${match.path}/DriverOrderRequests`} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/DriverOrderRequestDetail`} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/DriverOrders`} exact render={() => <DriverOrders client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/DriverOrderDetail`} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/DriverOrderInProgress`} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={`${match.path}/DriverSettings`} exact component={DriverSettings} />}/>
-          <Redirect to={`${match.path}/${DriverLanding.INITIAL_ROOT_NAME}`}/>
+          <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrders'} exact render={() => <DriverOrders client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverSettings'} exact component={DriverSettings} />}/>
+          <Redirect to={'/Driver/DriverOrderInProgress'}/>
         </Switch>
         <DriverMenuBar/>
       </Container>;

@@ -89,6 +89,9 @@ class DeliveryMap extends Component {
             {origin.line1 ? <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker> : null}
             {destination.line1 ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
+          <Button transparent style={styles.backButton}>
+            <Icon name='arrow-back' onPress={() => history.goBack()} />
+          </Button>
         </Row>
         <Row size={15} style={styles.inputRow}>
           <Col>
@@ -113,6 +116,11 @@ class DeliveryMap extends Component {
 }
 
 const styles = {
+  backButton: {
+    position: 'absolute',
+    left: 0,
+    top: 0
+  },
   locationTextPlaceholder: {
     color: shotgun.silver
   },

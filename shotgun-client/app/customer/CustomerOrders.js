@@ -29,6 +29,7 @@ class CustomerOrders extends Component{
 
     const reportOptions = {
       isCompleted,
+      orderId: undefined,
       columnsToSort: [{ name: 'eta', direction: 'asc' }],
       reportId: 'customerOrderSummary'};
 

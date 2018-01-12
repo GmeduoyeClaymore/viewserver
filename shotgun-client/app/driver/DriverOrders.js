@@ -6,6 +6,7 @@ import PagingListView from 'common/components/PagingListView';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
 import {getDaoState} from 'common/dao';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import Tabs from 'common/components/Tabs';
@@ -24,10 +25,13 @@ class DriverOrders extends Component{
 
   render(){
     const {isCompleted} = this.state;
+    const {userId} = this.props;
 
     const reportOptions = {
-      isCompleted,
+      isCompleted: isCompleted ? OrderStatuses.COMPLETED : 'INCOMPLETE',
       columnsToSort: [{ name: 'eta', direction: 'asc' }],
+      orderId: undefined,
+      userId,
       reportId: 'driverOrderSummary'};
 
     const Paging = () => <View style={{flex: 1}}><Spinner /></View>;

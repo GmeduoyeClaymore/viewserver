@@ -71,6 +71,19 @@ public class DriverController {
         return orderId;
     }
 
+    @ControllerAction(path = "completeOrder", isSynchronous = true)
+    public String completeOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(ORDER_TABLE_NAME);
+
+        orderTable.updateRow(new TableKey(orderId), row -> {
+            row.setString("status", OrderStatuses.COMPLETED.name());
+        });
+
+        //TODO - need to send a notification to the customer
+        //TODO - charge customer and pay driver
+        return orderId;
+    }
+
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(ORDER_TABLE_NAME);

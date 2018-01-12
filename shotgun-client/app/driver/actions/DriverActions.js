@@ -31,3 +31,7 @@ export const startOrderRequest = (orderId, continueWith) => {
 export const cancelOrderRequest = (orderId, continueWith) => {
   return invokeDaoCommand('driverDao', 'cancelOrderRequest', {orderId}, continueWith);
 };
+
+export const completeOrderRequest = (orderId, continueWith) => {
+  return invokeDaoCommand('driverDao', 'completeOrderRequest', {orderId}, continueWith);
+};

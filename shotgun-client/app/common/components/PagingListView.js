@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
-import { updateSubscriptionAction} from 'common/dao/DaoActions';
+import {updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
 import { connectAdvanced} from 'custom-redux';
 import { bindActionCreators} from 'redux';
 import { isEqual } from 'lodash';
@@ -31,11 +31,11 @@ class PagingListView extends Component{
     }
 
     componentWillMount(){
-      const {options = {}, pageSize} = this.props;
+      const {options = {}, pageSize, setOptions} = this.props;
       if (typeof pageSize != undefined){
-        this.props.setOptions({...options, limit: pageSize });
+        setOptions({...options, limit: pageSize });
       } else {
-        this.props.setOptions({...options});
+        setOptions({...options});
       }
     }
 
@@ -83,9 +83,10 @@ class PagingListView extends Component{
 const selectorFactory = (dispatch, initializationProps) => {
   let result = {};
   let ownProps = {};
-  const actions = bindActionCreators({updateSubscriptionAction}, dispatch);
+  const actions = bindActionCreators({updateSubscriptionAction, resetDataAction}, dispatch);
   const {daoName} = initializationProps;
   const setOptions = options => actions.updateSubscriptionAction(daoName, options);
+  const reset = () => actions.resetDataAction(daoName);
   const doPage = limit => actions.updateSubscriptionAction(daoName, {limit});
   return (nextState, nextOwnProps) => {
     const data = getDaoState(nextState, initializationProps.dataPath, daoName);
@@ -99,6 +100,7 @@ const selectorFactory = (dispatch, initializationProps) => {
       data,
       doPage,
       setOptions,
+      reset,
       errors,
       limit,
       ...nextOwnProps

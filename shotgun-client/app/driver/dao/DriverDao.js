@@ -13,6 +13,7 @@ export default class DriverDao{
     this.acceptOrderRequest = this.acceptOrderRequest.bind(this);
     this.startOrderRequest = this.startOrderRequest.bind(this);
     this.cancelOrderRequest = this.cancelOrderRequest.bind(this);
+    this.completeOrderRequest = this.completeOrderRequest.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -52,6 +53,11 @@ export default class DriverDao{
   async cancelOrderRequest({orderId}){
     const {userId} = this.options;
     await this.client.invokeJSONCommand('driverController', 'cancelOrder', {driverId: userId, orderId});
+  }
+
+  async completeOrderRequest({orderId}){
+    const {userId} = this.options;
+    await this.client.invokeJSONCommand('driverController', 'completeOrder', {driverId: userId, orderId});
   }
 }
 

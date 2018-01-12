@@ -12,16 +12,25 @@ export const invokeDaoCommand = (daoName, method, options, continueWith) => {
   };
 };
 
+/*
+This was causing some issues so have removed....things seems to be ok
 const getExistingValues = (existingOptions, options) => {
   const existingValues = {};
   Object.keys(options).forEach(op => {existingValues[op] = existingOptions[op];});
   return existingValues;
 };
+*/
+
+export const resetDataAction = (daoName, continueWith) => {
+  return async (dispatch) => {
+    dispatch(invokeDaoCommand(daoName, 'resetData', continueWith));
+  };
+};
 
 export const updateSubscriptionAction = (daoName, options, continueWith) => {
   return async (dispatch, getState) => {
     const existingOptions = getDaoOptions(getState(), daoName);
-    if (!existingOptions || !isEqual(getExistingValues(existingOptions, options), options)){
+    if (!existingOptions || !isEqual(existingOptions, options)){
       dispatch(invokeDaoCommand(daoName, 'updateSubscription', options, continueWith));
     } else if (continueWith){
       continueWith();
@@ -32,7 +41,7 @@ export const updateSubscriptionAction = (daoName, options, continueWith) => {
 export const updateOptionsAction = (daoName, options, continueWith) => {
   return async (dispatch, getState) => {
     const existingOptions = getDaoOptions(getState(), daoName);
-    if (!existingOptions || !isEqual(getExistingValues(existingOptions, options), options)){
+    if (!existingOptions || !isEqual(existingOptions, options)){
       dispatch(invokeDaoCommand(daoName, 'updateOptions', options, continueWith));
     } else if (continueWith){
       continueWith();

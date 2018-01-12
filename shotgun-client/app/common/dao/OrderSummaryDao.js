@@ -1,5 +1,7 @@
 import ReportSubscriptionStrategy from '../subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
+import {getDaoState} from 'common/dao';
+import {isEqual} from 'lodash';
 
 export default class OrderSummaryDao{
   static OPTIONS = {
@@ -23,12 +25,13 @@ export default class OrderSummaryDao{
     return 'orderSummaryDao';
   }
 
-  getReportContext({userId, isCompleted, reportId}){
+  getReportContext({userId, orderId, isCompleted, reportId}){
     return {
       reportId,
       parameters: {
         userId,
-        isCompleted
+        isCompleted,
+        orderId
       }
     };
   }
@@ -80,18 +83,15 @@ export default class OrderSummaryDao{
     };
   }
 
-  createSubscriptionStrategy({userId, isCompleted, reportId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId, reportId, isCompleted}), dataSink);
+  createSubscriptionStrategy({userId, isCompleted, reportId, orderId}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId, reportId, isCompleted, orderId}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.userId != newOptions.userId || previousOptions.isCompleted != newOptions.isCompleted || previousOptions.reportId != newOptions.reportId;
+    return !previousOptions || !isEqual(previousOptions, newOptions);
   }
 
   transformOptions(options){
-    if (typeof options.userId === 'undefined'){
-      throw new Error('userId should be defined');
-    }
     if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'driverOrderSummary')){
       throw new Error('reportId should be defined and be either customerOrderSummary or driverOrderSummary');
     }

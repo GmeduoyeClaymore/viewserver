@@ -15,7 +15,7 @@ class OrderRequest extends Component {
     const {origin, destination, noRequiredForOffload} = delivery;
     const isRowDelivery = orderSummary.orderItem.productId == Products.DELIVERY;
 
-    return <ListItem style={styles.orderRequest} onPress={() => history.push(next, {orderSummary})}>
+    return <ListItem style={styles.orderRequest} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={75}>
