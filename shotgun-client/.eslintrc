@@ -129,6 +129,7 @@
     }],
     "keyword-spacing": 2,
     "space-infix-ops": 2,            // http://eslint.org/docs/rules/space-infix-ops,
+    "indent":  ["error", 2],
 
 /** ES6**/
     "no-const-assign": "error",

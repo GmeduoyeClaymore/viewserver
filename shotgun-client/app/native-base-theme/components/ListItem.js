@@ -399,6 +399,10 @@ export default (variables = variable) => {
       paddingTop: variables.contentPadding,
       paddingBottom: variables.contentPadding
     },
+    '.paddedTopBottom': {
+      paddingTop: variables.contentPadding,
+      paddingBottom: variables.contentPadding
+    },
     '.paddedLeftRight': {
       paddingLeft: variables.contentPadding,
       paddingRight: variables.contentPadding,

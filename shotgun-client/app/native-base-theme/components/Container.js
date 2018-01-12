@@ -8,6 +8,9 @@ export default (variables = variable) => {
       paddingLeft: variables.contentPadding,
       paddingRight: variables.contentPadding
     },
+    '.paddedLeft': {
+      paddingLeft: variables.contentPadding,
+    },
     flex: 1,
     height: Platform.OS === 'ios' ? deviceHeight : deviceHeight - 20
   };

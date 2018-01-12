@@ -83,14 +83,14 @@ class DeliveryMap extends Component {
           <MapView ref={c => {this.map = c;}} style={{flex: 1}} showsUserLocation={true} showsMyLocationButton={true} initialRegion={region}>
             {showDirections ?
               <MapViewDirections client={client} origin={{latitude: origin.latitude, longitude: origin.longitude}}
-                                 destination={{latitude: destination.latitude, longitude: destination.longitude}}
-                                 strokeWidth={3} onReady={(result) => {this.map.fitToCoordinates(result.coordinates, mapFitCoordinates);}}/> : null}
+                destination={{latitude: destination.latitude, longitude: destination.longitude}}
+                strokeWidth={3} onReady={(result) => {this.map.fitToCoordinates(result.coordinates, mapFitCoordinates);}}/> : null}
 
             {origin.line1 ? <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker> : null}
             {destination.line1 ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
         </Row>
-      <Row size={15} style={styles.inputRow}>
+        <Row size={15} style={styles.inputRow}>
           <Col>
             <Row>
               <Icon name="pin" paddedIcon originPin/>

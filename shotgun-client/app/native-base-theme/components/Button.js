@@ -23,7 +23,7 @@ export default (variables = variable) => {
     },
 
 
-   /* '.primary': {
+    /* '.primary': {
       '.bordered': {
         'NativeBase.Text': {
           color: variables.btnPrimaryBg,
@@ -97,7 +97,7 @@ export default (variables = variable) => {
       backgroundColor: variables.darkGreen,
     },
 
- /*   '.block': {
+    /*   '.block': {
       justifyContent: 'center',
       alignSelf: 'stretch',
     },*/

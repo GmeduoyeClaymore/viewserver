@@ -18,23 +18,6 @@ export const fetchRoute = async  (client, origin, destination) => {
   throw new Error('No routes returned');
 };
 
-export const getAddressText = (address) => {
-  const result = [];
-  if (address.flatNumber){
-    result.push('Fl' + address.flatNumber);
-  }
-  if (address.line1){
-    result.push(address.line1);
-  }
-  if (address.line2){
-    result.push(address.line2);
-  }
-  if (address.postCode){
-    result.push(address.postCode);
-  }
-  return result.join(',');
-};
-
 export const parseGooglePlacesData = (details) => {
   try {
     const {name, place_id, geometry, address_components} = details;
