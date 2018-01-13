@@ -1,9 +1,13 @@
 package com.shotgun.viewserver.delivery;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeliveryAddress{
     private String deliveryAddressId;
     private boolean isDefault;
     private String flatNumber;
+    private String userId;
     private String line1;
     private String line2;
     private String city;
@@ -14,6 +18,14 @@ public class DeliveryAddress{
     private Double longitude;
 
     public DeliveryAddress() {
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getDeliveryAddressId() {

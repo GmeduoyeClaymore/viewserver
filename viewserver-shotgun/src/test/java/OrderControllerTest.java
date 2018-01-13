@@ -5,6 +5,9 @@ import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.order.OrderController;
 import com.shotgun.viewserver.order.OrderItem;
+import io.viewserver.command.ControllerContext;
+import io.viewserver.command.ControllerRegistration;
+import io.viewserver.network.IPeerSession;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-/**
- * Created by Gbemiga on 15/12/17.
- */
 public class OrderControllerTest {
 
     private OrderController sut;
@@ -29,45 +29,18 @@ public class OrderControllerTest {
 
     @Test
     public void jsonTest() throws IOException {
-        String json = "{\"noRequiredForOffload\":0,\"vehicleTypeId\":\"12323232\"}";
+        String json = "{\"noRequiredForOffload\":0,\"vehicleTypeId\":\"12323232\",\"xxxvehicleTypeId\":\"12323232\"}";
         ObjectMapper om = new ObjectMapper();
         Delivery del = om.readValue(json, Delivery.class);
         System.out.println(del.toString());
     }
 
     @Test
-    public void canCreateOrder(){
-
-        Delivery delivery = new Delivery(){{
-            setDeliveryId("DEL1234");
-            setDriverId("DRIV567");
-            setEta(new Date());
-            setNoRequiredForOffload(0);
-            setVehicleTypeId("VEH1234");
-         /*   setOrigin(new DeliveryAddress() {{
-                setLine1("ORIGINLINE1");
-                setCity("City");
-                setPostCode("PostCode");
-                setLatitude(0.0);
-                setLongitude(0.0);
-                setDefault(false);
-            }});
-            setDestination(new DeliveryAddress() {{
-                setLine1("DESTINATIONLINE1");
-                setCity("City");
-                setPostCode("PostCode");
-                setLatitude(0.0);
-                setLongitude(0.0);
-                setDefault(false);
-            }});*/
-        }};
-
-        OrderItem orderItem = new OrderItem(){{
-            setProductId("PROD1234");
-            setNotes("this is the notes");
-        }};
-
-
-     //  System.out.println( sut.createOrder("USER123", "PAYMENT456", delivery, Arrays.asList(orderItem)));
+    public  void canDeserializeParam() throws NoSuchMethodException {
+        ControllerContext ctxt = ControllerContext.create(new MockSession());
+        ControllerContext.set("userId","foo");
+        String param = "{\"userId\":\"2BBui\",\"paymentId\":\"card_1BZjOtJf2h7PvwlulrG7Lrbx\",\"delivery\":{\"eta\":\"2018-01-19T03:54:00.000Z\",\"noRequiredForOffload\":0,\"origin\":{\"deliveryAddressId\":\"22002c3a-6920-47e9-b9e4-d5e44daf60ee\",\"userId\":\"2BBui\",\"created\":0,\"lastUsed\":0,\"line1\":\"12 Kinnoul Road\",\"city\":\"London\",\"postCode\":\"SE12 4RT\",\"latitude\":51.4857236,\"longitude\":-0.2123406,\"rank\":0,\"key\":0,\"rowId\":0},\"destination\":{\"deliveryAddressId\":\"2ec23526-e8f4-4566-bb55-25c1b2877d98\",\"userId\":\"2BBui\",\"created\":0,\"lastUsed\":0,\"line1\":\"129 Drakefield Road\",\"city\":\"London\",\"postCode\":\"SW17 8RS\",\"latitude\":51.4341614,\"longitude\":-0.1523323,\"rank\":1,\"key\":1,\"rowId\":1}},\"orderItems\":[{\"quantity\":1,\"productId\":\"PROD_Delivery\",\"notes\":\"ddddd\"}]}";
+        ControllerRegistration reg = new ControllerRegistration(sut);
+        System.out.println(reg.getActions().get("createOrder").invoke(param));
     }
 }

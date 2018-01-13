@@ -1,9 +1,11 @@
 package com.shotgun.viewserver.delivery;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.joda.time.DateTime;
 
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Delivery {
     private String deliveryId;
     private String driverId;

@@ -41,13 +41,13 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, orderItem} = context.state;
+  const {delivery, payment, orderItem, origin, destination} = context.state;
 
   return {
     ...initialProps,
     errors: getOperationError(state, 'customerDao', 'checkout'),
     orderItem,
-    delivery,
+    delivery: {...delivery, origin, destination},
     payment,
     busy: isAnyOperationPending(state, { customerDao: 'checkout'})
   };

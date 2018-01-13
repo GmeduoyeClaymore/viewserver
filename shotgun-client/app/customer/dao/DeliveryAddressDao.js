@@ -53,9 +53,9 @@ export default class DeliveryAddressDao{
   }
 
   extendDao(dao){
-    dao.addOrUpdateDeliveryAddress = async ({userId, deliveryAddress}) => {
+    dao.addOrUpdateDeliveryAddress = async ({deliveryAddress}) => {
       Logger.info('add or update delivery address');
-      const deliveryAddressId = await this.client.invokeJSONCommand('deliveryAddressController', 'addOrUpdateDeliveryAddress', {userId, deliveryAddress});
+      const deliveryAddressId = await this.client.invokeJSONCommand('deliveryAddressController', 'addOrUpdateDeliveryAddress', {deliveryAddress});
       Logger.info(`Delivery address ${deliveryAddressId} added or updated`);
       return deliveryAddressId;
     };
