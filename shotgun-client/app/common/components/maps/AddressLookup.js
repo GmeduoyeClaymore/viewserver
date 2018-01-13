@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {Text, Button, Header, Left, Body, Container, Icon, Title, Input, Grid, Row, List, ListItem, View} from 'native-base';
-import {connect} from 'react-redux';
-import {getDaoState} from 'common/dao';
-import {parseGooglePlacesData} from 'common/components/maps/MapUtils';
+import { Text, Button, Header, Left, Body, Container, Icon, Title, Input, Grid, Row, List, ListItem, View } from 'native-base';
+import { connect } from 'react-redux';
+import { getDaoState } from 'common/dao';
+import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const MAX_RECENT_ADDRESSES = 10;
@@ -43,19 +43,29 @@ class AddressLookup extends Component {
       return addreses;
     }
     let result = [...addreses];
+    result = result.filter(ad => !ad.isDefault);
     result.sort((e1, e2) => this.compare(moment(e1.created), moment(e2.created)));
     result = result.slice(0, MAX_RECENT_ADDRESSES);
     return result;
   }
 
-  render() {
-    const {addressSearchText, suggestedPlaces, busy, errors} = this.state;
-    const {deliveryAddresses = [], addressLabel, client, context, history, addressKey} = this.props;
-    const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
 
-    const searchAutoCompleteSuggestions = debounce(async(value) => {
+  getHomeAddress(addreses) {
+    if (!addreses) {
+      return addreses;
+    }
+    return addreses.find(ad => ad.isDefault) || addreses[0];
+  }
+
+  render() {
+    const { addressSearchText, suggestedPlaces, busy, errors } = this.state;
+    const { deliveryAddresses = [], addressLabel, client, context, history, addressKey } = this.props;
+    const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
+    const homeAddress = this.getHomeAddress(deliveryAddresses);
+
+    const searchAutoCompleteSuggestions = debounce(async (value) => {
       try {
-        this.setState({busy: true});
+        this.setState({ busy: true });
         const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
           input: value,
           language: 'en'
@@ -65,19 +75,19 @@ class AddressLookup extends Component {
           busy: false
         });
       } catch (error) {
-        this.setState({error});
+        this.setState({ error });
       }
     });
 
     const onAddressChanged = (value) => {
-      this.setState({addressSearchText: value}, () => searchAutoCompleteSuggestions(value));
+      this.setState({ addressSearchText: value }, () => searchAutoCompleteSuggestions(value));
     };
 
     const onAddressSelected = (address) => {
-      context.setState({[addressKey]: address}, () => history.push('/Customer/Checkout/DeliveryMap'));
+      context.setState({ [addressKey]: address }, () => history.push('/Customer/Checkout/DeliveryMap'));
     };
 
-    const onSuggestedPlaceSelected = async(rowData) => {
+    const onSuggestedPlaceSelected = async (rowData) => {
       try {
         const res = await client.invokeJSONCommand('mapsController', 'mapPlaceRequest', {
           placeid: rowData.place_id,
@@ -86,7 +96,7 @@ class AddressLookup extends Component {
 
         onAddressSelected(parseGooglePlacesData(res.result));
       } catch (error) {
-        this.setState({error});
+        this.setState({ error });
       }
     };
 
@@ -111,7 +121,7 @@ class AddressLookup extends Component {
         <Header>
           <Left>
             <Button transparent disabled={busy}>
-              <Icon name='close-circle' onPress={() => history.goBack()}/>
+              <Icon name='close-circle' onPress={() => history.goBack()} />
             </Button>
           </Left>
           <Body><Title style={styles.title}>{addressLabel}</Title></Body>
@@ -119,10 +129,16 @@ class AddressLookup extends Component {
         <Grid>
           <Row size={10} style={styles.searchContainer}>
             <ErrorRegion errors={errors}>
-              <Icon name="pin" paddedIcon originPin style={{alignSelf: 'center'}}/>
-              <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged}/>
+              <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
+              <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
+          {homeAddress && suggestedPlaces.length == 0 ? <Row size={20}>
+            <Container>
+              <Text style={styles.smallText} onPress={() => onAddressSelected(homeAddress)}>Home</Text>
+            </Container>
+          </Row> : null}
+
           <Row size={90}>
             {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
               <Text style={styles.smallText}>Recent Addresses</Text>
