@@ -342,8 +342,9 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         return new EventLoopReactor(super.getName(), serverNetwork);
     }
 
-    public void registerController(Object controller){
+    public Object registerController(Object controller){
         this.controllerHandler.registerController(controller);
+        return controller;
     }
 
     @Override

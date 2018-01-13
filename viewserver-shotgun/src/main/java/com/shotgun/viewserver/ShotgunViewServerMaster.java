@@ -31,16 +31,19 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
     @Override
     protected void initCommandHandlerRegistry() {
         super.initCommandHandlerRegistry();
-        this.registerController(new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4")));
+        PaymentController paymentController = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
+        DeliveryAddressController deliveryAddressController = new DeliveryAddressController();
+        this.registerController(paymentController);
         this.registerController(new MapsController(new MapsControllerKey("AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M",false)));
         this.registerController(new LoginController());
         this.registerController(new UserController());
         this.registerController(new DriverController());
-        this.registerController(new CustomerController());
+        this.registerController(new CustomerController(paymentController, deliveryAddressController));
         this.registerController(new OrderController());
         this.registerController(new VehicleController());
         this.registerController(new DeliveryController());
-        this.registerController(new DeliveryAddressController());
+
+        this.registerController(deliveryAddressController);
         this.registerController(new OrderItemController());
         this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", true)));
         this.registerController(new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu")));
