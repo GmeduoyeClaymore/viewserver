@@ -19,14 +19,19 @@ import java.util.HashMap;
 public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
+    private PaymentController paymentController;
+    private DeliveryAddressController deliveryAddressController;
+
+
+    public CustomerController(PaymentController paymentController, DeliveryAddressController deliveryAddressController) {
+        this.paymentController = paymentController;
+        this.deliveryAddressController = deliveryAddressController;
+    }
+
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
     public String registerCustomer(@ActionParam(name = "user")User user, @ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress, @ActionParam(name = "paymentCard")PaymentCard paymentCard){
         log.debug("Registering customer: " + user.getEmail());
-
-        DeliveryAddressController deliveryAddressController = new DeliveryAddressController();
-        //TODO - api key should not be in here
-        PaymentController paymentController = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
-
+        deliveryAddress.setIsDefault(true);
         HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
         user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
