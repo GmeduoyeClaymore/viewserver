@@ -18,8 +18,8 @@ export default class ErrorRegion extends Component {
         <View style={{height: 25}}>
           <Text style={{flex: 1, color: 'red', fontSize: 10}}>{errors}</Text>
         </View>
-        {this.props.children}
-      </View> : this.props.children
+        {this.props.children || null}
+      </View> : (this.props.children || null)
     );
   }
 }

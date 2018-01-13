@@ -32,8 +32,8 @@ export default DataSink = (superclass) => class extends superclass {
     Logger.info('Subscription success');
   }
 
-  onError(){
-    Logger.info('Subscription error');
+  onError(error){
+    Logger.info('Subscription error - ' + error);
   }
 
   onDataReset(){
