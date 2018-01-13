@@ -13,8 +13,8 @@ export default class OrderSummary extends Component{
 
   render() {
     const { width } = Dimensions.get('window');
-    const {orderItem, delivery, client} = this.props;
-    const {origin, destination, noRequiredForOffload} = delivery;
+    const {orderItem, delivery, client, origin = {}, destination = {}} = this.props;
+    const {noRequiredForOffload} = delivery;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;
     const isDelivery = orderItem.productId == Products.DELIVERY;

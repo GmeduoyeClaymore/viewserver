@@ -39,10 +39,12 @@ public class OrderController {
 
         //add addresses
         String originDeliveryAddressId = deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getOrigin());
-        String destinationDeliverAddressId = delivery.getDestination().getLine1() != null ? deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getDestination()) : null;
-        delivery.getOrigin().setDeliveryAddressId(originDeliveryAddressId);
-        delivery.getDestination().setDeliveryAddressId(destinationDeliverAddressId);
+        if(delivery.getDestination() != null){
+            String destinationDeliverAddressId  = deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getDestination());
+            delivery.getDestination().setDeliveryAddressId(destinationDeliverAddressId);
+        }
 
+        delivery.getOrigin().setDeliveryAddressId(originDeliveryAddressId);
         //add delivery
         String deliveryId = deliveryController.addOrUpdateDelivery(userId, delivery);
         delivery.setDeliveryId(deliveryId);

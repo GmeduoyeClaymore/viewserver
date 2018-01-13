@@ -33,7 +33,9 @@ public class DeliveryController {
             row.setInt("noRequiredForOffload", delivery.getNoRequiredForOffload());
             row.setString("vehicleTypeId", delivery.getVehicleTypeId());
             row.setString("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId());
-            row.setString("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
+            if(delivery.getDestination()!=null){//can happen with rubbish collection
+                row.setString("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
+            }
             row.setString("driverId", delivery.getDriverId());
         };
 
