@@ -5,8 +5,8 @@ import {View, Text} from 'react-native';
 import PagingListView from 'common/components/PagingListView';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
-
-import {getDaoState} from 'common/dao';
+import LoadingScreen from 'common/components/LoadingScreen';
+import {getDaoState, isAnyLoading} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import Products from 'common/constants/Products';
 import OrderRequest from 'common/components/OrderRequest';
@@ -26,7 +26,7 @@ class DriverOrderRequests extends Component{
 
   render(){
     const {isDelivery} = this.state;
-    const {vehicle, position} = this.props;
+    const {vehicle = {}, position, busy} = this.props;
     const {vehicleTypeId, noRequiredForOffload = 0} = vehicle;
     const productId = isDelivery ? Products.DELIVERY : Products.DISPOSAL;
     const maxDistance = 30; //max distance to show jobs in miles
@@ -35,7 +35,7 @@ class DriverOrderRequests extends Component{
     const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs available</Text></View>;
     const RowView = (orderSummary) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next='/Driver/DriverOrderRequestDetail'/>;
 
-    return <Container>
+    return busy ? <LoadingScreen text="Loading Map" /> : <Container>
       <Header hasTabs>
         <Body><Title>Available Jobs</Title></Body>
       </Header>
@@ -65,11 +65,15 @@ DriverOrderRequests.PropTypes = {
   customer: PropTypes.object
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
-  position: getDaoState(state, ['position'], 'userDao'),
-  ...initialProps
-});
+const mapStateToProps = (state, initialProps) => {
+  const vehicle = getDaoState(state, ['vehicle'], 'vehicleDao');
+    return {
+      busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle,
+      vehicle,
+      position: getDaoState(state, ['position'], 'userDao'),
+      ...initialProps
+    };
+  };
 
 export default withRouter(connect(
   mapStateToProps

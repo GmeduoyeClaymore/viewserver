@@ -36,6 +36,11 @@ export default class OrderSummaryDao{
     };
   }
 
+
+  getDataFrequency(){
+    return 50;
+  }
+
   createDataSink(){
     return new RxDataSink();
   }

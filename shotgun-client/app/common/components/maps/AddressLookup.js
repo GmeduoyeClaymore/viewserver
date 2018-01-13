@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Text, Button, Header, Left, Body, Container, Icon, Title, Input, Grid, Row, List, ListItem, View } from 'native-base';
-import { connect } from 'react-redux';
+import { connect } from 'custom-redux';
 import { getDaoState } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';

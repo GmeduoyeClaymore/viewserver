@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
 import Products from 'common/constants/Products';
-import { connect } from 'react-redux';
+import { connect } from 'custom-redux';
 import { Container, Button, Text, Icon, Grid, Col, Row } from 'native-base';
 import MapView from 'react-native-maps';
 import LoadingScreen from 'common/components/LoadingScreen';

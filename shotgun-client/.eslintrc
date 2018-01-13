@@ -13,7 +13,6 @@
   "rules": {
     "strict": 0,
     "react/jsx-uses-vars": 1,
-    "react/jsx-indent-props": [0, "tab"],
 
 /**
  * Variables
@@ -129,7 +128,6 @@
     }],
     "keyword-spacing": 2,
     "space-infix-ops": 2,            // http://eslint.org/docs/rules/space-infix-ops,
-    "indent":  ["error", 2],
 
 /** ES6**/
     "no-const-assign": "error",

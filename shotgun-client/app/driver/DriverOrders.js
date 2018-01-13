@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import PropTypes from 'prop-types';
 import {View, Text} from 'react-native';
 import PagingListView from 'common/components/PagingListView';
@@ -10,7 +10,6 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import Tabs from 'common/components/Tabs';
-
 class DriverOrders extends Component{
   constructor(props){
     super(props);
@@ -75,5 +74,4 @@ const mapStateToProps = (state, initialProps) => ({
 });
 
 export default withRouter(connect(
-  mapStateToProps
-)(DriverOrders));
+  mapStateToProps )(DriverOrders));

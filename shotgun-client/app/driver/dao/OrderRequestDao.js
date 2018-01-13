@@ -6,7 +6,7 @@ export default class OrderRequestDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
-    isCompleted: false
+    isCompleted: ''
   };
 
   constructor(client, options = {}) {

@@ -20,7 +20,7 @@ class DriverOrderDetail extends Component{
       dispatch(updateSubscriptionAction('orderSummaryDao', {
         userId: undefined,
         orderId,
-        isCompleted: undefined,
+        isCompleted: '',
         reportId: 'driverOrderSummary'
       }));
     }
