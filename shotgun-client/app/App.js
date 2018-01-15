@@ -31,7 +31,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
-    this.client = new Client('ws://localhost:6060/');
+    this.client = new Client('ws://127.0.0.1:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
   }
@@ -55,8 +55,8 @@ export default class App extends React.Component {
 
   async setUserId(){
     //this.userId = undefined;
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

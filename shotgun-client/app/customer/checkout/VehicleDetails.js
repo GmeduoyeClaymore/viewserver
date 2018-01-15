@@ -17,13 +17,21 @@ class VehicleDetails extends Component {
     context.setState({delivery: merge({}, delivery, {[field]: value})});
   }
 
-  render() {
-    const {history} = this.props;
 
+  renderVehicleType(vehicleType, style = {}){
+    return <Col style={style}>
+      <Row><Button onPress={() => this.onChangeValue('vehicleTypeId', vehicleType.vehicleTypeId)} large><Icon style={styles.productSelectIcon} name='car'/></Button></Row>
+      <Row style={styles.vehicleSelectTextRow}><Text style={styles.vehicleSelectText}>{vehicleType.description}</Text></Row>
+    </Col>;
+  }
+
+  render() {
+    const {history, vehicleTypePairs} = this.props;
+ 
     return <Container>
-      <Header withButton>
+      <Header>
         <Left>
-          <Button>
+          <Button transparent>
             <Icon name='arrow-back' onPress={() => history.goBack()} />
           </Button>
         </Left>
@@ -32,32 +40,19 @@ class VehicleDetails extends Component {
       <Content padded>
         <Text style={styles.subTitle}>Select the type of vehicle you think you will need for your delivery</Text>
         <Grid>
-          <Row>
-            <Col style={{paddingRight: 25}}>
-              <Row><Button large><Icon style={styles.productSelectIcon} name='car'/></Button></Row>
-              <Row style={styles.vehicleSelectTextRow}><Text style={styles.vehicleSelectText}>Small van</Text></Row>
-            </Col>
-            <Col>
-              <Row><Button large><Icon style={styles.productSelectIcon} name='car'/></Button></Row>
-              <Row style={styles.vehicleSelectTextRow}><Text style={styles.vehicleSelectText}>Medium van</Text></Row>
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{paddingRight: 25}}>
-              <Row><Button large><Icon name='car'/></Button></Row>
-              <Row style={styles.vehicleSelectTextRow}><Text style={styles.vehicleSelectText}>Large van</Text></Row>
-            </Col>
-            <Col>
-              <Row><Button large><Icon name='car'/></Button></Row>
-              <Row style={styles.vehicleSelectTextRow}><Text style={styles.vehicleSelectText}>Tail lift truck</Text></Row>
-            </Col>
-          </Row>
+          {vehicleTypePairs.map(
+            ([left, right], idx) =>
+              <Row key={idx}>
+                {this.renderVehicleType(left, {paddingRight: 25})}
+                {this.renderVehicleType(right)}
+              </Row>
+          )}
         </Grid>
+        <Button fullWidth iconRight onPress={() =>  history.push('/Customer/Checkout/ItemDetails')}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon name='arrow-forward'/>
+        </Button>
       </Content>
-      <Button fullWidth iconRight paddedBottom onPress={() =>  history.push('/Customer/Checkout/ItemDetails')}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon name='arrow-forward'/>
-      </Button>
     </Container>;
   }
 }
@@ -83,10 +78,22 @@ VehicleDetails.PropTypes = {
 };
 
 
-const mapStateToProps = (state, initialProps) => ({
-  user: getDaoState(state, ['user'], 'userDao'),
-  ...initialProps
-});
+const mapStateToProps = (state, initialProps) => {
+  const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao');
+  const vehicleTypePairs = vehicleTypes ? vehicleTypes.reduce((result, value, index, array) => {
+    if (index % 2 === 0){
+      result.push(array.slice(index, index + 2));
+    }
+    return result;
+  }, []) : [];
+
+  return {
+    vehicleTypes,
+    vehicleTypePairs,
+    user: getDaoState(state, ['user'], 'userDao'),
+    ...initialProps
+  };
+};
 
 export default withRouter(connect(
   mapStateToProps
