@@ -3,10 +3,13 @@ import {Dimensions, Image} from 'react-native';
 import {Text, List, ListItem, Icon, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
+import LoadingScreen from 'common/components/LoadingScreen';
 import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {connect} from 'custom-redux';
+import { getDaoState, isAnyOperationPending } from 'common/dao';
 
-export default class OrderSummary extends Component{
+class OrderSummary extends Component{
   constructor(){
     super();
   }
@@ -21,7 +24,7 @@ export default class OrderSummary extends Component{
 
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
 
-    return <List>
+    return busy ? <LoadingScreen text="Loading Vehicle Types" /> : <List>
       <ListItem style={styles.mapListItem}>
         <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
       </ListItem>
@@ -42,6 +45,10 @@ export default class OrderSummary extends Component{
         <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noRequiredForOffload} people required`}</Text>
       </ListItem> : null}
 
+      {selectedVehicleType ? <ListItem padded>
+        <Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text>
+      </ListItem> : null}
+
       <ListItem padded style={{borderBottomWidth: 0}}>
         <Grid>
           <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
@@ -52,6 +59,23 @@ export default class OrderSummary extends Component{
     </List>;
   }
 }
+
+
+const mapStateToProps = (state, initialProps) => {
+  const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao') || [];
+  const {delivery} = initialProps;
+  const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
+  return {
+    selectedVehicleType,
+    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }),
+    ...initialProps
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(OrderSummary);
+
 
 const styles = {
   mapListItem: {
