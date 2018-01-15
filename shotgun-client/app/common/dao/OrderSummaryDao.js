@@ -65,6 +65,12 @@ export default class OrderSummaryDao{
         noRequiredForOffload: orderSummary.noRequiredForOffload,
         vehicleTypeId: orderSummary.vehicleTypeId,
         deliveryId: orderSummary.deliveryId,
+        customerRating: orderSummary.customerRating,
+        driverRating: orderSummary.driverRating,
+        customerFirstName: orderSummary.customerFirstName,
+        customerLastName: orderSummary.customerLastName,
+        driverFirstName: orderSummary.driverFirstName,
+        driverLastName: orderSummary.driverLastName,
         origin: {
           flatNumber: orderSummary.originFlatNumber,
           line1: orderSummary.originLine1,

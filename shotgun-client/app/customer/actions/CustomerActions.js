@@ -29,3 +29,7 @@ export const registerCustomer = (customer, deliveryAddress, paymentCard, continu
 export const getPaymentCards = (customerToken, continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', customerToken, continueWith);
 };
+
+export const rateDriver = (deliveryId, rating, continueWith) => {
+  return invokeDaoCommand('customerDao', 'rateDriver', {deliveryId, rating}, continueWith);
+};

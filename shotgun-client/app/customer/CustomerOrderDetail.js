@@ -4,6 +4,8 @@ import {Container, Header, Left, Button, Icon, Body, Title, Content} from 'nativ
 import OrderSummary from 'common/components/OrderSummary';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
 import LoadingScreen from 'common/components/LoadingScreen';
+import PriceSummary from 'common/components/PriceSummary';
+import RatingSummary from 'common/components/RatingSummary';
 
 class CustomerOrderDetail extends Component{
   constructor(props) {
@@ -35,6 +37,8 @@ class CustomerOrderDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
+        <PriceSummary orderStatus={orderSummary.status} isDriver={false} price={12.00}/>
+        <RatingSummary orderStatus={orderSummary.status} isDriver={false} delivery={orderSummary.delivery}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
       </Content>
     </Container>;

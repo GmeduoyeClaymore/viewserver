@@ -1,9 +1,6 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
-import com.shotgun.viewserver.setup.datasource.DeliveryDataSource;
-import com.shotgun.viewserver.setup.datasource.OrderDataSource;
-import com.shotgun.viewserver.setup.datasource.OrderItemsDataSource;
+import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.FilterNode;
@@ -25,10 +22,15 @@ public class DriverOrderSummaryReport {
                                 new FilterNode("orderFilter")
                                         .withExpression("if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
+                                new JoinNode("customerJoin")
+                                        .withLeftJoinColumns("userId")
+                                        .withRightJoinColumns("userId")
+                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("orderItemsJoin")
                                         .withLeftJoinColumns("orderId")
                                         .withRightJoinColumns("orderId")
-                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection("customerJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("deliveryJoin")
                                         .withLeftJoinColumns("deliveryId")
@@ -62,6 +64,9 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
+                                                new IProjectionConfig.ProjectionColumn("customerRating"),
+                                                new IProjectionConfig.ProjectionColumn("firstName", "customerFirstName"),
+                                                new IProjectionConfig.ProjectionColumn("lastName", "customerLastName"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),

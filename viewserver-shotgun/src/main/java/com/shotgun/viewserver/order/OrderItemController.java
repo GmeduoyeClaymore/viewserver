@@ -2,7 +2,7 @@ package com.shotgun.viewserver.order;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.constants.BuckeNames;
+import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
@@ -25,8 +25,8 @@ public class OrderItemController {
 
         //save image if required
         if(orderItem.getImageData() != null){
-            String fileName = BuckeNames.orderImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = imageController.saveToS3(BuckeNames.shotgunclientimages.name(),fileName,orderItem.getImageData());
+            String fileName = BucketNames.orderImages + "/" + ControllerUtils.generateGuid() + ".jpg";
+            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(),fileName,orderItem.getImageData());
             orderItem.setImageUrl(imageUrl);
         }
 

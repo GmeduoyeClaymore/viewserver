@@ -183,7 +183,13 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
             }
             case String: {
                 IColumnString joinColumn = (IColumnString) columnHolder;
-                return usePreviousValues ? joinColumn.getPreviousString(row).hashCode() : joinColumn.getString(row).hashCode();
+                if(usePreviousValues){
+                    String previousString = joinColumn.getPreviousString(row);
+                    return previousString != null ? previousString.hashCode() : "".hashCode();
+                }else{
+                    String string = joinColumn.getString(row);
+                    return string != null ? string.hashCode() : "".hashCode();
+                }
             }
             default: {
                 throw new IllegalArgumentException("Column: " + columnHolder.getName() +  " Cannot group on a column of type " + columnHolder.getType());

@@ -64,7 +64,8 @@ class DeliveryOptions extends Component {
 
   render() {
     const { history, context, busy, paymentCards, errors  } = this.props;
-    const { delivery, payment, orderItem, origin, destination } = context.state;
+    const { delivery, payment, orderItem} = context.state;
+    const {origin, destination} = delivery;
     const { noRequiredForOffload } = delivery;
     const { requireHelp, isDatePickerVisible, selectedCard } = this.state;
     const isDelivery = orderItem.productId == Products.DELIVERY;

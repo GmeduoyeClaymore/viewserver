@@ -1,7 +1,8 @@
 package com.shotgun.viewserver.constants;
 
-public enum BuckeNames{
+public enum BucketNames {
     shotgunclientimages,
     orderImages,
     driverImages
 }
+

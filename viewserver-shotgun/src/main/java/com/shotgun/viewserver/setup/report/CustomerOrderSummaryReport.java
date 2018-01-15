@@ -33,12 +33,18 @@ public class CustomerOrderSummaryReport {
                                         .withRightJoinColumns("deliveryId")
                                         .withConnection("orderItemsJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
+                                new JoinNode("driverJoin")
+                                        .withLeftJoinColumns("driverId")
+                                        .withLeftJoinOuter()
+                                        .withRightJoinColumns("userId")
+                                        .withConnection("deliveryJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("deliveryJoin", Constants.OUT, "left")
+                                        .withConnection("driverJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")
@@ -57,6 +63,9 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
+                                                new IProjectionConfig.ProjectionColumn("driverRating"),
+                                                new IProjectionConfig.ProjectionColumn("firstName", "driverFirstName"),
+                                                new IProjectionConfig.ProjectionColumn("lastName", "driverLastName"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),

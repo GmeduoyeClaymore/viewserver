@@ -12,6 +12,7 @@ export default class CustomerDao{
     this.updateSubscription = this.updateSubscription.bind(this);
     this.registerCustomer = this.registerCustomer.bind(this);
     this.checkout = this.checkout.bind(this);
+    this.rateDriver = this.rateDriver.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -41,6 +42,10 @@ export default class CustomerDao{
   async checkout({orderItem, payment, delivery}){
     const orderId = await this.orderDao.createOrder({paymentId: payment.paymentId, delivery, orderItems: [{quantity: 1, ...orderItem}]});
     return orderId;
+  }
+
+  async rateDriver({deliveryId, rating}){
+    await this.client.invokeJSONCommand('deliveryController', 'addDriverRating', {deliveryId, rating});
   }
 }
 

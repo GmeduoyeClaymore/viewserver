@@ -39,7 +39,9 @@ DeliveryDataSource {
                                         new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
                                         new Column("eta", "eta", ColumnType.DateTime),
-                                        new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int)
+                                        new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int),
+                                        new Column("driverRating", "driverRating", ColumnType.Int),
+                                        new Column("customerRating", "customerRating", ColumnType.Int)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )

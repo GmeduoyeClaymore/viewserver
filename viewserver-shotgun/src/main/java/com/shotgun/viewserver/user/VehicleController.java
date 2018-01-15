@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Vehicle;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
@@ -15,12 +16,11 @@ import org.slf4j.LoggerFactory;
 @Controller(name = "vehicleController")
 public class VehicleController {
     private static final Logger log = LoggerFactory.getLogger(VehicleController.class);
-    private static String VEHICLE_TABLE_NAME = "/datasources/vehicle/vehicle";
 
     @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
     public String addOrUpdateVehicle(@ActionParam(name = "vehicle") Vehicle vehicle){
         log.debug("addOrUpdateUser vehicle");
-        KeyedTable vehicleTable = ControllerUtils.getKeyedTable(VEHICLE_TABLE_NAME);
+        KeyedTable vehicleTable = ControllerUtils.getKeyedTable(TableNames.VEHICLE_TABLE_NAME);
         String newVehicleId = ControllerUtils.generateGuid();
 
         ITableRowUpdater tableUpdater = row -> {

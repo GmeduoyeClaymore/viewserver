@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -16,12 +17,11 @@ import java.util.Date;
 @Controller(name = "userController")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static String USER_TABLE_NAME = "/datasources/user/user";
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
     public String addOrUpdateUser(@ActionParam(name = "user")User user){
         log.debug("addOrUpdateUser user: " + user.getEmail());
-        KeyedTable userTable = ControllerUtils.getKeyedTable(USER_TABLE_NAME);
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         Date now = new Date();
         String newUserId = ControllerUtils.generateGuid();
 

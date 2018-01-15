@@ -6,8 +6,9 @@ import { connect } from 'custom-redux';
 import { getDaoState } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
-import { debounce } from 'lodash';
+import {debounce, merge} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
+
 
 const MAX_RECENT_ADDRESSES = 10;
 
@@ -84,7 +85,8 @@ class AddressLookup extends Component {
     };
 
     const onAddressSelected = (address) => {
-      context.setState({ [addressKey]: address }, () => history.push('/Customer/Checkout/DeliveryMap'));
+      const { delivery } = context.state;
+      context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
     };
 
     const onSuggestedPlaceSelected = async (rowData) => {

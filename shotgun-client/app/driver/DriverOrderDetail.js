@@ -5,6 +5,7 @@ import OrderSummary from 'common/components/OrderSummary';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
 import {startOrderRequest, cancelOrderRequest} from 'driver/actions/DriverActions';
 import PriceSummary from 'common/components/PriceSummary';
+import RatingSummary from 'common/components/RatingSummary';
 import shotgun from '../native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import LoadingScreen from 'common/components/LoadingScreen';
@@ -52,6 +53,7 @@ class DriverOrderDetail extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={12.00}/>
+        <RatingSummary orderStatus={orderSummary.status} isDriver={true} delivery={orderSummary.delivery}/>
         {!isComplete ?
           <View>
             {isStarted ?

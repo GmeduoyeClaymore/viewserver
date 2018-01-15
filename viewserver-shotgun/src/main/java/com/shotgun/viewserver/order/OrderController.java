@@ -39,7 +39,7 @@ public class OrderController {
 
         //add addresses
         String originDeliveryAddressId = deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getOrigin());
-        if(delivery.getDestination() != null){
+        if(delivery.getDestination() != null && delivery.getDestination().getLine1() != null){
             String destinationDeliverAddressId  = deliveryAddressController.addOrUpdateDeliveryAddress(delivery.getDestination());
             delivery.getDestination().setDeliveryAddressId(destinationDeliverAddressId);
         }

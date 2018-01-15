@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -15,11 +16,10 @@ import java.util.Date;
 @Controller(name = "deliveryAddressController")
 public class DeliveryAddressController {
     private static final Logger log = LoggerFactory.getLogger(DeliveryAddressController.class);
-    private static String DELIVERY_ADDRESS_TABLE_NAME = "/datasources/deliveryAddress/deliveryAddress";
 
     @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
     public String addOrUpdateDeliveryAddress(@ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress){
-        KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(DELIVERY_ADDRESS_TABLE_NAME);
+        KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
         Date now = new Date();
         String newDeliveryAddressId = ControllerUtils.generateGuid();
         log.debug("Adding or updating delivery address");

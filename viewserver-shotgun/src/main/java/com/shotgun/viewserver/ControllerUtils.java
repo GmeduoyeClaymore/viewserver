@@ -181,4 +181,9 @@ public class ControllerUtils{
             argon2.wipeArray(charStr);
         }
     }
+
+    public static String getDeliveryId(KeyedTable orderTable, int currentRow){
+        String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentRow).toString();
+        return deliveryId;
+    }
 }

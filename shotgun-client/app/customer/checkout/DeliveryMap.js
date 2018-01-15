@@ -11,8 +11,6 @@ import { withRouter } from 'react-router';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-
-
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
@@ -68,7 +66,6 @@ class DeliveryMap extends Component {
   constructor(props) {
     super(props);
     this.doAddressLookup = this.doAddressLookup.bind(this);
-    this.updateMapRegion = this.updateMapRegion.bind(this);
     this.fitMap = this.fitMap.bind(this);
   }
 
@@ -76,13 +73,6 @@ class DeliveryMap extends Component {
     context.setState({ [type]: EMPTY_LOCATION });
   }
 
-  updateMapRegion(position) {
-
-  }
-
-  onAddressSelected(addressKey) {
-    return (details) => onLocationSelect(addressKey, details);
-  }
 
   doAddressLookup(addressKey, addressLabel) {
     const { history } = this.props;
@@ -112,7 +102,8 @@ class DeliveryMap extends Component {
   render() {
     const { history, context, client, busy } = this.props;
     let { position } = this.props;
-    const { orderItem, destination = EMPTY_LOCATION, origin = EMPTY_LOCATION } = context.state;
+    const {orderItem, delivery} = context.state;
+    const {destination = EMPTY_LOCATION, origin = EMPTY_LOCATION} = delivery;
     const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
     const disableDoneButton = origin.line1 == undefined || (orderItem.productId == Products.DELIVERY && destination.line1 == undefined);
     const isDelivery = orderItem.productId == Products.DELIVERY;
@@ -166,7 +157,6 @@ class DeliveryMap extends Component {
         <Text uppercase={false}>Continue</Text>
         <Icon name='arrow-forward' />
       </Button>
-      {this.updateMapRegion(position)}
     </Container>;
   }
 }

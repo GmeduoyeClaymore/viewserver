@@ -10,6 +10,7 @@ import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
 import LoadingScreen from 'common/components/LoadingScreen';
+import RatingAction from 'common/components/RatingAction';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -33,8 +34,8 @@ class DriverOrderInProgress extends Component{
 
   render() {
     const {orderSummary = {status: ''}, history, position, dispatch, busy} = this.props;
-    const {orderItem, delivery} = orderSummary;
-    const {origin, destination} = delivery;
+    const {orderItem = {}, delivery = {}} = orderSummary;
+    const {origin, destination, customerRating} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const isDelivery = orderItem.productId == Products.DELIVERY;
 
@@ -63,7 +64,12 @@ class DriverOrderInProgress extends Component{
         <Row size={40} style={styles.infoRow}>
           {isComplete ?
             <Col>
-              <Text>Rate this customer</Text>
+              <Row>
+                <Col>
+                  <RatingAction isDriver={true} delivery={delivery}/>
+                </Col>
+              </Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth><Text uppercase={false} disabled={customerRating == 0} onPress={()=> history.push('/Driver')}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

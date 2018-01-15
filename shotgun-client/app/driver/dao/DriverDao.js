@@ -14,6 +14,7 @@ export default class DriverDao{
     this.startOrderRequest = this.startOrderRequest.bind(this);
     this.cancelOrderRequest = this.cancelOrderRequest.bind(this);
     this.completeOrderRequest = this.completeOrderRequest.bind(this);
+    this.rateCustomer = this.rateCustomer.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -58,6 +59,10 @@ export default class DriverDao{
   async completeOrderRequest({orderId}){
     const {userId} = this.options;
     await this.client.invokeJSONCommand('driverController', 'completeOrder', {driverId: userId, orderId});
+  }
+
+  async rateCustomer({deliveryId, rating}){
+    await this.client.invokeJSONCommand('deliveryController', 'addCustomerRating', {deliveryId, rating});
   }
 }
 

@@ -11,7 +11,7 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, payment, delivery}) => {
   const purchase = async() => {
-    dispatch(checkout(orderItem, payment, delivery, () => history.push('/Customer/Checkout/OrderComplete')));
+    dispatch(checkout(orderItem, payment, delivery, () => history.push('/Customer/CustomerOrders')));
   };
 
   return <Container>
@@ -27,7 +27,7 @@ const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, 
       <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={12.00}/>
       <OrderSummary delivery={delivery} orderItem={orderItem} client={client}/>
       <ErrorRegion errors={errors}>
-        {!busy ? <Button onPress={purchase} fullWidth iconRight padded><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
+        {!busy ? <Button onPress={purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
       </ErrorRegion>
     </Content>
   </Container>;
@@ -41,13 +41,13 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, orderItem, origin, destination} = context.state;
+  const {delivery, payment, orderItem} = context.state;
 
   return {
     ...initialProps,
     errors: getOperationError(state, 'customerDao', 'checkout'),
     orderItem,
-    delivery: {...delivery, origin, destination},
+    delivery,
     payment,
     busy: isAnyOperationPending(state, { customerDao: 'checkout'})
   };

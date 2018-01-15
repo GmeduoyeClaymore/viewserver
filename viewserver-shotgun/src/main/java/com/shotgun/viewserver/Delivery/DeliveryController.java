@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -14,11 +15,9 @@ import java.util.Date;
 @Controller(name = "deliveryController")
 public class DeliveryController {
 
-    private static String DELIVERY_TABLE_NAME = "/datasources/delivery/delivery";
-
     @ControllerAction(path = "addOrUpdateDelivery", isSynchronous = true)
     public String addOrUpdateDelivery(@ActionParam(name = "userId")String userId, @ActionParam(name = "delivery")Delivery delivery){
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(DELIVERY_TABLE_NAME);
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
         Date now = new Date();
         String newDeliveryId = ControllerUtils.generateGuid();
 
@@ -33,10 +32,11 @@ public class DeliveryController {
             row.setInt("noRequiredForOffload", delivery.getNoRequiredForOffload());
             row.setString("vehicleTypeId", delivery.getVehicleTypeId());
             row.setString("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId());
-            if(delivery.getDestination()!=null){//can happen with rubbish collection
+            if(delivery.getDestination()!= null){//can happen with rubbish collection
                 row.setString("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
             }
-            row.setString("driverId", delivery.getDriverId());
+            //String driverId = delivery.getDriverId();
+            //row.setString("driverId", driverId);
         };
 
         if(delivery.getDeliveryId() != null){
@@ -46,6 +46,30 @@ public class DeliveryController {
             deliveryTable.addRow(new TableKey(newDeliveryId), tableUpdater);
             return newDeliveryId;
         }
+    }
+
+    @ControllerAction(path = "addDriverRating", isSynchronous = true)
+    public String addDriverRating(@ActionParam(name = "deliveryId")String deliveryId, @ActionParam(name = "rating")int rating){
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+
+        ITableRowUpdater tableUpdater = row -> {
+            row.setInt("driverRating", rating);
+        };
+
+        deliveryTable.updateRow(new TableKey(deliveryId), tableUpdater);
+        return deliveryId;
+    }
+
+    @ControllerAction(path = "addCustomerRating", isSynchronous = true)
+    public String addCustomerRating(@ActionParam(name = "deliveryId")String deliveryId, @ActionParam(name = "rating")int rating){
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+
+        ITableRowUpdater tableUpdater = row -> {
+            row.setInt("customerRating", rating);
+        };
+
+        deliveryTable.updateRow(new TableKey(deliveryId), tableUpdater);
+        return deliveryId;
     }
 }
 
