@@ -41,7 +41,9 @@ public class
                                         new Column("email", "email", ColumnType.String),
                                         new Column("type", "type", ColumnType.String),
                                         new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
-                                        new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String)
+                                        new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
+                                        new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
+                                        new Column("chargePercentage", "chargePercentage", ColumnType.Int)
                                 ))
                                 .withKeyColumns("userId")
                 )

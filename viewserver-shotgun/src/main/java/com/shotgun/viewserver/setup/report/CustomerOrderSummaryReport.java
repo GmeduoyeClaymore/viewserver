@@ -58,6 +58,7 @@ public class CustomerOrderSummaryReport {
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
+                                                new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("productId"),
                                                 new IProjectionConfig.ProjectionColumn("notes"),
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),

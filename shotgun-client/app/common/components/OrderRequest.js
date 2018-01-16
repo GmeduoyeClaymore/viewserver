@@ -26,7 +26,7 @@ class OrderRequest extends Component {
             {isRowDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
           </Col>
           <Col size={25} style={styles.priceRow}>
-            <Text style={styles.price}>£XX.XX <Icon name="arrow-forward"/></Text>
+            <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="arrow-forward"/></Text>
           </Col>
         </Row>
         <Row size={25}>

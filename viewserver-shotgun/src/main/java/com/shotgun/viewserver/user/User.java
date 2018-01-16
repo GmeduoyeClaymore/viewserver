@@ -9,11 +9,14 @@ public class User{
     private String firstName;
     private String lastName;
     private String password;
+    private Date dob;
     private String contactNo;
     private String email;
     private String type;
     private String stripeCustomerId;
-    String stripeDefaultSourceId;
+    private String stripeAccountId;
+    private String stripeDefaultSourceId;
+    private int chargePercentage;
 
     public User() {
     }
@@ -106,4 +109,27 @@ public class User{
         this.stripeCustomerId = stripeCustomerId;
     }
 
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public String getStripeAccountId() {
+        return stripeAccountId;
+    }
+
+    public void setStripeAccountId(String stripeAccountId) {
+        this.stripeAccountId = stripeAccountId;
+    }
+
+    public int getChargePercentage() {
+        return chargePercentage;
+    }
+
+    public void setChargePercentage(int chargePercentage) {
+        this.chargePercentage = chargePercentage;
+    }
 }

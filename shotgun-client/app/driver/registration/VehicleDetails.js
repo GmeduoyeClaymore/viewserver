@@ -89,11 +89,4 @@ const validationSchema = {
   dimensions: yup.object().required()
 };
 
-
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps
-});
-
-export default withRouter(connect(
-  mapStateToProps
-)(VehicleDetails));
+export default withRouter(connect()(VehicleDetails));

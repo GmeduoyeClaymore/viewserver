@@ -7,11 +7,13 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import shotgun from 'native-base-theme/variables/shotgun';
 import LoadingScreen from 'common/components/LoadingScreen';
+import TermsAgreement from 'common/components/TermsAgreement';
 import {registerDriver} from 'driver/actions/DriverActions';
 import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
+import ErrorRegion from 'common/components/ErrorRegion';
 
-const OffloadDetails  = ({context, history, busy, dispatch}) => {
-  const {user, vehicle} = context.state;
+const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
+  const {user, vehicle, bankAccount, address} = context.state;
   const {numAvailableForOffload} = vehicle;
 
   const onChangeValue = (field, value) => {
@@ -19,7 +21,7 @@ const OffloadDetails  = ({context, history, busy, dispatch}) => {
   };
 
   const register = async () => {
-    dispatch(registerDriver(user, vehicle, () => history.push('/Root')));
+    dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   };
 
   return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
@@ -78,10 +80,13 @@ const OffloadDetails  = ({context, history, busy, dispatch}) => {
           </Row>
         </Grid> : null}
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight onPress={register} validationSchema={yup.object(validationSchema)} model={vehicle}>
-      <Text uppercase={false}>Register</Text>
-      <Icon name='arrow-forward'/>
-    </ValidatingButton>
+    <ErrorRegion errors={errors}>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={register} validationSchema={yup.object(validationSchema)} model={vehicle}>
+        <Text uppercase={false}>Register</Text>
+        <Icon name='arrow-forward'/>
+      </ValidatingButton>
+    </ErrorRegion>
+    <TermsAgreement/>
   </Container>;
 };
 

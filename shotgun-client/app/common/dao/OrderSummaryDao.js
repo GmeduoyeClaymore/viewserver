@@ -55,6 +55,7 @@ export default class OrderSummaryDao{
     return {
       orderId: orderSummary.orderId,
       status: orderSummary.status,
+      totalPrice: orderSummary.totalPrice,
       orderItem: {
         productId: orderSummary.productId,
         notes: orderSummary.notes,

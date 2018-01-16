@@ -43,14 +43,15 @@ class PaymentCardDetails extends Component {
         <Body><Title>Payment Details</Title></Body>
       </Header>
       <Content>
-        <ErrorRegion errors={errors}>
           <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
-        </ErrorRegion>
       </Content>
+      <ErrorRegion errors={errors}>
       <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='arrow-forward'/>
       </Button>
+      </ErrorRegion>
+      <TermsAgreement/>
     </Container>;
   }
 }

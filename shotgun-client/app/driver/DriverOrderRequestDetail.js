@@ -42,7 +42,7 @@ class DriverOrderRequestDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={12.00}/>
+        <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
         <Button fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></Button>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
       </Content>

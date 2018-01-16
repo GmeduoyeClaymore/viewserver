@@ -11,6 +11,7 @@ import LandingCommon from './LandingCommon';
 import RegistrationCommon from './RegistrationCommon';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
 import DriverRegistration from './driver/registration/DriverRegistration';
+import TermsAndConditions from 'common/registration/TermsAndConditions';
 import CustomerLanding from './customer/CustomerLanding';
 import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
@@ -63,8 +64,8 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    this.userId = undefined;
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    //this.userId = undefined;
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
@@ -101,6 +102,7 @@ export default class App extends React.Component {
               <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
               <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
               <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
+              <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
               <Redirect to={App.INITIAL_ROOT_NAME}/>
             </Switch>
           </StyleProvider>

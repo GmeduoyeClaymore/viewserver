@@ -1,11 +1,11 @@
 import React from 'react';
-import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Icon, Item, Label} from 'native-base';
+import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Icon, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
 import {merge} from 'lodash';
 
-export default UserDetails  = ({context, history, match, next}) => {
+export default UserDetails  = ({context, history, next}) => {
   const {user} = context.state;
 
   const onChangeText = async (field, value) => {
@@ -13,7 +13,12 @@ export default UserDetails  = ({context, history, match, next}) => {
   };
 
   return <Container>
-    <Header>
+    <Header withButton>
+      <Left>
+        <Button>
+          <Icon name='arrow-back' onPress={() => history.goBack()} />
+        </Button>
+      </Left>
       <Body><Title>Your Details</Title></Body>
     </Header>
     <Content>
@@ -60,10 +65,11 @@ export default UserDetails  = ({context, history, match, next}) => {
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} style={styles.continueButton} onPress={() => history.push(`${match.path}/${next}`)} validationSchema={yup.object(validationSchema)} model={user}>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} style={styles.continueButton} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={user}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward'/>
     </ValidatingButton>
+    <TermsAgreement/>
   </Container>;
 };
 

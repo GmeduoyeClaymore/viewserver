@@ -53,6 +53,7 @@ export default class OrderRequestDaoContext{
     return {
       orderId: orderRequest.orderId,
       status: orderRequest.status,
+      totalPrice: orderRequest.totalPrice,
       orderItem: {
         productId: orderRequest.productId,
         notes: orderRequest.notes,
