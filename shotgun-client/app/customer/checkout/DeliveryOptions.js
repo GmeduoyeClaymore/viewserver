@@ -15,6 +15,7 @@ import yup from 'yup';
 import Products from 'common/constants/Products';
 import CardIcon from 'common/components/CardIcon';
 import ErrorRegion from 'common/components/ErrorRegion';
+import TermsAgreement from 'common/components/TermsAgreement';
 
 class DeliveryOptions extends Component {
   constructor(props) {

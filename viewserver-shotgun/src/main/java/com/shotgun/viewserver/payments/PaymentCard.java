@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.payments;
 
+
 public class PaymentCard {
     String customerToken;
     String number;

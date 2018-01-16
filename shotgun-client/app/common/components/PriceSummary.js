@@ -16,7 +16,7 @@ export default class PriceSummary extends Component{
 
     return <Grid>
       <Row style={styles.row}><Text style={styles.heading}>{isDriver ? getDriverHeading() : getCustomerHeading()}</Text></Row>
-      <Row style={styles.row}><Text style={styles.price}>£{price}</Text></Row>
+      <Row style={styles.row}><Text style={styles.price}>£{(price / 100).toFixed(2)}</Text></Row>
     </Grid>;
   }
 }

@@ -12,7 +12,7 @@ export const INITIAL_STATE = {
     line2: undefined,
     city: undefined,
     country: undefined,
-    postcode: undefined,
+    postCode: undefined,
     isDefault: true
   }
 };

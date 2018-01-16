@@ -1,10 +1,9 @@
 package com.shotgun.viewserver.setup;
 
 import com.shotgun.viewserver.setup.datasource.*;
+import com.shotgun.viewserver.setup.report.CustomerOrderSummaryReport;
 import com.shotgun.viewserver.setup.report.DriverOrderSummaryReport;
 import com.shotgun.viewserver.setup.report.OrderRequestReport;
-import com.shotgun.viewserver.setup.report.CustomerOrderSummaryReport;
-import com.shotgun.viewserver.setup.report.ProductCategoryReport;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.server.setup.BootstrapperBase;
 
@@ -21,16 +20,9 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
         dataSources.add(UserDataSource.getDataSource());
         dataSources.add(DeliveryAddressDataSource.getDataSource());
-        dataSources.add(MerchantDataSource.getDataSource());
         dataSources.add(DeliveryDataSource.getDataSource());
-        dataSources.add(MerchantProductInventoryDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(OrderItemsDataSource.getDataSource());
-        dataSources.add(OrderFulfillmentDataSource.getDataSource());
-        dataSources.add(PackageTypeDataSource.getDataSource());
-        dataSources.add(ProductDataSource.getDataSource());
-        dataSources.add(ProductCategoryDataSource.getDataSource());
-        dataSources.add(StatusDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());
         dataSources.add(VehicleTypeDataSource.getDataSource());
         return dataSources;
@@ -41,7 +33,6 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
         reportDefinitions.put(CustomerOrderSummaryReport.ID, CustomerOrderSummaryReport.getReportDefinition());
         reportDefinitions.put(DriverOrderSummaryReport.ID, DriverOrderSummaryReport.getReportDefinition());
-        reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
 
         return reportDefinitions;

@@ -37,7 +37,7 @@ class CustomerOrderDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={orderSummary.status} isDriver={false} price={12.00}/>
+        <PriceSummary orderStatus={orderSummary.status} isDriver={false} price={orderSummary.totalPrice}/>
         <RatingSummary orderStatus={orderSummary.status} isDriver={false} delivery={orderSummary.delivery}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
       </Content>

@@ -1,12 +1,10 @@
 package com.shotgun.viewserver.order;
 
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.delivery.Delivery;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
-import com.shotgun.viewserver.constants.OrderStatuses;
-import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -14,7 +12,6 @@ import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
-
 import java.util.Date;
 
 @Controller(name = "orderController")

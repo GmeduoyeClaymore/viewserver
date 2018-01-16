@@ -11,16 +11,15 @@ export default RegistrationCommon = ({history}) => {
       <Grid>
         <Row>
           <Col size={45}>
-            <Row><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='cube'/></Button></Row>
-            <Row style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Schedule a delivery</Text></Row>
+            <Row size={35}><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='cube'/></Button></Row>
+            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Schedule a delivery</Text></Row>
           </Col>
           <Col size={10}>
-            <Row style={styles.orRow}><Text>Or</Text></Row>
-            <Row></Row>
+            <Row style={styles.orRow}><Text>or</Text></Row>
           </Col>
           <Col size={45}>
-            <Row><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='car'/></Button></Row>
-            <Row style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Drive and deliver</Text></Row>
+            <Row size={35}><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='car'/></Button></Row>
+            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Drive and deliver</Text></Row>
           </Col>
         </Row>
       </Grid>
@@ -49,10 +48,10 @@ const styles = {
   },
   orRow: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-start',
+    paddingTop: 30
   },
   productSelectTextRow: {
-    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'flex-start'
   },

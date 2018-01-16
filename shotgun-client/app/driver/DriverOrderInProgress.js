@@ -69,7 +69,7 @@ class DriverOrderInProgress extends Component{
                   <RatingAction isDriver={true} delivery={delivery}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth><Text uppercase={false} disabled={customerRating == 0} onPress={()=> history.push('/Driver')}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

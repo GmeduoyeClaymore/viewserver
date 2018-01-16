@@ -3,6 +3,7 @@ package com.shotgun.viewserver.order;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.BucketNames;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
@@ -13,11 +14,10 @@ import io.viewserver.operators.table.TableKey;
 
 @Controller(name = "orderItemController")
 public class OrderItemController {
-    private static String ORDER_ITEM_TABLE_NAME = "/datasources/orderItem/orderItem";
 
     @ControllerAction(path = "addOrUpdateOrderItem", isSynchronous = true)
     public String addOrUpdateOrderItem(@ActionParam(name = "userId")String userId, @ActionParam(name = "orderItem")OrderItem orderItem){
-        KeyedTable orderItemTable = ControllerUtils.getKeyedTable(ORDER_ITEM_TABLE_NAME);
+        KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
         //TODO - credentials should not be in here
         ImageController imageController = new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"));
         String newOrderItemId = ControllerUtils.generateGuid();
@@ -40,6 +40,7 @@ public class OrderItemController {
             row.setString("notes", orderItem.getNotes());
             row.setString("imageUrl", orderItem.getImageUrl());
             row.setInt("quantity", orderItem.getQuantity());
+            row.setInt("unitPrice", orderItem.getUnitPrice());
         };
 
         if(orderItem.getOrderItemId() != null){

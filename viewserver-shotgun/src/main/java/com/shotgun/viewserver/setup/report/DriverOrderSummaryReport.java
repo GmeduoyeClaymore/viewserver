@@ -60,6 +60,7 @@ public class DriverOrderSummaryReport {
                                         .withProjectionColumns(
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
                                                 new IProjectionConfig.ProjectionColumn("productId"),
+                                                new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("notes"),
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),

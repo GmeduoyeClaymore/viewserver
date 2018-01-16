@@ -33,9 +33,9 @@ export default class DriverDao{
     return;
   }
 
-  async registerDriver({driver, vehicle}){
+  async registerDriver({driver, vehicle, address, bankAccount}){
     Logger.info(`Registering driver ${driver.email}`);
-    const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle});
+    const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
     Logger.info(`Driver ${driverId} registered`);
     //await PrincipalService.setUserIdOnDevice(driverId);
     return driverId;

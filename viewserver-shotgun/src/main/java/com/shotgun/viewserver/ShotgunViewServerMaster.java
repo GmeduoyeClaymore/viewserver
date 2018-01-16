@@ -37,7 +37,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(new MapsController(new MapsControllerKey("AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M",false)));
         this.registerController(new LoginController());
         this.registerController(new UserController());
-        this.registerController(new DriverController());
+        this.registerController(new DriverController(paymentController));
         this.registerController(new CustomerController(paymentController, deliveryAddressController));
         this.registerController(new OrderController());
         this.registerController(new VehicleController());

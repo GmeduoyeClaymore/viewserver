@@ -7,31 +7,64 @@ export const INITIAL_STATE = {
     type: 'driver',
     password: undefined
   },
+  address: {
+    line1: undefined,
+    city: undefined,
+    postCode: undefined
+  },
+  bankAccount: {
+    accountNumber: undefined,
+    sortCode: undefined
+  },
   vehicle: {
     registrationNumber: undefined,
     colour: undefined,
     make: undefined,
     model: undefined,
-    numAvailableForOffload: undefined
+    numAvailableForOffload: undefined,
+      dimensions: {
+      height: undefined,
+      width: undefined,
+      length: undefined,
+      weight: undefined
+    }
   }
 };
 /*
+
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
     email: 'test@test.com',
-    contactNo: '1234565656',
+    contactNo: '07733362799',
     type: 'driver',
-    password: 'password'
+    password: 'password',
+    dob: '1982-02-03'
   },
   vehicle: {
     registrationNumber: 'nx01ert',
-    colour: 'fromAPI',
-    make: 'fromAPI',
-    model: 'fromAPI',
-    numAvailableForOffload: 0
+    colour: 'blue',
+    make: 'Ford',
+    model: 'Transit',
+    numAvailableForOffload: 0,
+    dimensions: {
+      height: 2000,
+      width: 2000,
+      length: 2000,
+      weight: 1000
+    }
+  },
+  address: {
+    line1: 'line1',
+    city: 'London',
+    postCode: 'SW178RS'
+  },
+  bankAccount: {
+    accountNumber: '00012345',
+    sortCode: '108800'
   }
-};*/
+};
 
+*/
 

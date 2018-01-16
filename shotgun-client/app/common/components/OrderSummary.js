@@ -16,7 +16,7 @@ class OrderSummary extends Component{
 
   render() {
     const { width } = Dimensions.get('window');
-    const {orderItem, delivery, client} = this.props;
+    const {orderItem, delivery, client, busy, selectedVehicleType} = this.props;
     const {noRequiredForOffload, origin, destination} = delivery;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;
@@ -67,7 +67,7 @@ const mapStateToProps = (state, initialProps) => {
   const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
   return {
     selectedVehicleType,
-    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }),
+    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType,
     ...initialProps
   };
 };

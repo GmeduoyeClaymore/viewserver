@@ -10,5 +10,5 @@ public final class TableNames {
     public static final String USER_TABLE_NAME = "/datasources/user/user";
     public static final String VEHICLE_TABLE_NAME = "/datasources/vehicle/vehicle";
     public static final String DELIVERY_ADDRESS_TABLE_NAME = "/datasources/deliveryAddress/deliveryAddress";
-
+    public static String ORDER_ITEM_TABLE_NAME = "/datasources/orderItem/orderItem";
 }
