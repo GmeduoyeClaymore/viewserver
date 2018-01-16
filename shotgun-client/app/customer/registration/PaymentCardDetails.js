@@ -4,6 +4,7 @@ import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
+import LoadingScreen from 'common/components/LoadingScreen';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class PaymentCardDetails extends Component {
@@ -32,7 +33,7 @@ class PaymentCardDetails extends Component {
       dispatch(registerCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
     };
 
-    return <Container>
+    return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -46,7 +47,7 @@ class PaymentCardDetails extends Component {
           <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
         </ErrorRegion>
       </Content>
-      <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid || busy}>
+      <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='arrow-forward'/>
       </Button>
@@ -56,8 +57,8 @@ class PaymentCardDetails extends Component {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  errors: getOperationError(state, 'customerDao', 'addCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'addCustomer'})
+  errors: getOperationError(state, 'customerDao', 'registerCustomer'),
+  busy: isAnyOperationPending(state, { customerDao: 'registerCustomer'})
 });
 
 export default connect(mapStateToProps)(PaymentCardDetails);
