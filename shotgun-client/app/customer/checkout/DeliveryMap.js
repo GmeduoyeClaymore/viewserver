@@ -162,12 +162,15 @@ class DeliveryMap extends Component {
 }
 
 
-const mapStateToProps = (state, initialProps) => ({
-  state,
-  position: getDaoState(state, ['position'], 'userDao'),
-  busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }),
-  ...initialProps
-});
+const mapStateToProps = (state, initialProps) => {
+  const position = getDaoState(state, ['position'], 'userDao');
+  return {
+    state,
+    position,
+    busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }) || !position,
+    ...initialProps
+  };
+};
 
 export default withRouter(connect(
   mapStateToProps

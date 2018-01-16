@@ -17,6 +17,7 @@ import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-ro
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
+import NotificationService from 'common/NotificationService';
 
 const store = configureStore();
 
@@ -34,12 +35,15 @@ export default class App extends React.Component {
     this.client = new Client('ws://127.0.0.1:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
+    this.notificationService = new NotificationService();
   }
 
   async componentDidMount() {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
+      this.notificationService.start();
+      this.notificationService.sendLocalNotification();
       await ProtoLoader.loadAll();
       await this.client.connect();
       await this.setUserId();
