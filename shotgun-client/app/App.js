@@ -42,15 +42,20 @@ export default class App extends React.Component {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
+      await this.notificationService.requestPermissions();
+      const token = await this.notificationService.getToken();
+      Logger.info('Token is - ' + token);
       this.notificationService.start();
-      this.notificationService.sendLocalNotification();
+      
       await ProtoLoader.loadAll();
       await this.client.connect();
       await this.setUserId();
+    
       this.setInitialRoot();
       isConnected = true;
+      this.notificationService.sendLocalNotification();
     } catch (error){
-      Logger.debug('Connection error - ' + error);
+      Logger.error('Connection error - ' + error);
       this.setState({ error});
     }
     Logger.debug('App Component Mounted');

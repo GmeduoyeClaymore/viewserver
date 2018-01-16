@@ -1,6 +1,7 @@
 import {Platform} from 'react-native';
 import Rx from 'rxjs/Rx';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
+import Logger from 'common/Logger';
 
 // this shall be called regardless of app state: running, background or not running. Won't be called when app is killed by user in iOS
 export default class NotificationService {
@@ -10,7 +11,6 @@ export default class NotificationService {
 
   sendLocalNotification(){
     FCM.presentLocalNotification({
-      id: 'UNIQ_ID_STRING',                               // (optional for instant notification)
       title: 'My Notification Title',                     // as FCM payload
       body: 'My Notification Message',                    // as FCM payload (required)
       sound: 'default',                                   // as FCM payload
@@ -32,7 +32,7 @@ export default class NotificationService {
       ongoing: true,                                      // Android only
       my_custom_data: 'my_custom_field_value',             // extra data you want to throw
       lights: true,                                       // Android only, LED blinking (default false)
-      show_in_foreground                                  // notification when app is in foreground (local & remote)
+      show_in_foreground: true                                // notification when app is in foreground (local & remote)
     });
   }
 
@@ -43,7 +43,7 @@ export default class NotificationService {
   start(){
     const {_tokenUpdated} = this;
     FCM.on(FCMEvent.RefreshToken, (token) => {
-      console.log(token);
+      Logger.info('Token is ' + token);
       _tokenUpdated.next(token);
       // fcm token may not be available on first load, catch it here
     });

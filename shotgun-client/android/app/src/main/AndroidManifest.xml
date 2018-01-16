@@ -48,10 +48,7 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M"/>
-	  <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_notif"/>
+
       <receiver android:name="com.evollu.react.fcm.FIRLocalMessagingPublisher"/>
       <receiver android:enabled="true" android:exported="true"  android:name="com.evollu.react.fcm.FIRSystemBootEventReceiver">
           <intent-filter>
