@@ -63,12 +63,14 @@ const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}
 
 const mapStateToProps = (state, initialProps) => {
   const vehicle = getDaoState(state, ['vehicle'], 'vehicleDao');
+  const position = getDaoState(state, ['position'], 'userDao');
+
   return {
     ...initialProps,
     isDelivery: initialProps.history.location.state && initialProps.history.location.state.isDelivery !== undefined ? initialProps.history.location.state.isDelivery : true,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle,
+    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle || !position,
     vehicle,
-    position: getDaoState(state, ['position'], 'userDao')
+    position
   };
 };
 
