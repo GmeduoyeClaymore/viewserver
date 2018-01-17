@@ -18,6 +18,7 @@ import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-ro
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
+import NotificationService from 'common/NotificationService';
 
 const store = configureStore();
 
@@ -35,19 +36,27 @@ export default class App extends React.Component {
     this.client = new Client('ws://127.0.0.1:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
+    this.notificationService = new NotificationService();
   }
 
   async componentDidMount() {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
+      await this.notificationService.requestPermissions();
+      const token = await this.notificationService.getToken();
+      Logger.info('Token is - ' + token);
+      this.notificationService.start();
+      
       await ProtoLoader.loadAll();
       await this.client.connect();
       await this.setUserId();
+    
       this.setInitialRoot();
       isConnected = true;
+      this.notificationService.sendLocalNotification();
     } catch (error){
-      Logger.debug('Connection error - ' + error);
+      Logger.error('Connection error - ' + error);
       this.setState({ error});
     }
     Logger.debug('App Component Mounted');

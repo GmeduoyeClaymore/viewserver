@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "977023970816",
+    "firebase_url": "https://shotgun-server.firebaseio.com",
+    "project_id": "shotgun-server",
+    "storage_bucket": "shotgun-server.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977023970816:android:59f296726e9d1d3c",
+        "android_client_info": {
+          "package_name": "com.shotgunclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "977023970816-4ohbcri0evdboet95d1gkg132sufge8u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEPc1Tkk1k3EDvHllF6rR12xyIrlH-ZPY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
