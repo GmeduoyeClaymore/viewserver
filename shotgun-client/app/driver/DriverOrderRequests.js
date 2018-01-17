@@ -67,10 +67,11 @@ DriverOrderRequests.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const vehicle = getDaoState(state, ['vehicle'], 'vehicleDao');
+  const position = getDaoState(state, ['position'], 'userDao');
     return {
-      busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle,
+      busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle || !position,
       vehicle,
-      position: getDaoState(state, ['position'], 'userDao'),
+      position,
       ...initialProps
     };
   };
