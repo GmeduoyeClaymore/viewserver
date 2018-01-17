@@ -54,7 +54,7 @@ export default class App extends React.Component {
     
       this.setInitialRoot();
       isConnected = true;
-      this.notificationService.sendLocalNotification();
+      //this.notificationService.sendLocalNotification();
     } catch (error){
       Logger.error('Connection error - ' + error);
       this.setState({ error});
@@ -65,8 +65,8 @@ export default class App extends React.Component {
 
   async setUserId(){
     //this.userId = undefined;
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

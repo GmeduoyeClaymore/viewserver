@@ -58,6 +58,7 @@
               <category android:name="android.intent.category.DEFAULT" />
           </intent-filter>
       </receiver>
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M"/>
     </application>
 
 </manifest>

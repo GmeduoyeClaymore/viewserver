@@ -33,7 +33,7 @@ const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
       </Left>
       <Body><Title>Delivery Details</Title></Body>
     </Header>
-    <Content padded>
+    <Content padded keyboardShouldPersistTaps="always">
       <Grid style={{marginBottom: shotgun.contentPadding}}>
         <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
         <Row>

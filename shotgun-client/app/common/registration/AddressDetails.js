@@ -33,7 +33,7 @@ export default AddressDetails  = ({context, history, client, next}) => {
       </Left>
       <Body><Title>Address Details</Title></Body>
     </Header>
-    <Content onPress={closeInputs}>
+    <Content onPress={closeInputs} keyboardShouldPersistTaps="always">
       <Grid>
         <Row>
           <Col>

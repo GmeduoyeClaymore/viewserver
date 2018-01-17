@@ -42,14 +42,14 @@ class PaymentCardDetails extends Component {
         </Left>
         <Body><Title>Payment Details</Title></Body>
       </Header>
-      <Content>
-          <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
+      <Content keyboardShouldPersistTaps="always">
+        <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}>
-      <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon name='arrow-forward'/>
-      </Button>
+        <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon name='arrow-forward'/>
+        </Button>
       </ErrorRegion>
       <TermsAgreement/>
     </Container>;
