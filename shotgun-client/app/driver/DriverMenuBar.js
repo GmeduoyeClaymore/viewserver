@@ -12,15 +12,5 @@ const DriverMenuBar = ({history}) => {
   </Footer>;
 };
 
-DriverMenuBar.PropTypes = {
-  cart: PropTypes.object
-};
-
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps
-});
-
-export default withRouter(connect(
-  mapStateToProps
-)(DriverMenuBar));
+export default withRouter(connect()(DriverMenuBar));
 

@@ -8,7 +8,6 @@ public class OrderItem{
     private String imageUrl;
     private String imageData;
     private int quantity;
-    private int unitPrice;
 
     public OrderItem() {
     }
@@ -67,13 +66,5 @@ public class OrderItem{
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
-    }
-
-    public int getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(int unitPrice) {
-        this.unitPrice = unitPrice;
     }
 }

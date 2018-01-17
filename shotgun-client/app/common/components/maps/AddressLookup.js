@@ -118,6 +118,13 @@ class AddressLookup extends Component {
       </View>
     </ListItem>;
 
+    const homeAddressItem = (address, i) => <ListItem paddedTopBottom first key={i} onPress={() => onAddressSelected(address)}>
+      <View>
+        <Text style={styles.addressText}>Home</Text>
+        <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
+      </View>
+    </ListItem>;
+
     return (
       <Container>
         <Header>
@@ -135,16 +142,13 @@ class AddressLookup extends Component {
               <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
-          {homeAddress && suggestedPlaces.length == 0 ? <Row size={20}>
-            <Container>
-              <Text style={styles.smallText} onPress={() => onAddressSelected(homeAddress)}>Home</Text>
-            </Container>
-          </Row> : null}
-
-          <Row size={90}>
+          <Row size={80}>
             {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
               <Text style={styles.smallText}>Recent Addresses</Text>
-              <List>{orderedAddresses.map(address)}</List>
+              <List>
+                {homeAddress ? homeAddressItem(homeAddress, 0) : null}
+                {orderedAddresses.map(address)}
+              </List>
             </Container> : null}
 
             {suggestedPlaces.length > 0 ? <Container paddedLeft>
@@ -168,7 +172,7 @@ const styles = {
   },
   resultsContainer: {
     borderTopWidth: 1,
-    marginTop: 20,
+    marginTop: 10,
     paddingTop: shotgun.contentPadding,
     borderColor: shotgun.silver
   },

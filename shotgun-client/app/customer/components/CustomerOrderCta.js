@@ -14,7 +14,7 @@ class CustomerOrderCta extends Component {
     const {orderSummary} = this.props;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const inOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
-    const isDelivery = orderSummary.productId == Products.DELIVERY;
+    const isDelivery = orderSummary.orderItem.productId == Products.DELIVERY;
 
     if (isComplete) {
       return null;
@@ -26,7 +26,7 @@ class CustomerOrderCta extends Component {
       </Col>
       {inOnRoute ?
         <Col>
-          <Button track style={styles.button} onPress={() => console.log('Should go to track driver screen')}>
+          <Button fullWidth track style={styles.button} onPress={() => console.log('Should go to track driver screen')}>
             <Icon name='arrow-forward'/>
             <Text uppercase={false}>Track Driver</Text>
           </Button>

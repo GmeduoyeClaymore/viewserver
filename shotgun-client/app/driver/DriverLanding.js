@@ -13,6 +13,7 @@ import {isAnyLoading, isAnyOperationPending} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class DriverLanding extends Component {
     const {busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
-      <Container>
+      <Container style={{backgroundColor: shotgun.brandPrimary}}>
         <Switch>
           <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>

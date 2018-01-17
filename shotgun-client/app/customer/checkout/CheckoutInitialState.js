@@ -1,4 +1,5 @@
 export const INITIAL_STATE = {
+  totalPrice: 1000,
   orderItem: {
     productId: 'PROD_Delivery',
     notes: undefined,

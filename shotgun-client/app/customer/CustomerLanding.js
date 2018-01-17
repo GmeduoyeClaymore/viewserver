@@ -12,6 +12,7 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {getCurrentPosition} from 'common/actions/CommonActions';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -42,13 +43,13 @@ class CustomerLanding extends Component {
     const {busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
-      <Container>
+      <Container style={{backgroundColor: shotgun.brandPrimary}}>
         <Switch>
           <Route path={'/Customer/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrders'} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerSettings'} exact component={CustomerSettings}/>
-          <Redirect to={'/Customer/Checkout'}/>
+          <Redirect to={'/Customer/CustomerOrders'}/>
         </Switch>
         <CustomerMenuBar/>
       </Container>;

@@ -163,10 +163,10 @@ class DeliveryMap extends Component {
 
 
 const mapStateToProps = (state, initialProps) => ({
+  ...initialProps,
   state,
   position: getDaoState(state, ['position'], 'userDao'),
   busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }),
-  ...initialProps
 });
 
 export default withRouter(connect(

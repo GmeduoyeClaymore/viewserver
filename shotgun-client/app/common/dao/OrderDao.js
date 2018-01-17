@@ -26,10 +26,10 @@ export default class OrdersDao{
     return;
   }
 
-  async createOrder({delivery, paymentId, orderItems}) {
+  async createOrder({delivery, paymentId, totalPrice, orderItems}) {
     const {userId} = options;
     Logger.info('Creating order');
-    const orderId = await this.client.invokeJSONCommand('orderController', 'createOrder', {userId, paymentId, delivery, orderItems});
+    const orderId = await this.client.invokeJSONCommand('orderController', 'createOrder', {userId, paymentId, totalPrice, delivery, orderItems});
     Logger.info(`Order ${orderId} created`);
     return orderId;
   }
