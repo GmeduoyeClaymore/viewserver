@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { Dimensions } from 'react-native';
+import React  from 'react';
 import Products from 'common/constants/Products';
 import { connect } from 'custom-redux';
 import { Container, Button, Text, Icon, Grid, Col, Row } from 'native-base';
@@ -10,6 +9,7 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {merge} from 'lodash';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
@@ -38,14 +38,18 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
     longitudeDelta: LONGITUDE_DELTA
   };
 
-  const getLocationText = (location, place, placeholder, doAddressLookup) => {
-    const style = location.line1 ? {} : styles.locationTextPlaceholder;
-    const text = location.line1 ? `${location.line1}, ${location.postCode}` : placeholder;
-    return <Text style={style} onPress={() => doAddressLookup(place, placeholder)}>{text}</Text>;
+  const getLocationText = (address, addressKey, placeholder) => {
+    const style = address.line1 ? {} : styles.locationTextPlaceholder;
+    const text = address.line1 ? `${address.line1}, ${address.postCode}` : placeholder;
+    return <Text style={style} onPress={() => doAddressLookup(placeholder, (address) => setLocation(address, addressKey))}>{text}</Text>;
   };
 
-  const doAddressLookup = (addressKey, addressLabel) => {
-    history.push('/Customer/Checkout/AddressLookup', { addressKey, addressLabel });
+  const setLocation = (address, addressKey) => {
+    context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
+  };
+
+  const doAddressLookup = (addressLabel, onAddressSelected) => {
+    history.push('/Customer/Checkout/AddressLookup', {addressLabel, onAddressSelected});
   };
 
   const fitMap = () => {
@@ -75,11 +79,11 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
         <Col>
           <Row>
             <Icon name="pin" paddedIcon originPin />
-            {getLocationText(origin, 'origin', 'Enter pick-up location', doAddressLookup)}
+            {getLocationText(origin, 'origin', 'Enter pick-up location')}
           </Row>
           {isDelivery ? <Row>
             <Icon name="pin" paddedIcon />
-            {getLocationText(destination, 'destination', 'Enter drop-off location', doAddressLookup)}
+            {getLocationText(destination, 'destination', 'Enter drop-off location')}
           </Row> : null}
         </Col>
       </Row>

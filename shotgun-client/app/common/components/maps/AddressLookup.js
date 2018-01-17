@@ -9,7 +9,6 @@ import ErrorRegion from 'common/components/ErrorRegion';
 import {debounce, merge} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-
 const MAX_RECENT_ADDRESSES = 10;
 
 class AddressLookup extends Component {
@@ -60,7 +59,7 @@ class AddressLookup extends Component {
 
   render() {
     const { addressSearchText, suggestedPlaces, busy, errors } = this.state;
-    const { deliveryAddresses = [], addressLabel, client, context, history, addressKey } = this.props;
+    const { deliveryAddresses = [], addressLabel, client, history, onAddressSelected} = this.props;
     const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
     const homeAddress = this.getHomeAddress(deliveryAddresses);
 
@@ -82,11 +81,6 @@ class AddressLookup extends Component {
 
     const onAddressChanged = (value) => {
       this.setState({ addressSearchText: value }, () => searchAutoCompleteSuggestions(value));
-    };
-
-    const onAddressSelected = (address) => {
-      const { delivery } = context.state;
-      context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
     };
 
     const onSuggestedPlaceSelected = async (rowData) => {

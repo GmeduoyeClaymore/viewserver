@@ -30,7 +30,7 @@ class DriverLanding extends Component {
     const {busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
-      <Container style={{backgroundColor: shotgun.brandPrimary}}>
+      <Container>
         <Switch>
           <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>

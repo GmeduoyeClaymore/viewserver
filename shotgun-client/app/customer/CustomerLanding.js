@@ -43,7 +43,7 @@ class CustomerLanding extends Component {
     const {busy, client} = this.props;
 
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
-      <Container style={{backgroundColor: shotgun.brandPrimary}}>
+      <Container>
         <Switch>
           <Route path={'/Customer/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrders'} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
