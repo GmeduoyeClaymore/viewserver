@@ -46,11 +46,11 @@ class VehicleDetails extends Component {
             {vehicleTypes.map((v, i) => renderVehicleType(v, i))}
           </Row>
         </Grid>
+        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  history.push('/Customer/Checkout/ItemDetails')} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={delivery}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon name='arrow-forward'/>
+        </ValidatingButton>
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  history.push('/Customer/Checkout/ItemDetails')} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={delivery}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon name='arrow-forward'/>
-      </ValidatingButton>
     </Container>;
   }
 }

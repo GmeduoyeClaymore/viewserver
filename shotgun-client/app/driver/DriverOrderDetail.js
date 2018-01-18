@@ -6,7 +6,7 @@ import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'comm
 import {startOrderRequest, cancelOrderRequest} from 'driver/actions/DriverActions';
 import PriceSummary from 'common/components/PriceSummary';
 import RatingSummary from 'common/components/RatingSummary';
-import shotgun from '../native-base-theme/variables/shotgun';
+import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import LoadingScreen from 'common/components/LoadingScreen';
 

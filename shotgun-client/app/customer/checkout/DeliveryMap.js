@@ -62,10 +62,10 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
     <Grid>
       <Row size={85}>
         <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-          showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} showsMyLocationButton={true}>
+          showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
           {showDirections ?
-            <MapViewDirections client={client} origin={{ latitude: origin.latitude, longitude: origin.longitude }}
-              destination={{ latitude: destination.latitude, longitude: destination.longitude }}
+            <MapViewDirections client={client} origin={{ ...origin }}
+              destination={{ ...destination }}
               strokeWidth={3} /> : null}
 
           {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{ ...origin }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
