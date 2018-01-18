@@ -66,9 +66,9 @@ const mapStateToProps = (state, initialProps) => {
   const {delivery} = initialProps;
   const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
   return {
+    ...initialProps,
     selectedVehicleType,
     busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType,
-    ...initialProps
   };
 };
 

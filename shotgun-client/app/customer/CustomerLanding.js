@@ -12,6 +12,7 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {getCurrentPosition} from 'common/actions/CommonActions';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({

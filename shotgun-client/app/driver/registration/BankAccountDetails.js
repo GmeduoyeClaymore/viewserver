@@ -23,7 +23,7 @@ const BankAccountDetails = ({context, history}) => {
       </Left>
       <Body><Title>Payment Details</Title></Body>
     </Header>
-    <Content>
+    <Content keyboardShouldPersistTaps="always">
       <Grid>
         <Row>
           <Col>

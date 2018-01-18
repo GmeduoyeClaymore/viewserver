@@ -15,6 +15,7 @@ import TermsAndConditions from 'common/registration/TermsAndConditions';
 import CustomerLanding from './customer/CustomerLanding';
 import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
+import {View} from 'react-native';
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -59,6 +60,10 @@ export default class App extends React.Component {
   }
 
   async initMessaging(){
+    if (!this.userId){
+      Logger.warning('No userid has been specified not initializing messaging');
+      return;
+    }
     registerAppListener();
     FCM.getInitialNotification().then(notif => {
       this.setState({
@@ -81,8 +86,8 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    //this.userId = undefined;
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    this.userId = undefined;
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
@@ -111,17 +116,19 @@ export default class App extends React.Component {
       <NativeRouter>
         <AndroidBackButton>
           <StyleProvider style={getTheme(shotgun)}>
-            <Switch>
-              <Route path="/Root" component={App}/>
-              <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
-              <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
-              <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
-              <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
-              <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
-              <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
-              <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
-              <Redirect to={App.INITIAL_ROOT_NAME}/>
-            </Switch>
+            <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+              <Switch>
+                <Route path="/Root" component={App}/>
+                <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
+                <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
+                <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
+                <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
+                <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+                <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
+                <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
+                <Redirect to={App.INITIAL_ROOT_NAME}/>
+              </Switch>
+            </View>
           </StyleProvider>
         </AndroidBackButton>
       </NativeRouter>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text, Button, Content, Grid, Col, Row, View, H1, Icon} from 'native-base';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 export default RegistrationCommon = ({history}) => {
   return <Content padded contentContainerStyle={styles.container}>
@@ -35,7 +36,8 @@ const styles = {
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: shotgun.brandPrimary
   },
   titleView: {
     flex: 1,

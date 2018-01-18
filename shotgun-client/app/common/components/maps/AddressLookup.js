@@ -9,7 +9,6 @@ import ErrorRegion from 'common/components/ErrorRegion';
 import {debounce, merge} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-
 const MAX_RECENT_ADDRESSES = 10;
 
 class AddressLookup extends Component {
@@ -60,7 +59,7 @@ class AddressLookup extends Component {
 
   render() {
     const { addressSearchText, suggestedPlaces, busy, errors } = this.state;
-    const { deliveryAddresses = [], addressLabel, client, context, history, addressKey } = this.props;
+    const { deliveryAddresses = [], addressLabel, client, history, onAddressSelected} = this.props;
     const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
     const homeAddress = this.getHomeAddress(deliveryAddresses);
 
@@ -82,11 +81,6 @@ class AddressLookup extends Component {
 
     const onAddressChanged = (value) => {
       this.setState({ addressSearchText: value }, () => searchAutoCompleteSuggestions(value));
-    };
-
-    const onAddressSelected = (address) => {
-      const { delivery } = context.state;
-      context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
     };
 
     const onSuggestedPlaceSelected = async (rowData) => {
@@ -118,6 +112,13 @@ class AddressLookup extends Component {
       </View>
     </ListItem>;
 
+    const homeAddressItem = (address, i) => <ListItem paddedTopBottom first key={i} onPress={() => onAddressSelected(address)}>
+      <View>
+        <Text style={styles.addressText}>Home</Text>
+        <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
+      </View>
+    </ListItem>;
+
     return (
       <Container>
         <Header>
@@ -135,16 +136,13 @@ class AddressLookup extends Component {
               <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
-          {homeAddress && suggestedPlaces.length == 0 ? <Row size={20}>
-            <Container>
-              <Text style={styles.smallText} onPress={() => onAddressSelected(homeAddress)}>Home</Text>
-            </Container>
-          </Row> : null}
-
-          <Row size={90}>
+          <Row size={80}>
             {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
               <Text style={styles.smallText}>Recent Addresses</Text>
-              <List>{orderedAddresses.map(address)}</List>
+              <List>
+                {homeAddress ? homeAddressItem(homeAddress, 0) : null}
+                {orderedAddresses.map(address)}
+              </List>
             </Container> : null}
 
             {suggestedPlaces.length > 0 ? <Container paddedLeft>
@@ -168,7 +166,7 @@ const styles = {
   },
   resultsContainer: {
     borderTopWidth: 1,
-    marginTop: 20,
+    marginTop: 10,
     paddingTop: shotgun.contentPadding,
     borderColor: shotgun.silver
   },

@@ -44,7 +44,6 @@ public class OrderItemController {
             row.setString("notes", orderItem.getNotes());
             row.setString("imageUrl", orderItem.getImageUrl());
             row.setInt("quantity", orderItem.getQuantity());
-            row.setInt("unitPrice", orderItem.getUnitPrice());
         };
 
         if(orderItem.getOrderItemId() != null){

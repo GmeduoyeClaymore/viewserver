@@ -31,6 +31,7 @@ public class OrderController {
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
     public String createOrder(@ActionParam(name = "paymentId")String paymentId,
+                              @ActionParam(name = "totalPrice")int totalPrice,
                               @ActionParam(name = "delivery")Delivery delivery, @ActionParam(name = "orderItems")OrderItem[] orderItems){
 
         String userId = (String) ControllerContext.get("userId");
@@ -59,6 +60,7 @@ public class OrderController {
         //add order
         ITableRowUpdater tableUpdater = row -> {
             row.setString("orderId", orderId);
+            row.setInt("totalPrice", totalPrice);
             row.setLong("created", now.getTime());
             row.setLong("lastModified", now.getTime());
             row.setString("status", OrderStatuses.PLACED.name());

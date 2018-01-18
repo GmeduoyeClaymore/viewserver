@@ -38,7 +38,7 @@ const VehicleDetails  = ({context, history, client}) => {
       </Left>
       <Body><Title>Vehicle Details</Title></Body>
     </Header>
-    <Content>
+    <Content keyboardShouldPersistTaps="always">
       <Grid>
         <Row>
           <Col>

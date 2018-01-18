@@ -22,22 +22,6 @@ export default (variables = variable) => {
       }
     },
 
-
-    /* '.primary': {
-      '.bordered': {
-        'NativeBase.Text': {
-          color: variables.btnPrimaryBg,
-        },
-        'NativeBase.Icon': {
-          color: variables.btnPrimaryBg,
-        },
-        'NativeBase.IconNB': {
-          color: variables.btnPrimaryBg,
-        },
-      },
-      backgroundColor: variables.btnPrimaryBg,
-    },*/
-
     '.success': {
       '.bordered': {
         'NativeBase.Text': {

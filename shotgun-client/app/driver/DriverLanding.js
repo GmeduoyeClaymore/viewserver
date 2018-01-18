@@ -13,6 +13,7 @@ import {isAnyLoading, isAnyOperationPending} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 class DriverLanding extends Component {
   constructor(props) {

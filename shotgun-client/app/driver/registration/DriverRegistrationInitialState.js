@@ -5,7 +5,8 @@ export const INITIAL_STATE = {
     email: undefined,
     contactNo: undefined,
     type: 'driver',
-    password: undefined
+    password: undefined,
+    dob: '1982-02-03'
   },
   address: {
     line1: undefined,
@@ -22,7 +23,7 @@ export const INITIAL_STATE = {
     make: undefined,
     model: undefined,
     numAvailableForOffload: undefined,
-      dimensions: {
+    dimensions: {
       height: undefined,
       width: undefined,
       length: undefined,

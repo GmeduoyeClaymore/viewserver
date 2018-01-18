@@ -21,7 +21,7 @@ export default UserDetails  = ({context, history, next}) => {
       </Left>
       <Body><Title>Your Details</Title></Body>
     </Header>
-    <Content>
+    <Content keyboardShouldPersistTaps="always">
       <Grid>
         <Row>
           <Col>
@@ -69,7 +69,6 @@ export default UserDetails  = ({context, history, next}) => {
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward'/>
     </ValidatingButton>
-    <TermsAgreement/>
   </Container>;
 };
 

@@ -1,45 +1,48 @@
 import React from 'react';
-import {Text, Header, Left, Body, Container, Button, Icon, Title, Content, Grid, Row, Col, Item, Label, Input} from 'native-base';
+import {Text, Header, Left, Body, Container, Button, Icon, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
-import PlacesInput from 'common/components/maps/PlacesInput';
-import {parseGooglePlacesData} from 'common/components/maps/MapUtils';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-export default AddressDetails  = ({context, history, client, next}) => {
+export default AddressDetails  = ({context, match, history, next}) => {
   const {deliveryAddress = {}} = context.state;
 
-  const onLocationSelect = (details) => {
-    const newLocation = parseGooglePlacesData(details);
-    context.setState({deliveryAddress: newLocation});
-  };
-
-  const closeInputs = () => {
-    this.originInput.addressInput();
+  const onAddressSelected = (address) => {
+    context.setState({deliveryAddress: address}, () => history.push(`${match.path}/AddressDetails`));
   };
 
   const onChangeText = async (field, value) => {
     context.setState({deliveryAddress: merge(deliveryAddress, {[field]: value})});
   };
 
+  const doAddressLookup = (addressLabel) => {
+    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected });
+  };
+
+  const getLocationText = (location, placeholder) => {
+    const style = location.line1 ? {} : styles.locationTextPlaceholder;
+    const text = location.line1 ? `${location.line1}, ${location.postCode}` : placeholder;
+    return <Text style={[styles.line1Text, style]} onPress={() => doAddressLookup(placeholder)}>{text}</Text>;
+  };
+
   return <Container>
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()} />
+          <Icon name='arrow-back' onPress={() => history.push(`${match.path}/UserDetails`)} />
         </Button>
       </Left>
       <Body><Title>Address Details</Title></Body>
     </Header>
-    <Content onPress={closeInputs}>
+    <Content keyboardShouldPersistTaps="always">
       <Grid>
         <Row>
           <Col>
             <Item stackedLabel first>
               <Label>Street Address</Label>
-              <Input/>
+              {getLocationText(deliveryAddress, 'Search for your home address')}
             </Item>
           </Col>
         </Row>
@@ -81,7 +84,6 @@ export default AddressDetails  = ({context, history, client, next}) => {
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward'/>
     </ValidatingButton>
-    <PlacesInput ref={c => {this.addressInput = c;}} client={client} onSelect={onLocationSelect} value={deliveryAddress.line1} style={styles.addressInput} placeholder='Search for your home address'/>
   </Container>;
 };
 
@@ -96,26 +98,13 @@ const validationSchema = {
 };
 
 const styles = {
-  addressInput: {
-    container: {
-      flex: 1,
-      height: 250,
-      margin: 2,
-      position: 'absolute',
-      top: 88,
-      left: shotgun.contentPadding - 3,
-      right: 0,
-      borderBottomWidth: 0
-    },
-    textInputContainer: {
-      backgroundColor: '#FFFFFF',
-      borderBottomWidth: 0,
-      borderTopWidth: 0
-    },
-    textInput: {
-      borderWidth: 0,
-      fontWeight: 'bold',
-      fontSize: 18
-    }
+  line1Text: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    paddingTop: 5,
+    paddingBottom: 10
+  },
+  locationTextPlaceholder: {
+    color: shotgun.silver
   }
 };

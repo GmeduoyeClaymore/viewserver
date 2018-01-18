@@ -1,6 +1,5 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import {Button, Icon, Footer, FooterTab} from 'native-base';
 import { withRouter } from 'react-router';
 
@@ -12,15 +11,5 @@ const CustomerMenuBar = ({history, match}) => {
   </Footer>;
 };
 
-CustomerMenuBar.PropTypes = {
-  cart: PropTypes.object
-};
-
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps
-});
-
-export default withRouter(connect(
-  mapStateToProps
-)(CustomerMenuBar));
+export default withRouter(connect()(CustomerMenuBar));
 
