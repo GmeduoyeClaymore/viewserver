@@ -24,7 +24,7 @@ public class OrderControllerTest {
 
     @Before
     public void createSut(){
-        sut = new OrderController();
+        sut = new OrderController(null,null,null);
     }
 
     @Test

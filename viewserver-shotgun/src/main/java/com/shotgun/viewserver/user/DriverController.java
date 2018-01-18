@@ -6,6 +6,9 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
+import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.messaging.AppMessageBuilder;
+import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentController;
 import io.viewserver.command.ActionParam;
@@ -21,9 +24,12 @@ import org.slf4j.LoggerFactory;
 public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
     private PaymentController paymentController;
+    private MessagingController messagingController;
 
-    public DriverController(PaymentController paymentController) {
+    public DriverController(PaymentController paymentController,
+                            MessagingController messagingController) {
         this.paymentController = paymentController;
+        this.messagingController = messagingController;
     }
 
     @ControllerAction(path = "registerDriver", isSynchronous = true)
@@ -55,6 +61,7 @@ public class DriverController {
 
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String currentStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
+        String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
         String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentRow);
 
         if(currentStatus != OrderStatuses.PLACED.name()){
@@ -70,19 +77,24 @@ public class DriverController {
             row.setString("driverId", driverId);
         });
 
-        //TODO - need to send a notification to the customer
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.ACCEPTED.name());
         return orderId;
     }
+
 
     @ControllerAction(path = "startOrder", isSynchronous = true)
     public String startOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
 
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+        String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
+
         orderTable.updateRow(new TableKey(orderId), row -> {
             row.setString("status", OrderStatuses.PICKEDUP.name());
         });
 
-        //TODO - need to send a notification to the customer
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
+
         return orderId;
     }
 
@@ -93,8 +105,8 @@ public class DriverController {
 
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
         int currentDriverRow = userTable.getRow(new TableKey(driverId));
-        String customerId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
-        int currentCustomerRow = userTable.getRow(new TableKey(customerId));
+        String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
+        int currentCustomerRow = userTable.getRow(new TableKey(orderUserId));
 
         String paymentId = (String)ControllerUtils.getColumnValue(orderTable, "paymentId", currentOrderRow);
         String stripeCustomerId = (String)ControllerUtils.getColumnValue(userTable, "stripeCustomerId", currentCustomerRow);
@@ -105,8 +117,8 @@ public class DriverController {
         orderTable.updateRow(new TableKey(orderId), row -> {
             row.setString("status", OrderStatuses.COMPLETED.name());
         });
-        //TODO - need to send a notification to the customer
 
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
         return orderId;
     }
@@ -116,9 +128,9 @@ public class DriverController {
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
 
-        int currentRow = orderTable.getRow(new TableKey(orderId));
-        String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentRow);
-
+        int currentOrderRow = orderTable.getRow(new TableKey(orderId));
+        String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentOrderRow);
+        String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
         orderTable.updateRow(new TableKey(orderId), row -> {
             row.setString("status", OrderStatuses.PLACED.name());
         });
@@ -127,7 +139,18 @@ public class DriverController {
             row.setString("driverId", null);
         });
 
-        //TODO - need to send a notification to the customer
+        notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;
     }
+
+    private void notifyStatusChanged(String orderId, String driverId, String orderUserId, String status) {
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        int driverRow = userTable.getRow(new TableKey(driverId));
+        String firstName = ControllerUtils.getColumnValue(userTable, "firstName", driverRow).toString();
+        String lastName = ControllerUtils.getColumnValue(userTable, "lastName", driverRow).toString();
+
+        AppMessage builder = new AppMessageBuilder().withDefaults().message(String.format("Order %s", status), String.format("Your order %s has been %s by driver %s", orderId, status, firstName + " " + lastName)).build();
+        messagingController.sendMessageToUser(orderUserId, builder);
+    }
+
 }

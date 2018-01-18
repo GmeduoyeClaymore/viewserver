@@ -1,4 +1,4 @@
-if [ -n "$EMULATOR" ]; then
+if [ -n "$1" ]; then
    EMULATOR=$1
 else
 	DEVICES=( $(emulator -list-avds 2>&1 ) )

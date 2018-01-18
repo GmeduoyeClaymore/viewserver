@@ -1,0 +1,7 @@
+{"custom_notification": {
+    "show_in_foreground": true,
+    "sound": "default",
+    "title": "Messaging controller title",
+    "body": "Messaging controller message",
+    "priority": "high"
+}, "to": "eBq4b7NZvP4:APA91bEZFoTmj2I555b9Q7bqjyOAH3ajpgnm87mR5TwIoNRwjReWWyYq87b54Q1zTcsh5rRapl5RuZxJ97eiS1sepuCG6SEYdjBrifj0LbFSkp1USGnI-S5yW21HnjSUTl1uHICE3OKl", "priority": "10"}

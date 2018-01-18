@@ -283,6 +283,11 @@ public class CoalescorOperator extends OperatorBase implements IConfigurableOper
     }
 
     @Override
+    public IOutput getOutput() {
+        return output;
+    }
+
+    @Override
     public ICatalog getParent() {
         return catalogHolder.getParent();
     }

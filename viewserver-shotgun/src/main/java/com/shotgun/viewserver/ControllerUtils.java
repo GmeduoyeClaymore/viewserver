@@ -13,6 +13,7 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 
 public class ControllerUtils{
 
@@ -54,32 +67,82 @@ public class ControllerUtils{
 
 
     public static String execute(String method, String targetURL, String urlParameters) {
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Content-Length",Integer.toString(urlParameters.getBytes().length));
+        headers.put("Content-Language", "en-US");
+        return execute(method, targetURL, urlParameters,headers);
+    }
+
+    public static String postToURL(String url, String message, HttpClient httpClient,  Map<String,String> requestHeaders) throws IOException, RuntimeException {
+        HttpPost postRequest = new HttpPost(url);
+        logger.info("Making request to: {} with parameters {}",url,message);
+        StringEntity input = new StringEntity(message);
+        input.setContentType("application/json");
+        postRequest.setEntity(input);
+        for(Map.Entry<String,String> entry :  requestHeaders.entrySet()){
+            postRequest.setHeader(entry.getKey(), entry.getValue());
+        }
+
+        HttpResponse response = httpClient.execute(postRequest);
+
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new RuntimeException("Failed : HTTP error code : "
+                    + response.getStatusLine().getStatusCode());
+        }
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader((response.getEntity().getContent())));
+
+        String output;
+        StringBuffer totalOutput = new StringBuffer();
+        System.out.println("Output from Server .... \n");
+        while ((output = br.readLine()) != null) {
+            System.out.println(output);
+            totalOutput.append(output);
+        }
+        return totalOutput.toString();
+    }
+
+    public static String execute(String method, String targetURL, String urlParameters, Map<String,String> requestHeaders) {
         HttpURLConnection connection = null;
         URL url = null;
         try {
             //Create connection
 
-            url = new URL(targetURL + (method.equals("GET") ? "?" + urlParameters : ""));
+            boolean isGet = method.equals("GET");
+            url = new URL(targetURL + (isGet ? "?" + urlParameters : ""));
             logger.info("Making request to: {}",url);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(method);
 
-            connection.setRequestProperty("Content-Length",
-                    Integer.toString(urlParameters.getBytes().length));
-            connection.setRequestProperty("Content-Language", "en-US");
+            for(Map.Entry<String,String> entry :  requestHeaders.entrySet()){
+                connection.setRequestProperty(entry.getKey(),entry.getValue());
+            }
             connection.setConnectTimeout(2000);
-
             connection.setUseCaches(false);
             connection.setDoOutput(true);
 
+
+            //Send request
+            if(!isGet){
+                connection.setDoInput(true);
+                DataOutputStream wr = new DataOutputStream(
+                        connection.getOutputStream());
+                wr.writeBytes(urlParameters);
+                wr.flush();
+                wr.close();
+            }
 
 
             InputStream errorStream = connection.getErrorStream();
             if(connection.getResponseCode() == 401){
                 throw new RuntimeException("Authentication issue. Api key broken or you have run out of requests");
             }
+            if(connection.getResponseCode() == 400){
+                throw new RuntimeException("Bad request");
+            }
             else if(connection.getResponseCode() != 200){
-                throw new RuntimeException("Problem executing request " + getString(errorStream));
+                throw new RuntimeException("Problem executing request. Response code is " + connection.getResponseCode() + " errors are " + getString(errorStream));
             }
             InputStream is = connection.getInputStream();
             String string = getString(is);
