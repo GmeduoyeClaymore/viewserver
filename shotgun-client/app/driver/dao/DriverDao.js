@@ -1,5 +1,5 @@
 import Logger from 'common/Logger';
-//import PrincipalService from 'common/services/PrincipalService';
+import PrincipalService from 'common/services/PrincipalService';
 import Rx from 'rxjs/Rx';
 
 export default class DriverDao{
@@ -37,7 +37,7 @@ export default class DriverDao{
     Logger.info(`Registering driver ${driver.email}`);
     const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
     Logger.info(`Driver ${driverId} registered`);
-    //await PrincipalService.setUserIdOnDevice(driverId);
+    await PrincipalService.setUserIdOnDevice(driverId);
     return driverId;
   }
 

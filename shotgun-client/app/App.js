@@ -6,7 +6,7 @@ import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
 import Logger from 'common/Logger';
 import ProtoLoader from './viewserver-client/core/ProtoLoader';
-// import PrincipalService from './common/services/PrincipalService';
+import PrincipalService from './common/services/PrincipalService';
 import LandingCommon from './LandingCommon';
 import RegistrationCommon from './RegistrationCommon';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
@@ -20,6 +20,7 @@ import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import NotificationService from 'common/NotificationService';
+import {AsyncStorage} from 'react-native';
 
 const store = configureStore();
 
@@ -65,8 +66,8 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    //this.userId = undefined;
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
+    this.userId = await PrincipalService.getUserIdFromDevice();
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }

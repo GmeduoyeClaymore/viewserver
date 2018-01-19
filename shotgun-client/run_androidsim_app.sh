@@ -1,15 +1,36 @@
-if [ -n "$EMULATOR" ]; then
-   EMULATOR=$1
-else
-	DEVICES=( $(emulator -list-avds 2>&1 ) )
-	EMULATOR=( ${DEVICES[0]} )
-	echo "No AVD specified running emulator $EMULATOR"
+#!/bin/bash
+
+while getopts e:p:r: option
+do
+ case "${option}"
+ in
+ e) EMULATOR=${OPTARG};;
+ p) PORT=${OPTARG};;
+ r) RUNREACT=${OPTARG};;
+ esac
+done
+
+if [ -z "$EMULATOR" ] || [ -z "$PORT" ];
+then
+    echo "ERROR: you must specify avd name and port using -e and -p options. Exiting"
+    exit 1
 fi
 
-echo "Starting $EMULATOR"
-emulator -avd $EMULATOR &
-sleep 10
+IFS='+' read -r -a EMULATOR_ARR <<< "$EMULATOR"
+IFS='+' read -r -a PORT_ARR <<< "$PORT"
 
-adb reverse tcp:7007 tcp:7007
-adb reverse tcp:6060 tcp:6060
+for index in "${!EMULATOR_ARR[@]}"
+do
+    CURRENT_PORT=${PORT_ARR[index]}
+    CURRENT_EMULATOR=${EMULATOR_ARR[index]}
+
+    ADBNAME="emulator-"$CURRENT_PORT
+    echo "Starting $CURRENT_EMULATOR on port $CURRENT_PORT"
+    emulator -avd $CURRENT_EMULATOR -port $CURRENT_PORT &
+    sleep 10
+
+    adb -s $ADBNAME reverse tcp:7007 tcp:7007 &
+    adb -s $ADBNAME reverse tcp:6060 tcp:6060 &
+done
+
 react-native run-android

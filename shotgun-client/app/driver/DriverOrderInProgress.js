@@ -150,9 +150,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  // const orderId = initialProps.location && initialProps.location.state ? initialProps.location.state.orderId : undefined;
-
-  const orderId = '7c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9';
+  const orderId = initialProps.location && initialProps.location.state ? initialProps.location.state.orderId : undefined;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const position = getDaoState(state, ['position'], 'userDao');

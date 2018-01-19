@@ -38,7 +38,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverSettings'} exact component={DriverSettings} />}/>
-          <Redirect to={'/Driver/DriverOrderInProgress'}/>
+          <Redirect to={'/Driver/DriverOrderRequests'}/>
         </Switch>
         <DriverMenuBar/>
       </Container>;

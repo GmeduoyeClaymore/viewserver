@@ -6,6 +6,7 @@ import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
+import TermsAgreement from 'common/components/TermsAgreement';
 
 class PaymentCardDetails extends Component {
   constructor(props) {

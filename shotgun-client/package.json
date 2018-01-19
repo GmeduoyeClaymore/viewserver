@@ -8,7 +8,9 @@
     "android-linux": "node node_modules/react-native/local-cli/cli.js bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && node node_modules/react-native/local-cli/cli.js run-android",
     "test": "jest",
     "lint": "node_modules/.bin/eslint --ext .jsx,.js .",
-    "start-app": "bash run_androidsim_app.sh"
+    "customer-app": "bash run_androidsim_app.sh -e CUSTOMER_DEVICE -p 5556",
+    "driver-app": "bash run_androidsim_app.sh -e DRIVER_DEVICE -p 5558",
+    "start-app": "bash run_androidsim_app.sh -e CUSTOMER_DEVICE+DRIVER_DEVICE -p 5556+5558"
   },
   "dependencies": {
     "babel-preset-es2015": "6.24.1",
