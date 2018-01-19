@@ -78,7 +78,7 @@ class DeliveryOptions extends Component {
       maximumDate: moment().add(14, 'days').toDate()
     };
 
-    return busy ?
+    return busy  || !selectedCard ?
       <LoadingScreen text="Loading Customer Cards" /> : <Container>
         <Header withButton>
           <Left>

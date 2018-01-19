@@ -13,12 +13,12 @@ class CustomerOrderDetail extends Component{
   }
 
   componentWillMount(){
-    const {dispatch, orderId, orderSummary} = this.props;
+    const {dispatch, orderId, orderSummary, userId} = this.props;
     if (orderSummary == undefined) {
       dispatch(updateSubscriptionAction('orderSummaryDao', {
-        userId: undefined,
+        userId,
         orderId,
-        isCompleted: undefined,
+        isCompleted: '',
         reportId: 'customerOrderSummary'
       }));
     }

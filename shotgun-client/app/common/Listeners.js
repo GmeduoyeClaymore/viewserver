@@ -2,13 +2,17 @@ import { Platform, AsyncStorage } from 'react-native';
 
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 
-AsyncStorage.getItem('lastNotification').then(data=>{
+export const getLastNotification = async () => {
+  const data = await AsyncStorage.getItem('lastNotification');
   if (data){
     // if notification arrives when app is killed, it should still be logged here
-    console.log('last notification', JSON.parse(data));
+    console.log('last notification', data);
     AsyncStorage.removeItem('lastNotification');
+    return JSON.parse(data);
   }
-});
+  return data;
+};
+
 
 export const registerKilledListener = () => {
   // these callback will be triggered even when app is killed
@@ -18,7 +22,7 @@ export const registerKilledListener = () => {
 };
 
 // these callback will be triggered only when app is foreground or background
-export const  registerAppListener = () => {
+export const  registerAppListener = (context) => {
   FCM.on(FCMEvent.Notification, notif => {
     console.log('Notification', notif);
     if (notif.local_notification){
@@ -26,6 +30,21 @@ export const  registerAppListener = () => {
     }
     if (notif.opened_from_tray){
       return;
+    }
+
+    const content = notif.fcm;
+    FCM.presentLocalNotification({
+      ...notif,
+      ...content,
+      vibrate: 500,
+      priority: 'high',
+      show_in_foreground: true,
+      group: 'test',
+      number: 10
+    });
+
+    if (context && context.onNotificationClicked){
+      context.onNotificationClicked(notif);
     }
 
     if (Platform.OS === 'ios'){
@@ -51,7 +70,9 @@ export const  registerAppListener = () => {
 
   FCM.on(FCMEvent.RefreshToken, token => {
     console.log('TOKEN (refreshUnsubscribe)', token);
-    this.onChangeToken(token);
+    if (this.onChangeToken){
+      this.onChangeToken(token);
+    }
   });
 
   FCM.enableDirectChannel();

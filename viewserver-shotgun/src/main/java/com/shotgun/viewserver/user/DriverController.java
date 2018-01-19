@@ -150,7 +150,7 @@ public class DriverController {
             String firstName = ControllerUtils.getColumnValue(userTable, "firstName", driverRow).toString();
             String lastName = ControllerUtils.getColumnValue(userTable, "lastName", driverRow).toString();
 
-            AppMessage builder = new AppMessageBuilder().withDefaults().message(String.format("Order %s", status), String.format("Your order %s has been %s by driver %s", orderId, status, firstName + " " + lastName)).build();
+            AppMessage builder = new AppMessageBuilder().withDefaults().withData("orderId",orderId).message(String.format("Order %s", status), String.format("Your order %s has been %s by driver %s", orderId, status, firstName + " " + lastName)).build();
             messagingController.sendMessageToUser(orderUserId, builder);
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);

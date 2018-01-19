@@ -17,11 +17,11 @@ public class CustomerOrderSummaryReport {
                 return new ReportDefinition(ID, "customerOrderSummary")
                         .withDataSource(OrderDataSource.NAME)
                         .withParameter("userId", "User Id", String[].class)
-                        .withParameter("isCompleted", "Is Order Complete", Boolean[].class)
+                        .withParameter("isCompleted", "Is Order Complete", String[].class)
                         .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("userId == \"{userId}\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if({isCompleted} == true, status == \"COMPLETED\", status != \"COMPLETED\")")
+                                        .withExpression("userId == \"{userId}\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
                                 new JoinNode("orderItemsJoin")
                                         .withLeftJoinColumns("orderId")

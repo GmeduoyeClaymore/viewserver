@@ -51,14 +51,14 @@ public class MessagingController {
 
     @ControllerAction(path = "sendMessage")
     public void sendMessage(AppMessage message){
-        sendPayload(message.toAndroidMessage());
+        sendPayload(message.toSimpleMessage());
     }
 
     @ControllerAction(path = "sendMessageToUser")
     public void sendMessageToUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "message")AppMessage message){
         String currentToken = getTokenForUser(userId);
         message.setTo(currentToken);
-        sendPayload(message.toAndroidMessage());
+        sendPayload(message.toSimpleMessage());
     }
 
     @ControllerAction(path = "updateUserToken")

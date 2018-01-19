@@ -13,6 +13,7 @@ import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import shotgun from 'native-base-theme/variables/shotgun';
+import { getLastNotification, registerAppListener} from 'common/Listeners';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -30,17 +31,35 @@ setLocale({
 class CustomerLanding extends Component {
   constructor(props) {
     super(props);
+    this.onNotificationClicked = this.onNotificationClicked.bind(this);
   }
 
   async componentWillMount() {
     const {dispatch, userId, client} = this.props;
+    registerAppListener(this);
     dispatch(customerServicesRegistrationAction(client, userId));
     this.attemptPaymentCards(this.props);
+    await this.loadOrderFromLastNotification();
     dispatch(getCurrentPosition());
   }
 
   componentWillReceiveProps(props){
     this.attemptPaymentCards(props);
+  }
+
+  async loadOrderFromLastNotification(){
+    const notification = await getLastNotification();
+    this.onNotificationClicked(notification);
+  }
+
+  onNotificationClicked(notification){
+    if (notification){
+      const { history } = this.props;
+      const { orderId } = notification;
+      if (orderId){
+        history.push('/Customer/CustomerOrderDetail', {orderId});
+      }
+    }
   }
 
   attemptPaymentCards(props){
