@@ -33,10 +33,22 @@ class CustomerLanding extends Component {
   }
 
   async componentWillMount() {
-    const {dispatch, userId, client, user} = this.props;
+    const {dispatch, userId, client} = this.props;
     dispatch(customerServicesRegistrationAction(client, userId));
-    dispatch(getPaymentCards(user.stripeCustomerId));
+    this.attemptPaymentCards(this.props);
     dispatch(getCurrentPosition());
+  }
+
+  componentWillReceiveProps(props){
+    this.attemptPaymentCards(props);
+  }
+
+  attemptPaymentCards(props){
+    const {dispatch, user} = props;
+    if (!this.paymentCardsRequested && user){
+      dispatch(getPaymentCards(user.stripeCustomerId));
+      this.paymentCardsRequested = true;
+    }
   }
 
   render() {
