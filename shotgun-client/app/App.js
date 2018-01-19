@@ -1,6 +1,6 @@
 import React from 'react';
 import {UIManager} from 'react-native';
-import {Container, Text, StyleProvider} from 'native-base';
+import {Container, Text, StyleProvider, Button} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';

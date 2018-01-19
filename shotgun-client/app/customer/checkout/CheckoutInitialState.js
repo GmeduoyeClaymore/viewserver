@@ -72,6 +72,7 @@ export const INITIAL_STATE = {
 
 /*
 export const INITIAL_STATE = {
+  totalPrice: 2000,
   orderItem: {
     notes: 'this is example delivery data',
     imageData: undefined,
@@ -81,7 +82,7 @@ export const INITIAL_STATE = {
   delivery: {
     eta: new Date(),
     noRequiredForOffload: 0,
-    vehicleTypeId: '12323232',
+    vehicleTypeId: 'ef17c21e-77d8-43e0-8091-bc2f9fe8e327',
     deliveryId: undefined,
     origin: {
       line1: '12 Kinnoul Rd',

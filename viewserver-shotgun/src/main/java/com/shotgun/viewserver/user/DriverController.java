@@ -144,13 +144,17 @@ public class DriverController {
     }
 
     private void notifyStatusChanged(String orderId, String driverId, String orderUserId, String status) {
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        int driverRow = userTable.getRow(new TableKey(driverId));
-        String firstName = ControllerUtils.getColumnValue(userTable, "firstName", driverRow).toString();
-        String lastName = ControllerUtils.getColumnValue(userTable, "lastName", driverRow).toString();
+        try {
+            KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+            int driverRow = userTable.getRow(new TableKey(driverId));
+            String firstName = ControllerUtils.getColumnValue(userTable, "firstName", driverRow).toString();
+            String lastName = ControllerUtils.getColumnValue(userTable, "lastName", driverRow).toString();
 
-        AppMessage builder = new AppMessageBuilder().withDefaults().message(String.format("Order %s", status), String.format("Your order %s has been %s by driver %s", orderId, status, firstName + " " + lastName)).build();
-        messagingController.sendMessageToUser(orderUserId, builder);
+            AppMessage builder = new AppMessageBuilder().withDefaults().message(String.format("Order %s", status), String.format("Your order %s has been %s by driver %s", orderId, status, firstName + " " + lastName)).build();
+            messagingController.sendMessageToUser(orderUserId, builder);
+        }catch (Exception ex){
+            log.error("There was a problem sending the notification", ex);
+        }
     }
 
 }

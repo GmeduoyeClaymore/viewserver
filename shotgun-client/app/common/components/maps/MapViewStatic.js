@@ -24,9 +24,13 @@ export default class MapViewStatic extends Component {
 
   render(){
     const rootUrl = 'https://maps.googleapis.com/maps/api/staticmap';
-    const { width, height, origin, destination} = this.props;
+    const { origin, destination} = this.props;
+    let { width, height} = this.props;
     const scale = 2;
     const zoom = destination.line1 == undefined ? '&zoom=14' : '';
+    width = Math.round(width);
+    height = Math.round(height);
+
 
     const getMarkerParams = (markers) => {
       if (markers == undefined){
