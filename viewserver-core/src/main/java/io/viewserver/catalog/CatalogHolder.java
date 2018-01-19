@@ -16,11 +16,13 @@
 
 package io.viewserver.catalog;
 
+import io.viewserver.Constants;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import io.viewserver.operators.IOutput;
 
 import java.util.*;
 
@@ -51,6 +53,11 @@ public class CatalogHolder implements ICatalog {
     @Override
     public String getName() {
         return owner.getName();
+    }
+
+    @Override
+    public IOutput getOutput() {
+        return owner.getOutput(Constants.OUT);
     }
 
     @Override

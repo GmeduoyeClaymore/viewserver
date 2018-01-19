@@ -48,6 +48,6 @@ const styles = {
   starEmpty: {
     color: shotgun.brandLight
   }
-}
+};
 
 export default connect()(RatingAction);

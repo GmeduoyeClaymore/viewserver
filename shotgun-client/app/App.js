@@ -19,8 +19,8 @@ import {View} from 'react-native';
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-import NotificationService from 'common/NotificationService';
-import {AsyncStorage} from 'react-native';
+import {registerAppListener} from 'common/Listeners';
+import FCM from 'react-native-fcm';
 
 const store = configureStore();
 
@@ -38,25 +38,19 @@ export default class App extends React.Component {
     this.client = new Client('ws://127.0.0.1:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
-    this.notificationService = new NotificationService();
+    this.onChangeToken = this.onChangeToken.bind(this);
   }
 
   async componentDidMount() {
     let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
-      await this.notificationService.requestPermissions();
-      const token = await this.notificationService.getToken();
-      Logger.info('Token is - ' + token);
-      this.notificationService.start();
-      
       await ProtoLoader.loadAll();
       await this.client.connect();
       await this.setUserId();
-    
+      await this.initMessaging();
       this.setInitialRoot();
       isConnected = true;
-      //this.notificationService.sendLocalNotification();
     } catch (error){
       Logger.error('Connection error - ' + error);
       this.setState({ error});
@@ -65,10 +59,36 @@ export default class App extends React.Component {
     this.setState({ isReady: true, isConnected });
   }
 
+  async initMessaging(){
+    if (!this.userId){
+      Logger.warning('No userid has been specified not initializing messaging');
+      return;
+    }
+    registerAppListener();
+    FCM.getInitialNotification().then(notif => {
+      this.setState({
+        initNotif: notif
+      });
+    });
+
+    try {
+      await FCM.requestPermissions({badge: false, sound: true, alert: true});
+      const token = await FCM.getFCMToken();
+      await this.onChangeToken(token);
+      this.setState({token: token || ''});
+    } catch (e){
+      Logger.error(e);
+    }
+  }
+
+  async onChangeToken(token){
+    await this.client.invokeJSONCommand('messagingController', 'updateUserToken', token);
+  }
+
   async setUserId(){
-    this.userId = await PrincipalService.getUserIdFromDevice();
+    //this.userId = await PrincipalService.getUserIdFromDevice();
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

@@ -19,6 +19,16 @@ public class OrderController {
 
     private static String ORDER_TABLE_NAME = "/datasources/order/order";
 
+    DeliveryAddressController deliveryAddressController;
+    DeliveryController deliveryController;
+    OrderItemController orderItemController;
+
+    public OrderController(DeliveryAddressController deliveryAddressController, DeliveryController deliveryController, OrderItemController orderItemController) {
+        this.deliveryAddressController = deliveryAddressController;
+        this.deliveryController = deliveryController;
+        this.orderItemController = orderItemController;
+    }
+
     @ControllerAction(path = "createOrder", isSynchronous = true)
     public String createOrder(@ActionParam(name = "paymentId")String paymentId,
                               @ActionParam(name = "totalPrice")int totalPrice,
@@ -30,9 +40,7 @@ public class OrderController {
         }
 
         KeyedTable orderTable = ControllerUtils.getKeyedTable(ORDER_TABLE_NAME);
-        DeliveryAddressController deliveryAddressController = new DeliveryAddressController();
-        DeliveryController deliveryController = new DeliveryController();
-        OrderItemController orderItemController = new OrderItemController();
+
 
 
         //add addresses

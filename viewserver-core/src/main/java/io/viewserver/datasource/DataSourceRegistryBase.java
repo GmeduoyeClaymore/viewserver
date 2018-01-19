@@ -25,10 +25,7 @@ import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.Utils;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.nodes.IGraphNode;
-import io.viewserver.operators.IOperator;
-import io.viewserver.operators.IRowSequence;
-import io.viewserver.operators.InputOperatorBase;
-import io.viewserver.operators.OutputBase;
+import io.viewserver.operators.*;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
@@ -307,6 +304,11 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         private NodeSpec getNodeForRow(int row) {
             int hash = nodeIds.get(row);
             return nodes.get(hash);
+        }
+
+        @Override
+        public IOutput getOutput() {
+            return output;
         }
 
         @Override

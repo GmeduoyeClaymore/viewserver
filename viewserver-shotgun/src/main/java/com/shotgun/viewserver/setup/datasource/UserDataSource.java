@@ -43,6 +43,7 @@ public class
                                         new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
                                         new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
                                         new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
+                                        new Column("fcmToken", "fcmToken", ColumnType.String),
                                         new Column("chargePercentage", "chargePercentage", ColumnType.Int)
                                 ))
                                 .withKeyColumns("userId")

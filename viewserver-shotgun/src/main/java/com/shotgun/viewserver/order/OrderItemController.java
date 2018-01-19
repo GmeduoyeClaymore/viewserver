@@ -15,11 +15,15 @@ import io.viewserver.operators.table.TableKey;
 @Controller(name = "orderItemController")
 public class OrderItemController {
 
+    private ImageController imageController;
+
+    public OrderItemController(ImageController imageController) {
+        this.imageController = imageController;
+    }
+
     @ControllerAction(path = "addOrUpdateOrderItem", isSynchronous = true)
     public String addOrUpdateOrderItem(@ActionParam(name = "userId")String userId, @ActionParam(name = "orderItem")OrderItem orderItem){
         KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
-        //TODO - credentials should not be in here
-        ImageController imageController = new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"));
         String newOrderItemId = ControllerUtils.generateGuid();
 
 

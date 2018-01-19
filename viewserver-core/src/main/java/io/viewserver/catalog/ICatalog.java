@@ -18,12 +18,15 @@ package io.viewserver.catalog;
 
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
+import io.viewserver.operators.IOutput;
 
 /**
  * Created by nickc on 07/10/2014.
  */
 public interface ICatalog {
     String getName();
+
+    IOutput getOutput();
 
     ICatalog getParent();
 

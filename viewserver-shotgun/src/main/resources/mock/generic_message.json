@@ -1,0 +1,5 @@
+{"to": "eBq4b7NZvP4:APA91bEZFoTmj2I555b9Q7bqjyOAH3ajpgnm87mR5TwIoNRwjReWWyYq87b54Q1zTcsh5rRapl5RuZxJ97eiS1sepuCG6SEYdjBrifj0LbFSkp1USGnI-S5yW21HnjSUTl1uHICE3OKl", "notification": {
+    "title": "Simple FCM Client",
+    "body": "This is a notification with only NOTIFICATION.",
+    "sound": "default"
+}, "priority": 10}
