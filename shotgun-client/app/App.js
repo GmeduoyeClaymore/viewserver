@@ -52,7 +52,7 @@ export default class App extends React.Component {
       this.setInitialRoot();
       isConnected = true;
     } catch (error){
-      Logger.error('Connection error - ' + error);
+      //Logger.error('Connection error - ' + error);
       this.setState({ error});
     }
     Logger.debug('App Component Mounted');
@@ -76,8 +76,9 @@ export default class App extends React.Component {
       const token = await FCM.getFCMToken();
       await this.onChangeToken(token);
       this.setState({token: token || ''});
-    } catch (e){
-      Logger.error(e);
+    } catch (error){
+      //Logger.error(error);
+      this.setState({error});
     }
   }
 
@@ -87,8 +88,8 @@ export default class App extends React.Component {
 
   async setUserId(){
     //this.userId = await PrincipalService.getUserIdFromDevice();
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'Bob.Builder@email.com', password: 'IGNORED'});
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {username: 'John.Customer@email.com', password: 'IGNORED'});
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'Bob.Builder@email.com', password: 'driver'});
+    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'John.Customer@email.com', password: 'customer'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

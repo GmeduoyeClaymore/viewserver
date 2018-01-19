@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.login;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -18,26 +19,33 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 @Controller(name = "loginController")
 public class LoginController {
 
-    private static String USER_TABLE_NAME = "/datasources/user/user";
-
     @ControllerAction(path = "login", isSynchronous = true)
-    public String login(@ActionParam(name = "username")String username,@ActionParam(name = "password")String password){
+    public String login(@ActionParam(name = "email")String email, @ActionParam(name = "password")String password){
 
-        ITable userTable = ControllerUtils.getTable(USER_TABLE_NAME);
+        ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
+        int userRowId = getUserRow(userTable, email);
+        String encryptedPassWord = (String)ControllerUtils.getColumnValue(userTable, "password", userRowId);
+
+        if(ControllerUtils.validatePassword(password, encryptedPassWord)){
+            String userId = (String)ControllerUtils.getColumnValue(userTable, "userId", userRowId);
+            ControllerContext.set("userId", userId);
+            return userId;
+        }else{
+            throw new RuntimeException("Incorrect password supplied for user with email " + email);
+        }
+    }
+
+    private int getUserRow(ITable userTable, String loginEmail){
         IOutput output = userTable.getOutput();
         IRowSequence rows = (output.getAllRows());
 
-        Schema schema = output.getSchema();
-        ColumnHolder emailCol = schema.getColumnHolder("email");
-        ColumnHolder userIdCol = schema.getColumnHolder("userId");
         while(rows.moveNext()){
-            String email = ColumnHolderUtils.getValue(emailCol, rows.getRowId()).toString();
-            if(email.equals(username)){
-                String userId = ColumnHolderUtils.getValue(userIdCol, rows.getRowId()).toString();
-                ControllerContext.set("userId", userId);
-                return userId;
+            String email = (String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
+
+            if(email.equals(loginEmail)){
+                return rows.getRowId();
             }
-        } 
-        throw new RuntimeException("Unable to find user for username " + username);
+        }
+        throw new RuntimeException("Unable to find user for email " + loginEmail);
     }
 }

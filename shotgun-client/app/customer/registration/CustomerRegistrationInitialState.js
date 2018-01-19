@@ -1,4 +1,4 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -15,9 +15,9 @@
     postCode: undefined,
     isDefault: true
   }
-};*/
+};
 
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
     lastName: 'Graves',
@@ -37,5 +37,5 @@ export const INITIAL_STATE = {
     longitude: 16.3,
     isDefault: true
   }
-};
+};*/
 
