@@ -11,7 +11,7 @@ export default DriverRegistrationLanding = ({history}) => {
       </Row>
       <Row size={50}>
         <Col>
-          <Button fullWidth style={styles.signInButton} onPress={() => history.push('/Driver/Login')}><Text uppercase={false}>Sign in</Text></Button>
+          <Button fullWidth style={styles.signInButton} onPress={() => history.push('/Driver/Registration/Login')}><Text uppercase={false}>Sign in</Text></Button>
           <Button fullWidth light onPress={() => history.push('/Driver/Registration/UserDetails')}><Text uppercase={false}>I'm new, register</Text></Button>
         </Col>
       </Row>

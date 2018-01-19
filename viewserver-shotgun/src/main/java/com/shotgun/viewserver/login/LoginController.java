@@ -23,7 +23,7 @@ public class LoginController {
     public String login(@ActionParam(name = "email")String email, @ActionParam(name = "password")String password){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
-        int userRowId = getUserRow(userTable, email);
+        int userRowId = getUserRow(userTable, email.toLowerCase());
         String encryptedPassWord = (String)ControllerUtils.getColumnValue(userTable, "password", userRowId);
 
         if(ControllerUtils.validatePassword(password, encryptedPassWord)){

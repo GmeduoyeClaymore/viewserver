@@ -87,9 +87,9 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
-    //this.userId = await PrincipalService.getUserIdFromDevice();
+    this.userId = await PrincipalService.getUserIdFromDevice();
     //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'Bob.Builder@email.com', password: 'driver'});
-    this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'John.Customer@email.com', password: 'customer'});
+    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'John.Customer@email.com', password: 'customer'});
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 
@@ -102,6 +102,10 @@ export default class App extends React.Component {
     }
   }
 
+  async signOut() {
+    await PrincipalService.removeUserIdFromDevice();
+  }
+
   render() {
     const {isReady, isConnected, error} = this.state;
     if (!isReady) {
@@ -109,6 +113,7 @@ export default class App extends React.Component {
     } else if (!isConnected){
       return  <Container style={{flexDirection: 'column', flex: 1}}>
         <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
+        <Button onPress={this.signOut}><Text>Clear User Id</Text></Button>
       </Container>;
     }
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};

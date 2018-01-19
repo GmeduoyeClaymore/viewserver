@@ -36,7 +36,7 @@ public class UserController {
             row.setString("lastName", user.getLastName());
             row.setString("password", ControllerUtils.encryptPassword(user.getPassword()));
             row.setString("contactNo", user.getContactNo());
-            row.setString("email", user.getEmail());
+            row.setString("email", user.getEmail().toLowerCase());
             row.setString("type", user.getType());
             row.setString("stripeCustomerId", user.getStripeCustomerId());
             row.setString("stripeDefaultSourceId", user.getStripeDefaultSourceId());
