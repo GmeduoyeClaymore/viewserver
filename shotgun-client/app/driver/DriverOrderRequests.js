@@ -12,6 +12,13 @@ import OrderRequest from 'common/components/OrderRequest';
 import Tabs from 'common/components/Tabs';
 
 const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}) => {
+
+
+  if (busy){
+    return <LoadingScreen text="Loading Map" />;
+  }
+
+
   const {location} = history;
   const {vehicleTypeId, noRequiredForOffload = 0} = vehicle;
   const productId = isDelivery ? Products.DELIVERY : Products.DISPOSAL;
@@ -36,7 +43,7 @@ const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}
     }
   };
 
-  return busy ? <LoadingScreen text="Loading Map" /> : <Container>
+  return <Container>
     <Header hasTabs>
       <Body><Title>Available Jobs</Title></Body>
     </Header>

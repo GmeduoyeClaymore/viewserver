@@ -88,8 +88,11 @@ export default class App extends React.Component {
 
   async setUserId(){
     this.userId = await PrincipalService.getUserIdFromDevice();
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'Bob.Builder@email.com', password: 'driver'});
-    //this.userId = await this.client.invokeJSONCommand('loginController', 'login', {email: 'John.Customer@email.com', password: 'customer'});
+    const {userId} = this;
+    if (userId){
+      //TODO this is really unsafe really we should be saving credentials in the client not just the userID
+      await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
+    }
     Logger.debug(`Got user id ${this.userId} from device`);
   }
 

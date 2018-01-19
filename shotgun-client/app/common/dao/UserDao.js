@@ -115,7 +115,7 @@ export default class UserDaoContext{
       return userObject.userId;
     };
     dao.getCurrentPosition = async () =>{
-      const position = await this.getPositionAsPromise();
+      const position = await this.getPositionAsPromise().timeoutWithError(3000, 'Unable to get current position after 3 seconds');
       Logger.info(`Got user position as ${JSON.stringify(position)}`);
       this.position = position.coords;
       dao.subject.next(this.mapDomainEvent(null, dao.dataSink));

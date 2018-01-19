@@ -28,11 +28,16 @@ public class LoginController {
 
         if(ControllerUtils.validatePassword(password, encryptedPassWord)){
             String userId = (String)ControllerUtils.getColumnValue(userTable, "userId", userRowId);
-            ControllerContext.set("userId", userId);
+            setUserId(userId);
             return userId;
         }else{
             throw new RuntimeException("Incorrect password supplied for user with email " + email);
         }
+    }
+
+    @ControllerAction(path = "setUserId", isSynchronous = true)
+    public void setUserId(String userId) {
+        ControllerContext.set("userId", userId);
     }
 
     private int getUserRow(ITable userTable, String loginEmail){

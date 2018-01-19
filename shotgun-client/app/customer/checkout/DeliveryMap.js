@@ -16,6 +16,9 @@ const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const DeliveryMap = ({history, context, client, busy, position}) => {
+  if (busy){
+    return <LoadingScreen text="Loading Map" />;
+  }
   let map;
   const {orderItem, delivery} = context.state;
   const {destination, origin} = delivery;
@@ -58,7 +61,7 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
     }
   };
 
-  return busy ? <LoadingScreen text="Loading Map" /> : <Container style={{ flex: 1 }}>
+  return <Container style={{ flex: 1 }}>
     <Grid>
       <Row size={85}>
         <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
