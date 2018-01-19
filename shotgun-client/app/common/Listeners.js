@@ -1,7 +1,6 @@
 import { Platform, AsyncStorage } from 'react-native';
 
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
-
 export const getLastNotification = async () => {
   const data = await AsyncStorage.getItem('lastNotification');
   if (data){
@@ -33,7 +32,7 @@ export const  registerAppListener = (context) => {
     }
 
     const content = notif.fcm;
-    FCM.presentLocalNotification({
+    const localNotification = {
       ...notif,
       ...content,
       vibrate: 500,
@@ -41,10 +40,10 @@ export const  registerAppListener = (context) => {
       show_in_foreground: true,
       group: 'test',
       number: 10
-    });
-
+    };
+    FCM.presentLocalNotification(localNotification);
     if (context && context.onNotificationClicked){
-      context.onNotificationClicked(notif);
+      context.onNotificationClicked(localNotification);
     }
 
     if (Platform.OS === 'ios'){
