@@ -13,7 +13,16 @@ class CustomerOrderDetail extends Component{
   }
 
   componentWillMount(){
-    const {dispatch, orderId, orderSummary, userId} = this.props;
+    this.subscribeToOrderSummary(this.props);
+  }
+
+  componentWillReceiveProps(netProps){
+    this.subscribeToOrderSummary(netProps);
+  }
+
+
+  subscribeToOrderSummary(props){
+    const {dispatch, orderId, orderSummary, userId} = props;
     if (orderSummary == undefined) {
       dispatch(updateSubscriptionAction('orderSummaryDao', {
         userId,
