@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {Container, Header, Left, Button, Icon, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';
 import OrderSummary from 'common/components/OrderSummary';
@@ -58,7 +58,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const orderId = initialProps.location.state.orderId;
+  const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
 

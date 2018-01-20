@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
 
-const ProductListItem = ({history, product}) => {
+
+const selectProduct = ({history, context, product}) => {
+  context.setState({selectedProduct: product});
+  history.push('/Customer/Checkout/ProductCategoryList');
+};
+
+const ProductListItem = ({history, context, product}) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -21,9 +27,9 @@ const ProductListItem = ({history, product}) => {
     }
   });
 
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => history.push('/Customer/Checkout/ProductDetails', {product})} underlayColor={'#EEEEEE'}>
+  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => selectProduct({history, context, product}) } underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
-      <Image source={require('../assets/cement.jpg')} style={styles.picture} />
+      <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
       <View style={{flex: 1}}>
         <Text style={styles.title}>{product.name}</Text>
         <Text>{product.description}</Text>
@@ -34,7 +40,7 @@ const ProductListItem = ({history, product}) => {
 
 ProductListItem.propTypes = {
   product: PropTypes.object,
-  navigation: PropTypes.object
+  history: PropTypes.object
 };
 
 export default ProductListItem;

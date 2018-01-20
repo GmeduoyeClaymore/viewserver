@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Container, Header, Left, Button, Icon, Body, Title, Content} from 'native-base';
 import OrderSummary from 'common/components/OrderSummary';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import LoadingScreen from 'common/components/LoadingScreen';
 import PriceSummary from 'common/components/PriceSummary';
 import RatingSummary from 'common/components/RatingSummary';
@@ -55,7 +55,7 @@ class CustomerOrderDetail extends Component{
 }
 
 const mapStateToProps = (state, initialProps) => {
-  const orderId = initialProps.location.state.orderId;
+  const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
 

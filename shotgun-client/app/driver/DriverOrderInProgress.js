@@ -3,7 +3,7 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest} from 'driver/actions/DriverActions';
 import Products from 'common/constants/Products';
@@ -150,7 +150,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const orderId = initialProps.location && initialProps.location.state ? initialProps.location.state.orderId : undefined;
+  const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const position = getDaoState(state, ['position'], 'userDao');

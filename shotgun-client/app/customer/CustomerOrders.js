@@ -10,8 +10,9 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import CustomerOrderCta from './components/CustomerOrderCta';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+import LoadingScreen from 'common/components/LoadingScreen';
 
-const CustomerOrders = ({history, isCompleted, userId}) => {
+const CustomerOrders = ({history, isCompleted, userId, busy}) => {
   const {location} = history;
 
   const reportOptions = {
@@ -59,7 +60,7 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   isCompleted: initialProps.history.location.state && initialProps.history.location.state.isCompleted !== undefined ? initialProps.history.location.state.isCompleted : 'INCOMPLETE',
-  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentDao']),
+  busy: isAnyLoading(state, ['orderSummaryDao']),
 });
 
 export default withRouter(connect(

@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
+import {Icon, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {Spinner} from 'native-base';
+import { withRouter } from 'react-router';
 import PagingListView from 'common/components/PagingListView';
-import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
-import {connect} from 'react-redux';
+import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps} from 'common/dao';
+import {connect} from 'custom-redux';
+import yup from 'yup';
 import ErrorRegion from 'common/components/ErrorRegion';
+import ValidatingButton from 'common/components/ValidatingButton';
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
@@ -14,18 +19,16 @@ const styles = StyleSheet.create({
   separator: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#AAAAAA',
-  }
+  },
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30
+  },
 });
 
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-const navFuncFactory =  ({categoryId, category, history, isLeaf, shouldNavigateToProductPage}) =>  () => {
-  if (shouldNavigateToProductPage) {
-    history.push('/Customer/Checkout/ProductList', {category});
-  } else {
-    history.push('/Customer/Checkout/ProductCategoryList', {parentCategoryId: categoryId, parentCategory: category, isLeaf});
-  }
-};
+
 
 class ProductCategoryList extends Component{
   static propTypes = {
@@ -35,62 +38,89 @@ class ProductCategoryList extends Component{
     navigation: PropTypes.object
   };
 
-  static navigationOptions = ({navigation}) => {
-    const title = navigation.state.params !== undefined ? navigation.state.params.parentCategory : undefined;
-    const navOptions = {title};
-    if (title == undefined){
-      navOptions.header = null;
-    }
-    return navOptions;
-  };
-
   constructor(props){
     super(props);
-    const {screenProps, navigation} = this.props;
-    const {dispatch} = screenProps;
-    const params = navigation.state.params || {};
-    const {isLeaf: shouldNavigateToProductPage} = params;
-    this.rowView = (row) => {
-      const {categoryId, category, isLeaf} = row;
-      return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={navFuncFactory({dispatch, navigation, categoryId, category, isLeaf, shouldNavigateToProductPage})} underlayColor={'#EEEEEE'}>
+    this.navigateToCategory = this.navigateToCategory.bind(this);
+    this.rowView = this.rowView.bind(this);
+  }
+
+  rowView(row){
+    const {categoryId, category} = row;
+    return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory({category: row})} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
         <Text>{`${category}`}</Text>
       </View>
-      </TouchableHighlight>;
-    };
+    </TouchableHighlight>;
   }
 
-  componentDidMount(){
-    const {navigation, dispatch} = this.props;
-    const params = navigation.state.params || {};
-    const {parentCategoryId = 'NONE', parentCategory = undefined} = params;
-    dispatch(updateSubscriptionAction('productCategoryDao', {parentCategoryId, parentCategory}));
+  navigateToCategory({category}){
+    const {history, context} = this.props;
+    const {selectedCategory = {}} = context.state;
+    if (selectedCategory.isLeaf) {
+      history.push('/Customer/Checkout/ProductList', {category});
+    } else {
+      this.goToCategory(category);
+    }
+  }
+
+  goToCategory(category){
+    const {context} = this.props;
+    context.setState({selectedCategory: category});
   }
 
   render(){
-    const {busy, errors, options} = this.props;
+    const {busy, errors, options, navigationStrategy, context, history} = this.props;
     const {rowView} = this;
-    return busy ? <Paging/> : <View style={{flexDirection: 'column', flex: 1, padding: 0}}><ErrorRegion errors={errors}/><PagingListView
-      style={styles.container}
-      daoName='productCategoryDao'
-      dataPath={['product', 'categories']}
-      pageSize={10}
-      options={options}
-      rowView={rowView}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      headerView={() => null}
-    /></View>;
+    const {state} = context;
+    const {selectedProduct, selectedCategory} = state;
+
+    return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name='arrow-back' onPress={() => navigationStrategy.back()} />
+          </Button>
+        </Left>
+        <Body><Title>Select Product Category</Title></Body>
+      </Header>
+      <Content padded>
+        <Text style={styles.subTitle}>Selected product is {JSON.stringify(selectedProduct)}</Text>
+        <ErrorRegion errors={errors}>
+          <PagingListView
+            style={styles.container}
+            daoName='productCategoryDao'
+            dataPath={['product', 'categories']}
+            pageSize={10}
+            options={{...options, parentCategoryId: selectedCategory ? selectedCategory.categoryId : 'NONE'}}
+            history={history}
+            rowView={rowView}
+            paginationWaitingView={Paging}
+            emptyView={NoItems}
+            headerView={() => null}
+          />
+        </ErrorRegion>
+        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon name='arrow-forward'/>
+        </ValidatingButton>
+      </Content>
+    </Container>;
   }
 }
 
+const validationSchema = {
+  productId: yup.string().required(),
+};
+
 const mapStateToProps = (state, nextOwnProps) => ({
+  ...nextOwnProps,
+  ...getNavigationProps(nextOwnProps),
   busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
   options: getDaoOptions(state, 'productCategoryDao'),
   errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
 });
 
-const ConnectedProductCategoryList =  connect(mapStateToProps)(ProductCategoryList);
+const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
 
 export default ConnectedProductCategoryList;
 

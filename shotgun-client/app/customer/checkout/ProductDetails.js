@@ -10,7 +10,7 @@ const ProductDetails = ({history, context}) => {
   if (product) {
     return (
       <View style={styles.container}>
-        <Image source={require('../assets/cement.jpg')} style={styles.picture} />
+        <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
         <View style={styles.header}>
           <ActionButton buttonText={null} icon={backIcon} action={() => history.push('/Customer/Checkout/ProductList')}/>
           <Text style={styles.bigText}>{product.name}</Text>

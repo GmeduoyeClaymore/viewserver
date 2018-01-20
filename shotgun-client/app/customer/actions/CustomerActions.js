@@ -7,6 +7,8 @@ import DeliveryAddressDao from 'customer/dao/DeliveryAddressDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import VehicleTypeDao from 'common/dao/VehicleTypeDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
+import ProductCategoryDao from 'common/dao/ProductCategoryDao';
+import ProductDao from 'common/dao/ProductDao';
 import UserDao from 'common/dao/UserDao';
 
 export const customerServicesRegistrationAction = (client, userId, continueWith) => {
@@ -18,6 +20,8 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
     register(dispatch, new OrderSummaryDao(client), {userId});
     register(dispatch, new VehicleTypeDao(client), {userId});
     register(dispatch, new ContentTypeDao(client), {userId});
+    register(dispatch, new ProductDao(client), {userId});
+    register(dispatch, new ProductCategoryDao(client), {userId});
     registerNakedDao(dispatch, new CustomerDao(client, orderDao), {userId}, continueWith);
   };
 };
