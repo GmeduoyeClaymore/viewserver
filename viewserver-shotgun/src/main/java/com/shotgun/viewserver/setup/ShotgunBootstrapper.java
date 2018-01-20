@@ -24,6 +24,8 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(OrderItemsDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());
+        dataSources.add(ProductCategoryDataSource.getDataSource());
+        dataSources.add(ProductDataSource.getDataSource());
         dataSources.add(VehicleTypeDataSource.getDataSource());
         dataSources.add(ContentTypeDataSource.getDataSource());
         return dataSources;
