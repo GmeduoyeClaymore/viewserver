@@ -8,7 +8,7 @@ export default class DataSourceSubscriptionStrategyStrategy{
     this.path = path;
     this.editTable = this.editTable.bind(this);
     this.dispose = this.dispose.bind(this);
-    this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
+    this.updateSubscription = debounce(this.updateSubscription.bind(this), 50);
   }
 
   editTable(rowEvents){
