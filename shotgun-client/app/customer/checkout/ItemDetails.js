@@ -10,7 +10,7 @@ import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
 
 
-const ItemDetails = ({context, history}) => {
+const ItemDetails = ({context, navigationStrategy}) => {
   const {orderItem} = context.state;
   const { width } = Dimensions.get('window');
   let imageIsVertical = false;
@@ -34,7 +34,7 @@ const ItemDetails = ({context, history}) => {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()} />
+            <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Your Item</Title></Body>
@@ -57,7 +57,7 @@ const ItemDetails = ({context, history}) => {
         </Button> : null}
         <ValidatingInput style={styles.detailsInput} value={orderItem.notes} multiline={true} placeholder='Add a description of the item' onChangeText={(value) => onChangeValue('notes', value)} validateOnMount={true} validationSchema={validationSchema.notes} maxLength={200}/>
       </Content>
-      <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push('/Customer/Checkout/OrderConfirmation')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
+      <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='arrow-forward'/>
       </ValidatingButton>

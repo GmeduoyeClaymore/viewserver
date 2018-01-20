@@ -9,7 +9,7 @@ import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, payment, delivery, totalPrice}) => {
+const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, totalPrice, context}) => {
   const purchase = async() => {
     dispatch(checkout(orderItem, payment, delivery, totalPrice, () => history.push('/Customer/CustomerOrders')));
   };
@@ -18,7 +18,7 @@ const OrderConfirmation = ({client, dispatch, history, errors, busy, orderItem, 
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()} />
+          <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
         </Button>
       </Left>
       <Body><Title>Order Summary</Title></Body>

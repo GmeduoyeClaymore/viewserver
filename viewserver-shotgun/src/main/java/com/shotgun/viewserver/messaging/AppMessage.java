@@ -68,8 +68,6 @@ public class AppMessage {
         notification.put("title",getTitle());
         notification.put("body",getBody());
         notification.put("sound",getSound());
-        notification.put("priority","high");
-        notification.put("show_in_foreground",true);
         body.put("notification",notification);
         if(this.data != null){
             body.put("data",this.data);
@@ -83,7 +81,7 @@ public class AppMessage {
     public String toAndroidMessage(){
         HashMap<String,Object> body = new HashMap<>();
         HashMap<String,Object> data = new HashMap<>();
-        if(this.data != null){
+        if(this.data != null){ //This doesn't  appear to do anything
             for(Map.Entry<String,Object> entry :  this.data.entrySet()){
                 data.put(entry.getKey(),entry.getValue());
             }

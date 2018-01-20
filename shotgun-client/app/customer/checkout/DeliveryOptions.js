@@ -63,7 +63,7 @@ class DeliveryOptions extends Component {
   }
 
   render() {
-    const { history, context, busy, paymentCards, errors  } = this.props;
+    const { history, context, busy, paymentCards, errors, navigationStrategy} = this.props;
     const { delivery, payment, orderItem} = context.state;
     const {origin, destination} = delivery;
     const { noRequiredForOffload } = delivery;
@@ -153,7 +153,7 @@ class DeliveryOptions extends Component {
             </Grid>
           </ListItem> : null}
         </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push('/Customer/Checkout/VehicleDetails')} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
           <Text uppercase={false}>Continue</Text>
           <Icon name='arrow-forward' />
         </ValidatingButton>
