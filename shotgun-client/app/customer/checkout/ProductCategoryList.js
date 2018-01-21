@@ -69,16 +69,14 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, errors, options, navigationStrategy, context, history} = this.props;
+    const {busy, errors, options, navigationStrategy, selectedProduct, selectedCategory, history, rootProductCategory} = this.props;
     const {rowView} = this;
-    const {state} = context;
-    const {selectedProduct, selectedCategory} = state;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='arrow-back' onPress={() => navigationStrategy.back()} />
+            <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Select Product Category</Title></Body>
@@ -91,7 +89,7 @@ class ProductCategoryList extends Component{
             daoName='productCategoryDao'
             dataPath={['product', 'categories']}
             pageSize={10}
-            options={{...options, parentCategoryId: selectedCategory ? selectedCategory.categoryId : 'NONE'}}
+            options={{...options, parentCategoryId: selectedCategory ? selectedCategory.categoryId : rootProductCategory}}
             history={history}
             rowView={rowView}
             paginationWaitingView={Paging}
@@ -112,13 +110,21 @@ const validationSchema = {
   productId: yup.string().required(),
 };
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  ...nextOwnProps,
-  ...getNavigationProps(nextOwnProps),
-  busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
-  options: getDaoOptions(state, 'productCategoryDao'),
-  errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
-});
+const mapStateToProps = (state, nextOwnProps) => {
+  const {context} = nextOwnProps;
+  const {selectedContentType, selectedProduct, selectedCategory} = context.state;
+  const {rootProductCategory} = selectedContentType;
+  return {
+    ...nextOwnProps,
+    ...getNavigationProps(nextOwnProps),
+    rootProductCategory,
+    selectedProduct,
+    selectedCategory,
+    busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
+    options: getDaoOptions(state, 'productCategoryDao'),
+    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
+  };
+};
 
 const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
 

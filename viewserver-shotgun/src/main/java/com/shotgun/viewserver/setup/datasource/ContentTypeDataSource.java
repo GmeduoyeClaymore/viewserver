@@ -38,7 +38,7 @@ public class
                                         new Column("fromTime", "fromTime", ColumnType.Bool),
                                         new Column("toTime", "toTime", ColumnType.Bool),
                                         new Column("hasVehicle", "hasVehicle", ColumnType.Bool),
-                                        new Column("rootProductCategory", "rootProductCategory", ColumnType.Int)
+                                        new Column("rootProductCategory", "rootProductCategory", ColumnType.String)
                                 ))
                                 .withKeyColumns("contentTypeId")
                 )

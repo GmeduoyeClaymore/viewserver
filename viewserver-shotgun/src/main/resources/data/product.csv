@@ -1,52 +1,238 @@
-productId,name,description,categoryId,price,rating
-PROD_CeCppb2,General Purpose Cement,"For general purpose use in concrete, mortar, render and screed.",c1f5d05d-911d-4305-a26e-287938b1bd03,5.49,4
-PROD_CeCplb3,Mastercrete Cement 20kg,A CEM II Portland-composite cement suitable for most applications,c1f5d05d-911d-4305-a26e-287938b1bd03,6.35,3
-PROD_CeCplb4,Extra Rapid Cement 10kg,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes,c1f5d05d-911d-4305-a26e-287938b1bd03,12.79,4
-PROD_CeCplb5,Mastercrete Cement 10kg,A multi-purpose cement containing special additives for superior performance.,c1f5d05d-911d-4305-a26e-287938b1bd03,2.99,5
-PROD_CeCplb6,Extra Rapid Cement 20kg,A rapid setting and hardening cement for all building repair and maintenance work which sets in 30 minutes.,c1f5d05d-911d-4305-a26e-287938b1bd03,7.19,2
-PROD_CeCtb7,Rapid Setting Cement 10kg,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",c1f5d05d-911d-4305-a26e-287938b1bd03,3.25,3
-PROD_CeCtb8,Rapid Setting Cement 20kg,"Wickes Rapid Setting Cement is ideal for emergency repairs, filling and patching",c1f5d05d-911d-4305-a26e-287938b1bd03,5.95,4
-PROD_CeBmjb9,Ballast Type 10kg,Wickes Ballast is suitable for all general building use.,346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,5.49,3.5
-PROD_CeBjb10,Ballast Type 20kg,Wickes Ballast is suitable for all general building use.,346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,6.35,4
-PROD_CeGmjb11,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,12.79,3
-PROD_CeGjb12,10mm Gravel Pea Shingle,"10mm Gravel is suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,2.99,3.5
-PROD_CeGmjb13,20mm Gravel,"Ideal for building use, suitable for driveways, paths, borders and water features",c566ac2f-e485-4cd6-8313-32ccdfe24dc0,7.19,2
-PROD_CeGjb14,20mm Gravel,Wickes 20mm Gravel is suitable for all general building use.,c566ac2f-e485-4cd6-8313-32ccdfe24dc0,3.25,4
-PROD_CeSmjb15,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,575f8e92-eb24-4f76-aab1-b93ea2fb4163,5.95,3
-PROD_CeSjb16,Granular Sub Base Mot 1,High quality specially blended material for use as a sub base.,575f8e92-eb24-4f76-aab1-b93ea2fb4163,5.49,1
-PROD_CeRmjb17,Rock Salt 25 kg,"Ideal for De-Icing Paths, Driveways and Steps.",96310611-6664-467b-af77-65424223baeb,6.35,2
-PROD_CeMmjb18,Instant Lay Macadam,Designed to easily restore paths and drives and is convenient and cost effective.,eeced8f7-755c-4865-8e2d-b013b15bf483,12.79,4
-PROD_CeSjb19,Sharp Sand,Sharp sand for all general building use.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,2.99,2
-PROD_CeSmjb20,Sharp Sand,"Sharp sand for all general building use.",d0a957a6-74ab-4cd5-b577-1e1611c60d50,7.19,1
-PROD_CeSmjb21,Building Sand,Building sand for all general building uses.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,3.25,3
-PROD_CeSjb22,Building Sand,Building sand for all general building uses.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,5.95,2
-PROD_CeSjb23,Plastering Sand,Fine sand for use in plastering and render.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,5.49,3
-PROD_CeSmjb24,Plastering Sand,Fine sand for use in plastering and render.,d0a957a6-74ab-4cd5-b577-1e1611c60d50,6.35,2
-PROD_CeCplb25,Postcrete 20kg,"A quick-setting ready-to-use blend of selected sand, cement and additives formulated for fixing wooden, concrete and metal posts",840b6935-166d-4110-be6c-65dfce5afcd9,12.79,4
-PROD_CeCplb26,Slablayer 20kg,A cement-based material containing specially selected sand and cement for use under patio paving slabs,840b6935-166d-4110-be6c-65dfce5afcd9,2.99,2
-PROD_CeMplb27,Mortar Mix 20kg,Pre-mixed and ready-to-use mortar that just needs the addition of clean water,d2e04bec-321b-42c9-9b23-c4c1fd793269,7.19,1
-PROD_CeMtb28,Mix in the Tub Mortar 10kg,Just add water ideal for brick or block laying,d2e04bec-321b-42c9-9b23-c4c1fd793269,3.25,3
-PROD_CeMppb29,Mortar 12.5kg,"Easy to use for repairs and pointing, just add water",d2e04bec-321b-42c9-9b23-c4c1fd793269,5.95,2
-PROD_ShP30,Structural Softwood Plywood 18x1220x2440mm,A high strength exterior panel which has excellent stability and load-bearing properties.,604e6f40-0796-4511-acf8-96ba25ec7595,30.99,3
-PROD_ShP31,Non Structural Hardwood Plywood 5.5 x 1220 x 2440mm,Versatile non-structural building board with a smooth sanded surface.,604e6f40-0796-4511-acf8-96ba25ec7595,19.99,4
-PROD_ShM32,General Purpose MDF Board 18 x 1220 x 2440mm,Versatile non-structural interior board free of natural defects,da27c495-5cf0-417a-b0a4-77ba15ec7d71,18.89,3
-PROD_ShT33,General Purpose Timberboard 18 x 500,Quality timberboard for general joinery use,5cfe1f34-e36e-45b7-955b-ef214c9765ee,27.09,3.5
-PROD_TiS34,Sawn Kiln Dried C16 47 x 125 x 2400mm Single,Structurally C16 strength graded timber that has been regularised to consistent widths for working accurately and Kiln Dried for extra strength and stability,06207dbb-7366-4d45-a669-d84744415aaa,10.99,2
-PROD_PlP35,Knauf Plasterboard Tapered Edge 2400x1200x12.5mm,Ivory paper faced plasterboard can be finished with a plaster finish or direct decoration including painting.,3361dce4-3994-424b-9996-f670a23f35dd,6.94,4
-PROD_PlP36,Gyproc Plasterboard - Square Edge - 1220 x 900 x 9.5mm,Gyproc HandiBoard is a small and easy to transport gypsum plasterboard.,3361dce4-3994-424b-9996-f670a23f35dd,3.99,3
-PROD_PlP37,"KNAUF FIRELINE SQUARE EDGE PLASTERBOARD (L)1200MM(W)2400MM (T)12.5MM",Knauf plasterboard with core additives to increase fire protection,3361dce4-3994-424b-9996-f670a23f35dd,11.03,1
-PROD_PlP38,British Gypsum Thistle Multi Finish Plaster 25kg,"Thistle Multi-Finish is a gypsum finish plaster for use on a wide range of backgrounds it provides a smooth, inert, high quality surface to internal walls and ceilings, and a durable base for the application of decorative finishes.",f85b25dd-9de7-4575-8fe4-22d6add31e65,6.25,2
-PROD_PlP39,Polycell White 5L Plastic Container,For damaged and textured walls,f85b25dd-9de7-4575-8fe4-22d6add31e65,38,4
-PROD_PlP40,British Gypsum Thistle Hardwall Plaster 25kg,An undercoat plaster with high impact-resistance and is suitable for application by hand or mechanical plastering machine to most masonry backgrounds.,f85b25dd-9de7-4575-8fe4-22d6add31e65,8.99,2
-PROD_InI41,Celotex 50mm High Performance Cavity Wall Board 450 x 1200mm,"General purpose polyisocyanurate insulation board for floors, walls and roofs, provides thermal insulation making a property more thermally efficient.",0dba507f-edb2-40bf-a76f-0c3b3e3b0d06,5.65,1
-PROD_InI42,HOMELUX HEATWAVE INSULATION BOARD 1200MM 600MM,ThisInsulation board;Ideal for use under tiled flooring,94abc45d-b99d-428a-bbd1-1373e8f20ee0,20,3
-PROD_InL43,Knauf 170mm Standard Top Up Loft Roll Insulation 6.47m2,170mm Top-up layer loft roll insulation is a glass mineral wool product designed for topping up existing insulation,bdef7480-7b96-415f-9704-731e7d1f9554,24.99,2
-PROD_BrB44,Aerated Block 3.6 N 100mm,"Aerated blocks can be used below DPC as infill for Beam and Block flooring systems, as well as above the ground in walling applications",39327e8f-d795-48c5-8564-c5a41b681132,2.28,3
-PROD_BrB45,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,Class B Engineering Brick (H)65mm (D)102.5mm (W)215mm,0a853985-608d-4720-8db3-e56c6c6da84c,0.54,4
-PROD_HaA46,Bracket - White,This Bracket - White - 20cm is a multi purpose bracket all around the home.,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,4
-PROD_HaA47,38mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,2
-PROD_HaA48,25mm Zinc Plated Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,3.99,2
-PROD_HaA49,ABRU SILVER EFFECT STEEL ANGLE BRACKET,ABRU SILVER EFFECT STEEL ANGLE BRACKET,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,2.32,5
-PROD_HaT50,Galvansied Angle Bracket 40x40x40mm,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,1.99,3
-PROD_HaT51,80mm Galvanised Angle Bracket Pack 4,Angle brackets for multi-purpose connections,feb5e5f9-b5e5-40b6-a202-0be146bf3a93,4.49,3
-PROD_HaM52,Metal Sheet Aluminium with Stainless Steel Effect Finish 300 x 1000mm,"Multi-purpose aluminium metal sheet with stainless steel effect finish. Cut, drill or bend to shape if required.",7e4664e6-461b-4ae2-b81f-4d163b830871,4.45,1
+productId,name,description,categoryId,price
+6YDSkip,6 Yard Skip,4.6 m3,2Skips,210
+8YDSkip,8 Yard Skip,6.1 m3,2Skips,230
+10YDSkip,10 Yard Skip,7.3 m3,2Skips,250
+12YDSkip,12 Yard Skip,9.2 m3,2Skips,280
+GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",3Grab,300
+20YardCage,20 Yard cage,"20-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,200
+10YardCage,10 Yard cage,"10-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,180
+75TonneTipper,7.5 tonne tipper,multi-use vehicle for either waste or material. It?s a 6-yard body or can be loaded with 5 tonnes of material. ,4Cage,150
+LadderDouble12ft,Ladder Double 12 ft,,2AccessLadder,10
+LadderTriple11ft,Ladder Triple 11ft,,2AccessLadder,14
+LadderTriple17ft,Ladder Triple 17ft,,2AccessLadder,20
+LadderRoof,Ladder Roof,,2AccessLadder,10
+LadderStay,Ladder Stay,,2AccessLadder,2.5
+Stepladder6ft(8tread),Stepladder 6ft (8 tread),,3StepLadder,4
+Stepladder8ft(10tread),Stepladder 8ft (10 tread),,3StepLadder,5
+Stepladder9ft(12tread),Stepladder 9ft (12 tread),,3StepLadder,6
+Stepladder10ft(14tread),Stepladder 10ft (14 tread),,3StepLadder,8
+LadderCombination(9tread),Ladder Combination (9 tread),,3LadderCombination,14
+StepladderPodium,Stepladder Podium,,3StepLadder,13
+StepladderFibreGlass6ft,Stepladder Fibre Glass 6ft,,3StepLadder,5
+StepladderFibreGlass8ft,Stepladder Fibre Glass 8ft,,3StepLadder,7
+ScaffoldBoard8/10/13ft,Scaffold Board 8/10/13ft,,3Staging,0
+TowerAluminium,Tower Aluminium,,3Staging,0
+TrestleBandstand,Trestle Bandstand,,3Staging,0
+Staging12ft,Staging 12ft,,3Staging,6
+Staging14ft,Staging 14ft,,3Staging,7
+Staging16ft,Staging 16ft,,3Staging,8
+LadderDouble15ft,Ladder Double 15 ft,,2AccessLadder,12
+Stepladder4ft(6tread),Stepladder 4ft (6 tread),,3StepLadder,4
+LadderTriple8ft,Ladder Triple 8 ft,,2AccessLadder,12
+LadderCombination(10tread),Ladder Combination (10 tread),,3LadderCombination,16
+LadderCombination(14tread),Ladder Combination (14 tread),,3LadderCombination,18
+DrillHammer110v(2speed),Drill Hammer 110v (2 speed),,3Drill,6.5
+DrillBench240v,Drill Bench 240v,,3Drill,8
+DrillCordless,Drill Cordless,,3Drill,10
+DrillDiamond110v,Drill Diamond 110v,,3Drill,12
+DrillRightAngle110v,Drill Right Angle 110v,,3Drill,14
+DrillSDS110v,Drill SDS 110v,,3Drill,10
+DrillPlasterers110v,Drill Plasterers 110v,,3Drill,12
+BreakerHeavy110v,Breaker Heavy 110v,,3Breaker,22
+BreakerMedium110v,Breaker Medium 110v,,3Breaker,16
+CoreDrillTungsten,Core Drill Tungsten,,3CoreDrill,8.5
+CoreDrillDiamond22mm,Core Drill Diamond 22mm,,3CoreDrill,4.5
+CoreDrillDiamond25mm,Core Drill Diamond 25mm,,3CoreDrill,4.5
+CoreDrillDiamond35mm,Core Drill Diamond 35mm,,3CoreDrill,6.5
+CoreDrillDiamond50mm,Core Drill Diamond 50mm,,3CoreDrill,7.5
+CoreDrillDiamond65mm,Core Drill Diamond 65mm,,3CoreDrill,7.5
+CoreDrillDiamond76mm,Core Drill Diamond 76mm,,3CoreDrill,8.5
+CoreDrillDiamond102mm,Core Drill Diamond 102mm,,3CoreDrill,10
+CoreDrillDiamond127mm,Core Drill Diamond 127mm,,3CoreDrill,10
+CoreDrillDiamond152mm,Core Drill Diamond 152mm,,3CoreDrill,11.5
+DrillMagnetic110v12-50mm,Drill Magnetic 110v 12-50mm,,3Drill,30
+BreakerHydraulic,Breaker Hydraulic,,3Breaker,40
+SDSMaxDrill/Breaker,SDS Max Drill/Breaker,,3Breaker,14
+Acrow0,Acrow 0,,2BuildingSiteworks,0
+Acrow3/4,Acrow 3/4,,2BuildingSiteworks,0
+Strongboy,Strongboy,,2BuildingSiteworks,0
+BitumenBoiler,Bitumen Boiler,,2BuildingSiteworks,15
+DampMeter,Damp Meter,,2BuildingSiteworks,8
+DampProofingInjector110v,Damp Proofing Injector 110v,,2BuildingSiteworks,24
+RubbishChute(persection),Rubbish Chute (per section),,2BuildingSiteworks,0
+SiteSafe,Site Safe,,2BuildingSiteworks,9
+Transformer1.5-3kVa,Transformer 1.5-3 kVa,,2BuildingSiteworks,3
+Transformer5kVa,Transformer 5 kVa,,2BuildingSiteworks,6
+Transformer10kVa(site),Transformer 10 kVa (site),,2BuildingSiteworks,10
+Barriers(per2msection),Barriers (per 2m section),,2BuildingSiteworks,0
+Acrow1/2,Acrow 1/2,,2BuildingSiteworks,0
+CarpetCleaner,Carpet Cleaner,,2CleaningFloorcare,19
+CarpetStretcher,Carpet Stretcher,,2CleaningFloorcare,4
+FloorPolisher240v,Floor Polisher 240v,,2CleaningFloorcare,15
+FumeExtractor110v,Fume Extractor 110v,,2CleaningFloorcare,35
+PressureWasher240v1500psi,Pressure Washer 240v 1500 psi,,2CleaningFloorcare,15
+PressureWasher240v2500psi,Pressure Washer 240v 2500 psi,,2CleaningFloorcare,21
+VacuumCleanerIndustrial240v,Vacuum Cleaner Industrial 240v,,2CleaningFloorcare,14
+VacuumCleanerHenry240v,Vacuum Cleaner Henry 240v,,2CleaningFloorcare,9
+FloorTileRemover,Floor Tile Remover,,2CleaningFloorcare,24
+CementMixer240v,Cement Mixer 240v,,2ConcretePreparation,9
+CementMixer110v,Cement Mixer 110v,,2ConcretePreparation,9
+CompactorLight,Compactor Light,,2ConcretePreparation,20
+EasyFloatConcreteFinisher,Easy Float Concrete Finisher,,2ConcretePreparation,10
+NeedleGun110v,Needle Gun 110v,,2ConcretePreparation,23
+PokerVibrator110v,Poker Vibrator 110v,,2ConcretePreparation,20
+ConcreteTestMould,Concrete Test Mould,,2ConcretePreparation,6
+GardenAerator,Garden Aerator,,3HandTools,3.5
+GardenHedgeTrimmer240v,Garden Hedge Trimmer 240v,,4TrimmersAndStrimmers,9
+KnapsackSprayer,Knapsack Sprayer,,3HandTools,7
+LawnmowerElectric240v,Lawnmower Electric 240v,,3LawnMowers,10
+LawnmowerPetrol,Lawnmower Petrol,,3LawnMowers,12
+LeafBlowerVacuum240v,Leaf Blower Vacuum 240v,,3RotovatorsBlowers,7
+PostHoleBorer,Post Hole Borer,,3HandTools,6
+GardenPruner,Garden Pruner,,3HandTools,5.5
+GardenRoller(waterfilled),Garden Roller (water filled),,3HandTools,6
+GardenRotovator5hp,Garden Rotovator 5 hp,,3RotovatorsBlowers,30
+GardenShoveHoler,Garden Shove Holer,,3HandTools,6
+GardenShredderPetrol5HP,Garden Shredder Petrol 5 HP,,4TrimmersAndStrimmers,38
+GardenStrimmerPetrol,Garden Strimmer Petrol,,4TrimmersAndStrimmers,17.5
+TurfCutter,Turf Cutter,,3HandTools,34
+GardenFellingAxe,Garden Felling Axe,,3HandTools,2.5
+GardenGrassRake,Garden Grass Rake,,3HandTools,2.5
+GardenLeafRake,Garden Leaf Rake,,3HandTools,2.5
+GardenShears,Garden Shears,,3HandTools,2.5
+GardenSpade,Garden Spade,,3HandTools,2.5
+GardenHoe,Garden Hoe,,3HandTools,2.5
+GardenAeratorRotary,Garden Aerator Rotary,,3HandTools,4.5
+LawnmowerPetrolSelf-Propelled,Lawnmower Petrol Self-Propelled,,3LawnMowers,24
+LeafBlower(petrol)(fuelextra),Leaf Blower (petrol) (fuel extra),,3RotovatorsBlowers,15
+GardenRotovator8hp,Garden Rotovator 8 hp,,3RotovatorsBlowers,40
+GardenHedgeTrimmer(2stroke),Garden Hedge Trimmer (2 stroke),,4TrimmersAndStrimmers,20
+GardenHedgeTrimmer(LongReach),Garden Hedge Trimmer (Long Reach),,4TrimmersAndStrimmers,25
+DehumidifierSmall,Dehumidifier Small,,2HeatingDrying,19
+DehumidifierLarge,Dehumidifier Large,,2HeatingDrying,24
+Fan240v,Fan 240v,,2HeatingDrying,7.5
+HeaterCeramic,Heater Ceramic,,2HeatingDrying,10
+HeaterElectricFan240v2kW,Heater Electric Fan 240v 2 kW,,2HeatingDrying,16
+HeaterElectricTube240v1.5kW,Heater Electric Tube 240v 1.5 kW,,2HeatingDrying,10
+HeaterInfraRed,Heater Infra Red,,2HeatingDrying,12.5
+HeaterSpaceLarge,Heater Space Large,,2HeatingDrying,24
+HeaterSpaceSmall,Heater Space Small,,2HeatingDrying,19
+BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,12.5
+BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,15
+PalletTruck,Pallet Truck,,2LiftingHandling,16
+GinWheel,Gin Wheel,,2LiftingHandling,4.5
+SackBarrow,Sack Barrow,,2LiftingHandling,4
+SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,8
+PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,25
+GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,50
+BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,12.5
+BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,15
+PalletTruck,Pallet Truck,,2LiftingHandling,16
+GinWheel,Gin Wheel,,2LiftingHandling,4.5
+SackBarrow,Sack Barrow,,2LiftingHandling,4
+SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,8
+PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,25
+GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,50
+BlowLampSingle,Blow Lamp Single,,2PaintingDecorating,5
+BlowLampDouble,Blow Lamp Double,,2PaintingDecorating,8
+HotAirGun240v,Hot Air Gun 240v,,2PaintingDecorating,6
+PasteTable,Paste Table,,2PaintingDecorating,2.5
+TyroleanGun,Tyrolean Gun,,2PaintingDecorating,10
+WallpaperStripper240v,Wallpaper Stripper 240v,,2PaintingDecorating,10
+WallpaperPerforator,Wallpaper Perforator,,2PaintingDecorating,2.5
+TexturedSurfaceRemover,Textured Surface Remover,,2PaintingDecorating,16
+PaintSprayer(Airless)110v,Paint Sprayer (Airless) 110v,,2PaintingDecorating,75
+CentralHeatingFlusher110v,Central Heating Flusher 110v,,2PlumbingPumping,38
+DrainClearer110v,Drain Clearer 110v,,2PlumbingPumping,21
+DrainPlugs,Drain Plugs,,2PlumbingPumping,0
+DrainRods,Drain Rods,,2PlumbingPumping,4
+DrainAirBag,Drain Air Bag,,2PlumbingPumping,0
+DrainAirPump,Drain Air Pump,,2PlumbingPumping,0
+PipeBender,Pipe Bender,,2PlumbingPumping,10
+PipeStockandDieSet,Pipe Stock and Die Set,,2PlumbingPumping,5.5
+PipeFreezingKit110v,Pipe Freezing Kit 110v,,2PlumbingPumping,24
+WaterPump110v,Water Pump 110v,,2PlumbingPumping,15
+ImpactDriver110v,Impact Driver 110v,,2SandingFixing,10
+ImpulseGunPaslode,Impulse Gun Paslode,,2SandingFixing,19
+Portanailer,Portanailer,,2SandingFixing,11
+ScrewdriverAutofeed110v,Screwdriver Autofeed 110v,,2SandingFixing,16
+Stapler240v,Stapler 240v,,2SandingFixing,9
+SanderBelt4in240v,Sander Belt 4in 240v,,2SandingFixing,13
+SanderDisc7in,Sander Disc 7in,,2SandingFixing,10
+SanderDetail240v,Sander Detail 240v,,2SandingFixing,8
+SanderOrbital4in,Sander Orbital 4in,,2SandingFixing,8
+SanderOrbitalPalm,Sander Orbital Palm,,2SandingFixing,7
+SanderFloor8indrum240v,Sander Floor 8in drum 240v,,2SandingFixing,21
+SanderEdging240v,Sander Edging 240v,,2SandingFixing,15
+SanderOrbitalFloor240v,Sander Orbital Floor 240v,,2SandingFixing,25
+FloorPreparationMachine110v,Floor Preparation Machine 110v,,2SandingFixing,35
+SanderFloor(AdjustableHeight),Sander Floor (Adjustable Height),,2SandingFixing,25
+BiscuitJointer110v,Biscuit Jointer 110v,,3PlanerJointerSplitterRouter,11
+BlockSplitter,Block Splitter,,3PlanerJointerSplitterRouter,17
+GrinderAngle4.5in110v,Grinder Angle 4.5in 110v,,3Grinder,7
+GrinderAngle9in110v,Grinder Angle 9in 110v,,3Grinder,10
+GrinderBench12in110v,Grinder Bench 12in 110v,,3Grinder,12
+GrinderPetrolCutOff12in,Grinder Petrol Cut Off 12in,,3Grinder,20
+PlanerElectric240v,Planer Electric 240v,,3PlanerJointerSplitterRouter,10
+PlanerElectric110v,Planer Electric 110v,,3PlanerJointerSplitterRouter,10
+Router,Router,,3PlanerJointerSplitterRouter,10
+SawChopsaw110v,Saw Chopsaw 110v,,3Saw,21
+SawCircular110v,Saw Circular 110v,,3Saw,11
+SawPlunge/DoorTrimmer110v,Saw Plunge/Door Trimmer 110v,,3Saw,15
+SawFlipsaw110v,Saw Flipsaw 110v,,3Saw,26
+SawJigsaw110v,Saw Jigsaw 110v,,3Saw,9.25
+SawReciprocating110v,Saw Reciprocating 110v,,3Saw,11
+TilesawBench110v,Tilesaw Bench 110v,,3TileCutterSaw,35
+Tilesaw110v,Tilesaw 110v,,3TileCutterSaw,17.5
+TileCutter300mm,Tile Cutter 300mm,,3TileCutterSaw,4
+Tile/StoneSaw110v1000mm(Bench),Tile/Stone Saw 110v 1000mm (Bench),,3TileCutterSaw,60
+PlanerThicknesser110v,Planer Thicknesser 110v,,3PlanerJointerSplitter,28
+TileCutter600mm,Tile Cutter 600mm,,3TileCutterSaw,10
+StoneCutter(marble/granite)110v,Stone Cutter (marble/granite) 110v,,3TileCutterSaw,18
+MasonryBenchSaw110v,Masonry Bench Saw 110v,,3TileCutterSaw,40
+CompoundMitreChopsaw110v,Compound Mitre Chopsaw 110v,,3Saw,26
+ConcretePlaner110v,Concrete Planer 110v,,3PlanerJointerSplitterRouter,20
+TableSawBench,Table Saw Bench,,3Saw,35
+CowleyLevel,Cowley Level,,2SurveyingLocation,10
+DunphyLevel,Dunphy Level,,2SurveyingLocation,24
+LaserLevel,Laser Level,,2SurveyingLocation,10
+WaterLevel,Water Level,,2SurveyingLocation,5
+SpiritLevel,Spirit Level,,2SurveyingLocation,2.5
+LaserLevel(Rotary),Laser Level (Rotary),,2SurveyingLocation,25
+Generator2.5kVa,Generator 2.5 kVa,,2WeldingPower,17.5
+Generator4kVa,Generator 4 kVa,,2WeldingPower,22.5
+WelderMiniMig240v,Welder MiniMig 240v,,2WeldingPower,11
+WelderGenerator,Welder Generator,,2WeldingPower,40
+LightHalogen,Light Halogen,,2Lighting,4.25
+LightFluorescent,Light Fluorescent,,2Lighting,5
+LightStringFestoon,Light String Festoon,,2Lighting,6
+Compressor240v90litre150psi,Compressor 240v 90litre 150psi,,2Miscellaneous,20
+SafetyHarness,Safety Harness,,2Miscellaneous,6
+FloorCramp,Floor Cramp,,2Miscellaneous,5
+SashCramp,Sash Cramp,,2Miscellaneous,3
+ExtensionLead,Extension Lead,,2Miscellaneous,1.8
+ExtensionReel,Extension Reel,,2Miscellaneous,3
+FourWaySplitter110v,Four Way Splitter 110v,,2Miscellaneous,3
+GlassSucker,Glass Sucker,,2Miscellaneous,5
+GullyScoop,Gully Scoop,,2Miscellaneous,5
+LockJig,Lock Jig,,2Miscellaneous,10
+WallChaser110v,Wall Chaser 110v,,2Miscellaneous,20
+Wheelbarrow,Wheelbarrow,,2Miscellaneous,3
+WorktopMitre,Worktop Mitre,,2Miscellaneous,12
+Sledgehammer,Sledgehammer,,2Miscellaneous,2.5
+Shovel,Shovel,,2Miscellaneous,2.5
+PickAxe,Pick Axe,,2Miscellaneous,2.5
+ImmersionSpanner,Immersion Spanner,,2Miscellaneous,2.5
+Crowbar,Crowbar,,2Miscellaneous,2.5
+Tamper,Tamper,,2Miscellaneous,2.5
+Nailbar,Nailbar,,2Miscellaneous,2.5
+SlateRip,Slate Rip,,2Miscellaneous,2.5
+SlateNibbler,Slate Nibbler,,2Miscellaneous,2.5
+FloorSqueegee,Floor Squeegee,,2Miscellaneous,2.5
+Nibbler(Metal)110v,Nibbler (Metal) 110v,,2Miscellaneous,14
+Carpenter,Carpenter,,2Carpenters,150
+GroundWorker,Ground Worker,,2GroundWorkers,150
+Tiler,Tiler,,2Tiler,150
+Painter,Painter,,2Painter,150
+BrickLayer,Brick Layer,,2BrickLayer,150
+Plumber,Plumber,,2Plumber,150

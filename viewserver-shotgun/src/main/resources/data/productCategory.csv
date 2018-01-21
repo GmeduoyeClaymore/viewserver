@@ -1,49 +1,72 @@
 categoryId,category,parentCategoryId,isLeaf
-897d97d1-948f-42ae-b80c-5a00fe922ac5,Cement & Aggregates,NONE,false
-c1f5d05d-911d-4305-a26e-287938b1bd03,Cement,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-346e9ac4-6d16-4550-bbc3-9a2bcec42fd1,Ballast,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-c566ac2f-e485-4cd6-8313-32ccdfe24dc0,Gravel,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-575f8e92-eb24-4f76-aab1-b93ea2fb4163,Sub Base,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-96310611-6664-467b-af77-65424223baeb,Rock Salt,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-eeced8f7-755c-4865-8e2d-b013b15bf483,Macadam,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-d0a957a6-74ab-4cd5-b577-1e1611c60d50,Sand,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-d2e04bec-321b-42c9-9b23-c4c1fd793269,Mortar,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-840b6935-166d-4110-be6c-65dfce5afcd9,Concrete,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-a6329b2d-6a04-4970-adae-577c80577a74,Floor Levelling Compound,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-83d20659-a5a6-49f0-ad03-a7e76f1f309a,Cement Additives,897d97d1-948f-42ae-b80c-5a00fe922ac5,true
-0949a142-3968-4960-ac6e-bffde903a305,SheetMaterials,NONE,false
-604e6f40-0796-4511-acf8-96ba25ec7595,Plywood,0949a142-3968-4960-ac6e-bffde903a305,true
-16f8fda4-3b41-492c-b111-28b2142bf53a,OSB,0949a142-3968-4960-ac6e-bffde903a305,true
-da27c495-5cf0-417a-b0a4-77ba15ec7d71,MDFSheets,0949a142-3968-4960-ac6e-bffde903a305,true
-5cfe1f34-e36e-45b7-955b-ef214c9765ee,Timberboard,0949a142-3968-4960-ac6e-bffde903a305,true
-06207dbb-7366-4d45-a669-d84744415aaa,Decorative Panels,0949a142-3968-4960-ac6e-bffde903a305,true
-e99add5a-7a87-4ec9-a9d1-446853deb92b,Chipboard Flooring,0949a142-3968-4960-ac6e-bffde903a305,true
-0dba507f-edb2-40bf-a76f-0c3b3e3b0d06,Hardboard,0949a142-3968-4960-ac6e-bffde903a305,true
-41b5c749-bde9-4d29-abfd-2bb632774968,Chipboard Sheets,0949a142-3968-4960-ac6e-bffde903a305,true
-f9d6e65d-44dc-4703-84ad-a4b3f4c424f6,Acrylic Sheets,0949a142-3968-4960-ac6e-bffde903a305,true
-5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,Timber,NONE,false
-5459785e-4d92-4685-86ea-c02c1178e87c,Planned Square Edge Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-ea27a9db-27cc-4588-8faa-d109fc30bb76,CLS Studwork Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-dbf471a3-2309-43ec-95ec-7bef044a4ab2,Treated Sawn Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-c2d36f4d-6e85-4bea-911a-e01cca01c9fa,Treated Regularised Kiln Dried Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-87d1cbdb-0397-4030-9535-206df9e2f07a,Fence Posts,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-9a35f900-619d-4331-b31c-1c15da579ce6,Timber Deckboards,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-1dba818a-69b7-41b0-88f4-d2ff23eb63e7,Feather Edge Board & Arris Rails,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-c07ae9d1-d1b6-43c7-b2da-8edc4fba87b4,Sawn Wood,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-d8bf69fc-91ff-433e-9d43-fda88eee70b4,Sawn Kiln Dried Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-ba230a5d-930e-4b0f-8c16-1ce213d7cd2d,Sawn Kiln Dried C16 Timber,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-ac1a5ac8-30a6-4b4e-b3a3-a9911909c9eb,Floorboards,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-b17246ab-25e1-450f-8504-f2b0399d6166,Timber Roof Battons,5e5d0d64-4ad2-4b98-a4fa-0dfd1700b665,true
-cb9becc2-2fc8-4512-9ca9-4b1f7acadf59,Plaster & Plasterboard,NONE,false
-3361dce4-3994-424b-9996-f670a23f35dd,Plasterboard,cb9becc2-2fc8-4512-9ca9-4b1f7acadf59,true
-f85b25dd-9de7-4575-8fe4-22d6add31e65,Plaster,cb9becc2-2fc8-4512-9ca9-4b1f7acadf59,true
-ab341068-ec0d-41a5-acf5-c7562cb37bbe,Insulation,NONE,false
-94abc45d-b99d-428a-bbd1-1373e8f20ee0,Wall Insulation,ab341068-ec0d-41a5-acf5-c7562cb37bbe,true
-bdef7480-7b96-415f-9704-731e7d1f9554,Loft Insulation,ab341068-ec0d-41a5-acf5-c7562cb37bbe,true
-68664c9c-6c3a-42aa-bd32-7b033a5c39b3,"Bricks, Blocks & Lintels",NONE,false
-39327e8f-d795-48c5-8564-c5a41b681132,Blocks,68664c9c-6c3a-42aa-bd32-7b033a5c39b3,true
-0a853985-608d-4720-8db3-e56c6c6da84c,Bricks,68664c9c-6c3a-42aa-bd32-7b033a5c39b3,true
-f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,Hardware and Metalwork,NONE,false
-feb5e5f9-b5e5-40b6-a202-0be146bf3a93,Angle Brackets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,true
-13988c85-3956-4d95-9609-a7d726484657,Timber Brackets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,true
-7e4664e6-461b-4ae2-b81f-4d163b830871,Metal Sheets,f90e91b1-ebbf-46bf-8ed5-a1fda3a2662c,true
+1Waste,Waste,NONE,
+2Skips,Skips,1Waste,
+3Grab,Grab,1Waste,
+4Cage,Cage,1Waste,
+1Workers,Workers,NONE,
+2Carpenters,Carpenter,1Workers,
+2GroundWorkers,Ground Worker,1Workers,
+2Tiler,Tiler,1Workers,
+2Painter,Painter,1Workers,
+2BrickLayer,Brick Layer,1Workers,
+2Plumber,Plumber,1Workers,
+1Plant,Plant,NONE,
+2AccessLadder,Access & Ladders ,1Plant,
+3Ladder,Ladder,2AccessLadder,
+3StepLadder,Step Ladder,2AccessLadder,
+3Staging,Staging,2AccessLadder,
+3LadderCombination,Ladder Combination,2AccessLadder,
+2BreakingDrilling,Breaking & Drilling ,1Plant,
+3Breaker,Breaker,2BreakingDrilling,
+3Drill,Drill,2BreakingDrilling,
+3CoreDrill,Core Drill,2BreakingDrilling,
+2BuildingSiteworks,Building & Siteworks ,1Plant,
+2CleaningFloorcare,Cleaning & Floorcare ,1Plant,
+2ConcretePreparation,Concreting & Preparation ,1Plant,
+2GardeningEvening,Gardening & Event ,1Plant,
+3HandTools,Hand Tools,2GardeningEvening,
+3LawnMowers,Lawn Mowers,2GardeningEvening,
+3TrimmersAndStrimmers,Trimmers and Strimmers,2GardeningEvening,
+3RotovatorsBlowers,Rotavators & Blowers,2GardeningEvening,
+2HeatingDrying,Heating & Drying ,1Plant,
+2LiftingHandling,Lifting & Handling ,1Plant,
+2PaintingDecorating,Painting & Decorating ,1Plant,
+2PlumbingPumping,Plumbing & Pumping ,1Plant,
+2SandingFixing,Sanding & Fixing ,1Plant,
+2CuttingGrinding,Cutting & Grinding ,1Plant,
+3Grinder,Grinder,2CuttingGrinding,
+3Saw,Saw,2CuttingGrinding,
+3TileCutterSaw,Tile Cutters & Saws,2CuttingGrinding,
+3PlanerJointerSplitterRouter,"Planer, Jointer, Splitter & Router",2CuttingGrinding,
+2SurveyingLocation,Surveying & Location ,1Plant,
+2WeldingPower,Welding & Power ,1Plant,
+2Lighting,Lighting ,1Plant,
+2Miscellaneous,Miscellaneous,1Plant,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
