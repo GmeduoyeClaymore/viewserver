@@ -29,7 +29,7 @@ const BankAccountDetails = ({context, history}) => {
           <Col>
             <Item stackedLabel first>
               <Label>Account number</Label>
-              <ValidatingInput bold value={bankAccount.accountNumber} validateOnMount={bankAccount.accountNumber !== undefined} onChangeText={(value) => onChangeText('accountNumber', value)} validationSchema={validationSchema.accountNumber} maxLength={8}/>
+              <ValidatingInput bold placeholder="123456789" value={bankAccount.accountNumber} validateOnMount={bankAccount.accountNumber !== undefined} onChangeText={(value) => onChangeText('accountNumber', value)} validationSchema={validationSchema.accountNumber} maxLength={8}/>
             </Item>
           </Col>
         </Row>
@@ -37,7 +37,7 @@ const BankAccountDetails = ({context, history}) => {
           <Col>
             <Item stackedLabel last>
               <Label>Sort code</Label>
-              <ValidatingInput bold value={bankAccount.sortCode} validateOnMount={bankAccount.sortCode !== undefined} onChangeText={(value) => onChangeText('sortCode', value)} validationSchema={validationSchema.sortCode} maxLength={10}/>
+              <ValidatingInput bold placeholder="12-34-56" value={bankAccount.sortCode} validateOnMount={bankAccount.sortCode !== undefined} onChangeText={(value) => onChangeText('sortCode', value)} validationSchema={validationSchema.sortCode} maxLength={10}/>
             </Item>
           </Col>
         </Row>

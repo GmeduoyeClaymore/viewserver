@@ -50,7 +50,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>Flat number/Business Name</Label>
-              <ValidatingInput bold value={deliveryAddress.flatNumber} validateOnMount={deliveryAddress.flatNumber !== undefined} onChangeText={(value) => onChangeText('flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
+              <ValidatingInput bold placeholder="Optional" value={deliveryAddress.flatNumber} validateOnMount={deliveryAddress.flatNumber !== undefined} onChangeText={(value) => onChangeText('flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -58,7 +58,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>City</Label>
-              <ValidatingInput bold value={deliveryAddress.city} validateOnMount={deliveryAddress.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
+              <ValidatingInput bold placeholder="CityVille" value={deliveryAddress.city} validateOnMount={deliveryAddress.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -66,7 +66,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>Postcode</Label>
-              <ValidatingInput bold value={deliveryAddress.postCode} validateOnMount={deliveryAddress.postCode !== undefined} onChangeText={(value) => onChangeText('postCode', value)} validationSchema={validationSchema.postCode} maxLength={30}/>
+              <ValidatingInput bold placeholder="PC12 ABC" value={deliveryAddress.postCode} validateOnMount={deliveryAddress.postCode !== undefined} onChangeText={(value) => onChangeText('postCode', value)} validationSchema={validationSchema.postCode} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -74,7 +74,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
           <Col>
             <Item stackedLabel last>
               <Label>Country</Label>
-              <ValidatingInput bold value={deliveryAddress.country} validateOnMount={deliveryAddress.country !== undefined} onChangeText={(value) => onChangeText('country', value)} validationSchema={validationSchema.country} maxLength={30}/>
+              <ValidatingInput bold placeholder="Somewhereland" value={deliveryAddress.country} validateOnMount={deliveryAddress.country !== undefined} onChangeText={(value) => onChangeText('country', value)} validationSchema={validationSchema.country} maxLength={30}/>
             </Item>
           </Col>
         </Row>

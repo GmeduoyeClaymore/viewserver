@@ -13,11 +13,18 @@ export default (variables = variable) => {
     },
     '.floatingLabel': {
       'NativeBase.Input': {
-        height: 60,
-        top: 8,
+        height: 50,
+        top: 0,
+        fontWeight: 'bold',
+        fontSize: 18
       },
       'NativeBase.Label': {
+        left: variables.contentPadding,
         top: 8,
+        fontSize: 12
+      },
+      'NativeBase.Text': {
+        fontSize: 12
       },
       'NativeBase.Icon': {
         top: 6,

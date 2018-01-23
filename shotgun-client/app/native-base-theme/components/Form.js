@@ -39,7 +39,7 @@ export default (variables = variable) => {
           marginLeft: null,
         },
         'NativeBase.Label': {
-          left: 0,
+          left: variables.contentPadding,
           top: 8,
         },
         'NativeBase.Icon': {

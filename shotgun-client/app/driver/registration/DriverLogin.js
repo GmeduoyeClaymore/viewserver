@@ -47,6 +47,7 @@ class DriverLogin extends Component {
                 <Label>Email</Label>
                 <ValidatingInput bold value={email}
                   onChangeText={(value) => onChangeText('email', value)}
+                  placeholder="email@email.com"
                   validationSchema={validationSchema.email}/>
               </Item>
             </Col>
@@ -56,6 +57,7 @@ class DriverLogin extends Component {
               <Item stackedLabel last>
                 <Label>Password</Label>
                 <ValidatingInput bold secureTextEntry={true} value={password}
+                  placeholder="*****"
                   onChangeText={(value) => onChangeText('password', value)}
                   validationSchema={validationSchema.password}/>
               </Item>

@@ -46,6 +46,7 @@ class CustomerLogin extends Component {
               <Item stackedLabel first>
                 <Label>Email</Label>
                 <ValidatingInput bold value={email}
+                  placeholder="email@email.com"
                   onChangeText={(value) => onChangeText('email', value)}
                   validationSchema={validationSchema.email}/>
               </Item>
@@ -56,6 +57,7 @@ class CustomerLogin extends Component {
               <Item stackedLabel last>
                 <Label>Password</Label>
                 <ValidatingInput bold secureTextEntry={true} value={password}
+                  placeholder="*****"
                   onChangeText={(value) => onChangeText('password', value)}
                   validationSchema={validationSchema.password}/>
               </Item>
