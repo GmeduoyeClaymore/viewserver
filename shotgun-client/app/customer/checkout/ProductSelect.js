@@ -1,37 +1,51 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, Icon, Col, View} from 'native-base';
 import {merge} from 'lodash';
 import Products from 'common/constants/Products';
 
-const ProductSelect = ({context, history}) => {
-  const selectProduct = (productId) => {
-    context.setState({orderItem: merge({}, context.state.orderItem, {productId})});
-    history.push('/Customer/Checkout/DeliveryMap');
-  };
+class ProductSelect extends Component{
+  constructor(props){
+    super(props);
+  }
 
-  return (
-    <Content padded contentContainerStyle={styles.container}>
-      <View style={styles.titleView}>
-        <H1 style={styles.h1}>Start a new job</H1>
-        <Text subTitle>What kind of service do you need?</Text>
-      </View>
-      <View style={styles.productSelectView}>
-        <Grid>
-          <Row>
-            <Col style={{paddingRight: 25}}>
-              <Row><Button large onPress={() => selectProduct(Products.DISPOSAL)}><Icon name='trash'/></Button></Row>
-              <Row style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Waste collection</Text></Row>
-            </Col>
-            <Col>
-              <Row><Button large onPress={() => selectProduct(Products.DELIVERY)}><Icon name='car'/></Button></Row>
-              <Row style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Schedule delivery</Text></Row>
-            </Col>
-          </Row>
-        </Grid>
-      </View>
-    </Content>
-  );
-};
+  renderContentType(contentType, i){
+    const {context} = this.props;
+    const {selectedContentType = {}} = context.state;
+    return <View key={i} style={{width: '30%'}}>
+      <Button style={{height: 'auto'}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
+        <Icon name='car'/>
+      </Button>
+      <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
+    </View>;
+  }
+
+  selectContentType(selectedContentType){
+    const {context, navigationStrategy, history} = this.props;
+    context.setState({selectedContentType});
+    navigationStrategy.init(selectedContentType.contentTypeId, history);
+    navigationStrategy.next();
+  }
+
+  render(){
+    const {contentTypes} = this.props;
+    return (
+      <Content padded contentContainerStyle={styles.container}>
+        <View style={styles.titleView}>
+          <H1 style={styles.h1}>Start a new job</H1>
+          <Text subTitle>What kind of service do you need?</Text>
+        </View>
+        <View style={styles.productSelectView}>
+
+          <Grid>
+            <Row style={{flexWrap: 'wrap'}}>
+              {contentTypes.map((v, i) => this.renderContentType(v, i))}
+            </Row>
+          </Grid>
+        </View>
+      </Content>
+    );
+  }
+}
 
 const styles = {
   h1: {
@@ -48,7 +62,7 @@ const styles = {
     justifyContent: 'flex-end'
   },
   productSelectView: {
-    flex: 1,
+    flex: 2,
     justifyContent: 'flex-start',
     paddingTop: 30
   },

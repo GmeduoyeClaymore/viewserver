@@ -11,8 +11,10 @@ import CustomerSettings from './CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
+import {Alert} from 'react-native';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {getCurrentPosition} from 'common/actions/CommonActions';
+import { getLastNotification, registerAppListener} from 'common/Listeners';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -30,17 +32,46 @@ setLocale({
 class CustomerLanding extends Component {
   constructor(props) {
     super(props);
+    this.onNotificationClicked = this.onNotificationClicked.bind(this);
   }
 
   async componentWillMount() {
     const {dispatch, userId, client} = this.props;
+    registerAppListener(this);
     dispatch(customerServicesRegistrationAction(client, userId));
     this.attemptPaymentCards(this.props);
+    await this.loadOrderFromLastNotification();
     dispatch(getCurrentPosition());
   }
 
   componentWillReceiveProps(props){
     this.attemptPaymentCards(props);
+  }
+
+  async loadOrderFromLastNotification(){
+    const notification = await getLastNotification();
+    this.goToOrderForNotification(notification);
+  }
+
+  onNotificationClicked(notification){
+    Alert.alert(
+      notification.title,
+      'Go to order ?',
+      [
+        {text: 'Yes', onPress: () => this.goToOrderForNotification(notification)},
+        {text: 'No', style: 'cancel'},
+      ],
+      { cancelable: false }
+    );
+  }
+  goToOrderForNotification(notification){
+    if (notification){
+      const { history } = this.props;
+      const { orderId } = notification;
+      if (orderId){
+        history.push('/Customer/CustomerOrderDetail', {orderId});
+      }
+    }
   }
 
   attemptPaymentCards(props){
@@ -70,7 +101,8 @@ class CustomerLanding extends Component {
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['paymentDao', 'userDao']),
+  busy: isAnyLoading(state, ['paymentDao', 'userDao', 'contentTypeDao']),
+  contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
   user: getDaoState(state, ['user'], 'userDao'),
   ...nextOwnProps
 });

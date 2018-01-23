@@ -15,16 +15,17 @@ const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const DeliveryMap = ({history, context, client, busy, position}) => {
+const DeliveryMap = ({history, context, client, busy, position, navigationStrategy}) => {
   if (busy){
     return <LoadingScreen text="Loading Map" />;
   }
   let map;
-  const {orderItem, delivery} = context.state;
+  const {orderItem, delivery, selectedContentType} = context.state;
   const {destination, origin} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
-  const disableDoneButton = origin.line1 == undefined || (orderItem.productId == Products.DELIVERY && destination.line1 == undefined);
-  const isDelivery = orderItem.productId == Products.DELIVERY;
+  const supportsDestination = selectedContentType.destination;
+  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined);
+  
 
   if (origin.line1 !== undefined) {
     position = origin;
@@ -71,7 +72,7 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
           {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
         </MapView>
         <Button transparent style={styles.backButton}>
-          <Icon name='arrow-back' onPress={() => history.push('/Customer/Checkout/ProductSelect')} />
+          <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
         </Button>
       </Row>
       <Row size={15} style={styles.inputRow}>
@@ -80,14 +81,14 @@ const DeliveryMap = ({history, context, client, busy, position}) => {
             <Icon name="pin" paddedIcon originPin />
             {getLocationText(origin, 'origin', 'Enter pick-up location')}
           </Row>
-          {isDelivery ? <Row>
+          {supportsDestination ? <Row>
             <Icon name="pin" paddedIcon />
             {getLocationText(destination, 'destination', 'Enter drop-off location')}
           </Row> : null}
         </Col>
       </Row>
     </Grid>
-    <Button fullWidth paddedBottom iconRight onPress={() => history.push('/Customer/Checkout/DeliveryOptions')} disabled={disableDoneButton}>
+    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward' />
     </Button>

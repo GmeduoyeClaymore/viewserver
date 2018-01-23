@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.messaging;
 
+import java.util.HashMap;
+
 /**
  * Created by Gbemiga on 17/01/18.
  */
@@ -19,6 +21,13 @@ public class AppMessageBuilder {
 
     public AppMessageBuilder to(String token){
         message.setTo(token);
+        return this;
+    }
+    public AppMessageBuilder withData(String key,Object value){
+        if(message.getData() == null){
+           message.setData(new HashMap<>());
+        }
+        message.getData().put(key, value);
         return this;
     }
 

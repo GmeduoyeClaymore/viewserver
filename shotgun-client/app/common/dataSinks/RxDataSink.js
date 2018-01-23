@@ -3,7 +3,7 @@ import DataSink from './DataSink';
 
 export default class RxDataSink extends DataSink(null){
   static SNAPSHOT_COMPLETE = 'SnapshotComplete';
-  static DATA_RESET = 'SnapshotComplete';
+  static DATA_RESET = 'DataReset';
   static TOTAL_ROW_COUNT = 'TotalRowCount';
   static SCHEMA_RESET = 'SchemaReset';
   static ROW_ADDED = 'RowAdded';

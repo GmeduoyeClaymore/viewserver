@@ -9,12 +9,15 @@ import {isAnyLoading} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import CustomerOrderCta from './components/CustomerOrderCta';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
+import LoadingScreen from 'common/components/LoadingScreen';
 
-const CustomerOrders = ({history, isCompleted}) => {
+const CustomerOrders = ({history, isCompleted, userId, busy}) => {
   const {location} = history;
 
   const reportOptions = {
     isCompleted,
+    userId,
     orderId: undefined,
     columnsToSort: [{ name: 'eta', direction: 'asc' }],
     reportId: 'customerOrderSummary'};
@@ -33,7 +36,7 @@ const CustomerOrders = ({history, isCompleted}) => {
     <Header hasTabs>
       <Body><Title>My Jobs</Title></Body>
     </Header>
-    <Tabs initialPage={isCompleted ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
+    <Tabs initialPage={isCompleted === OrderStatuses.COMPLETED ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1 ? OrderStatuses.COMPLETED : 'INCOMPLETE')}>
       <Tab heading="Live Jobs"/>
       <Tab heading="Complete"/>
     </Tabs>
@@ -56,8 +59,8 @@ const CustomerOrders = ({history, isCompleted}) => {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  isCompleted: initialProps.history.location.state && initialProps.history.location.state.isCompleted !== undefined ? initialProps.history.location.state.isCompleted : false,
-  busy: isAnyLoading(state, ['orderSummaryDao', 'paymentDao']),
+  isCompleted: initialProps.history.location.state && initialProps.history.location.state.isCompleted !== undefined ? initialProps.history.location.state.isCompleted : 'INCOMPLETE',
+  busy: isAnyLoading(state, ['orderSummaryDao']),
 });
 
 export default withRouter(connect(

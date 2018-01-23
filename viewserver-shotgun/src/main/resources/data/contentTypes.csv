@@ -1,0 +1,6 @@
+contentTypeId,name,origin,destination,noPeople,fromTime,toTime,hasVehicle,rootProductCategory
+1,Delivery,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,-1
+2,Rubbish,TRUE,FALSE,FALSE,TRUE,FALSE,TRUE,1Waste
+3,Tool Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Plant
+4,Skip,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Waste
+5,Personell,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,1Workers

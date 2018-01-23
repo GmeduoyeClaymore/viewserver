@@ -5,7 +5,7 @@ export default class ReportSubscriptionStrategy{
     this.dataSink = dataSink;
     this.reportContext = reportContext;
     this.dispose = this.dispose.bind(this);
-    this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
+    this.updateSubscription = debounce(this.updateSubscription.bind(this), 50);
   }
 
   updateSubscription(options){

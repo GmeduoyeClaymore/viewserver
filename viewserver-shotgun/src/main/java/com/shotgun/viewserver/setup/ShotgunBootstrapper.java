@@ -4,6 +4,7 @@ import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.setup.report.CustomerOrderSummaryReport;
 import com.shotgun.viewserver.setup.report.DriverOrderSummaryReport;
 import com.shotgun.viewserver.setup.report.OrderRequestReport;
+import com.shotgun.viewserver.setup.report.ProductCategoryReport;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.server.setup.BootstrapperBase;
 
@@ -24,7 +25,10 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(OrderItemsDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());
+        dataSources.add(ProductCategoryDataSource.getDataSource());
+        dataSources.add(ProductDataSource.getDataSource());
         dataSources.add(VehicleTypeDataSource.getDataSource());
+        dataSources.add(ContentTypeDataSource.getDataSource());
         return dataSources;
     }
 
@@ -34,7 +38,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         reportDefinitions.put(CustomerOrderSummaryReport.ID, CustomerOrderSummaryReport.getReportDefinition());
         reportDefinitions.put(DriverOrderSummaryReport.ID, DriverOrderSummaryReport.getReportDefinition());
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
-
+        reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
         return reportDefinitions;
     }
 }

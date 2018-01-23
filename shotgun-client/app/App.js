@@ -19,10 +19,12 @@ import {View} from 'react-native';
 import LoadingScreen from 'common/components/LoadingScreen';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {registerAppListener} from 'common/Listeners';
+import {registerAppListener, registerKilledListener} from 'common/Listeners';
 import FCM from 'react-native-fcm';
 
 const store = configureStore();
+
+registerKilledListener();
 
 UIManager.setLayoutAnimationEnabledExperimental(true);
 
@@ -65,11 +67,6 @@ export default class App extends React.Component {
       return;
     }
     registerAppListener();
-    FCM.getInitialNotification().then(notif => {
-      this.setState({
-        initNotif: notif
-      });
-    });
 
     try {
       await FCM.requestPermissions({badge: false, sound: true, alert: true});

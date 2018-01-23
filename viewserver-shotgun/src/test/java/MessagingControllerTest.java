@@ -1,5 +1,6 @@
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
 import org.junit.Before;
@@ -20,13 +21,12 @@ public class MessagingControllerTest {
 
     @Test
     public void canSendMessage(){
-        AppMessage message = new AppMessage();
-        message.setTo("eBq4b7NZvP4:APA91bEZFoTmj2I555b9Q7bqjyOAH3ajpgnm87mR5TwIoNRwjReWWyYq87b54Q1zTcsh5rRapl5RuZxJ97eiS1sepuCG6SEYdjBrifj0LbFSkp1USGnI-S5yW21HnjSUTl1uHICE3OKl");
-        message.setBody("Messaging controller message");
-        message.setTitle("Messaging controller title");
-        message.setSound("default");
-        message.setPriority(10);
-        sut.sendMessage(message);
+        AppMessageBuilder message = new AppMessageBuilder();
+        message.to("fV3ttxSBvFo:APA91bEUBin7eMh-ijCB6WUp79a9kFabnium-CJnXdZKpev1VResdjavWnXfJKzgENXQilMzYlLaG68ebJjnbKQmhPXw9rc2Fd1h8DyWcToDrMjuRao1ixacBe0f6g33ysJAtqhOTFGp");
+        message.message("Messaging controller title","Messaging controller message");
+        message.withData("orderId","XXXXX");
+        message.withDefaults();
+        sut.sendMessage(message.build());
     }
     @Test
     public void canSendCannedGenericMessage(){

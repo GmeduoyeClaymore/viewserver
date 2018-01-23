@@ -12,29 +12,36 @@ import ValidatingButton from 'common/components/ValidatingButton';
 class VehicleDetails extends Component {
   constructor(props) {
     super(props);
+    this.onChangeValue = this.onChangeValue.bind(this);
+  }
+
+  onChangeValue(field, value){
+    const {context} = this.props;
+    const {delivery} = context.state;
+    context.setState({delivery: merge({}, delivery, {[field]: value})});
+  }
+
+  renderVehicleType(vehicleType, i){
+    const {context} = this.props;
+    const {delivery} = context.state;
+    return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+      <Button style={{height: 'auto'}} large active={delivery.vehicleTypeId == vehicleType.vehicleTypeId} onPress={() => this.onChangeValue('vehicleTypeId', vehicleType.vehicleTypeId)}>
+        <Icon name='car'/>
+      </Button>
+      <Text style={styles.vehicleSelectText}>{vehicleType.description}</Text>
+    </View>;
   }
 
   render() {
-    const {history, vehicleTypes, context, busy} = this.props;
+    const {navigationStrategy, vehicleTypes, context, busy} = this.props;
     const {delivery} = context.state;
 
-    const onChangeValue = (field, value) => {
-      context.setState({delivery: merge({}, delivery, {[field]: value})});
-    };
-
-    const renderVehicleType = (vehicleType, i) => {
-      return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-        <Button style={{height: 'auto'}} large active={delivery.vehicleTypeId == vehicleType.vehicleTypeId} onPress={() => onChangeValue('vehicleTypeId', vehicleType.vehicleTypeId)}>
-          <Icon name='car'/>
-        </Button>
-        <Text style={styles.vehicleSelectText}>{vehicleType.description}</Text>
-      </View>;
-    };
+   
     return busy ? <LoadingScreen text="Loading Vehicle Types" /> : <Container>
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='arrow-back' onPress={() => history.goBack()} />
+            <Icon name='arrow-back' onPress={() => navigationStrategy.back()} />
           </Button>
         </Left>
         <Body><Title>Vehicle Details</Title></Body>
@@ -43,10 +50,10 @@ class VehicleDetails extends Component {
         <Text style={styles.subTitle}>Select the type of vehicle you think you will need for your delivery</Text>
         <Grid>
           <Row style={{flexWrap: 'wrap'}}>
-            {vehicleTypes.map((v, i) => renderVehicleType(v, i))}
+            {vehicleTypes.map((v, i) => this.renderVehicleType(v, i))}
           </Row>
         </Grid>
-        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  history.push('/Customer/Checkout/ItemDetails')} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={delivery}>
+        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={delivery}>
           <Text uppercase={false}>Continue</Text>
           <Icon name='arrow-forward'/>
         </ValidatingButton>

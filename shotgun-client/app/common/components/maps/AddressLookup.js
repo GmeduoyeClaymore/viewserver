@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Text, Button, Header, Left, Body, Container, Icon, Title, Input, Grid, Row, List, ListItem, View } from 'native-base';
 import { connect } from 'custom-redux';
-import { getDaoState } from 'common/dao';
+import { getDaoState, getNavigationProps } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {debounce} from 'lodash';
@@ -180,7 +180,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
-  ...(initialProps && initialProps.location && initialProps.location.state ? initialProps.location.state : {}),
+  ...getNavigationProps(initialProps),
   ...getDaoState(state, ['customer'], 'deliveryAddressDao'),
   ...initialProps
 });
