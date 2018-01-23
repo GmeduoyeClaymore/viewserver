@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, Content, Button, H1, Grid, Row, Icon, Col, View} from 'native-base';
 import {merge} from 'lodash';
 import Products from 'common/constants/Products';
-import shotgun from 'native-base-theme/variables/shotgun';
 
 const ProductSelect = ({context, history}) => {
   const selectProduct = (productId) => {

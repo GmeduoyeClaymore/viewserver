@@ -1,22 +1,22 @@
 import { connectAdvanced } from './connectAdvanced';
 import isEqual from './is-equal';
-import Logger from 'common/Logger';
 const getType = {};
+
 const filterFunctions = (args) => {
-    if (!args){
-        return args;
+  if (!args){
+    return args;
+  }
+  const result = {};
+  Object.keys(args).forEach( key => {
+    const val = args[key];
+    if (!(val && getType.toString.call(val) === '[object Function]'))   {
+      result[key] = val;
     }
-    const result = {};
-    Object.keys(args).forEach( key => {
-        const val = args[key];
-        if (!(val && getType.toString.call(val) === '[object Function]'))   {
-            result[key] = val;
-        }
-    });
-    return result;
+  });
+  return result;
 };
 
-const selectorFactory = (ignorefuncs, selector) => (dispatch, initializationProps) => {
+const selectorFactory = (ignorefuncs, selector) => () => {
   let previousPropsForComparison = {};
   let previousProps = {};
   return (nextState, nextOwnProps) => {
@@ -35,6 +35,6 @@ const selectorFactory = (ignorefuncs, selector) => (dispatch, initializationProp
 };
 
 export const connect = (selector, ignorefuncs = true) => (component) => connectAdvanced(
-    selectorFactory(ignorefuncs, selector)
-  )(component);
+  selectorFactory(ignorefuncs, selector)
+)(component);
 

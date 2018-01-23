@@ -5,72 +5,41 @@ import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {completeOrderRequest, stopWatchingPosition} from 'driver/actions/DriverActions';
 import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
 import LoadingScreen from 'common/components/LoadingScreen';
 import RatingAction from 'common/components/RatingAction';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import {Linking} from 'react-native';
-import Logger from 'common/Logger';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-class DriverOrderInProgress extends Component{
+class CustomerOrderInProgress extends Component{
   constructor(props) {
     super(props);
-
-    this.state = {
-      initialPosition: undefined
-    };
   }
 
   componentWillMount(){
-    const {dispatch, orderId, position} = this.props;
+    const {dispatch, orderId} = this.props;
     dispatch(updateSubscriptionAction('orderSummaryDao', {
       userId: undefined,
       isCompleted: '',
       orderId,
-      reportId: 'driverOrderSummary'
+      reportId: 'customerOrderSummary'
     }));
-
-    this.setState({initialPosition: position});
   }
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, position, dispatch, busy, client} = this.props;
-    const {initialPosition} = this.state;
-    const {latitude, longitude} = position;
+    const {orderSummary = {status: ''}, history, busy, client} = this.props;
     const {orderItem = {}, delivery = {}} = orderSummary;
-    const {origin = {}, destination = {}, customerRating} = delivery;
+    const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
+    const {origin = {}, destination = {}, driverRating} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const isDelivery = orderItem.productId == Products.DELIVERY;
-
-    const onCompletePress = async() => {
-      dispatch(completeOrderRequest(orderSummary.orderId));
-      dispatch(stopWatchingPosition());
-    };
-
-    const onNavigatePress = async() => {
-      const navigationDestination = destination.line1 !== undefined ? destination : origin;
-      const wayPoints = destination.line1 !== undefined ? `&waypoints=${origin.latitude},${origin.longitude}` : undefined;
-      const mapUrl = `https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate${wayPoints}&origin=${latitude},${longitude}&destination=${navigationDestination.latitude},${navigationDestination.longitude}`;
-      try {
-        const isSupported = await Linking.canOpenURL(mapUrl);
-
-        if (isSupported) {
-          return Linking.openURL(mapUrl);
-        }
-        throw 'Could not open';
-      } catch (e) {
-        Logger.warning(`Could not open ${mapUrl}`);
-      }
-    };
 
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
@@ -79,8 +48,8 @@ class DriverOrderInProgress extends Component{
     };
 
     const region = {
-      latitude: position.latitude,
-      longitude: position.longitude,
+      latitude: driverPosition.latitude,
+      longitude: driverPosition.longitude,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };
@@ -89,11 +58,9 @@ class DriverOrderInProgress extends Component{
       <Grid>
         <Row size={60}>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
-            showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
-            <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>
+            showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
             {isDelivery ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
-
-            <MapView.Marker coordinate={{...position}}/>
+            <MapView.Marker coordinate={{...driverPosition}}/>
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {isDelivery ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
@@ -106,21 +73,36 @@ class DriverOrderInProgress extends Component{
             <Col>
               <Row>
                 <Col>
-                  <RatingAction isDriver={true} delivery={delivery}/>
+                  <RatingAction isDriver={false} delivery={delivery}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={driverRating == 0} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>
-                <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-                {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
-                <Row style={styles.ctaRow}>
-                  <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
-                  <Col><Button fullWidth style={styles.callButton}><Text uppercase={false}>Call customer</Text></Button></Col>
+                <Row>
+                  <Col>
+                    <Row><Text>Driver photo here</Text></Row>
+                    <Row><Text>Driver Avg Rating Here</Text></Row>
+                  </Col>
+                  <Col>
+                    <Row>
+                      <Col>
+                        <Text style={styles.subTitle}>Your delivery driver</Text>
+                        <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Text style={styles.subTitle}>Vehicle</Text>
+                        <Text style={styles.data}>{delivery.vehicleMake} {delivery.vehicleModel}, {delivery.vehicleColour}</Text>
+                        <Text style={styles.data}>{delivery.registrationNumber}</Text>
+                      </Col>
+                    </Row>
+                  </Col>
                 </Row>
               </Grid>
-              <Button fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></Button>
+              <Button fullWidth style={styles.callButton}><Text uppercase={false}>Call driver</Text></Button>
             </Col>
           }
         </Row>
@@ -138,8 +120,13 @@ const styles = {
   infoRow: {
     padding: shotgun.contentPadding
   },
-  ctaRow: {
-    paddingBottom: 15
+  subTitle: {
+    color: shotgun.brandLight,
+    fontSize: 12,
+    paddingBottom: 5
+  },
+  data: {
+    fontWeight: 'bold'
   },
   callButton: {
     backgroundColor: shotgun.brandPrimary,
@@ -158,13 +145,11 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = initialProps.location && initialProps.location.state ? initialProps.location.state.orderId : undefined;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-  const position = getDaoState(state, ['position'], 'userDao');
 
   return {
     ...initialProps,
-    position,
     orderId,
-    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription', userDao: 'getCurrentPosition'}) || orderSummary == undefined  || !position,
+    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription', userDao: 'getCurrentPosition'}) || orderSummary == undefined,
     orderSummary
   };
 };
@@ -173,5 +158,5 @@ mapStateToProps.dependsOnOwnProps = true;
 
 export default withRouter(connect(
   mapStateToProps
-)(DriverOrderInProgress));
+)(CustomerOrderInProgress));
 

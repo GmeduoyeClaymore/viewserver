@@ -1,35 +1,25 @@
 package com.shotgun.viewserver.maps;
 
-import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class DirectionRequest{
-    private String origin;
-    private String destination;
     private String mode;
+    private ArrayList<LatLng> locations;
 
     public DirectionRequest() {
     }
 
-    public DirectionRequest(String origin, String destination, String mode) {
-        this.origin = origin;
-        this.destination = destination;
+    public DirectionRequest(ArrayList<LatLng> locations, String mode) {
+        this.locations = locations;
         this.mode = mode;
     }
 
-    public String getOrigin() {
-        return origin;
+    public ArrayList<LatLng> getLocations() {
+        return locations;
     }
 
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    public void setLocations(ArrayList<LatLng> locations) {
+        this.locations = locations;
     }
 
     public String getMode() {
@@ -41,7 +31,20 @@ public class DirectionRequest{
     }
 
     public String toQueryString(String key){
-        return String.format("key=%s&origin=%s&destination=%s&mode=%s",key, URLEncoder.encode(this.origin),URLEncoder.encode(this.destination),this.mode);
+        LatLng origin = locations.get(0);
+        LatLng destination = locations.get(locations.size()-1);
+
+        return String.format("key=%s&origin=%s,%s&destination=%s,%s&mode=%s%s", key, origin.getLatitude(), origin.getLongitude(), destination.getLatitude(), destination.getLongitude(), this.mode, getWayPoints());
+    }
+
+    private String getWayPoints(){
+        StringBuilder sb = new StringBuilder();
+
+        for(int i=1;i<locations.size()-1; i++){
+            sb.append(String.format("%s,%s|", locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+        }
+
+        return sb.length() > 0 ? "&waypoints=via:"+sb.toString() : "";
     }
 
 }

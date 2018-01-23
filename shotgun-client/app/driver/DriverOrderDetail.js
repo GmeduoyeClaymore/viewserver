@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Container, Header, Left, Button, Icon, Body, Title, Content, Text, View} from 'native-base';
 import OrderSummary from 'common/components/OrderSummary';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
-import {startOrderRequest, cancelOrderRequest} from 'driver/actions/DriverActions';
+import {startOrderRequest, cancelOrderRequest, watchPosition, stopWatchingPosition} from 'driver/actions/DriverActions';
 import PriceSummary from 'common/components/PriceSummary';
 import RatingSummary from 'common/components/RatingSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -33,12 +33,14 @@ class DriverOrderDetail extends Component{
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
     const onStartPress = async() => {
+      dispatch(watchPosition());
       dispatch(startOrderRequest(orderSummary.orderId, navigateToOrderInProgress));
     };
 
     const navigateToOrderInProgress = () => history.push('/Driver/DriverOrderInProgress', {orderId: orderSummary.orderId});
 
     const onCancelPress = async() => {
+      dispatch(stopWatchingPosition());
       dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push('/Driver')));
     };
 

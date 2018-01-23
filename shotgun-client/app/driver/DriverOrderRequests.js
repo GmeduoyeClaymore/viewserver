@@ -12,8 +12,6 @@ import OrderRequest from 'common/components/OrderRequest';
 import Tabs from 'common/components/Tabs';
 
 const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}) => {
-
-
   if (busy){
     return <LoadingScreen text="Loading Map" />;
   }

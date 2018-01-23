@@ -1,6 +1,5 @@
 import ReportSubscriptionStrategy from '../subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-import {getDaoState} from 'common/dao';
 import {isEqual} from 'lodash';
 
 export default class OrderSummaryDao{
@@ -72,6 +71,12 @@ export default class OrderSummaryDao{
         customerLastName: orderSummary.customerLastName,
         driverFirstName: orderSummary.driverFirstName,
         driverLastName: orderSummary.driverLastName,
+        driverLatitude: orderSummary.driverLatitude,
+        driverLongitude: orderSummary.driverLongitude,
+        registrationNumber: orderSummary.registrationNumber,
+        vehicleColour: orderSummary.vehicleColour,
+        vehicleMake: orderSummary.vehicleMake,
+        vehicleModel: orderSummary.vehicleModel,
         origin: {
           flatNumber: orderSummary.originFlatNumber,
           line1: orderSummary.originLine1,

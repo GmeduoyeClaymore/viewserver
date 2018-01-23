@@ -16,8 +16,8 @@ class RatingAction extends Component{
     const rating = isDriver ? delivery.customerRating : delivery.driverRating;
     const ratingFunc = isDriver ? rateCustomer : rateDriver;
 
-    const onPressStar = async(rating) => {
-      dispatch(ratingFunc(delivery.deliveryId, rating));
+    const onPressStar = async(newRating) => {
+      dispatch(ratingFunc(delivery.deliveryId, newRating));
     };
 
     return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>

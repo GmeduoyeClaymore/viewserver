@@ -44,7 +44,9 @@ public class
                                         new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
                                         new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
                                         new Column("fcmToken", "fcmToken", ColumnType.String),
-                                        new Column("chargePercentage", "chargePercentage", ColumnType.Int)
+                                        new Column("chargePercentage", "chargePercentage", ColumnType.Int),
+                                        new Column("latitude", "latitude", ColumnType.Double),
+                                        new Column("longitude", "longitude", ColumnType.Double)
                                 ))
                                 .withKeyColumns("userId")
                 )

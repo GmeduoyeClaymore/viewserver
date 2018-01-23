@@ -9,7 +9,7 @@ const CustomerMenuBar = ({history, match}) => {
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/CustomerOrders`)}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/CustomerSettings`)}><Icon name='settings'/></Button></FooterTab>
   </Footer>;
-}
+};
 
 export default withRouter(connect()(CustomerMenuBar));
 

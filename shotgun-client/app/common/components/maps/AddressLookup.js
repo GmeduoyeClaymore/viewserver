@@ -6,7 +6,7 @@ import { connect } from 'custom-redux';
 import { getDaoState } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
-import {debounce, merge} from 'lodash';
+import {debounce} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const MAX_RECENT_ADDRESSES = 10;

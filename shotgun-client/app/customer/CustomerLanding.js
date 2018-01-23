@@ -5,6 +5,7 @@ import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
 import CustomerOrders from './CustomerOrders';
 import CustomerOrderDetail from './CustomerOrderDetail';
+import CustomerOrderInProgress from './CustomerOrderInProgress';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import CustomerSettings from './CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
@@ -12,7 +13,6 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import LoadingScreen from 'common/components/LoadingScreen';
 import {getCurrentPosition} from 'common/actions/CommonActions';
-import shotgun from 'native-base-theme/variables/shotgun';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -60,6 +60,7 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrders'} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
+          <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerSettings'} exact component={CustomerSettings}/>
           <Redirect to={'/Customer/Checkout'}/>
         </Switch>

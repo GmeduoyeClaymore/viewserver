@@ -79,7 +79,7 @@ export default DataSink = (superclass) => class extends superclass {
       super.onRowUpdated(rowId, row);
     }
     const rowIndex = this._getRowIndex(rowId);
-    if(!~rowIndex){
+    if (!~rowIndex){
       Logger.info('Row not updated as couldnt get index for row ' + rowId);
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
@@ -96,10 +96,10 @@ export default DataSink = (superclass) => class extends superclass {
       this.rows.splice(rowIndex, 1);
       Object.keys(this.idIndexes).forEach( id => {
         const index = this.idIndexes[id];
-        if(index > rowIndex){
+        if (index > rowIndex){
           this.idIndexes[id] = index - 1;
         }
-      })
+      });
       Logger.info(`Row ${rowId} removed`);
     }
   }

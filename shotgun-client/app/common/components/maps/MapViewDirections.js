@@ -37,12 +37,11 @@ class MapViewDirections extends Component {
 	    onReady,
 	    onError,
 	    client,
-	    origin,
-	    destination
+	    locations
 	  } = this.props;
 
 
-	  fetchRoute(client, origin, destination)
+	  fetchRoute(client, locations)
 	    .then(result => {
 	      this.setState(result);
 	      onReady && onReady(result);

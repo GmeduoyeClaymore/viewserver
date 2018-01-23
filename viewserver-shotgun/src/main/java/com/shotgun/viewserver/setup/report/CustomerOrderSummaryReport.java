@@ -39,12 +39,20 @@ public class CustomerOrderSummaryReport {
                                         .withRightJoinColumns("userId")
                                         .withConnection("deliveryJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
+                                new JoinNode("vehicleJoin")
+                                        .withLeftJoinColumns("driverId")
+                                        .withLeftJoinOuter()
+                                        .withRightJoinColumns("userId")
+                                      /*  .withColumnPrefixes("", "vehicle_")
+                                        .withAlwaysResolveNames()*/
+                                        .withConnection("driverJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(VehicleDataSource.NAME, VehicleDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("driverJoin", Constants.OUT, "left")
+                                        .withConnection("vehicleJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")
@@ -65,8 +73,14 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
                                                 new IProjectionConfig.ProjectionColumn("driverRating"),
+                                                new IProjectionConfig.ProjectionColumn("registrationNumber", "registrationNumber"),
+                                                new IProjectionConfig.ProjectionColumn("colour", "vehicleColour"),
+                                                new IProjectionConfig.ProjectionColumn("make", "vehicleMake"),
+                                                new IProjectionConfig.ProjectionColumn("model", "vehicleModel"),
                                                 new IProjectionConfig.ProjectionColumn("firstName", "driverFirstName"),
                                                 new IProjectionConfig.ProjectionColumn("lastName", "driverLastName"),
+                                                new IProjectionConfig.ProjectionColumn("latitude", "driverLatitude"),
+                                                new IProjectionConfig.ProjectionColumn("longitude", "driverLongitude"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
