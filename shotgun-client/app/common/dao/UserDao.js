@@ -25,7 +25,10 @@ export default class UserDaoContext{
     this.client = client;
     this.options = options;
     this.getPositionAsPromise = this.getPositionAsPromise.bind(this);
+    this.watchPositionOnSuccess = this.watchPositionOnSuccess.bind(this);
+    this.watchPositionOnError = this.watchPositionOnError.bind(this);
     this.position = undefined;
+    this.locationOptions = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10};
   }
 
   get defaultOptions(){
@@ -76,6 +79,16 @@ export default class UserDaoContext{
     });
   }
 
+  async watchPositionOnSuccess(userId, position){
+    const {coords} = position;
+    const {latitude, longitude} = coords;
+    await this.client.invokeJSONCommand('userController', 'setLocation', {userId, latitude, longitude});
+  }
+
+  watchPositionOnError(e){
+    Logger.warning(e);
+  }
+
   extendDao(dao){
     dao.addOrUpdateUser = async ({user}) => {
       let userRowEvent;
@@ -119,6 +132,14 @@ export default class UserDaoContext{
       Logger.info(`Got user position as ${JSON.stringify(position)}`);
       this.position = position.coords;
       dao.subject.next(this.mapDomainEvent(null, dao.dataSink));
+    };
+    dao.watchPosition = async () => {
+      const {userId} = dao.options;
+      await navigator.geolocation.getCurrentPosition((position) => this.watchPositionOnSuccess(userId, position), this.watchPositionOnError, {enableHighAccuracy: true});
+      this.watchId = navigator.geolocation.watchPosition((position) => this.watchPositionOnSuccess(userId, position), this.watchPositionOnError, this.locationOptions);
+    };
+    dao.stopWatchingPosition = () => {
+      navigator.geolocation.clearWatch(this.watchId);
     };
   }
 }

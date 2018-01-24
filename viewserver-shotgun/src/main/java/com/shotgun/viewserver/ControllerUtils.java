@@ -10,6 +10,7 @@ import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -206,6 +207,10 @@ public class ControllerUtils{
         Schema schema = output.getSchema();
         ColumnHolder col = schema.getColumnHolder(column);
         return ColumnHolderUtils.getValue(col, row);
+    }
+
+    public static Object getColumnValue(KeyedTable table, String column, String key){
+       return getColumnValue(table, column, table.getRow(new TableKey(key)));
     }
 
     public static String generateGuid(){

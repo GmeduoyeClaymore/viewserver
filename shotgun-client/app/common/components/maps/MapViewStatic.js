@@ -17,7 +17,7 @@ export default class MapViewStatic extends Component {
     const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
 
     if (showDirections){
-      const route = await fetchRoute(client, {latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude});
+      const route = await fetchRoute(client, [origin, destination]);
       this.setState({route});
     }
   }

@@ -45,3 +45,11 @@ export const completeOrderRequest = (orderId, continueWith) => {
 export const rateCustomer = (deliveryId, rating, continueWith) => {
   return invokeDaoCommand('driverDao', 'rateCustomer', {deliveryId, rating}, continueWith);
 };
+
+export const watchPosition = (continueWith) => {
+  return invokeDaoCommand('userDao', 'watchPosition', {}, continueWith);
+};
+
+export const stopWatchingPosition = (continueWith) => {
+  return invokeDaoCommand('userDao', 'stopWatchingPosition', {}, continueWith);
+};

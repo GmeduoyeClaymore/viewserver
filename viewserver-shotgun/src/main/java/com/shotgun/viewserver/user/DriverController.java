@@ -6,6 +6,7 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
+import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.MessagingController;
@@ -25,11 +26,20 @@ public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
     private PaymentController paymentController;
     private MessagingController messagingController;
+    private UserController userController;
+    private VehicleController vehicleController;
+    private JourneyEmulatorController journeyEmulatorController;
 
     public DriverController(PaymentController paymentController,
-                            MessagingController messagingController) {
+                            MessagingController messagingController,
+                            UserController userController,
+                            VehicleController vehicleController,
+                            JourneyEmulatorController journeyEmulatorController) {
         this.paymentController = paymentController;
         this.messagingController = messagingController;
+        this.userController = userController;
+        this.vehicleController = vehicleController;
+        this.journeyEmulatorController = journeyEmulatorController;
     }
 
     @ControllerAction(path = "registerDriver", isSynchronous = true)
@@ -38,8 +48,6 @@ public class DriverController {
                                  @ActionParam(name = "address")DeliveryAddress address,
                                  @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount){
         log.debug("Registering driver: " + user.getEmail());
-        UserController userController = new UserController();
-        VehicleController vehicleController = new VehicleController();
 
         //We can change this later on or on a per user basis
         user.setChargePercentage(10);
@@ -95,6 +103,7 @@ public class DriverController {
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
 
+        journeyEmulatorController.emulateJourneyForOrder(orderId, "emulator-5558", driverId);
         return orderId;
     }
 

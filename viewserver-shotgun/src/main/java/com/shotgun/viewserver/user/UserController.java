@@ -53,4 +53,17 @@ public class UserController {
         }
     }
 
+    @ControllerAction(path = "setLocation", isSynchronous = true)
+    public String setLocation(@ActionParam(name = "userId")String userId, @ActionParam(name = "latitude")double latitude, @ActionParam(name = "longitude")double longitude){
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+
+        ITableRowUpdater tableUpdater = row -> {
+            row.setDouble("latitude", latitude);
+            row.setDouble("longitude", longitude);
+        };
+
+        userTable.updateRow(new TableKey(userId), tableUpdater);
+        return userId;
+    }
+
 }

@@ -7,7 +7,7 @@ import DriverOrderRequests from './DriverOrderRequests';
 import DriverOrderRequestDetail from './DriverOrderRequestDetail';
 import DriverOrderInProgress from './DriverOrderInProgress';
 import DriverSettings from './DriverSettings';
-import {driverServicesRegistrationAction} from 'driver/actions/DriverActions';
+import {driverServicesRegistrationAction, stopWatchingPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -23,6 +23,10 @@ class DriverLanding extends Component {
     const {dispatch, client, userId} = this.props;
     dispatch(driverServicesRegistrationAction(client, userId));
     dispatch(getCurrentPosition());
+  }
+
+  componentWillUnmount() {
+    dispatch(stopWatchingPosition());
   }
 
   render() {

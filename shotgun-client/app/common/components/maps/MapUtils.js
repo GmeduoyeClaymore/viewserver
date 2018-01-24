@@ -1,8 +1,9 @@
 import Logger from 'common/Logger';
 
-export const fetchRoute = async  (client, origin, destination) => {
+export const fetchRoute = async  (client, locations) => {
   const mode = 'driving';
-  const json = await client.invokeJSONCommand('mapsController', 'mapDirectionRequest', {origin: `${origin.latitude},${origin.longitude}`, destination: `${destination.latitude},${destination.longitude}`, mode});
+  const mappedLocations = locations.map(l => {return {latitude: l.latitude, longitude: l.longitude};});
+  const json = await client.invokeJSONCommand('mapsController', 'mapDirectionRequest', {locations: mappedLocations, mode});
   if (json.routes.length){
     const route = json.routes[0];
     return {

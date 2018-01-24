@@ -2,6 +2,8 @@ import com.shotgun.viewserver.maps.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 /**
  * Created by Gbemiga on 15/12/17.
  */
@@ -27,7 +29,11 @@ public class MapsControllerTest {
 
     @Test
     public void canRequestDirections(){
-        System.out.println(sut.mapDirectionRequest(new DirectionRequest("W6 8NQ", "E5 9QR","driving")));
+        ArrayList<LatLng> locations = new ArrayList<>();
+        locations.add(new LatLng(51.5526951, -0.1412256));
+        locations.add(new LatLng(51.4857236, -0.2123406));
+
+        System.out.println(sut.mapDirectionRequest(new DirectionRequest(locations, "driving")));
     }
 
     @Test

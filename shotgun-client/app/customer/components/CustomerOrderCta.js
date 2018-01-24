@@ -11,7 +11,7 @@ class CustomerOrderCta extends Component {
   }
 
   render() {
-    const {orderSummary} = this.props;
+    const {orderSummary, history} = this.props;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const inOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
     const isDelivery = orderSummary.orderItem.productId == Products.DELIVERY;
@@ -26,7 +26,7 @@ class CustomerOrderCta extends Component {
       </Col>
       {inOnRoute ?
         <Col>
-          <Button fullWidth track style={styles.button} onPress={() => console.log('Should go to track driver screen')}>
+          <Button fullWidth track style={styles.button} onPress={() => history.push('/Customer/CustomerOrderInProgress', {orderId: orderSummary.orderId})}>
             <Icon name='arrow-forward'/>
             <Text uppercase={false}>Track Driver</Text>
           </Button>

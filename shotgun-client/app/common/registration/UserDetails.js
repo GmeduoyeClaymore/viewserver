@@ -27,7 +27,7 @@ export default UserDetails  = ({context, history, next}) => {
           <Col>
             <Item stackedLabel first>
               <Label>First name</Label>
-              <ValidatingInput bold value={user.firstName} validateOnMount={user.firstName !== undefined} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={validationSchema.firstName} maxLength={30}/>
+              <ValidatingInput bold value={user.firstName} placeholder="John" validateOnMount={user.firstName !== undefined} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={validationSchema.firstName} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -35,7 +35,7 @@ export default UserDetails  = ({context, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>Last name</Label>
-              <ValidatingInput bold value={user.lastName} validateOnMount={user.lastName !== undefined} onChangeText={(value) => onChangeText('lastName', value)} validationSchema={validationSchema.lastName} maxLength={30}/>
+              <ValidatingInput bold value={user.lastName} placeholder="Smith" validateOnMount={user.lastName !== undefined} onChangeText={(value) => onChangeText('lastName', value)} validationSchema={validationSchema.lastName} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -43,7 +43,7 @@ export default UserDetails  = ({context, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>Phone number</Label>
-              <ValidatingInput bold keyboardType='phone-pad' validateOnMount={user.contactNo !== undefined} value={user.contactNo} onChangeText={(value) => onChangeText('contactNo', value)} validationSchema={validationSchema.contactNo}/>
+              <ValidatingInput bold keyboardType='phone-pad' placeholder="01234 56678" validateOnMount={user.contactNo !== undefined} value={user.contactNo} onChangeText={(value) => onChangeText('contactNo', value)} validationSchema={validationSchema.contactNo}/>
             </Item>
           </Col>
         </Row>
@@ -51,7 +51,7 @@ export default UserDetails  = ({context, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>Email</Label>
-              <ValidatingInput bold keyboardType='email-address' validateOnMount={user.email !== undefined} value={user.email} onChangeText={(value) => onChangeText('email', value)} validationSchema={validationSchema.email} maxLength={30}/>
+              <ValidatingInput bold keyboardType='email-address' placeholder="email@email.com" validateOnMount={user.email !== undefined} value={user.email} onChangeText={(value) => onChangeText('email', value)} validationSchema={validationSchema.email} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -59,7 +59,7 @@ export default UserDetails  = ({context, history, next}) => {
           <Col>
             <Item stackedLabel last>
               <Label>Create an account password</Label>
-              <ValidatingInput bold secureTextEntry={true} value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
+              <ValidatingInput bold secureTextEntry={true} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
             </Item>
           </Col>
         </Row>
