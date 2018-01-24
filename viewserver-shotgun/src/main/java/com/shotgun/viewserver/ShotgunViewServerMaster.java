@@ -7,6 +7,7 @@ import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.order.PricingStrategyResolver;
 import com.shotgun.viewserver.user.*;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
@@ -47,7 +48,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(userController);
         this.registerController(new DriverController(paymentController,messagingController, userController, vehicleController, journeyEmulatorController));
         this.registerController(new CustomerController(paymentController, deliveryAddressController));
-        this.registerController(new OrderController(deliveryAddressController,deliveryController,orderItemController));
+        this.registerController(new OrderController(deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver()));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
         this.registerController(messagingController);

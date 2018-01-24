@@ -28,6 +28,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   const {destination, origin} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
+  const supportsOrigin = selectedContentType.origin;
   const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined);
   
 
@@ -74,21 +75,20 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
     <Grid>
       <Row size={85}>
         <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-          showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
-onRead		  onReady={setDurationAndDistance}
-          {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{ ...origin }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-          {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
+          showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} onReady={setDurationAndDistance}>
         </MapView>
+        {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{ ...origin }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+        {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
         <Button transparent style={styles.backButton}>
           <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
         </Button>
       </Row>
       <Row size={15} style={styles.inputRow}>
         <Col>
-          <Row>
+          {supportsOrigin ? <Row>
             <Icon name="pin" paddedIcon originPin />
             {getLocationText(origin, 'origin', 'Enter pick-up location')}
-          </Row>
+          </Row> : null}
           {supportsDestination ? <Row>
             <Icon name="pin" paddedIcon />
             {getLocationText(destination, 'destination', 'Enter drop-off location')}
@@ -96,7 +96,7 @@ onRead		  onReady={setDurationAndDistance}
         </Col>
       </Row>
     </Grid>
-    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
+    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton || (!supportsDestination && !supportsOrigin)}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='arrow-forward' />
     </Button>

@@ -38,6 +38,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
 
   const DAO_SUBSCRIPTIONS = {};
   const DAO_OPTIONS_SUBSCRIPTIONS = {};
+  const DAO_COUNT_SUBSCRIPTIONS = {};
   const DAOS = {};
 
   const registerDao = ({name, dao}) => {
@@ -47,29 +48,52 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       unRegisterDao({name});
     }
     DAOS[name] = dao;
-    let daoEventFunc = c => {
-      dispatch({type: UPDATE_STATE(name), path: [name, 'data'], data: c});
-    };
-    daoEventFunc = daoEventFunc.bind(dao);
-    const sub = dao.observable.subscribe(daoEventFunc);
-    let daoOptionFunc = c => {
-      dispatch({type: UPDATE_OPTIONS(name), path: [name, 'options'], data: c});
-    };
-    daoOptionFunc = daoOptionFunc.bind(dao);
-    const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);
-    DAO_SUBSCRIPTIONS[name] = sub;
-    DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
+    
+    if (dao.observable){
+      let daoEventFunc = c => {
+        dispatch({type: UPDATE_STATE(name), path: [name, 'data'], data: c});
+      };
+      daoEventFunc = daoEventFunc.bind(dao);
+      const sub = dao.observable.subscribe(daoEventFunc);
+      DAO_SUBSCRIPTIONS[name] = sub;
+    }
+
+    if (dao.optionsObservable){
+      let daoOptionFunc = c => {
+        dispatch({type: UPDATE_OPTIONS(name), path: [name, 'options'], data: c});
+      };
+      daoOptionFunc = daoOptionFunc.bind(dao);
+      const optionsSub = dao.optionsObservable.subscribe(daoOptionFunc);
+      DAO_OPTIONS_SUBSCRIPTIONS[name] = optionsSub;
+    }
+
+    if (dao.countObservable){
+      const daoCountFunc = c => {
+        dispatch({type: UPDATE_STATE(name), path: [name, 'size'], data: c});
+      };
+      const countSub = dao.countObservable.subscribe(daoCountFunc);
+      DAO_COUNT_SUBSCRIPTIONS[name] = countSub;
+    }
+
     return getState();
+  };
+
+  const unsub = (name, subs) => {
+    if (subs[name]){
+      subs[name].unsubscribe();
+      subs[name] = undefined;
+    }
   };
 
   const unRegisterDao = ({name}) => {
     if (!DAOS[name]){
       return;
     }
-    DAO_SUBSCRIPTIONS[name].unsubscribe();
+    unsub(name, DAO_SUBSCRIPTIONS);
+    unsub(name, DAO_OPTIONS_SUBSCRIPTIONS);
+    unsub(name, DAO_COUNT_SUBSCRIPTIONS);
     DAOS[name] = undefined;
-    DAO_SUBSCRIPTIONS[name] = undefined;
-    DAO_OPTIONS_SUBSCRIPTIONS[name] = undefined;
+
     dispatch({type: UPDATE_STATE(name), path: [name], data: undefined});
     return getState();
   };

@@ -9,10 +9,10 @@ export default class ContentTypeNavigationStrategy{
     this.pathIndex = -1;
     this.contentTypePaths = {};
     this.contentTypePaths[ContentTypes.DELIVERY] = ['DeliveryMap', 'DeliveryOptions', 'VehicleDetails', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.RUBBISH] = ['DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.SKIP] = ['DeliveryMap', 'ProductCategoryList', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.PERSONELL] = ['DeliveryMap', 'ProductCategoryList', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.HIRE] = ['DeliveryMap', 'ProductCategoryList', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.RUBBISH] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.SKIP] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.PERSONELL] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.HIRE] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
     this.init = this.init.bind(this);
     this.next = this.next.bind(this);
     this.prev = this.prev.bind(this);

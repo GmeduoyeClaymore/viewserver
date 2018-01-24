@@ -4,7 +4,7 @@ import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import {Spinner} from 'native-base';
-import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps} from 'common/dao';
+import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getNavigationProps} from 'common/dao';
 import PagingListView from 'common/components/PagingListView';
 import {connect} from 'custom-redux';
 
@@ -41,44 +41,45 @@ class ProductList extends Component{
   constructor(props){
     super(props);
     const {history, dispatch, context} = this.props;
-    
     this.search = (searchText) => {
       dispatch(updateSubscriptionAction('productDao', {searchText}));
     };
+    this.search = this.search.bind(this);
     this.rowView = (p) => {
       return (<ProductListItem key={p.productId} product={p} history={history} context={context}/>);
     };
   }
 
-  componentDidMount(){
-    const {dispatch, options} = this.props;
-    const {categoryId} = options;
-    dispatch(updateSubscriptionAction('productDao', {categoryId}));
-  }
-
   render(){
     const {rowView, search, props} = this;
-    const {context} = props;
+    const {context, options} = props;
     return <PagingListView
       style={styles.container}
       daoName='productDao'
       dataPath={['product', 'products']}
       pageSize={10}
+      options={options}
       context={context}
       rowView={rowView}
       paginationWaitingView={Paging}
       emptyView={NoItems}
-      headerView={() => <SearchBar onChange={search.bind(this)} />}
+      headerView={() => <SearchBar onChange={search} />}
     />;
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  ...getNavigationProps(nextOwnProps),
-  busy: isAnyLoading(state, ['productDao']),
-  options: getDaoOptions(state, 'productDao'),
-  errors: getLoadingErrors(state, ['productDao']), ...nextOwnProps
-});
+const mapStateToProps = (state, nextOwnProps) => {
+  const navProps = getNavigationProps(nextOwnProps);
+  const {category = {}} = navProps;
+  const {categoryId} = category;
+  const options  = {categoryId};
+  return {
+    ...navProps,
+    busy: isAnyLoading(state, ['productDao']),
+    options,
+    errors: getLoadingErrors(state, ['productDao']), ...nextOwnProps
+  };
+};
 
 const ConnectedProductList =  connect(mapStateToProps)(ProductList);
 

@@ -16,11 +16,11 @@ class OrderSummary extends Component{
 
   render() {
     const { width } = Dimensions.get('window');
-    const {orderItem, delivery, client, busy, selectedVehicleType} = this.props;
-    const {noRequiredForOffload, origin, destination} = delivery;
+    const {orderItem, delivery, client, busy, selectedVehicleType, contentType, product} = this.props;
+    const {origin, destination} = delivery;
+    const {quantity: noPeople} = orderItem;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;
-    const isDelivery = orderItem.productId == Products.DELIVERY;
 
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
 
@@ -31,24 +31,27 @@ class OrderSummary extends Component{
 
       <ListItem padded>
         <Grid>
-          <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-          {isDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
-          {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+          {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
+          {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
+          {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
         </Grid>
       </ListItem>
+      {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
 
-      <ListItem padded>
-        <Icon paddedIcon name="time"/><Text>{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text>
-      </ListItem>
-
-      {delivery.noRequiredForOffload > 0 ? <ListItem padded>
-        <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noRequiredForOffload} people required`}</Text>
+      {contentType.noPeople > 0 ? <ListItem padded>
+        <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noPeople} people required`}</Text>
       </ListItem> : null}
 
       {selectedVehicleType ? <ListItem padded>
         <Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text>
       </ListItem> : null}
 
+      {product ? <ListItem padded>
+        <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
+        <Text key='text'>{`${product.name}`}</Text>
+      </ListItem> : null}
+      
       <ListItem padded style={{borderBottomWidth: 0}}>
         <Grid>
           <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
@@ -82,6 +85,12 @@ const styles = {
     justifyContent: 'center',
     borderBottomWidth: 0,
     marginTop: 20
+  },
+  picture: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    marginRight: 8
   },
   image: {
     aspectRatio: 1.2,

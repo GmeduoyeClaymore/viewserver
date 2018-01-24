@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, Icon, Col, View} from 'native-base';
 import {merge} from 'lodash';
 import Products from 'common/constants/Products';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 class ProductSelect extends Component{
   constructor(props){
@@ -20,9 +21,15 @@ class ProductSelect extends Component{
   }
 
   selectContentType(selectedContentType){
-    const {context, navigationStrategy, history} = this.props;
-    context.setState({selectedContentType});
-    navigationStrategy.init(selectedContentType.contentTypeId, history);
+    const {context, navigationStrategy} = this.props;
+    let {orderItem} = context.state;
+    if (selectedContentType && selectedContentType.defaultProductId){
+      if (selectedContentType.defaultProductId){
+        orderItem = merge({}, orderItem, {productId: selectedContentType.defaultProductId});
+      }
+    }
+    context.setState({selectedContentType, orderItem});
+    navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();
   }
 

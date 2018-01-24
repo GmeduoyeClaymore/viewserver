@@ -47,8 +47,8 @@ export default class CustomerDao{
     return customerId;
   }
 
-  async checkout({orderItem, payment, totalPrice, delivery}){
-    const orderId = await this.orderDao.createOrder({paymentId: payment.paymentId, totalPrice, delivery, orderItems: [{quantity: 1, ...orderItem}]});
+  async checkout({orderItem, payment, product, delivery}){
+    const orderId = await this.orderDao.createOrder({paymentId: payment.paymentId, product, delivery, orderItems: [{quantity: 1, ...orderItem}]});
     return orderId;
   }
 

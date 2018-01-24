@@ -9,13 +9,12 @@ import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, getEstimatedPrice}) => {
+const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, loadEstimatedPrice, estimatedTotalPrice, selectedProduct, selectedContentType}) => {
   const purchase = async() => {
     dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push('/Customer/CustomerOrders')));
   };
 
-  const totalPrice = getEstimatedPrice();
-
+  loadEstimatedPrice();
 
   return <Container>
     <Header withButton>
@@ -27,8 +26,8 @@ const OrderConfirmation = ({client, dispatch, history, navigationStrategy, error
       <Body><Title>Order Summary</Title></Body>
     </Header>
     <Content>
-      <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={totalPrice}/>
-      <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct}/>
+      <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={estimatedTotalPrice}/>
+      <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
       <ErrorRegion errors={errors}>
         {!busy ? <Button onPress={purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
       </ErrorRegion>
@@ -44,25 +43,25 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, orderItem, selectedProduct} = context.state;
-  const getEstimatedPrice = async () => {
+  const {delivery, payment, orderItem, selectedProduct, estimatedTotalPrice, selectedContentType} = context.state;
+  const loadEstimatedPrice = async () => {
     const {estimatedTotalPrice: savedTotalPrice} = context.state;
     if (savedTotalPrice){
       return savedTotalPrice;
     }
     const estimatedTotalPrice = client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItem, payment, delivery});
     context.setState({estimatedTotalPrice});
-    return estimatedTotalPrice;
   };
   return {
     ...initialProps,
+    estimatedTotalPrice,
+    loadEstimatedPrice,
     errors: getOperationError(state, 'customerDao', 'checkout'),
-    getEstimatedPrice,
     orderItem,
     delivery,
     selectedProduct,
+    selectedContentType,
     payment,
-    totalPrice,
     busy: isAnyOperationPending(state, { customerDao: 'checkout'})
   };
 };

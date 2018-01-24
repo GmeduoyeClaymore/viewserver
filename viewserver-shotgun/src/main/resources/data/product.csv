@@ -1,12 +1,13 @@
 productId,name,description,categoryId,price
+PROD_Delivery,Delivery,,1Delivery,1
 6YDSkip,6 Yard Skip,4.6 m3,2Skips,210
 8YDSkip,8 Yard Skip,6.1 m3,2Skips,230
 10YDSkip,10 Yard Skip,7.3 m3,2Skips,250
 12YDSkip,12 Yard Skip,9.2 m3,2Skips,280
-GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",3Grab,300
-20YardCage,20 Yard cage,"20-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,200
-10YardCage,10 Yard cage,"10-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,180
-75TonneTipper,7.5 tonne tipper,multi-use vehicle for either waste or material. It?s a 6-yard body or can be loaded with 5 tonnes of material. ,4Cage,150
+GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",2Grab,300
+20YardCage,20 Yard cage,"20-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",2Cage,200
+10YardCage,10 Yard cage,"10-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",2Cage,180
+75TonneTipper,7.5 tonne tipper,multi-use vehicle for either waste or material. It?s a 6-yard body or can be loaded with 5 tonnes of material. ,2Cage,150
 LadderDouble12ft,Ladder Double 12 ft,,2AccessLadder,10
 LadderTriple11ft,Ladder Triple 11ft,,2AccessLadder,14
 LadderTriple17ft,Ladder Triple 17ft,,2AccessLadder,20
@@ -236,3 +237,13 @@ Tiler,Tiler,,2Tiler,150
 Painter,Painter,,2Painter,150
 BrickLayer,Brick Layer,,2BrickLayer,150
 Plumber,Plumber,,2Plumber,150
+HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,£40
+HouseHoldQuarterVan,Household  ¼ van,250 kg,2HouseHoldWaste,£80
+HouseHoldHalfVan,Household  ½ van,500 kg,2HouseHoldWaste,£140
+HouseHoldThreeQuarterVan,Household  ¾ van,750 kg,2HouseHoldWaste,£180
+HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,£220
+CommercialHoldMin,Household Min. charge,100kg,2CommercialWaste,£50
+CommercialHoldQuarterVan,Household  ¼ van,250 kg,2CommercialWaste,£90
+CommercialHoldHalfVan,Household  ½ van,500 kg,2CommercialWaste,£150
+CommercialThreeQuarterVan,Household  ¾ van,750 kg,2CommercialWaste,£190
+CommercialFullVan,Household  Full van,1000 kg,2CommercialWaste,£230

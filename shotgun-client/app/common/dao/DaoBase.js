@@ -3,11 +3,14 @@ import Rx from 'rxjs/Rx';
 import * as crx from 'common/rx';
 import {page} from 'common/dao/DaoExtensions';
 import {isEqual} from 'lodash';
+import RxDataSink from '../../common/dataSinks/RxDataSink';
+
 export default class Dao {
   constructor(daoContext) {
     this.daoContext = daoContext;
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
+    this.countSubject = new Rx.Subject();
     this.options = this.daoContext.defaultOptions;
     if (this.daoContext.extendDao){
       this.daoContext.extendDao(this);
@@ -27,6 +30,10 @@ export default class Dao {
   get optionsObservable(){
     return this.optionsSubject;
   }
+    
+  get countObservable(){
+    return this.countSubject;
+  }
 
   async updateOptions(options){
     this.options = {...this.options, ...options};
@@ -45,10 +52,14 @@ export default class Dao {
       if (this.rowEventSubscription){
         this.rowEventSubscription.unsubscribe();
       }
+      if (this.countSubscription){
+        this.countSubscription.unsubscribe();
+      }
       this.dataSink = this.daoContext.createDataSink(newOptions);
       this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
+      this.countSubscription = this.dataSink.dataSinkUpdated.filter(ev => ev.Type === RxDataSink.TOTAL_ROW_COUNT).subscribe(ev => this.countSubject.next(ev.count));
       const _this = this;
       this.domainEventObservable = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink));
       if (this.daoContext.getDataFrequency){
