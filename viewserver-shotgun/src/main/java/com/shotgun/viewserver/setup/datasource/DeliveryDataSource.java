@@ -38,10 +38,13 @@ DeliveryDataSource {
                                         new Column("driverId", "driverId", ColumnType.String),
                                         new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
-                                        new Column("eta", "eta", ColumnType.DateTime),
+                                        new Column("from", "from", ColumnType.DateTime),
+                                        new Column("till", "till", ColumnType.DateTime),
                                         new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int),
                                         new Column("driverRating", "driverRating", ColumnType.Int),
-                                        new Column("customerRating", "customerRating", ColumnType.Int)
+                                        new Column("customerRating", "customerRating", ColumnType.Int),
+                                        new Column("distance", "distance", ColumnType.Int),
+                                        new Column("duration", "duration", ColumnType.Int)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )

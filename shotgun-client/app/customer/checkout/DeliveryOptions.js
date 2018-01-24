@@ -93,7 +93,7 @@ class DeliveryOptions extends Component {
           <ListItem padded>
             <Grid>
               <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row>
-              {isDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
+              {isDelivery ? <Row><Text time>| {deliver.duration} hrs</Text></Row> : null}
               {isDelivery ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
             </Grid>
           </ListItem>

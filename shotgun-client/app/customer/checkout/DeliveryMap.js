@@ -7,17 +7,21 @@ import LoadingScreen from 'common/components/LoadingScreen';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import { getDaoState, isAnyOperationPending } from 'common/dao';
+import { getDaoState, isAnyOperationPending, getOperationError } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {merge} from 'lodash';
+import ErrorRegion from 'common/components/ErrorRegion';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const DeliveryMap = ({history, context, client, busy, position, navigationStrategy}) => {
+const DeliveryMap = ({history, context, client, busy, position, navigationStrategy, errors}) => {
   if (busy){
     return <LoadingScreen text="Loading Map" />;
+  }
+  if (errors){
+    return <ErrorRegion errors={errors}/>;
   }
   let map;
   const {orderItem, delivery, selectedContentType} = context.state;
@@ -52,6 +56,10 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
     context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
   };
 
+  const setDurationAndDistance = ({distance, duration}) => {
+    context.setState({delivery: merge({}, delivery, { distance, duration})});
+  };
+
   const doAddressLookup = (addressLabel, onAddressSelected) => {
     history.push('/Customer/Checkout/AddressLookup', {addressLabel, onAddressSelected});
   };
@@ -69,6 +77,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
           showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
           {showDirections ?
             <MapViewDirections client={client} origin={{ ...origin }}
+              onReady={setDurationAndDistance}
               destination={{ ...destination }}
               strokeWidth={3} /> : null}
 
@@ -122,7 +131,8 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     state,
     position,
-    busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }) || !position,
+    errors: getOperationError(state, 'userDao', 'getCurrentPosition'),
+    busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }),
   };
 };
 

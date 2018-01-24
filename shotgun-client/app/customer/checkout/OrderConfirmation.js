@@ -9,10 +9,13 @@ import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, totalPrice, context}) => {
+const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, getEstimatedPrice}) => {
   const purchase = async() => {
-    dispatch(checkout(orderItem, payment, delivery, totalPrice, () => history.push('/Customer/CustomerOrders')));
+    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push('/Customer/CustomerOrders')));
   };
+
+  const totalPrice = getEstimatedPrice();
+
 
   return <Container>
     <Header withButton>
@@ -25,7 +28,7 @@ const OrderConfirmation = ({client, dispatch, history, navigationStrategy, error
     </Header>
     <Content>
       <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={totalPrice}/>
-      <OrderSummary delivery={delivery} orderItem={orderItem} client={client}/>
+      <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct}/>
       <ErrorRegion errors={errors}>
         {!busy ? <Button onPress={purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
       </ErrorRegion>
@@ -41,13 +44,23 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, orderItem, totalPrice} = context.state;
-
+  const {delivery, payment, orderItem, selectedProduct} = context.state;
+  const getEstimatedPrice = async () => {
+    const {estimatedTotalPrice: savedTotalPrice} = context.state;
+    if (savedTotalPrice){
+      return savedTotalPrice;
+    }
+    const estimatedTotalPrice = client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItem, payment, delivery});
+    context.setState({estimatedTotalPrice});
+    return estimatedTotalPrice;
+  };
   return {
     ...initialProps,
     errors: getOperationError(state, 'customerDao', 'checkout'),
+    getEstimatedPrice,
     orderItem,
     delivery,
+    selectedProduct,
     payment,
     totalPrice,
     busy: isAnyOperationPending(state, { customerDao: 'checkout'})

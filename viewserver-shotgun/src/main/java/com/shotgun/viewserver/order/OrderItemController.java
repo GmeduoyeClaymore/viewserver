@@ -26,7 +26,6 @@ public class OrderItemController {
         KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
         String newOrderItemId = ControllerUtils.generateGuid();
 
-
         //save image if required
         if(orderItem.getImageData() != null){
             String fileName = BucketNames.orderImages + "/" + ControllerUtils.generateGuid() + ".jpg";

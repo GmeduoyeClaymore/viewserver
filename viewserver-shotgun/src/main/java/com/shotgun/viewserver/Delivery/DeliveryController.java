@@ -27,8 +27,11 @@ public class DeliveryController {
                 row.setLong("created", now.getTime());
             }
             row.setString("userIdDelivery", userId);
-            row.setLong("eta", delivery.getEta().getTime());
+            row.setLong("from", delivery.getFrom().getTime());
+            row.setLong("till", delivery.getTill().getTime());
             row.setLong("lastModified", now.getTime());
+            row.setInt("distance", delivery.getDistance());
+            row.setInt("duration", delivery.getDuration());
             row.setInt("noRequiredForOffload", delivery.getNoRequiredForOffload());
             row.setString("vehicleTypeId", delivery.getVehicleTypeId());
             row.setString("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId());
