@@ -7,8 +7,9 @@ export default class PaymentDao{
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.name = 'paymentDao';
-    this.createPaymentCustomer = this.createPaymentCustomer.bind(this);
     this.getCustomerPaymentCards = this.getCustomerPaymentCards.bind(this);
+    this.deletePaymentCard = this.deletePaymentCard.bind(this);
+    this.addPaymentCard = this.addPaymentCard.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
     this.subject.next();
   }
@@ -21,11 +22,19 @@ export default class PaymentDao{
     return this.optionsSubject;
   }
 
-  async createPaymentCustomer(paymentCustomer){
-    const promise = this.client.invokeJSONCommand('paymentController', 'createPaymentCustomer', paymentCustomer);
-    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect creation of payment customer ${paymentCustomer.email} in 5 seconds`));
-    Logger.debug(`Got stripe payment details ${JSON.stringify(paymentResponse)}`);
-    this.subject.next(paymentResponse);
+  async deletePaymentCard({customerToken, cardId}){
+    const promise = this.client.invokeJSONCommand('paymentController', 'deletePaymentCard', {customerToken, cardId});
+    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect deletion of payment card ${cardId} in 5 seconds`));
+    Logger.debug(`Deleted card ${cardId}`);
+    this.getCustomerPaymentCards(customerToken);
+    return paymentResponse;
+  }
+
+  async addPaymentCard({customerToken, paymentCard}){
+    const promise = this.client.invokeJSONCommand('paymentController', 'addPaymentCard', {customerToken, paymentCard});
+    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect creation of payment card for customer ${customerToken} in 5 seconds`));
+    Logger.debug(`Added card for customer ${customerToken}`);
+    this.getCustomerPaymentCards(customerToken);
     return paymentResponse;
   }
 

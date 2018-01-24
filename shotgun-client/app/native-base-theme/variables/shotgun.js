@@ -62,8 +62,8 @@ export default {
 
   // Button
   btnFontFamily: platform === 'ios' ? 'System' : 'Roboto_medium',
-  btnDisabledBg: '#b5b5b5',
-  btnDisabledClr: '#f1f1f1',
+  btnDisabledBg: 'rgba(181, 181, 181, 0.6)',
+  btnDisabledClr: colors.coolGrey,
 
   // CheckBox
   CheckboxRadius: 2,

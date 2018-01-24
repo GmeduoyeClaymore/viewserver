@@ -164,7 +164,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     position,
     orderId,
-    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription', userDao: 'getCurrentPosition'}) || orderSummary == undefined  || !position,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'},{userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
     orderSummary
   };
 };

@@ -7,7 +7,7 @@ import CustomerOrders from './CustomerOrders';
 import CustomerOrderDetail from './CustomerOrderDetail';
 import CustomerOrderInProgress from './CustomerOrderInProgress';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
-import CustomerSettings from './CustomerSettings';
+import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
@@ -92,8 +92,8 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/CustomerOrders'} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={'/Customer/CustomerSettings'} exact component={CustomerSettings}/>
-          <Redirect to={'/Customer/Checkout'}/>
+          <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
+          <Redirect to={'/Customer/Settings'}/>
         </Switch>
         <CustomerMenuBar/>
       </Container>;

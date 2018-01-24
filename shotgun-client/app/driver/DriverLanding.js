@@ -49,7 +49,7 @@ class DriverLanding extends Component {
 }
 
 const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao']) || isAnyOperationPending(state, { userDao: 'getCurrentPosition'}),
+  busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]),
   ...nextOwnProps
 });
 

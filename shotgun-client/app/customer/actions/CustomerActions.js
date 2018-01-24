@@ -34,12 +34,24 @@ export const registerCustomer = (customer, deliveryAddress, paymentCard, continu
   return invokeDaoCommand('customerDao', 'registerCustomer', {customer, deliveryAddress, paymentCard}, continueWith);
 };
 
+export const updateCustomer = (customer, continueWith) => {
+  return invokeDaoCommand('customerDao', 'updateCustomer', {customer}, continueWith);
+};
+
 export const loginCustomer = (email, password, continueWith) => {
   return invokeDaoCommand('customerDao', 'loginCustomer', {email, password}, continueWith);
 };
 
 export const getPaymentCards = (customerToken, continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', customerToken, continueWith);
+};
+
+export const deletePaymentCard = (customerToken, cardId, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'deletePaymentCard', {customerToken, cardId}, continueWith);
+};
+
+export const addPaymentCard = (customerToken, paymentCard, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'addPaymentCard', {customerToken, paymentCard}, continueWith);
 };
 
 export const rateDriver = (deliveryId, rating, continueWith) => {

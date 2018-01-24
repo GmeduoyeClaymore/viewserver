@@ -10,6 +10,7 @@ export default class DriverDao{
     this.optionsSubject = new Rx.Subject();
     this.updateSubscription = this.updateSubscription.bind(this);
     this.registerDriver = this.registerDriver.bind(this);
+    this.updateDriver = this.updateDriver.bind(this);
     this.loginDriver = this.loginDriver.bind(this);
     this.acceptOrderRequest = this.acceptOrderRequest.bind(this);
     this.startOrderRequest = this.startOrderRequest.bind(this);
@@ -39,6 +40,13 @@ export default class DriverDao{
     const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
     Logger.info(`Driver ${driverId} registered`);
     await PrincipalService.setUserIdOnDevice(driverId);
+    return driverId;
+  }
+
+  async updateDriver({driver}){
+    Logger.info(`Updating driver ${driver.email}`);
+    const driverId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: driver});
+    Logger.info(`Driver ${driverId} updated`);
     return driverId;
   }
 

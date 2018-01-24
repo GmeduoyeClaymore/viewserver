@@ -118,7 +118,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     state,
     position,
-    busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }) || !position,
+    busy: isAnyOperationPending(state, [{ userDao: 'getCurrentPosition' }]) || !position,
   };
 };
 

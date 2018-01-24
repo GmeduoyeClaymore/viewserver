@@ -9,7 +9,7 @@ import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, totalPrice, context}) => {
+const OrderConfirmation = ({client, dispatch, history, navigationStrategy, errors, busy, orderItem, payment, delivery, totalPrice}) => {
   const purchase = async() => {
     dispatch(checkout(orderItem, payment, delivery, totalPrice, () => history.push('/Customer/CustomerOrders')));
   };
@@ -50,7 +50,7 @@ const mapStateToProps = (state, initialProps) => {
     delivery,
     payment,
     totalPrice,
-    busy: isAnyOperationPending(state, { customerDao: 'checkout'})
+    busy: isAnyOperationPending(state, [{ customerDao: 'checkout'}])
   };
 };
 export default connect(

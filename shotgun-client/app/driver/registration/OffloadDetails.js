@@ -110,7 +110,7 @@ const validationSchema = {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   errors: getOperationError(state, 'driverDao', 'registerDriver'),
-  busy: isAnyOperationPending(state, { driverDao: 'registerDriver'} || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao'])),
+  busy: isAnyOperationPending(state, [{ driverDao: 'registerDriver'}] || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao'])),
 });
 
 export default withRouter(connect(

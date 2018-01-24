@@ -23,7 +23,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
 
   const getLocationText = (location, placeholder) => {
     const style = location.line1 ? {} : styles.locationTextPlaceholder;
-    const text = location.line1 ? `${location.line1}, ${location.postCode}` : placeholder;
+    const text = location.line1 ? location.line1 : placeholder;
     return <Text style={[styles.line1Text, style]} onPress={() => doAddressLookup(placeholder)}>{text}</Text>;
   };
 
@@ -58,7 +58,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
           <Col>
             <Item stackedLabel>
               <Label>City</Label>
-              <ValidatingInput bold placeholder="CityVille" value={deliveryAddress.city} validateOnMount={deliveryAddress.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
+              <ValidatingInput bold placeholder="Cityville" value={deliveryAddress.city} validateOnMount={deliveryAddress.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -67,14 +67,6 @@ export default AddressDetails  = ({context, match, history, next}) => {
             <Item stackedLabel>
               <Label>Postcode</Label>
               <ValidatingInput bold placeholder="PC12 ABC" value={deliveryAddress.postCode} validateOnMount={deliveryAddress.postCode !== undefined} onChangeText={(value) => onChangeText('postCode', value)} validationSchema={validationSchema.postCode} maxLength={30}/>
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Item stackedLabel last>
-              <Label>Country</Label>
-              <ValidatingInput bold placeholder="Somewhereland" value={deliveryAddress.country} validateOnMount={deliveryAddress.country !== undefined} onChangeText={(value) => onChangeText('country', value)} validationSchema={validationSchema.country} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -91,7 +83,6 @@ const validationSchema = {
   flatNumber: yup.string().max(30),
   line1: yup.string().required().max(30),
   city: yup.string().required().max(30),
-  country: yup.string().required().max(30),
   postCode: yup.string()
     .matches(/^([A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2})$/i)
     .required()

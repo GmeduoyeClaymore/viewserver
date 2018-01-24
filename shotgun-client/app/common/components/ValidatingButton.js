@@ -1,25 +1,35 @@
 import React, {Component} from 'react';
-import { Button} from 'native-base';
+import SpinnerButton from 'common/components/SpinnerButton';
 import {PropTypes} from 'prop-types';
 import ValidationService from 'common/services/ValidationService';
-
+import shotgun from 'native-base-theme/variables/shotgun';
+import {isEqual} from 'lodash';
 
 export default class ValidatingButton extends Component {
   constructor(){
     super();
-    this.state = {isValid: false};
+    this.state = {isValid: false, model: undefined};
   }
 
   async componentDidMount() {
     const {validateOnMount = false} = this.props;
 
     if (validateOnMount){
-      await this.validate(this.props.model);
+      await this.validateIfRequired(this.props.model);
     }
   }
 
   componentWillReceiveProps(nextProps){
-    this.validate(nextProps.model);
+    this.validateIfRequired(nextProps.model);
+  }
+
+  validateIfRequired(newModel){
+    const model = Object.assign({}, newModel);
+
+    if (!isEqual(model, this.state.model)) {
+      this.setState({model});
+      this.validate(model);
+    }
   }
 
   async validate(model){
@@ -31,9 +41,9 @@ export default class ValidatingButton extends Component {
     const disabled = !this.state.isValid || this.props.disabled;
 
     return (
-      <Button {...this.props} disabled={disabled}>
+      <SpinnerButton {...this.props} disabled={disabled}>
         {this.props.children}
-      </Button>
+      </SpinnerButton>
     );
   }
 }

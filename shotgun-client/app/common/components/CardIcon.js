@@ -18,14 +18,14 @@ export default class CardIcon extends Component {
   }
 
   render() {
-    const {brand} = this.props;
-    return <Image style={style} source={{uri: CardIcons[brand]}}/>;
+    const {brand, style} = this.props;
+    return <Image style={[styles, style]} source={{uri: CardIcons[brand]}}/>;
   }
 }
 
-const style = {
+const styles = {
   width: 15,
   aspectRatio: 1,
-  borderRadius: 3,
+  borderRadius: 4,
   marginRight: 10
 };

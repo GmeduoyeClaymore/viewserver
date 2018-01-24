@@ -35,6 +35,10 @@ export const getCurrentPosition = () => {
   return invokeDaoCommand('userDao', 'getCurrentPosition');
 };
 
+export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
+  return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
+};
+
 export const commonServicesRegistrationAction = (client, userId, continueWith) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});

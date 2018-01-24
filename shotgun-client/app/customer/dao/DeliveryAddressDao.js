@@ -55,6 +55,14 @@ export default class DeliveryAddressDao{
   extendDao(dao){
     dao.addOrUpdateDeliveryAddress = async ({deliveryAddress}) => {
       Logger.info('add or update delivery address');
+
+      //TODO - not very keen on this logic being here
+      const defaultAddress = dao.dataSink.rows.find(ad => ad.isDefault);
+      //if we already have a default address then set it to not default
+      if (defaultAddress !== undefined && deliveryAddress.deliveryAddressId !== defaultAddress.deliveryAddressId){
+        await this.client.invokeJSONCommand('deliveryAddressController', 'addOrUpdateDeliveryAddress', {deliveryAddress: {...defaultAddress, isDefault: false}});
+      }
+
       const deliveryAddressId = await this.client.invokeJSONCommand('deliveryAddressController', 'addOrUpdateDeliveryAddress', {deliveryAddress});
       Logger.info(`Delivery address ${deliveryAddressId} added or updated`);
       return deliveryAddressId;

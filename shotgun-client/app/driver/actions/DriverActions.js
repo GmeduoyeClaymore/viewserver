@@ -22,6 +22,10 @@ export const registerDriver = (driver, vehicle, address, bankAccount, continueWi
   return invokeDaoCommand('driverDao', 'registerDriver', {driver, vehicle, address, bankAccount}, continueWith);
 };
 
+export const updateDriver = (driver, continueWith) => {
+  return invokeDaoCommand('driverDao', 'updateDriver', {driver}, continueWith);
+};
+
 export const loginDriver = (email, password, continueWith) => {
   return invokeDaoCommand('driverDao', 'loginDriver', {email, password}, continueWith);
 };

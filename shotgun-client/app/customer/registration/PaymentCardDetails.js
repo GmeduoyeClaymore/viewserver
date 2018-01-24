@@ -26,6 +26,8 @@ class PaymentCardDetails extends Component {
         const {number, expiry, cvc} = details.values;
         const expiryTokens = expiry.split('/');
         this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
+      } else {
+        this.setState({valid: details.valid});
       }
     };
 
@@ -34,7 +36,7 @@ class PaymentCardDetails extends Component {
       dispatch(registerCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
     };
 
-    return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
+    return <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -47,7 +49,7 @@ class PaymentCardDetails extends Component {
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}>
-        <Button paddedBottom fullWidth iconRight onPress={register} disabled={!valid}>
+        <Button paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
           <Text uppercase={false}>Continue</Text>
           <Icon name='arrow-forward'/>
         </Button>
@@ -60,7 +62,7 @@ class PaymentCardDetails extends Component {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   errors: getOperationError(state, 'customerDao', 'registerCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'registerCustomer'})
+  busy: isAnyOperationPending(state, [{ customerDao: 'registerCustomer'}])
 });
 
 export default connect(mapStateToProps)(PaymentCardDetails);

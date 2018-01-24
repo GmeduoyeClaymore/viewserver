@@ -49,12 +49,12 @@ export const getLoadingErrors = (state, daoNames) => {
   return daoNames.map(nm => getLoadingError(state, nm)).filter(err => err).join( '\n');
 };
 
-export const getOperationsErrors = (state, daoOperationPairs) => {
-  return Object.entries(daoOperationPairs).map( nm => getOperationError(state, nm[0], nm[1])).filter(err => err).join( '\n');
+export const getOperationErrors = (state, daoOperations) => {
+  return daoOperations.map(nm => {const key = Object.keys(nm)[0]; return getOperationError(state, key, nm[key]);}).filter(err => err).join( '\n');
 };
 
-export const isAnyOperationPending = (state, daoOperationPairs) => {
-  return Object.entries(daoOperationPairs).some( nm => isOperationPending(state, nm[0], nm[1]));
+export const isAnyOperationPending = (state, daoOperations) => {
+  return daoOperations.some( nm => {const key = Object.keys(nm)[0]; return isOperationPending(state, key, nm[key]);});
 };
 
 export const isAnyLoading = (state, daoNames) => {
