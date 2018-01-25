@@ -93,7 +93,7 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
-          <Redirect to={'/Customer/Settings'}/>
+          <Redirect to={'/Customer/Checkout'}/>
         </Switch>
         <CustomerMenuBar/>
       </Container>;

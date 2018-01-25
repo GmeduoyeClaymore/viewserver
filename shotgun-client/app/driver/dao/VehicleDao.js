@@ -72,36 +72,11 @@ export default class VehiclesDaoContext{
   }
 
   extendDao(dao){
-    dao.addOrUpdateVehicle = async({userId, vehicle}) =>{
-      const {dataSink, subscriptionStrategy} = dao;
-      const schema = await dataSink.waitForSchema();
-      let vehicleRowEvent;
-      const existingVehicle = dataSink.rows[0];
-  
-      Logger.info(`Adding vehicle schema is ${JSON.stringify(schema)}`);
-      const vehicleObject = {};
-      forEach(schema, value => {
-        const field = value.name;
-        vehicleObject[field] = vehicle[field];
-      });
-  
-      vehicleObject.userId = userId;
-  
-      if (vehicleObject.vehicleId == undefined) {
-        vehicleObject.vehicleId = uuidv4();
-      }
-  
-      if (existingVehicle == undefined){
-        Logger.info(`Adding vehicle ${JSON.stringify(vehicleObject)}`);
-        vehicleRowEvent = createAddVehicleEvent(vehicleObject);
-      } else {
-        Logger.info(`Updating vehicle ${JSON.stringify(vehicleObject)}`);
-        vehicleRowEvent = createUpdateVehicleEvent(vehicleObject);
-      }
-      const promise = dao.rowEventObservable.filter(ev => ev.row.vehicleId == vehicleObject.vehicleId).take(1).timeoutWithError(5000, new Error(`Could not detect creation of vehicle ${vehicleObject.vehicleId} in 5 seconds`)).toPromise();
-      const modifiedRows = await subscriptionStrategy.editTable([vehicleRowEvent]);
-      Logger.info(`Add item promise resolved ${JSON.stringify(modifiedRows)}`);
-      return await promise;
+    dao.addOrUpdateVehicle = async({vehicle}) =>{
+      const promise = this.client.invokeJSONCommand('vehicleController', 'addOrUpdateVehicle', vehicle);
+      const result =  await promise.timeoutWithError(5000, new Error('Could not update vehicle in 5 seconds'));
+      Logger.debug('Updated vehicle');
+      return result;
     };
   }
 }

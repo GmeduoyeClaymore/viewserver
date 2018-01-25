@@ -24,7 +24,7 @@ export default class ValidatingButton extends Component {
   }
 
   validateIfRequired(newModel){
-    const model = Object.assign({}, newModel);
+    const model = typeof(newModel) === 'object' ? Object.assign({}, newModel) : newModel;
 
     if (!isEqual(model, this.state.model)) {
       this.setState({model});

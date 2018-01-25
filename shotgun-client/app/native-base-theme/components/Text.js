@@ -9,6 +9,9 @@ export default (variables = variable) => {
       color: variables.brandLight,
       fontSize: variables.noteFontSize
     },
+    '.bold': {
+      fontWeight: 'bold'
+    },
     '.time': {
       fontSize: 12,
       color: variables.coolGrey
