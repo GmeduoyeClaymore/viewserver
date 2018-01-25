@@ -53,6 +53,26 @@ public class UserController {
         }
     }
 
+
+    @ControllerAction(path = "updateUser", isSynchronous = true)
+    public String updateUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "user")User user){
+        log.debug("updateUser user: " + user.getEmail());
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        Date now = new Date();
+
+        ITableRowUpdater tableUpdater = row -> {
+            row.setLong("lastModified", now.getTime());
+            row.setString("firstName", user.getFirstName());
+            row.setString("lastName", user.getLastName());
+            row.setString("contactNo", user.getContactNo());
+            row.setString("email", user.getEmail().toLowerCase());
+        };
+
+        userTable.updateRow(new TableKey(userId), tableUpdater);
+        log.debug("Updated user: " + user.getEmail() + " with id " + userId);
+        return userId;
+    }
+
     @ControllerAction(path = "setLocation", isSynchronous = true)
     public String setLocation(@ActionParam(name = "userId")String userId, @ActionParam(name = "latitude")double latitude, @ActionParam(name = "longitude")double longitude){
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);

@@ -10,7 +10,11 @@ export default (variables = variable) => {
     },
     '.originPin': {
       color: variables.blue
-    }
+    },
+    '.right': {
+      position: 'absolute',
+      right: 0
+    },
   };
 
   return iconTheme;

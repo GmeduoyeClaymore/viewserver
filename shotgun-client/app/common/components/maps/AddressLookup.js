@@ -129,29 +129,29 @@ class AddressLookup extends Component {
           </Left>
           <Body><Title style={styles.title}>{addressLabel}</Title></Body>
         </Header>
-        <Content>
-        <Grid>
-          <Row size={10} style={styles.searchContainer}>
-            <ErrorRegion errors={errors}>
-              <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-              <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
-            </ErrorRegion>
-          </Row>
-          <Row size={80}>
-            {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
-              <Text style={styles.smallText}>Recent Addresses</Text>
-              <List>
-                {homeAddress ? homeAddressItem(homeAddress, 0) : null}
-                {orderedAddresses.map(address)}
-              </List>
-            </Container> : null}
+        <Content keyboardShouldPersistTaps="always">
+          <Grid>
+            <Row size={10} style={styles.searchContainer}>
+              <ErrorRegion errors={errors}>
+                <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
+                <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
+              </ErrorRegion>
+            </Row>
+            <Row size={80}>
+              {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
+                <Text style={styles.smallText}>Recent Addresses</Text>
+                <List>
+                  {homeAddress ? homeAddressItem(homeAddress, 0) : null}
+                  {orderedAddresses.map(address)}
+                </List>
+              </Container> : null}
 
-            {suggestedPlaces.length > 0 ? <Container paddedLeft>
-              <Text style={styles.smallText}>Results</Text>
-              <List>{suggestedPlaces.map((r, i) => renderSuggestedPlace(r, i))}</List>
-            </Container> : null}
-          </Row>
-        </Grid>
+              {suggestedPlaces.length > 0 ? <Container paddedLeft>
+                <Text style={styles.smallText}>Results</Text>
+                <List>{suggestedPlaces.map((r, i) => renderSuggestedPlace(r, i))}</List>
+              </Container> : null}
+            </Row>
+          </Grid>
         </Content>
       </Container>
     );
@@ -182,9 +182,9 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => ({
+  ...initialProps,
   ...getNavigationProps(initialProps),
   ...getDaoState(state, ['customer'], 'deliveryAddressDao'),
-  ...initialProps
 });
 
 export default connect(mapStateToProps)(AddressLookup);

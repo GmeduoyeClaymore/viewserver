@@ -18,37 +18,45 @@ public class VehicleController {
     private static final Logger log = LoggerFactory.getLogger(VehicleController.class);
 
     @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
-    public String addOrUpdateVehicle(@ActionParam(name = "vehicle") Vehicle vehicle){
-        log.debug("addOrUpdateUser vehicle");
-        KeyedTable vehicleTable = ControllerUtils.getKeyedTable(TableNames.VEHICLE_TABLE_NAME);
-        String newVehicleId = ControllerUtils.generateGuid();
+    public String addOrUpdateVehicle(Vehicle vehicle){
+        try {
+            log.debug("addOrUpdateUser vehicle");
+            KeyedTable vehicleTable = ControllerUtils.getKeyedTable(TableNames.VEHICLE_TABLE_NAME);
+            String newVehicleId = ControllerUtils.generateGuid();
 
-        ITableRowUpdater tableUpdater = row -> {
-            if(vehicle.getVehicleId() == null){
-                row.setString("vehicleId", newVehicleId);
-            }
-            String userId = (String)ControllerContext.get("userId");
-            if(userId == null){
-                throw new RuntimeException("User id must be set in the controller context before this method is called");
-            }
-            row.setString("userId", userId);
-            row.setString("registrationNumber", vehicle.getRegistrationNumber());
-            row.setString("colour", vehicle.getColour());
-            row.setString("make", vehicle.getMake());
-            row.setString("model", vehicle.getModel());
-            row.setString("dimensions", ControllerUtils.toString(vehicle.getDimensions()));
-            row.setString("vehicleTypeId", vehicle.getVehicleTypeId());
-            row.setInt("numAvailableForOffload", vehicle.getNumAvailableForOffload());
-        };
+            ITableRowUpdater tableUpdater = row -> {
+                if (vehicle.getVehicleId() == null) {
+                    row.setString("vehicleId", newVehicleId);
+                }
+                String userId = (String) ControllerContext.get("userId");
+                if (userId == null) {
+                    throw new RuntimeException("User id must be set in the controller context before this method is called");
+                }
+                row.setString("userId", userId);
+                row.setString("registrationNumber", vehicle.getRegistrationNumber());
+                row.setString("colour", vehicle.getColour());
+                row.setString("make", vehicle.getMake());
+                row.setString("model", vehicle.getModel());
+                row.setString("dimensions", ControllerUtils.toString(vehicle.getDimensions()));
+                row.setString("vehicleTypeId", vehicle.getVehicleTypeId());
 
-        if(vehicle.getVehicleId() != null){
-            vehicleTable.updateRow(new TableKey(vehicle.getVehicleId()), tableUpdater);
-            log.debug("Updated vehicle: " + vehicle.getVehicleId());
-            return vehicle.getVehicleId();
-        }else{
-            vehicleTable.addRow(new TableKey(newVehicleId), tableUpdater);
-            log.debug("Updated vehicle: " + newVehicleId);
-            return newVehicleId;
+                if(vehicle.getNumAvailableForOffload() != null) {
+                    row.setInt("numAvailableForOffload", vehicle.getNumAvailableForOffload());
+                }
+            };
+
+            if (vehicle.getVehicleId() != null) {
+                vehicleTable.updateRow(new TableKey(vehicle.getVehicleId()), tableUpdater);
+                log.debug("Updated vehicle: " + vehicle.getVehicleId());
+                return vehicle.getVehicleId();
+            } else {
+                vehicleTable.addRow(new TableKey(newVehicleId), tableUpdater);
+                log.debug("Updated vehicle: " + newVehicleId);
+                return newVehicleId;
+            }
+        }catch (Exception e){
+            log.error("There was a problem updating the vehicle", e);
+            throw new RuntimeException(e);
         }
     }
 

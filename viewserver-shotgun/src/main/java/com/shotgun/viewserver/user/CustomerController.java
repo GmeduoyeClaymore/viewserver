@@ -44,4 +44,6 @@ public class CustomerController {
         log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
         return userId;
     }
+
+
 }

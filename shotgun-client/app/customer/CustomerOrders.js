@@ -10,9 +10,8 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import CustomerOrderCta from './components/CustomerOrderCta';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import LoadingScreen from 'common/components/LoadingScreen';
 
-const CustomerOrders = ({history, isCompleted, userId, busy}) => {
+const CustomerOrders = ({history, isCompleted, userId}) => {
   const {location} = history;
 
   const reportOptions = {

@@ -149,7 +149,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
-    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription', userDao: 'getCurrentPosition'}) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
     orderSummary
   };
 };

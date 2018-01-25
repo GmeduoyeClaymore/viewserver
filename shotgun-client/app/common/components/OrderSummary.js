@@ -88,8 +88,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     selectedVehicleType,
-    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType || !contentType,
-  };
+    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType  };
 };
 
 export default connect(

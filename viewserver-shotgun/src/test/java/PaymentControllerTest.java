@@ -39,7 +39,7 @@ public class PaymentControllerTest {
 
     @Test
     public void B_canAddPaymentCard(){
-        assertNotNull(sut.addPaymentCard(getPaymentCard(this.customerId)));
+        assertNotNull(sut.addPaymentCard(this.customerId, getPaymentCard(this.customerId)));
     }
 
     @Test

@@ -11,6 +11,7 @@ export default class CustomerDao{
     this.optionsSubject = new Rx.Subject();
     this.updateSubscription = this.updateSubscription.bind(this);
     this.registerCustomer = this.registerCustomer.bind(this);
+    this.updateCustomer = this.updateCustomer.bind(this);
     this.loginCustomer = this.loginCustomer.bind(this);
     this.checkout = this.checkout.bind(this);
     this.rateDriver = this.rateDriver.bind(this);
@@ -37,6 +38,14 @@ export default class CustomerDao{
     const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
     Logger.info(`Customer ${customerId} registered`);
     await PrincipalService.setUserIdOnDevice(customerId);
+    return customerId;
+  }
+
+  async updateCustomer({customer}){
+    const {userId} = this.options;
+    Logger.info(`Updating customer ${customer.email}`);
+    const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {userId, user: customer});
+    Logger.info(`Customer ${customerId} updated`);
     return customerId;
   }
 

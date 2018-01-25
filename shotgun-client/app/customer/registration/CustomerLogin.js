@@ -19,7 +19,7 @@ class CustomerLogin extends Component {
   }
 
   render() {
-    const {dispatch, history, errors} = this.props;
+    const {dispatch, history, errors, busy} = this.props;
     const {email, password} = this.state;
 
     const onChangeText = async (field, value) => {
@@ -67,7 +67,7 @@ class CustomerLogin extends Component {
       </Content>
       <ErrorRegion errors={errors}>
         <ValidatingButton paddedBottom fullWidth iconRight
-          onPress={login} validationSchema={yup.object(validationSchema)} model={this.state}>
+          onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
           <Text uppercase={false}>Sign In</Text>
           <Icon name='arrow-forward'/>
         </ValidatingButton>
@@ -84,7 +84,7 @@ const validationSchema = {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   errors: getOperationError(state, 'customerDao', 'loginCustomer'),
-  busy: isAnyOperationPending(state, { customerDao: 'loginCustomer'})
+  busy: isAnyOperationPending(state, [{ customerDao: 'loginCustomer'}])
 });
 
 export default connect(mapStateToProps)(CustomerLogin);

@@ -48,6 +48,7 @@ public class PaymentController {
             result.put("paymentToken", cardToken);
             return result;
         } catch (Exception e) {
+            logger.error("There was a problem adding the payment customer", e);
             throw new RuntimeException(e);
         }
     }
@@ -110,6 +111,7 @@ public class PaymentController {
             logger.debug("Added stripe account id {}", account.getId());
             return account.getId();
         } catch (Exception e) {
+            logger.error("There was a problem creating the payment account", e);
             throw new RuntimeException(e);
         }
     }
@@ -137,21 +139,23 @@ public class PaymentController {
             Charge charge = Charge.create(params);
             logger.debug("Created stripe charge {} with amount {} with {} sent to driver", charge.getId(), totalPrice, destinationAmount);
         } catch (Exception e) {
+            logger.error("There was a problem creating the charge", e);
             throw new RuntimeException(e);
         }
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
+    public String addPaymentCard(@ActionParam(name = "customerToken") String customerToken, @ActionParam(name = "paymentCard") PaymentCard paymentCard) {
         try {
             String cardToken = createCardToken(paymentCard);
-            Customer customer = Customer.retrieve(paymentCard.customerToken);
+            Customer customer = Customer.retrieve(customerToken);
             Map<String, Object> params = new HashMap<>();
             params.put("source", cardToken);
             customer.getSources().create(params);
             logger.debug("Added stripe payment card with token {}", cardToken);
             return cardToken;
         } catch (Exception e) {
+            logger.error("There was a problem adding the payment card", e);
             throw new RuntimeException(e);
         }
     }
@@ -165,6 +169,56 @@ public class PaymentController {
             logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), customerToken);
             return cards.getData().stream().map(a -> (Card) a).collect(Collectors.toList());
         } catch (Exception e) {
+            logger.error("There was a problem getting the payment cards", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
+    public void deletePaymentCard(@ActionParam(name = "customerToken") String customerToken,
+                                  @ActionParam(name = "cardId") String cardId) {
+        try {
+            Customer customer = Customer.retrieve(customerToken);
+            customer.getSources().retrieve(cardId).delete();
+        } catch (Exception e) {
+            logger.error("There was a problem deleting the payment card", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ControllerAction(path = "getBankAccount", isSynchronous = false)
+    public BankAccount getBankAccount(String stripeAccountId) {
+        try {
+            Account account = Account.retrieve(stripeAccountId, null);
+            BankAccount ac =(BankAccount)account.getExternalAccounts().getData().get(0);
+            logger.debug("Got bank account for stripe account {}", stripeAccountId);
+            return ac;
+        } catch (Exception e) {
+            logger.error("There was a problem getting the bank account", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ControllerAction(path = "setBankAccount", isSynchronous = false)
+    public void setBankAccount(@ActionParam(name = "stripeAccountId") String stripeAccountId,
+                               @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+        try {
+            Map<String, Object> externalAccount = new HashMap<>();
+            externalAccount.put("object", "bank_account");
+            externalAccount.put("account_number", paymentBankAccount.getAccountNumber().replaceAll("[^\\d]", ""));
+            externalAccount.put("routing_number", paymentBankAccount.getSortCode().replaceAll("[^\\d]", ""));
+            externalAccount.put("account_holder_type", "individual");
+            externalAccount.put("country", "GB");
+            externalAccount.put("currency", "gbp");
+
+            Account account = Account.retrieve(stripeAccountId, null);
+
+            Map<String, Object> accountParams = new HashMap<>();
+            accountParams.put("external_account", externalAccount);
+            account.update(accountParams);
+            logger.debug("Set bank account for stripe account {}", stripeAccountId);
+        } catch (Exception e) {
+            logger.error("There was a problem setting the bank account", e);
             throw new RuntimeException(e);
         }
     }
@@ -174,10 +228,10 @@ public class PaymentController {
 
         Map<String, Object> tokenParams = new HashMap<>();
         Map<String, Object> cardParams = new HashMap<>();
-        cardParams.put("number", paymentCard.number);
-        cardParams.put("exp_month", paymentCard.expMonth);
-        cardParams.put("exp_year", paymentCard.expYear);
-        cardParams.put("cvc", paymentCard.cvc);
+        cardParams.put("number", paymentCard.getNumber());
+        cardParams.put("exp_month", paymentCard.getExpMonth());
+        cardParams.put("exp_year", paymentCard.getExpYear());
+        cardParams.put("cvc", paymentCard.getCvc());
         tokenParams.put("card", cardParams);
 
         try {

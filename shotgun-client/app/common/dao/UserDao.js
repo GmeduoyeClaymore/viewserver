@@ -90,43 +90,6 @@ export default class UserDaoContext{
   }
 
   extendDao(dao){
-    dao.addOrUpdateUser = async ({user}) => {
-      let userRowEvent;
-      const {dataSink, subscriptionStrategy} = dao;
-      const schema = await dataSink.waitForSchema();
-      const {userId} = dao.options;
-      const lastModified = moment().format('x');
-      Logger.info(`Adding user schema is ${JSON.stringify(schema)}`);
-
-      //TODO - tidy this up using lodash or similar
-      const userObject = {};
-      forEach(schema, value => {
-        const field = value.name;
-        userObject[field] = user[field];
-      });
-
-      userObject.lastModified = lastModified;
-
-      if (userObject.userId == undefined) {
-        userObject.userId = userId;
-      }
-
-      if (!dataSink.rows.length){
-        Logger.info(`Adding user ${JSON.stringify(userObject)}`);
-        userObject.created = lastModified;
-        userRowEvent = createAddUserEvent(userObject);
-      } else {
-        Logger.info(`Updating user ${JSON.stringify(userObject)}`);
-        userRowEvent = createUpdateUserEvent(userObject);
-      }
-
-      const promise = dao.rowEventObservable.filter(ev => ev.row.userId == userId).take(1).timeoutWithError(5000, new Error(`Could not detect modification to user id ${userId} in 5 seconds`)).toPromise();
-      await Promise.all([promise, subscriptionStrategy.editTable([userRowEvent])]);
-      Logger.info('Add user promise resolved');
-
-      await PrincipalService.setUserIdOnDevice(userObject.userId);
-      return userObject.userId;
-    };
     dao.getCurrentPosition = async () =>{
       const position = await this.getPositionAsPromise().timeoutWithError(3000, 'Unable to get current position after 3 seconds');
       Logger.info(`Got user position as ${JSON.stringify(position)}`);

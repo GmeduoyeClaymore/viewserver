@@ -4,9 +4,10 @@ import UserDao from 'common/dao/UserDao';
 import DriverDao from 'driver/dao/DriverDao';
 import VehicleDao from 'driver/dao/VehicleDao';
 import VehicleTypeDao from 'common/dao/VehicleTypeDao';
-import ContentTypeDao from 'common/dao/ContentTypeDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
+import PaymentDao from 'common/dao/PaymentDao';
+import ContentTypeDao from 'common/dao/ContentTypeDao';
 
 export const driverServicesRegistrationAction = (client, userId, continueWith) => {
   return async (dispatch) => {
@@ -16,12 +17,21 @@ export const driverServicesRegistrationAction = (client, userId, continueWith) =
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client), {userId});
     register(dispatch, new ContentTypeDao(client), {userId});
+    registerNakedDao(dispatch, new PaymentDao(client), {userId});
     registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
 };
   
 export const registerDriver = (driver, vehicle, address, bankAccount, continueWith) => {
   return invokeDaoCommand('driverDao', 'registerDriver', {driver, vehicle, address, bankAccount}, continueWith);
+};
+
+export const updateDriver = (driver, continueWith) => {
+  return invokeDaoCommand('driverDao', 'updateDriver', {driver}, continueWith);
+};
+
+export const updateVehicle = (vehicle, continueWith) => {
+  return invokeDaoCommand('vehicleDao', 'addOrUpdateVehicle', {vehicle}, continueWith);
 };
 
 export const loginDriver = (email, password, continueWith) => {
@@ -54,4 +64,12 @@ export const watchPosition = (continueWith) => {
 
 export const stopWatchingPosition = (continueWith) => {
   return invokeDaoCommand('userDao', 'stopWatchingPosition', {}, continueWith);
+};
+
+export const getBankAccount = (stripeAccountId, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'getBankAccount', {stripeAccountId}, continueWith);
+};
+
+export const setBankAccount = (stripeAccountId, paymentBankAccount, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'setBankAccount', {stripeAccountId, paymentBankAccount}, continueWith);
 };

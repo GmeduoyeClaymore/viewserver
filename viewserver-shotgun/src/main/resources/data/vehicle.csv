@@ -1,2 +1,2 @@
 vehicleId,userId,registrationNumber,colour,make,model,vehicleTypeId,dimensions
-7da63d73-e564-4605-9c59-7550056485cc,3ABCD,AB17OAR,blue,Ford,Transit,843930b8-e72f-4860-ae72-cca6e8bfe403,{}
+7da63d73-e564-4605-9c59-7550056485cc,3ABCD,AB17OAR,blue,Ford,Transit,843930b8-e72f-4860-ae72-cca6e8bfe403,"{height:320, width:120, length:300, weight: 100}"

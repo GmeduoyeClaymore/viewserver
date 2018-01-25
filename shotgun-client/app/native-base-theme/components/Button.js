@@ -6,6 +6,12 @@ export default (variables = variable) => {
   const buttonTheme = {
     '.disabled': {
       backgroundColor: variables.btnDisabledBg,
+      'NativeBase.Text': {
+        color: variables.btnDisabledClr
+      },
+      'NativeBase.Icon': {
+        color: variables.btnDisabledClr,
+      },
     },
 
     '.active': {
@@ -291,6 +297,14 @@ export default (variables = variable) => {
       borderColor: variables.silver,
       'NativeBase.Text': {
         color: variables.brandDanger,
+      }
+    },
+    '.signOutButton': {
+      backgroundColor: variables.brandPrimary,
+      borderWidth: 1,
+      borderColor: variables.silver,
+      'NativeBase.Text': {
+        color: variables.darkGreen,
       }
     },
 

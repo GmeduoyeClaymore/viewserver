@@ -127,9 +127,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     state,
     position,
-    errors: getOperationError(state, 'userDao', 'getCurrentPosition'),
-    busy: isAnyOperationPending(state, { userDao: 'getCurrentPosition' }),
-  };
+    errors: getOperationError(state, 'userDao', 'getCurrentPosition') };
 };
 
 export default withRouter(connect(

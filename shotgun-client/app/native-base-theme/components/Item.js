@@ -224,7 +224,8 @@ export default (variables = variable) => {
     '.first': {
       marginLeft: 0,
       paddingLeft: variables.contentPadding,
-      borderTopWidth: 1
+      borderTopWidth: 0.5,
+      borderBottomWidth: 0.5,
     },
 
     borderBottomWidth: 0.5,

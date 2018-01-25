@@ -407,6 +407,12 @@ export default (variables = variable) => {
       paddingLeft: variables.contentPadding,
       paddingRight: variables.contentPadding,
     },
+    '.iconRight': {
+      'NativeBase.Icon': {
+        position: 'absolute',
+        right: 0
+      },
+    },
     alignItems: 'center',
     flexDirection: 'row',
     paddingRight: variables.listItemPadding,
