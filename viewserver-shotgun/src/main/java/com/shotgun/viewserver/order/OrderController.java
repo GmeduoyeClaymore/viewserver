@@ -13,10 +13,15 @@ import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 
 @Controller(name = "orderController")
 public class OrderController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     DeliveryAddressController deliveryAddressController;
     DeliveryController deliveryController;
@@ -24,7 +29,6 @@ public class OrderController {
     private PricingStrategyResolver pricingStrategyResolver;
     private KeyedTable orderTable;
     private KeyedTable productTable;
-    private KeyedTable productCategoryTable;
 
     public OrderController(DeliveryAddressController deliveryAddressController, DeliveryController deliveryController, OrderItemController orderItemController, PricingStrategyResolver pricingStrategyResolver) {
         this.deliveryAddressController = deliveryAddressController;
@@ -44,13 +48,6 @@ public class OrderController {
             this.productTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_TABLE_NAME);
         }
         return this.productTable;
-    }
-
-    KeyedTable getProductCategoryTable(){
-        if(this.productCategoryTable == null){
-            this.productCategoryTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_TABLE_NAME);
-        }
-        return this.productCategoryTable;
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
@@ -80,7 +77,7 @@ public class OrderController {
         //add order
         ITableRowUpdater tableUpdater = row -> {
             row.setString("orderId", orderId);
-            row.setInt("totalPrice", calculateTotalPrice(delivery,orderItems));
+            row.setDouble("totalPrice", calculateTotalPrice(delivery, orderItems));
             row.setLong("created", now.getTime());
             row.setLong("lastModified", now.getTime());
             row.setString("status", OrderStatuses.PLACED.name());
@@ -89,7 +86,7 @@ public class OrderController {
             row.setString("deliveryId", deliveryId);
         };
 
-        orderTable.addRow(new TableKey(orderId), tableUpdater);
+        getOrderTable().addRow(new TableKey(orderId), tableUpdater);
 
         //add orderItems
         for (OrderItem orderItem : orderItems) {
@@ -101,27 +98,31 @@ public class OrderController {
     }
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
-    public Integer calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        int result = 0;
+    public Double calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
+        Double result = new Double(0);
         for(OrderItem orderItem : orderItems){
             result += calculatePrice(orderItem,delivery);
         }
         return result;
     }
 
-    private int calculatePrice(OrderItem orderItem, Delivery delivery) {
+    private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
         PriceStrategy strategy = getPriceStrategy(orderItem);
         Product product = getProduct(orderItem);
         switch (strategy){//TODO this will need some refining
             case JOURNEY_TIME:
-                return orderItem.getQuantity() * delivery.getNoRequiredForOffload() * calculateDistance(delivery) * calculateDuration(delivery) * product.getPrice();
+                return getQuantity(orderItem) * delivery.getNoRequiredForOffload() * calculateDistance(delivery) * calculateDuration(delivery) * product.getPrice();
             case FIXED:
-                return orderItem.getQuantity() * product.getPrice();
+                return getQuantity(orderItem) * product.getPrice();
             case DURATION:
-                return orderItem.getQuantity() * product.getPrice() * calculateDistance(delivery);
+                return getQuantity(orderItem) * product.getPrice() * calculateDistance(delivery);
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
+    }
+
+    private int getQuantity(OrderItem orderItem) {
+        return orderItem.getQuantity() == 0 ? 1 : orderItem.getQuantity();
     }
 
     private Product getProduct(OrderItem orderItem) {
@@ -134,16 +135,22 @@ public class OrderController {
         result.setCategoryId((String) ControllerUtils.getColumnValue(this.productTable, "categoryId", row));
         result.setDescription((String) ControllerUtils.getColumnValue(this.productTable, "description", row));
         result.setName((String) ControllerUtils.getColumnValue(this.productTable, "name", row));
-        result.setPrice((Integer) ControllerUtils.getColumnValue(this.productTable, "price", row));
+        result.setPrice((Double) ControllerUtils.getColumnValue(this.productTable, "price", row));
         result.setProductId((String)ControllerUtils.getColumnValue(this.productTable,"productId",row));
         return result;
     }
 
     private int calculateDistance(Delivery delivery) {
+        if(delivery.getDistance() == 0){
+            throw new RuntimeException("Zero delivery distance found for delivery");
+        }
         return delivery.getDistance();
     }
 
     private int calculateDuration(Delivery delivery) {
+        if(delivery.getDuration() == 0){
+            throw new RuntimeException("Zero duration found for delivery");
+        }
         return delivery.getDuration();
     }
 

@@ -145,7 +145,8 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     public String getString(String columnName) {
         String dataSourceColumnName = this.getDataSourceColumnName(columnName);
         String value = record.isSet(columnName) ? record.get(dataSourceColumnName) : null;
-        return this.replaceNullValues(columnName, value, String.class);
+        String s = this.replaceNullValues(columnName, value, String.class);
+        return s == null ? null : s.trim();
     }
 
     @Override
@@ -166,7 +167,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     @Override
     public short getShort(String columnName) {
         String string = getString(columnName);
-        return string == null ? -1 : TypeFormat.parseShort(string); //Short.parseShort(getString(columnName));
+        return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseShort(string.trim());
     }
 
     @Override
@@ -178,19 +179,19 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     @Override
     public long getLong(String columnName) {
         String string = getString(columnName);
-        return string == null ? -1 : TypeFormat.parseLong(string);
+        return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseLong(string.trim());
     }
 
     @Override
     public float getFloat(String columnName) {
         String string = getString(columnName);
-        return string == null ? -1 : TypeFormat.parseFloat(string);
+        return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseFloat(string.trim());
     }
 
     @Override
     public double getDouble(String columnName) {
         String string = getString(columnName);
-        return (string == null) ? -1 : TypeFormat.parseDouble(string);
+        return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseDouble(string.trim());
     }
 
     @Override

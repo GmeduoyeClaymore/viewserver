@@ -19,7 +19,7 @@ const CustomerOrders = ({history, isCompleted, userId, busy}) => {
     isCompleted,
     userId,
     orderId: undefined,
-    columnsToSort: [{ name: 'eta', direction: 'asc' }],
+    columnsToSort: [{ name: 'from', direction: 'asc' }],
     reportId: 'customerOrderSummary'};
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;

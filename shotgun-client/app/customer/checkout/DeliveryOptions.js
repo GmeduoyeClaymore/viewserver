@@ -24,7 +24,8 @@ class DeliveryOptions extends Component {
     this.setCard = this.setCard.bind(this);
     this.state = {
       requireHelp: false,
-      isDatePickerVisible: false,
+      from_isDatePickerVisible: false,
+      till_isDatePickerVisible: false,
       selectedCard: undefined,
       date: undefined
     };
@@ -47,8 +48,8 @@ class DeliveryOptions extends Component {
     this.setState({ selectedCard });
   }
 
-  toggleDatePicker(isDatePickerVisible) {
-    this.setState({ isDatePickerVisible });
+  toggleDatePicker(pickerName, isDatePickerVisible) {
+    this.setState({[pickerName + '_isDatePickerVisible']: isDatePickerVisible});
   }
 
   setRequireHelp(requireHelp) {
@@ -73,7 +74,7 @@ class DeliveryOptions extends Component {
     const { delivery, payment, orderItem, selectedContentType} = context.state;
     const {origin, destination} = delivery;
     const { quantity: noRequiredForOffload } = orderItem;
-    const { requireHelp, isDatePickerVisible, selectedCard } = this.state;
+    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
@@ -113,15 +114,15 @@ class DeliveryOptions extends Component {
               {selectedContentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
             </Grid>
           </ListItem>
-          {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+          {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
-            <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('from', date)} {...datePickerOptions} />
+            <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeValue('from', date)} {...datePickerOptions} />
           </ListItem> : null}
-          {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+          {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a return time</Text>}
-            <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('till', date)} {...datePickerOptions} />
+            <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeValue('till', date)} {...datePickerOptions} />
           </ListItem> : null}
           <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>

@@ -29,7 +29,7 @@ OrderDataSource {
                         new Column("userId", "userId", ColumnType.String),
                         new Column("paymentId", "paymentId", ColumnType.String),
                         new Column("deliveryId", "deliveryId", ColumnType.String),
-                        new Column("totalPrice", "totalPrice", ColumnType.Int)
+                        new Column("totalPrice", "totalPrice", ColumnType.Double)
                 ))
                 .withKeyColumns("orderId");
 

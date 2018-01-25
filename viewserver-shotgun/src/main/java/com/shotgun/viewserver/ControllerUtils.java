@@ -206,6 +206,9 @@ public class ControllerUtils{
         IOutput output = table.getOutput();
         Schema schema = output.getSchema();
         ColumnHolder col = schema.getColumnHolder(column);
+        if(col == null){
+            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
+        }
         return ColumnHolderUtils.getValue(col, row);
     }
 

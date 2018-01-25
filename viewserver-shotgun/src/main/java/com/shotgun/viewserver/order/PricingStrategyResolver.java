@@ -73,7 +73,7 @@ public class PricingStrategyResolver {
 
     private KeyedTable getProductCategoryTable(){
         if(this.productCategoryTable == null){
-            this.productCategoryTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_TABLE_NAME);
+            this.productCategoryTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_CATEGORY_TABLE_NAME);
         }
         return this.productCategoryTable;
     }
@@ -104,10 +104,10 @@ public class PricingStrategyResolver {
         }
         int row = this.getProductCategoryTable().getRow(new TableKey(categoryId));
         if(row == -1){
-            throw new RuntimeException(String.format("Unable to find category id \"%s\" in the productCategory table",categoryId));
+            throw new RuntimeException(String.format("Cannot resolve pricing strategy for product category path \"%s\" Unable to find category id \"%s\" in the productCategory table",String.join(",",categoryPath),categoryId));
         }
 
-        String parentCategoryId = (String) ControllerUtils.getColumnValue(this.productTable, "parentCategoryId", row);
+        String parentCategoryId = (String) ControllerUtils.getColumnValue(this.getProductCategoryTable(), "parentCategoryId", row);
         return getStrategyForCategoryRoot(parentCategoryId,categoryPath);
     }
 
@@ -116,7 +116,7 @@ public class PricingStrategyResolver {
         if(row == -1){
             throw new RuntimeException(String.format("Unable to find product id \"%s\" in the product table",productId));
         }
-        return (String) ControllerUtils.getColumnValue(this.productTable, "categoryId", row);
+        return (String) ControllerUtils.getColumnValue(this.getProductTable(), "categoryId", row);
     }
 
 
