@@ -1,9 +1,6 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
-import com.shotgun.viewserver.setup.datasource.DeliveryDataSource;
-import com.shotgun.viewserver.setup.datasource.OrderDataSource;
-import com.shotgun.viewserver.setup.datasource.OrderItemsDataSource;
+import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.CalcColNode;
@@ -37,10 +34,17 @@ public class OrderRequestReport {
                                         .withRightJoinColumns("orderId")
                                         .withConnection("deliveryJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
+                                new JoinNode("contentTypeJoin")
+                                        .withLeftJoinColumns("contentTypeId")
+                                        .withRightJoinColumns("contentTypeId")
+                                        .withColumnPrefixes("", "contentType_")
+                                        .withConnection("orderItemJoin", Constants.OUT, "left")
+                                        .withAlwaysResolveNames()
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("orderFilter")
                                       /*  .withExpression("status == \"PLACED\" && vehicleTypeId == \"{vehicleTypeId}\" && noRequiredForOffload <= {noRequiredForOffload}")*/
                                         .withExpression("productId == \"{productId}\" && status == \"PLACED\"")
-                                        .withConnection("orderItemJoin"),
+                                        .withConnection("contentTypeJoin"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
@@ -57,10 +61,10 @@ public class OrderRequestReport {
                                         .withAlwaysResolveNames()
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new CalcColNode("distanceCalcCol")
-                                        .withCalculations(new CalcColOperator.CalculatedColumn("distance", "distance(origin_latitude, origin_longitude, {driverLatitude}, {driverLongitude}, \"M\")"))
+                                        .withCalculations(new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, {driverLatitude}, {driverLongitude}, \"M\")"))
                                         .withConnection("destinationDeliveryAddressJoin"),
                                 new FilterNode("distanceFilter")
-                                        .withExpression("distance <= {maxDistance}")
+                                        .withExpression("currentDistance <= {maxDistance}")
                                         .withConnection("distanceCalcCol"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -77,7 +81,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("created"),
                                                 new IProjectionConfig.ProjectionColumn("from"),
                                                 new IProjectionConfig.ProjectionColumn("till"),
-                                                new IProjectionConfig.ProjectionColumn("distance"),
+                                                new IProjectionConfig.ProjectionColumn("currentDistance"),
                                                 new IProjectionConfig.ProjectionColumn("origin_flatNumber", "originFlatNumber"),
                                                 new IProjectionConfig.ProjectionColumn("origin_line1", "originLine1"),
                                                 new IProjectionConfig.ProjectionColumn("origin_city", "originCity"),
@@ -89,7 +93,20 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("destination_city", "destinationCity"),
                                                 new IProjectionConfig.ProjectionColumn("destination_postCode", "destinationPostCode"),
                                                 new IProjectionConfig.ProjectionColumn("destination_latitude", "destinationLatitude"),
-                                                new IProjectionConfig.ProjectionColumn("destination_longitude", "destinationLongitude"))
+                                                new IProjectionConfig.ProjectionColumn("destination_longitude", "destinationLongitude"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_contentTypeId", "contentTypeContentTypeId"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_name", "contentTypeName"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_origin", "contentTypeOrigin"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_destination", "contentTypeDestination"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_noPeople", "contentTypeNoPeople"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_fromTime", "contentTypeFromTime"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_tillTime", "contentTypeTillTime"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_noItems", "contentTypeNoItems"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_hasVehicle", "contentTypeHasVehicle"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_pricingStrategy", "contentTypePricingStrategy"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_defaultProductId", "defaultProductId")
+                                        )
                                         .withConnection("distanceFilter")
                         )
                         .withOutput("orderRequestProjection");

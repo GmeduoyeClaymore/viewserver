@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order;
 
+import com.amazonaws.util.JodaTime;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
@@ -13,10 +14,13 @@ import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Map;
 
 @Controller(name = "orderController")
 public class OrderController {
@@ -108,27 +112,37 @@ public class OrderController {
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
         PriceStrategy strategy = getPriceStrategy(orderItem);
-        Product product = getProduct(orderItem);
+        Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining
             case JOURNEY_TIME:
-                return getQuantity(orderItem) * delivery.getNoRequiredForOffload() * calculateDistance(delivery) * calculateDuration(delivery) * product.getPrice();
+                return getQuantity(orderItem) * calculateDistance(delivery) * calculateDuration(delivery) * product.getPrice();
             case FIXED:
                 return getQuantity(orderItem) * product.getPrice();
             case DURATION:
-                return getQuantity(orderItem) * product.getPrice() * calculateDistance(delivery);
+                return getQuantity(orderItem) * product.getPrice() * calculateDays(delivery);
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
+    }
+
+    private int calculateDays(Delivery delivery) {
+        if(delivery.getFrom() == null){
+            throw new RuntimeException("From date must be specified");
+        }
+        if(delivery.getTill() == null){
+            throw new RuntimeException("Till date must be specified");
+        }
+       return Days.daysBetween(new LocalDate(delivery.getFrom()), new LocalDate(delivery.getTill())).getDays();
     }
 
     private int getQuantity(OrderItem orderItem) {
         return orderItem.getQuantity() == 0 ? 1 : orderItem.getQuantity();
     }
 
-    private Product getProduct(OrderItem orderItem) {
-        int row = this.getProductTable().getRow(new TableKey(orderItem.getProductId()));
+    private Product getProduct(String productId) {
+        int row = this.getProductTable().getRow(new TableKey(productId));
         if(row == -1){
-            throw new RuntimeException(String.format("Unable to find product id \"%s\" in the product table",orderItem.getProductId()));
+            throw new RuntimeException(String.format("Unable to find product id \"%s\" in the product table",productId));
         }
 
         Product result = new Product();

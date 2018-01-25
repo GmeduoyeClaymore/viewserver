@@ -237,13 +237,13 @@ Tiler,Tiler,,2Tiler,15000
 Painter,Painter,,2Painter,15000
 BrickLayer,Brick Layer,,2BrickLayer,15000
 Plumber,Plumber,,2Plumber,15000
-HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,"4,000 "
-HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,"8,000 "
-HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,"14,000 "
-HouseHoldThreeQuarterVan,Household  Three Quarter van,750 kg,2HouseHoldWaste,"18,000 "
-HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,"22,000 "
-CommercialHoldMin,Commercial Min. charge,100kg,2CommercialWaste,"5,000 "
-CommercialHoldQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,"9,000 "
-CommercialHoldHalfVan,Commercial Half van,500 kg,2CommercialWaste,"15,000 "
-CommercialThreeQuarterVan,Commercial Three Quarter van,750 kg,2CommercialWaste,"19,000 "
-CommercialFullVan,Commercial  Full van,1000 kg,2CommercialWaste,"23,000 "
+HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,4000
+HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000
+HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000
+HouseHoldThreeQuarterVan,Household  Three Quarter van,750 kg,2HouseHoldWaste,18000
+HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,22000
+CommercialHoldMin,Commercial Min. charge,100kg,2CommercialWaste,5000
+CommercialHoldQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,9000
+CommercialHoldHalfVan,Commercial Half van,500 kg,2CommercialWaste,15000
+CommercialThreeQuarterVan,Commercial Three Quarter van,750 kg,2CommercialWaste,19000
+CommercialFullVan,Commercial  Full van,1000 kg,2CommercialWaste,23000

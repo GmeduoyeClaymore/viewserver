@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row, Icon} from 'native-base';
 import moment from 'moment';
-import Products from 'common/constants/Products';
 import { withRouter } from 'react-router';
 
 class OrderRequest extends Component {
@@ -11,9 +10,8 @@ class OrderRequest extends Component {
 
   render() {
     const {orderSummary, history, next} = this.props;
-    const {delivery} = orderSummary;
+    const {delivery, contentType} = orderSummary;
     const {origin, destination, noRequiredForOffload} = delivery;
-    const isRowDelivery = orderSummary.orderItem.productId == Products.DELIVERY;
 
     return <ListItem style={styles.orderRequest} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>
       <Grid>
@@ -22,15 +20,17 @@ class OrderRequest extends Component {
             <Row>
               <Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text>
             </Row>
-            {isRowDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
-            {isRowDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+            {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
+            {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
+            {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
           </Col>
           <Col size={25} style={styles.priceRow}>
             <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="arrow-forward"/></Text>
           </Col>
         </Row>
         <Row size={25}>
-          <Col size={50}><Row><Icon paddedIcon name="time"/><Text>{moment(delivery.eta).format('Do MMM, h:mma')}</Text></Row></Col>
+          {contentType.fromTime ? <Col size={50}><Row><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row></Col> : null}
+          {contentType.tillTime ? <Col size={50}><Row><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row></Col>  : null}
           <Col size={50}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="man"/>, <Text key='text'>{`${noRequiredForOffload} people required`}</Text>] : null}</Row></Col>
         </Row>
       </Grid>

@@ -71,7 +71,7 @@ class OrderSummary extends Component{
       {this.renderDelivery()}
       {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {contentType.noPeople > 0 ? <ListItem padded>
+      {contentType.noPeople && noPeople ? <ListItem padded>
         <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noPeople} people required`}</Text>
       </ListItem> : null}
       {contentType.hasVehicle ? this.renderVehicleType() : null}
@@ -83,12 +83,12 @@ class OrderSummary extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao') || [];
-  const {delivery} = initialProps;
+  const {delivery, contentType} = initialProps;
   const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
   return {
     ...initialProps,
     selectedVehicleType,
-    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType,
+    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType || !contentType,
   };
 };
 

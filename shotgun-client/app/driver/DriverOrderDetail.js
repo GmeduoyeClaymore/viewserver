@@ -66,7 +66,7 @@ class DriverOrderDetail extends Component{
           </View> : null
         }
 
-        <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
+        <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem}  product={orderSummary.product} contentType={orderSummary.contentType} client={client}/>
       </Content>
     </Container>;
   }
@@ -87,7 +87,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
-    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription'}) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, { orderSummaryDao: 'updateSubscription'}) || !orderSummary,
     orderSummary
   };
 };

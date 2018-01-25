@@ -4,6 +4,7 @@ import UserDao from 'common/dao/UserDao';
 import DriverDao from 'driver/dao/DriverDao';
 import VehicleDao from 'driver/dao/VehicleDao';
 import VehicleTypeDao from 'common/dao/VehicleTypeDao';
+import ContentTypeDao from 'common/dao/ContentTypeDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
 
@@ -14,6 +15,7 @@ export const driverServicesRegistrationAction = (client, userId, continueWith) =
     register(dispatch, new VehicleTypeDao(client), {userId});
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client), {userId});
+    register(dispatch, new ContentTypeDao(client), {userId});
     registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
 };

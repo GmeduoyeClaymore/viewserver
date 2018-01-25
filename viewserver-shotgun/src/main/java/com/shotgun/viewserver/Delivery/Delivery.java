@@ -52,14 +52,6 @@ public class Delivery {
         this.from = from;
     }
 
-    public int getNoRequiredForOffload() {
-        return noRequiredForOffload;
-    }
-
-    public void setNoRequiredForOffload(int noRequiredForOffload) {
-        this.noRequiredForOffload = noRequiredForOffload;
-    }
-
     public String getVehicleTypeId() {
         return vehicleTypeId;
     }

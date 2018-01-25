@@ -111,6 +111,7 @@ public class PricingStrategyResolver {
         return getStrategyForCategoryRoot(parentCategoryId,categoryPath);
     }
 
+
     private String getCategoryForProduct(String productId) {
         int row = this.getProductTable().getRow(new TableKey(productId));
         if(row == -1){

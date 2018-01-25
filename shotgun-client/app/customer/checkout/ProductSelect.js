@@ -23,6 +23,7 @@ class ProductSelect extends Component{
   selectContentType(selectedContentType){
     const {context, navigationStrategy} = this.props;
     let {orderItem} = context.state;
+    orderItem = merge({}, orderItem, {contentTypeId: selectedContentType.contentTypeId});
     if (selectedContentType && selectedContentType.defaultProductId){
       if (selectedContentType.defaultProductId){
         orderItem = merge({}, orderItem, {productId: selectedContentType.defaultProductId});

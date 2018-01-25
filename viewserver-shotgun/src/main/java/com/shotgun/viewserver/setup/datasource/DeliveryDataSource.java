@@ -40,7 +40,6 @@ DeliveryDataSource {
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
                                         new Column("from", "from", ColumnType.DateTime),
                                         new Column("till", "till", ColumnType.DateTime),
-                                        new Column("noRequiredForOffload", "noRequiredForOffload", ColumnType.Int),
                                         new Column("driverRating", "driverRating", ColumnType.Int),
                                         new Column("customerRating", "customerRating", ColumnType.Int),
                                         new Column("distance", "distance", ColumnType.Int),
