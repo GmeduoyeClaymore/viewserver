@@ -83,12 +83,12 @@ class OrderSummary extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao') || [];
-  const {delivery, contentType} = initialProps;
+  const {delivery} = initialProps;
   const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
   return {
     ...initialProps,
     selectedVehicleType,
-    busy: isAnyOperationPending(state, { vehicleTypeDao: 'vehicleTypes' }) || !selectedVehicleType  };
+    busy: isAnyOperationPending(state, [{ vehicleTypeDao: 'vehicleTypes' }]) || !selectedVehicleType  };
 };
 
 export default connect(

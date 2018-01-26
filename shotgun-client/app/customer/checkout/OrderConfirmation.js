@@ -84,7 +84,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedProduct,
     selectedContentType,
     payment,
-    busy: isAnyOperationPending(state, { customerDao: 'checkout'})
+    busy: isAnyOperationPending(state, [{ customerDao: 'checkout'}])
   };
 };
 export default connect(

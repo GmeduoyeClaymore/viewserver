@@ -36,6 +36,7 @@ public class DriverOrderSummaryReport {
                                         .withLeftJoinColumns("productId")
                                         .withRightJoinColumns("productId")
                                         .withColumnPrefixes("", "product_")
+                                        .withAlwaysResolveNames()
                                         .withConnection("orderItemsJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("contentTypeJoin")

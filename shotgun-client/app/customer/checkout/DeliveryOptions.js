@@ -215,7 +215,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     ...getNavigationProps(initialProps),
-    busy: isAnyOperationPending(state, { paymentDao: 'getCustomerPaymentCards' }),
+    busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
     paymentCards,
     user,

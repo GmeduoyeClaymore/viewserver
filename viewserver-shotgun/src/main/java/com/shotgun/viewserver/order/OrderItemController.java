@@ -40,6 +40,7 @@ public class OrderItemController {
             row.setString("userId", userId);
             row.setString("orderId", orderItem.getOrderId());
             row.setString("productId", orderItem.getProductId());
+            row.setInt("contentTypeId", orderItem.getContentTypeId());
             row.setString("notes", orderItem.getNotes());
             row.setString("imageUrl", orderItem.getImageUrl());
             row.setInt("quantity", orderItem.getQuantity());
