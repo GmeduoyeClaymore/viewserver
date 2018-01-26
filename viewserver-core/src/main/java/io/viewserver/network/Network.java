@@ -381,7 +381,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         // timeout!
                         log.debug("Session {} timed out!", peerSession.getConnectionId());
                         // TODO: correctly handle client-to-server sessions
-                        if (peerSession instanceof ServerToClientSession && false) {
+                        if (peerSession instanceof ServerToClientSession) {
                             peerSession.fireDisconnection();
                         }
                     }

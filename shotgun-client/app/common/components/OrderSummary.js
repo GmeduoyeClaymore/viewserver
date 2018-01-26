@@ -29,7 +29,7 @@ class OrderSummary extends Component{
 
   renderMap(){
     const { width } = Dimensions.get('window');
-    const {delivery, client} = this.props;
+    const {delivery = {}, client} = this.props;
     const {origin, destination} = delivery;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;

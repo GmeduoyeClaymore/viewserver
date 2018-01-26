@@ -35,7 +35,7 @@ class ProductSelect extends Component{
   }
 
   render(){
-    const {contentTypes} = this.props;
+    const {contentTypes = []} = this.props;
     return (
       <Content padded contentContainerStyle={styles.container}>
         <View style={styles.titleView}>

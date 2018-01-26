@@ -71,7 +71,7 @@ const mapStateToProps = (state, initialProps) => {
       return savedTotalPrice;
     }
     const estimatedTotalPrice = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery});
-    context.setState({estimatedTotalPrice});
+    //context.setState({estimatedTotalPrice});
     return estimatedTotalPrice;
   };
   return {
