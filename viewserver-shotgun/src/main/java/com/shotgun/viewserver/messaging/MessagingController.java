@@ -56,8 +56,10 @@ public class MessagingController {
 
     @ControllerAction(path = "sendMessageToUser")
     public void sendMessageToUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "message")AppMessage message){
+
         String currentToken = getTokenForUser(userId);
         message.setTo(currentToken);
+        logger.info("Sending message \"{}\" to \"{}\" token \"{}\"",message, userId, currentToken);
         sendPayload(message.toSimpleMessage());
     }
 

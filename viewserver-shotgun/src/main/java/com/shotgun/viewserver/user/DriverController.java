@@ -121,7 +121,7 @@ public class DriverController {
         String stripeCustomerId = (String)ControllerUtils.getColumnValue(userTable, "stripeCustomerId", currentCustomerRow);
         String accountId = (String)ControllerUtils.getColumnValue(userTable, "stripeAccountId", currentDriverRow);
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
-        int totalPrice = (int)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
+        Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
         orderTable.updateRow(new TableKey(orderId), row -> {
             row.setString("status", OrderStatuses.COMPLETED.name());

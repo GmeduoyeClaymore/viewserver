@@ -98,4 +98,16 @@ public class AppMessage {
         body.put("priority",getPriority());
         return ControllerUtils.toString(body);
     }
+
+    @Override
+    public String toString() {
+        return "AppMessage{" +
+                "to='" + to + '\'' +
+                ", priority=" + priority +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", sound='" + sound + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }
