@@ -39,6 +39,7 @@ public class CustomerOrderSummaryReport {
                                         .withLeftJoinColumns("contentTypeId")
                                         .withRightJoinColumns("contentTypeId")
                                         .withColumnPrefixes("", "contentType_")
+                                        .withAlwaysResolveNames()
                                         .withConnection("productJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("deliveryJoin")

@@ -38,7 +38,7 @@ class CustomerOrderDetail extends Component{
 
   render() {
     const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch} = this.props;
-    const {delivery} = orderSummary;
+    const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const hasDriver = delivery.driverFirstName !== undefined;
