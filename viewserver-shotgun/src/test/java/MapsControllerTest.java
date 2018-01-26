@@ -33,7 +33,7 @@ public class MapsControllerTest {
         locations.add(new LatLng(51.5526951, -0.1412256));
         locations.add(new LatLng(51.4857236, -0.2123406));
 
-        System.out.println(sut.mapDirectionRequest(new DirectionRequest(locations, "driving")));
+        System.out.println(sut.mapDirectionRequest(new DirectionRequest((LatLng[]) locations.toArray(new LatLng[0]), "driving")));
     }
 
     @Test

@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class DirectionRequest{
     private String mode;
-    private ArrayList<LatLng> locations;
+    private LatLng[] locations;
 
     public DirectionRequest() {
     }
 
-    public DirectionRequest(ArrayList<LatLng> locations, String mode) {
+    public DirectionRequest(LatLng[] locations, String mode) {
         this.locations = locations;
         this.mode = mode;
     }
 
-    public ArrayList<LatLng> getLocations() {
+    public LatLng[] getLocations() {
         return locations;
     }
 
-    public void setLocations(ArrayList<LatLng> locations) {
+    public void setLocations(LatLng[] locations) {
         this.locations = locations;
     }
 
@@ -31,8 +31,8 @@ public class DirectionRequest{
     }
 
     public String toQueryString(String key){
-        LatLng origin = locations.get(0);
-        LatLng destination = locations.get(locations.size()-1);
+        LatLng origin = locations[0];
+        LatLng destination = locations[locations.length-1];
 
         return String.format("key=%s&origin=%s,%s&destination=%s,%s&mode=%s%s", key, origin.getLatitude(), origin.getLongitude(), destination.getLatitude(), destination.getLongitude(), this.mode, getWayPoints());
     }
@@ -40,8 +40,8 @@ public class DirectionRequest{
     private String getWayPoints(){
         StringBuilder sb = new StringBuilder();
 
-        for(int i=1;i<locations.size()-1; i++){
-            sb.append(String.format("%s,%s|", locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+        for(int i=1;i<locations.length-1; i++){
+            sb.append(String.format("%s,%s|", locations[i].getLatitude(), locations[i].getLongitude()));
         }
 
         return sb.length() > 0 ? "&waypoints=via:"+sb.toString() : "";
