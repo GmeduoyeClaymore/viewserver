@@ -14,6 +14,7 @@ import RatingAction from 'common/components/RatingAction';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import {Linking} from 'react-native';
 import Logger from 'common/Logger';
+import SpinnerButton from 'common/components/SpinnerButton';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -43,7 +44,7 @@ class DriverOrderInProgress extends Component{
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, position, dispatch, busy, client} = this.props;
+    const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client} = this.props;
     const {initialPosition} = this.state;
     const {latitude, longitude} = position;
     const {orderItem = {}, delivery = {}} = orderSummary;
@@ -105,11 +106,11 @@ class DriverOrderInProgress extends Component{
           {isComplete ?
             <Col>
               <Row>
-                <Col>
+                <Col>v
                   <RatingAction isDriver={true} delivery={delivery}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == -1} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>
@@ -120,7 +121,7 @@ class DriverOrderInProgress extends Component{
                   <Col><Button fullWidth style={styles.callButton}><Text uppercase={false}>Call customer</Text></Button></Col>
                 </Row>
               </Grid>
-              <Button fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></Button>
+              <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
             </Col>
           }
         </Row>
@@ -164,7 +165,8 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     position,
     orderId,
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'},{userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
+    busyUpdating: isAnyOperationPending(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}]),
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
     orderSummary
   };
 };

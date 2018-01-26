@@ -11,8 +11,10 @@ export default class CustomerDao{
     this.optionsSubject = new Rx.Subject();
     this.updateSubscription = this.updateSubscription.bind(this);
     this.registerCustomer = this.registerCustomer.bind(this);
+    this.rejectDriver = this.rejectDriver.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
     this.loginCustomer = this.loginCustomer.bind(this);
+    this.cancelOrder = this.cancelOrder.bind(this);
     this.checkout = this.checkout.bind(this);
     this.rateDriver = this.rateDriver.bind(this);
     this.subject.next();
@@ -54,6 +56,14 @@ export default class CustomerDao{
     Logger.info(`Customer ${customerId} logged in`);
     await PrincipalService.setUserIdOnDevice(customerId);
     return customerId;
+  }
+
+  async cancelOrder({orderId}){
+    await this.client.invokeJSONCommand('customerController', 'cancelOrder', orderId);
+  }
+
+  async rejectDriver({orderId}){
+    await this.client.invokeJSONCommand('customerController', 'rejectDriver', orderId);
   }
 
   async checkout({orderItem, payment, totalPrice, delivery}){

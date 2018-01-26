@@ -52,7 +52,7 @@ public class JourneyEmulatorController {
                     Thread.sleep(2000);
 
                     int currentOrderRow = orderTable.getRow(new TableKey(orderId));
-                    String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentOrderRow);
+                    String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentOrderRow).toString();
 
                     Double driverLatitude = (Double) ControllerUtils.getColumnValue(userTable, "latitude", userId);
                     Double driverLongitude = (Double) ControllerUtils.getColumnValue(userTable, "longitude", userId);

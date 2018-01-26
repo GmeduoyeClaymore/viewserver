@@ -20,7 +20,7 @@ public class DriverOrderSummaryReport {
                         .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
+                                        .withExpression("status != \"CANCELLED\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
                                 new JoinNode("customerJoin")
                                         .withLeftJoinColumns("userId")

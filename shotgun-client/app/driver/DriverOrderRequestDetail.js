@@ -7,6 +7,7 @@ import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {acceptOrderRequest} from 'driver/actions/DriverActions';
 import LoadingScreen from 'common/components/LoadingScreen';
+import SpinnerButton from 'common/components/SpinnerButton';
 
 class DriverOrderRequestDetail extends Component{
   constructor(props) {
@@ -26,7 +27,7 @@ class DriverOrderRequestDetail extends Component{
   }
 
   render() {
-    const {orderSummary, client, history, dispatch, busy} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
@@ -43,7 +44,7 @@ class DriverOrderRequestDetail extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
-        <Button fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></Button>
+        <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></SpinnerButton>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client}/>
       </Content>
     </Container>;
@@ -65,6 +66,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
+    busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || orderSummary == undefined,
     orderSummary
   };

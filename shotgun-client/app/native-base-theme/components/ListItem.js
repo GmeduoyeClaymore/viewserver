@@ -218,9 +218,7 @@ export default (variables = variable) => {
     },
 
     '.last': {
-      marginLeft: -(variables.listItemPadding),
-      paddingLeft: (variables.listItemPadding) * 2,
-      top: 1
+      marginBottom: 0
     },
 
     '.avatar': {

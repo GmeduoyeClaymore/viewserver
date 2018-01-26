@@ -33,7 +33,7 @@ const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
   const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs available</Text></View>;
-  const RowView = (orderSummary) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next='/Driver/DriverOrderRequestDetail'/>;
+  const RowView = (orderSummary, isLast) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} next='/Driver/DriverOrderRequestDetail'/>;
 
   const onChangeTab = (newIsDelivery) => {
     if (isDelivery !== newIsDelivery) {
@@ -50,7 +50,7 @@ const DriverOrderRequests = ({history, isDelivery, vehicle = {}, position, busy}
       <Tab heading="Waste Collection" />
     </Tabs>
     <Content>
-      <List>
+      <List style={{backgroundColor: shotgun.hairline}}>
         <PagingListView
           daoName='orderRequestDao'
           dataPath={['driver', 'orders']}

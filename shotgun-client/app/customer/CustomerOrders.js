@@ -8,7 +8,6 @@ import Tabs from 'common/components/Tabs';
 import {isAnyLoading} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
-import CustomerOrderCta from './components/CustomerOrderCta';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 const CustomerOrders = ({history, isCompleted, userId}) => {
@@ -23,7 +22,11 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
   const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;
-  const RowView = (orderSummary) => [<OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next='/Customer/CustomerOrderDetail'/>, <CustomerOrderCta key={`${orderSummary.orderId}Cta`} orderSummary={orderSummary}/>];
+  const RowView = (orderSummary, isLast) => {
+    const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
+    const next = isOnRoute ? '/Customer/CustomerOrderInProgress' : '/Customer/CustomerOrderDetail';
+    return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast}/>;
+  };
 
   const onChangeTab = (newIsCompleted) => {
     if (isCompleted !== newIsCompleted) {
@@ -40,7 +43,7 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
       <Tab heading="Complete"/>
     </Tabs>
     <Content>
-      <List>
+      <List style={{backgroundColor: shotgun.hairline}}>
         <PagingListView
           daoName='orderSummaryDao'
           dataPath={['orders']}

@@ -70,7 +70,7 @@ public class DriverController {
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String currentStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
-        String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentRow);
+        String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentRow).toString();
 
         if(currentStatus != OrderStatuses.PLACED.name()){
             //TODO - handle this on the client side
@@ -138,7 +138,7 @@ public class DriverController {
         KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
 
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
-        String deliveryId = ControllerUtils.getDeliveryId(orderTable, currentOrderRow);
+        String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentOrderRow).toString();
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
         orderTable.updateRow(new TableKey(orderId), row -> {
             row.setString("status", OrderStatuses.PLACED.name());
@@ -165,5 +165,4 @@ public class DriverController {
             log.error("There was a problem sending the notification", ex);
         }
     }
-
 }

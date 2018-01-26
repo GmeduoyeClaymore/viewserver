@@ -5,4 +5,5 @@ public enum OrderStatuses {
     ACCEPTED,
     PICKEDUP,
     COMPLETED,
+    CANCELLED
 }

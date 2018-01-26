@@ -46,6 +46,14 @@ export const getPaymentCards = (customerToken, continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', customerToken, continueWith);
 };
 
+export const cancelOrder = (orderId, continueWith) => {
+  return invokeDaoCommand('customerDao', 'cancelOrder', {orderId}, continueWith);
+};
+
+export const rejectDriver = (orderId, continueWith) => {
+  return invokeDaoCommand('customerDao', 'rejectDriver', {orderId}, continueWith);
+};
+
 export const deletePaymentCard = (customerToken, cardId, continueWith) => {
   return invokeDaoCommand('paymentDao', 'deletePaymentCard', {customerToken, cardId}, continueWith);
 };

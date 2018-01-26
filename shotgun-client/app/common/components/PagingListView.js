@@ -7,6 +7,8 @@ import { bindActionCreators} from 'redux';
 import { isEqual } from 'lodash';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
+import Logger from 'common/Logger';
+
 const styles = StyleSheet.create({
   contentContainer: {
     paddingVertical: 0
@@ -43,7 +45,7 @@ class PagingListView extends Component{
       if (newProps.options !== null && !isEqual(this.props.options, newProps.options)){
         this.props.setOptions(newProps.options);
       }
-      console.log('PagingProps-' + JSON.stringify(newProps.options));
+      Logger.debug('PagingProps-' + JSON.stringify(newProps.options));
     }
 
     _onScroll(e){
@@ -62,7 +64,7 @@ class PagingListView extends Component{
       this.props.doPage(newLimit);
     }
     
-    renderItem = (item) => this.props.rowView(item);
+    renderItem = (item, isLast) => this.props.rowView(item, isLast);
     
     render() {
       const { data = [], errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
@@ -71,7 +73,7 @@ class PagingListView extends Component{
           <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
             <HeaderView/>
             {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
-              {data.map( c => this.renderItem(c))}
+              {data.map((c, i) => this.renderItem(c, i == data.length-1))}
               {this.props.busy ? paginationWaitingView() : null}
             </ScrollView >}
           </View>

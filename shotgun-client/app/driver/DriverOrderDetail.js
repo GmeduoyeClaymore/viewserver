@@ -9,6 +9,7 @@ import RatingSummary from 'common/components/RatingSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import LoadingScreen from 'common/components/LoadingScreen';
+import SpinnerButton from 'common/components/SpinnerButton';
 
 class DriverOrderDetail extends Component{
   constructor(props) {
@@ -28,7 +29,7 @@ class DriverOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, dispatch, busy} = this.props;
+    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating} = this.props;
     const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
@@ -60,9 +61,9 @@ class DriverOrderDetail extends Component{
           <View>
             {isStarted ?
               <Button fullWidth padded style={styles.startButton} onPress={navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button> :
-              <Button fullWidth padded style={styles.startButton} onPress={onStartPress}><Text uppercase={false}>Start this job</Text></Button>
+              <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={onStartPress}><Text uppercase={false}>Start this job</Text></SpinnerButton>
             }
-            <Button fullWidth padded cancelButton onPress={onCancelPress}><Text uppercase={false}>Cancel this job</Text></Button>
+            <SpinnerButton busy={busyUpdating} fullWidth padded cancelButton onPress={onCancelPress}><Text uppercase={false}>Cancel this job</Text></SpinnerButton>
           </View> : null
         }
 
@@ -87,6 +88,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
+    busyUpdating: isAnyOperationPending(state, [{ driverDao: 'startOrderRequest'}, { driverDao: 'cancelOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || orderSummary == undefined,
     orderSummary
   };

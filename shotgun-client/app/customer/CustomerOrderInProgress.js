@@ -23,9 +23,9 @@ class CustomerOrderInProgress extends Component{
   }
 
   componentWillMount(){
-    const {dispatch, orderId} = this.props;
+    const {dispatch, orderId, userId} = this.props;
     dispatch(updateSubscriptionAction('orderSummaryDao', {
-      userId: undefined,
+      userId,
       isCompleted: '',
       orderId,
       reportId: 'customerOrderSummary'
@@ -76,7 +76,7 @@ class CustomerOrderInProgress extends Component{
                   <RatingAction isDriver={false} delivery={delivery}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={driverRating == 0} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={driverRating == -1} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

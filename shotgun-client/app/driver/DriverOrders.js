@@ -22,7 +22,7 @@ const DriverOrders = ({history, isCompleted, userId}) => {
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
   const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs assigned</Text></View>;
-  const RowView = (orderSummary) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next='/Driver/DriverOrderDetail'/>;
+  const RowView = (orderSummary, isLast) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} next='/Driver/DriverOrderDetail'/>;
 
   const onChangeTab = (newIsCompleted) => {
     if (isCompleted !== newIsCompleted) {
@@ -39,7 +39,7 @@ const DriverOrders = ({history, isCompleted, userId}) => {
       <Tab heading="Complete"/>
     </Tabs>
     <Content>
-      <List>
+      <List style={{backgroundColor: shotgun.hairline}}>
         <PagingListView
           daoName='orderSummaryDao'
           dataPath={['orders']}

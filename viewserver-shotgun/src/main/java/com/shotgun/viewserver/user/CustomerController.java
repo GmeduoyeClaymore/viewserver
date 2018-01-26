@@ -1,7 +1,13 @@
 package com.shotgun.viewserver.user;
 
+import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.OrderStatuses;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
+import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.messaging.AppMessageBuilder;
+import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
@@ -9,6 +15,8 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +29,15 @@ public class CustomerController {
 
     private PaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
+    private MessagingController messagingController;
 
 
-    public CustomerController(PaymentController paymentController, DeliveryAddressController deliveryAddressController) {
+    public CustomerController(PaymentController paymentController,
+                              DeliveryAddressController deliveryAddressController,
+                              MessagingController messagingController) {
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
+        this.messagingController = messagingController;
     }
 
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
@@ -45,5 +57,50 @@ public class CustomerController {
         return userId;
     }
 
+    @ControllerAction(path = "cancelOrder", isSynchronous = true)
+    public String cancelOrder(String orderId){
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
 
+        orderTable.updateRow(new TableKey(orderId), row -> {
+            row.setString("status", OrderStatuses.CANCELLED.name());
+        });
+
+        rejectDriver(orderId);
+
+        return orderId;
+    }
+
+    @ControllerAction(path = "rejectDriver", isSynchronous = true)
+    public String rejectDriver(String orderId){
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+
+        String deliveryId = (String)ControllerUtils.getColumnValue(orderTable, "deliveryId", orderId);
+        String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
+
+        if(driverId != null && driverId != "") {
+            orderTable.updateRow(new TableKey(orderId), row -> {
+                row.setString("status", OrderStatuses.PLACED.name());
+            });
+
+            deliveryTable.updateRow(new TableKey(deliveryId), row -> {
+                row.setString("driverId", null);
+            });
+
+            notifyStatusChanged(orderId, driverId, "cancelled");
+        }
+
+        return orderId;
+    }
+
+    private void notifyStatusChanged(String orderId, String orderDriverId, String status) {
+        try {
+
+            AppMessage builder = new AppMessageBuilder().withDefaults().withData("orderId", orderId)
+                    .message(String.format("Order %s", status), String.format("Order %s has been %s by the customer", orderId, status)).build();
+            messagingController.sendMessageToUser(orderDriverId, builder);
+        }catch (Exception ex){
+            log.error("There was a problem sending the notification", ex);
+        }
+    }
 }
