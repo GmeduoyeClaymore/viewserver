@@ -11,8 +11,8 @@ export default class PriceSummary extends Component{
     const {orderStatus, isDriver, price} = this.props;
 
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
-    const getCustomerHeading = () => isComplete ? 'You were charged' : 'You will be charged';
-    const getDriverHeading = () => isComplete ? 'You were paid' : 'You will be paid';
+    const getCustomerHeading = () => isComplete ? 'You were charged' : 'You will be charged (estimated)';
+    const getDriverHeading = () => isComplete ? 'You were paid' : 'You will be paid (estimated)';
 
     return <Grid>
       <Row style={styles.row}><Text style={styles.heading}>{isDriver ? getDriverHeading() : getCustomerHeading()}</Text></Row>

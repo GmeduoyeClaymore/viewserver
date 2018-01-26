@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
+import { merge } from 'lodash';
 
-
-const selectProduct = ({history, context, product}) => {
-  context.setState({selectedProduct: product});
+const onChangeProduct = ({history, context, product}) => {
+  const { orderItem } = context.state;
+  const {productId} = product;
+  context.setState({ selectedProduct: product, orderItem: merge({}, orderItem, {productId}) });
   history.push('/Customer/Checkout/ProductCategoryList');
 };
 
@@ -27,7 +29,7 @@ const ProductListItem = ({history, context, product}) => {
     }
   });
 
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => selectProduct({history, context, product}) } underlayColor={'#EEEEEE'}>
+  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => onChangeProduct({history, context, product}) } underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
       <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
       <View style={{flex: 1}}>

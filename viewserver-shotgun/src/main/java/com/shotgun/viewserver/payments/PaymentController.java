@@ -117,7 +117,7 @@ public class PaymentController {
     }
 
     @ControllerAction(path = "createCharge", isSynchronous = false)
-    public void createCharge(@ActionParam(name = "totalPrice") int totalPrice,
+    public void createCharge(@ActionParam(name = "totalPrice") Double totalPrice,
                              @ActionParam(name = "chargePercentage") int chargePercentage,
                              @ActionParam(name = "paymentId") String paymentId,
                              @ActionParam(name = "customerId") String customerId,

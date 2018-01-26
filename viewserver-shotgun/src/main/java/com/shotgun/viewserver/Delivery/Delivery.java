@@ -1,7 +1,6 @@
 package com.shotgun.viewserver.delivery;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.joda.time.DateTime;
 
 import java.util.Date;
 
@@ -9,7 +8,10 @@ import java.util.Date;
 public class Delivery {
     private String deliveryId;
     private String driverId;
-    private Date eta;
+    private Date from;
+    private Date till;
+    private int distance;
+    private int duration;
     private int noRequiredForOffload;
     private String vehicleTypeId;
     private DeliveryAddress origin;
@@ -18,20 +20,36 @@ public class Delivery {
     public Delivery() {
     }
 
-    public Date getEta() {
-        return eta;
+    public Date getFrom() {
+        return from;
     }
 
-    public void setEta(Date eta) {
-        this.eta = eta;
+    public Date getTill() {
+        return till;
     }
 
-    public int getNoRequiredForOffload() {
-        return noRequiredForOffload;
+    public int getDistance() {
+        return distance;
     }
 
-    public void setNoRequiredForOffload(int noRequiredForOffload) {
-        this.noRequiredForOffload = noRequiredForOffload;
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setTill(Date till) {
+        this.till = till;
+    }
+
+    public void setFrom(Date from) {
+        this.from = from;
     }
 
     public String getVehicleTypeId() {

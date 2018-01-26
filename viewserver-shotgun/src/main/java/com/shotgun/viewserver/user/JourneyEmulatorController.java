@@ -25,8 +25,6 @@ import java.util.LinkedHashMap;
 @Controller(name = "journeyEmulatorController")
 public class JourneyEmulatorController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
-    private PaymentController paymentController;
-    private MessagingController messagingController;
     private MapsController mapsController;
 
     public JourneyEmulatorController(MapsController mapsController) {
@@ -72,7 +70,7 @@ public class JourneyEmulatorController {
                         locations.add(new LatLng(destLat, destLng));
                     }
 
-                    emulateJourney(emulator, new DirectionRequest(locations, "driving"));
+                    emulateJourney(emulator, new DirectionRequest((LatLng[]) locations.toArray(new LatLng[0]), "driving"));
                 } catch (Exception ex) {
                     log.error("There was a problem emulating this journey", ex);
                 }
@@ -89,6 +87,7 @@ public class JourneyEmulatorController {
         HashMap<String, Object> directions = mapsController.mapDirectionRequest(directionsRequest);
 
         try {
+            System.out.println("Path is - " + System.getenv("PATH"));
             ArrayList<LinkedHashMap> steps = (ArrayList) ((LinkedHashMap) ((ArrayList) ((LinkedHashMap) ((ArrayList) directions.get("routes")).get(0)).get("legs")).get(0)).get("steps");
 
             for (LinkedHashMap step : steps) {

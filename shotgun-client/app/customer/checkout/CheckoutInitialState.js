@@ -1,13 +1,13 @@
 export const INITIAL_STATE = {
   totalPrice: 1000,
   orderItem: {
-    productId: 'PROD_Delivery',
+    productId: undefined,
     notes: undefined,
     imageUrl: undefined,
     imageData: undefined
   },
   delivery: {
-    eta: undefined,
+    from: undefined,
     noRequiredForOffload: 0,
     vehicleTypeId: undefined,
     deliveryId: undefined,
@@ -43,7 +43,7 @@ export const INITIAL_STATE = {
     productId: 'PROD_Disposal',
   },
   delivery: {
-    eta: new Date(),
+    from: new Date(),
     noRequiredForOffload: 0,
     vehicleTypeId: '12323232',
     deliveryId: undefined,
@@ -80,7 +80,7 @@ export const INITIAL_STATE = {
     productId: 'PROD_Delivery',
   },
   delivery: {
-    eta: new Date(),
+    from: new Date(),
     noRequiredForOffload: 0,
     vehicleTypeId: 'ef17c21e-77d8-43e0-8091-bc2f9fe8e327',
     deliveryId: undefined,

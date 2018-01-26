@@ -60,8 +60,27 @@ export default class OrderSummaryDao{
         notes: orderSummary.notes,
         imageUrl: orderSummary.imageUrl,
       },
+      product: {
+        productId: orderSummary.productProductId,
+        name: orderSummary.productName
+      },
+      contentType: {
+        contentTypeId: orderSummary.contentTypeContentTypeId,
+        name: orderSummary.contentTypeName,
+        origin: orderSummary.contentTypeOrigin,
+        destination: orderSummary.contentTypeDestination,
+        noPeople: orderSummary.contentTypeNoPeople,
+        fromTime: orderSummary.contentTypeFromTime,
+        tillTime: orderSummary.contentTypeTillTime,
+        noItems: orderSummary.contentTypeNoItems,
+        hasVehicle: orderSummary.contentTypeHasVehicle,
+        rootProductCategory: orderSummary.contentTypeRootProductCategory,
+        pricingStrategy: orderSummary.contentTypePricingStrategy,
+        defaultProductId: orderSummary.defaultProductId,
+      },
       delivery: {
-        eta: orderSummary.eta,
+        from: orderSummary.from,
+        till: orderSummary.till,
         noRequiredForOffload: orderSummary.noRequiredForOffload,
         vehicleTypeId: orderSummary.vehicleTypeId,
         deliveryId: orderSummary.deliveryId,
@@ -93,6 +112,7 @@ export default class OrderSummaryDao{
           latitude: orderSummary.destinationLatitude,
           longitude: orderSummary.destinationLongitude
         }
+        
       },
       payment: {
         paymentId: orderSummary.paymentId

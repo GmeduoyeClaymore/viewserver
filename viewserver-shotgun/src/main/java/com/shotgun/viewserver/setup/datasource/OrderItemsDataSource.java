@@ -29,6 +29,7 @@ public class OrderItemsDataSource {
                         .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("orderItemId", "orderItemId", ColumnType.String),
+                                        new Column("contentTypeId", "contentTypeId", ColumnType.Int),
                                         new Column("orderId", "orderId", ColumnType.String),
                                         new Column("userId", "userId", ColumnType.String),
                                         new Column("productId", "productId", ColumnType.String),

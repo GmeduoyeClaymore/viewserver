@@ -38,7 +38,6 @@ public abstract class BaseRecordWrapper implements IRecord {
     }
 
     public String[] getColumnNames() {
-
         List<Column> columns = dataSource.getSchema().getColumns();
         String[] columnNames = new String[columns.size()];
         int i = 0;

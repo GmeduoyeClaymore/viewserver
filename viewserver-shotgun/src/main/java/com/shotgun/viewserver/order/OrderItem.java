@@ -8,8 +8,17 @@ public class OrderItem{
     private String imageUrl;
     private String imageData;
     private int quantity;
+    private int contentTypeId;
 
     public OrderItem() {
+    }
+
+    public int getContentTypeId() {
+        return contentTypeId;
+    }
+
+    public void setContentTypeId(int contentTypeId) {
+        this.contentTypeId = contentTypeId;
     }
 
     public String getProductId() {

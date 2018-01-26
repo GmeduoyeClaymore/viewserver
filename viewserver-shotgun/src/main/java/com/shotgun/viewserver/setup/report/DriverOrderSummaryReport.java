@@ -32,10 +32,24 @@ public class DriverOrderSummaryReport {
                                         .withRightJoinColumns("orderId")
                                         .withConnection("customerJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
+                                new JoinNode("productJoin")
+                                        .withLeftJoinColumns("productId")
+                                        .withRightJoinColumns("productId")
+                                        .withColumnPrefixes("", "product_")
+                                        .withAlwaysResolveNames()
+                                        .withConnection("orderItemsJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
+                                new JoinNode("contentTypeJoin")
+                                        .withLeftJoinColumns("contentTypeId")
+                                        .withRightJoinColumns("contentTypeId")
+                                        .withAlwaysResolveNames()
+                                        .withColumnPrefixes("", "contentType_")
+                                        .withConnection("productJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("deliveryJoin")
                                         .withLeftJoinColumns("deliveryId")
                                         .withRightJoinColumns("deliveryId")
-                                        .withConnection("orderItemsJoin", Constants.OUT, "left")
+                                        .withConnection("contentTypeJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("driverIdFilter")
                                         .withExpression("if(\"{userId}\" != \"\", driverId == \"{userId}\", orderId != null)")
@@ -72,7 +86,22 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("created"),
-                                                new IProjectionConfig.ProjectionColumn("eta"),
+                                                new IProjectionConfig.ProjectionColumn("from"),
+                                                new IProjectionConfig.ProjectionColumn("till"),
+                                                new IProjectionConfig.ProjectionColumn("product_productId", "productProductId"),
+                                                new IProjectionConfig.ProjectionColumn("product_name", "productName"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_contentTypeId", "contentTypeContentTypeId"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_name", "contentTypeName"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_origin", "contentTypeOrigin"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_destination", "contentTypeDestination"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_noPeople", "contentTypeNoPeople"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_fromTime", "contentTypeFromTime"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_tillTime", "contentTypeTillTime"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_noItems", "contentTypeNoItems"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_hasVehicle", "contentTypeHasVehicle"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_pricingStrategy", "contentTypePricingStrategy"),
+                                                new IProjectionConfig.ProjectionColumn("contentType_defaultProductId", "defaultProductId"),
                                                 new IProjectionConfig.ProjectionColumn("origin_flatNumber", "originFlatNumber"),
                                                 new IProjectionConfig.ProjectionColumn("origin_line1", "originLine1"),
                                                 new IProjectionConfig.ProjectionColumn("origin_city", "originCity"),

@@ -22,6 +22,10 @@ export default class ProductDaoContext{
     return 'productDao';
   }
 
+  getDataFrequency(){
+    return 50;
+  }
+
   createDataSink(){
     return new RxDataSink();
   }

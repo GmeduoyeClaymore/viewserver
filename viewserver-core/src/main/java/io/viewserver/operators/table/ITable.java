@@ -22,6 +22,9 @@ import io.viewserver.operators.IOutput;
  * Created by nick on 12/02/2015.
  */
 public interface ITable {
+
+    String getName();
+
     int addRow(ITableRowUpdater updater);
 
     void updateRow(int row, ITableRowUpdater updater);

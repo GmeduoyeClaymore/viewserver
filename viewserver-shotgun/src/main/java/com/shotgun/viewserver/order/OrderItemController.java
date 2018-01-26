@@ -26,7 +26,6 @@ public class OrderItemController {
         KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
         String newOrderItemId = ControllerUtils.generateGuid();
 
-
         //save image if required
         if(orderItem.getImageData() != null){
             String fileName = BucketNames.orderImages + "/" + ControllerUtils.generateGuid() + ".jpg";
@@ -41,6 +40,7 @@ public class OrderItemController {
             row.setString("userId", userId);
             row.setString("orderId", orderItem.getOrderId());
             row.setString("productId", orderItem.getProductId());
+            row.setInt("contentTypeId", orderItem.getContentTypeId());
             row.setString("notes", orderItem.getNotes());
             row.setString("imageUrl", orderItem.getImageUrl());
             row.setInt("quantity", orderItem.getQuantity());

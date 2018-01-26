@@ -12,6 +12,9 @@ export const getDaoState = (state, path, daoName) => {
 export const getDaoOptions = (state, daoName) => {
   return state.getIn(['dao', daoName, 'options']);
 };
+export const getDaoSize = (state, daoName) => {
+  return state.getIn(['dao', daoName, 'size']);
+};
 
 export const getAllDaos = (state) => {
   return state.getIn(['dao']);

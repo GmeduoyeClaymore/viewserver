@@ -4,7 +4,6 @@ import {Text, List, ListItem, Icon, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import LoadingScreen from 'common/components/LoadingScreen';
-import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
@@ -14,52 +13,73 @@ class OrderSummary extends Component{
     super();
   }
 
-  render() {
+
+  renderVehicleType(){
+    const {busy, selectedVehicleType} = this.props;
+    return  busy ? <LoadingScreen text="Loading Vehicle Types" /> : <ListItem padded><Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text></ListItem>;
+  }
+
+  renderProduct(){
+    const {product} = this.props;
+    return product ? <ListItem padded>
+      <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
+      <Text key='text'>{`${product.name}`}</Text>
+    </ListItem> : null;
+  }
+
+  renderMap(){
     const { width } = Dimensions.get('window');
-    const {orderItem, delivery, client, busy, selectedVehicleType} = this.props;
-    const {noRequiredForOffload, origin, destination} = delivery;
+    const {delivery = {}, client} = this.props;
+    const {origin, destination} = delivery;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;
-    const isDelivery = orderItem.productId == Products.DELIVERY;
+    return <ListItem style={styles.mapListItem}>
+      <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
+    </ListItem>;
+  }
 
+  renderDelivery(){
+    const {delivery, contentType} = this.props;
+    const {origin, destination} = delivery;
+    return <ListItem padded>
+      <Grid>
+        {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
+        {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
+        {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+      </Grid>
+    </ListItem>;
+  }
+
+  renderItemDetails(){
+    const {orderItem} = this.props;
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
+    return <ListItem padded style={{borderBottomWidth: 0}}>
+      <Grid>
+        <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
+        <Row><Text>{orderItem.notes}</Text></Row>
+        {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: orderItem.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
+      </Grid>
+    </ListItem>;
+  }
 
-    return busy ? <LoadingScreen text="Loading Vehicle Types" /> : <List>
-      <ListItem style={styles.mapListItem}>
-        <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
-      </ListItem>
-
-      <ListItem padded>
-        <Grid>
-          <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-          {isDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
-          {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
-        </Grid>
-      </ListItem>
-
-      <ListItem padded>
-        <Icon paddedIcon name="time"/><Text>{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text>
-      </ListItem>
-
-      {delivery.noRequiredForOffload > 0 ? <ListItem padded>
-        <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noRequiredForOffload} people required`}</Text>
+  render() {
+    const {orderItem, delivery, contentType} = this.props;
+    const {quantity: noPeople} = orderItem;
+    
+    return <List>
+      {this.renderMap()}
+      {this.renderDelivery()}
+      {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {contentType.noPeople && noPeople ? <ListItem padded>
+        <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noPeople} people required`}</Text>
       </ListItem> : null}
-
-      {selectedVehicleType ? <ListItem padded>
-        <Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text>
-      </ListItem> : null}
-
-      <ListItem padded style={{borderBottomWidth: 0}}>
-        <Grid>
-          <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
-          <Row><Text>{orderItem.notes}</Text></Row>
-          {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: orderItem.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
-        </Grid>
-      </ListItem>
+      {contentType.hasVehicle ? this.renderVehicleType() : null}
+      {this.renderProduct()}
+      {this.renderItemDetails()}
     </List>;
   }
 }
-
 
 const mapStateToProps = (state, initialProps) => {
   const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao') || [];
@@ -68,8 +88,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     selectedVehicleType,
-    busy: isAnyOperationPending(state, [{ vehicleTypeDao: 'vehicleTypes' }]) || !selectedVehicleType,
-  };
+    busy: isAnyOperationPending(state, [{ vehicleTypeDao: 'vehicleTypes' }]) || !selectedVehicleType  };
 };
 
 export default connect(
@@ -82,6 +101,12 @@ const styles = {
     justifyContent: 'center',
     borderBottomWidth: 0,
     marginTop: 20
+  },
+  picture: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    marginRight: 8
   },
   image: {
     aspectRatio: 1.2,

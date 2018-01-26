@@ -15,7 +15,7 @@ const DriverOrders = ({history, isCompleted, userId}) => {
 
   const reportOptions = {
     isCompleted: isCompleted ? OrderStatuses.COMPLETED : 'INCOMPLETE',
-    columnsToSort: [{ name: 'eta', direction: 'asc' }],
+    columnsToSort: [{ name: 'from', direction: 'asc' }],
     orderId: undefined,
     userId,
     reportId: 'driverOrderSummary'};

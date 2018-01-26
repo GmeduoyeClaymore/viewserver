@@ -1,238 +1,249 @@
 productId,name,description,categoryId,price
-6YDSkip,6 Yard Skip,4.6 m3,2Skips,210
-8YDSkip,8 Yard Skip,6.1 m3,2Skips,230
-10YDSkip,10 Yard Skip,7.3 m3,2Skips,250
-12YDSkip,12 Yard Skip,9.2 m3,2Skips,280
-GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",3Grab,300
-20YardCage,20 Yard cage,"20-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,200
-10YardCage,10 Yard cage,"10-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",4Cage,180
-75TonneTipper,7.5 tonne tipper,multi-use vehicle for either waste or material. It?s a 6-yard body or can be loaded with 5 tonnes of material. ,4Cage,150
-LadderDouble12ft,Ladder Double 12 ft,,2AccessLadder,10
-LadderTriple11ft,Ladder Triple 11ft,,2AccessLadder,14
-LadderTriple17ft,Ladder Triple 17ft,,2AccessLadder,20
-LadderRoof,Ladder Roof,,2AccessLadder,10
-LadderStay,Ladder Stay,,2AccessLadder,2.5
-Stepladder6ft(8tread),Stepladder 6ft (8 tread),,3StepLadder,4
-Stepladder8ft(10tread),Stepladder 8ft (10 tread),,3StepLadder,5
-Stepladder9ft(12tread),Stepladder 9ft (12 tread),,3StepLadder,6
-Stepladder10ft(14tread),Stepladder 10ft (14 tread),,3StepLadder,8
-LadderCombination(9tread),Ladder Combination (9 tread),,3LadderCombination,14
-StepladderPodium,Stepladder Podium,,3StepLadder,13
-StepladderFibreGlass6ft,Stepladder Fibre Glass 6ft,,3StepLadder,5
-StepladderFibreGlass8ft,Stepladder Fibre Glass 8ft,,3StepLadder,7
+PROD_Delivery,Delivery,,1Delivery,100
+6YDSkip,6 Yard Skip,4.6 m3,2Skips,21000
+8YDSkip,8 Yard Skip,6.1 m3,2Skips,23000
+10YDSkip,10 Yard Skip,7.3 m3,2Skips,25000
+12YDSkip,12 Yard Skip,9.2 m3,2Skips,28000
+GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",2Grab,30000
+20YardCage,20 Yard cage,"20-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",2Cage,20000
+10YardCage,10 Yard cage,"10-yard cage vehicle is great for Bulky Light Waste, Like Furniture or Insulation it gives you the flexibility if you are unsure on how much waste you have",2Cage,18000
+75TonneTipper,7.5 tonne tipper,multi-use vehicle for either waste or material. It?s a 6-yard body or can be loaded with 5 tonnes of material. ,2Cage,15000
+LadderDouble12ft,Ladder Double 12 ft,,2AccessLadder,1000
+LadderTriple11ft,Ladder Triple 11ft,,2AccessLadder,1400
+LadderTriple17ft,Ladder Triple 17ft,,2AccessLadder,2000
+LadderRoof,Ladder Roof,,2AccessLadder,1000
+LadderStay,Ladder Stay,,2AccessLadder,250
+Stepladder6ft(8tread),Stepladder 6ft (8 tread),,3StepLadder,400
+Stepladder8ft(10tread),Stepladder 8ft (10 tread),,3StepLadder,500
+Stepladder9ft(12tread),Stepladder 9ft (12 tread),,3StepLadder,600
+Stepladder10ft(14tread),Stepladder 10ft (14 tread),,3StepLadder,800
+LadderCombination(9tread),Ladder Combination (9 tread),,3LadderCombination,1400
+StepladderPodium,Stepladder Podium,,3StepLadder,1300
+StepladderFibreGlass6ft,Stepladder Fibre Glass 6ft,,3StepLadder,500
+StepladderFibreGlass8ft,Stepladder Fibre Glass 8ft,,3StepLadder,700
 ScaffoldBoard8/10/13ft,Scaffold Board 8/10/13ft,,3Staging,0
 TowerAluminium,Tower Aluminium,,3Staging,0
 TrestleBandstand,Trestle Bandstand,,3Staging,0
-Staging12ft,Staging 12ft,,3Staging,6
-Staging14ft,Staging 14ft,,3Staging,7
-Staging16ft,Staging 16ft,,3Staging,8
-LadderDouble15ft,Ladder Double 15 ft,,2AccessLadder,12
-Stepladder4ft(6tread),Stepladder 4ft (6 tread),,3StepLadder,4
-LadderTriple8ft,Ladder Triple 8 ft,,2AccessLadder,12
-LadderCombination(10tread),Ladder Combination (10 tread),,3LadderCombination,16
-LadderCombination(14tread),Ladder Combination (14 tread),,3LadderCombination,18
-DrillHammer110v(2speed),Drill Hammer 110v (2 speed),,3Drill,6.5
-DrillBench240v,Drill Bench 240v,,3Drill,8
-DrillCordless,Drill Cordless,,3Drill,10
-DrillDiamond110v,Drill Diamond 110v,,3Drill,12
-DrillRightAngle110v,Drill Right Angle 110v,,3Drill,14
-DrillSDS110v,Drill SDS 110v,,3Drill,10
-DrillPlasterers110v,Drill Plasterers 110v,,3Drill,12
-BreakerHeavy110v,Breaker Heavy 110v,,3Breaker,22
-BreakerMedium110v,Breaker Medium 110v,,3Breaker,16
-CoreDrillTungsten,Core Drill Tungsten,,3CoreDrill,8.5
-CoreDrillDiamond22mm,Core Drill Diamond 22mm,,3CoreDrill,4.5
-CoreDrillDiamond25mm,Core Drill Diamond 25mm,,3CoreDrill,4.5
-CoreDrillDiamond35mm,Core Drill Diamond 35mm,,3CoreDrill,6.5
-CoreDrillDiamond50mm,Core Drill Diamond 50mm,,3CoreDrill,7.5
-CoreDrillDiamond65mm,Core Drill Diamond 65mm,,3CoreDrill,7.5
-CoreDrillDiamond76mm,Core Drill Diamond 76mm,,3CoreDrill,8.5
-CoreDrillDiamond102mm,Core Drill Diamond 102mm,,3CoreDrill,10
-CoreDrillDiamond127mm,Core Drill Diamond 127mm,,3CoreDrill,10
-CoreDrillDiamond152mm,Core Drill Diamond 152mm,,3CoreDrill,11.5
-DrillMagnetic110v12-50mm,Drill Magnetic 110v 12-50mm,,3Drill,30
-BreakerHydraulic,Breaker Hydraulic,,3Breaker,40
-SDSMaxDrill/Breaker,SDS Max Drill/Breaker,,3Breaker,14
+Staging12ft,Staging 12ft,,3Staging,600
+Staging14ft,Staging 14ft,,3Staging,700
+Staging16ft,Staging 16ft,,3Staging,800
+LadderDouble15ft,Ladder Double 15 ft,,2AccessLadder,1200
+Stepladder4ft(6tread),Stepladder 4ft (6 tread),,3StepLadder,400
+LadderTriple8ft,Ladder Triple 8 ft,,2AccessLadder,1200
+LadderCombination(10tread),Ladder Combination (10 tread),,3LadderCombination,1600
+LadderCombination(14tread),Ladder Combination (14 tread),,3LadderCombination,1800
+DrillHammer110v(2speed),Drill Hammer 110v (2 speed),,3Drill,650
+DrillBench240v,Drill Bench 240v,,3Drill,800
+DrillCordless,Drill Cordless,,3Drill,1000
+DrillDiamond110v,Drill Diamond 110v,,3Drill,1200
+DrillRightAngle110v,Drill Right Angle 110v,,3Drill,1400
+DrillSDS110v,Drill SDS 110v,,3Drill,1000
+DrillPlasterers110v,Drill Plasterers 110v,,3Drill,1200
+BreakerHeavy110v,Breaker Heavy 110v,,3Breaker,2200
+BreakerMedium110v,Breaker Medium 110v,,3Breaker,1600
+CoreDrillTungsten,Core Drill Tungsten,,3CoreDrill,850
+CoreDrillDiamond22mm,Core Drill Diamond 22mm,,3CoreDrill,450
+CoreDrillDiamond25mm,Core Drill Diamond 25mm,,3CoreDrill,450
+CoreDrillDiamond35mm,Core Drill Diamond 35mm,,3CoreDrill,650
+CoreDrillDiamond50mm,Core Drill Diamond 50mm,,3CoreDrill,750
+CoreDrillDiamond65mm,Core Drill Diamond 65mm,,3CoreDrill,750
+CoreDrillDiamond76mm,Core Drill Diamond 76mm,,3CoreDrill,850
+CoreDrillDiamond102mm,Core Drill Diamond 102mm,,3CoreDrill,1000
+CoreDrillDiamond127mm,Core Drill Diamond 127mm,,3CoreDrill,1000
+CoreDrillDiamond152mm,Core Drill Diamond 152mm,,3CoreDrill,1150
+DrillMagnetic110v12-50mm,Drill Magnetic 110v 12-50mm,,3Drill,3000
+BreakerHydraulic,Breaker Hydraulic,,3Breaker,4000
+SDSMaxDrill/Breaker,SDS Max Drill/Breaker,,3Breaker,1400
 Acrow0,Acrow 0,,2BuildingSiteworks,0
 Acrow3/4,Acrow 3/4,,2BuildingSiteworks,0
 Strongboy,Strongboy,,2BuildingSiteworks,0
-BitumenBoiler,Bitumen Boiler,,2BuildingSiteworks,15
-DampMeter,Damp Meter,,2BuildingSiteworks,8
-DampProofingInjector110v,Damp Proofing Injector 110v,,2BuildingSiteworks,24
+BitumenBoiler,Bitumen Boiler,,2BuildingSiteworks,1500
+DampMeter,Damp Meter,,2BuildingSiteworks,800
+DampProofingInjector110v,Damp Proofing Injector 110v,,2BuildingSiteworks,2400
 RubbishChute(persection),Rubbish Chute (per section),,2BuildingSiteworks,0
-SiteSafe,Site Safe,,2BuildingSiteworks,9
-Transformer1.5-3kVa,Transformer 1.5-3 kVa,,2BuildingSiteworks,3
-Transformer5kVa,Transformer 5 kVa,,2BuildingSiteworks,6
-Transformer10kVa(site),Transformer 10 kVa (site),,2BuildingSiteworks,10
+SiteSafe,Site Safe,,2BuildingSiteworks,900
+Transformer1.5-3kVa,Transformer 1.5-3 kVa,,2BuildingSiteworks,300
+Transformer5kVa,Transformer 5 kVa,,2BuildingSiteworks,600
+Transformer10kVa(site),Transformer 10 kVa (site),,2BuildingSiteworks,1000
 Barriers(per2msection),Barriers (per 2m section),,2BuildingSiteworks,0
 Acrow1/2,Acrow 1/2,,2BuildingSiteworks,0
-CarpetCleaner,Carpet Cleaner,,2CleaningFloorcare,19
-CarpetStretcher,Carpet Stretcher,,2CleaningFloorcare,4
-FloorPolisher240v,Floor Polisher 240v,,2CleaningFloorcare,15
-FumeExtractor110v,Fume Extractor 110v,,2CleaningFloorcare,35
-PressureWasher240v1500psi,Pressure Washer 240v 1500 psi,,2CleaningFloorcare,15
-PressureWasher240v2500psi,Pressure Washer 240v 2500 psi,,2CleaningFloorcare,21
-VacuumCleanerIndustrial240v,Vacuum Cleaner Industrial 240v,,2CleaningFloorcare,14
-VacuumCleanerHenry240v,Vacuum Cleaner Henry 240v,,2CleaningFloorcare,9
-FloorTileRemover,Floor Tile Remover,,2CleaningFloorcare,24
-CementMixer240v,Cement Mixer 240v,,2ConcretePreparation,9
-CementMixer110v,Cement Mixer 110v,,2ConcretePreparation,9
-CompactorLight,Compactor Light,,2ConcretePreparation,20
-EasyFloatConcreteFinisher,Easy Float Concrete Finisher,,2ConcretePreparation,10
-NeedleGun110v,Needle Gun 110v,,2ConcretePreparation,23
-PokerVibrator110v,Poker Vibrator 110v,,2ConcretePreparation,20
-ConcreteTestMould,Concrete Test Mould,,2ConcretePreparation,6
-GardenAerator,Garden Aerator,,3HandTools,3.5
-GardenHedgeTrimmer240v,Garden Hedge Trimmer 240v,,4TrimmersAndStrimmers,9
-KnapsackSprayer,Knapsack Sprayer,,3HandTools,7
-LawnmowerElectric240v,Lawnmower Electric 240v,,3LawnMowers,10
-LawnmowerPetrol,Lawnmower Petrol,,3LawnMowers,12
-LeafBlowerVacuum240v,Leaf Blower Vacuum 240v,,3RotovatorsBlowers,7
-PostHoleBorer,Post Hole Borer,,3HandTools,6
-GardenPruner,Garden Pruner,,3HandTools,5.5
-GardenRoller(waterfilled),Garden Roller (water filled),,3HandTools,6
-GardenRotovator5hp,Garden Rotovator 5 hp,,3RotovatorsBlowers,30
-GardenShoveHoler,Garden Shove Holer,,3HandTools,6
-GardenShredderPetrol5HP,Garden Shredder Petrol 5 HP,,4TrimmersAndStrimmers,38
-GardenStrimmerPetrol,Garden Strimmer Petrol,,4TrimmersAndStrimmers,17.5
-TurfCutter,Turf Cutter,,3HandTools,34
-GardenFellingAxe,Garden Felling Axe,,3HandTools,2.5
-GardenGrassRake,Garden Grass Rake,,3HandTools,2.5
-GardenLeafRake,Garden Leaf Rake,,3HandTools,2.5
-GardenShears,Garden Shears,,3HandTools,2.5
-GardenSpade,Garden Spade,,3HandTools,2.5
-GardenHoe,Garden Hoe,,3HandTools,2.5
-GardenAeratorRotary,Garden Aerator Rotary,,3HandTools,4.5
-LawnmowerPetrolSelf-Propelled,Lawnmower Petrol Self-Propelled,,3LawnMowers,24
-LeafBlower(petrol)(fuelextra),Leaf Blower (petrol) (fuel extra),,3RotovatorsBlowers,15
-GardenRotovator8hp,Garden Rotovator 8 hp,,3RotovatorsBlowers,40
-GardenHedgeTrimmer(2stroke),Garden Hedge Trimmer (2 stroke),,4TrimmersAndStrimmers,20
-GardenHedgeTrimmer(LongReach),Garden Hedge Trimmer (Long Reach),,4TrimmersAndStrimmers,25
-DehumidifierSmall,Dehumidifier Small,,2HeatingDrying,19
-DehumidifierLarge,Dehumidifier Large,,2HeatingDrying,24
-Fan240v,Fan 240v,,2HeatingDrying,7.5
-HeaterCeramic,Heater Ceramic,,2HeatingDrying,10
-HeaterElectricFan240v2kW,Heater Electric Fan 240v 2 kW,,2HeatingDrying,16
-HeaterElectricTube240v1.5kW,Heater Electric Tube 240v 1.5 kW,,2HeatingDrying,10
-HeaterInfraRed,Heater Infra Red,,2HeatingDrying,12.5
-HeaterSpaceLarge,Heater Space Large,,2HeatingDrying,24
-HeaterSpaceSmall,Heater Space Small,,2HeatingDrying,19
-BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,12.5
-BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,15
-PalletTruck,Pallet Truck,,2LiftingHandling,16
-GinWheel,Gin Wheel,,2LiftingHandling,4.5
-SackBarrow,Sack Barrow,,2LiftingHandling,4
-SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,8
-PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,25
-GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,50
-BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,12.5
-BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,15
-PalletTruck,Pallet Truck,,2LiftingHandling,16
-GinWheel,Gin Wheel,,2LiftingHandling,4.5
-SackBarrow,Sack Barrow,,2LiftingHandling,4
-SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,8
-PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,25
-GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,50
-BlowLampSingle,Blow Lamp Single,,2PaintingDecorating,5
-BlowLampDouble,Blow Lamp Double,,2PaintingDecorating,8
-HotAirGun240v,Hot Air Gun 240v,,2PaintingDecorating,6
-PasteTable,Paste Table,,2PaintingDecorating,2.5
-TyroleanGun,Tyrolean Gun,,2PaintingDecorating,10
-WallpaperStripper240v,Wallpaper Stripper 240v,,2PaintingDecorating,10
-WallpaperPerforator,Wallpaper Perforator,,2PaintingDecorating,2.5
-TexturedSurfaceRemover,Textured Surface Remover,,2PaintingDecorating,16
-PaintSprayer(Airless)110v,Paint Sprayer (Airless) 110v,,2PaintingDecorating,75
-CentralHeatingFlusher110v,Central Heating Flusher 110v,,2PlumbingPumping,38
-DrainClearer110v,Drain Clearer 110v,,2PlumbingPumping,21
+CarpetCleaner,Carpet Cleaner,,2CleaningFloorcare,1900
+CarpetStretcher,Carpet Stretcher,,2CleaningFloorcare,400
+FloorPolisher240v,Floor Polisher 240v,,2CleaningFloorcare,1500
+FumeExtractor110v,Fume Extractor 110v,,2CleaningFloorcare,3500
+PressureWasher240v1500psi,Pressure Washer 240v 1500 psi,,2CleaningFloorcare,1500
+PressureWasher240v2500psi,Pressure Washer 240v 2500 psi,,2CleaningFloorcare,2100
+VacuumCleanerIndustrial240v,Vacuum Cleaner Industrial 240v,,2CleaningFloorcare,1400
+VacuumCleanerHenry240v,Vacuum Cleaner Henry 240v,,2CleaningFloorcare,900
+FloorTileRemover,Floor Tile Remover,,2CleaningFloorcare,2400
+CementMixer240v,Cement Mixer 240v,,2ConcretePreparation,900
+CementMixer110v,Cement Mixer 110v,,2ConcretePreparation,900
+CompactorLight,Compactor Light,,2ConcretePreparation,2000
+EasyFloatConcreteFinisher,Easy Float Concrete Finisher,,2ConcretePreparation,1000
+NeedleGun110v,Needle Gun 110v,,2ConcretePreparation,2300
+PokerVibrator110v,Poker Vibrator 110v,,2ConcretePreparation,2000
+ConcreteTestMould,Concrete Test Mould,,2ConcretePreparation,600
+GardenAerator,Garden Aerator,,3HandTools,350
+GardenHedgeTrimmer240v,Garden Hedge Trimmer 240v,,4TrimmersAndStrimmers,900
+KnapsackSprayer,Knapsack Sprayer,,3HandTools,700
+LawnmowerElectric240v,Lawnmower Electric 240v,,3LawnMowers,1000
+LawnmowerPetrol,Lawnmower Petrol,,3LawnMowers,1200
+LeafBlowerVacuum240v,Leaf Blower Vacuum 240v,,3RotovatorsBlowers,700
+PostHoleBorer,Post Hole Borer,,3HandTools,600
+GardenPruner,Garden Pruner,,3HandTools,550
+GardenRoller(waterfilled),Garden Roller (water filled),,3HandTools,600
+GardenRotovator5hp,Garden Rotovator 5 hp,,3RotovatorsBlowers,3000
+GardenShoveHoler,Garden Shove Holer,,3HandTools,600
+GardenShredderPetrol5HP,Garden Shredder Petrol 5 HP,,4TrimmersAndStrimmers,3800
+GardenStrimmerPetrol,Garden Strimmer Petrol,,4TrimmersAndStrimmers,1750
+TurfCutter,Turf Cutter,,3HandTools,3400
+GardenFellingAxe,Garden Felling Axe,,3HandTools,250
+GardenGrassRake,Garden Grass Rake,,3HandTools,250
+GardenLeafRake,Garden Leaf Rake,,3HandTools,250
+GardenShears,Garden Shears,,3HandTools,250
+GardenSpade,Garden Spade,,3HandTools,250
+GardenHoe,Garden Hoe,,3HandTools,250
+GardenAeratorRotary,Garden Aerator Rotary,,3HandTools,450
+LawnmowerPetrolSelf-Propelled,Lawnmower Petrol Self-Propelled,,3LawnMowers,2400
+LeafBlower(petrol)(fuelextra),Leaf Blower (petrol) (fuel extra),,3RotovatorsBlowers,1500
+GardenRotovator8hp,Garden Rotovator 8 hp,,3RotovatorsBlowers,4000
+GardenHedgeTrimmer(2stroke),Garden Hedge Trimmer (2 stroke),,4TrimmersAndStrimmers,2000
+GardenHedgeTrimmer(LongReach),Garden Hedge Trimmer (Long Reach),,4TrimmersAndStrimmers,2500
+DehumidifierSmall,Dehumidifier Small,,2HeatingDrying,1900
+DehumidifierLarge,Dehumidifier Large,,2HeatingDrying,2400
+Fan240v,Fan 240v,,2HeatingDrying,750
+HeaterCeramic,Heater Ceramic,,2HeatingDrying,1000
+HeaterElectricFan240v2kW,Heater Electric Fan 240v 2 kW,,2HeatingDrying,1600
+HeaterElectricTube240v1.5kW,Heater Electric Tube 240v 1.5 kW,,2HeatingDrying,1000
+HeaterInfraRed,Heater Infra Red,,2HeatingDrying,1250
+HeaterSpaceLarge,Heater Space Large,,2HeatingDrying,2400
+HeaterSpaceSmall,Heater Space Small,,2HeatingDrying,1900
+BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,1250
+BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,1500
+PalletTruck,Pallet Truck,,2LiftingHandling,1600
+GinWheel,Gin Wheel,,2LiftingHandling,450
+SackBarrow,Sack Barrow,,2LiftingHandling,400
+SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,800
+PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,2500
+GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,5000
+BlockandTackle1ton/5m,Block and Tackle 1 ton/5 m,,2LiftingHandling,1250
+BlockandTackle2ton/8m,Block and Tackle 2 ton/8 m,,2LiftingHandling,1500
+PalletTruck,Pallet Truck,,2LiftingHandling,1600
+GinWheel,Gin Wheel,,2LiftingHandling,450
+SackBarrow,Sack Barrow,,2LiftingHandling,400
+SackBarrowStaircase,Sack Barrow Staircase,,2LiftingHandling,800
+PlasterboardLifter,Plasterboard Lifter,,2LiftingHandling,2500
+GenieLiftSLA103m454kg,Genie Lift SLA10 3m 454kg,,2LiftingHandling,5000
+BlowLampSingle,Blow Lamp Single,,2PaintingDecorating,500
+BlowLampDouble,Blow Lamp Double,,2PaintingDecorating,800
+HotAirGun240v,Hot Air Gun 240v,,2PaintingDecorating,600
+PasteTable,Paste Table,,2PaintingDecorating,250
+TyroleanGun,Tyrolean Gun,,2PaintingDecorating,1000
+WallpaperStripper240v,Wallpaper Stripper 240v,,2PaintingDecorating,1000
+WallpaperPerforator,Wallpaper Perforator,,2PaintingDecorating,250
+TexturedSurfaceRemover,Textured Surface Remover,,2PaintingDecorating,1600
+PaintSprayer(Airless)110v,Paint Sprayer (Airless) 110v,,2PaintingDecorating,7500
+CentralHeatingFlusher110v,Central Heating Flusher 110v,,2PlumbingPumping,3800
+DrainClearer110v,Drain Clearer 110v,,2PlumbingPumping,2100
 DrainPlugs,Drain Plugs,,2PlumbingPumping,0
-DrainRods,Drain Rods,,2PlumbingPumping,4
+DrainRods,Drain Rods,,2PlumbingPumping,400
 DrainAirBag,Drain Air Bag,,2PlumbingPumping,0
 DrainAirPump,Drain Air Pump,,2PlumbingPumping,0
-PipeBender,Pipe Bender,,2PlumbingPumping,10
-PipeStockandDieSet,Pipe Stock and Die Set,,2PlumbingPumping,5.5
-PipeFreezingKit110v,Pipe Freezing Kit 110v,,2PlumbingPumping,24
-WaterPump110v,Water Pump 110v,,2PlumbingPumping,15
-ImpactDriver110v,Impact Driver 110v,,2SandingFixing,10
-ImpulseGunPaslode,Impulse Gun Paslode,,2SandingFixing,19
-Portanailer,Portanailer,,2SandingFixing,11
-ScrewdriverAutofeed110v,Screwdriver Autofeed 110v,,2SandingFixing,16
-Stapler240v,Stapler 240v,,2SandingFixing,9
-SanderBelt4in240v,Sander Belt 4in 240v,,2SandingFixing,13
-SanderDisc7in,Sander Disc 7in,,2SandingFixing,10
-SanderDetail240v,Sander Detail 240v,,2SandingFixing,8
-SanderOrbital4in,Sander Orbital 4in,,2SandingFixing,8
-SanderOrbitalPalm,Sander Orbital Palm,,2SandingFixing,7
-SanderFloor8indrum240v,Sander Floor 8in drum 240v,,2SandingFixing,21
-SanderEdging240v,Sander Edging 240v,,2SandingFixing,15
-SanderOrbitalFloor240v,Sander Orbital Floor 240v,,2SandingFixing,25
-FloorPreparationMachine110v,Floor Preparation Machine 110v,,2SandingFixing,35
-SanderFloor(AdjustableHeight),Sander Floor (Adjustable Height),,2SandingFixing,25
-BiscuitJointer110v,Biscuit Jointer 110v,,3PlanerJointerSplitterRouter,11
-BlockSplitter,Block Splitter,,3PlanerJointerSplitterRouter,17
-GrinderAngle4.5in110v,Grinder Angle 4.5in 110v,,3Grinder,7
-GrinderAngle9in110v,Grinder Angle 9in 110v,,3Grinder,10
-GrinderBench12in110v,Grinder Bench 12in 110v,,3Grinder,12
-GrinderPetrolCutOff12in,Grinder Petrol Cut Off 12in,,3Grinder,20
-PlanerElectric240v,Planer Electric 240v,,3PlanerJointerSplitterRouter,10
-PlanerElectric110v,Planer Electric 110v,,3PlanerJointerSplitterRouter,10
-Router,Router,,3PlanerJointerSplitterRouter,10
-SawChopsaw110v,Saw Chopsaw 110v,,3Saw,21
-SawCircular110v,Saw Circular 110v,,3Saw,11
-SawPlunge/DoorTrimmer110v,Saw Plunge/Door Trimmer 110v,,3Saw,15
-SawFlipsaw110v,Saw Flipsaw 110v,,3Saw,26
-SawJigsaw110v,Saw Jigsaw 110v,,3Saw,9.25
-SawReciprocating110v,Saw Reciprocating 110v,,3Saw,11
-TilesawBench110v,Tilesaw Bench 110v,,3TileCutterSaw,35
-Tilesaw110v,Tilesaw 110v,,3TileCutterSaw,17.5
-TileCutter300mm,Tile Cutter 300mm,,3TileCutterSaw,4
-Tile/StoneSaw110v1000mm(Bench),Tile/Stone Saw 110v 1000mm (Bench),,3TileCutterSaw,60
-PlanerThicknesser110v,Planer Thicknesser 110v,,3PlanerJointerSplitter,28
-TileCutter600mm,Tile Cutter 600mm,,3TileCutterSaw,10
-StoneCutter(marble/granite)110v,Stone Cutter (marble/granite) 110v,,3TileCutterSaw,18
-MasonryBenchSaw110v,Masonry Bench Saw 110v,,3TileCutterSaw,40
-CompoundMitreChopsaw110v,Compound Mitre Chopsaw 110v,,3Saw,26
-ConcretePlaner110v,Concrete Planer 110v,,3PlanerJointerSplitterRouter,20
-TableSawBench,Table Saw Bench,,3Saw,35
-CowleyLevel,Cowley Level,,2SurveyingLocation,10
-DunphyLevel,Dunphy Level,,2SurveyingLocation,24
-LaserLevel,Laser Level,,2SurveyingLocation,10
-WaterLevel,Water Level,,2SurveyingLocation,5
-SpiritLevel,Spirit Level,,2SurveyingLocation,2.5
-LaserLevel(Rotary),Laser Level (Rotary),,2SurveyingLocation,25
-Generator2.5kVa,Generator 2.5 kVa,,2WeldingPower,17.5
-Generator4kVa,Generator 4 kVa,,2WeldingPower,22.5
-WelderMiniMig240v,Welder MiniMig 240v,,2WeldingPower,11
-WelderGenerator,Welder Generator,,2WeldingPower,40
-LightHalogen,Light Halogen,,2Lighting,4.25
-LightFluorescent,Light Fluorescent,,2Lighting,5
-LightStringFestoon,Light String Festoon,,2Lighting,6
-Compressor240v90litre150psi,Compressor 240v 90litre 150psi,,2Miscellaneous,20
-SafetyHarness,Safety Harness,,2Miscellaneous,6
-FloorCramp,Floor Cramp,,2Miscellaneous,5
-SashCramp,Sash Cramp,,2Miscellaneous,3
-ExtensionLead,Extension Lead,,2Miscellaneous,1.8
-ExtensionReel,Extension Reel,,2Miscellaneous,3
-FourWaySplitter110v,Four Way Splitter 110v,,2Miscellaneous,3
-GlassSucker,Glass Sucker,,2Miscellaneous,5
-GullyScoop,Gully Scoop,,2Miscellaneous,5
-LockJig,Lock Jig,,2Miscellaneous,10
-WallChaser110v,Wall Chaser 110v,,2Miscellaneous,20
-Wheelbarrow,Wheelbarrow,,2Miscellaneous,3
-WorktopMitre,Worktop Mitre,,2Miscellaneous,12
-Sledgehammer,Sledgehammer,,2Miscellaneous,2.5
-Shovel,Shovel,,2Miscellaneous,2.5
-PickAxe,Pick Axe,,2Miscellaneous,2.5
-ImmersionSpanner,Immersion Spanner,,2Miscellaneous,2.5
-Crowbar,Crowbar,,2Miscellaneous,2.5
-Tamper,Tamper,,2Miscellaneous,2.5
-Nailbar,Nailbar,,2Miscellaneous,2.5
-SlateRip,Slate Rip,,2Miscellaneous,2.5
-SlateNibbler,Slate Nibbler,,2Miscellaneous,2.5
-FloorSqueegee,Floor Squeegee,,2Miscellaneous,2.5
-Nibbler(Metal)110v,Nibbler (Metal) 110v,,2Miscellaneous,14
-Carpenter,Carpenter,,2Carpenters,150
-GroundWorker,Ground Worker,,2GroundWorkers,150
-Tiler,Tiler,,2Tiler,150
-Painter,Painter,,2Painter,150
-BrickLayer,Brick Layer,,2BrickLayer,150
-Plumber,Plumber,,2Plumber,150
+PipeBender,Pipe Bender,,2PlumbingPumping,1000
+PipeStockandDieSet,Pipe Stock and Die Set,,2PlumbingPumping,550
+PipeFreezingKit110v,Pipe Freezing Kit 110v,,2PlumbingPumping,2400
+WaterPump110v,Water Pump 110v,,2PlumbingPumping,1500
+ImpactDriver110v,Impact Driver 110v,,2SandingFixing,1000
+ImpulseGunPaslode,Impulse Gun Paslode,,2SandingFixing,1900
+Portanailer,Portanailer,,2SandingFixing,1100
+ScrewdriverAutofeed110v,Screwdriver Autofeed 110v,,2SandingFixing,1600
+Stapler240v,Stapler 240v,,2SandingFixing,900
+SanderBelt4in240v,Sander Belt 4in 240v,,2SandingFixing,1300
+SanderDisc7in,Sander Disc 7in,,2SandingFixing,1000
+SanderDetail240v,Sander Detail 240v,,2SandingFixing,800
+SanderOrbital4in,Sander Orbital 4in,,2SandingFixing,800
+SanderOrbitalPalm,Sander Orbital Palm,,2SandingFixing,700
+SanderFloor8indrum240v,Sander Floor 8in drum 240v,,2SandingFixing,2100
+SanderEdging240v,Sander Edging 240v,,2SandingFixing,1500
+SanderOrbitalFloor240v,Sander Orbital Floor 240v,,2SandingFixing,2500
+FloorPreparationMachine110v,Floor Preparation Machine 110v,,2SandingFixing,3500
+SanderFloor(AdjustableHeight),Sander Floor (Adjustable Height),,2SandingFixing,2500
+BiscuitJointer110v,Biscuit Jointer 110v,,3PlanerJointerSplitterRouter,1100
+BlockSplitter,Block Splitter,,3PlanerJointerSplitterRouter,1700
+GrinderAngle4.5in110v,Grinder Angle 4.5in 110v,,3Grinder,700
+GrinderAngle9in110v,Grinder Angle 9in 110v,,3Grinder,1000
+GrinderBench12in110v,Grinder Bench 12in 110v,,3Grinder,1200
+GrinderPetrolCutOff12in,Grinder Petrol Cut Off 12in,,3Grinder,2000
+PlanerElectric240v,Planer Electric 240v,,3PlanerJointerSplitterRouter,1000
+PlanerElectric110v,Planer Electric 110v,,3PlanerJointerSplitterRouter,1000
+Router,Router,,3PlanerJointerSplitterRouter,1000
+SawChopsaw110v,Saw Chopsaw 110v,,3Saw,2100
+SawCircular110v,Saw Circular 110v,,3Saw,1100
+SawPlunge/DoorTrimmer110v,Saw Plunge/Door Trimmer 110v,,3Saw,1500
+SawFlipsaw110v,Saw Flipsaw 110v,,3Saw,2600
+SawJigsaw110v,Saw Jigsaw 110v,,3Saw,925
+SawReciprocating110v,Saw Reciprocating 110v,,3Saw,1100
+TilesawBench110v,Tilesaw Bench 110v,,3TileCutterSaw,3500
+Tilesaw110v,Tilesaw 110v,,3TileCutterSaw,1750
+TileCutter300mm,Tile Cutter 300mm,,3TileCutterSaw,400
+Tile/StoneSaw110v1000mm(Bench),Tile/Stone Saw 110v 1000mm (Bench),,3TileCutterSaw,6000
+PlanerThicknesser110v,Planer Thicknesser 110v,,3PlanerJointerSplitter,2800
+TileCutter600mm,Tile Cutter 600mm,,3TileCutterSaw,1000
+StoneCutter(marble/granite)110v,Stone Cutter (marble/granite) 110v,,3TileCutterSaw,1800
+MasonryBenchSaw110v,Masonry Bench Saw 110v,,3TileCutterSaw,4000
+CompoundMitreChopsaw110v,Compound Mitre Chopsaw 110v,,3Saw,2600
+ConcretePlaner110v,Concrete Planer 110v,,3PlanerJointerSplitterRouter,2000
+TableSawBench,Table Saw Bench,,3Saw,3500
+CowleyLevel,Cowley Level,,2SurveyingLocation,1000
+DunphyLevel,Dunphy Level,,2SurveyingLocation,2400
+LaserLevel,Laser Level,,2SurveyingLocation,1000
+WaterLevel,Water Level,,2SurveyingLocation,500
+SpiritLevel,Spirit Level,,2SurveyingLocation,250
+LaserLevel(Rotary),Laser Level (Rotary),,2SurveyingLocation,2500
+Generator2.5kVa,Generator 2.5 kVa,,2WeldingPower,1750
+Generator4kVa,Generator 4 kVa,,2WeldingPower,2250
+WelderMiniMig240v,Welder MiniMig 240v,,2WeldingPower,1100
+WelderGenerator,Welder Generator,,2WeldingPower,4000
+LightHalogen,Light Halogen,,2Lighting,425
+LightFluorescent,Light Fluorescent,,2Lighting,500
+LightStringFestoon,Light String Festoon,,2Lighting,600
+Compressor240v90litre150psi,Compressor 240v 90litre 150psi,,2Miscellaneous,2000
+SafetyHarness,Safety Harness,,2Miscellaneous,600
+FloorCramp,Floor Cramp,,2Miscellaneous,500
+SashCramp,Sash Cramp,,2Miscellaneous,300
+ExtensionLead,Extension Lead,,2Miscellaneous,180
+ExtensionReel,Extension Reel,,2Miscellaneous,300
+FourWaySplitter110v,Four Way Splitter 110v,,2Miscellaneous,300
+GlassSucker,Glass Sucker,,2Miscellaneous,500
+GullyScoop,Gully Scoop,,2Miscellaneous,500
+LockJig,Lock Jig,,2Miscellaneous,1000
+WallChaser110v,Wall Chaser 110v,,2Miscellaneous,2000
+Wheelbarrow,Wheelbarrow,,2Miscellaneous,300
+WorktopMitre,Worktop Mitre,,2Miscellaneous,1200
+Sledgehammer,Sledgehammer,,2Miscellaneous,250
+Shovel,Shovel,,2Miscellaneous,250
+PickAxe,Pick Axe,,2Miscellaneous,250
+ImmersionSpanner,Immersion Spanner,,2Miscellaneous,250
+Crowbar,Crowbar,,2Miscellaneous,250
+Tamper,Tamper,,2Miscellaneous,250
+Nailbar,Nailbar,,2Miscellaneous,250
+SlateRip,Slate Rip,,2Miscellaneous,250
+SlateNibbler,Slate Nibbler,,2Miscellaneous,250
+FloorSqueegee,Floor Squeegee,,2Miscellaneous,250
+Nibbler(Metal)110v,Nibbler (Metal) 110v,,2Miscellaneous,1400
+Carpenter,Carpenter,,2Carpenters,15000
+GroundWorker,Ground Worker,,2GroundWorkers,15000
+Tiler,Tiler,,2Tiler,15000
+Painter,Painter,,2Painter,15000
+BrickLayer,Brick Layer,,2BrickLayer,15000
+Plumber,Plumber,,2Plumber,15000
+HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,4000
+HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000
+HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000
+HouseHoldThreeQuarterVan,Household  Three Quarter van,750 kg,2HouseHoldWaste,18000
+HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,22000
+CommercialHoldMin,Commercial Min. charge,100kg,2CommercialWaste,5000
+CommercialHoldQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,9000
+CommercialHoldHalfVan,Commercial Half van,500 kg,2CommercialWaste,15000
+CommercialThreeQuarterVan,Commercial Three Quarter van,750 kg,2CommercialWaste,19000
+CommercialFullVan,Commercial  Full van,1000 kg,2CommercialWaste,23000

@@ -6,7 +6,7 @@ import { Icon, Button, Container, ListItem, Header, Text, Title, Body, Left, Gri
 import { getDaoState } from 'common/dao';
 import { merge } from 'lodash';
 import { withRouter } from 'react-router';
-import { isAnyOperationPending, getOperationError } from 'common/dao';
+import { isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import LoadingScreen from 'common/components/LoadingScreen';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
@@ -24,7 +24,8 @@ class DeliveryOptions extends Component {
     this.setCard = this.setCard.bind(this);
     this.state = {
       requireHelp: false,
-      isDatePickerVisible: false,
+      from_isDatePickerVisible: false,
+      till_isDatePickerVisible: false,
       selectedCard: undefined,
       date: undefined
     };
@@ -47,13 +48,13 @@ class DeliveryOptions extends Component {
     this.setState({ selectedCard });
   }
 
-  toggleDatePicker(isDatePickerVisible) {
-    this.setState({ isDatePickerVisible });
+  toggleDatePicker(pickerName, isDatePickerVisible) {
+    this.setState({[pickerName + '_isDatePickerVisible']: isDatePickerVisible});
   }
 
   setRequireHelp(requireHelp) {
     this.setState({ requireHelp });
-    this.onChangeValue('noRequiredForOffload', 0);
+    this.onChangeNoItems(0);
   }
 
   onChangeValue(field, value) {
@@ -62,13 +63,18 @@ class DeliveryOptions extends Component {
     context.setState({ delivery: merge({}, delivery, { [field]: value }) });
   }
 
+  onChangeNoItems(quantity){
+    const { context } = this.props;
+    const { orderItem } = context.state;
+    context.setState({ orderItem: merge({}, orderItem, {quantity}) });
+  }
+
   render() {
-    const { history, context, busy, paymentCards, errors, navigationStrategy} = this.props;
-    const { delivery, payment, orderItem} = context.state;
+    const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
+    const { delivery, payment, orderItem, selectedContentType} = context.state;
     const {origin, destination} = delivery;
-    const { noRequiredForOffload } = delivery;
-    const { requireHelp, isDatePickerVisible, selectedCard } = this.state;
-    const isDelivery = orderItem.productId == Products.DELIVERY;
+    const { quantity: noRequiredForOffload } = orderItem;
+    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
@@ -78,12 +84,23 @@ class DeliveryOptions extends Component {
       maximumDate: moment().add(14, 'days').toDate()
     };
 
+    const validationSchema = {};
+
+    if (selectedContentType.fromTime){
+      validationSchema.from = yup.date().required();
+    }
+
+    if (selectedContentType.tillTime){
+      validationSchema.till = yup.date().required();
+    }
+    
+
     return busy  || !selectedCard ?
       <LoadingScreen text="Loading Customer Cards" /> : <Container>
         <Header withButton>
           <Left>
             <Button>
-              <Icon name='arrow-back' onPress={() => history.goBack()} />
+              <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
             </Button>
           </Left>
           <Body><Title>Delivery Details</Title></Body>
@@ -92,28 +109,35 @@ class DeliveryOptions extends Component {
           <ErrorRegion errors={errors}/>
           <ListItem padded>
             <Grid>
-              <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row>
-              {isDelivery ? <Row><Text time>| 3 hrs</Text></Row> : null}
-              {isDelivery ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+              {selectedContentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
+              {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
+              {selectedContentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
             </Grid>
           </ListItem>
-          <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+          {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="time" />
-            {delivery.eta !== undefined ? <Text>{moment(delivery.eta).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
-            <DatePicker isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeValue('eta', date)} {...datePickerOptions} />
-          </ListItem>
+            {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
+            <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeValue('from', date)} {...datePickerOptions} />
+          </ListItem> : null}
+          {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
+            <Icon paddedIcon name="time" />
+            {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a return time</Text>}
+            <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeValue('till', date)} {...datePickerOptions} />
+          </ListItem> : null}
           <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>
             <Picker style={styles.cardPicker} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
               {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c} />)}
             </Picker>
           </ListItem>
-          <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
-            <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
-            <Text style={{ paddingLeft: 10 }}>Request extra people to help carry/lift your item(s)</Text>
-          </ListItem>
+          
+          {selectedContentType.noPeople ?
+            <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
+              <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
+              <Text style={{ paddingLeft: 10 }}>Request extra people to help carry/lift your item(s)</Text>
+            </ListItem> : null}
 
-          {requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
+          {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
             <Grid>
               <Row>
                 <Text style={{ paddingBottom: 15 }}>How many people do you need?</Text>
@@ -121,7 +145,7 @@ class DeliveryOptions extends Component {
               <Row>
                 <Col style={{ marginRight: 10 }}>
                   <Row>
-                    <Button personButton active={noRequiredForOffload == 1} onPress={() => this.onChangeValue('noRequiredForOffload', 1)} >
+                    <Button personButton active={noRequiredForOffload == 1} onPress={() => this.onChangeNoItems(1)} >
                       <Icon name='man' />
                     </Button>
                   </Row>
@@ -131,7 +155,7 @@ class DeliveryOptions extends Component {
                 </Col>
                 <Col style={{ marginRight: 10 }}>
                   <Row>
-                    <Button personButton active={noRequiredForOffload == 2} onPress={() => this.onChangeValue('noRequiredForOffload', 2)} >
+                    <Button personButton active={noRequiredForOffload == 2} onPress={() => this.onChangeNoItems(2)} >
                       <Icon name='man' />
                     </Button>
                   </Row>
@@ -141,7 +165,7 @@ class DeliveryOptions extends Component {
                 </Col>
                 <Col>
                   <Row>
-                    <Button personButton active={noRequiredForOffload == 3} onPress={() => this.onChangeValue('noRequiredForOffload', 3)} >
+                    <Button personButton active={noRequiredForOffload == 3} onPress={() => this.onChangeNoItems(3)} >
                       <Icon name='man' />
                     </Button>
                   </Row>
@@ -161,9 +185,6 @@ class DeliveryOptions extends Component {
   }
 }
 
-const validationSchema = {
-  eta: yup.date().required(),
-};
 
 DeliveryOptions.PropTypes = {
   paymentCards: PropTypes.array,
@@ -193,6 +214,7 @@ const mapStateToProps = (state, initialProps) => {
 
   return {
     ...initialProps,
+    ...getNavigationProps(initialProps),
     busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
     paymentCards,
