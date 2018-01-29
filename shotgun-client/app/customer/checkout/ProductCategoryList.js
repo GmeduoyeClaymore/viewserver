@@ -44,7 +44,7 @@ class ProductCategoryList extends Component{
     this.rowView = this.rowView.bind(this);
   }
 
-  rowView(row){
+  rowView({item: row}){
     const {categoryId, category} = row;
     this.redirectIfOnlyOneCategory(row);
     return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory({category: row})} underlayColor={'#EEEEEE'}>

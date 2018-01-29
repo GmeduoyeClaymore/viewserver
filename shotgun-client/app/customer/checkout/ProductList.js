@@ -45,7 +45,7 @@ class ProductList extends Component{
       dispatch(updateSubscriptionAction('productDao', {searchText}));
     };
     this.search = this.search.bind(this);
-    this.rowView = (p) => {
+    this.rowView = ({item: p}) => {
       return (<ProductListItem key={p.productId} product={p} history={history} context={context}/>);
     };
   }

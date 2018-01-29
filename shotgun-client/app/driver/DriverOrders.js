@@ -22,7 +22,7 @@ const DriverOrders = ({history, isCompleted, userId}) => {
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
   const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs assigned</Text></View>;
-  const RowView = (orderSummary, isLast) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} next='/Driver/DriverOrderDetail'/>;
+  const RowView = ({item: orderSummary, isLast, isFirst}) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next='/Driver/DriverOrderDetail'/>;
 
   const onChangeTab = (newIsCompleted) => {
     if (isCompleted !== newIsCompleted) {

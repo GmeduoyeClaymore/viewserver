@@ -125,13 +125,13 @@ public class PaymentController {
         try {
             //TODO is there a better way to do this without using big decimals all over the place?
             BigDecimal chargeDecimal = BigDecimal.valueOf(chargePercentage).divide(BigDecimal.valueOf(100));
-            BigDecimal destinationAmount = BigDecimal.valueOf(totalPrice).subtract(BigDecimal.valueOf(totalPrice).multiply(chargeDecimal).setScale(0, RoundingMode.DOWN));
+            BigDecimal destinationAmount = BigDecimal.valueOf(totalPrice.intValue()).subtract(BigDecimal.valueOf(totalPrice.intValue()).multiply(chargeDecimal).setScale(0, RoundingMode.DOWN));
             Map<String, Object> destinationParams = new HashMap<>();
             destinationParams.put("account", accountId);
             destinationParams.put("amount", destinationAmount);
 
             Map<String, Object> params = new HashMap<>();
-            params.put("amount", totalPrice);
+            params.put("amount", totalPrice == null ? null : totalPrice.intValue());
             params.put("currency", "gbp");
             params.put("customer", customerId);
             params.put("source", paymentId);
