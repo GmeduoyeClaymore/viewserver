@@ -2,26 +2,6 @@ import * as TableNames from 'common/constants/TableNames';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
-import {forEach} from 'lodash';
-import uuidv4 from 'uuid/v4';
-
-const createAddVehicleEvent = (vehicle) => {
-  return {
-    type: 0, // ADD
-    columnValues: {
-      ...vehicle
-    }
-  };
-};
-
-const createUpdateVehicleEvent = (vehicle) =>{
-  return {
-    type: 1, // UPDATE
-    columnValues: {
-      ...vehicle
-    }
-  };
-};
 
 export default class VehiclesDaoContext{
   constructor(client, options = {}) {

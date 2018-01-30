@@ -2,23 +2,6 @@ import * as TableNames from 'common/constants/TableNames';
 import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-import {forEach} from 'lodash';
-import PrincipalService from 'common/services/PrincipalService';
-import moment from 'moment';
-
-const createAddUserEvent = (args) => {
-  return {
-    type: 0, // ADD
-    columnValues: args
-  };
-};
-
-const createUpdateUserEvent = (args) => {
-  return {
-    type: 1, // UPDATE
-    columnValues: args
-  };
-};
 
 export default class UserDaoContext{
   constructor(client, options = {}) {

@@ -159,6 +159,8 @@ dependencies {
     compile ('com.google.firebase:firebase-messaging:10.0.1') {
         force = true;
     }
+
+    compile project(':react-native-immediate-phone-call')
 }
 
 // Run this once to be able to run the application with BUCK

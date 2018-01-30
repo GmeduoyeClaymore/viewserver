@@ -53,7 +53,7 @@ export default class PaymentDao{
     const promise = this.client.invokeJSONCommand('paymentController', 'getBankAccount', stripeAccountId);
     const bankAccount =  await promise.timeoutWithError(5000, new Error(`Could get bank account for stripe account ${stripeAccountId} in 5 seconds`));
     Logger.debug(`Got bank account ${stripeAccountId}`);
-    const result = {bankAccount}
+    const result = {bankAccount};
     this.subject.next(result);
     return result;
   }

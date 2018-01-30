@@ -5,7 +5,7 @@ import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {completeOrderRequest, stopWatchingPosition} from 'driver/actions/DriverActions';
+import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
@@ -55,6 +55,10 @@ class DriverOrderInProgress extends Component{
 
     const onCompletePress = async() => {
       dispatch(completeOrderRequest(orderSummary.orderId, () => dispatch(stopWatchingPosition())));
+    };
+
+    const onPressCallCustomer = async () => {
+      dispatch(callCustomer(orderSummary.orderId));
     };
 
     const onNavigatePress = async() => {
@@ -119,10 +123,12 @@ class DriverOrderInProgress extends Component{
                 {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
-                  <Col><Button fullWidth style={styles.callButton}><Text uppercase={false}>Call customer</Text></Button></Col>
+                  <Col><Button fullWidth style={styles.callButton} onPress={onPressCallCustomer}><Text uppercase={false}>Call customer</Text></Button></Col>
                 </Row>
               </Grid>
-              <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
+              <ErrorRegion errors={errors}>
+                <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
+              </ErrorRegion>
             </Col>
           }
         </Row>
@@ -161,7 +167,7 @@ const mapStateToProps = (state, initialProps) => {
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const position = getDaoState(state, ['position'], 'userDao');
-  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, { orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]);
+  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]);
 
   return {
     ...initialProps,

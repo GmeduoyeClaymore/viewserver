@@ -1,6 +1,7 @@
 import Logger from 'common/Logger';
 import PrincipalService from 'common/services/PrincipalService';
 import Rx from 'rxjs/Rx';
+import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 
 export default class CustomerDao{
   constructor(client, orderDao) {
@@ -17,6 +18,7 @@ export default class CustomerDao{
     this.cancelOrder = this.cancelOrder.bind(this);
     this.checkout = this.checkout.bind(this);
     this.rateDriver = this.rateDriver.bind(this);
+    this.callDriver = this.callDriver.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -66,6 +68,10 @@ export default class CustomerDao{
     await this.client.invokeJSONCommand('customerController', 'rejectDriver', orderId);
   }
 
+  async callDriver({orderId}){
+    const driverPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getDriverVirtualNumber', orderId);
+    RNImmediatePhoneCall.immediatePhoneCall(`+${driverPhoneNumber}`);
+  }
  
   async checkout({orderItem, payment, product, delivery}){
     const orderId = await this.orderDao.createOrder({paymentId: payment.paymentId, product, delivery, orderItems: [{quantity: 1, ...orderItem}]});

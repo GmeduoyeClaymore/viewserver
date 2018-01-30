@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import SpinnerButton from 'common/components/SpinnerButton';
 import {PropTypes} from 'prop-types';
 import ValidationService from 'common/services/ValidationService';
-import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 
 export default class ValidatingButton extends Component {

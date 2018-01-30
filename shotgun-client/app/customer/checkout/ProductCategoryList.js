@@ -5,7 +5,7 @@ import {Icon, Button, Container, Header, Title, Body, Left, Content} from 'nativ
 import {Spinner} from 'native-base';
 import { withRouter } from 'react-router';
 import PagingListView from 'common/components/PagingListView';
-import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize, getDaoState} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';
 import {connect} from 'custom-redux';
 import yup from 'yup';
 import ErrorRegion from 'common/components/ErrorRegion';
