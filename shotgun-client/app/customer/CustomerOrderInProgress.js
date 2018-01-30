@@ -3,14 +3,16 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import Products from 'common/constants/Products';
+import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
 import LoadingScreen from 'common/components/LoadingScreen';
 import RatingAction from 'common/components/RatingAction';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
+import ErrorRegion from 'common/components/ErrorRegion';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -34,7 +36,7 @@ class CustomerOrderInProgress extends Component{
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, busy, client} = this.props;
+    const {orderSummary = {status: ''}, history, busy, client, dispatch, errors} = this.props;
     const {orderItem = {}, delivery = {}} = orderSummary;
     const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
     const {origin = {}, destination = {}, driverRating} = delivery;
@@ -45,6 +47,10 @@ class CustomerOrderInProgress extends Component{
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
         map.fitToElements(false);
       }
+    };
+
+    const onPressCallDriver = async () => {
+      dispatch(callDriver(orderSummary.orderId));
     };
 
     const region = {
@@ -102,7 +108,9 @@ class CustomerOrderInProgress extends Component{
                   </Col>
                 </Row>
               </Grid>
-              <Button fullWidth style={styles.callButton}><Text uppercase={false}>Call driver</Text></Button>
+              <ErrorRegion errors={errors}>
+                <Button fullWidth style={styles.callButton} onPress={onPressCallDriver}><Text uppercase={false}>Call driver</Text></Button>
+              </ErrorRegion>
             </Col>
           }
         </Row>
@@ -149,6 +157,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
+    errors: getOperationError(state, 'customerDao', 'callDriver' ),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
     orderSummary
   };

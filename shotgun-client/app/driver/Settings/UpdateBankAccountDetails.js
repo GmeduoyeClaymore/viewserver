@@ -99,7 +99,7 @@ const styles = {
   bankAccountRow: {
     marginTop: 25
   }
-}
+};
 
 const validationSchema = {
   accountNumber: yup.string().required().matches(/^\d{8}$/),

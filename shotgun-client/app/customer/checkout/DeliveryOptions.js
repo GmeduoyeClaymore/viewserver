@@ -12,7 +12,6 @@ import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import ValidatingButton from 'common/components/ValidatingButton';
 import yup from 'yup';
-import Products from 'common/constants/Products';
 import CardIcon from 'common/components/CardIcon';
 import ErrorRegion from 'common/components/ErrorRegion';
 

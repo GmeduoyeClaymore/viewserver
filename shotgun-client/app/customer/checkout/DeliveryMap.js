@@ -1,5 +1,4 @@
 import React  from 'react';
-import Products from 'common/constants/Products';
 import { connect } from 'custom-redux';
 import { Container, Button, Text, Icon, Grid, Col, Row } from 'native-base';
 import MapView from 'react-native-maps';
@@ -7,7 +6,7 @@ import LoadingScreen from 'common/components/LoadingScreen';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import { getDaoState, isAnyOperationPending, getOperationError } from 'common/dao';
+import { getDaoState, getOperationError } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {merge} from 'lodash';
 import ErrorRegion from 'common/components/ErrorRegion';
@@ -24,7 +23,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
     return <ErrorRegion errors={errors}/>;
   }
   let map;
-  const {orderItem, delivery, selectedContentType} = context.state;
+  const {delivery, selectedContentType} = context.state;
   const {destination, origin} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
@@ -50,7 +49,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   const getLocationText = (address, addressKey, placeholder) => {
     const style = address.line1 ? {} : styles.locationTextPlaceholder;
     const text = address.line1 ? `${address.line1}, ${address.postCode}` : placeholder;
-    return <Text style={style} onPress={() => doAddressLookup(placeholder, (address) => setLocation(address, addressKey))}>{text}</Text>;
+    return <Text style={style} onPress={() => doAddressLookup(placeholder, a => setLocation(a, addressKey))}>{text}</Text>;
   };
 
   const setLocation = (address, addressKey) => {

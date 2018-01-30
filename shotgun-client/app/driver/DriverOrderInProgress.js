@@ -3,9 +3,9 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationError} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {completeOrderRequest, stopWatchingPosition} from 'driver/actions/DriverActions';
+import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
@@ -15,6 +15,7 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import {Linking} from 'react-native';
 import Logger from 'common/Logger';
 import SpinnerButton from 'common/components/SpinnerButton';
+import ErrorRegion from 'common/components/ErrorRegion';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -44,7 +45,7 @@ class DriverOrderInProgress extends Component{
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client} = this.props;
+    const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client, errors} = this.props;
     const {initialPosition} = this.state;
     const {latitude, longitude} = position;
     const {orderItem = {}, delivery = {}} = orderSummary;
@@ -55,6 +56,10 @@ class DriverOrderInProgress extends Component{
     const onCompletePress = async() => {
       dispatch(completeOrderRequest(orderSummary.orderId));
       dispatch(stopWatchingPosition());
+    };
+
+    const onPressCallCustomer = async () => {
+      dispatch(callCustomer(orderSummary.orderId));
     };
 
     const onNavigatePress = async() => {
@@ -118,10 +123,12 @@ class DriverOrderInProgress extends Component{
                 {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
-                  <Col><Button fullWidth style={styles.callButton}><Text uppercase={false}>Call customer</Text></Button></Col>
+                  <Col><Button fullWidth style={styles.callButton} onPress={onPressCallCustomer}><Text uppercase={false}>Call customer</Text></Button></Col>
                 </Row>
               </Grid>
-              <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
+              <ErrorRegion errors={errors}>
+                <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
+              </ErrorRegion>
             </Col>
           }
         </Row>
@@ -165,6 +172,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     position,
     orderId,
+    errors: getOperationError(state, 'driverDao', 'callCustomer' ),
     busyUpdating: isAnyOperationPending(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
     orderSummary
