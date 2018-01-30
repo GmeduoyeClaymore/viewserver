@@ -292,4 +292,4 @@ export const connectAdvanced = (
 
     return hoistStatics(Connect, WrappedComponent);
   };
-}
+};

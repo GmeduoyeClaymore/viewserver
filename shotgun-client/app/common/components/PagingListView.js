@@ -64,7 +64,7 @@ class PagingListView extends Component{
       this.props.doPage(newLimit);
     }
     
-    renderItem = (item, isLast) => this.props.rowView(item, isLast);
+    renderItem = ({item, isLast, isFirst}) => this.props.rowView({item, isLast, isFirst});
     
     render() {
       const { data = [], errors, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
@@ -73,7 +73,7 @@ class PagingListView extends Component{
           <View style={{flex: 1, flexDirection: 'column', display: 'flex'}}>
             <HeaderView/>
             {(data.length === 0 && !this.props.busy)  ? emptyView() : <ScrollView contentContainerStyle={styles.contentContainer} style={{flex: 1, flexDirection: 'column'}} onScroll={this._onScroll}>
-              {data.map((c, i) => this.renderItem(c, i == data.length - 1))}
+              {data.map((c, i) => this.renderItem({item: c, isLast: i == data.length - 1, isFirst: i == 0}))}
               {this.props.busy ? paginationWaitingView() : null}
             </ScrollView >}
           </View>

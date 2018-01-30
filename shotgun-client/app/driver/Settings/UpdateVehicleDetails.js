@@ -9,6 +9,7 @@ import ErrorRegion from 'common/components/ErrorRegion';
 import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {updateVehicle} from 'driver/actions/DriverActions';
+import Logger from 'common/Logger';
 
 class UpdateVehicleDetails extends Component {
   constructor(props) {
@@ -34,11 +35,10 @@ class UpdateVehicleDetails extends Component {
 
     const requestUpdateVehicleDetails = async () => {
       try {
-        console.log(vehicle);
         const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.newRegistrationNumber);
         this.setState({vehicle: vehicleDetails, errors: ''});
       } catch (error) {
-        console.log(errors);
+        Logger.debug(errors);
         this.setState({errors: error});
       }
     };

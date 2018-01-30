@@ -39,6 +39,7 @@ public class CustomerOrderSummaryReport {
                                         .withLeftJoinColumns("contentTypeId")
                                         .withRightJoinColumns("contentTypeId")
                                         .withColumnPrefixes("", "contentType_")
+                                        .withAlwaysResolveNames()
                                         .withConnection("productJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("deliveryJoin")
@@ -96,7 +97,6 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("latitude", "driverLatitude"),
                                                 new IProjectionConfig.ProjectionColumn("longitude", "driverLongitude"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
-                                                new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("created"),
                                                 new IProjectionConfig.ProjectionColumn("from"),

@@ -13,7 +13,6 @@ class OrderSummary extends Component{
     super();
   }
 
-
   renderVehicleType(){
     const {busy, selectedVehicleType} = this.props;
     return  busy ? <LoadingScreen text="Loading Vehicle Types" /> : <ListItem padded><Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text></ListItem>;

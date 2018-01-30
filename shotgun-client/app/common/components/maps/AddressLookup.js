@@ -15,7 +15,7 @@ class AddressLookup extends Component {
   static propTypes = {
     client: PropTypes.object,
     addressLabel: PropTypes.string.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);

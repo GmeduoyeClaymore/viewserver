@@ -3,7 +3,7 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationError} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import Products from 'common/constants/Products';
@@ -12,10 +12,10 @@ import {withRouter} from 'react-router';
 import LoadingScreen from 'common/components/LoadingScreen';
 import RatingAction from 'common/components/RatingAction';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
+import ErrorRegion from 'common/components/ErrorRegion';
 import {Linking} from 'react-native';
 import Logger from 'common/Logger';
 import SpinnerButton from 'common/components/SpinnerButton';
-import ErrorRegion from 'common/components/ErrorRegion';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -54,8 +54,7 @@ class DriverOrderInProgress extends Component{
     const isDelivery = orderItem.productId == Products.DELIVERY;
 
     const onCompletePress = async() => {
-      dispatch(completeOrderRequest(orderSummary.orderId));
-      dispatch(stopWatchingPosition());
+      dispatch(completeOrderRequest(orderSummary.orderId, () => dispatch(stopWatchingPosition())));
     };
 
     const onPressCallCustomer = async () => {
@@ -72,7 +71,7 @@ class DriverOrderInProgress extends Component{
         if (isSupported) {
           return Linking.openURL(mapUrl);
         }
-        throw 'Could not open';
+        throw new Error('Could not open');
       } catch (e) {
         Logger.warning(`Could not open ${mapUrl}`);
       }
@@ -94,6 +93,7 @@ class DriverOrderInProgress extends Component{
     return busy ? <LoadingScreen text="Loading Order"/> : <Container style={{flex: 1}}>
       <Grid>
         <Row size={60}>
+          <ErrorRegion errors={errors}/>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
             showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
             <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>
@@ -111,7 +111,7 @@ class DriverOrderInProgress extends Component{
           {isComplete ?
             <Col>
               <Row>
-                <Col>v
+                <Col>
                   <RatingAction isDriver={true} delivery={delivery}/>
                 </Col>
               </Row>
@@ -167,12 +167,13 @@ const mapStateToProps = (state, initialProps) => {
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const position = getDaoState(state, ['position'], 'userDao');
+  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]);
 
   return {
     ...initialProps,
     position,
     orderId,
-    errors: getOperationError(state, 'driverDao', 'callCustomer' ),
+    errors,
     busyUpdating: isAnyOperationPending(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
     orderSummary

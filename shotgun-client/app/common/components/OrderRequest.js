@@ -12,18 +12,15 @@ class OrderRequest extends Component {
   }
 
   render() {
-    const {orderSummary, history, next, isLast} = this.props;
-    const {delivery, contentType} = orderSummary;
-    const {origin, destination, noRequiredForOffload} = delivery;
+    const {orderSummary, history, next, isLast, isFirst} = this.props;
+    const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
+    const {origin, destination} = delivery;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
 
-    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined]} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>
+    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={70}>
-            <Row>
-              <Icon name="pin" paddedIcon originPin/><Text style={styles.origin}>{origin.line1}, {origin.postCode}</Text>
-            </Row>
             {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
             {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
             {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
@@ -62,6 +59,9 @@ const styles = {
   },
   last: {
     marginBottom: 0
+  },
+  first: {
+    marginTop: 15
   },
   priceRow: {
     alignItems: 'flex-end',

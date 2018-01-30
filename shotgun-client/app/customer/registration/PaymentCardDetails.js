@@ -4,7 +4,6 @@ import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {connect} from 'react-redux';
-import LoadingScreen from 'common/components/LoadingScreen';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 import TermsAgreement from 'common/components/TermsAgreement';
 

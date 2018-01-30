@@ -1,11 +1,13 @@
 import { Platform, AsyncStorage } from 'react-native';
 
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
+import Logger from 'common/Logger';
+
 export const getLastNotification = async () => {
   const data = await AsyncStorage.getItem('lastNotification');
   if (data){
     // if notification arrives when app is killed, it should still be logged here
-    console.log('last notification', data);
+    Logger.debug('last notification', data);
     AsyncStorage.removeItem('lastNotification');
     return JSON.parse(data);
   }
@@ -23,7 +25,7 @@ export const registerKilledListener = () => {
 // these callback will be triggered only when app is foreground or background
 export const  registerAppListener = (context) => {
   FCM.on(FCMEvent.Notification, notif => {
-    console.log('Notification', notif);
+    Logger.debug('Notification', notif);
     if (notif.local_notification){
       return;
     }
@@ -68,7 +70,7 @@ export const  registerAppListener = (context) => {
   });
 
   FCM.on(FCMEvent.RefreshToken, token => {
-    console.log('TOKEN (refreshUnsubscribe)', token);
+    Logger.debug('TOKEN (refreshUnsubscribe)', token);
     if (this.onChangeToken){
       this.onChangeToken(token);
     }
@@ -76,9 +78,9 @@ export const  registerAppListener = (context) => {
 
   FCM.enableDirectChannel();
   FCM.on(FCMEvent.DirectChannelConnectionChanged, (data) => {
-    console.log('direct channel connected' + data);
+    Logger.debug('direct channel connected' + data);
   });
   setTimeout(() => {
-    FCM.isDirectChannelEstablished().then(d => console.log(d));
+    FCM.isDirectChannelEstablished().then(d => Logger.debug(d));
   }, 1000);
 };

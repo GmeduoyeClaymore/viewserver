@@ -5,7 +5,7 @@ import PagingListView from 'common/components/PagingListView';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
 import Tabs from 'common/components/Tabs';
-import {isAnyLoading} from 'common/dao';
+import {isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
@@ -22,10 +22,10 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
 
   const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
   const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;
-  const RowView = (orderSummary, isLast) => {
+  const RowView = ({item: orderSummary, isLast, isFirst}) => {
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
     const next = isOnRoute ? '/Customer/CustomerOrderInProgress' : '/Customer/CustomerOrderDetail';
-    return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast}/>;
+    return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };
 
   const onChangeTab = (newIsCompleted) => {
@@ -59,11 +59,14 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
   </Container>;
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  isCompleted: initialProps.history.location.state && initialProps.history.location.state.isCompleted !== undefined ? initialProps.history.location.state.isCompleted : 'INCOMPLETE',
-  busy: isAnyLoading(state, ['orderSummaryDao']),
-});
+const mapStateToProps = (state, initialProps) => {
+  const navigationProps = getNavigationProps(initialProps);
+  return {
+    ...initialProps,
+    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : 'INCOMPLETE',
+    busy: isAnyLoading(state, ['orderSummaryDao']),
+  };
+};
 
 export default withRouter(connect(
   mapStateToProps

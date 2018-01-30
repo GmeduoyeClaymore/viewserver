@@ -30,7 +30,7 @@ class MapViewDirections extends Component {
 	    distance: null,
 	    duration: null,
 	  }, cb);
-	}
+	};
 
 	fetchAndRenderRoute = () => {
 	  const {
@@ -51,7 +51,7 @@ class MapViewDirections extends Component {
 	      console.warn(`MapViewDirections Error: ${errorMessage}`);
 	      onError && onError(errorMessage);
 	    });
-	}
+	};
 
 	render() {
 	  if (!this.state.coordinates) {
