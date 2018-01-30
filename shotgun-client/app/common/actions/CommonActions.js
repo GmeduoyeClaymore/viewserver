@@ -3,6 +3,7 @@ import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
 import CustomerDao from 'customer/dao/CustomerDao';
 import DriverDao from 'driver/dao/DriverDao';
+import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {getAllDaos, invokeDaoCommand} from 'common/dao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
@@ -42,6 +43,7 @@ export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
 export const commonServicesRegistrationAction = (client, userId, continueWith) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});
+    register(dispatch, new ContentTypeDao(client), {userId});
     registerNakedDao(dispatch, new CustomerDao(client), {userId}, continueWith);
     registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };

@@ -23,11 +23,11 @@ export default class OrderRequestDaoContext{
     return 'orderRequestDao';
   }
 
-  getReportContext({productId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
+  getReportContext({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
     return {
       reportId: 'orderRequest',
       parameters: {
-        productId,
+        contentTypeId,
         vehicleTypeId,
         noRequiredForOffload,
         driverLatitude,
@@ -99,17 +99,17 @@ export default class OrderRequestDaoContext{
     };
   }
 
-  createSubscriptionStrategy({productId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({productId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
+  createSubscriptionStrategy({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
     //TODO - probably needs to be updated as driver position changed but not sure how often
-    return !previousOptions || previousOptions.productId != newOptions.productId;
+    return !previousOptions || previousOptions.contentTypeId != newOptions.contentTypeId;
   }
 
   transformOptions(options){
-    if (typeof options.productId === 'undefined'){
+    if (typeof options.contentTypeId === 'undefined'){
       throw new Error('productId should be defined');
     }
     if (typeof options.vehicleTypeId === 'undefined'){

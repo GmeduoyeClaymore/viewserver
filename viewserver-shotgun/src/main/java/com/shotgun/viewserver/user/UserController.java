@@ -34,6 +34,7 @@ public class UserController {
             row.setLong("lastModified", now.getTime());
             row.setString("firstName", user.getFirstName());
             row.setString("lastName", user.getLastName());
+            row.setString("selectedContentTypes", user.getSelectedContentTypes() == null ? null : String.join(",",user.getSelectedContentTypes()));
             row.setString("password", ControllerUtils.encryptPassword(user.getPassword()));
             row.setString("contactNo", user.getContactNo());
             row.setString("email", user.getEmail().toLowerCase());

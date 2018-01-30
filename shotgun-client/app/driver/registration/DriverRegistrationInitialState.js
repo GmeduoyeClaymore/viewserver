@@ -1,4 +1,4 @@
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -30,8 +30,8 @@ export const INITIAL_STATE = {
       weight: undefined
     }
   }
-};
-/*
+};*/
+
 
 export const INITIAL_STATE = {
   user: {
@@ -67,5 +67,4 @@ export const INITIAL_STATE = {
   }
 };
 
-*/
 

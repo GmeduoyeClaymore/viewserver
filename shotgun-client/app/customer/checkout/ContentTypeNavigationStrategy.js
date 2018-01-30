@@ -1,4 +1,4 @@
-import * as ContentTypes from './ContentTypes';
+import * as ContentTypes from 'common/constants/ContentTypes';
 
 export default class ContentTypeNavigationStrategy{
   constructor(history){

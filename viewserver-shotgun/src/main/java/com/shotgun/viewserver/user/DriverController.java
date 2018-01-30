@@ -46,7 +46,9 @@ public class DriverController {
     public String registerDriver(@ActionParam(name = "user")User user,
                                  @ActionParam(name = "vehicle")Vehicle vehicle,
                                  @ActionParam(name = "address")DeliveryAddress address,
-                                 @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount){
+                                 @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount
+
+    ){
         log.debug("Registering driver: " + user.getEmail());
 
         //We can change this later on or on a per user basis
@@ -54,7 +56,6 @@ public class DriverController {
 
         String paymentAccountId = paymentController.createPaymentAccount(user, address, bankAccount);
         user.setStripeDefaultSourceId(paymentAccountId);
-
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId",userId);
         vehicleController.addOrUpdateVehicle(vehicle);

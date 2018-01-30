@@ -7,7 +7,6 @@ import VehicleTypeDao from 'common/dao/VehicleTypeDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
 import PaymentDao from 'common/dao/PaymentDao';
-import ContentTypeDao from 'common/dao/ContentTypeDao';
 
 export const driverServicesRegistrationAction = (client, userId, continueWith) => {
   return async (dispatch) => {
@@ -16,7 +15,6 @@ export const driverServicesRegistrationAction = (client, userId, continueWith) =
     register(dispatch, new VehicleTypeDao(client), {userId});
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client), {userId});
-    register(dispatch, new ContentTypeDao(client), {userId});
     registerNakedDao(dispatch, new PaymentDao(client), {userId});
     registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
