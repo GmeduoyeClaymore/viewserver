@@ -11,6 +11,7 @@ import {withRouter} from 'react-router';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError } from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
+import LoadingScreen from 'common/components/LoadingScreen';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 class VehicleDetails extends Component{
@@ -20,24 +21,26 @@ class VehicleDetails extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.renderContentType = this.renderContentType.bind(this);
     this.requestVehicleDetails = this.requestVehicleDetails.bind(this);
+    this.register = this.register.bind(this);
   }
 
   onChangeText(field, value){
-    const {context} = this.props;
+    const {vehicle, context} = this.props;
     context.setState({vehicle: merge(vehicle, {[field]: value})});
   }
 
   async register(){
-    const {dispatch, user, vehicle, bankAccount, address} = this.props;
+    const {user, vehicle, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
+    user.selectedContentTypes = selectedContentTypes.join(',');
     dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
+
   selectContentType(selectedContentType){
-    const {context} = this.props;
-    let {selectedContentTypes = []} = context.state;
+    let {context, selectedContentTypes = []} = this.props;
     const index = selectedContentTypes.indexOf(selectedContentType.contentTypeId);
     if (!!~index){
-      selectedContentTypes = selectedContentTypes.splice(index, 1);
+      selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
     } else {
       selectedContentTypes = [...selectedContentTypes, selectedContentType.contentTypeId];
     }
@@ -55,8 +58,8 @@ class VehicleDetails extends Component{
   }
 
   async requestVehicleDetails(){
+    const {context, client, vehicle} = this.props;
     try {
-      const {context, client, vehicle} = this.props;
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
       context.setState({vehicle: vehicleDetails, errors: ''});
     } catch (error){
@@ -65,17 +68,10 @@ class VehicleDetails extends Component{
   }
 
   onChangeValue(field, value){
-    const {state} = this.props;
-    const {vehicle} = state;
+    const {vehicle, context} = this.props;
     context.setState({vehicle: merge({}, vehicle, {[field]: value})});
   }
 
-  async register(){
-    const {state} = this.props;
-    const {user, vehicle, bankAccount, address, selectedContentTypes} = state;
-    user.selectedContentTypes = selectedContentTypes.join(',');
-    dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
-  }
 
   printDimensions(){
     const {dimensions} = this.props;
@@ -83,11 +79,11 @@ class VehicleDetails extends Component{
   }
 
   render(){
-    const {history, contentTypes = [], vehicle = {}, dimensions, selectedContentTypes = [], errors} = this.props;
+    const {history, contentTypes = [], vehicle = {}, dimensions, selectedContentTypes = [], errors, busy} = this.props;
     const {numAvailableForOffload} = vehicle;
     const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
-    return <Container>
+    return  busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -96,11 +92,11 @@ class VehicleDetails extends Component{
         </Left>
         <Body><Title>Account Type</Title></Body>
       </Header>
-      <Content keyboardShouldPersistTaps="always">
+      <Content keyboardShouldPersistTaps="always" padded>
         <Grid>
           <Row>
             <Col>
-              <View style={styles.productSelectView}>
+              <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
                     {contentTypes.map((v, i) => this.renderContentType(v, i))}

@@ -17,7 +17,7 @@ public class User{
     private String stripeAccountId;
     private String stripeDefaultSourceId;
     private int chargePercentage;
-    private String[] selectedContentTypes;
+    private String selectedContentTypes;
 
     public User() {
     }
@@ -134,11 +134,11 @@ public class User{
         this.chargePercentage = chargePercentage;
     }
 
-    public void setSelectedContentTypes(String[] selectedContentTypes) {
+    public void setSelectedContentTypes(String selectedContentTypes) {
         this.selectedContentTypes = selectedContentTypes;
     }
 
-    public String[] getSelectedContentTypes() {
+    public String getSelectedContentTypes() {
         return selectedContentTypes;
     }
 }

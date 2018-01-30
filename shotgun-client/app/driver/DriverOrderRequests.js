@@ -10,7 +10,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import OrderRequest from 'common/components/OrderRequest';
 import Tabs from 'common/components/Tabs';
 
-const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, position, busy, selectedContentTypes, selectedContentType}) => {
+const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, position, busy, selectedContentTypes, selectedContentType = {}, contentTypeId}) => {
   if (busy){
     return <LoadingScreen text="Loading Map" />;
   }
@@ -44,8 +44,8 @@ const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, p
     <Header hasTabs>
       <Body><Title>Available Jobs</Title></Body>
     </Header>
-    <Tabs initialPage={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 0)}>
-      {selectedContentTypes.map(c => <Tab heading={c.name} />)}
+    <Tabs initialPage={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i)}>
+      {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} />)}
     </Tabs>
     <Content>
       <List style={{backgroundColor: shotgun.hairline}}>
@@ -69,16 +69,18 @@ const mapStateToProps = (state, initialProps) => {
   const position = getDaoState(state, ['position'], 'userDao');
   const user = getDaoState(state, ['user'], 'userDao');
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
-  const selectedContentTypeIds = user ? user.selectedContentTypes.split('\n') : [];
-  const selectedContentTypes = contentTypes.filter(ct => selectedContentTypeIds.contains(ct.contentTypeId));
-  const navigationProps = getNavigationProps(initialProps);
-  const {contentTypeId} = navigationProps;
-  const selectedContentType = contentTypes.find(ct => ct.contentTypeId === contentTypeId);
+  const navigationProps = getNavigationProps(initialProps) || [];
+  let {contentTypeId} = navigationProps;
+  contentTypeId = contentTypeId || (contentTypes[0] && contentTypes[0].contentTypeId);
+  const selectedContentTypeIds = user ? user.selectedContentTypes.split(',').map( str => parseInt(str, 10)) : [];
+  const selectedContentTypes = contentTypes.filter(ct => !!~selectedContentTypeIds.indexOf(ct.contentTypeId));
+  const selectedContentType = contentTypes.find(ct => ct.contentTypeId === contentTypeId) || contentTypes[0];
   const selectedContentTypeIndex = selectedContentTypes.indexOf(selectedContentType);
 
   return {
     ...initialProps,
     selectedContentTypes,
+    contentTypeId,
     selectedContentType,
     selectedContentTypeIndex,
     isDelivery: navigationProps.isDelivery !== undefined ? navigationProps.isDelivery : true,

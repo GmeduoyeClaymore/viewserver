@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.user;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
@@ -17,8 +19,12 @@ import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.*;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.Future;
 
 
 @Controller(name = "driverController")
@@ -29,38 +35,53 @@ public class DriverController {
     private UserController userController;
     private VehicleController vehicleController;
     private JourneyEmulatorController journeyEmulatorController;
+    private IReactor reactor;
 
     public DriverController(PaymentController paymentController,
                             MessagingController messagingController,
                             UserController userController,
                             VehicleController vehicleController,
-                            JourneyEmulatorController journeyEmulatorController) {
+                            JourneyEmulatorController journeyEmulatorController,
+                            IReactor reactor) {
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
         this.vehicleController = vehicleController;
         this.journeyEmulatorController = journeyEmulatorController;
+        this.reactor = reactor;
     }
 
-    @ControllerAction(path = "registerDriver", isSynchronous = true)
-    public String registerDriver(@ActionParam(name = "user")User user,
+    @ControllerAction(path = "registerDriver", isSynchronous = false)
+    public ListenableFuture<String> registerDriver(@ActionParam(name = "user")User user,
                                  @ActionParam(name = "vehicle")Vehicle vehicle,
                                  @ActionParam(name = "address")DeliveryAddress address,
                                  @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount
 
     ){
         log.debug("Registering driver: " + user.getEmail());
-
         //We can change this later on or on a per user basis
         user.setChargePercentage(10);
 
         String paymentAccountId = paymentController.createPaymentAccount(user, address, bankAccount);
-        user.setStripeDefaultSourceId(paymentAccountId);
-        String userId = userController.addOrUpdateUser(user);
-        ControllerContext.set("userId",userId);
-        vehicleController.addOrUpdateVehicle(vehicle);
-        log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
-        return userId;
+        SettableFuture<String> future = SettableFuture.create();
+        ControllerContext context = ControllerContext.Current();
+        reactor.scheduleTask(new ITask() {
+            @Override
+            public void execute() {
+                try{
+                    ControllerContext.create(context);
+                    user.setStripeDefaultSourceId(paymentAccountId);
+                    String userId = userController.addOrUpdateUser(user);
+                    ControllerContext.set("userId",userId);
+                    vehicleController.addOrUpdateVehicle(vehicle);
+                    log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
+                    future.set(userId);
+                }catch (Exception ex){
+                    future.setException(ex);
+                }
+            }
+        },0,0);
+        return future;
     }
 
     @ControllerAction(path = "acceptOrder", isSynchronous = true)

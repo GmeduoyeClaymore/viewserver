@@ -3,6 +3,7 @@ package io.viewserver.command;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -76,5 +77,12 @@ public class ControllerContext implements AutoCloseable{
             }
             return params.get(name);
         }
+    }
+
+    public static Throwable Unwrap(Throwable e){
+        if(e instanceof InvocationTargetException){
+            return ((InvocationTargetException)e).getTargetException();
+        }
+        return e;
     }
 }

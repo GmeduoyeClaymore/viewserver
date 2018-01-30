@@ -5,21 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.*;
+import com.sun.deploy.util.ReflectionUtil;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 public class ControllerActionEntry{
 
     private final Class<?> parameterType;
-    private final Class<?> returnType;
     private final List<ControllerParamEntry> actionParams;
+    private boolean isFuture = false;
     private Method method;
     private Object controller;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -30,18 +30,22 @@ public class ControllerActionEntry{
         this.an = an;
         this.actionParams =  getActionParams(method);
         this.parameterType = method.getParameterTypes().length == 1 ? method.getParameterTypes()[0] : null;
-        this.returnType = method.getReturnType();
 
         if(this.parameterType != null && !mapper.canSerialize(this.parameterType)){
             throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". unable to serialize argument type \"" + this.parameterType + "\"");
         }
 
-        if(this.returnType != null && !mapper.canSerialize(this.returnType)){
-            throw new RuntimeException("Problem with constructing controller action \"" + an.path() + "\" on controller \"" + controllerAttribute.name() + "\". unable to serialize return type " + this.returnType);
-        }
         this.method = method;
         this.controller = controller;
+        if(this.method.getReturnType().isAssignableFrom(ListenableFuture.class)){
+            this.isFuture = true;
+        }
+
     }
+
+
+
+
 
     private List<ControllerParamEntry> getActionParams(Method method) {
         List<ControllerParamEntry> result  = new ArrayList<>();
@@ -74,10 +78,10 @@ public class ControllerActionEntry{
         return an.isSynchronous();
     }
 
-    public String invoke(String param){
+    public ListenableFuture<String> invoke(String param,ControllerContext ctxt,ListeningExecutorService executorService){
         Object arg = fromString(param, this.parameterType, this.an.path());
         try {
-            Object result;
+            ListenableFuture result;
             if(this.actionParams != null && actionParams.size() > 0){
                 HashMap<String,Object> map = mapper.readValue(param, dictionaryType);
                 Object[] args = new Object[this.actionParams.size()];
@@ -113,17 +117,13 @@ public class ControllerActionEntry{
                 if(errors.size() > 0){
                     throw new RuntimeException(String.format("Problems invoking method params \"%s\"", String.join(",",errors)));
                 }
-                result = method.invoke(this.controller, args);
+                result = invokeMethod(executorService, ctxt,args);
             }
             else{
-                result = this.parameterType == null ? method.invoke(this.controller) : method.invoke(this.controller, arg);
+                result = this.parameterType == null ? invokeMethod(executorService, ctxt) : invokeMethod(executorService, ctxt,arg);
             }
 
-
-            if(this.returnType == null){
-                return null;
-            }
-            return toString(result, this.returnType);
+            return result;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -137,6 +137,54 @@ public class ControllerActionEntry{
         }
     }
 
+    private ListenableFuture<String> invokeMethod(ListeningExecutorService service,ControllerContext ctxt,Object... args) throws IllegalAccessException, InvocationTargetException {
+        return this.invokeMethod(service,ctxt, () -> method.invoke(this.controller, args));
+    }
+
+    private ListenableFuture<String> invokeMethod(ListeningExecutorService service,ControllerContext ctxt) throws IllegalAccessException, InvocationTargetException {
+        return this.invokeMethod(service,ctxt, () -> method.invoke(this.controller));
+    }
+
+    private ListenableFuture<String> invokeMethod(ListeningExecutorService service, ControllerContext ctxt, Callable<Object> method){
+        if(isFuture){
+            SettableFuture <String> result = SettableFuture.create();
+            service.submit(() -> {
+                ControllerContext.create(ctxt);
+                ListenableFuture future = null;
+                try {
+                    future = (ListenableFuture)method.call();
+                } catch (Exception e) {
+                    result.setException(ControllerContext.Unwrap(e));
+                    return;
+                }
+                Futures.addCallback(future, new FutureCallback<Object>() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        result.set(ControllerActionEntry.toString(o));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        result.setException(ControllerContext.Unwrap(throwable));
+                    }
+                });
+            });
+            return result;
+        }
+        return service.submit( () -> {
+            try{
+                ControllerContext.create(ctxt);
+                return toString(method.call());
+            }
+            catch(Exception ex){
+                throw new RuntimeException(ControllerContext.Unwrap(ex));
+            }
+        });
+    }
+
+
+
+
     private String getParameter(Object parameter) {
         if(parameter == null){
             return null;
@@ -144,7 +192,7 @@ public class ControllerActionEntry{
         if(parameter instanceof String){
             return (String) parameter;
         }
-        return toString(parameter,parameter.getClass());
+        return toString(parameter);
 
     }
 
@@ -195,10 +243,12 @@ public class ControllerActionEntry{
         }
     }
 
-    public static String toString(Object ser,Class<?> aType){
+    public static String toString(Object ser){
         try {
-
-            return mapper.writerFor(aType).writeValueAsString(ser);
+            if(ser == null){
+                return null;
+            }
+            return mapper.writerFor(ser.getClass()).writeValueAsString(ser);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to serialize object \"" + ser + "\"",e);
         }

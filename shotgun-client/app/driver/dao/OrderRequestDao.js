@@ -110,10 +110,7 @@ export default class OrderRequestDaoContext{
 
   transformOptions(options){
     if (typeof options.contentTypeId === 'undefined'){
-      throw new Error('productId should be defined');
-    }
-    if (typeof options.vehicleTypeId === 'undefined'){
-      throw new Error('vehicleTypeId  should be defined');
+      throw new Error('contentTypeId should be defined');
     }
     if (typeof options.driverLatitude === 'undefined'){
       throw new Error('driverLatitude  should be defined');

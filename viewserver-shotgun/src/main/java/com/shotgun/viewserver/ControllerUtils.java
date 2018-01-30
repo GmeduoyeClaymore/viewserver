@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -200,6 +201,13 @@ public class ControllerUtils{
         }
 
         return (KeyedTable)table;
+    }
+
+    public static Throwable Unwrap(Exception e){
+        if(e instanceof InvocationTargetException){
+            return ((InvocationTargetException)e).getTargetException();
+        }
+        return e;
     }
 
     public static Object getColumnValue(ITable table, String column, int row){
