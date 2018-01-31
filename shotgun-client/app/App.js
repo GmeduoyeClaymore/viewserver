@@ -41,27 +41,37 @@ export default class App extends React.Component {
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
+    this.setUserId = this.setUserId.bind(this);
+    this.initMessaging = this.initMessaging.bind(this);
+    this.setInitialRoot = this.setInitialRoot.bind(this);
+    this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
+    this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
   }
 
   async componentDidMount() {
-    let isConnected = false;
     try {
       Logger.debug('Mounting App Component');
       await ProtoLoader.loadAll();
-      await this.client.connect();
-      await this.setUserId();
-      await this.initMessaging();
-      this.setInitialRoot();
-      isConnected = true;
+      await this.client.connect(true);
     } catch (error){
       //Logger.error('Connection error - ' + error);
       this.setState({ error});
     }
     Logger.debug('App Component Mounted');
-    this.setState({ isReady: true, isConnected });
+  }
+
+  async handleConnectionStatusChanged(isReady){
+    Logger.info(`Connection status changed to :\"${isReady}\"`);
+    if (isReady){
+      await this.setUserId();
+      await this.initMessaging();
+      this.setInitialRoot();
+    }
+    this.setState({ isReady, isConnected: isReady});
   }
 
   async initMessaging(){
+    Logger.info('......Initializing firebase messaging');
     if (!this.userId){
       Logger.warning('No userid has been specified not initializing messaging');
       return;
@@ -77,6 +87,7 @@ export default class App extends React.Component {
       //Logger.error(error);
       this.setState({error});
     }
+    Logger.info('!!! Finished initializing firebase messaging');
   }
 
   async onChangeToken(token){
@@ -84,13 +95,14 @@ export default class App extends React.Component {
   }
 
   async setUserId(){
+    Logger.info('......Attempting to get userid from device');
     this.userId = await PrincipalService.getUserIdFromDevice();
     const {userId} = this;
     if (userId){
       //TODO this is really unsafe really we should be saving credentials in the client not just the userID
       await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
     }
-    Logger.debug(`Got user id ${this.userId} from device`);
+    Logger.info(`!!! Got user id ${this.userId} from device`);
   }
 
   setInitialRoot(){

@@ -17,13 +17,27 @@ import LoadingScreen from 'common/components/LoadingScreen';
 class DriverLanding extends Component {
   constructor(props) {
     super(props);
+    this.hasLoadedData = false;
   }
 
   componentWillMount(){
-    const {dispatch, client, userId, user} = this.props;
-    dispatch(driverServicesRegistrationAction(client, userId));
-    dispatch(getCurrentPosition());
-    dispatch(getBankAccount(user.stripeAccountId));
+    this.loadData(this.props);
+  }
+
+  componentWillReceiveProps(newProps){
+    this.loadData(newProps);
+  }
+  
+  loadData(newProps){
+    if (!this.hasLoadedData ){
+      const {dispatch, client, userId, user} = newProps;
+      if (user){
+        dispatch(driverServicesRegistrationAction(client, userId));
+        dispatch(getCurrentPosition());
+        dispatch(getBankAccount(user.stripeAccountId));
+        this.hasLoadedData = true;
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -50,11 +64,14 @@ class DriverLanding extends Component {
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  ...nextOwnProps,
-  busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]),
-  user: getDaoState(state, ['user'], 'userDao')
-});
+const mapStateToProps = (state, nextOwnProps) => {
+  const user = getDaoState(state, ['user'], 'userDao');
+  return {
+    ...nextOwnProps,
+    busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
+    user
+  };
+};
 
 export default connect(mapStateToProps)(DriverLanding);
 

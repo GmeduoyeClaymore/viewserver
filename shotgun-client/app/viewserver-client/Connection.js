@@ -1,5 +1,6 @@
 import Logger from 'common/Logger';
 import ProtoLoader from './core/ProtoLoader';
+import Rx from 'rxjs/Rx';
 
 export default class Connection {
   constructor(uri, network) {
@@ -13,34 +14,44 @@ export default class Connection {
     this.handleSocketOpen = this.handleSocketOpen.bind(this);
     this.handleSocketClosed = this.handleSocketClosed.bind(this);
     this.handleSocketMessage = this.handleSocketMessage.bind(this);
+    this.tryConnect = this.tryConnect.bind(this);
+    this._connectionSubject = new Rx.Subject();
+    this._connectionPromise = undefined;
   }
 
     static CONNECTION_ATTEMPT_DELAY = 500; // The maximum amount of time to wait for the socket to open before giving up
-    static CONNECTING_RETRY_ATTEMPTS = 5;
+    static CONNECTING_RETRY_ATTEMPTS = 500000;
 
     connect(autoReconnect) {
+      if (this._connectionPromise){
+        throw new Error('Cannot call reconnect multiple times on the same connection');
+      }
       this._autoReconnect = autoReconnect;
-      return new Promise((resolve, reject) => {
+      this._connectionPromise = new Promise((resolve, reject) => {
         this.tryConnect(1, resolve, reject);
       });
+      return this._connectionPromise;
     }
 
     tryConnect(attemptCounter, resolve, reject){
       this._socket = new WebSocket(this._uri);
       this._socket.binaryType = 'arraybuffer';
-
+      const _this = this;
       this._socket.onopen = () => {
-        Logger.debug(`Attempt ${attemptCounter} socket connected successfully`);
-        this._socket.onclose = this.handleSocketClosed;
-        this.handleSocketOpen();
+        Logger.info(`Attempt ${attemptCounter} socket connected successfully`);
+        _this._socket.onclose = this.handleSocketClosed;
+        _this.handleSocketOpen();
         resolve();
+        _this._socket.onerror = undefined;
+        _this._connectionPromise = undefined;
+        _this._connectionSubject.next(true);
       };
 
       this._socket.onerror = () => {
         if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS){
           reject(`Unable to detect open web socket to ${this._uri} after ${Connection.CONNECTING_RETRY_ATTEMPTS} retries`);
         } else {
-          Logger.debug(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);
+          Logger.info(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);
           setTimeout(() => this.tryConnect(attemptCounter + 1, resolve, reject), Connection.CONNECTION_ATTEMPT_DELAY);
         }
       };
@@ -49,6 +60,11 @@ export default class Connection {
 
     get socket(){
       return this._socket;
+    }
+
+
+    get connectionObservable(){
+      return this._connectionSubject;
     }
 
     get connected(){
@@ -74,6 +90,7 @@ export default class Connection {
 
     handleSocketClosed(e){
       let reason;
+      this._connectionSubject.next(false);
 
       switch (e.code){
       case 1000:

@@ -17,10 +17,22 @@ export default class Dao {
     }
     this.name = daoContext.name;
     this.page = page(this);
+    this.handleConnectionStatus = this.handleConnectionStatus.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
     this.crx = crx;//force this to load
+    if (!this.daoContext.client){
+      Logger.warning('Unable to link up reconnect event as cannot find client in DAO context');
+      this.daoContext.client.connection.connectionObservable.subscribe(this.handleConnectionStatus);
+    }
+  }
+
+  handleConnectionStatus(status){
+    if (status){
+      Logger.info('Handling reconnection logic');
+      this.updateSubscription(this.options, true);
+    }
   }
     
   get observable(){
@@ -43,9 +55,9 @@ export default class Dao {
     this.dataSink.onDataReset();
   }
 
-  async updateSubscription(options){
+  async updateSubscription(options, force){
     const newOptions = {...this.options, ...options};
-    if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy){
+    if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy || force){
       if (this.subscriptionStrategy){
         this.subscriptionStrategy.dispose();
       }

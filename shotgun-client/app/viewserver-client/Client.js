@@ -20,8 +20,12 @@ export default class Client {
     Client.Current = client;
   }
 
-  connect(){
-    return this.network.connect();
+  get connection(){
+    return this.network.connection;
+  }
+
+  connect(autoReconnect){
+    return this.network.connect(autoReconnect);
   }
 
   get connected(){

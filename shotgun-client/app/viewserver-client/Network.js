@@ -7,14 +7,14 @@ import TableMetaDataMapper from './mappers/TableMetaDataMapper';
 export default class Network {
   constructor(connectionUrl) {
     this.connectionUrl = connectionUrl;
-  }
-
-  connect(){
     Logger.debug(`Creating connection to ${this.connectionUrl}`);
     this.connection = new Connection(this.connectionUrl, this);
-    return this.connection.connect();
   }
-    
+
+  connect(autoReconnect){
+    Logger.debug(`Connecting to ${this.connectionUrl} auto reconnect is ${autoReconnect}`);
+    return this.connection.connect(autoReconnect);
+  }
 
   get connected(){
     return this.connection.connected;
