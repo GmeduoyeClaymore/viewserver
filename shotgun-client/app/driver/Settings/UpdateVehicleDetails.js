@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Icon, Grid, Row, Col} from 'native-base';
+import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
@@ -10,6 +10,7 @@ import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {updateVehicle} from 'driver/actions/DriverActions';
 import Logger from 'common/Logger';
+import {Icon} from 'common/components/Icon';
 
 class UpdateVehicleDetails extends Component {
   constructor(props) {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Content, Header, Left, Body, Container, Icon, Title, List, ListItem, View, Button} from 'native-base';
+import {Text, Content, Header, Left, Body, Container, Title, List, ListItem, View, Button} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import ErrorRegion from 'common/components/ErrorRegion';
 import SpinnerButton from 'common/components/SpinnerButton';
@@ -8,6 +8,7 @@ import {isAnyOperationPending, getOperationErrors, getDaoState} from 'common/dao
 import CardIcon from 'common/components/CardIcon';
 import {deletePaymentCard, addPaymentCard} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {Icon} from 'common/components/Icon';
 
 class PaymentCardDetails extends Component {
   constructor(props) {

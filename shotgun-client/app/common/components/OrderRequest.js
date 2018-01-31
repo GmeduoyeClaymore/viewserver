@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Text, ListItem, Grid, Col, Row, Icon} from 'native-base';
+import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import { withRouter } from 'react-router';
 import {getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {Icon} from 'common/components/Icon';
 
 class OrderRequest extends Component {
   constructor() {
@@ -31,9 +32,9 @@ class OrderRequest extends Component {
           </Col>
         </Row>
         <Row size={25}>
-          {contentType.fromTime ? <Col size={50}><Row><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row></Col> : null}
-          {contentType.tillTime ? <Col size={50}><Row><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row></Col>  : null}
-          <Col size={50} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="man"/>, <Text key='text'>{`${noRequiredForOffload} people required`}</Text>] : null}</Row></Col>
+          {contentType.fromTime ? <Col size={50}><Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row></Col> : null}
+          {contentType.tillTime ? <Col size={50}><Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row></Col>  : null}
+          <Col size={50} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text key='text'>{`${noRequiredForOffload} people required`}</Text>] : null}</Row></Col>
         </Row>
       </Grid>
     </ListItem>;

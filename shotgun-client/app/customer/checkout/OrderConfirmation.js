@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Spinner,  Container, Content, Header, Text, Title, Body, Left, Button, Icon} from 'native-base';
+import {Spinner,  Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 import ErrorRegion from 'common/components/ErrorRegion';
 import OrderSummary from 'common/components/OrderSummary';
 import PriceSummary from 'common/components/PriceSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {Icon} from 'common/components/Icon';
 
 class OrderConfirmation extends Component{
   constructor(props){

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Text, Content, List, ListItem, Icon, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
+import { Button, Text, Content, List, ListItem, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'react-redux';
 import {getDaoState} from 'common/dao';
 import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
+import {Icon} from 'common/components/Icon';
 
 const DriverSettings = ({history, user}) => {
   const signOut = async () => {

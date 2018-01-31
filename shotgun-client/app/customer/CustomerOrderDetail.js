@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Container, Header, Left, Button, Icon, Body, Title, Content, Text} from 'native-base';
+import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import OrderSummary from 'common/components/OrderSummary';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
@@ -9,6 +9,7 @@ import PriceSummary from 'common/components/PriceSummary';
 import RatingSummary from 'common/components/RatingSummary';
 import {cancelOrder, rejectDriver} from 'customer/actions/CustomerActions';
 import SpinnerButton from 'common/components/SpinnerButton';
+import {Icon} from 'common/components/Icon';
 
 class CustomerOrderDetail extends Component{
   constructor(props) {

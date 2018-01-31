@@ -23,9 +23,7 @@ import {registerAppListener, registerKilledListener} from 'common/Listeners';
 import FCM from 'react-native-fcm';
 
 const store = configureStore();
-
 registerKilledListener();
-
 UIManager.setLayoutAnimationEnabledExperimental(true);
 
 export default class App extends React.Component {

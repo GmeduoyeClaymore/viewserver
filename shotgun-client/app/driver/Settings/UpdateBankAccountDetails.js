@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Content, Header, Left, Body, Container, Button, Icon, Title, Grid, Row, Col, Item, Label, View} from 'native-base';
+import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, Col, Item, Label, View} from 'native-base';
 import yup from 'yup';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
@@ -9,6 +9,7 @@ import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {setBankAccount} from 'driver/actions/DriverActions';
 import ErrorRegion from 'common/components/ErrorRegion';
+import {Icon} from 'common/components/Icon';
 
 class UpdateBankAccountDetails extends Component {
   constructor(props) {

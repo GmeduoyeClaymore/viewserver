@@ -200,7 +200,7 @@ export default {
   },
 
   // Icon
-  iconFamily: 'Ionicons',
+  iconFamily: 'Shotgun',
   iconFontSize: 16,
   iconMargin: 7,
   iconHeaderSize: platform === 'ios' ? 33 : 24,

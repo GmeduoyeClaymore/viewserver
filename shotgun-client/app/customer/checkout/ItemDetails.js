@@ -1,14 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {Image, Dimensions} from 'react-native';
-import {Icon, Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
+import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 import ImagePicker from 'react-native-image-picker';
 import ValidatingInput from 'common/components/ValidatingInput';
 import ValidatingButton from 'common/components/ValidatingButton';
-
+import {Icon} from 'common/components/Icon';
 
 const ItemDetails = ({context, navigationStrategy}) => {
   const {orderItem} = context.state;

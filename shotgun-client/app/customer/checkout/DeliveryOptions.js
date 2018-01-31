@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'custom-redux';
 import { Picker } from 'react-native';
-import { Icon, Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, CheckBox } from 'native-base';
+import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, CheckBox } from 'native-base';
 import { getDaoState } from 'common/dao';
 import { merge } from 'lodash';
 import { withRouter } from 'react-router';
@@ -14,6 +14,7 @@ import ValidatingButton from 'common/components/ValidatingButton';
 import yup from 'yup';
 import CardIcon from 'common/components/CardIcon';
 import ErrorRegion from 'common/components/ErrorRegion';
+import {Icon} from 'common/components/Icon';
 
 class DeliveryOptions extends Component {
   constructor(props) {
@@ -114,12 +115,12 @@ class DeliveryOptions extends Component {
             </Grid>
           </ListItem>
           {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
-            <Icon paddedIcon name="time" />
+            <Icon paddedIcon name="delivery-time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
             <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeValue('from', date)} {...datePickerOptions} />
           </ListItem> : null}
           {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
-            <Icon paddedIcon name="time" />
+            <Icon paddedIcon name="delivery-time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a return time</Text>}
             <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeValue('till', date)} {...datePickerOptions} />
           </ListItem> : null}
@@ -145,7 +146,7 @@ class DeliveryOptions extends Component {
                 <Col style={{ marginRight: 10 }}>
                   <Row>
                     <Button personButton active={noRequiredForOffload == 1} onPress={() => this.onChangeNoItems(1)} >
-                      <Icon name='man' />
+                      <Icon name='one-person' />
                     </Button>
                   </Row>
                   <Row style={styles.personSelectTextRow}>
@@ -155,21 +156,11 @@ class DeliveryOptions extends Component {
                 <Col style={{ marginRight: 10 }}>
                   <Row>
                     <Button personButton active={noRequiredForOffload == 2} onPress={() => this.onChangeNoItems(2)} >
-                      <Icon name='man' />
+                      <Icon name='two-people' />
                     </Button>
                   </Row>
                   <Row style={styles.personSelectTextRow}>
                     <Text style={styles.personSelectText}>2</Text>
-                  </Row>
-                </Col>
-                <Col>
-                  <Row>
-                    <Button personButton active={noRequiredForOffload == 3} onPress={() => this.onChangeNoItems(3)} >
-                      <Icon name='man' />
-                    </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>3</Text>
                   </Row>
                 </Col>
               </Row>

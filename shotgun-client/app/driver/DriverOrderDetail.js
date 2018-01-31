@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Container, Header, Left, Button, Icon, Body, Title, Content, Text, View} from 'native-base';
+import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
 import OrderSummary from 'common/components/OrderSummary';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {startOrderRequest, cancelOrderRequest, watchPosition, stopWatchingPosition} from 'driver/actions/DriverActions';
@@ -10,6 +10,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import LoadingScreen from 'common/components/LoadingScreen';
 import SpinnerButton from 'common/components/SpinnerButton';
+import {Icon} from 'common/components/Icon';
 
 class DriverOrderDetail extends Component{
   constructor(props) {

@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {Dimensions, Image} from 'react-native';
-import {Text, List, ListItem, Icon, Grid, Row} from 'native-base';
+import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import LoadingScreen from 'common/components/LoadingScreen';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
+import {Icon} from 'common/components/Icon';
 
 class OrderSummary extends Component{
   constructor(){
@@ -15,7 +16,7 @@ class OrderSummary extends Component{
 
   renderVehicleType(){
     const {busy, selectedVehicleType} = this.props;
-    return  busy ? <LoadingScreen text="Loading Vehicle Types" /> : <ListItem padded><Icon paddedIcon name='car'/><Text key='text'>{`${selectedVehicleType.description}`}</Text></ListItem>;
+    return  busy ? <LoadingScreen text="Loading Vehicle Types" /> : <ListItem padded><Icon paddedIcon name='drive'/><Text key='text'>{`${selectedVehicleType.description}`}</Text></ListItem>;
   }
 
   renderProduct(){
@@ -68,10 +69,10 @@ class OrderSummary extends Component{
     return <List>
       {this.renderMap()}
       {this.renderDelivery()}
-      {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.noPeople && noPeople ? <ListItem padded>
-        <Icon key='icon' paddedIcon name="man"/><Text key='text'>{`${noPeople} people required`}</Text>
+        <Icon key='icon' paddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text>
       </ListItem> : null}
       {contentType.hasVehicle ? this.renderVehicleType() : null}
       {this.renderProduct()}

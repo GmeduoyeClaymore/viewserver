@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Text, View, Icon} from 'native-base';
+import {Text, View} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import RatingAction from 'common/components/RatingAction';
+import {Icon} from 'common/components/Icon';
 
 export default class RatingSummary extends Component{
   constructor(){

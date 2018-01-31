@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Header, Left, Body, Container, Button, Icon, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
+import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
 import ValidatingInput from 'common/components/ValidatingInput';
@@ -10,6 +10,7 @@ import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao'
 import ErrorRegion from 'common/components/ErrorRegion';
 import { withRouter } from 'react-router';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';
+import {Icon} from 'common/components/Icon';
 
 class HomeAddressDetails  extends Component{
   constructor(props) {

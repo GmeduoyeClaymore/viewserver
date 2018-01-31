@@ -32,16 +32,12 @@ export default class MapViewStatic extends Component {
     height = Math.round(height);
 
 
-    const getMarkerParams = (markers) => {
-      if (markers == undefined){
-        return '';
-      }
+    const getOriginMarker = (origin) => {
+      return `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-origin-small.png')}|${origin.latitude},${origin.longitude}`;
+    };
 
-      const markerParams = markers.reduce((prev, curr, i) => {
-        const location = curr.line1 !== undefined ? `${i !== 0 ? '|' : ''}${curr.latitude},${curr.longitude}` : '';
-        return prev + location;
-      }, '');
-      return `size:tiny|${markerParams}`;
+    const getDestinationMarker = (destination) => {
+      return destination.line1 !== undefined ? `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-destination-small.png')}|${destination.latitude},${destination.longitude}` : undefined;
     };
 
     const getPath = () => {
@@ -51,7 +47,7 @@ export default class MapViewStatic extends Component {
 
       return `color:0x000000ff|weight:3|${pathParams}`;
     };
-    const staticMapsUrl = `${rootUrl}?style=feature:poi|visibility:off${zoom}&scale=${scale}&size=${width}x${height}&markers=${getMarkerParams([origin, destination])}&path=${getPath()}`;
+    const staticMapsUrl = `${rootUrl}?style=feature:poi|visibility:off${zoom}&scale=${scale}&size=${width}x${height}${getOriginMarker(origin)}${getDestinationMarker(destination)}&path=${getPath()}`;
 
     return <Image style={[styles, this.props.style, {width, height}]} source={{uri: staticMapsUrl}} />;
   }

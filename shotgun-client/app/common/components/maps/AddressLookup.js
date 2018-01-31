@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Text, Button, Header, Left, Body, Container, Icon, Title, Input, Grid, Row, List, ListItem, View, Content} from 'native-base';
+import { Text, Button, Header, Left, Body, Container, Title, Input, Grid, Row, List, ListItem, View, Content} from 'native-base';
 import { connect } from 'custom-redux';
 import { getDaoState, getNavigationProps } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import ErrorRegion from 'common/components/ErrorRegion';
 import {debounce} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {Icon} from 'common/components/Icon';
 
 const MAX_RECENT_ADDRESSES = 10;
 
@@ -123,8 +124,8 @@ class AddressLookup extends Component {
       <Container>
         <Header>
           <Left>
-            <Button transparent disabled={busy}>
-              <Icon name='close-circle' onPress={() => history.goBack()} />
+            <Button disabled={busy}>
+              <Icon name='cross' onPress={() => history.goBack()} />
             </Button>
           </Left>
           <Body><Title style={styles.title}>{addressLabel}</Title></Body>

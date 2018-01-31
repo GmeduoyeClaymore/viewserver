@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Icon, Button, Container, Header, Text, Title, Body, Left, Grid, Row, Content, View} from 'native-base';
+import {Button, Container, Header, Text, Title, Body, Left, Grid, Row, Content, View} from 'native-base';
 import {getDaoState, isAnyLoading} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 import yup from 'yup';
 import LoadingScreen from 'common/components/LoadingScreen';
 import ValidatingButton from 'common/components/ValidatingButton';
+import {Icon} from 'common/components/Icon';
 
 class VehicleDetails extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class VehicleDetails extends Component {
     const {delivery} = context.state;
     return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
       <Button style={{height: 'auto'}} large active={delivery.vehicleTypeId == vehicleType.vehicleTypeId} onPress={() => this.onChangeValue('vehicleTypeId', vehicleType.vehicleTypeId)}>
-        <Icon name='car'/>
+        <Icon name='small-van'/>
       </Button>
       <Text style={styles.vehicleSelectText}>{vehicleType.description}</Text>
     </View>;

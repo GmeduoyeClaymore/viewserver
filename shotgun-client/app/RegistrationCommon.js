@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, Button, Content, Grid, Col, Row, View, H1, Icon} from 'native-base';
+import {Text, Button, Content, Grid, Col, Row, View, H1} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {Icon} from 'common/components/Icon';
 
 export default RegistrationCommon = ({history}) => {
   return <Content padded contentContainerStyle={styles.container}>
@@ -12,14 +13,14 @@ export default RegistrationCommon = ({history}) => {
       <Grid>
         <Row>
           <Col size={45}>
-            <Row size={35}><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='cube'/></Button></Row>
+            <Row size={35}><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='schedule-delivery'/></Button></Row>
             <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Schedule a delivery</Text></Row>
           </Col>
           <Col size={10}>
             <Row style={styles.orRow}><Text>or</Text></Row>
           </Col>
           <Col size={45}>
-            <Row size={35}><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='car'/></Button></Row>
+            <Row size={35}><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='drive'/></Button></Row>
             <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Drive and deliver</Text></Row>
           </Col>
         </Row>

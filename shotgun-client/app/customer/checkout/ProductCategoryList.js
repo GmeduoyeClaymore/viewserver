@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import {Icon, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
+import {Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {Spinner} from 'native-base';
 import { withRouter } from 'react-router';
 import PagingListView from 'common/components/PagingListView';
@@ -10,6 +10,7 @@ import {connect} from 'custom-redux';
 import yup from 'yup';
 import ErrorRegion from 'common/components/ErrorRegion';
 import ValidatingButton from 'common/components/ValidatingButton';
+import {Icon} from 'common/components/Icon';
 
 const styles = StyleSheet.create({
   container: {

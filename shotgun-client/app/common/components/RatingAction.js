@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Text, View, Icon} from 'native-base';
+import {Text, View} from 'native-base';
 import {connect} from 'react-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {rateCustomer} from 'driver/actions/DriverActions';
 import {rateDriver} from 'customer/actions/CustomerActions';
+import {Icon} from 'common/components/Icon';
 
 class RatingAction extends Component{
   constructor(){

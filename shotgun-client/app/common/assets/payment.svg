@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="16px" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>iconmonstr-credit-card-6@1.5x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Account" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-320.000000, -370.000000)">
+        <g id="iconmonstr-credit-card-6" transform="translate(320.000000, 370.000000)" fill="#323E42" fill-rule="nonzero">
+            <path d="M22,0 L2,0 C0.896,0 0,0.896 0,2 L0,14 C0,15.104 0.896,16 2,16 L22,16 C23.104,16 24,15.104 24,14 L24,2 C24,0.896 23.104,0 22,0 Z M22,13.5 C22,13.776 21.776,14 21.5,14 L2.5,14 C2.224,14 2,13.776 2,13.5 L2,7 L22,7 L22,13.5 Z M22,4 L2,4 L2,2.5 C2,2.224 2.224,2 2.5,2 L21.5,2 C21.776,2 22,2.224 22,2.5 L22,4 Z M13,10 L4,10 L4,9 L13,9 L13,10 Z M10,12 L4,12 L4,11 L10,11 L10,12 Z M20,10 L17,10 L17,9 L20,9 L20,10 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

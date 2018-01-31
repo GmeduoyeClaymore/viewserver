@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {Container, Button, Text, Icon, Grid, Col, Row} from 'native-base';
+import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
@@ -13,6 +13,8 @@ import LoadingScreen from 'common/components/LoadingScreen';
 import RatingAction from 'common/components/RatingAction';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import ErrorRegion from 'common/components/ErrorRegion';
+import {Icon} from 'common/components/Icon';
+import locationImg from 'common/assets/location.png';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -66,7 +68,7 @@ class CustomerOrderInProgress extends Component{
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
             showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
             {isDelivery ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
-            <MapView.Marker coordinate={{...driverPosition}}/>
+            <MapView.Marker image={locationImg} coordinate={{...driverPosition}}/>
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {isDelivery ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
@@ -109,7 +111,10 @@ class CustomerOrderInProgress extends Component{
                 </Row>
               </Grid>
               <ErrorRegion errors={errors}>
-                <Button fullWidth style={styles.callButton} onPress={onPressCallDriver}><Text uppercase={false}>Call driver</Text></Button>
+                <Button fullWidth callButton onPress={onPressCallDriver}>
+                  <Icon name="phone" paddedIcon/>
+                  <Text uppercase={false}>Call driver</Text>
+                </Button>
               </ErrorRegion>
             </Col>
           }
@@ -135,13 +140,6 @@ const styles = {
   },
   data: {
     fontWeight: 'bold'
-  },
-  callButton: {
-    backgroundColor: shotgun.brandPrimary,
-    borderWidth: 1,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    borderColor: shotgun.silver
   },
   navigateButton: {
     borderTopRightRadius: 0,

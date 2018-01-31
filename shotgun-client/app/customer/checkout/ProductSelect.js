@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Text, Content, Button, H1, Grid, Row, Icon, View} from 'native-base';
+import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
 import {merge} from 'lodash';
+import {Icon} from 'common/components/Icon';
 
 class ProductSelect extends Component{
   constructor(props){
@@ -12,7 +13,7 @@ class ProductSelect extends Component{
     const {selectedContentType = {}} = context.state;
     return <View key={i} style={{width: '30%'}}>
       <Button style={{height: 'auto'}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
-        <Icon name='car'/>
+        <Icon name='small-van'/>
       </Button>
       <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
     </View>;
