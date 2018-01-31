@@ -9,10 +9,10 @@ export const fetchRoute = async  (client, locations) => {
     return {
       distance: route.legs.reduce((carry, curr) => {
         return carry + curr.distance.value;
-      }, 0) / 1000,
+      }, 0),
       duration: route.legs.reduce((carry, curr) => {
         return carry + curr.duration.value;
-      }, 0) / 60,
+      }, 0),
       coordinates: decode(route.overview_polyline.points)
     };
   }

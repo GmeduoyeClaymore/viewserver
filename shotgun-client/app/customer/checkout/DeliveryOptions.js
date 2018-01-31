@@ -6,7 +6,7 @@ import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row,
 import { merge } from 'lodash';
 import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
-import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon} from 'common/components';
+import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
@@ -67,7 +67,6 @@ class DeliveryOptions extends Component {
   render() {
     const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
     const { delivery, payment, orderItem, selectedContentType} = context.state;
-    const {origin, destination} = delivery;
     const { quantity: noRequiredForOffload } = orderItem;
     const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
@@ -103,11 +102,7 @@ class DeliveryOptions extends Component {
         <Content>
           <ErrorRegion errors={errors}/>
           <ListItem padded>
-            <Grid>
-              {selectedContentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
-              {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
-              {selectedContentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
-            </Grid>
+            <OriginDestinationSummary contentType={selectedContentType} delivery={delivery}/>
           </ListItem>
           {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />

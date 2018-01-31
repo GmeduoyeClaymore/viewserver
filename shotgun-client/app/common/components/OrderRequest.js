@@ -4,7 +4,7 @@ import moment from 'moment';
 import { withRouter } from 'react-router';
 import {OrderStatuses, getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Icon} from 'common/components';
+import {Icon, OriginDestinationSummary} from 'common/components';
 
 class OrderRequest extends Component {
   constructor() {
@@ -21,9 +21,7 @@ class OrderRequest extends Component {
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={70}>
-            {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
-            {delivery.duration ? <Row><Text time>| {delivery.duration.toFixed(0)} hrs</Text></Row> : null}
-            {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+            <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
           </Col>
           <Col size={30} style={styles.priceRow}>
             <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="arrow-forward"/></Text>

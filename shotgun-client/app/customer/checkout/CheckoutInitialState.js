@@ -1,5 +1,5 @@
 export const INITIAL_STATE = {
-  totalPrice: 1000,
+  totalPrice: undefined,
   orderItem: {
     productId: undefined,
     notes: undefined,
@@ -11,6 +11,8 @@ export const INITIAL_STATE = {
     noRequiredForOffload: 0,
     vehicleTypeId: undefined,
     deliveryId: undefined,
+    distance: undefined,
+    duration: undefined,
     origin: {
       flatNumber: undefined,
       line1: undefined,

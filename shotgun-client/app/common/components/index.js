@@ -14,3 +14,4 @@ export {ValidatingButton} from './ValidatingButton';
 export {ValidatingInput} from './ValidatingInput';
 export {Icon} from './Icon';
 export {Tabs} from './Tabs';
+export {OriginDestinationSummary} from './OriginDestinationSummary';

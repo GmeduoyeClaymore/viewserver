@@ -3,7 +3,7 @@ import {Dimensions, Image} from 'react-native';
 import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
-import {LoadingScreen, Icon} from 'common/components';
+import {LoadingScreen, Icon, OriginDestinationSummary} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
@@ -37,18 +37,6 @@ class OrderSummary extends Component{
     </ListItem>;
   }
 
-  renderDelivery(){
-    const {delivery, contentType} = this.props;
-    const {origin, destination} = delivery;
-    return <ListItem padded>
-      <Grid>
-        {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
-        {delivery.duration ? <Row><Text time>| {delivery.duration} hrs</Text></Row> : null}
-        {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
-      </Grid>
-    </ListItem>;
-  }
-
   renderItemDetails(){
     const {orderItem} = this.props;
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
@@ -67,7 +55,9 @@ class OrderSummary extends Component{
     
     return <List>
       {this.renderMap()}
-      {this.renderDelivery()}
+      <ListItem padded>
+        <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+      </ListItem>
       {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.noPeople && noPeople ? <ListItem padded>

@@ -81,6 +81,8 @@ export default class OrderSummaryDao{
       delivery: {
         from: orderSummary.from,
         till: orderSummary.till,
+        distance: orderSummary.distance,
+        duration: orderSummary.duration,
         noRequiredForOffload: orderSummary.noRequiredForOffload,
         vehicleTypeId: orderSummary.vehicleTypeId,
         deliveryId: orderSummary.deliveryId,

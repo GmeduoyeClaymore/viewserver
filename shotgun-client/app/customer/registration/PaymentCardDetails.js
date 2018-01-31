@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
-import {ErrorRegion, TermsAgreement, Icon} from 'common/components';
+import {ErrorRegion, TermsAgreement, Icon, SpinnerButton} from 'common/components';
 import {connect} from 'react-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
@@ -47,10 +47,10 @@ class PaymentCardDetails extends Component {
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}>
-        <Button paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
+        <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
           <Text uppercase={false}>Continue</Text>
           <Icon name='arrow-forward'/>
-        </Button>
+        </SpinnerButton>
       </ErrorRegion>
       <TermsAgreement/>
     </Container>;

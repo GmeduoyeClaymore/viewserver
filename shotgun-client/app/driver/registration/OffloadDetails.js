@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import {TermsAgreement, ValidatingButton, ErrorRegion, Icon, LoadingScreen} from 'common/components';
+import {TermsAgreement, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
@@ -21,7 +21,7 @@ const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
     dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   };
 
-  return busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
+  return <Container>
     <Header withButton>
       <Left>
         <Button>
@@ -68,7 +68,7 @@ const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
         </Grid> : null}
     </Content>
     <ErrorRegion errors={errors}>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={register} validationSchema={yup.object(validationSchema)} model={vehicle}>
+      <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true} onPress={register} validationSchema={yup.object(validationSchema)} model={vehicle}>
         <Text uppercase={false}>Register</Text>
         <Icon name='arrow-forward'/>
       </ValidatingButton>

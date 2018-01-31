@@ -88,6 +88,8 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("created"),
                                                 new IProjectionConfig.ProjectionColumn("from"),
                                                 new IProjectionConfig.ProjectionColumn("till"),
+                                                new IProjectionConfig.ProjectionColumn("distance"),
+                                                new IProjectionConfig.ProjectionColumn("duration"),
                                                 new IProjectionConfig.ProjectionColumn("product_productId", "productProductId"),
                                                 new IProjectionConfig.ProjectionColumn("product_name", "productName"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_contentTypeId", "contentTypeContentTypeId"),

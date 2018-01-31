@@ -81,7 +81,7 @@ class VehicleDetails extends Component{
     const {numAvailableForOffload} = vehicle;
     const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
-    return  busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
+    return  <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -194,7 +194,7 @@ class VehicleDetails extends Component{
         </Row>
       </Content> : null}
       <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
+        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
           <Text uppercase={false}>Register</Text>
           <Icon name='arrow-forward'/>
         </ValidatingButton>
@@ -249,7 +249,7 @@ const mapStateToProps = (state, initialProps) => {
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy =  isAnyLoading(state, ['contentTypeDao']) || isAnyOperationPending(state, [{ driverDao: 'registerDriver'}] || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']));
+  const busy = isAnyLoading(state, ['contentTypeDao']) || isAnyOperationPending(state, [{ driverDao: 'registerDriver'}] || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']));
   return {
     ...initialProps,
     context,
