@@ -76,6 +76,8 @@ export default class OrderRequestDaoContext{
       delivery: {
         from: orderRequest.from,
         till: orderRequest.till,
+        distance: orderRequest.distance,
+        duration: orderRequest.duration,
         noRequiredForOffload: orderRequest.noRequiredForOffload,
         deliveryId: orderRequest.deliveryId,
         distance: orderRequest.distance,
