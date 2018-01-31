@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, Linking} from 'react-native';
 import {connect} from 'react-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
@@ -9,14 +9,9 @@ import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/a
 import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
-import LoadingScreen from 'common/components/LoadingScreen';
-import RatingAction from 'common/components/RatingAction';
+import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import ErrorRegion from 'common/components/ErrorRegion';
-import {Linking} from 'react-native';
 import Logger from 'common/Logger';
-import SpinnerButton from 'common/components/SpinnerButton';
-import {Icon} from 'common/components/Icon';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;

@@ -4,7 +4,7 @@ import {PropTypes} from 'prop-types';
 import ValidationService from 'common/services/ValidationService';
 import {isEqual} from 'lodash';
 
-export default class ValidatingButton extends Component {
+export class ValidatingButton extends Component {
   constructor(){
     super();
     this.state = {isValid: false, model: undefined};

@@ -2,17 +2,13 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingInput, ValidatingButton, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'custom-redux';
-import ErrorRegion from 'common/components/ErrorRegion';
 import {withRouter} from 'react-router';
-import {Icon} from 'common/components/Icon';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError } from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
-import LoadingScreen from 'common/components/LoadingScreen';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 class VehicleDetails extends Component{
@@ -38,7 +34,8 @@ class VehicleDetails extends Component{
 
 
   selectContentType(selectedContentType){
-    let {context, selectedContentTypes = []} = this.props;
+    let {selectedContentTypes = []} = this.props;
+    const {context} = this.props;
     const index = selectedContentTypes.indexOf(selectedContentType.contentTypeId);
     if (!!~index){
       selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
@@ -85,18 +82,18 @@ class VehicleDetails extends Component{
     const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
     return  busy ? <LoadingScreen text="Registering You With Shotgun"/> : <Container>
-    <Header withButton>
-      <Left>
-        <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()}/>
-        </Button>
-      </Left>
+      <Header withButton>
+        <Left>
+          <Button>
+            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          </Button>
+        </Left>
         <Body><Title>Account Type</Title></Body>
-    </Header>
+      </Header>
       <Content keyboardShouldPersistTaps="always" padded>
-      <Grid>
-        <Row>
-          <Col>
+        <Grid>
+          <Row>
+            <Col>
               <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
@@ -113,37 +110,37 @@ class VehicleDetails extends Component{
         <Grid>
           <Row>
             <Col>
-            <ErrorRegion errors={errors}>
-              <Item stackedLabel first>
-                <Label>Vehicle registration</Label>
+              <ErrorRegion errors={errors}>
+                <Item stackedLabel first>
+                  <Label>Vehicle registration</Label>
                   <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
-              </Item>
-            </ErrorRegion>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+                </Item>
+              </ErrorRegion>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               <ValidatingButton fullWidth padded onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
-          </Col>
-        </Row>
-        {vehicle.make != undefined ? (<Row>
-          <Col>
-            <Row><Item stackedLabel vehicleDetails>
-              <Label>Vehicle model</Label>
-              <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
-            </Item></Row>
-            <Row><Item stackedLabel vehicleDetails>
-              <Label>Vehicle colour</Label>
-              <Text>{vehicle.colour}</Text>
-            </Item></Row>
-            <Row><Item stackedLabel vehicleDetails>
-              <Label>Approx dimensions</Label>
+            </Col>
+          </Row>
+          {vehicle.make != undefined ? (<Row>
+            <Col>
+              <Row><Item stackedLabel vehicleDetails>
+                <Label>Vehicle model</Label>
+                <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
+              </Item></Row>
+              <Row><Item stackedLabel vehicleDetails>
+                <Label>Vehicle colour</Label>
+                <Text>{vehicle.colour}</Text>
+              </Item></Row>
+              <Row><Item stackedLabel vehicleDetails>
+                <Label>Approx dimensions</Label>
                 <Text>{this.printDimensions()}</Text>
-              <Text>{`${dimensions.weight}kg Max`}</Text>
-            </Item></Row>
-          </Col>
-        </Row>) : null}
-      </Grid>
+                <Text>{`${dimensions.weight}kg Max`}</Text>
+              </Item></Row>
+            </Col>
+          </Row>) : null}
+        </Grid>
         <Row>
           <Col>
             <Content padded keyboardShouldPersistTaps="always">
@@ -192,17 +189,17 @@ class VehicleDetails extends Component{
                     </Col>
                   </Row>
                 </Grid> : null}
-    </Content>
+            </Content>
           </Col>
         </Row>
       </Content> : null}
       <ErrorRegion errors={errors}>
         <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
           <Text uppercase={false}>Register</Text>
-      <Icon name='arrow-forward'/>
-    </ValidatingButton>
+          <Icon name='arrow-forward'/>
+        </ValidatingButton>
       </ErrorRegion>
-  </Container>;
+    </Container>;
   }
 }
 

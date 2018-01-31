@@ -1,10 +1,9 @@
-import {unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
+import {getAllDaos, invokeDaoCommand, unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
 import CustomerDao from 'customer/dao/CustomerDao';
 import DriverDao from 'driver/dao/DriverDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
-import {getAllDaos, invokeDaoCommand} from 'common/dao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
   const dao = new Dao(daoContext);

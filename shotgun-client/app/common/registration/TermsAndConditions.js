@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, Header, Left, Body, Container, Button, Title, Content} from 'native-base';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 export default TermsAndConditions  = ({history}) => {
   return <Container>

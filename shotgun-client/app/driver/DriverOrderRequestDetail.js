@@ -3,12 +3,8 @@ import {connect} from 'react-redux';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';
-import OrderSummary from 'common/components/OrderSummary';
-import PriceSummary from 'common/components/PriceSummary';
+import {OrderSummary, PriceSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {acceptOrderRequest} from 'driver/actions/DriverActions';
-import LoadingScreen from 'common/components/LoadingScreen';
-import SpinnerButton from 'common/components/SpinnerButton';
-import {Icon} from 'common/components/Icon';
 
 class DriverOrderRequestDetail extends Component{
   constructor(props) {

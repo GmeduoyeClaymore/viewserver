@@ -115,7 +115,10 @@ const selectorFactory = (dispatch, initializationProps) => {
   };
 };
 
-export default connectAdvanced(
+const ConnectedPagingListView = connectAdvanced(
   selectorFactory
 )(PagingListView);
+
+export {ConnectedPagingListView as PagingListView};
+
 

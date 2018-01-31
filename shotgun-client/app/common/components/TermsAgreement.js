@@ -32,4 +32,5 @@ const styles = {
   }
 };
 
-export default withRouter(connect()(TermsAgreement));
+const ConnectedTermsAndAgreement = withRouter(connect()(TermsAgreement));
+export {ConnectedTermsAndAgreement as TermsAndAgreement};

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import {Button, Container, Header, Title, Body, Left, Content} from 'native-base';
-import {Spinner} from 'native-base';
+import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';

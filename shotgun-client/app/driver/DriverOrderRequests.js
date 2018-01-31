@@ -1,14 +1,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
-import PagingListView from 'common/components/PagingListView';
+import {PagingListView, LoadingScreen, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
-import LoadingScreen from 'common/components/LoadingScreen';
 import {getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
-import OrderRequest from 'common/components/OrderRequest';
-import Tabs from 'common/components/Tabs';
 
 const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, position, busy, selectedContentTypes, selectedContentType = {}, contentTypeId}) => {
   if (busy){

@@ -4,7 +4,7 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {RatingAction, Icon} from 'common/components';
 
-export default class RatingSummary extends Component{
+export class RatingSummary extends Component{
   constructor(){
     super();
   }

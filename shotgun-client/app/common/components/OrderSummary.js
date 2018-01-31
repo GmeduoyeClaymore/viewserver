@@ -90,10 +90,11 @@ const mapStateToProps = (state, initialProps) => {
     busy: isAnyOperationPending(state, [{ vehicleTypeDao: 'vehicleTypes' }]) || !selectedVehicleType  };
 };
 
-export default connect(
+const ConnectedOrderSummary = connect(
   mapStateToProps
 )(OrderSummary);
 
+export {ConnectedOrderSummary as OrderSummary};
 
 const styles = {
   mapListItem: {

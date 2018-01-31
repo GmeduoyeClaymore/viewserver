@@ -1,5 +1,5 @@
 import React from 'react';
-import {UIManager} from 'react-native';
+import {UIManager, View} from 'react-native';
 import {Container, Text, StyleProvider, Button} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
@@ -15,7 +15,6 @@ import TermsAndConditions from 'common/registration/TermsAndConditions';
 import CustomerLanding from './customer/CustomerLanding';
 import DriverLanding from './driver/DriverLanding';
 import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
-import {View} from 'react-native';
 import {LoadingScreen} from 'common/components';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';

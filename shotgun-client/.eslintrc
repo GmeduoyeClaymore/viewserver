@@ -132,6 +132,7 @@
     "indent":  ["error", 2],
 
 /** ES6**/
+    "no-duplicate-imports": "error",
     "no-const-assign": "error",
     "no-var": "error",
     "prefer-const": "error",

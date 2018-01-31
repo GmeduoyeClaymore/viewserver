@@ -1,16 +1,13 @@
 import React, {Component} from 'react';
 import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
-import ErrorRegion from 'common/components/ErrorRegion';
 import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {updateVehicle} from 'driver/actions/DriverActions';
 import Logger from 'common/Logger';
-import {Icon} from 'common/components/Icon';
 
 class UpdateVehicleDetails extends Component {
   constructor(props) {

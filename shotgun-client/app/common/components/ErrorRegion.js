@@ -5,7 +5,7 @@ import {PropTypes} from 'prop-types';
 
 const JAVA_EXCEPTION_STRING = 'java.lang.RuntimeException';
 
-export default class ErrorRegion extends Component {
+export class ErrorRegion extends Component {
   constructor(){
     super();
   }

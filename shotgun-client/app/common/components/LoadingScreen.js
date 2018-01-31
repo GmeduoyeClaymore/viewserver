@@ -3,7 +3,7 @@ import {Container, Spinner, Text} from 'native-base';
 import {PropTypes} from 'prop-types';
 import {StyleSheet} from 'react-native';
 
-export default class LoadingScreen extends Component{
+export class LoadingScreen extends Component{
   constructor(){
     super();
   }

@@ -1,12 +1,10 @@
 import React from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingButton, ValidatingInput, Icon} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
-import {Icon} from 'common/components/Icon';
 
 const BankAccountDetails = ({context, history}) => {
   const {bankAccount} = context.state;

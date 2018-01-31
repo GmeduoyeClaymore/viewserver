@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Grid, Row, Text} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-export default class PriceSummary extends Component{
+export class PriceSummary extends Component{
   constructor(){
     super();
   }

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Button, Spinner} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-export default class SpinnerButton extends Component {
+export class SpinnerButton extends Component {
   constructor(){
     super();
   }

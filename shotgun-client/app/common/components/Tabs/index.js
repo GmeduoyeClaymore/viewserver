@@ -17,7 +17,7 @@ import _ from 'lodash';
 const SceneComponent = require('./SceneComponent');
 const { DefaultTabBar } = require('./DefaultTabBar');
 
-export default ScrollableTabView = createReactClass({
+const ScrollableTabView = createReactClass({
   mixins: [TimerMixin],
   statics: {
     DefaultTabBar
@@ -260,3 +260,6 @@ export default ScrollableTabView = createReactClass({
     );
   },
 });
+
+export {ScrollableTabView as Tabs};
+

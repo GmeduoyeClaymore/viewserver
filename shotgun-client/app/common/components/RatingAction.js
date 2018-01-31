@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {rateCustomer} from 'driver/actions/DriverActions';
 import {rateDriver} from 'customer/actions/CustomerActions';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 class RatingAction extends Component{
   constructor(){
@@ -51,4 +51,6 @@ const styles = {
   }
 };
 
-export default connect()(RatingAction);
+const ConnectedRatingAction = connect()(RatingAction);
+export {ConnectedRatingAction as RatingAction};
+

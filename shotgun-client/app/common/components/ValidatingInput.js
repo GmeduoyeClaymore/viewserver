@@ -3,9 +3,9 @@ import {Input, Item} from 'native-base';
 import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
-export default class ValidatingInput extends Component {
+export class ValidatingInput extends Component {
   constructor(){
     super();
     this.state = {touched: false, error: ''};

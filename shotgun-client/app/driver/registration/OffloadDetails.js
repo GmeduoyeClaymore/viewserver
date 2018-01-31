@@ -1,17 +1,13 @@
 import React from 'react';
 import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {TermsAgreement, ValidatingButton, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import shotgun from 'native-base-theme/variables/shotgun';
-import LoadingScreen from 'common/components/LoadingScreen';
-import TermsAgreement from 'common/components/TermsAgreement';
 import {registerDriver} from 'driver/actions/DriverActions';
 import {isAnyLoading, isAnyOperationPending, getOperationError} from 'common/dao';
-import ErrorRegion from 'common/components/ErrorRegion';
-import {Icon} from 'common/components/Icon';
 
 const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
   const {user, vehicle, bankAccount, address} = context.state;

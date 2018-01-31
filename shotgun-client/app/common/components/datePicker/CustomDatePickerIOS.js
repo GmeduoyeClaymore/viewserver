@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { DatePickerIOS, Text, TouchableHighlight, View } from 'react-native';
+import {StyleSheet, DatePickerIOS, Text, TouchableHighlight, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 
 export default class CustomDatePickerIOS extends PureComponent {
@@ -167,8 +167,6 @@ export default class CustomDatePickerIOS extends PureComponent {
     );
   }
 }
-
-import { StyleSheet } from 'react-native';
 
 const BORDER_RADIUS = 13;
 const BACKGROUND_COLOR = 'white';

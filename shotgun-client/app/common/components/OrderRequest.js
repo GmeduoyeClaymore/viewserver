@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import { withRouter } from 'react-router';
-import {getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {OrderStatuses, getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 class OrderRequest extends Component {
   constructor() {
@@ -88,4 +87,5 @@ const styles = {
   }
 };
 
-export default withRouter(OrderRequest);
+const OrderRequestWithRouter = withRouter(OrderRequest);
+export {OrderRequestWithRouter as OrderRequest};

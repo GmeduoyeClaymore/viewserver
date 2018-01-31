@@ -1,14 +1,12 @@
 import React from 'react';
 import {connect} from 'custom-redux';
 import {View, Text} from 'react-native';
-import PagingListView from 'common/components/PagingListView';
+import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
 import {getDaoState} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
-import OrderRequest from 'common/components/OrderRequest';
-import Tabs from 'common/components/Tabs';
 
 const DriverOrders = ({history, isCompleted, userId}) => {
   const {location} = history;

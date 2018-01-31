@@ -1,16 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
-import {OrderSummary, } from 'common/components';
+import {OrderSummary, PriceSummary, RatingSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {startOrderRequest, cancelOrderRequest, watchPosition, stopWatchingPosition} from 'driver/actions/DriverActions';
-import PriceSummary from 'common/components/PriceSummary';
-import RatingSummary from 'common/components/RatingSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import LoadingScreen from 'common/components/LoadingScreen';
-import SpinnerButton from 'common/components/SpinnerButton';
-import {Icon} from 'common/components/Icon';
 
 class DriverOrderDetail extends Component{
   constructor(props) {
