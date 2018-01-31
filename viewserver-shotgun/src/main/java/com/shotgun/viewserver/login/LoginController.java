@@ -40,7 +40,7 @@ public class LoginController {
         ControllerContext.set("userId", userId);
     }
 
-    private int getUserRow(ITable userTable, String loginEmail){
+    public int getUserRow(ITable userTable, String loginEmail){
         IOutput output = userTable.getOutput();
         IRowSequence rows = (output.getAllRows());
 

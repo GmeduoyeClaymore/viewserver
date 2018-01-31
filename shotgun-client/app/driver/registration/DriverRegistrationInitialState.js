@@ -1,4 +1,4 @@
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -30,10 +30,10 @@
       weight: undefined
     }
   }
-};*/
+};
 
 
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
@@ -65,6 +65,6 @@ export const INITIAL_STATE = {
     accountNumber: '00012345',
     sortCode: '108800'
   }
-};
+};*/
 
 

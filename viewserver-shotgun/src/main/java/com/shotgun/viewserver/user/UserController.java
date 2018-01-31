@@ -2,6 +2,7 @@ package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.login.LoginController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -17,11 +18,20 @@ import java.util.Date;
 @Controller(name = "userController")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private LoginController loginController;
+
+    public UserController(LoginController loginController) {
+
+        this.loginController = loginController;
+    }
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
     public String addOrUpdateUser(@ActionParam(name = "user")User user){
         log.debug("addOrUpdateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
+            throw new RuntimeException("Already  user registered for email " + user.getEmail());
+        }
         Date now = new Date();
         String newUserId = ControllerUtils.generateGuid();
 

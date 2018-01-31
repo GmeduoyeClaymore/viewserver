@@ -8,6 +8,7 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
+import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
@@ -35,6 +36,7 @@ public class DriverController {
     private UserController userController;
     private VehicleController vehicleController;
     private JourneyEmulatorController journeyEmulatorController;
+    private LoginController loginController;
     private IReactor reactor;
 
     public DriverController(PaymentController paymentController,
@@ -42,11 +44,13 @@ public class DriverController {
                             UserController userController,
                             VehicleController vehicleController,
                             JourneyEmulatorController journeyEmulatorController,
+                            LoginController loginController,
                             IReactor reactor) {
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
         this.vehicleController = vehicleController;
+        this.loginController = loginController;
         this.journeyEmulatorController = journeyEmulatorController;
         this.reactor = reactor;
     }
@@ -58,6 +62,12 @@ public class DriverController {
                                  @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount
 
     ){
+
+        ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
+        if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
+            throw new RuntimeException("Already  user registered for email " + user.getEmail());
+        }
+
         log.debug("Registering driver: " + user.getEmail());
         //We can change this later on or on a per user basis
         user.setChargePercentage(10);
