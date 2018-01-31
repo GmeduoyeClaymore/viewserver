@@ -24,6 +24,9 @@ public class LoginController {
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         int userRowId = getUserRow(userTable, email.toLowerCase());
+        if(userRowId == -1){
+            throw new RuntimeException("Unable to find user for email " + email);
+        }
         String encryptedPassWord = (String)ControllerUtils.getColumnValue(userTable, "password", userRowId);
 
         if(ControllerUtils.validatePassword(password, encryptedPassWord)){
@@ -46,11 +49,10 @@ public class LoginController {
 
         while(rows.moveNext()){
             String email = (String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
-
             if(email.equals(loginEmail)){
                 return rows.getRowId();
             }
         }
-        throw new RuntimeException("Unable to find user for email " + loginEmail);
+        return -1;
     }
 }
