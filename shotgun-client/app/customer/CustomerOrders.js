@@ -1,13 +1,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
-import PagingListView from 'common/components/PagingListView';
+import {PagingListView, Tabs, OrderRequest} from 'common/components';
 import { withRouter } from 'react-router';
 import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
-import Tabs from 'common/components/Tabs';
 import {isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
-import OrderRequest from 'common/components/OrderRequest';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 const CustomerOrders = ({history, isCompleted, userId}) => {

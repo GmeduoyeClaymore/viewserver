@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
-import OrderSummary from 'common/components/OrderSummary';
+import {OrderSummary, } from 'common/components';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {startOrderRequest, cancelOrderRequest, watchPosition, stopWatchingPosition} from 'driver/actions/DriverActions';
 import PriceSummary from 'common/components/PriceSummary';

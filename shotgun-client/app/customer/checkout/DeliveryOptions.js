@@ -7,14 +7,10 @@ import { getDaoState } from 'common/dao';
 import { merge } from 'lodash';
 import { withRouter } from 'react-router';
 import { isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
-import LoadingScreen from 'common/components/LoadingScreen';
+import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
-import ValidatingButton from 'common/components/ValidatingButton';
 import yup from 'yup';
-import CardIcon from 'common/components/CardIcon';
-import ErrorRegion from 'common/components/ErrorRegion';
-import {Icon} from 'common/components/Icon';
 
 class DeliveryOptions extends Component {
   constructor(props) {

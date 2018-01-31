@@ -5,7 +5,7 @@ import {updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
 import { connectAdvanced} from 'custom-redux';
 import { bindActionCreators} from 'redux';
 import { isEqual } from 'lodash';
-import ErrorRegion from 'common/components/ErrorRegion';
+import {ErrorRegion} from 'common/components';
 import {getDaoCommandStatus, getDaoCommandResult, getDaoState} from 'common/dao';
 import Logger from 'common/Logger';
 

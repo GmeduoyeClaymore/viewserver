@@ -1,14 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Spinner,  Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
+import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
-import ErrorRegion from 'common/components/ErrorRegion';
-import OrderSummary from 'common/components/OrderSummary';
-import PriceSummary from 'common/components/PriceSummary';
+import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {Icon} from 'common/components/Icon';
 
 class OrderConfirmation extends Component{
   constructor(props){
@@ -50,7 +47,7 @@ class OrderConfirmation extends Component{
         <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={price}/>
         <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
         <ErrorRegion errors={errors}>
-          {!busy ? <Button onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></Button> :  <Spinner />}
+          <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></SpinnerButton>
         </ErrorRegion>
       </Content>
     </Container>;

@@ -37,10 +37,9 @@ public class OrderControllerTest {
 
     @Test
     public  void canDeserializeParam() throws NoSuchMethodException {
-        ControllerContext ctxt = ControllerContext.create(new MockSession());
-        ControllerContext.set("userId","foo");
+
         String param = "{\"userId\":\"2BBui\",\"totalPrice\":\"1000\",\"paymentId\":\"card_1BZjOtJf2h7PvwlulrG7Lrbx\",\"delivery\":{\"eta\":\"2018-01-19T03:54:00.000Z\",\"noRequiredForOffload\":0,\"origin\":{\"deliveryAddressId\":\"22002c3a-6920-47e9-b9e4-d5e44daf60ee\",\"userId\":\"2BBui\",\"created\":0,\"lastUsed\":0,\"line1\":\"12 Kinnoul Road\",\"city\":\"London\",\"postCode\":\"SE12 4RT\",\"latitude\":51.4857236,\"longitude\":-0.2123406,\"rank\":0,\"key\":0,\"rowId\":0},\"destination\":{\"deliveryAddressId\":\"2ec23526-e8f4-4566-bb55-25c1b2877d98\",\"userId\":\"2BBui\",\"created\":0,\"lastUsed\":0,\"line1\":\"129 Drakefield Road\",\"city\":\"London\",\"postCode\":\"SW17 8RS\",\"latitude\":51.4341614,\"longitude\":-0.1523323,\"rank\":1,\"key\":1,\"rowId\":1}},\"orderItems\":[{\"quantity\":1,\"productId\":\"PROD_Delivery\",\"notes\":\"ddddd\"}]}";
         ControllerRegistration reg = new ControllerRegistration(sut);
-        System.out.println(reg.getActions().get("createOrder").invoke(param));
+        System.out.println(TestControllerUtils.invoke(reg, "createOrder", param));
     }
 }

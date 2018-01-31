@@ -3,11 +3,10 @@ import {Dimensions, Image} from 'react-native';
 import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
-import LoadingScreen from 'common/components/LoadingScreen';
+import {LoadingScreen, Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import { getDaoState, isAnyOperationPending } from 'common/dao';
-import {Icon} from 'common/components/Icon';
 
 class OrderSummary extends Component{
   constructor(){

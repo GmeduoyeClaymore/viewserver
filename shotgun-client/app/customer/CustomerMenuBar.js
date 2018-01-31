@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {Button, Footer, FooterTab} from 'native-base';
 import {withRouter} from 'react-router';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 const CustomerMenuBar = ({history, match}) => {
   return <Footer>

@@ -4,7 +4,7 @@ import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/action
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
 import Logger from 'common/Logger';
-import LoadingScreen from 'common/components/LoadingScreen';
+import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
 
 class LandingCommon extends Component {

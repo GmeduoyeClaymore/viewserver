@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'react-redux';
 import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
-import ErrorRegion from 'common/components/ErrorRegion';
 import { withRouter } from 'react-router';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';
-import {Icon} from 'common/components/Icon';
 
 class HomeAddressDetails  extends Component{
   constructor(props) {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import SpinnerButton from 'common/components/SpinnerButton';
+import {SpinnerButton} from 'common/components';
 import {PropTypes} from 'prop-types';
 import ValidationService from 'common/services/ValidationService';
 import {isEqual} from 'lodash';

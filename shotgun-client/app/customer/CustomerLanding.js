@@ -12,7 +12,7 @@ import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import {Alert} from 'react-native';
-import LoadingScreen from 'common/components/LoadingScreen';
+import {LoadingScreen} from 'common/components';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import { getLastNotification, registerAppListener} from 'common/Listeners';
 

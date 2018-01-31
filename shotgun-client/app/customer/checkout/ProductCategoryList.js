@@ -4,13 +4,10 @@ import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
 import {Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {Spinner} from 'native-base';
 import { withRouter } from 'react-router';
-import PagingListView from 'common/components/PagingListView';
+import {PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';
 import {connect} from 'custom-redux';
 import yup from 'yup';
-import ErrorRegion from 'common/components/ErrorRegion';
-import ValidatingButton from 'common/components/ValidatingButton';
-import {Icon} from 'common/components/Icon';
 
 const styles = StyleSheet.create({
   container: {

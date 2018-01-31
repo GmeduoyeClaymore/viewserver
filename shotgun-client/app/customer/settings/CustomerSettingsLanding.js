@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {getDaoState} from 'common/dao';
 import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 const CustomerSettings = ({history, user}) => {
   const signOut = async () => {

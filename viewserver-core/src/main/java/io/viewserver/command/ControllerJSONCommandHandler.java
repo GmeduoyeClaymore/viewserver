@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -19,6 +20,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
     private static final Logger log = LoggerFactory.getLogger(ControllerJSONCommandHandler.class);
 
     private ListeningExecutorService asyncExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setNameFormat("controller-command-handler-%d").build()));
+    private ListeningExecutorService currentThreadExecutor = MoreExecutors.newDirectExecutorService();
     public ControllerJSONCommandHandler() {
         super(IGenericJSONCommand.class);
     }
@@ -52,12 +54,12 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                     try {
                         commandResult.setSuccess(true).setMessage(invoke.get()).setComplete(true);
                     } catch (InterruptedException e) {
-                        commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
+                        commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
-                        commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
+                        commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     }
                 }
-            }, MoreExecutors.sameThreadExecutor());
+            }, currentThreadExecutor);
 
         } catch(Exception e) {
             log.error("Failed to handle generic json command", e);
@@ -68,22 +70,16 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
     private synchronized ListenableFuture<String> invoke(ControllerActionEntry entry, String payload,ControllerContext context) {
         if(entry.isSynchronous()){
             try(ControllerContext ctxt = ControllerContext.create(context)){
-                return Futures.immediateFuture(entry.invoke(payload));
+                return entry.invoke(payload,ctxt,currentThreadExecutor);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(ControllerContext.Unwrap(e));
             }
         }
-        return asyncExecutor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                try(ControllerContext ctxt = ControllerContext.create(context)){
-                    return entry.invoke(payload);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-        });
+        try(ControllerContext ctxt = ControllerContext.create(context)){
+            return entry.invoke(payload, ctxt,asyncExecutor);
+        } catch (Exception e) {
+            throw new RuntimeException(ControllerContext.Unwrap(e));
+        }
     }
 
     public void registerController(Object controller) {

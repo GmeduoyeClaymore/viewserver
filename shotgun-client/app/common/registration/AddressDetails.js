@@ -2,8 +2,7 @@ import React from 'react';
 import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {merge} from 'lodash';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingInput, ValidatingButton} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon} from 'common/components/Icon';
 

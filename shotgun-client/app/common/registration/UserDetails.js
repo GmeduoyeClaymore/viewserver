@@ -1,10 +1,8 @@
 import React from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import {merge} from 'lodash';
-import {Icon} from 'common/components/Icon';
 
 export default UserDetails  = ({context, history, next}) => {
   const {user} = context.state;

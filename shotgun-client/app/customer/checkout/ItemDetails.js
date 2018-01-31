@@ -6,9 +6,7 @@ import yup from 'yup';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 import ImagePicker from 'react-native-image-picker';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
-import {Icon} from 'common/components/Icon';
+import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
 
 const ItemDetails = ({context, navigationStrategy}) => {
   const {orderItem} = context.state;

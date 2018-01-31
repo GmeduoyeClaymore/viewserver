@@ -9,11 +9,8 @@ import Products from 'common/constants/Products';
 import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
-import LoadingScreen from 'common/components/LoadingScreen';
-import RatingAction from 'common/components/RatingAction';
+import {LoadingScreen, RatingAction, ErrorRegion, Icon} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import ErrorRegion from 'common/components/ErrorRegion';
-import {Icon} from 'common/components/Icon';
 import locationImg from 'common/assets/location.png';
 
 const {width, height} = Dimensions.get('window');

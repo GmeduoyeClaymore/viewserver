@@ -6,9 +6,7 @@ import {getDaoState, isAnyLoading} from 'common/dao';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 import yup from 'yup';
-import LoadingScreen from 'common/components/LoadingScreen';
-import ValidatingButton from 'common/components/ValidatingButton';
-import {Icon} from 'common/components/Icon';
+import {LoadingScreen, ValidatingButton, Icon} from 'common/components';
 
 class VehicleDetails extends Component {
   constructor(props) {

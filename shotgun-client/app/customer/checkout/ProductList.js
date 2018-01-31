@@ -5,7 +5,7 @@ import SearchBar from './SearchBar';
 import ProductListItem from './ProductListItem';
 import {Spinner} from 'native-base';
 import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getNavigationProps} from 'common/dao';
-import PagingListView from 'common/components/PagingListView';
+import {PagingListView} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;

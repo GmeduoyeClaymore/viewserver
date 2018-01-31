@@ -1,13 +1,10 @@
 import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import ValidatingInput from 'common/components/ValidatingInput';
-import ValidatingButton from 'common/components/ValidatingButton';
+import {ErrorRegion, ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import {connect} from 'react-redux';
 import {loginCustomer} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
-import ErrorRegion from 'common/components/ErrorRegion';
-import {Icon} from 'common/components/Icon';
 
 class CustomerLogin extends Component {
   constructor(props) {

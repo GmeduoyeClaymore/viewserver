@@ -2,11 +2,9 @@ import React, {Component} from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
-import ErrorRegion from 'common/components/ErrorRegion';
+import {ErrorRegion, TermsAgreement, Icon} from 'common/components';
 import {connect} from 'react-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
-import TermsAgreement from 'common/components/TermsAgreement';
-import {Icon} from 'common/components/Icon';
 
 class PaymentCardDetails extends Component {
   constructor(props) {

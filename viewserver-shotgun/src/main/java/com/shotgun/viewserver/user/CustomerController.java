@@ -30,14 +30,17 @@ public class CustomerController {
     private PaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
     private MessagingController messagingController;
+    private UserController userController;
 
 
     public CustomerController(PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
-                              MessagingController messagingController) {
+                              MessagingController messagingController,
+                              UserController userController) {
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
         this.messagingController = messagingController;
+        this.userController = userController;
     }
 
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
@@ -48,7 +51,6 @@ public class CustomerController {
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
         user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
 
-        UserController userController = new UserController();
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId", userId);
         deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);

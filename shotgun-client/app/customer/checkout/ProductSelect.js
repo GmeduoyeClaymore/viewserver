@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
 import {merge} from 'lodash';
-import {Icon} from 'common/components/Icon';
+import {Icon} from 'common/components';
 
 class ProductSelect extends Component{
   constructor(props){

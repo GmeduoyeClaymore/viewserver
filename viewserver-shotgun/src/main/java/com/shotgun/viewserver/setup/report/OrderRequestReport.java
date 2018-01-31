@@ -18,7 +18,7 @@ public class OrderRequestReport {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
                         .withParameter("vehicleTypeId", "Vehicle Type Id", String[].class)
-                        .withParameter("productId", "Product Id", String[].class)
+                        .withParameter("contentTypeId", "Content Type Id", String[].class)
                         .withParameter("noRequiredForOffload", "Number required for offload", int[].class)
                         .withParameter("driverLatitude", "Driver Latitude", double[].class)
                         .withParameter("driverLongitude", "Driver Longitude", double[].class)
@@ -43,7 +43,7 @@ public class OrderRequestReport {
                                         .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("orderFilter")
                                       /*  .withExpression("status == \"PLACED\" && vehicleTypeId == \"{vehicleTypeId}\" && noRequiredForOffload <= {noRequiredForOffload}")*/
-                                        .withExpression("productId == \"{productId}\" && status == \"PLACED\"")
+                                        .withExpression("contentTypeId == \"{contentTypeId}\" && status == \"PLACED\"")
                                         .withConnection("contentTypeJoin"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
