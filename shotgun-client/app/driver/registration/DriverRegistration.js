@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import UserDetails from 'common/registration/UserDetails';
 import VehicleDetails from './VehicleDetails';
 import DriverLogin from './DriverLogin';

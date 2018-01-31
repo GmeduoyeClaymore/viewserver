@@ -34,7 +34,7 @@ const selectorFactory = (ignorefuncs, selector) => () => {
   };
 };
 
-export const connect = (selector, ignorefuncs = true) => (component) => connectAdvanced(
-  selectorFactory(ignorefuncs, selector)
+export const connect = (mapStateToProps = (_, props) => props, ignorefuncs = true) => (component) => connectAdvanced(
+  selectorFactory(ignorefuncs, mapStateToProps)
 )(component);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {View, Text} from 'react-native';
 import {PagingListView, LoadingScreen, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';

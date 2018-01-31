@@ -3,7 +3,7 @@ import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {setBankAccount} from 'driver/actions/DriverActions';

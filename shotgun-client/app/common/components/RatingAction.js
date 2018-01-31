@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View} from 'native-base';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {rateCustomer} from 'driver/actions/DriverActions';
 import {rateDriver} from 'customer/actions/CustomerActions';

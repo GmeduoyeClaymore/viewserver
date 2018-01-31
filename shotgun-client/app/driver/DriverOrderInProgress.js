@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Dimensions, Linking} from 'react-native';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';

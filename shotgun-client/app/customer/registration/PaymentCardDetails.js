@@ -3,7 +3,7 @@ import {Text, Content, Header, Left, Body, Container, Button, Title} from 'nativ
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
 import {ErrorRegion, TermsAgreement, Icon, SpinnerButton} from 'common/components';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class PaymentCardDetails extends Component {

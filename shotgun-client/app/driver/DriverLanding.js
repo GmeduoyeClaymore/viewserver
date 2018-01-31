@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import DriverMenuBar from './DriverMenuBar';
 import DriverOrders from './DriverOrders';
 import DriverOrderDetail from './DriverOrderDetail';

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {loginDriver} from 'driver/actions/DriverActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 

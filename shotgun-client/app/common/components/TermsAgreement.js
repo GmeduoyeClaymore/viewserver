@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Linking} from 'react-native';
 import {Text} from 'native-base';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
 
