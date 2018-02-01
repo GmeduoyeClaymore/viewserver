@@ -22,7 +22,7 @@ export default class GenericJSONCommandPromise{
   }
 
   onSuccess(commandResultId, message){
-    Logger.debug(`Command successfully executed with the following message "${message}"`);
+    Logger.fine(`Command successfully executed with the following message "${message}"`);
     try {
       const argument = message ? JSON.parse(message) : undefined;
       this.resolve(argument);

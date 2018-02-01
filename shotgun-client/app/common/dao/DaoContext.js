@@ -11,7 +11,7 @@ export default class DaoContext{
     throw new Error('This should be implemented in base class' + options);
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     throw new Error('This should be implemented in base class' + dataSink);
   }
 

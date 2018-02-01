@@ -3,7 +3,7 @@ import {connect} from 'custom-redux';
 import {View, Text} from 'react-native';
 import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
-import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
+import {Container, Spinner, Header, Body, Title, Tab} from 'native-base';
 import {getDaoState} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -36,20 +36,18 @@ const DriverOrders = ({history, isCompleted, userId}) => {
       <Tab heading="Live Jobs"/>
       <Tab heading="Complete"/>
     </Tabs>
-    <Content>
-      <List style={{backgroundColor: shotgun.hairline}}>
-        <PagingListView
-          daoName='orderSummaryDao'
-          dataPath={['orders']}
-          rowView={RowView}
-          options={reportOptions}
-          paginationWaitingView={Paging}
-          emptyView={NoItems}
-          pageSize={10}
-          headerView={() => null}
-        />
-      </List>
-    </Content>
+    <View style={{flex: 1}}>
+      <PagingListView
+        daoName='orderSummaryDao'
+        dataPath={['orders']}
+        rowView={RowView}
+        options={reportOptions}
+        paginationWaitingView={Paging}
+        emptyView={NoItems}
+        pageSize={10}
+        headerView={() => null}
+      />
+    </View>
   </Container>;
 };
 

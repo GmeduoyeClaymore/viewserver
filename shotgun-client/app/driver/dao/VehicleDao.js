@@ -29,7 +29,7 @@ export default class VehiclesDaoContext{
     return new RxDataSink();
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       vehicle: dataSink.rows[0]
     };

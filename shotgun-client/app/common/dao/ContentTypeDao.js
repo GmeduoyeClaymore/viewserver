@@ -32,7 +32,7 @@ export default class ContentTypeDaoContext{
     return options;
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       contentTypes: dataSink.rows
     };

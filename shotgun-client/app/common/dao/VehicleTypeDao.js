@@ -33,7 +33,7 @@ export default class VehicleTypeDaoContext{
     return options;
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       vehicleTypes: dataSink.rows
     };

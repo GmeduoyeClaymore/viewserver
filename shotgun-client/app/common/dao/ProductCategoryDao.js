@@ -40,7 +40,7 @@ export default class ProductCategoryDaoContext{
     return new RxDataSink();
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       product: {
         categories: dataSink.rows

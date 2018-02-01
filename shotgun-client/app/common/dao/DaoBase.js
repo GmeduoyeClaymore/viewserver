@@ -51,8 +51,9 @@ export default class Dao {
     this.options = {...this.options, ...options};
   }
 
-  resetData(){
+  async resetData(){
     this.dataSink.onDataReset();
+    this.subject.next();
   }
 
   async updateSubscription(options, force){
@@ -72,12 +73,18 @@ export default class Dao {
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       this.countSubscription = this.dataSink.dataSinkUpdated.filter(ev => ev.Type === RxDataSink.TOTAL_ROW_COUNT).subscribe(ev => this.countSubject.next(ev.count));
-      const _this = this;
-      this.domainEventObservable = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink));
-      if (this.daoContext.getDataFrequency){
-        this.domainEventObservable = this.domainEventObservable.debounceTime(this.daoContext.getDataFrequency());
-      }
-      this.rowEventSubscription = this.domainEventObservable.subscribe(ev => this.subject.next(ev));
+
+      this.snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
+      this.rowEventSubscription = this.rowEventObservable.subscribe(() => {
+        if (this.dataSink.isSnapshotComplete) {
+          this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
+        }
+      });
+
+      this.snapshotPromise.then(() => {
+        this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
+      });
+
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);
     }
 
@@ -97,6 +104,7 @@ export default class Dao {
       Logger.info('!!!!!Completed snapshot complete!!!!');
       return result;
     } catch (error){
+      Logger.warning(error);
       return Promise.reject(error);
     }
   }
