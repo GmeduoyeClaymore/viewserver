@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import UserDetails from 'common/registration/UserDetails';
-import VehicleDetails from './VehicleDetails';
+import DriverCapabilityDetails from './DriverCapabilityDetails';
 import DriverLogin from './DriverLogin';
 import BankAccountDetails from './BankAccountDetails';
 import OffloadDetails from './OffloadDetails';
@@ -32,7 +32,7 @@ class DriverRegistration extends Component {
       <Route path={'/Driver/Registration/AddressDetails'} exact render={() => <AddressDetails {...this.props} context={this} next="/Driver/Registration/BankAccountDetails"/>} />
       <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...this.props}/>} />
       <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/VehicleDetails'} exact render={() => <VehicleDetails {...this.props} context={this}/>} />
+      <Route path={'/Driver/Registration/DriverCapabilityDetails'} exact render={() => <DriverCapabilityDetails {...this.props} context={this}/>} />
       <Route path={'/Driver/Registration/OffloadDetails'} exact render={() => <OffloadDetails {...this.props} context={this}/>} />
       <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
     </Switch>;

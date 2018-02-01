@@ -95,7 +95,8 @@ public class DriverController {
     }
 
     @ControllerAction(path = "acceptOrder", isSynchronous = true)
-    public String acceptOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
+    public String acceptOrder(@ActionParam(name = "orderId")String orderId){
+        String driverId = getUserId();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
 
@@ -123,8 +124,9 @@ public class DriverController {
 
 
     @ControllerAction(path = "startOrder", isSynchronous = true)
-    public String startOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
+    public String startOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+        String driverId = getUserId();
 
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
@@ -140,10 +142,10 @@ public class DriverController {
     }
 
     @ControllerAction(path = "completeOrder", isSynchronous = true)
-    public String completeOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
+    public String completeOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-
+        String driverId = getUserId();
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
         int currentDriverRow = userTable.getRow(new TableKey(driverId));
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
@@ -165,9 +167,10 @@ public class DriverController {
     }
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
-    public String cancelOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "driverId")String driverId){
+    public String cancelOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+        String driverId = getUserId();
 
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
         String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentOrderRow).toString();
@@ -182,6 +185,14 @@ public class DriverController {
 
         notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;
+    }
+
+    private String getUserId() {
+        String driverId = (String) ControllerContext.get("userId");
+        if(driverId == null){
+            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
+        }
+        return driverId;
     }
 
     private void notifyStatusChanged(String orderId, String driverId, String orderUserId, String status) {

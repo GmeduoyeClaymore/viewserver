@@ -29,7 +29,7 @@ class UpdateBankAccountDetails extends Component {
     };
 
     const onSetBankAccount = async () => {
-      dispatch(setBankAccount(user.stripeAccountId, bankAccount, () => history.push('/Driver/Settings')));
+      dispatch(setBankAccount(bankAccount, () => history.push('/Driver/Settings')));
     };
 
     return <Container>

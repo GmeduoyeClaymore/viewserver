@@ -145,8 +145,9 @@ public class PaymentController {
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(@ActionParam(name = "customerToken") String customerToken, @ActionParam(name = "paymentCard") PaymentCard paymentCard) {
+    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
         try {
+            String customerToken = getStripeCustomerToken();
             String cardToken = createCardToken(paymentCard);
             Customer customer = Customer.retrieve(customerToken);
             Map<String, Object> params = new HashMap<>();
@@ -161,12 +162,13 @@ public class PaymentController {
     }
 
     @ControllerAction(path = "getPaymentCards", isSynchronous = false)
-    public List<Card> getPaymentCards(String customerToken) {
+    public List<Card> getPaymentCards() {
         try {
+            User user = getUser();
             HashMap<String, Object> sourcesParams = new HashMap<>();
             sourcesParams.put("object", "card");
-            ExternalAccountCollection cards = Customer.retrieve(customerToken).getSources().list(sourcesParams);
-            logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), customerToken);
+            ExternalAccountCollection cards = Customer.retrieve(user.getStripeCustomerId()).getSources().list(sourcesParams);
+            logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), user.getStripeCustomerId());
             return cards.getData().stream().map(a -> (Card) a).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("There was a problem getting the payment cards", e);
@@ -174,10 +176,18 @@ public class PaymentController {
         }
     }
 
+    private User getUser() {
+        User user = (User) ControllerContext.get("user");
+        if(user == null){
+            throw new RuntimeException("User must be logged in to get current payment cards");
+        }
+        return user;
+    }
+
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public void deletePaymentCard(@ActionParam(name = "customerToken") String customerToken,
-                                  @ActionParam(name = "cardId") String cardId) {
+    public void deletePaymentCard(@ActionParam(name = "cardId") String cardId) {
         try {
+            String customerToken = getStripeCustomerToken();
             Customer customer = Customer.retrieve(customerToken);
             customer.getSources().retrieve(cardId).delete();
         } catch (Exception e) {
@@ -187,8 +197,9 @@ public class PaymentController {
     }
 
     @ControllerAction(path = "getBankAccount", isSynchronous = false)
-    public BankAccount getBankAccount(String stripeAccountId) {
+    public BankAccount getBankAccount() {
         try {
+            String stripeAccountId = getStripeAccountId();
             Account account = Account.retrieve(stripeAccountId, null);
             BankAccount ac =(BankAccount)account.getExternalAccounts().getData().get(0);
             logger.debug("Got bank account for stripe account {}", stripeAccountId);
@@ -199,10 +210,28 @@ public class PaymentController {
         }
     }
 
+    private String getStripeAccountId() {
+        User user = getUser();
+        String stripeAccountId = user.getStripeAccountId();
+        if(stripeAccountId == null){
+            throw new RuntimeException("No stripe account id specified for current user");
+        }
+        return stripeAccountId;
+    }
+
+    private String getStripeCustomerToken() {
+        User user = getUser();
+        String stripeCustomerToken = user.getStripeCustomerId();
+        if(stripeCustomerToken == null){
+            throw new RuntimeException("No stripe customerid specified for current user");
+        }
+        return stripeCustomerToken;
+    }
+
     @ControllerAction(path = "setBankAccount", isSynchronous = false)
-    public void setBankAccount(@ActionParam(name = "stripeAccountId") String stripeAccountId,
-                               @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
         try {
+            String stripeAccountId = getStripeAccountId();
             Map<String, Object> externalAccount = new HashMap<>();
             externalAccount.put("object", "bank_account");
             externalAccount.put("account_number", paymentBankAccount.getAccountNumber().replaceAll("[^\\d]", ""));

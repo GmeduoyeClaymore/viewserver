@@ -1,6 +1,8 @@
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.payments.*;
+import com.shotgun.viewserver.user.User;
 import com.stripe.model.Card;
+import io.viewserver.command.ControllerContext;
 import org.apache.logging.log4j.core.util.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,10 +23,14 @@ public class PaymentControllerTest {
     private PaymentController sut;
 
     private static String customerId;
+    private ControllerContext ctxt;
 
     @Before
     public void createSut(){
         sut = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
+        TestControllerUtils.getControllerContext("foo");
+        User user = (User) ControllerContext.get("user");
+        user.setStripeCustomerId(this.customerId);
     }
 
     @Test
@@ -33,18 +39,19 @@ public class PaymentControllerTest {
         HashMap<String,Object> result = sut.createPaymentCustomer("FOO@BAR.com", paymentCard);
         this.customerId = (String)result.get("customerId");
         assertNotNull(this.customerId);
+
         System.out.println(result);
     }
 
 
     @Test
     public void B_canAddPaymentCard(){
-        assertNotNull(sut.addPaymentCard(this.customerId, getPaymentCard(this.customerId)));
+        assertNotNull(sut.addPaymentCard(getPaymentCard(this.customerId)));
     }
 
     @Test
     public void C_canGetPaymentCards(){
-        List<Card> paymentCards = sut.getPaymentCards(this.customerId);
+        List<Card> paymentCards = sut.getPaymentCards();
         assertTrue(paymentCards.size() == 2);
     }
 

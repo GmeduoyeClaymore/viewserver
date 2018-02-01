@@ -11,7 +11,7 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-class VehicleDetails extends Component{
+class DriverCapabilityDetails extends Component{
   constructor(props){
     super(props);
     this.selectContentType = this.selectContentType.bind(this);
@@ -81,7 +81,7 @@ class VehicleDetails extends Component{
     const {numAvailableForOffload} = vehicle;
     const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
-    return  <Container>
+    return    <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -94,6 +94,7 @@ class VehicleDetails extends Component{
         <Grid>
           <Row>
             <Col>
+            <ErrorRegion errors={errors}/>
               <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
@@ -110,12 +111,10 @@ class VehicleDetails extends Component{
         <Grid>
           <Row>
             <Col>
-              <ErrorRegion errors={errors}>
-                <Item stackedLabel first>
-                  <Label>Vehicle registration</Label>
-                  <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
-                </Item>
-              </ErrorRegion>
+              <Item stackedLabel first>
+                <Label>Vehicle registration</Label>
+                <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
+              </Item>
             </Col>
           </Row>
           <Row>
@@ -193,12 +192,11 @@ class VehicleDetails extends Component{
           </Col>
         </Row>
       </Content> : null}
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
-          <Text uppercase={false}>Register</Text>
-          <Icon name='arrow-forward'/>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
+        <Text uppercase={false}>Register</Text>
+        <Icon name='arrow-forward'/>
+      </ValidatingButton>
+     
     </Container>;
   }
 }
@@ -266,4 +264,4 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 
-export default withRouter(connect(mapStateToProps)(VehicleDetails));
+export default withRouter(connect(mapStateToProps)(DriverCapabilityDetails));

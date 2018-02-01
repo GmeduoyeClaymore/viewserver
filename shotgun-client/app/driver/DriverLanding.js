@@ -34,7 +34,7 @@ class DriverLanding extends Component {
       if (user){
         dispatch(driverServicesRegistrationAction(client, userId));
         dispatch(getCurrentPosition());
-        dispatch(getBankAccount(user.stripeAccountId));
+        dispatch(getBankAccount());
         this.hasLoadedData = true;
       }
     }
@@ -57,7 +57,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
-          <Redirect to={'/Driver/DriverOrders'}/>
+          <Redirect to={'/Driver/DriverOrderRequests'}/>
         </Switch>
         <DriverMenuBar/>
       </Container>;

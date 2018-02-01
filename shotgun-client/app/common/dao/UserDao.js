@@ -1,5 +1,4 @@
-import * as TableNames from 'common/constants/TableNames';
-import DataSourceSubscriptionStrategy from 'common/subscriptionStrategies/DataSourceSubscriptionStrategy';
+import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 
@@ -20,8 +19,17 @@ export default class UserDaoContext{
       limit: 1,
       columnName: undefined,
       columnsToSort: undefined,
-      filterMode: 2, //Filtering
+      filterMode: undefined, //Filtering
       flags: undefined
+    };
+  }
+
+  getReportContext({userId}){
+    return {
+      reportId: 'userReport',
+      parameters: {
+        userId
+      }
     };
   }
 
@@ -40,8 +48,8 @@ export default class UserDaoContext{
     };
   }
 
-  createSubscriptionStrategy(options, dataSink){
-    return new DataSourceSubscriptionStrategy(this.client, TableNames.USER_TABLE_NAME, dataSink);
+  createSubscriptionStrategy({userId}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
@@ -53,7 +61,7 @@ export default class UserDaoContext{
     if (typeof userId === 'undefined'){
       throw new Error('userId should be defined');
     }
-    return {...options, filterExpression: `userId == \"${userId}\"`};
+    return {...options};
   }
 
   getPositionAsPromise(){

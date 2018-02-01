@@ -37,7 +37,7 @@ class LandingCommon extends Component {
     case 'customer':
       return <Redirect to="/Customer/Landing"/>;
     default:
-      Logger.error(`Could not process user of type ${user.type}`);
+      Logger.error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
       //TODO -return an error screen here
       return null;
     }

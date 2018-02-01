@@ -3,31 +3,37 @@ import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
 import { merge } from 'lodash';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 5
+  },
+  picture: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    marginRight: 8
+  },
+  title: {
+    fontWeight: 'bold',
+    color: '#848484'
+  }
+});
+
 const onChangeProduct = ({history, context, product}) => {
   const { orderItem } = context.state;
   const {productId} = product;
   context.setState({ selectedProduct: product, orderItem: merge({}, orderItem, {productId}) });
-  history.push('/Customer/Checkout/ProductCategoryList');
+  if (history){
+    history.push('/Customer/Checkout/ProductCategoryList');
+  }
 };
 
 const ProductListItem = ({history, context, product}) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'row',
-      padding: 5
-    },
-    picture: {
-      width: 80,
-      height: 80,
-      borderRadius: 20,
-      marginRight: 8
-    },
-    title: {
-      fontWeight: 'bold',
-      color: '#848484'
-    }
-  });
+  if (!product){
+    return null;
+  }
 
   return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => onChangeProduct({history, context, product}) } underlayColor={'#EEEEEE'}>
     <View style={styles.container}>

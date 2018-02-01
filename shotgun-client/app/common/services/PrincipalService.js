@@ -6,7 +6,7 @@ export default class PrincipalService {
 
   static async getUserIdFromDevice(){
     try {
-      return await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(1000, 'Unable to find get userid within 5 second timespan');
+      return await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(5000, 'Unable to find get userid within 5 second timespan');
     } catch (error) {
       //TODO - error handling here
       Logger.error('Error getting user id from device ' + error);

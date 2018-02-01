@@ -33,6 +33,7 @@ public class
                                 .withColumns(Arrays.asList(
                                         new Column("userId", "userId", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
+                                        new Column("dob", "dob", ColumnType.DateTime),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),
                                         new Column("firstName", "firstName", ColumnType.String),
                                         new Column("lastName", "lastName", ColumnType.String),
