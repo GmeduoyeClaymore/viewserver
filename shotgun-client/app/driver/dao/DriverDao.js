@@ -46,9 +46,8 @@ export default class DriverDao{
   }
 
   async updateDriver({driver}){
-    const {userId} = this.options;
     Logger.info(`Updating driver ${driver.email}`);
-    const driverId = await this.client.invokeJSONCommand('userController', 'updateUser', {userId, user: driver});
+    const driverId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: driver});
     Logger.info(`Driver ${driverId} updated`);
     return driverId;
   }
@@ -61,23 +60,19 @@ export default class DriverDao{
   }
 
   async acceptOrderRequest({orderId}) {
-    const {userId} = this.options;
-    await this.client.invokeJSONCommand('driverController', 'acceptOrder', {driverId: userId, orderId});
+    await this.client.invokeJSONCommand('driverController', 'acceptOrder', {orderId});
   }
 
   async startOrderRequest({orderId}){
-    const {userId} = this.options;
-    await this.client.invokeJSONCommand('driverController', 'startOrder', {driverId: userId, orderId});
+    await this.client.invokeJSONCommand('driverController', 'startOrder', {orderId});
   }
 
   async cancelOrderRequest({orderId}){
-    const {userId} = this.options;
-    await this.client.invokeJSONCommand('driverController', 'cancelOrder', {driverId: userId, orderId});
+    await this.client.invokeJSONCommand('driverController', 'cancelOrder', {orderId});
   }
 
   async completeOrderRequest({orderId}){
-    const {userId} = this.options;
-    await this.client.invokeJSONCommand('driverController', 'completeOrder', {driverId: userId, orderId});
+    await this.client.invokeJSONCommand('driverController', 'completeOrder', {orderId});
   }
 
   async callCustomer({orderId}){

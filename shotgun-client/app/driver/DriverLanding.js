@@ -34,7 +34,7 @@ class DriverLanding extends Component {
       if (user){
         dispatch(driverServicesRegistrationAction(client, userId));
         dispatch(getCurrentPosition());
-        dispatch(getBankAccount(user.stripeAccountId));
+        dispatch(getBankAccount());
         this.hasLoadedData = true;
       }
     }

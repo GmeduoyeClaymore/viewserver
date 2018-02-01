@@ -58,12 +58,12 @@ export const callDriver = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'callDriver', {orderId}, continueWith);
 };
 
-export const deletePaymentCard = (customerToken, cardId, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'deletePaymentCard', {customerToken, cardId}, continueWith);
+export const deletePaymentCard = (cardId, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'deletePaymentCard', {cardId}, continueWith);
 };
 
-export const addPaymentCard = (customerToken, paymentCard, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'addPaymentCard', {customerToken, paymentCard}, continueWith);
+export const addPaymentCard = (paymentCard, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'addPaymentCard', {paymentCard}, continueWith);
 };
 
 export const rateDriver = (deliveryId, rating, continueWith) => {

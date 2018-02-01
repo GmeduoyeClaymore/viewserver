@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
-import {PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
+import {LoadingScreen, PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';
 import {connect} from 'custom-redux';
+import ProductListItem from './ProductListItem';
 import yup from 'yup';
 
 const styles = StyleSheet.create({
@@ -86,7 +87,7 @@ class ProductCategoryList extends Component{
         <Body><Title>Select Product Category</Title></Body>
       </Header>
       <Content padded>
-        <Text style={styles.subTitle}>Selected product is {JSON.stringify(selectedProduct)}</Text>
+        <ProductListItem product={selectedProduct}/>
         <ErrorRegion errors={errors}>
           <PagingListView
             style={styles.container}

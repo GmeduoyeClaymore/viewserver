@@ -6,6 +6,7 @@ import com.shotgun.viewserver.login.LoginController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -66,8 +67,9 @@ public class UserController {
 
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
-    public String updateUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "user")User user){
+    public String updateUser(@ActionParam(name = "user")User user){
         log.debug("updateUser user: " + user.getEmail());
+        String userId = getUserId();
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         Date now = new Date();
 
@@ -85,8 +87,9 @@ public class UserController {
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)
-    public String setLocation(@ActionParam(name = "userId")String userId, @ActionParam(name = "latitude")double latitude, @ActionParam(name = "longitude")double longitude){
+    public String setLocation(@ActionParam(name = "latitude")double latitude, @ActionParam(name = "longitude")double longitude){
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        String userId = getUserId();
 
         ITableRowUpdater tableUpdater = row -> {
             row.setDouble("latitude", latitude);
@@ -94,6 +97,14 @@ public class UserController {
         };
 
         userTable.updateRow(new TableKey(userId), tableUpdater);
+        return userId;
+    }
+
+    private String getUserId() {
+        String userId = (String) ControllerContext.get("userId");
+        if(userId == null){
+            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
+        }
         return userId;
     }
 

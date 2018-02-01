@@ -31,11 +31,11 @@ class PaymentCardDetails extends Component {
     };
 
     const deleteCard = (cardId) => {
-      dispatch(deletePaymentCard(user.stripeCustomerId, cardId));
+      dispatch(deletePaymentCard(cardId));
     };
 
     const addCard = async() => {
-      dispatch(addPaymentCard(user.stripeCustomerId, newPaymentCard, () => this.ccInput.setValues({ number: undefined,  expiry: undefined, cvc: undefined})));
+      dispatch(addPaymentCard(newPaymentCard, () => this.ccInput.setValues({ number: undefined,  expiry: undefined, cvc: undefined})));
     };
 
     return <Container>

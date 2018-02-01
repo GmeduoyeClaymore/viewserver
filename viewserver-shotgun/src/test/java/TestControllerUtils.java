@@ -1,5 +1,6 @@
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.shotgun.viewserver.user.User;
 import io.viewserver.command.ControllerContext;
 import io.viewserver.command.ControllerRegistration;
 
@@ -18,11 +19,19 @@ public class TestControllerUtils {
     }
     public static String invoke(String userId,ControllerRegistration reg, String method, String params) {
         try {
-            ControllerContext ctxt = ControllerContext.create(new MockSession());
-            ControllerContext.set("userId",userId);
+            ControllerContext ctxt = getControllerContext(userId);
             return reg.getActions().get(method).invoke(params,ctxt,service).get();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ControllerContext getControllerContext(String userId) {
+        ControllerContext ctxt = ControllerContext.create(new MockSession());
+        ControllerContext.set("userId",userId);
+        User user = new User();
+        user.setUserId(userId);
+        ControllerContext.set("user",user);
+        return ctxt;
     }
 }

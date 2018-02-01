@@ -77,7 +77,7 @@ class CustomerLanding extends Component {
   attemptPaymentCards(props){
     const {dispatch, user} = props;
     if (!this.paymentCardsRequested && user){
-      dispatch(getPaymentCards(user.stripeCustomerId));
+      dispatch(getPaymentCards());
       this.paymentCardsRequested = true;
     }
   }
