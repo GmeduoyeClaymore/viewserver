@@ -12,18 +12,9 @@ export const invokeDaoCommand = (daoName, method, options, continueWith) => {
   };
 };
 
-/*
-This was causing some issues so have removed....things seems to be ok
-const getExistingValues = (existingOptions, options) => {
-  const existingValues = {};
-  Object.keys(options).forEach(op => {existingValues[op] = existingOptions[op];});
-  return existingValues;
-};
-*/
-
 export const resetDataAction = (daoName, continueWith) => {
   return async (dispatch) => {
-    dispatch(invokeDaoCommand(daoName, 'resetData', continueWith));
+    dispatch(invokeDaoCommand(daoName, 'resetData', {}, continueWith));
   };
 };
 

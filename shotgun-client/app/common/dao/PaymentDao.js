@@ -43,7 +43,7 @@ export default class PaymentDao{
   async getCustomerPaymentCards(stripeCustomerToken){
     const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards', stripeCustomerToken);
     const paymentCards =  await promise.timeoutWithError(5000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 5 seconds`));
-    Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
+    Logger.fine(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
     const result = {paymentCards};
     this.subject.next(result);
     return result;
@@ -52,7 +52,7 @@ export default class PaymentDao{
   async getBankAccount({stripeAccountId}){
     const promise = this.client.invokeJSONCommand('paymentController', 'getBankAccount', stripeAccountId);
     const bankAccount =  await promise.timeoutWithError(5000, new Error(`Could get bank account for stripe account ${stripeAccountId} in 5 seconds`));
-    Logger.debug(`Got bank account ${stripeAccountId}`);
+    Logger.fine(`Got bank account ${stripeAccountId}`);
     const result = {bankAccount};
     this.subject.next(result);
     return result;
@@ -61,7 +61,7 @@ export default class PaymentDao{
   async setBankAccount({stripeAccountId, paymentBankAccount}){
     const promise = this.client.invokeJSONCommand('paymentController', 'setBankAccount', {stripeAccountId, paymentBankAccount});
     const result =  await promise.timeoutWithError(5000, new Error(`Could set bank account for stripe account ${stripeAccountId} in 5 seconds`));
-    Logger.debug(`Set bank account for ${stripeAccountId}`);
+    Logger.fine(`Set bank account for ${stripeAccountId}`);
     this.getBankAccount({stripeAccountId});
     return result;
   }

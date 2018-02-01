@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {View, Text} from 'react-native';
 import {PagingListView, LoadingScreen, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
-import {Container, Content, Spinner, Header, Body, Title, Tab, List} from 'native-base';
+import {Container, Spinner, Header, Body, Title, Tab} from 'native-base';
 import {getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
@@ -44,20 +44,18 @@ const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, p
     <Tabs initialPage={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i)}>
       {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} />)}
     </Tabs>
-    <Content>
-      <List style={{backgroundColor: shotgun.hairline}}>
-        <PagingListView
-          daoName='orderRequestDao'
-          dataPath={['driver', 'orders']}
-          rowView={RowView}
-          options={reportOptions}
-          paginationWaitingView={Paging}
-          emptyView={NoItems}
-          pageSize={10}
-          headerView={() => null}
-        />
-      </List>
-    </Content>
+    <View style={{flex: 1}}>
+      <PagingListView
+        daoName='orderRequestDao'
+        dataPath={['driver', 'orders']}
+        rowView={RowView}
+        options={reportOptions}
+        paginationWaitingView={Paging}
+        emptyView={NoItems}
+        pageSize={10}
+        headerView={() => null}
+      />
+    </View>
   </Container>;
 };
 

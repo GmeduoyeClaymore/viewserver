@@ -33,7 +33,7 @@ export default class UserDaoContext{
     return new RxDataSink();
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       user: dataSink.rows[0],
       position: this.position
@@ -77,7 +77,7 @@ export default class UserDaoContext{
       const position = await this.getPositionAsPromise().timeoutWithError(3000, 'Unable to get current position after 3 seconds');
       Logger.info(`Got user position as ${JSON.stringify(position)}`);
       this.position = position.coords;
-      dao.subject.next(this.mapDomainEvent(null, dao.dataSink));
+      dao.subject.next(this.mapDomainEvent(dao.dataSink));
     };
     dao.watchPosition = async () => {
       const {userId} = dao.options;

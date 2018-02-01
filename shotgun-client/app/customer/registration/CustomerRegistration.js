@@ -4,7 +4,8 @@ import UserDetails from 'common/registration/UserDetails';
 import PaymentCardDetails from './PaymentCardDetails';
 import AddressDetails from 'common/registration/AddressDetails';
 import CustomerLogin from 'customer/registration/CustomerLogin';
-import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
+import CustomerDao from 'customer/dao/CustomerDao';
+import {unregisterAllDaos, registerNakedDao} from 'common/actions/CommonActions';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';
@@ -18,7 +19,7 @@ export default class CustomerRegistration extends Component {
   componentWillMount(){
     const {dispatch, client} = this.props;
     dispatch(unregisterAllDaos());
-    dispatch(commonServicesRegistrationAction(client));
+    registerNakedDao(dispatch, new CustomerDao(client));
   }
 
   render() {

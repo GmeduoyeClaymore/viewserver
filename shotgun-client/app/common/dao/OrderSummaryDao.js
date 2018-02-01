@@ -35,16 +35,11 @@ export default class OrderSummaryDao{
     };
   }
 
-
-  getDataFrequency(){
-    return 50;
-  }
-
   createDataSink(){
     return new RxDataSink();
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       orders: dataSink.rows.map(r => this.mapOrderSummary(r))
     };

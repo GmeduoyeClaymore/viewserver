@@ -1,8 +1,6 @@
 import {getAllDaos, invokeDaoCommand, unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
-import CustomerDao from 'customer/dao/CustomerDao';
-import DriverDao from 'driver/dao/DriverDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
@@ -39,11 +37,9 @@ export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
   return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
 };
 
-export const commonServicesRegistrationAction = (client, userId, continueWith) => {
+export const commonServicesRegistrationAction = (client, userId) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});
     register(dispatch, new ContentTypeDao(client), {userId});
-    registerNakedDao(dispatch, new CustomerDao(client), {userId}, continueWith);
-    registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };
 };

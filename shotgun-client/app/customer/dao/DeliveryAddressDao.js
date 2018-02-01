@@ -32,7 +32,7 @@ export default class DeliveryAddressDao{
     return 50;
   }
 
-  mapDomainEvent(event, dataSink){
+  mapDomainEvent(dataSink){
     return {
       customer: {
         deliveryAddresses: dataSink.rows
