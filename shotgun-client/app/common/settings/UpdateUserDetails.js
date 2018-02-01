@@ -3,7 +3,7 @@ import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Lab
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import {merge} from 'lodash';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
 import {withRouter} from 'react-router';
 

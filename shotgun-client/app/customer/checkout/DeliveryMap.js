@@ -6,7 +6,7 @@ import {LoadingScreen, ErrorRegion, Icon} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import { getDaoState, getOperationError } from 'common/dao';
+import { getDaoState, getOperationError, isOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {merge} from 'lodash';
 
@@ -16,7 +16,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const DeliveryMap = ({history, context, client, busy, position, navigationStrategy, errors}) => {
   if (busy){
-    return <LoadingScreen text="Loading Map" />;
+    return <LoadingScreen text="Waiting for position from device" />;
   }
   if (errors){
     return <ErrorRegion errors={errors}/>;
@@ -123,6 +123,7 @@ const mapStateToProps = (state, initialProps) => {
   const position = getDaoState(state, ['position'], 'userDao');
   return {
     ...initialProps,
+    busy: isOperationPending(state, 'userDao', 'getCurrentPosition'),
     state,
     position,
     errors: getOperationError(state, 'userDao', 'getCurrentPosition') };

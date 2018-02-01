@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';

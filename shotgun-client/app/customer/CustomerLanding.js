@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {setLocale} from 'yup/lib/customLocale';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from './checkout/Checkout';
@@ -77,7 +77,7 @@ class CustomerLanding extends Component {
   attemptPaymentCards(props){
     const {dispatch, user} = props;
     if (!this.paymentCardsRequested && user){
-      dispatch(getPaymentCards(user.stripeCustomerId));
+      dispatch(getPaymentCards());
       this.paymentCardsRequested = true;
     }
   }

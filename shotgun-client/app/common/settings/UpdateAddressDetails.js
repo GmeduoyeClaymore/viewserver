@@ -4,7 +4,7 @@ import yup from 'yup';
 import {merge} from 'lodash';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import { withRouter } from 'react-router';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';

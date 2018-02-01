@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
 import { withRouter } from 'react-router';
 import {Icon} from 'common/components';

@@ -8,6 +8,7 @@ import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -22,7 +23,8 @@ public class OrderItemController {
     }
 
     @ControllerAction(path = "addOrUpdateOrderItem", isSynchronous = true)
-    public String addOrUpdateOrderItem(@ActionParam(name = "userId")String userId, @ActionParam(name = "orderItem")OrderItem orderItem){
+    public String addOrUpdateOrderItem(@ActionParam(name = "orderItem")OrderItem orderItem){
+        String userId = getUserId();
         KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
         String newOrderItemId = ControllerUtils.generateGuid();
 
@@ -53,5 +55,13 @@ public class OrderItemController {
             orderItemTable.addRow(new TableKey(newOrderItemId), tableUpdater);
             return newOrderItemId;
         }
+    }
+
+    private String getUserId() {
+        String driverId = (String) ControllerContext.get("userId");
+        if(driverId == null){
+            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
+        }
+        return driverId;
     }
 }

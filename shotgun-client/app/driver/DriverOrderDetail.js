@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
 import {OrderSummary, PriceSummary, RatingSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';

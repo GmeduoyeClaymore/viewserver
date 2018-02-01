@@ -3,7 +3,7 @@ import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, 
 import yup from 'yup';
 import {TermsAgreement, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {registerDriver} from 'driver/actions/DriverActions';

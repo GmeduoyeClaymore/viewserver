@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
+import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
-import {Spinner} from 'native-base';
 import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getNavigationProps} from 'common/dao';
-import {PagingListView} from 'common/components';
+import {LoadingScreen, ErrorRegion, PagingListView, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;
@@ -52,19 +52,33 @@ class ProductList extends Component{
 
   render(){
     const {rowView, search, props} = this;
-    const {context, options} = props;
-    return <PagingListView
-      style={styles.container}
-      daoName='productDao'
-      dataPath={['product', 'products']}
-      pageSize={10}
-      options={options}
-      context={context}
-      rowView={rowView}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      headerView={() => <SearchBar onChange={search} />}
-    />;
+    const {context, options, history, busy, errors} = props;
+    return   busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
+      <Header>
+        <Left>
+          <Button transparent>
+            <Icon name='arrow-back' onPress={() => history.goBack()} />
+          </Button>
+        </Left>
+        <Body><Title>Select Product</Title></Body>
+      </Header>
+      <Content padded>
+        <ErrorRegion errors={errors}>
+          <PagingListView
+            style={styles.container}
+            daoName='productDao'
+            dataPath={['product', 'products']}
+            pageSize={10}
+            options={options}
+            context={context}
+            rowView={rowView}
+            paginationWaitingView={Paging}
+            emptyView={NoItems}
+            headerView={() => <SearchBar onChange={search} />}
+          />
+        </ErrorRegion>
+      </Content>
+    </Container>;
   }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';

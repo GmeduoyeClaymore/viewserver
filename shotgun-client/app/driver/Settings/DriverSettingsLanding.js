@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Text, Content, List, ListItem, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';

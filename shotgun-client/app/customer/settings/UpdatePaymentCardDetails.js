@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, Header, Left, Body, Container, Title, List, ListItem, View, Button} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {ErrorRegion, SpinnerButton, CardIcon, Icon} from 'common/components';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {isAnyOperationPending, getOperationErrors, getDaoState} from 'common/dao';
 import {deletePaymentCard, addPaymentCard} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -31,11 +31,11 @@ class PaymentCardDetails extends Component {
     };
 
     const deleteCard = (cardId) => {
-      dispatch(deletePaymentCard(user.stripeCustomerId, cardId));
+      dispatch(deletePaymentCard(cardId));
     };
 
     const addCard = async() => {
-      dispatch(addPaymentCard(user.stripeCustomerId, newPaymentCard, () => this.ccInput.setValues({ number: undefined,  expiry: undefined, cvc: undefined})));
+      dispatch(addPaymentCard(newPaymentCard, () => this.ccInput.setValues({ number: undefined,  expiry: undefined, cvc: undefined})));
     };
 
     return <Container>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import {connect} from 'custom-redux';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
@@ -37,7 +37,7 @@ class LandingCommon extends Component {
     case 'customer':
       return <Redirect to="/Customer/Landing"/>;
     default:
-      Logger.error(`Could not process user of type ${user.type}`);
+      Logger.error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
       //TODO -return an error screen here
       return null;
     }
