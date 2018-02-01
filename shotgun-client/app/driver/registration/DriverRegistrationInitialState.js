@@ -6,7 +6,7 @@ export const INITIAL_STATE = {
     contactNo: undefined,
     type: 'driver',
     password: undefined,
-    dob: '1982-02-03'
+    dob: undefined
   },
   address: {
     line1: undefined,

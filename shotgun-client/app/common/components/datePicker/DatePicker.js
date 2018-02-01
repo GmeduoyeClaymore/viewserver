@@ -31,13 +31,14 @@ export default class DatePickerControl extends Component{
 
   render(){
     const {props, state} = this;
+    const {hideAsap} = props;
     const {date} = state;
     const newProps = {...props, date};
     return <View>
       <DatePicker {...newProps}/>
-      <Button onPress={this.setAsap} style={{height: 18, marginLeft: 15}}>
+      {hideAsap ? null : <Button onPress={this.setAsap} style={{height: 18, marginLeft: 15}}>
         <Text>ASAP</Text>
-      </Button>
+      </Button>}
     </View>;
   }
 }
