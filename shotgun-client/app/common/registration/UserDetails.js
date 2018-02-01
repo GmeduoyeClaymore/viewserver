@@ -41,6 +41,7 @@ export default class UserDetails  extends Component{
     const {context, history, next} = this.props;
     const {dobIsDatePickerVisible} = this.state;
     const {user} = context.state;
+    const isDriver = user.type === 'driver';
   
     return <Container>
       <Header withButton>
@@ -77,12 +78,12 @@ export default class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
-          {user.type === 'driver' ? <Row >
+          {isDriver ? <Row >
             <Col >
               <TouchableHighlight  onPress={() => this.toggleDatePicker(true)} style={{flex: 1, zIndex: 100}}>
                 <Item stackedLabel>
                   <Label>DOB</Label>
-                  <ValidatingInput bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={validationSchema.dob} editable={false}maxLength={30}/>
+                  <ValidatingInput bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} editable={false}maxLength={30}/>
                   <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeText('dob', date)} {...datePickerOptions} />
                 </Item>
               </TouchableHighlight>
@@ -107,7 +108,7 @@ export default class UserDetails  extends Component{
           </Row>
         </Grid>
       </Content>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} style={styles.continueButton} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={user}>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} style={styles.continueButton} onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='arrow-forward'/>
       </ValidatingButton>
@@ -128,4 +129,10 @@ const validationSchema = {
   dob: yup.date().required(),
   email: yup.string().required().email().max(100),
   contactNo: yup.string().required().matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
+};
+
+
+const drivervalidationSchema = {
+  ...validationSchema,
+  dob: yup.date().required()
 };
