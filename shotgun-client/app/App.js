@@ -60,9 +60,14 @@ export default class App extends React.Component {
   async handleConnectionStatusChanged(isReady){
     Logger.info(`Connection status changed to :\"${isReady}\"`);
     if (isReady){
-      await this.setUserId();
-      await this.initMessaging();
-      this.setInitialRoot();
+      try {
+        await this.setUserId();
+        await this.initMessaging();
+        this.setInitialRoot();
+      } catch (error){
+        this.setState({ error, isReady: true, isConnected: false});
+        return;
+      }
     }
     this.setState({ isReady, isConnected: isReady});
   }

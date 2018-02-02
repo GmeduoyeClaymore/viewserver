@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
+import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
+
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';
-import {OrderSummary, PriceSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
+import {OrderSummary, PriceSummary, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {acceptOrderRequest} from 'driver/actions/DriverActions';
 
 class DriverOrderRequestDetail extends Component{
@@ -24,7 +25,7 @@ class DriverOrderRequestDetail extends Component{
   }
 
   render() {
-    const {orderSummary, client, history, dispatch, busy, busyUpdating} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
@@ -40,6 +41,7 @@ class DriverOrderRequestDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
+        <ErrorRegion errors={errors}/>
         <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
         <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></SpinnerButton>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} product={orderSummary.product} client={client} contentType={orderSummary.contentType}/>
@@ -59,10 +61,14 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-
+  const errors = getOperationErrors(state, [
+    { driverDao: 'acceptOrderRequest'},
+    { orderSummaryDao: 'updateSubscription'}
+  ]);
   return {
     ...initialProps,
     orderId,
+    errors,
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || orderSummary == undefined,
     orderSummary

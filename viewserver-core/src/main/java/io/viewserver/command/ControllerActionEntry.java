@@ -79,7 +79,6 @@ public class ControllerActionEntry{
     }
 
     public ListenableFuture<String> invoke(String param,ControllerContext ctxt,ListeningExecutorService executorService){
-        Object arg = fromString(param, this.parameterType, this.an.path());
         try {
             ListenableFuture result;
             if(this.actionParams != null && actionParams.size() > 0){
@@ -120,6 +119,7 @@ public class ControllerActionEntry{
                 result = invokeMethod(executorService, ctxt,args);
             }
             else{
+                Object arg = fromString(param, this.parameterType, this.an.path());
                 result = this.parameterType == null ? invokeMethod(executorService, ctxt) : invokeMethod(executorService, ctxt,arg);
             }
 
