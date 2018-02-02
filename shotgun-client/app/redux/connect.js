@@ -16,9 +16,12 @@ const filterFunctions = (args) => {
   return result;
 };
 
-const selectorFactory = (ignorefuncs, selector) => () => {
+const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
   let previousPropsForComparison = {};
   let previousProps = {};
+  if (!dispatch){
+    throw new Error('Dispatch must not be null');
+  }
   return (nextState, nextOwnProps) => {
     ownProps = nextOwnProps;
     const propsFromSelector = selector(nextState, nextOwnProps);
@@ -28,7 +31,7 @@ const selectorFactory = (ignorefuncs, selector) => () => {
     }
     if (!isEqual(previousPropsForComparison, propsForComparison)) {
       previousPropsForComparison = propsForComparison;
-      previousProps = propsFromSelector;
+      previousProps = {...propsFromSelector, dispatch};
     }
     return previousProps;
   };
