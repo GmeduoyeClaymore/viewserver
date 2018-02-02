@@ -51,6 +51,8 @@ public class CustomerOrderSummaryReport {
                                         .withLeftJoinColumns("driverId")
                                         .withLeftJoinOuter()
                                         .withRightJoinColumns("userId")
+                                        .withColumnPrefixes("", "driver_")
+                                        .withAlwaysResolveNames()
                                         .withConnection("deliveryJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("vehicleJoin")
@@ -92,11 +94,11 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("colour", "vehicleColour"),
                                                 new IProjectionConfig.ProjectionColumn("make", "vehicleMake"),
                                                 new IProjectionConfig.ProjectionColumn("model", "vehicleModel"),
-                                                new IProjectionConfig.ProjectionColumn("firstName", "driverFirstName"),
-                                                new IProjectionConfig.ProjectionColumn("lastName", "driverLastName"),
-                                                new IProjectionConfig.ProjectionColumn("imageUrl", "driverImageUrl"),
-                                                new IProjectionConfig.ProjectionColumn("latitude", "driverLatitude"),
-                                                new IProjectionConfig.ProjectionColumn("longitude", "driverLongitude"),
+                                                new IProjectionConfig.ProjectionColumn("driver_firstName", "driverFirstName"),
+                                                new IProjectionConfig.ProjectionColumn("driver_lastName", "driverLastName"),
+                                                new IProjectionConfig.ProjectionColumn("driver_imageUrl", "driverImageUrl"),
+                                                new IProjectionConfig.ProjectionColumn("driver_latitude", "driverLatitude"),
+                                                new IProjectionConfig.ProjectionColumn("driver_longitude", "driverLongitude"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("created"),

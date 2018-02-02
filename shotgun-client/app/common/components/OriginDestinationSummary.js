@@ -42,7 +42,7 @@ const styles = {
     paddingBottom: 5,
     marginLeft: 6
   }
-}
+};
 
 OriginDestinationSummary.PropTypes = {
   origin: PropTypes.object,

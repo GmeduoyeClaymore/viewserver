@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, Image} from 'react-native';
 import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
@@ -85,27 +85,27 @@ class CustomerOrderInProgress extends Component{
             </Col> :
             <Col>
               <Grid>
-                <Row>
-                  <Col>
-                    <Row><Text>Driver photo here</Text></Row>
-                    <Row><Text>Driver Avg Rating Here</Text></Row>
-                  </Col>
-                  <Col>
-                    <Row>
-                      <Col>
-                        <Text style={styles.subTitle}>Your delivery driver</Text>
-                        <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Text style={styles.subTitle}>Vehicle</Text>
-                        <Text style={styles.data}>{delivery.vehicleMake} {delivery.vehicleModel}, {delivery.vehicleColour}</Text>
-                        <Text style={styles.data}>{delivery.registrationNumber}</Text>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
+                <Col>
+                  <Row>
+                    <Col>
+                      <Text style={styles.subTitle}>Your driver</Text>
+
+                      <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
+                    </Col>
+                    <Col>
+                      <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col>
+                  <Row>
+                    <Col>
+                      <Text style={styles.subTitle}>Vehicle</Text>
+                      <Text style={styles.data}>{delivery.vehicleMake} {delivery.vehicleModel}, {delivery.vehicleColour}</Text>
+                      <Text style={styles.data}>{delivery.registrationNumber}</Text>
+                    </Col>
+                  </Row>
+                </Col>
               </Grid>
               <ErrorRegion errors={errors}>
                 <Button fullWidth callButton onPress={onPressCallDriver}>
@@ -141,6 +141,12 @@ const styles = {
   navigateButton: {
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
+  },
+  driverImage: {
+    aspectRatio: 1,
+    borderRadius: 150,
+    width: 60,
+    marginRight: 10
   }
 };
 

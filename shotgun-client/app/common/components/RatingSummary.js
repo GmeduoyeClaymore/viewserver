@@ -3,6 +3,7 @@ import {Text, View} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {RatingAction, Icon} from 'common/components';
+import {Image} from 'react-native';
 
 export class RatingSummary extends Component{
   constructor(){
@@ -24,7 +25,10 @@ export class RatingSummary extends Component{
 
     if (isRated){
       const stars = [...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
-      return <View style={styles.view}><Text style={styles.text}>You rated {name}</Text>{stars}</View>;
+      return <View style={styles.view}>
+        {!isDriver ?  <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/> : null}
+        <Text style={styles.text}>You rated {name}</Text>{stars}
+      </View>;
     }
     return <RatingAction isDriver={isDriver} delivery={delivery}/>;
   }
@@ -46,4 +50,10 @@ const styles = {
     padding: 2,
     color: shotgun.gold,
   },
+  driverImage: {
+    aspectRatio: 1,
+    borderRadius: 150,
+    width: 30,
+    marginRight: 10
+  }
 };

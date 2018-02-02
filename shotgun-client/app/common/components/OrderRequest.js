@@ -14,7 +14,6 @@ class OrderRequest extends Component {
   render() {
     const {orderSummary, history, next, isLast, isFirst} = this.props;
     const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
-    const {origin, destination} = delivery;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
 
     return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>

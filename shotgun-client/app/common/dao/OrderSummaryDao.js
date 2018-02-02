@@ -87,6 +87,7 @@ export default class OrderSummaryDao{
         customerLastName: orderSummary.customerLastName,
         driverFirstName: orderSummary.driverFirstName,
         driverLastName: orderSummary.driverLastName,
+        driverImageUrl: orderSummary.driverImageUrl,
         driverLatitude: orderSummary.driverLatitude,
         driverLongitude: orderSummary.driverLongitude,
         registrationNumber: orderSummary.registrationNumber,

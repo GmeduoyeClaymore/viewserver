@@ -20,7 +20,7 @@ const ItemDetails = ({context, navigationStrategy}) => {
   const onSelectImage = (response) => {
     onChangeValue('imageData', response.data);
     imageIsVertical = response.height > response.width;
-  }
+  };
 
   const showPicker = () => {
     ImageSelector.show({title: 'Select Image', onSelect: onSelectImage, options: {}});

@@ -1,7 +1,9 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
@@ -20,10 +22,12 @@ import java.util.Date;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private LoginController loginController;
+    private ImageController imageController;
 
-    public UserController(LoginController loginController) {
+    public UserController(LoginController loginController, ImageController imageController) {
 
         this.loginController = loginController;
+        this.imageController = imageController;
     }
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
@@ -74,12 +78,19 @@ public class UserController {
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         Date now = new Date();
 
+        if(user.getImageData() != null){
+            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
+            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            user.setImageUrl(imageUrl);
+        }
+
         ITableRowUpdater tableUpdater = row -> {
             row.setLong("lastModified", now.getTime());
             row.setString("firstName", user.getFirstName());
             row.setString("lastName", user.getLastName());
             row.setString("contactNo", user.getContactNo());
             row.setString("email", user.getEmail().toLowerCase());
+            row.setString("imageUrl", user.getImageUrl());
         };
 
         userTable.updateRow(new TableKey(userId), tableUpdater);
