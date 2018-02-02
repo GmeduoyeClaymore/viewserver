@@ -9,17 +9,22 @@ import {Icon} from 'common/components';
 class RatingAction extends Component{
   constructor(){
     super();
+    this.onPressStar = this.onPressStar.bind(this);
+  }
+
+
+  onPressStar(newRating){
+    const {isDriver, delivery, dispatch} = this.props;
+    const ratingFunc = isDriver ? rateCustomer : rateDriver;
+    const action = ratingFunc(delivery.deliveryId, newRating);
+    dispatch(action);
   }
 
   render() {
-    const {isDriver, delivery, dispatch} = this.props;
+    const {isDriver, delivery} = this.props;
     const name = isDriver ? delivery.customerFirstName : delivery.driverFirstName;
     const rating = isDriver ? delivery.customerRating : delivery.driverRating;
-    const ratingFunc = isDriver ? rateCustomer : rateDriver;
-
-    const onPressStar = async(newRating) => {
-      dispatch(ratingFunc(delivery.deliveryId, newRating));
-    };
+    const {onPressStar} = this;
 
     return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>
       <View style={styles.starView}>

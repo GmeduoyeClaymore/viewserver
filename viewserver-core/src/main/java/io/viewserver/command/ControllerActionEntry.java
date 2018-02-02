@@ -40,12 +40,7 @@ public class ControllerActionEntry{
         if(this.method.getReturnType().isAssignableFrom(ListenableFuture.class)){
             this.isFuture = true;
         }
-
     }
-
-
-
-
 
     private List<ControllerParamEntry> getActionParams(Method method) {
         List<ControllerParamEntry> result  = new ArrayList<>();
@@ -181,9 +176,6 @@ public class ControllerActionEntry{
             }
         });
     }
-
-
-
 
     private String getParameter(Object parameter) {
         if(parameter == null){
