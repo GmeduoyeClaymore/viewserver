@@ -27,7 +27,7 @@ do
     ADBNAME="emulator-"$CURRENT_PORT
     echo "Starting $CURRENT_EMULATOR on port $CURRENT_PORT"
     emulator -avd $CURRENT_EMULATOR -port $CURRENT_PORT &
-    sleep 25
+    sleep 10
 
     adb -s $ADBNAME reverse tcp:7007 tcp:7007 &
     adb -s $ADBNAME reverse tcp:6060 tcp:6060 &

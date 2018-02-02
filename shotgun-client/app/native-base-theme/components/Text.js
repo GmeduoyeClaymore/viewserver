@@ -21,6 +21,13 @@ export default (variables = variable) => {
     },
     '.subTitle': {
       color: variables.brandLight
+    },
+    '.empty': {
+      fontWeight: 'bold',
+      fontSize: 18,
+      textAlign: 'center',
+      paddingTop: 50,
+      color: variables.brandDark
     }
   };
 

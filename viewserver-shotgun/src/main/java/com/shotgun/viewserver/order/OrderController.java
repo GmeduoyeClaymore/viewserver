@@ -95,7 +95,7 @@ public class OrderController {
         //add orderItems
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrderId(orderId);
-            orderItemController.addOrUpdateOrderItem(userId, orderItem);
+            orderItemController.addOrUpdateOrderItem(orderItem);
         }
 
         return orderId;
