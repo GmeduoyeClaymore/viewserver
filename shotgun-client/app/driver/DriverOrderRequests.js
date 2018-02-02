@@ -1,9 +1,8 @@
 import React from 'react';
 import {connect} from 'custom-redux';
-import {View, Text} from 'react-native';
 import {PagingListView, LoadingScreen, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
-import {Container, Spinner, Header, Body, Title, Tab} from 'native-base';
+import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
 import {getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
@@ -26,8 +25,8 @@ const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, p
     driverLongitude: position.longitude
   };
 
-  const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
-  const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs available</Text></View>;
+  const Paging = () => <Spinner />;
+  const NoItems = () => <Text empty>No jobs available</Text>;
   const RowView = ({item: orderSummary, isLast, isFirst}) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next='/Driver/DriverOrderRequestDetail'/>;
 
   const onChangeTab = (index) => {

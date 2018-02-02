@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Text, TouchableHighlight} from 'react-native';
-import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
+import {View, StyleSheet, TouchableHighlight} from 'react-native';
+import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';
@@ -23,10 +23,6 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
 });
-
-const Paging = () => <View><Spinner /></View>;
-const NoItems = () => <View><Text>No items to display</Text></View>;
-
 
 class ProductCategoryList extends Component{
   static propTypes = {
@@ -76,6 +72,9 @@ class ProductCategoryList extends Component{
   render(){
     const {busy, errors, options, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
     const {rowView} = this;
+
+    const Paging = () => <Spinner />;
+    const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header>

@@ -1,9 +1,8 @@
 import React from 'react';
 import {connect} from 'custom-redux';
-import {View, Text} from 'react-native';
 import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
-import {Container, Spinner, Header, Body, Title, Tab} from 'native-base';
+import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
 import {getDaoState} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -18,8 +17,8 @@ const DriverOrders = ({history, isCompleted, userId}) => {
     userId,
     reportId: 'driverOrderSummary'};
 
-  const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
-  const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No jobs assigned</Text></View>;
+  const Paging = () => <Spinner />;
+  const NoItems = () => <Text empty>{isCompleted ? 'You have no completed jobs' : 'You have no live jobs'}</Text>;
   const RowView = ({item: orderSummary, isLast, isFirst}) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next='/Driver/DriverOrderDetail'/>;
 
   const onChangeTab = (newIsCompleted) => {

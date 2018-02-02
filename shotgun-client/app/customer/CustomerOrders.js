@@ -1,9 +1,8 @@
 import React from 'react';
 import {connect} from 'custom-redux';
-import {View, Text} from 'react-native';
 import {PagingListView, Tabs, OrderRequest} from 'common/components';
 import { withRouter } from 'react-router';
-import {Container, Spinner, Header, Body, Title, Tab} from 'native-base';
+import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
 import {isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
@@ -18,8 +17,8 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
     columnsToSort: [{ name: 'from', direction: 'asc' }],
     reportId: 'customerOrderSummary'};
 
-  const Paging = () => <View style={{flex: 1}}><Spinner /></View>;
-  const NoItems = () => <View style={{flex: 1, display: 'flex'}}><Text>No orders to display</Text></View>;
+  const Paging = () => <Spinner />;
+  const NoItems = () => <Text empty>No orders to display</Text>;
   const RowView = ({item: orderSummary, isLast, isFirst}) => {
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
     const next = isOnRoute ? '/Customer/CustomerOrderInProgress' : '/Customer/CustomerOrderDetail';
