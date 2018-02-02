@@ -52,6 +52,7 @@ public class UserController {
             row.setString("type", user.getType());
             row.setString("stripeCustomerId", user.getStripeCustomerId());
             row.setString("stripeDefaultSourceId", user.getStripeDefaultSourceId());
+            row.setString("imageUrl", user.getImageUrl());
         };
 
         if(user.getUserId() != null){

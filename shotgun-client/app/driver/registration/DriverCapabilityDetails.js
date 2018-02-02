@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import {ValidatingInput, ValidatingButton, ErrorRegion, Icon, LoadingScreen} from 'common/components';
+import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
@@ -49,7 +49,7 @@ class DriverCapabilityDetails extends Component{
     const {selectedContentTypes = []} = this.props;
     return <View key={i} style={{width: '30%'}}>
       <Button style={{height: 'auto'}} large active={!!~selectedContentTypes.indexOf(contentType.contentTypeId)} onPress={() => this.selectContentType(contentType)}>
-        <Icon name='car'/>
+        <Icon name='small-van'/>
       </Button>
       <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
     </View>;
@@ -94,7 +94,7 @@ class DriverCapabilityDetails extends Component{
         <Grid>
           <Row>
             <Col>
-            <ErrorRegion errors={errors}/>
+              <ErrorRegion errors={errors}/>
               <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
@@ -159,7 +159,7 @@ class DriverCapabilityDetails extends Component{
                     <Col style={{marginRight: 10}}>
                       <Row>
                         <Button personButton active={numAvailableForOffload == 1} onPress={() => this.onChangeValue('numAvailableForOffload', 1)} >
-                          <Icon name='man'/>
+                          <Icon name='one-person'/>
                         </Button>
                       </Row>
                       <Row style={styles.personSelectTextRow}>
@@ -169,7 +169,7 @@ class DriverCapabilityDetails extends Component{
                     <Col style={{marginRight: 10}}>
                       <Row>
                         <Button personButton active={numAvailableForOffload == 2} onPress={() => this.onChangeValue('numAvailableForOffload', 2)} >
-                          <Icon name='man'/>
+                          <Icon name='one-person'/>
                         </Button>
                       </Row>
                       <Row style={styles.personSelectTextRow}>
@@ -179,7 +179,7 @@ class DriverCapabilityDetails extends Component{
                     <Col>
                       <Row>
                         <Button personButton active={numAvailableForOffload == 3} onPress={() => this.onChangeValue('numAvailableForOffload', 3)} >
-                          <Icon name='man'/>
+                          <Icon name='one-person'/>
                         </Button>
                       </Row>
                       <Row style={styles.personSelectTextRow}>
@@ -235,6 +235,7 @@ const styles = {
 const validationSchema = {
   registrationNumber: yup.string().required().matches(/ ^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/i),
   colour: yup.string().required(),
+  numAvailableForOffload: yup.number().required(),
   make: yup.string().required(),
   model: yup.string().required(),
   dimensions: yup.object().required()

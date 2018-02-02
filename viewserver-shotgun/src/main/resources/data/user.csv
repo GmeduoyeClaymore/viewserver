@@ -1,3 +1,4 @@
-userId,firstName,lastName,contactNo,email,type,stripeCustomerId,stripeDefaultSourceId,stripeAccountId,chargePercentage,password,selectedContentTypes
-2BBui,John,Customer,447966265016,john.customer@email.com,customer,cus_Bxeiko7yw4hcgH,card_1BZjOtJf2h7PvwlulrG7Lrbx,,0,"$argon2i$v=19$m=65536,t=2,p=1$w61m6x8Nuy8Mr67d/VEWNg$Ah69QMTsN+ICkXBqfG/4dpvj5xY1ITz1Wq+b5E8Cq8Y","1,2"
-3ABCD,Bob,Builder,447733362799,bob.builder@email.com,driver,,,acct_1BkvcFEHyvjwxaQs,10,"$argon2i$v=19$m=65536,t=2,p=1$NwjimNeLR4uu0mcSrzOOCQ$3W7U6ZAkTlZJ+Lswc1o1tUThzS7ok+IP+TamCn5Hys8","1,2"
+userId,firstName,lastName,contactNo,email,type,stripeCustomerId,stripeDefaultSourceId,stripeAccountId,chargePercentage,password,selectedContentTypes,imageUrl
+2BBui,John,Customer,447966265016,john.customer@email.com,customer,cus_Bxeiko7yw4hcgH,card_1BZjOtJf2h7PvwlulrG7Lrbx,,0,"$argon2i$v=19$m=65536,t=2,p=1$w61m6x8Nuy8Mr67d/VEWNg$Ah69QMTsN+ICkXBqfG/4dpvj5xY1ITz1Wq+b5E8Cq8Y","1,2",
+3ABCD,Bob,Builder,447733362799,bob.builder@email.com,driver,,,acct_1BkvcFEHyvjwxaQs,10,"$argon2i$v=19$m=65536,t=2,p=1$NwjimNeLR4uu0mcSrzOOCQ$3W7U6ZAkTlZJ+Lswc1o1tUThzS7ok+IP+TamCn5Hys8","1,2","https://shotgunclientimages.s3.eu-west-2.amazonaws.com/driverImages/d9007942-38c4-4991-90b5-e131dbae5cd8.jpg"
+

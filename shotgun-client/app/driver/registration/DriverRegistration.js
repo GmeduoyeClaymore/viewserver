@@ -8,8 +8,9 @@ import OffloadDetails from './OffloadDetails';
 import DriverRegistrationLanding from './DriverRegistrationLanding';
 import AddressDetails from 'common/registration/AddressDetails';
 import AddressLookup from 'common/components/maps/AddressLookup';
-import {unregisterAllDaos, registerNakedDao} from 'common/actions/CommonActions';
+import {unregisterAllDaos, registerNakedDao, register} from 'common/actions/CommonActions';
 import DriverDao from 'driver/dao/DriverDao';
+import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
 
@@ -23,6 +24,7 @@ class DriverRegistration extends Component {
     const {dispatch, client} = this.props;
     dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new DriverDao(client));
+    register(dispatch, new ContentTypeDao(client, {userId: undefined}));
   }
 
   render() {

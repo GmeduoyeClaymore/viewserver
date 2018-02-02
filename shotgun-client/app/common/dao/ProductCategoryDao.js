@@ -32,10 +32,6 @@ export default class ProductCategoryDaoContext{
     };
   }
 
-  getDataFrequency(){
-    return 50;
-  }
-
   createDataSink(){
     return new RxDataSink();
   }

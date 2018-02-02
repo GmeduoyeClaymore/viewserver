@@ -94,6 +94,7 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("model", "vehicleModel"),
                                                 new IProjectionConfig.ProjectionColumn("firstName", "driverFirstName"),
                                                 new IProjectionConfig.ProjectionColumn("lastName", "driverLastName"),
+                                                new IProjectionConfig.ProjectionColumn("imageUrl", "driverImageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("latitude", "driverLatitude"),
                                                 new IProjectionConfig.ProjectionColumn("longitude", "driverLongitude"),
                                                 new IProjectionConfig.ProjectionColumn("vehicleTypeId"),

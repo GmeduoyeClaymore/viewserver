@@ -102,6 +102,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        vectorDrawables.useSupportLibrary = true
     }
     splits {
         abi {
@@ -143,6 +144,7 @@ dependencies {
     compile(project(':react-native-maps')){
         exclude group: 'com.google.android.gms'
     }
+     compile project(':react-native-image-crop-picker')
     compile project(':react-native-image-picker')
 	compile ("com.google.android.gms:play-services-base:10.0.1") {
         force = true;

@@ -17,6 +17,7 @@ export default class Dao {
     }
     this.name = daoContext.name;
     this.page = page(this);
+    this.subscribed = false;
     this.handleConnectionStatus = this.handleConnectionStatus.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
@@ -89,7 +90,7 @@ export default class Dao {
     }
 
     try {
-      if (isEqual(this.options, newOptions)){
+      if (isEqual(this.options, newOptions) && this.subscribed){
         return Promise.resolve();
       }
       this.options = newOptions;
@@ -102,6 +103,7 @@ export default class Dao {
       Logger.info('!!!!!Waiting for snapshot complete!!!!');
       const result = await snapshotPromise;
       Logger.info('!!!!!Completed snapshot complete!!!!');
+      this.subscribed = true;
       return result;
     } catch (error){
       Logger.warning(error);

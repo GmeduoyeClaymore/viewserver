@@ -2,12 +2,14 @@ package com.shotgun.viewserver.user;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
+import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.messaging.AppMessage;
@@ -37,6 +39,7 @@ public class DriverController {
     private VehicleController vehicleController;
     private JourneyEmulatorController journeyEmulatorController;
     private LoginController loginController;
+    private ImageController imageController;
     private IReactor reactor;
 
     public DriverController(PaymentController paymentController,
@@ -45,6 +48,7 @@ public class DriverController {
                             VehicleController vehicleController,
                             JourneyEmulatorController journeyEmulatorController,
                             LoginController loginController,
+                            ImageController imageController,
                             IReactor reactor) {
         this.paymentController = paymentController;
         this.messagingController = messagingController;
@@ -52,6 +56,7 @@ public class DriverController {
         this.vehicleController = vehicleController;
         this.loginController = loginController;
         this.journeyEmulatorController = journeyEmulatorController;
+        this.imageController = imageController;
         this.reactor = reactor;
     }
 
@@ -73,6 +78,14 @@ public class DriverController {
         user.setChargePercentage(10);
 
         String paymentAccountId = paymentController.createPaymentAccount(user, address, bankAccount);
+
+        //save image if required
+        if(user.getImageData() != null){
+            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
+            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            user.setImageUrl(imageUrl);
+        }
+
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
         reactor.scheduleTask(new ITask() {

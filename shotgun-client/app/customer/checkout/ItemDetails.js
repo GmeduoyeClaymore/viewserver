@@ -5,8 +5,7 @@ import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} 
 import yup from 'yup';
 import {merge} from 'lodash';
 import { withRouter } from 'react-router';
-import ImagePicker from 'react-native-image-picker';
-import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
+import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 
 const ItemDetails = ({context, navigationStrategy}) => {
   const {orderItem} = context.state;
@@ -18,14 +17,14 @@ const ItemDetails = ({context, navigationStrategy}) => {
     context.setState({orderItem: merge({}, orderItem, {[field]: value})});
   };
 
-  const launchImagePicker = () => {
-    ImagePicker.showImagePicker(imagePickerOptions, async (response) => {
-      //TODO - maybe compress the image here??
-      onChangeValue('imageData', response.data);
-      imageIsVertical = response.height > response.width;
-    });
-  };
+  const onSelectImage = (response) => {
+    onChangeValue('imageData', response.data);
+    imageIsVertical = response.height > response.width;
+  }
 
+  const showPicker = () => {
+    ImageSelector.show({title: 'Select Image', onSelect: onSelectImage, options: {}});
+  };
 
   return (
     <Container>
@@ -38,12 +37,12 @@ const ItemDetails = ({context, navigationStrategy}) => {
         <Body><Title>Your Item</Title></Body>
       </Header>
       <Content padded>
-        {orderItem.imageData != undefined ? <Grid onPress={launchImagePicker}>
+        {orderItem.imageData != undefined ? <Grid onPress={showPicker}>
           <Row style={{justifyContent: 'center'}}>
             <Image source={{uri: `data:image/jpeg;base64,${orderItem.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? width / 2 : width - 50 }]}/>
           </Row>
         </Grid> : null}
-        {orderItem.imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={launchImagePicker}>
+        {orderItem.imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
           <Grid>
             <Row style={styles.imageButtonIconRow}>
               <Icon name='camera' style={{marginBottom: 15}}/>
@@ -65,16 +64,6 @@ const ItemDetails = ({context, navigationStrategy}) => {
 
 const validationSchema = {
   notes: yup.string().required().max(200)
-};
-
-
-const imagePickerOptions = {
-  title: 'Item Image',
-  mediaType: 'photo',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images'
-  }
 };
 
 const styles = {

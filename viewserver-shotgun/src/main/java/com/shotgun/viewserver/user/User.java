@@ -18,6 +18,8 @@ public class User{
     private String stripeDefaultSourceId;
     private int chargePercentage;
     private String selectedContentTypes;
+    private String imageUrl;
+    private String imageData;
 
     private String fcmToken;
     private Double latitude;
@@ -169,5 +171,21 @@ public class User{
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(String imageData) {
+        this.imageData = imageData;
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {UIManager, View} from 'react-native';
-import {Container, Text, StyleProvider, Button} from 'native-base';
+import {Container, Text, StyleProvider, Button, Root} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -133,25 +133,27 @@ export default class App extends React.Component {
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};
 
     return <Provider store={store}>
-      <NativeRouter>
-        <AndroidBackButton>
-          <StyleProvider style={getTheme(shotgun)}>
-            <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-              <Switch>
-                <Route path="/Root" component={App}/>
-                <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
-                <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
-                <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
-                <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
-                <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
-                <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
-                <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
-                <Redirect to={App.INITIAL_ROOT_NAME}/>
-              </Switch>
-            </View>
-          </StyleProvider>
-        </AndroidBackButton>
-      </NativeRouter>
+      <Root>
+        <NativeRouter>
+          <AndroidBackButton>
+            <StyleProvider style={getTheme(shotgun)}>
+              <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+                <Switch>
+                  <Route path="/Root" component={App}/>
+                  <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
+                  <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
+                  <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
+                  <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
+                  <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+                  <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
+                  <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
+                  <Redirect to={App.INITIAL_ROOT_NAME}/>
+                </Switch>
+              </View>
+            </StyleProvider>
+          </AndroidBackButton>
+        </NativeRouter>
+      </Root>
     </Provider>;
   }
 }

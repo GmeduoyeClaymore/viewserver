@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Text, Content, List, ListItem, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
+import { Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
+import {Image} from 'react-native';
 import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
@@ -20,6 +21,9 @@ const DriverSettings = ({history, user}) => {
         </Button>
       </Left>
       <Body><Title>{user.firstName} {user.lastName}</Title><Subtitle>{user.email}</Subtitle></Body>
+      <Right>
+        {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
+      </Right>
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
@@ -48,6 +52,11 @@ const DriverSettings = ({history, user}) => {
 const styles = {
   text: {
     fontSize: 16
+  },
+  image: {
+    aspectRatio: 1,
+    borderRadius: 150,
+    width: 50
   }
 };
 

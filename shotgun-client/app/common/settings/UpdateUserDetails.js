@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
+import {ValidatingInput, ValidatingButton, Icon, ErrorRegion, ImageSelector} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
 import {withRouter} from 'react-router';
+import {Image} from 'react-native';
 
 class UpdateUserDetails extends Component{
   constructor(props) {
@@ -16,17 +17,39 @@ class UpdateUserDetails extends Component{
         firstName: props.user.firstName,
         lastName: props.user.lastName,
         contactNo: props.user.contactNo,
-        email: props.user.email
+        email: props.user.email,
+        imageUrl: props.user.imageUrl,
+        imageData: undefined,
+        type: props.user.type
       }
+    };
+
+    this.pickerOptions = {
+      cropping: true,
+      cropperCircleOverlay: true,
+      useFrontCamera: true,
+      height: 400,
+      width: 400
     };
   }
 
   render() {
     const {dispatch, busy, errors, history, onUpdate} = this.props;
     const {user} = this.state;
+    user.imageUrl = user.imageData !== undefined ? `data:image/jpeg;base64,${user.imageData}` : user.imageUrl;
 
-    const onChangeText = async (field, value) => {
+    const isDriver = user.type == 'driver';
+
+    const onChangeText = (field, value) => {
       this.setState({user: merge(user, {[field]: value})});
+    };
+
+    const onSelectImage = (response) => {
+      onChangeText('imageData', response.data);
+    };
+
+    const showPicker = () => {
+      ImageSelector.show({title: 'Select Image', onSelect: onSelectImage, options: this.pickerOptions});
     };
 
     const onUpdateDetails = () => {
@@ -45,26 +68,37 @@ class UpdateUserDetails extends Component{
       <Content keyboardShouldPersistTaps="always">
         <Grid>
           <Row>
-            <Col>
-              <Item stackedLabel first>
-                <Label>First name</Label>
-                <ValidatingInput bold value={user.firstName} placeholder="John"
-                  validateOnMount={user.firstName !== undefined}
-                  onChangeText={(value) => onChangeText('firstName', value)}
-                  validationSchema={validationSchema.firstName} maxLength={30}/>
-              </Item>
+            <Col width={isDriver ? 40 : 100}>
+              <Row>
+                <Col>
+                  <Item stackedLabel first>
+                    <Label>First name</Label>
+                    <ValidatingInput bold value={user.firstName} placeholder="John"
+                      validateOnMount={user.firstName !== undefined}
+                      onChangeText={(value) => onChangeText('firstName', value)}
+                      validationSchema={validationSchema.firstName} maxLength={30}/>
+                  </Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Item stackedLabel>
+                    <Label>Last name</Label>
+                    <ValidatingInput bold value={user.lastName} placeholder="Smith"
+                      validateOnMount={user.lastName !== undefined}
+                      onChangeText={(value) => onChangeText('lastName', value)}
+                      validationSchema={validationSchema.lastName} maxLength={30}/>
+                  </Item>
+                </Col>
+              </Row>
             </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Item stackedLabel>
-                <Label>Last name</Label>
-                <ValidatingInput bold value={user.lastName} placeholder="Smith"
-                  validateOnMount={user.lastName !== undefined}
-                  onChangeText={(value) => onChangeText('lastName', value)}
-                  validationSchema={validationSchema.lastName} maxLength={30}/>
-              </Item>
-            </Col>
+            {isDriver ? <Col width={60}><Row>
+              <Col >
+                {user.imageUrl != undefined ? <Row style={{justifyContent: 'center'}} onPress={showPicker}>
+                  <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/>
+                </Row> : null}
+              </Col>
+            </Row></Col> : null }
           </Row>
           <Row>
             <Col>
@@ -103,6 +137,11 @@ class UpdateUserDetails extends Component{
 const styles = {
   continueButton: {
     marginTop: 50
+  },
+  image: {
+    aspectRatio: 1,
+    borderRadius: 150,
+    width: 100
   }
 };
 

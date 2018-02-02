@@ -87,11 +87,6 @@ export default (variables = variable) => {
       backgroundColor: variables.darkGreen,
     },
 
-    /*   '.block': {
-      justifyContent: 'center',
-      alignSelf: 'stretch',
-    },*/
-
     '.transparent': {
       backgroundColor: 'transparent',
       elevation: 0,

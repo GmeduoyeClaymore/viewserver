@@ -24,9 +24,6 @@ export default class ContentTypeDaoContext{
     return new RxDataSink();
   }
 
-  getDataFrequency(){
-    return 50;
-  }
 
   transformOptions(options){
     return options;

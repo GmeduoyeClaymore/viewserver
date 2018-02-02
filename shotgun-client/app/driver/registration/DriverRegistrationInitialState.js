@@ -6,7 +6,8 @@ export const INITIAL_STATE = {
     contactNo: undefined,
     type: 'driver',
     password: undefined,
-    dob: undefined
+    dob: undefined,
+    imageData: undefined
   },
   address: {
     line1: undefined,

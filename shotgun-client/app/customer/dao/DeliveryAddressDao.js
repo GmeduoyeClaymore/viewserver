@@ -28,10 +28,6 @@ export default class DeliveryAddressDao{
     return new RxDataSink();
   }
 
-  getDataFrequency(){
-    return 50;
-  }
-
   mapDomainEvent(dataSink){
     return {
       customer: {

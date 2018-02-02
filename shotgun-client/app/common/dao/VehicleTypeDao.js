@@ -21,10 +21,6 @@ export default class VehicleTypeDaoContext{
     return 'vehicleTypeDao';
   }
 
-  getDataFrequency(){
-    return 50;
-  }
-
   createDataSink(){
     return new RxDataSink();
   }

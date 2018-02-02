@@ -80,7 +80,6 @@ export default class OrderRequestDaoContext{
         duration: orderRequest.duration,
         noRequiredForOffload: orderRequest.noRequiredForOffload,
         deliveryId: orderRequest.deliveryId,
-        distance: orderRequest.distance,
         origin: {
           flatNumber: orderRequest.originFlatNumber,
           line1: orderRequest.originLine1,

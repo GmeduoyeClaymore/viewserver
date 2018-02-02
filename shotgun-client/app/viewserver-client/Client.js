@@ -158,7 +158,6 @@ export default class Client {
     const command = new Command(commandName, commandDto);
     command.handler = eventHandlers;
     command.continuous = continuous;
-    //command.extensions = extensions;
     return this.network.sendCommand(command);
   };
 }
