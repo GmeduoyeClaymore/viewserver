@@ -38,7 +38,7 @@ class OrderConfirmation extends Component{
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
+            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Order Summary</Title></Body>
@@ -47,7 +47,7 @@ class OrderConfirmation extends Component{
         <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={price}/>
         <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
         <ErrorRegion errors={errors}>
-          <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon name='arrow-forward'/></SpinnerButton>
+          <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon next name='forward-arrow'/></SpinnerButton>
         </ErrorRegion>
       </Content>
     </Container>;

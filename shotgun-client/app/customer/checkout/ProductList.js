@@ -57,7 +57,7 @@ class ProductList extends Component{
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='arrow-back' onPress={() => history.goBack()} />
+            <Icon name='back-arrow' onPress={() => history.goBack()} />
           </Button>
         </Left>
         <Body><Title>Select Product</Title></Body>

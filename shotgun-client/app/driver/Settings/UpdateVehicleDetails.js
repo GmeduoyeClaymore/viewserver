@@ -49,7 +49,7 @@ class UpdateVehicleDetails extends Component {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+            <Icon name='back-arrow' onPress={() => history.goBack()}/>
           </Button>
         </Left>
         <Body><Title>Vehicle Details</Title></Body>

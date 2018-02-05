@@ -17,7 +17,7 @@ const BankAccountDetails = ({context, history}) => {
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          <Icon name='back-arrow' onPress={() => history.goBack()}/>
         </Button>
       </Left>
       <Body><Title>Payment Details</Title></Body>
@@ -44,7 +44,7 @@ const BankAccountDetails = ({context, history}) => {
     </Content>
     <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Driver/Registration/DriverCapabilityDetails')} validationSchema={yup.object(validationSchema)} model={bankAccount}>
       <Text uppercase={false}>Continue</Text>
-      <Icon name='arrow-forward'/>
+      <Icon next name='forward-arrow'/>
     </ValidatingButton>
   </Container>;
 };

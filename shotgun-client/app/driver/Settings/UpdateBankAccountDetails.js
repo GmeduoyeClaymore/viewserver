@@ -36,7 +36,7 @@ class UpdateBankAccountDetails extends Component {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+            <Icon name='back-arrow' onPress={() => history.goBack()}/>
           </Button>
         </Left>
         <Body><Title>Bank Account Details</Title></Body>

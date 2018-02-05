@@ -23,7 +23,7 @@ class OrderRequest extends Component {
             <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
           </Col>
           <Col size={30} style={styles.priceRow}>
-            <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="arrow-forward"/></Text>
+            <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
             <Text note style={styles.orderStatus}>{getFriendlyOrderStatusName(orderSummary.status)}</Text>
           </Col>
         </Row>
@@ -81,6 +81,9 @@ const styles = {
   },
   noRequiredForOffloadCol: {
     alignItems: 'flex-end'
+  },
+  forwardIcon: {
+    fontSize: 14,
   }
 };
 

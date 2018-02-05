@@ -17,7 +17,7 @@ const DriverSettings = ({history, user}) => {
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          <Icon name='back-arrow' onPress={() => history.goBack()}/>
         </Button>
       </Left>
       <Body><Title>{user.firstName} {user.lastName}</Title><Subtitle>{user.email}</Subtitle></Body>
@@ -29,19 +29,19 @@ const DriverSettings = ({history, user}) => {
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
           <Text style={styles.text}>Personal details</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateBankAccountDetails')}>
           <Text style={styles.text}>Bank Details</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateVehicleDetails')}>
           <Text style={styles.text}>Vehicle Details</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/UserDetails')}>
           <Text style={styles.text}>Give us feedback</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ListItem>
       </List>
     </Content>

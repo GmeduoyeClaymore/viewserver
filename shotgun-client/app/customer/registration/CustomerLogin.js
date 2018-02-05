@@ -32,7 +32,7 @@ class CustomerLogin extends Component {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+            <Icon name='back-arrow' onPress={() => history.goBack()}/>
           </Button>
         </Left>
         <Body><Title>Login</Title></Body>
@@ -67,7 +67,7 @@ class CustomerLogin extends Component {
         <ValidatingButton paddedBottom fullWidth iconRight
           onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
           <Text uppercase={false}>Sign In</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </ErrorRegion>
     </Container>;

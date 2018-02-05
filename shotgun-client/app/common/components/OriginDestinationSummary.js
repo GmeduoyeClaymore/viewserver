@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
-import {Grid, Row, Text, View} from 'native-base';
+import {Grid, Row, Text, Col} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -22,11 +22,11 @@ export class OriginDestinationSummary extends Component{
 
     return <Grid>
       {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
-      <View style={styles.timeRow}>
-        <Text time>
+      {contentType.destination ? <Row style={styles.timeRow}>
+        <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
         </Text>
-      </View>
+      </Row> : null}
       {contentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
     </Grid>;
   }
@@ -34,13 +34,18 @@ export class OriginDestinationSummary extends Component{
 
 const styles = {
   timeRow: {
-    borderLeftWidth: 2,
-    borderColor: shotgun.silver,
-    borderStyle: 'dashed',
-    paddingLeft: 15,
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginLeft: 6
+    marginLeft: 6,
+    alignItems: 'center'
+  },
+  timeText: {
+    alignSelf: 'flex-start',
+    paddingTop: 3
+  },
+  dashedIcon: {
+    color: shotgun.silver,
+    fontSize: 30,
+    height: 22,
+    marginRight: 15
   }
 };
 

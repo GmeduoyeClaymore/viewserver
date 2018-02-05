@@ -85,7 +85,7 @@ class DriverCapabilityDetails extends Component{
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+            <Icon name='back-arrow' onPress={() => history.goBack()}/>
           </Button>
         </Left>
         <Body><Title>Account Type</Title></Body>
@@ -194,7 +194,7 @@ class DriverCapabilityDetails extends Component{
       </Content> : null}
       <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
         <Text uppercase={false}>Register</Text>
-        <Icon name='arrow-forward'/>
+        <Icon next name='forward-arrow'/>
       </ValidatingButton>
      
     </Container>;

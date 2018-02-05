@@ -31,7 +31,7 @@ const ItemDetails = ({context, navigationStrategy}) => {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
+            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Your Item</Title></Body>
@@ -56,7 +56,7 @@ const ItemDetails = ({context, navigationStrategy}) => {
       </Content>
       <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
         <Text uppercase={false}>Continue</Text>
-        <Icon name='arrow-forward'/>
+        <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </Container>
   );

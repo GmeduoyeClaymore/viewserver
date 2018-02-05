@@ -38,7 +38,7 @@ class PaymentCardDetails extends Component {
       <Header withButton>
         <Left>
           <Button>
-            <Icon name='arrow-back' onPress={() => history.goBack()}/>
+            <Icon name='back-arrow' onPress={() => history.goBack()}/>
           </Button>
         </Left>
         <Body><Title>Payment Details</Title></Body>
@@ -49,7 +49,7 @@ class PaymentCardDetails extends Component {
       <ErrorRegion errors={errors}>
         <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
           <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </SpinnerButton>
       </ErrorRegion>
       <TermsAgreement/>

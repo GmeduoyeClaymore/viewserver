@@ -30,7 +30,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.push(`${match.path}/UserDetails`)} />
+          <Icon name='back-arrow' onPress={() => history.push(`${match.path}/UserDetails`)} />
         </Button>
       </Left>
       <Body><Title>Address Details</Title></Body>
@@ -73,7 +73,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
     </Content>
     <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
       <Text uppercase={false}>Continue</Text>
-      <Icon name='arrow-forward'/>
+      <Icon name='forward-arrow' next/>
     </ValidatingButton>
   </Container>;
 };

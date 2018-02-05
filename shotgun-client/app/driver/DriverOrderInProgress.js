@@ -99,7 +99,7 @@ class DriverOrderInProgress extends Component{
             {isDelivery ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
           <Button transparent style={styles.backButton}>
-            <Icon name='arrow-back' onPress={() => history.goBack()} />
+            <Icon name='back-arrow' onPress={() => history.goBack()} />
           </Button>
         </Row>
         <Row size={40} style={styles.infoRow}>

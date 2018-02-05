@@ -15,6 +15,9 @@ export default (variables = variable) => {
       position: 'absolute',
       right: 0
     },
+    '.next': {
+      fontSize: 12
+    }
   };
 
   return iconTheme;

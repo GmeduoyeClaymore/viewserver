@@ -80,7 +80,7 @@ class ProductCategoryList extends Component{
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='arrow-back' onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)} />
+            <Icon name='back-arrow' onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)} />
           </Button>
         </Left>
         <Body><Title>Select Product Category</Title></Body>
@@ -103,7 +103,7 @@ class ProductCategoryList extends Component{
         </ErrorRegion>
         <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
           <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
     </Container>;

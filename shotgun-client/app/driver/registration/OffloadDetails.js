@@ -25,7 +25,7 @@ const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
     <Header withButton>
       <Left>
         <Button>
-          <Icon name='arrow-back' onPress={() => history.goBack()}/>
+          <Icon name='back-arrow' onPress={() => history.goBack()}/>
         </Button>
       </Left>
       <Body><Title>Delivery Details</Title></Body>
@@ -70,7 +70,7 @@ const OffloadDetails  = ({context, history, busy, dispatch, errors}) => {
     <ErrorRegion errors={errors}>
       <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true} onPress={register} validationSchema={yup.object(validationSchema)} model={vehicle}>
         <Text uppercase={false}>Register</Text>
-        <Icon name='arrow-forward'/>
+        <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </ErrorRegion>
     <TermsAgreement/>

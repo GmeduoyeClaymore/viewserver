@@ -79,7 +79,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
         {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{ ...origin }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
         {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
         <Button transparent style={styles.backButton}>
-          <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
+          <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
         </Button>
       </Row>
       <Row size={15} style={styles.inputRow}>
@@ -97,7 +97,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
     </Grid>
     <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton || (!supportsDestination && !supportsOrigin)}>
       <Text uppercase={false}>Continue</Text>
-      <Icon name='arrow-forward' />
+      <Icon name='forward-arrow' next/>
     </Button>
   </Container>;
 };

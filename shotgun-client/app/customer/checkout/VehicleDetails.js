@@ -40,7 +40,7 @@ class VehicleDetails extends Component {
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='arrow-back' onPress={() => navigationStrategy.back()} />
+            <Icon name='back-arrow' onPress={() => navigationStrategy.back()} />
           </Button>
         </Left>
         <Body><Title>Vehicle Details</Title></Body>
@@ -54,7 +54,7 @@ class VehicleDetails extends Component {
         </Grid>
         <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={delivery}>
           <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward'/>
+          <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
     </Container>;

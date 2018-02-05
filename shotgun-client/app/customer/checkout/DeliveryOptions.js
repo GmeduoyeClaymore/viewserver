@@ -94,7 +94,7 @@ class DeliveryOptions extends Component {
         <Header withButton>
           <Left>
             <Button>
-              <Icon name='arrow-back' onPress={() => navigationStrategy.prev()} />
+              <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
             </Button>
           </Left>
           <Body><Title>Delivery Details</Title></Body>
@@ -159,7 +159,7 @@ class DeliveryOptions extends Component {
         </Content>
         <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
           <Text uppercase={false}>Continue</Text>
-          <Icon name='arrow-forward' />
+          <Icon next name='forward-arrow' />
         </ValidatingButton>
       </Container>;
   }
