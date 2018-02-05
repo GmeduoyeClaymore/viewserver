@@ -100,6 +100,7 @@ public class DriverController {
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     future.set(userId);
                 }catch (Exception ex){
+                    log.error("There was a problem registering the driver", ex);
                     future.setException(ex);
                 }
             }

@@ -116,7 +116,7 @@ export default class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
-          {isDriver ? <Row  onPress={() => console.log('click')}>
+          {isDriver ? <Row>
             <Col>
               <Item stackedLabel>
                 <Label>DOB</Label>

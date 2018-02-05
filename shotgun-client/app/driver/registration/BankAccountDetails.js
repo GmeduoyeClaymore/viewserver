@@ -42,7 +42,7 @@ const BankAccountDetails = ({context, history}) => {
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Driver/Registration/DriverCapabilityDetails')} validationSchema={yup.object(validationSchema)} model={bankAccount}>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Driver/Registration/DriverAccountType')} validationSchema={yup.object(validationSchema)} model={bankAccount}>
       <Text uppercase={false}>Continue</Text>
       <Icon next name='forward-arrow'/>
     </ValidatingButton>

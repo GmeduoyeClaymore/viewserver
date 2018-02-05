@@ -6,7 +6,7 @@ import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/compo
 import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
-import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError } from 'common/dao';
+import {isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError } from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -14,9 +14,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 class DriverCapabilityDetails extends Component{
   constructor(props){
     super(props);
-    this.selectContentType = this.selectContentType.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
-    this.renderContentType = this.renderContentType.bind(this);
     this.requestVehicleDetails = this.requestVehicleDetails.bind(this);
     this.register = this.register.bind(this);
   }
@@ -32,29 +30,6 @@ class DriverCapabilityDetails extends Component{
     dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
-
-  selectContentType(selectedContentType){
-    let {selectedContentTypes = []} = this.props;
-    const {context} = this.props;
-    const index = selectedContentTypes.indexOf(selectedContentType.contentTypeId);
-    if (!!~index){
-      selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
-    } else {
-      selectedContentTypes = [...selectedContentTypes, selectedContentType.contentTypeId];
-    }
-    context.setState({selectedContentTypes});
-  }
-
-  renderContentType(contentType, i){
-    const {selectedContentTypes = []} = this.props;
-    return <View key={i} style={{width: '30%'}}>
-      <Button style={{height: 'auto'}} large active={!!~selectedContentTypes.indexOf(contentType.contentTypeId)} onPress={() => this.selectContentType(contentType)}>
-        <Icon name='small-van'/>
-      </Button>
-      <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
-    </View>;
-  }
-
   async requestVehicleDetails(){
     const {context, client, vehicle} = this.props;
     try {
@@ -65,11 +40,6 @@ class DriverCapabilityDetails extends Component{
     }
   }
 
-  onChangeValue(field, value){
-    const {vehicle, context} = this.props;
-    context.setState({vehicle: merge({}, vehicle, {[field]: value})});
-  }
-
 
   printDimensions(){
     const {dimensions} = this.props;
@@ -77,11 +47,11 @@ class DriverCapabilityDetails extends Component{
   }
 
   render(){
-    const {history, contentTypes = [], vehicle = {}, dimensions, selectedContentTypes = [], errors, busy} = this.props;
+    const {history, vehicle = {}, dimensions, selectedContentTypes = [], errors, busy} = this.props;
     const {numAvailableForOffload} = vehicle;
     const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
-    return    <Container>
+    return <Container>
       <Header withButton>
         <Left>
           <Button>
@@ -91,35 +61,16 @@ class DriverCapabilityDetails extends Component{
         <Body><Title>Account Type</Title></Body>
       </Header>
       <Content keyboardShouldPersistTaps="always" padded>
-        <Grid>
+        { containsDelivery ? <View>
           <Row>
-            <Col>
-              <ErrorRegion errors={errors}/>
-              <View style={{...styles.productSelectView}}>
-                <Grid>
-                  <Row style={{flexWrap: 'wrap'}}>
-                    {contentTypes.map((v, i) => this.renderContentType(v, i))}
-                  </Row>
-                </Grid>
-              </View>
-            </Col>
-          </Row>
-        </Grid>
-      </Content>
-
-      { containsDelivery ? <Content keyboardShouldPersistTaps="always">
-        <Grid>
-          <Row>
-            <Col>
-              <Item stackedLabel first>
-                <Label>Vehicle registration</Label>
-                <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
-              </Item>
-            </Col>
+            <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
+              <Label>Vehicle registration</Label>
+              <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
+            </Item>
           </Row>
           <Row>
             <Col>
-              <ValidatingButton fullWidth padded onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
+              <ValidatingButton fullWidth onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
             </Col>
           </Row>
           {vehicle.make != undefined ? (<Row>
@@ -139,15 +90,13 @@ class DriverCapabilityDetails extends Component{
               </Item></Row>
             </Col>
           </Row>) : null}
-        </Grid>
-        <Row>
-          <Col>
-            <Content padded keyboardShouldPersistTaps="always">
-              <Grid style={{marginBottom: shotgun.contentPadding}}>
+          <Row>
+            <Col>
+              <Grid style={{marginBottom: shotgun.contentPadding, marginTop: 50}}>
                 <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
                 <Row>
-                  <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={numAvailableForOffload > 0} onPress={() => this.onChangeValue('numAvailableForOffload', 1)}><Text uppercase={false}>Yes</Text></Button></Col>
-                  <Col><Button fullWidth light active={numAvailableForOffload == 0} onPress={() => this.onChangeValue('numAvailableForOffload', 0)}><Text uppercase={false}>No</Text></Button></Col>
+                  <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={numAvailableForOffload > 0} onPress={() => this.onChangeText('numAvailableForOffload', 1)}><Text uppercase={false}>Yes</Text></Button></Col>
+                  <Col><Button fullWidth light active={numAvailableForOffload == 0} onPress={() => this.onChangeText('numAvailableForOffload', 0)}><Text uppercase={false}>No</Text></Button></Col>
                 </Row>
               </Grid>
               {numAvailableForOffload > 0 ?
@@ -158,7 +107,7 @@ class DriverCapabilityDetails extends Component{
                   <Row>
                     <Col style={{marginRight: 10}}>
                       <Row>
-                        <Button personButton active={numAvailableForOffload == 1} onPress={() => this.onChangeValue('numAvailableForOffload', 1)} >
+                        <Button personButton active={numAvailableForOffload == 1} onPress={() => this.onChangeText('numAvailableForOffload', 1)} >
                           <Icon name='one-person'/>
                         </Button>
                       </Row>
@@ -168,7 +117,7 @@ class DriverCapabilityDetails extends Component{
                     </Col>
                     <Col style={{marginRight: 10}}>
                       <Row>
-                        <Button personButton active={numAvailableForOffload == 2} onPress={() => this.onChangeValue('numAvailableForOffload', 2)} >
+                        <Button personButton active={numAvailableForOffload == 2} onPress={() => this.onChangeText('numAvailableForOffload', 2)} >
                           <Icon name='one-person'/>
                         </Button>
                       </Row>
@@ -178,7 +127,7 @@ class DriverCapabilityDetails extends Component{
                     </Col>
                     <Col>
                       <Row>
-                        <Button personButton active={numAvailableForOffload == 3} onPress={() => this.onChangeValue('numAvailableForOffload', 3)} >
+                        <Button personButton active={numAvailableForOffload == 3} onPress={() => this.onChangeText('numAvailableForOffload', 3)} >
                           <Icon name='one-person'/>
                         </Button>
                       </Row>
@@ -188,45 +137,28 @@ class DriverCapabilityDetails extends Component{
                     </Col>
                   </Row>
                 </Grid> : null}
-            </Content>
-          </Col>
-        </Row>
-      </Content> : null}
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
-        <Text uppercase={false}>Register</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
-     
+            </Col>
+          </Row>
+        </View> : null}
+      </Content>
+      <ErrorRegion errors={errors}>
+        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
+          <Text uppercase={false}>Register</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
+      </ErrorRegion>
     </Container>;
   }
 }
 
 const styles = {
-  h1: {
-    width: '80%',
-    marginBottom: 30
-  },
-  container: {
-    flex: 1,
-    flexDirection: 'column',
+  personSelectTextRow: {
     justifyContent: 'center'
   },
-  titleView: {
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
-  productSelectView: {
-    flex: 2,
-    justifyContent: 'flex-start',
-    paddingTop: 30
-  },
-  productSelectTextRow: {
-    justifyContent: 'center'
-  },
-  productSelectText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    width: '80%',
+  personSelectText: {
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
     textAlign: 'center'
   }
 };
@@ -243,22 +175,20 @@ const validationSchema = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context = {}} = initialProps;
-  const {vehicle = {}, errors = [], user, bankAccount, address, selectedContentTypes} = context.state;
+  const {vehicle = {}, errors = [], selectedContentTypes, user, bankAccount, address} = context.state;
   const {dimensions} = vehicle;
-  const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy = isAnyLoading(state, ['contentTypeDao']) || isAnyOperationPending(state, [{ driverDao: 'registerDriver'}] || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']));
+  const busy = isAnyOperationPending(state, [{ driverDao: 'registerDriver'}] || isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']));
   return {
     ...initialProps,
     context,
-    user,
     vehicle,
+    user,
     bankAccount,
     address,
     selectedContentTypes,
     dimensions,
-    contentTypes,
     busy,
     errors: [loadingErrors, errors, registrationErrors].filter( c=> !!c).join('\n')
   };

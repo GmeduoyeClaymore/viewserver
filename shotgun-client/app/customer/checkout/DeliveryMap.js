@@ -56,7 +56,8 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   };
 
   const setDurationAndDistance = ({distance, duration}) => {
-    context.setState({delivery: merge({}, delivery, {distance: distance.toFixed(0), duration: duration.toFixed(0)})});
+    context.setState({delivery: merge({}, delivery, {distance: Math.round(distance),  duration: Math.round(duration)})});
+    console.log(context.state.delivery);
   };
 
   const doAddressLookup = (addressLabel, onAddressSelected) => {
@@ -71,8 +72,6 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
       });
     }
   };
-
-  console.log(origin);
 
   return <Container style={{ flex: 1 }}>
     <Grid>

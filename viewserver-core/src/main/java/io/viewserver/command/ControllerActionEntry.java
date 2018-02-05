@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.*;
 import com.sun.deploy.util.ReflectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -25,6 +27,7 @@ public class ControllerActionEntry{
     private static ObjectMapper mapper = new ObjectMapper();
     private ControllerAction an;
     private static TypeReference<HashMap<String,Object>> dictionaryType = new TypeReference<HashMap<String,Object>>() {};
+    private static final Logger log = LoggerFactory.getLogger(ControllerActionEntry.class);
 
     public ControllerActionEntry(Method method, Object controller, ControllerAction an, Controller controllerAttribute) {
         this.an = an;
@@ -149,6 +152,7 @@ public class ControllerActionEntry{
                 try {
                     future = (ListenableFuture)method.call();
                 } catch (Exception e) {
+                    log.error("Error with future", ControllerContext.Unwrap(e));
                     result.setException(ControllerContext.Unwrap(e));
                     return;
                 }
