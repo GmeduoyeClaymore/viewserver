@@ -65,19 +65,24 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
 
   const fitMap = () => {
     if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
-      map.fitToElements(false);
+      map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
+        edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
+        animated: false,
+      });
     }
   };
+
+  console.log(origin);
 
   return <Container style={{ flex: 1 }}>
     <Grid>
       <Row size={85}>
         <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
           showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+          {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
+          {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+          {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
         </MapView>
-        {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
-        {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{ ...origin }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-        {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
         <Button transparent style={styles.backButton}>
           <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
         </Button>

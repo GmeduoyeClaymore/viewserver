@@ -53,10 +53,10 @@ export class ValidatingInput extends Component {
   render() {
     const isValid = this.state.touched === true && this.state.error === '';
     const isInvalid = this.state.touched === true &&  this.state.error !== '';
-    const {showIcons = true} = this.props;
+    const {showIcons = true, onPress} = this.props;
 
     return (
-      <Item error={isInvalid} success={isValid}>
+      <Item error={isInvalid} success={isValid} onPress={onPress}>
         <Input {...this.props} placeholderTextColor={shotgun.silver} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
         {showIcons && isValid ? <Icon name='checkmark' /> : null}
         {showIcons && isInvalid ? <Icon name='cross' /> : null}

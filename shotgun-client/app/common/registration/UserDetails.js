@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
+import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
 import yup from 'yup';
 import {TouchableHighlight, Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -116,15 +116,13 @@ export default class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
-          {isDriver ? <Row >
-            <Col >
-              <TouchableHighlight  onPress={() => this.toggleDatePicker(true)} style={{flex: 1, zIndex: 100}}>
-                <Item stackedLabel>
-                  <Label>DOB</Label>
-                  <ValidatingInput bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} editable={false}maxLength={30}/>
-                  <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeText('dob', date)} {...datePickerOptions} />
-                </Item>
-              </TouchableHighlight>
+          {isDriver ? <Row  onPress={() => console.log('click')}>
+            <Col>
+              <Item stackedLabel>
+                <Label>DOB</Label>
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} editable={false}maxLength={30}/>
+                <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeText('dob', date)} {...datePickerOptions} />
+              </Item>
             </Col>
           </Row> : null }
           <Row>

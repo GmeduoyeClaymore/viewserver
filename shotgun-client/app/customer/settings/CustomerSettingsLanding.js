@@ -25,19 +25,19 @@ const CustomerSettings = ({history, user}) => {
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdateUserDetails')}>
           <Text style={styles.text}>Personal details</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='one-person'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdateAddressDetails')}>
           <Text style={styles.text}>Home address</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='address'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdatePaymentCardDetails')}>
           <Text style={styles.text}>Payment cards</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/UserDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push('/')}>
           <Text style={styles.text}>Give us feedback</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='feedback'/>
         </ListItem>
       </List>
     </Content>
@@ -48,6 +48,10 @@ const CustomerSettings = ({history, user}) => {
 const styles = {
   text: {
     fontSize: 16
+  },
+  icon: {
+    fontSize: 24,
+    paddingRight: 10
   }
 };
 

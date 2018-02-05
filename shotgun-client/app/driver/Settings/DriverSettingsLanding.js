@@ -29,19 +29,19 @@ const DriverSettings = ({history, user}) => {
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
           <Text style={styles.text}>Personal details</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='one-person'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateBankAccountDetails')}>
           <Text style={styles.text}>Bank Details</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={{paddingRight: 10}}  name='payment'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateVehicleDetails')}>
           <Text style={styles.text}>Vehicle Details</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='drive'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/UserDetails')}>
           <Text style={styles.text}>Give us feedback</Text>
-          <Icon next name='forward-arrow'/>
+          <Icon style={styles.icon} name='feedback'/>
         </ListItem>
       </List>
     </Content>
@@ -56,7 +56,12 @@ const styles = {
   image: {
     aspectRatio: 1,
     borderRadius: 150,
-    width: 50
+    width: 50,
+    marginTop: 5
+  },
+  icon: {
+    fontSize: 24,
+    paddingRight: 10
   }
 };
 
