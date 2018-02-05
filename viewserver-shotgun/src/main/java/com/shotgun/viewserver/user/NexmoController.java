@@ -13,6 +13,8 @@ import com.sun.net.httpserver.HttpServer;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.Controller;
+import io.viewserver.command.ControllerAction;
+import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -23,15 +25,39 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Controller(name = "nexmoController")
 public class NexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private Catalog systemCatalog;
+    private final String apiKey;
+    private final String apiSecret;
+    private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog) {
+    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret) {
         this.systemCatalog = systemCatalog;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
         this.createHttpServer(httpPort);
+    }
+
+    @ControllerAction(path = "getPhoneNumberInfo", isSynchronous = true)
+    public HashMap<String, Object> getPhoneNumberInfo(String phoneNumber) {
+        try {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("api_key", apiKey);
+            params.put("api_secret", apiSecret);
+            params.put("number", phoneNumber);
+            params.put("country", "GB");
+
+            String response = ControllerUtils.execute("POST", NUMBER_INSIGHT_URI, params);
+            HashMap<String,Object> map = ControllerUtils.mapDefault(response);
+            return map;
+        }catch (Exception ex){
+            log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     private void createHttpServer(int httpPort) {
@@ -79,15 +105,11 @@ public class NexmoController {
     private class EventHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange he) throws IOException {
-
-
             systemCatalog.getExecutionContext().getReactor().scheduleTask(() -> {
                 try {
                     HashMap<String, String> parameters = getParameters(he.getRequestBody());
                     log.debug(parameters.toString());
-
                     setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"));
-
                 } catch (Exception ex) {
                     log.error("Could not handle call", ex);
                 }

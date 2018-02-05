@@ -1,3 +1,4 @@
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: undefined,
@@ -32,14 +33,14 @@ export const INITIAL_STATE = {
     }
   }
 };
+*/
 
 
-/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
-    email: 'test@test.com',
+    email: 'test2@test.com',
     contactNo: '07733362799',
     type: 'driver',
     password: 'password',
@@ -68,6 +69,3 @@ export const INITIAL_STATE = {
     sortCode: '108800'
   }
 };
-
-
-*/

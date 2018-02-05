@@ -14,7 +14,10 @@ import io.viewserver.operators.table.TableKey;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,20 +25,10 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 
 public class ControllerUtils{
@@ -67,6 +60,17 @@ public class ControllerUtils{
         }
     }
 
+    public static String execute(String method, String targetURL, HashMap<String, String> parameters) throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+        for(HashMap.Entry<String, String> e : parameters.entrySet()){
+            if(sb.length() > 0){
+                sb.append('&');
+            }
+            sb.append(URLEncoder.encode(e.getKey(), "UTF-8")).append('=').append(URLEncoder.encode(e.getValue(), "UTF-8"));
+        }
+
+        return execute(method, targetURL, sb.toString());
+    }
 
     public static String execute(String method, String targetURL, String urlParameters) {
         Map<String,String> headers = new HashMap<>();

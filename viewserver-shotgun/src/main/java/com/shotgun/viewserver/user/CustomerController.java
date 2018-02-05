@@ -31,16 +31,19 @@ public class CustomerController {
     private DeliveryAddressController deliveryAddressController;
     private MessagingController messagingController;
     private UserController userController;
+    private NexmoController nexmoController;
 
 
     public CustomerController(PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
                               MessagingController messagingController,
-                              UserController userController) {
+                              UserController userController,
+                              NexmoController nexmoController) {
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
         this.messagingController = messagingController;
         this.userController = userController;
+        this.nexmoController = nexmoController;
     }
 
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
@@ -50,6 +53,8 @@ public class CustomerController {
         HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
         user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
+
+        user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
 
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId", userId);

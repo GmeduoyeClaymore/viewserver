@@ -23,11 +23,13 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private LoginController loginController;
     private ImageController imageController;
+    private NexmoController nexmoController;
 
-    public UserController(LoginController loginController, ImageController imageController) {
+    public UserController(LoginController loginController, ImageController imageController, NexmoController nexmoController) {
 
         this.loginController = loginController;
         this.imageController = imageController;
+        this.nexmoController = nexmoController;
     }
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
@@ -51,11 +53,12 @@ public class UserController {
             row.setString("lastName", user.getLastName());
             row.setString("selectedContentTypes", user.getSelectedContentTypes());
             row.setString("password", ControllerUtils.encryptPassword(user.getPassword()));
-            row.setString("contactNo", user.getContactNo());
+            row.setString("contactNo", (String) nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
             row.setString("email", user.getEmail().toLowerCase());
             row.setString("type", user.getType());
             row.setString("stripeCustomerId", user.getStripeCustomerId());
             row.setString("stripeDefaultSourceId", user.getStripeDefaultSourceId());
+            row.setString("stripeAccountId", user.getStripeAccountId());
             row.setString("imageUrl", user.getImageUrl());
         };
 

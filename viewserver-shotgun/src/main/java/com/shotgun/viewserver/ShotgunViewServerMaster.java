@@ -38,18 +38,18 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController();
         DeliveryController deliveryController = new DeliveryController();
         OrderItemController orderItemController = new OrderItemController(imageController);
-
+        NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), "c03cd396", "33151c6772f2bd52");
         VehicleController vehicleController = new VehicleController();
         JourneyEmulatorController journeyEmulatorController = new JourneyEmulatorController(mapsController);
         LoginController loginController = new LoginController();
-        UserController userController = new UserController(loginController, imageController);
+        UserController userController = new UserController(loginController, imageController, nexmoController);
+
         this.registerController(paymentController);
         this.registerController(mapsController);
-
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new DriverController(paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, this.getServerReactor()));
-        this.registerController(new CustomerController(paymentController, deliveryAddressController, messagingController, userController));
+        this.registerController(new DriverController(paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor()));
+        this.registerController(new CustomerController(paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(new OrderController(deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver()));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
@@ -58,7 +58,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(orderItemController);
         this.registerController(imageController);
         this.registerController(new PhoneCallController());
-        this.registerController(new NexmoController(9000, this.getServerCatalog()));
+        this.registerController(nexmoController);
         this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", true)));
     }
 

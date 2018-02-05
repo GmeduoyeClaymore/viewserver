@@ -40,6 +40,7 @@ public class DriverController {
     private JourneyEmulatorController journeyEmulatorController;
     private LoginController loginController;
     private ImageController imageController;
+    private NexmoController nexmoController;
     private IReactor reactor;
 
     public DriverController(PaymentController paymentController,
@@ -49,6 +50,7 @@ public class DriverController {
                             JourneyEmulatorController journeyEmulatorController,
                             LoginController loginController,
                             ImageController imageController,
+                            NexmoController nexmoController,
                             IReactor reactor) {
         this.paymentController = paymentController;
         this.messagingController = messagingController;
@@ -57,6 +59,7 @@ public class DriverController {
         this.loginController = loginController;
         this.journeyEmulatorController = journeyEmulatorController;
         this.imageController = imageController;
+        this.nexmoController = nexmoController;
         this.reactor = reactor;
     }
 
@@ -86,6 +89,8 @@ public class DriverController {
             user.setImageUrl(imageUrl);
         }
 
+        user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
+
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
         reactor.scheduleTask(new ITask() {
@@ -93,7 +98,7 @@ public class DriverController {
             public void execute() {
                 try{
                     ControllerContext.create(context);
-                    user.setStripeDefaultSourceId(paymentAccountId);
+                    user.setStripeAccountId(paymentAccountId);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId",userId);
                     vehicleController.addOrUpdateVehicle(vehicle);
