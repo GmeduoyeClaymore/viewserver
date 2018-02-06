@@ -27,8 +27,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
   const supportsOrigin = selectedContentType.origin;
-  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined);
-  
+  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   if (origin.line1 !== undefined) {
     position = origin;
@@ -57,6 +56,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
 
   const setDurationAndDistance = ({distance, duration}) => {
     context.setState({delivery: merge({}, delivery, {distance: Math.round(distance),  duration: Math.round(duration)})});
+    console.log(context.state.delivery);
   };
 
   const doAddressLookup = (addressLabel, onAddressSelected) => {
@@ -98,7 +98,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
         </Col>
       </Row>
     </Grid>
-    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton || (!supportsDestination && !supportsOrigin)}>
+    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='forward-arrow' next/>
     </Button>
@@ -123,12 +123,11 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const position = getDaoState(state, ['position'], 'userDao');
   return {
     ...initialProps,
-    busy: isOperationPending(state, 'userDao', 'getCurrentPosition'),
     state,
-    position,
+    position: getDaoState(state, ['position'], 'userDao'),
+    busy: isOperationPending(state, 'userDao', 'getCurrentPosition'),
     errors: getOperationError(state, 'userDao', 'getCurrentPosition') };
 };
 
