@@ -21,13 +21,13 @@ export class OriginDestinationSummary extends Component{
     };
 
     return <Grid>
-      {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.line1}, {origin.postCode}</Text></Row> : null}
+      {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.flatNumber} {origin.line1}, {origin.postCode}</Text></Row> : null}
       {contentType.destination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
         </Text>
       </Row> : null}
-      {contentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+      {contentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
     </Grid>;
   }
 }
