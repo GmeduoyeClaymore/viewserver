@@ -78,7 +78,6 @@ public class MessagingController {
         userTable.updateRow(new TableKey(userId), row -> {
             row.setString("fcmToken", token);
         });
-
     }
 
     public String getTokenForUser(String userId){

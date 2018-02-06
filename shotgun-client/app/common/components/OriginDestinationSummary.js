@@ -39,7 +39,8 @@ const styles = {
   },
   timeText: {
     alignSelf: 'flex-start',
-    paddingTop: 3
+    paddingTop: 3,
+    paddingLeft: 3
   },
   dashedIcon: {
     color: shotgun.silver,
