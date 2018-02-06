@@ -21,7 +21,7 @@ export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
     lastName: 'Graves',
-    email: 'test@test.com',
+    email: 'test5@test.com',
     contactNo: '07733362799',
     type: 'customer',
     password: 'test',

@@ -64,6 +64,7 @@ class CustomerLanding extends Component {
       { cancelable: false }
     );
   }
+
   goToOrderForNotification(notification){
     if (notification){
       const { history } = this.props;

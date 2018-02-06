@@ -37,10 +37,10 @@ class VehicleDetails extends Component {
 
    
     return busy ? <LoadingScreen text="Loading Vehicle Types" /> : <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent>
-            <Icon name='back-arrow' onPress={() => navigationStrategy.back()} />
+          <Button>
+            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Vehicle Details</Title></Body>

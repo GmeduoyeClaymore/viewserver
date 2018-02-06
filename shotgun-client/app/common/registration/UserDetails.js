@@ -181,8 +181,6 @@ const validationSchema = {
   firstName: yup.string().required().max(30),
   lastName: yup.string().required().max(30),
   password: yup.string().required().max(30),
-  imageData: yup.string().required(),
-  dob: yup.date().required(),
   email: yup.string().required().email().max(100),
   contactNo: yup.string().required().matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
 };
@@ -190,5 +188,6 @@ const validationSchema = {
 
 const drivervalidationSchema = {
   ...validationSchema,
+  imageData: yup.string().required(),
   dob: yup.date().required()
 };
