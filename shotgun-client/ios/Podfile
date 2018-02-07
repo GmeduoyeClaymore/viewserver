@@ -8,6 +8,8 @@ target 'ShotgunClient' do
   # Pods for ShotgunClient
   pod 'Firebase/Core'
   pod 'Firebase/Messaging'
+  pod 'RSKImageCropper'
+  pod 'QBImagePickerController'
   target 'ShotgunClientTests' do
     inherit! :search_paths
     # Pods for testing

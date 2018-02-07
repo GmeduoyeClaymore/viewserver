@@ -14,7 +14,6 @@ import java.util.List;
 @Controller(name = "mapsController")
 public class MapsController {
 
-
     private MapsControllerKey controllerKey;
     private static final Logger logger = LoggerFactory.getLogger(MapsController.class);
 
