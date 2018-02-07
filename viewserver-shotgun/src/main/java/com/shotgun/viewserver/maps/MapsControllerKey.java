@@ -18,7 +18,7 @@ public class MapsControllerKey{
         return key;
     }
 
-    public boolean isSupportsReverveGeocoding() {
+    public boolean isSupportsReverseGeocoding() {
         return supportsReverveGeocoding;
     }
 }

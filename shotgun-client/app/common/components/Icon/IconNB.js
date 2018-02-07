@@ -7,7 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import icoMoonConfig from './shotgun-icons-config.json';
 import mapPropsToStyleNames from '../mapPropsToStyleNames';
-const ShotgunIcons = createIconSetFromIcoMoon(icoMoonConfig, 'shotgun', 'shotgun-icons.ttf');
+const ShotgunIcons = createIconSetFromIcoMoon(icoMoonConfig);
 
 class IconNB extends Component {
 	static contextTypes = {

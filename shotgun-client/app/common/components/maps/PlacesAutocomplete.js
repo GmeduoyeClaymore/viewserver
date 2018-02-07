@@ -359,7 +359,7 @@ export default class PlacesAutocomplete extends Component {
     return (
       <ActivityIndicator
         animating={true}
-        size="small"
+        size={0}
       />
     );
   }
