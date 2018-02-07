@@ -1,20 +1,14 @@
 package com.shotgun.viewserver.maps;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller(name = "mapsController")
@@ -37,8 +31,8 @@ public class MapsController {
 
     @ControllerAction(path = "requestNearbyPlaces", isSynchronous = false)
     public HashMap<String,Object> requestNearbyPlaces(NearbyPlaceRequest request){
-        String url = this.controllerKey.isSupportsReverveGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
-        return getResponse(request, ControllerUtils.execute("GET", url, request.toQueryString(controllerKey.getKey(), controllerKey.isSupportsReverveGeocoding())),true);
+        String url = this.controllerKey.isSupportsReverseGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
+        return getResponse(request, ControllerUtils.execute("GET", url, request.toQueryString(controllerKey.getKey(), controllerKey.isSupportsReverseGeocoding())),true);
     }
 
     @ControllerAction(path = "mapPlaceRequest", isSynchronous = false)

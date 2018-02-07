@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconNB } from 'common/components/Icon/IconNB';
 import {UIManager, View} from 'react-native';
 import {Container, Text, StyleProvider, Button, Root} from 'native-base';
 import {Provider} from 'react-redux';
@@ -23,7 +24,9 @@ import FCM from 'react-native-fcm';
 
 const store = configureStore();
 registerKilledListener();
-UIManager.setLayoutAnimationEnabledExperimental(true);
+if(UIManager.setLayoutAnimationEnabledExperimental){
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'LandingCommon';
@@ -34,7 +37,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
-    this.client = new Client('ws://127.0.0.1:6060/');
+    this.client = new Client('ws://192.168.0.20:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);

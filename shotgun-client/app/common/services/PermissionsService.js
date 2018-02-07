@@ -20,7 +20,7 @@ export default class PermissionsService {
         }
       }
     } catch (err) {
-      Logger.warn(err);
+      Logger.warning(err);
     }
   }
 }
