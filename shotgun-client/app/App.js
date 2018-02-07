@@ -1,5 +1,4 @@
 import React from 'react';
-import { IconNB } from 'common/components/Icon/IconNB';
 import {UIManager, View} from 'react-native';
 import {Container, Text, StyleProvider, Root} from 'native-base';
 import {Provider} from 'react-redux';
@@ -22,8 +21,8 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
 
 const store = configureStore();
-if(UIManager.setLayoutAnimationEnabledExperimental){
-UIManager.setLayoutAnimationEnabledExperimental(true);
+if (UIManager.setLayoutAnimationEnabledExperimental){
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export default class App extends React.Component {
@@ -35,7 +34,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
-    this.client = new Client('wss://192.168.0.20:6060/');
+    this.client = new Client('ws://127.0.0.1:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
