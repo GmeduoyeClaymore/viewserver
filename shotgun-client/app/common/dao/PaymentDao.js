@@ -28,21 +28,21 @@ export default class PaymentDao{
     const promise = this.client.invokeJSONCommand('paymentController', 'deletePaymentCard', {cardId});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect deletion of payment card ${cardId} in 5 seconds`));
     Logger.debug(`Deleted card ${cardId}`);
-    this.getCustomerPaymentCards(customerToken);
+    this.getCustomerPaymentCards();
     return paymentResponse;
   }
 
-  async addPaymentCard({customerToken, paymentCard}){
+  async addPaymentCard({paymentCard}){
     const promise = this.client.invokeJSONCommand('paymentController', 'addPaymentCard', {paymentCard});
-    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect creation of payment card for customer ${customerToken} in 5 seconds`));
-    Logger.debug(`Added card for customer ${customerToken}`);
-    this.getCustomerPaymentCards(customerToken);
+    const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect creation of payment card in 5 seconds`));
+    Logger.debug('Added card for customer');
+    this.getCustomerPaymentCards();
     return paymentResponse;
   }
 
-  async getCustomerPaymentCards(stripeCustomerToken){
+  async getCustomerPaymentCards(){
     const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards');
-    const paymentCards =  await promise.timeoutWithError(5000, new Error(`Could not get payment cards for customer ${stripeCustomerToken} in 5 seconds`));
+    const paymentCards =  await promise.timeoutWithError(5000, new Error(`Could not get payment cards for customer in 5 seconds`));
     Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
     const result = {paymentCards};
     this.subject.next(result);
@@ -52,17 +52,17 @@ export default class PaymentDao{
   async getBankAccount(){
     const promise = this.client.invokeJSONCommand('paymentController', 'getBankAccount');
     const bankAccount =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
-    Logger.debug(`Got bank account ${stripeAccountId}`);
+    Logger.debug(`Got bank account ${bankAccount}`);
     const result = {bankAccount};
     this.subject.next(result);
     return result;
   }
 
-  async setBankAccount({stripeAccountId, paymentBankAccount}){
+  async setBankAccount({paymentBankAccount}){
     const promise = this.client.invokeJSONCommand('paymentController', 'setBankAccount', {paymentBankAccount});
     const result =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
-    Logger.debug(`Set bank account for ${stripeAccountId}`);
-    this.getBankAccount({stripeAccountId});
+    Logger.debug('Set bank account');
+    this.getBankAccount();
     return result;
   }
 

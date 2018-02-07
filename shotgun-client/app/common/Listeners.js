@@ -44,9 +44,6 @@ export const  registerAppListener = (context) => {
       number: 10
     };
     FCM.presentLocalNotification(localNotification);
-    if (context && context.onNotificationClicked){
-      context.onNotificationClicked(localNotification);
-    }
 
     if (Platform.OS === 'ios'){
       //optional

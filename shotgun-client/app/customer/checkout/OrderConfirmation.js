@@ -12,6 +12,7 @@ class OrderConfirmation extends Component{
     super(props);
     this.state = {};
     this.purchase = this.purchase.bind(this);
+    this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
   }
 
   purchase(){
@@ -20,20 +21,19 @@ class OrderConfirmation extends Component{
   }
 
   async componentWillMount(){
-    const {loadEstimatedPrice} = this.props;
-    const price  = await loadEstimatedPrice();
-    this.setState({price});
+    await this.loadEstimatedPrice();
   }
 
-  async componentWillReceiveProps(){
-    const {loadEstimatedPrice} = this.props;
-    const price  = await loadEstimatedPrice();
+  async loadEstimatedPrice(){
+    const {client, orderItem, payment, delivery} = this.props;
+    const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery});
     this.setState({price});
   }
 
   render(){
     const {client, navigationStrategy, errors, busy, orderItem, delivery, selectedProduct, selectedContentType} = this.props;
     const {price} = this.state;
+
     return <Container>
       <Header withButton>
         <Left>
@@ -61,28 +61,21 @@ OrderConfirmation.PropTypes = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context, client} = initialProps;
-  const {delivery, payment, orderItem, selectedProduct, estimatedTotalPrice, selectedContentType} = context.state;
-  const loadEstimatedPrice = async () => {
-    const {estimatedTotalPrice: savedTotalPrice} = context.state;
-    if (savedTotalPrice){
-      return savedTotalPrice;
-    }
-    return await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery});
-  };
+  const {context} = initialProps;
+  const {delivery, payment, orderItem, selectedProduct, selectedContentType} = context.state;
+
   return {
     ...initialProps,
-    estimatedTotalPrice,
-    loadEstimatedPrice,
-    errors: getOperationError(state, 'customerDao', 'checkout'),
     orderItem,
     delivery,
     selectedProduct,
     selectedContentType,
     payment,
+    errors: getOperationError(state, 'customerDao', 'checkout'),
     busy: isAnyOperationPending(state, [{ customerDao: 'checkout'}])
   };
 };
+
 export default connect(
   mapStateToProps
 )(OrderConfirmation);

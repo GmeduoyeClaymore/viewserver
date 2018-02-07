@@ -42,8 +42,8 @@ export const loginCustomer = (email, password, continueWith) => {
   return invokeDaoCommand('customerDao', 'loginCustomer', {email, password}, continueWith);
 };
 
-export const getPaymentCards = (customerToken, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', customerToken, continueWith);
+export const getPaymentCards = (continueWith) => {
+  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', continueWith);
 };
 
 export const cancelOrder = (orderId, continueWith) => {

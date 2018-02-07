@@ -11,7 +11,6 @@ import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
-import {Alert} from 'react-native';
 import {LoadingScreen} from 'common/components';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import { getLastNotification, registerAppListener} from 'common/Listeners';
@@ -32,7 +31,6 @@ setLocale({
 class CustomerLanding extends Component {
   constructor(props) {
     super(props);
-    this.onNotificationClicked = this.onNotificationClicked.bind(this);
   }
 
   async componentWillMount() {
@@ -48,22 +46,12 @@ class CustomerLanding extends Component {
     this.attemptPaymentCards(props);
   }
 
+  //TODO - think we should remove this??
   async loadOrderFromLastNotification(){
     const notification = await getLastNotification();
     this.goToOrderForNotification(notification);
   }
 
-  onNotificationClicked(notification){
-    Alert.alert(
-      notification.title,
-      'Go to order ?',
-      [
-        {text: 'Yes', onPress: () => this.goToOrderForNotification(notification)},
-        {text: 'No', style: 'cancel'},
-      ],
-      { cancelable: false }
-    );
-  }
   goToOrderForNotification(notification){
     if (notification){
       const { history } = this.props;
@@ -93,7 +81,7 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
-          <Redirect to={'/Customer/CustomerOrders'}/>
+          <Redirect to={'/Customer/Checkout'}/>
         </Switch>
         <CustomerMenuBar/>
       </Container>;

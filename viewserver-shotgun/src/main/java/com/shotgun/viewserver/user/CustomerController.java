@@ -102,9 +102,9 @@ public class CustomerController {
 
     private void notifyStatusChanged(String orderId, String orderDriverId, String status) {
         try {
-
+            String formattedStatus = status.toLowerCase();
             AppMessage builder = new AppMessageBuilder().withDefaults().withData("orderId", orderId)
-                    .message(String.format("Order %s", status), String.format("Order %s has been %s by the customer", orderId, status)).build();
+                    .message(String.format("Shotgun order %s", formattedStatus), String.format("Shotgun order has been %s by the customer", formattedStatus)).build();
             messagingController.sendMessageToUser(orderDriverId, builder);
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);

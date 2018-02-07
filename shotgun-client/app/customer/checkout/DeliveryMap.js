@@ -1,14 +1,16 @@
 import React  from 'react';
 import { connect } from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row } from 'native-base';
+import { Container, Button, Text, Grid, Col, Row, Input} from 'native-base';
 import MapView from 'react-native-maps';
-import {LoadingScreen, ErrorRegion, Icon} from 'common/components';
+import {LoadingScreen, ErrorRegion, Icon, ValidatingInput} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import { getDaoState, getOperationError, isOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {merge} from 'lodash';
+import yup from 'yup';
+import { AppRegistry, TextInput, View} from 'react-native';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
@@ -27,8 +29,7 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
   const supportsOrigin = selectedContentType.origin;
-  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined);
-  
+  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   if (origin.line1 !== undefined) {
     position = origin;
@@ -45,10 +46,22 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
     longitudeDelta: LONGITUDE_DELTA
   };
 
+  const onChangeText = async (location, field, value) => {
+    const newLocation = {...delivery[location], [field]: value};
+    context.setState({delivery: {...delivery, [location]: newLocation}});
+  };
+
   const getLocationText = (address, addressKey, placeholder) => {
     const style = address.line1 ? {} : styles.locationTextPlaceholder;
     const text = address.line1 ? `${address.line1}, ${address.postCode}` : placeholder;
-    return <Text style={style} onPress={() => doAddressLookup(placeholder, a => setLocation(a, addressKey))}>{text}</Text>;
+    return  <Row>
+      {address.line1 !== undefined ? <Col size={30}>
+        <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
+      </Col> : null}
+      <Col size={70}>
+        <Text style={style} onPress={() => doAddressLookup(placeholder, a => setLocation(a, addressKey))}>{text}</Text>
+      </Col>
+    </Row>;
   };
 
   const setLocation = (address, addressKey) => {
@@ -57,7 +70,6 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
 
   const setDurationAndDistance = ({distance, duration}) => {
     context.setState({delivery: merge({}, delivery, {distance: Math.round(distance),  duration: Math.round(duration)})});
-    console.log(context.state.delivery);
   };
 
   const doAddressLookup = (addressLabel, onAddressSelected) => {
@@ -99,11 +111,15 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
         </Col>
       </Row>
     </Grid>
-    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton || (!supportsDestination && !supportsOrigin)}>
+    <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='forward-arrow' next/>
     </Button>
   </Container>;
+};
+
+const validationSchema = {
+  flatNumber: yup.string().max(30)
 };
 
 const styles = {
@@ -124,12 +140,11 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const position = getDaoState(state, ['position'], 'userDao');
   return {
     ...initialProps,
-    busy: isOperationPending(state, 'userDao', 'getCurrentPosition'),
     state,
-    position,
+    position: getDaoState(state, ['position'], 'userDao'),
+    busy: isOperationPending(state, 'userDao', 'getCurrentPosition'),
     errors: getOperationError(state, 'userDao', 'getCurrentPosition') };
 };
 

@@ -68,10 +68,10 @@ export const stopWatchingPosition = (continueWith) => {
   return invokeDaoCommand('userDao', 'stopWatchingPosition', {}, continueWith);
 };
 
-export const getBankAccount = (stripeAccountId, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getBankAccount', {stripeAccountId}, continueWith);
+export const getBankAccount = (continueWith) => {
+  return invokeDaoCommand('paymentDao', 'getBankAccount', {}, continueWith);
 };
 
-export const setBankAccount = (stripeAccountId, paymentBankAccount, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'setBankAccount', {stripeAccountId, paymentBankAccount}, continueWith);
+export const setBankAccount = (paymentBankAccount, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'setBankAccount', {paymentBankAccount}, continueWith);
 };
