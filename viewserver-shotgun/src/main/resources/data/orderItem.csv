@@ -1,10 +1,10 @@
 orderItemId,orderId,userId,productId,quantity,notes,imageUrl,contentTypeId
-2943a86c-40c7-4102-af36-080e4806ecae,2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Disposal,1,item 1 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,2
+2943a86c-40c7-4102-af36-080e4806ecae,2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,6YDSkip,1,item 1 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,2
 3943a86c-40c7-4102-af36-080e4806ecae,3c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 2 notes,,1
 4943a86c-40c7-4102-af36-080e4806ecae,4c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 3 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,1
 5943a86c-40c7-4102-af36-080e4806ecae,5c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 4 notes,,1
 6943a86c-40c7-4102-af36-080e4806ecae,6c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 5 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,1
 7943a86c-40c7-4102-af36-080e4806ecae,7c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 6 notes,,1
 8943a86c-40c7-4102-af36-080e4806ecae,8c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Delivery,1,item 7 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,1
-9943a86c-40c7-4102-af36-080e4806ecae,9c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Disposal,1,item 8 notes,,2
-1043a86c-40c7-4102-af36-080e4806ecae,102f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,PROD_Disposal,1,item 9 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,2
+9943a86c-40c7-4102-af36-080e4806ecae,9c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,10YDSkip,1,item 8 notes,,2
+1043a86c-40c7-4102-af36-080e4806ecae,102f5e22-54f2-4464-8d25-5b0a0dcc2ec9,2BBui,12YDSkip,1,item 9 notes,https://s3.eu-west-2.amazonaws.com/shotgunclientimages/orderImages/1568939e-52f6-475e-ad9f-baa91fdda3a1.jpg,2
