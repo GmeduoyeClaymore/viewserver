@@ -223,12 +223,21 @@ public class DriverController {
             String formattedStatus = status.toLowerCase();
 
             AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withData("orderId", orderId)
+                    .withAction(createActionUri(orderId, status))
                     .message(String.format("Shotgun order %s", formattedStatus), String.format("%s has %s your Shotgun order", firstName + " " + lastName, formattedStatus))
                     .build();
             messagingController.sendMessageToUser(orderUserId, builder);
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);
+        }
+    }
+
+    private String createActionUri(String orderId, String status){
+        switch (status) {
+            case "PICKEDUP":
+                return String.format("shotgun://CustomerOrderInProgress/%s", orderId);
+            default:
+                return String.format("shotgun://CustomerOrderDetail/%s", orderId);
         }
     }
 }

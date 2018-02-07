@@ -8,19 +8,11 @@ import java.util.Map;
 
 public class AppMessage {
     private String to;
-    private Integer priority;
+    private String priority;
     private String title;
     private String body;
     private String sound;
-    private HashMap<String,Object> data;
-
-    public HashMap<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(HashMap<String, Object> data) {
-        this.data = data;
-    }
+    private String action;
 
     public String getTitle() {
         return title;
@@ -54,48 +46,37 @@ public class AppMessage {
         this.to = to;
     }
 
-    public Integer getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(Integer priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
-    public String toSimpleMessage(){
-        HashMap<String,Object> body = new HashMap<String,Object>();
-        HashMap<String,Object> notification = new HashMap<String,Object>();
-        notification.put("title",getTitle());
-        notification.put("body",getBody());
-        notification.put("sound",getSound());
-        body.put("notification",notification);
-        if(this.data != null){
-            body.put("data",this.data);
-        }
-        body.put("to",getTo());
-        body.put("priority",getPriority());
-        return ControllerUtils.toString(body);
+    public String getAction() {
+        return action;
     }
 
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-    public String toAndroidMessage(){
-        HashMap<String,Object> body = new HashMap<>();
-        HashMap<String,Object> data = new HashMap<>();
-        if(this.data != null){ //This doesn't  appear to do anything
-            for(Map.Entry<String,Object> entry :  this.data.entrySet()){
-                data.put(entry.getKey(),entry.getValue());
-            }
-        }
-        HashMap<String,Object> notification = new HashMap<>();
-        notification.put("title",getTitle());
-        notification.put("body",getBody());
-        notification.put("sound",getSound());
-        notification.put("priority","high");
-        notification.put("show_in_foreground",true);
-        data.put("custom_notification",notification);
-        body.put("data",data);
-        body.put("to",getTo());
-        body.put("priority",getPriority());
+    public String toSimpleMessage() {
+        HashMap<String, Object> body = new HashMap<String, Object>();
+        HashMap<String, Object> customNotificationBody = new HashMap<>();
+        customNotificationBody.put("title", getTitle());
+        customNotificationBody.put("body", getBody());
+        customNotificationBody.put("sound", getSound());
+        customNotificationBody.put("click_action", getAction());
+        customNotificationBody.put("priority", getPriority());
+        customNotificationBody.put("show_in_foreground", true);
+
+        HashMap<String, Object> customNotification = new HashMap<>();
+        customNotification.put("custom_notification", customNotificationBody);
+
+        body.put("data", customNotification);
+        body.put("to", getTo());
         return ControllerUtils.toString(body);
     }
 
@@ -105,9 +86,9 @@ public class AppMessage {
                 "to='" + to + '\'' +
                 ", priority=" + priority +
                 ", title='" + title + '\'' +
+                ", action='" + action + '\'' +
                 ", body='" + body + '\'' +
                 ", sound='" + sound + '\'' +
-                ", data=" + data +
                 '}';
     }
 }

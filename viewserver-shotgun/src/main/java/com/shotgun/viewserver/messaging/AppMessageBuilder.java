@@ -15,7 +15,7 @@ public class AppMessageBuilder {
 
     public AppMessageBuilder withDefaults(){
         message.setSound("default");
-        message.setPriority(10);
+        message.setPriority("high");
         return this;
     }
 
@@ -23,11 +23,9 @@ public class AppMessageBuilder {
         message.setTo(token);
         return this;
     }
-    public AppMessageBuilder withData(String key,Object value){
-        if(message.getData() == null){
-           message.setData(new HashMap<>());
-        }
-        message.getData().put(key, value);
+
+    public AppMessageBuilder withAction(String action){
+        message.setAction(action);
         return this;
     }
 

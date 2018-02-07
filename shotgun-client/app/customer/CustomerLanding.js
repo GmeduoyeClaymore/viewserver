@@ -13,7 +13,8 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {getCurrentPosition} from 'common/actions/CommonActions';
-import { getLastNotification, registerAppListener} from 'common/Listeners';
+import {registerActionListener} from 'common/Listeners';
+import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -34,32 +35,15 @@ class CustomerLanding extends Component {
   }
 
   async componentWillMount() {
-    const {dispatch, userId, client} = this.props;
-    registerAppListener(this);
+    const {dispatch, userId, client, history} = this.props;
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, 'Customer', actionUri));
     dispatch(customerServicesRegistrationAction(client, userId));
     this.attemptPaymentCards(this.props);
-    await this.loadOrderFromLastNotification();
     dispatch(getCurrentPosition());
   }
 
   componentWillReceiveProps(props){
     this.attemptPaymentCards(props);
-  }
-
-  //TODO - think we should remove this??
-  async loadOrderFromLastNotification(){
-    const notification = await getLastNotification();
-    this.goToOrderForNotification(notification);
-  }
-
-  goToOrderForNotification(notification){
-    if (notification){
-      const { history } = this.props;
-      const { orderId } = notification;
-      if (orderId){
-        history.push('/Customer/CustomerOrderDetail', {orderId});
-      }
-    }
   }
 
   attemptPaymentCards(props){

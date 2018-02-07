@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Created by Gbemiga on 18/01/18.
@@ -22,9 +23,9 @@ public class MessagingControllerTest {
     @Test
     public void canSendMessage(){
         AppMessageBuilder message = new AppMessageBuilder();
-        message.to("fV3ttxSBvFo:APA91bEUBin7eMh-ijCB6WUp79a9kFabnium-CJnXdZKpev1VResdjavWnXfJKzgENXQilMzYlLaG68ebJjnbKQmhPXw9rc2Fd1h8DyWcToDrMjuRao1ixacBe0f6g33ysJAtqhOTFGp");
-        message.message("Messaging controller title","Messaging controller message");
-        message.withData("orderId","XXXXX");
+        message.to("d_ubOor_Ylw:APA91bF__oK3Oom5T8AclGAzCpu6msMs9f8A_-A4p8LdwD0ByAK3pd6UQj-LEZSrmktf2zFvT8A7DG2YdQKxPbW_k9C0QpsGCDKuOghC7Xx4Q1ssJQDXfYdBaLgs2ea7gmbIRwU4gmg9");
+        message.message("Messaging controller title", "Messaging controller message");
+        message.withAction("shotgun://order/1234");
         message.withDefaults();
         sut.sendMessage(message.build());
     }

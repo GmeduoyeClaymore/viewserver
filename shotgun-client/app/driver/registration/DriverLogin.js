@@ -75,7 +75,7 @@ class DriverLogin extends Component {
 }
 
 const validationSchema = {
-  email: yup.string().required(),
+  email: yup.string().email().required(),
   password: yup.string().required()
 };
 
