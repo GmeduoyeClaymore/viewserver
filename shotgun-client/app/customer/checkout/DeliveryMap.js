@@ -132,10 +132,7 @@ const styles = {
     color: shotgun.silver
   },
   inputRow: {
-    padding: shotgun.contentPadding,
-    shadowOffset: { width: 10, height: 10, },
-    shadowColor: 'black',
-    shadowOpacity: 1.0
+    padding: shotgun.contentPadding
   }
 };
 
