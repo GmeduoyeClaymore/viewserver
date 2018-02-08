@@ -34,7 +34,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
-    this.client = new Client('ws://127.0.0.1:6060/');
+    this.client = new Client('ws://shotgun.ltd:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
