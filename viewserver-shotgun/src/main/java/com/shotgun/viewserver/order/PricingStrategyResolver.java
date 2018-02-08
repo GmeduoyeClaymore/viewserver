@@ -6,6 +6,8 @@ import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -22,8 +24,8 @@ public class PricingStrategyResolver {
     private KeyedTable productCategoryTable;
     private HashMap<String,PriceStrategy> categoryToStrategyMap;
     private HashMap<String,PriceStrategy> categoryToStrategyCacheMap;
-
     private static final HashMap<String, PriceStrategy> NameToPricingStrategyMap;
+    private static final Logger log = LoggerFactory.getLogger(PricingStrategyResolver.class);
 
     static{
         NameToPricingStrategyMap = new HashMap<String, PriceStrategy>();
@@ -96,7 +98,9 @@ public class PricingStrategyResolver {
             return null;
         }
         if(categoryPath.contains(categoryId)){
-            throw new RuntimeException(String.format("Already found entry for category %s in path %s",categoryId,String.join(",",categoryPath)));
+            String error = String.format("Already found entry for category %s in path %s", categoryId, String.join(",", categoryPath));
+            log.error(error);
+            throw new RuntimeException(error);
         }
         categoryPath.add(categoryId);
         if(this.getCategoryToStrategyMap().containsKey(categoryId)){
@@ -104,7 +108,9 @@ public class PricingStrategyResolver {
         }
         int row = this.getProductCategoryTable().getRow(new TableKey(categoryId));
         if(row == -1){
-            throw new RuntimeException(String.format("Cannot resolve pricing strategy for product category path \"%s\" Unable to find category id \"%s\" in the productCategory table",String.join(",",categoryPath),categoryId));
+            String error = String.format("Cannot resolve pricing strategy for product category path \"%s\" Unable to find category id \"%s\" in the productCategory table", String.join(",", categoryPath), categoryId);
+            log.error(error);
+            throw new RuntimeException(error);
         }
 
         String parentCategoryId = (String) ControllerUtils.getColumnValue(this.getProductCategoryTable(), "parentCategoryId", row);
@@ -115,7 +121,9 @@ public class PricingStrategyResolver {
     private String getCategoryForProduct(String productId) {
         int row = this.getProductTable().getRow(new TableKey(productId));
         if(row == -1){
-            throw new RuntimeException(String.format("Unable to find product id \"%s\" in the product table",productId));
+            String error = String.format("Unable to find product id \"%s\" in the product table", productId);
+            log.error(error);
+            throw new RuntimeException(error);
         }
         return (String) ControllerUtils.getColumnValue(this.getProductTable(), "categoryId", row);
     }

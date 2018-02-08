@@ -17,7 +17,6 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("vehicleTypeId", "Vehicle Type Id", String[].class)
                         .withParameter("contentTypeId", "Content Type Id", String[].class)
                         .withParameter("noRequiredForOffload", "Number required for offload", int[].class)
                         .withParameter("driverLatitude", "Driver Latitude", double[].class)
@@ -75,7 +74,6 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("notes"),
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
-                                                new IProjectionConfig.ProjectionColumn("vehicleTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("created"),
@@ -106,8 +104,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("contentType_noItems", "contentTypeNoItems"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_hasVehicle", "contentTypeHasVehicle"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_pricingStrategy", "contentTypePricingStrategy"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_defaultProductId", "defaultProductId")
+                                                new IProjectionConfig.ProjectionColumn("contentType_pricingStrategy", "contentTypePricingStrategy")
                                         )
                                         .withConnection("distanceFilter")
                         )

@@ -1,6 +1,6 @@
-contentTypeId,name,origin,destination,noPeople,fromTime,tillTime,noItems,hasVehicle,rootProductCategory,pricingStrategy,defaultProductId
-1,Delivery,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,1Delivery,JOURNEY_TIME,PROD_Delivery
-2,Rubbish,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,1Waste,FIXED,
-3,Tool Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,1Plant,DURATION,
-4,Skip,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,1Waste,FIXED,
-5,Personell,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE,1Workers,DURATION,
+contentTypeId,name,origin,destination,noPeople,fromTime,tillTime,noItems,rootProductCategory,pricingStrategy
+1,Delivery,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,1Vans,JOURNEY_TIME
+2,Rubbish,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,1Waste,FIXED
+3,Tool Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Plant,DURATION
+4,Skip,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Waste,FIXED
+5,Personell,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,1Workers,DURATION

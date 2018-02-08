@@ -6,7 +6,6 @@ import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
-import Products from 'common/constants/Products';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
 import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
@@ -44,10 +43,9 @@ class DriverOrderInProgress extends Component{
     const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client, errors} = this.props;
     const {initialPosition} = this.state;
     const {latitude, longitude} = position;
-    const {orderItem = {}, delivery = {}} = orderSummary;
+    const {delivery = {}, contentType} = orderSummary;
     const {origin = {}, destination = {}, customerRating} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
-    const isDelivery = orderItem.productId == Products.DELIVERY;
 
     const onCompletePress = async() => {
       dispatch(completeOrderRequest(orderSummary.orderId, () => dispatch(stopWatchingPosition())));
@@ -93,10 +91,10 @@ class DriverOrderInProgress extends Component{
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
             showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
             <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>
-            {isDelivery ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
+            {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
 
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
-            {isDelivery ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
+            {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
           <Button transparent style={styles.backButton}>
             <Icon name='back-arrow' onPress={() => history.goBack()} />
@@ -115,7 +113,7 @@ class DriverOrderInProgress extends Component{
             <Col>
               <Grid>
                 <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-                {isDelivery ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+                {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
                   <Col><Button fullWidth callButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>

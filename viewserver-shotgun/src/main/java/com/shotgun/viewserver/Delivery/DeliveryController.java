@@ -36,7 +36,6 @@ public class DeliveryController {
             row.setLong("lastModified", now.getTime());
             row.setInt("distance", delivery.getDistance());
             row.setInt("duration", delivery.getDuration());
-            row.setString("vehicleTypeId", delivery.getVehicleTypeId());
             row.setString("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId());
             if(delivery.getDestination()!= null){//can happen with rubbish collection
                 row.setString("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
