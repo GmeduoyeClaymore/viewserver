@@ -13,6 +13,8 @@ import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
+import {registerActionListener} from 'common/Listeners';
+import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -22,6 +24,7 @@ class DriverLanding extends Component {
 
   componentWillMount(){
     this.loadData(this.props);
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
   }
 
   componentWillReceiveProps(newProps){

@@ -34,7 +34,6 @@ DeliveryDataSource {
                                         new Column("userIdDelivery", "userIdDelivery", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                        new Column("vehicleTypeId", "vehicleTypeId", ColumnType.String),
                                         new Column("driverId", "driverId", ColumnType.String),
                                         new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),

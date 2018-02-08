@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import DeliveryMap from './DeliveryMap';
-import ProductSelect from './ProductSelect';
+import ContentTypeSelect from './ContentTypeSelect';
 import DeliveryOptions from './DeliveryOptions';
-import VehicleDetails from './VehicleDetails';
+import VehicleSelect from './VehicleSelect';
 import ItemDetails from './ItemDetails';
 import OrderConfirmation from './OrderConfirmation';
 import ProductCategoryList from './ProductCategoryList';
@@ -23,17 +23,17 @@ export default class Checkout extends Component {
     const {navigationStrategy} = this;
     const customerProps = {navigationStrategy, ...this.props};
     return <Switch>
-      <Route path={'/Customer/Checkout/ProductSelect'} exact render={() => <ProductSelect {...customerProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/ContentTypeSelect'} exact render={() => <ContentTypeSelect {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryMap'} exact render={() => <DeliveryMap {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...customerProps} context={this}/>} />
-      <Route path={'/Customer/Checkout/VehicleDetails'} exact render={() => <VehicleDetails {...customerProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/VehicleSelect'} exact render={() => <VehicleSelect {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductCategoryList'} exact render={() => <ProductCategoryList {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductList'} exact render={() => <ProductList {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductDetails'} exact render={() => <ProductDetails {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/AddressLookup'} exact render={() => <AddressLookup {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...customerProps} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/ProductSelect'}/>
+      <Redirect to={'/Customer/Checkout/ContentTypeSelect'}/>
     </Switch>;
   }
 }

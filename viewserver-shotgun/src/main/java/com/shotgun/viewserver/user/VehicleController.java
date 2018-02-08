@@ -3,7 +3,6 @@ package com.shotgun.viewserver.user;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Vehicle;
-import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
@@ -38,7 +37,7 @@ public class VehicleController {
                 row.setString("make", vehicle.getMake());
                 row.setString("model", vehicle.getModel());
                 row.setString("dimensions", ControllerUtils.toString(vehicle.getDimensions()));
-                row.setString("vehicleTypeId", vehicle.getVehicleTypeId());
+                row.setString("bodyStyle", vehicle.getBodyStyle());
 
                 if(vehicle.getNumAvailableForOffload() != null) {
                     row.setInt("numAvailableForOffload", vehicle.getNumAvailableForOffload());

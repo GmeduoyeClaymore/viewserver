@@ -3,7 +3,7 @@ import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
 import {merge} from 'lodash';
 import {Icon} from 'common/components';
 
-class ProductSelect extends Component{
+class ContentTypeSelect extends Component{
   constructor(props){
     super(props);
   }
@@ -15,7 +15,7 @@ class ProductSelect extends Component{
       <Button style={{height: 'auto'}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
         <Icon name='small-van'/>
       </Button>
-      <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
+      <Text style={styles.contentTypeSelectTextRow}>{contentType.name}</Text>
     </View>;
   }
 
@@ -23,11 +23,6 @@ class ProductSelect extends Component{
     const {context, navigationStrategy} = this.props;
     let {orderItem} = context.state;
     orderItem = merge({}, orderItem, {contentTypeId: selectedContentType.contentTypeId});
-    if (selectedContentType && selectedContentType.defaultProductId){
-      if (selectedContentType.defaultProductId){
-        orderItem = merge({}, orderItem, {productId: selectedContentType.defaultProductId});
-      }
-    }
     context.setState({selectedContentType, orderItem});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();
@@ -41,7 +36,7 @@ class ProductSelect extends Component{
           <H1 style={styles.h1}>Start a new job</H1>
           <Text subTitle>What kind of service do you need?</Text>
         </View>
-        <View style={styles.productSelectView}>
+        <View style={styles.contentTypeSelectView}>
 
           <Grid>
             <Row style={{flexWrap: 'wrap'}}>
@@ -68,15 +63,15 @@ const styles = {
     flex: 1,
     justifyContent: 'flex-end'
   },
-  productSelectView: {
+  contentTypeSelectView: {
     flex: 2,
     justifyContent: 'flex-start',
     paddingTop: 30
   },
-  productSelectTextRow: {
+  contentTypeSelectTextRow: {
     justifyContent: 'center'
   },
-  productSelectText: {
+  contentTypeSelectText: {
     fontSize: 18,
     fontWeight: 'bold',
     width: '80%',
@@ -84,4 +79,4 @@ const styles = {
   }
 };
 
-export default ProductSelect;
+export default ContentTypeSelect;

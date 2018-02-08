@@ -3,27 +3,13 @@ import {Dimensions, Image} from 'react-native';
 import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
-import {LoadingScreen, Icon, OriginDestinationSummary} from 'common/components';
+import {Icon, OriginDestinationSummary} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
-import { getDaoState, isAnyOperationPending } from 'common/dao';
 
 class OrderSummary extends Component{
   constructor(){
     super();
-  }
-
-  renderVehicleType(){
-    const {busy, selectedVehicleType} = this.props;
-    return  busy ? <LoadingScreen text="Loading Vehicle Types" /> : <ListItem padded><Icon paddedIcon name='drive'/><Text key='text'>{`${selectedVehicleType.description}`}</Text></ListItem>;
-  }
-
-  renderProduct(){
-    const {product} = this.props;
-    return product ? <ListItem padded>
-      <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
-      <Text key='text'>{`${product.name}`}</Text>
-    </ListItem> : null;
   }
 
   renderMap(){
@@ -50,7 +36,7 @@ class OrderSummary extends Component{
   }
 
   render() {
-    const {orderItem, delivery, contentType} = this.props;
+    const {orderItem, delivery, contentType, product} = this.props;
     const {quantity: noPeople} = orderItem;
     
     return <List>
@@ -60,31 +46,15 @@ class OrderSummary extends Component{
       </ListItem>
       {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {contentType.noPeople && noPeople ? <ListItem padded>
-        <Icon key='icon' paddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text>
+      {contentType.noPeople && noPeople ? <ListItem padded><IconpaddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text></ListItem> : null}
+      {product ? <ListItem padded>
+        {product.imageUrl ? <Icon paddedIcon name={product.imageUrl}/> : null}
+        <Text>{`${product.name}`}</Text>
       </ListItem> : null}
-      {contentType.hasVehicle ? this.renderVehicleType() : null}
-      {this.renderProduct()}
       {this.renderItemDetails()}
     </List>;
   }
 }
-
-const mapStateToProps = (state, initialProps) => {
-  const vehicleTypes = getDaoState(state, ['vehicleTypes'], 'vehicleTypeDao') || [];
-  const {delivery} = initialProps;
-  const selectedVehicleType = vehicleTypes.find(c=> c.vehicleTypeId === delivery.vehicleTypeId);
-  return {
-    ...initialProps,
-    selectedVehicleType,
-    busy: isAnyOperationPending(state, [{ vehicleTypeDao: 'vehicleTypes' }]) || !selectedVehicleType  };
-};
-
-const ConnectedOrderSummary = connect(
-  mapStateToProps
-)(OrderSummary);
-
-export {ConnectedOrderSummary as OrderSummary};
 
 const styles = {
   mapListItem: {
@@ -109,4 +79,17 @@ const styles = {
     marginBottom: 10
   }
 };
+
+const mapStateToProps = (state, initialProps) => {
+  return {
+    ...initialProps
+  };
+};
+
+const ConnectedOrderSummary = connect(
+  mapStateToProps
+)(OrderSummary);
+
+export {ConnectedOrderSummary as OrderSummary};
+
 

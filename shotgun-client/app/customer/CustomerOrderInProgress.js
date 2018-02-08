@@ -5,7 +5,6 @@ import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import Products from 'common/constants/Products';
 import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
@@ -36,11 +35,10 @@ class CustomerOrderInProgress extends Component{
   render() {
     let map;
     const {orderSummary = {status: ''}, history, busy, client, dispatch, errors} = this.props;
-    const {orderItem = {}, delivery = {}} = orderSummary;
+    const {delivery = {}, contentType} = orderSummary;
     const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
     const {origin = {}, destination = {}, driverRating} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
-    const isDelivery = orderItem.productId == Products.DELIVERY;
 
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
@@ -64,10 +62,10 @@ class CustomerOrderInProgress extends Component{
         <Row size={60}>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
             showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
-            {isDelivery ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
+            {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
             <MapView.Marker image={locationImg} coordinate={{...driverPosition}}/>
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
-            {isDelivery ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
+            {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
           <Button transparent style={styles.backButton}>
             <Icon name='back-arrow' onPress={() => history.goBack()} />

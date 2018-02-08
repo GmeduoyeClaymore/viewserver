@@ -1,8 +1,8 @@
 import React  from 'react';
 import { connect } from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row, Input} from 'native-base';
+import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {LoadingScreen, ErrorRegion, Icon, ValidatingInput} from 'common/components';
+import {LoadingScreen, ErrorRegion, Icon} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
@@ -10,7 +10,7 @@ import { getDaoState, getOperationError, isOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {merge} from 'lodash';
 import yup from 'yup';
-import { AppRegistry, TextInput, View} from 'react-native';
+import {TextInput} from 'react-native';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;

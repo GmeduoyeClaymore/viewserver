@@ -36,7 +36,7 @@ public class
                                         new Column("model", "model", ColumnType.String),
                                         new Column("dimensions", "dimensions", ColumnType.String),
                                         new Column("numAvailableForOffload", "numAvailableForOffload", ColumnType.Int),
-                                        new Column("vehicleTypeId", "vehicleTypeId", ColumnType.String)
+                                        new Column("bodyStyle", "bodyStyle", ColumnType.String)
                                 ))
                                 .withKeyColumns("vehicleId")
                 )

@@ -13,12 +13,11 @@ const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, p
 
 
   const {location} = history;
-  const {vehicleTypeId, noRequiredForOffload = 0} = vehicle;
+  const {noRequiredForOffload = 0} = vehicle;
   const maxDistance = 30; //max distance to show jobs in miles
 
   const reportOptions = {
     contentTypeId,
-    vehicleTypeId,
     noRequiredForOffload,
     maxDistance,
     driverLatitude: position.latitude,

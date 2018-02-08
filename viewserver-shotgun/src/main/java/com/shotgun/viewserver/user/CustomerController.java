@@ -103,11 +103,21 @@ public class CustomerController {
     private void notifyStatusChanged(String orderId, String orderDriverId, String status) {
         try {
             String formattedStatus = status.toLowerCase();
-            AppMessage builder = new AppMessageBuilder().withDefaults().withData("orderId", orderId)
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(orderId, status))
                     .message(String.format("Shotgun order %s", formattedStatus), String.format("Shotgun order has been %s by the customer", formattedStatus)).build();
             messagingController.sendMessageToUser(orderDriverId, builder);
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);
+        }
+    }
+
+    private String createActionUri(String orderId, String status){
+        switch (status) {
+            case "PICKEDUP":
+                return String.format("shotgun://DriverOrderInProgress/%s", orderId);
+            default:
+                return String.format("shotgun://DriverOrderDetail/%s", orderId);
         }
     }
 }

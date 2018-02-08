@@ -37,7 +37,7 @@ export default class MapViewStatic extends Component {
     };
 
     const getDestinationMarker = (destination) => {
-      return destination.line1 !== undefined ? `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-destination-small.png')}|${destination.latitude},${destination.longitude}` : undefined;
+      return destination.line1 !== undefined ? `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-destination-small.png')}|${destination.latitude},${destination.longitude}` : '';
     };
 
     const getPath = () => {

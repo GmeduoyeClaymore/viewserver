@@ -12,8 +12,6 @@ public class Delivery {
     private Date till;
     private int distance;
     private int duration;
-    private int noRequiredForOffload;
-    private String vehicleTypeId;
     private DeliveryAddress origin;
     private DeliveryAddress destination;
 
@@ -52,13 +50,6 @@ public class Delivery {
         this.from = from;
     }
 
-    public String getVehicleTypeId() {
-        return vehicleTypeId;
-    }
-
-    public void setVehicleTypeId(String vehicleTypeId) {
-        this.vehicleTypeId = vehicleTypeId;
-    }
 
     public String getDeliveryId() {
         return deliveryId;

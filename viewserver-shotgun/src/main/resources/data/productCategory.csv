@@ -1,5 +1,5 @@
 categoryId,category,parentCategoryId,isLeaf
-1Delivery,Delivery,NONE,TRUE
+1Vans,Vans,NONE,TRUE
 1Waste,Waste,NONE,FALSE
 2Skips,Skips,1Waste,TRUE
 2Grab,Grab,1Waste,TRUE

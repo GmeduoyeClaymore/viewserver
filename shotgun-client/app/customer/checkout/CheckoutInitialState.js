@@ -6,10 +6,20 @@ export const INITIAL_STATE = {
     imageUrl: undefined,
     imageData: undefined
   },
+  selectedContentType: {
+    contentTypeId: undefined,
+    name: undefined,
+    origin: undefined,
+    destination: undefined,
+    fromTime: undefined,
+    tillTime: undefined,
+    noItems: undefined,
+    rootProductCategory: undefined,
+    pricingStrategy: undefined
+  },
   delivery: {
     from: undefined,
     noRequiredForOffload: 0,
-    vehicleTypeId: undefined,
     deliveryId: undefined,
     distance: undefined,
     duration: undefined,
@@ -47,7 +57,6 @@ export const INITIAL_STATE = {
   delivery: {
     from: new Date(),
     noRequiredForOffload: 0,
-    vehicleTypeId: '12323232',
     deliveryId: undefined,
     origin: {
       line1: '12 Kinnoul Rd',
@@ -72,19 +81,35 @@ export const INITIAL_STATE = {
   }
 };*/
 
-/*
-export const INITIAL_STATE = {
-  totalPrice: 2000,
+/*export const INITIAL_STATE = {
+  totalPrice: undefined,
   orderItem: {
     notes: 'this is example delivery data',
     imageData: undefined,
     imageUrl: undefined,
-    productId: 'PROD_Delivery',
+    productId: '1SmallVan',
+  },
+  selectedProduct: {
+    productId: '1SmallVan',
+    name: 'Small Van',
+    imageUrl: 'small-van'
+  },
+  selectedContentType: {
+    contentTypeId: 1,
+    name: 'Delivery',
+    origin: true,
+    destination: true,
+    fromTime: true,
+    tillTime: false,
+    noItems: 1,
+    rootProductCategory: '1Vans',
+    pricingStrategy: 'JOURNEY_TIME'
   },
   delivery: {
     from: new Date(),
+    distance: 2000,
+    duration: 5000,
     noRequiredForOffload: 0,
-    vehicleTypeId: 'ef17c21e-77d8-43e0-8091-bc2f9fe8e327',
     deliveryId: undefined,
     origin: {
       line1: '12 Kinnoul Rd',
@@ -106,5 +131,4 @@ export const INITIAL_STATE = {
   payment: {
     paymentId: '12345'
   }
-};
-*/
+};*/

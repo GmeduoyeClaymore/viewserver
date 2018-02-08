@@ -36,7 +36,7 @@ export default class DatePickerControl extends Component{
     const newProps = {...props, date};
     return <View>
       <DatePicker {...newProps}/>
-      {hideAsap ? null : <Button onPress={this.setAsap} style={{height: 18, marginLeft: 15}}>
+      {hideAsap ? null : <Button onPress={this.setAsap} style={{marginLeft: 15}}>
         <Text>ASAP</Text>
       </Button>}
     </View>;

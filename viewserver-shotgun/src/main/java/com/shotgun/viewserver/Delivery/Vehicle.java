@@ -7,17 +7,17 @@ public  class Vehicle{
     String colour;
     String make;
     String model;
-    String vehicleTypeId;
+    String bodyStyle;
     Integer numAvailableForOffload;
 
     public Vehicle() {
     }
 
-    public Vehicle(Dimensions dimensions,String make, String model, String vehicleTypeId,String colour, String reg) {
+    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg) {
         this.dimensions = dimensions;
         this.model = model;
         this.make = make;
-        this.vehicleTypeId = vehicleTypeId;
+        this.bodyStyle = bodyStyle;
         this.colour = colour;
         this.registrationNumber = reg;
     }
@@ -38,12 +38,12 @@ public  class Vehicle{
         this.numAvailableForOffload = numAvailableForOffload;
     }
 
-    public String getVehicleTypeId() {
-        return vehicleTypeId;
+    public String getBodyStyle() {
+        return bodyStyle;
     }
 
-    public void setVehicleTypeId(String vehicleTypeId) {
-        this.vehicleTypeId = vehicleTypeId;
+    public void getBodyStyle(String bodyStyle) {
+        this.bodyStyle = bodyStyle;
     }
 
     public String getVehicleId() {
@@ -95,7 +95,7 @@ public  class Vehicle{
                 ", colour='" + colour + '\'' +
                 ", make='" + make + '\'' +
                 ", model='" + model + '\'' +
-                ", vehicleTypeId='" + vehicleTypeId + '\'' +
+                ", bodyStyle='" + bodyStyle + '\'' +
                 '}';
     }
 }

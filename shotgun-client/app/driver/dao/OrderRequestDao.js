@@ -23,12 +23,11 @@ export default class OrderRequestDaoContext{
     return 'orderRequestDao';
   }
 
-  getReportContext({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
+  getReportContext({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
     return {
       reportId: 'orderRequest',
       parameters: {
         contentTypeId,
-        vehicleTypeId,
         noRequiredForOffload,
         driverLatitude,
         driverLongitude,
@@ -68,10 +67,8 @@ export default class OrderRequestDaoContext{
         fromTime: orderRequest.contentTypeFromTime,
         tillTime: orderRequest.contentTypeTillTime,
         noItems: orderRequest.contentTypeNoItems,
-        hasVehicle: orderRequest.contentTypeHasVehicle,
         rootProductCategory: orderRequest.contentTypeRootProductCategory,
-        pricingStrategy: orderRequest.contentTypePricingStrategy,
-        defaultProductId: orderRequest.defaultProductId,
+        pricingStrategy: orderRequest.contentTypePricingStrategy
       },
       delivery: {
         from: orderRequest.from,
@@ -100,8 +97,8 @@ export default class OrderRequestDaoContext{
     };
   }
 
-  createSubscriptionStrategy({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, vehicleTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
+  createSubscriptionStrategy({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

@@ -24,7 +24,8 @@ ProductDataSource {
                         new Column("description", "description", ColumnType.String),
                         new Column("categoryId", "categoryId", ColumnType.String),
                         new Column("price", "price", ColumnType.Double),
-                        new Column("rating", "rating", ColumnType.Double)
+                        new Column("rating", "rating", ColumnType.Double),
+                        new Column("imageUrl", "imageUrl", ColumnType.String)
                 ))
                 .withKeyColumns("productId");
 

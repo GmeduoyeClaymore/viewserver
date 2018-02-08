@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
-import {Grid, Row, Text, Col} from 'native-base';
+import {Grid, Row, Text} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -16,12 +16,14 @@ export class OriginDestinationSummary extends Component{
 
     const formatDuration = () => {
       const momentDuration = moment.duration(duration, 'seconds');
-
       return duration < 3600 ? `${momentDuration.minutes()}mins` : `${momentDuration.hours()}hrs`;
     };
 
     return <Grid>
-      {contentType.origin ? <Row><Icon name="pin" paddedIcon originPin /><Text>{origin.flatNumber} {origin.line1}, {origin.postCode}</Text></Row> : null}
+      {contentType.origin ? <Row>
+        <Icon name="pin" paddedIcon originPin/>
+        <Text style={{alignSelf: 'flex-start'}}>{origin.flatNumber} {origin.line1}, {origin.postCode}</Text>
+      </Row> : null}
       {contentType.destination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}

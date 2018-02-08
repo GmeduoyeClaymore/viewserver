@@ -75,15 +75,10 @@ export default class Dao {
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       this.countSubscription = this.dataSink.dataSinkUpdated.filter(ev => ev.Type === RxDataSink.TOTAL_ROW_COUNT).subscribe(ev => this.countSubject.next(ev.count));
 
-      this.snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
-      this.rowEventSubscription = this.rowEventObservable.subscribe(() => {
-        if (this.dataSink.isSnapshotComplete) {
+      this.rowEventSubscription = this.rowEventObservable.subscribe((ev) => {
+        if (this.dataSink.isSnapshotComplete || ev.Type == RxDataSink.DATA_RESET) {
           this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
         }
-      });
-
-      this.snapshotPromise.then(() => {
-        this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
       });
 
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);

@@ -37,9 +37,10 @@ public class VehicleDetailsController {
         }
         Map<String,Object> dataItems = (Map<String, Object>) get(res, "DataItems");
         Map<String, Object> vehicleRegistration = (Map<String, Object>) get(dataItems, "VehicleRegistration");
-        String vehicleTypeId = (String) get(vehicleRegistration,"VehicleClass");
-        if(Arrays.binarySearch(PERMITTED_CLASSES,vehicleTypeId) == -1){
-            throw new RuntimeException(String.format("Invalid vehicle class \"%s\" found. In order to use this service vehcile must be a type of van",vehicleTypeId));
+        Map<String, Object> SmmtDetails = (Map<String, Object>) get(dataItems, "SmmtDetails");
+        String bodyType = (String) get(SmmtDetails,"BodyStyle");
+        if(Arrays.binarySearch(PERMITTED_CLASSES, bodyType) == -1){
+            throw new RuntimeException(String.format("Invalid vehicle body type \"%s\" found. In order to use this service vehicle must be a type of van", bodyType));
         }
         Map<String, Object> technicalDetails = (Map<String, Object>) get(dataItems, "TechnicalDetails");
         Map<String, Object> dimensions = (Map<String, Object>) get(technicalDetails, "Dimensions");
@@ -55,7 +56,7 @@ public class VehicleDetailsController {
         String make = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Make"));
         String model = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Model"));
         String color = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Colour"));
-        return new Vehicle(dim,make,model,vehicleTypeId,color,reg);
+        return new Vehicle(dim,make,model,bodyType,color,reg);
 
     }
 

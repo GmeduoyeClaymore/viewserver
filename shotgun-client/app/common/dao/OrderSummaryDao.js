@@ -57,7 +57,8 @@ export default class OrderSummaryDao{
       },
       product: {
         productId: orderSummary.productProductId,
-        name: orderSummary.productName
+        name: orderSummary.productName,
+        imageUrl: orderSummary.productImageUrl
       },
       contentType: {
         contentTypeId: orderSummary.contentTypeContentTypeId,
@@ -68,10 +69,8 @@ export default class OrderSummaryDao{
         fromTime: orderSummary.contentTypeFromTime,
         tillTime: orderSummary.contentTypeTillTime,
         noItems: orderSummary.contentTypeNoItems,
-        hasVehicle: orderSummary.contentTypeHasVehicle,
         rootProductCategory: orderSummary.contentTypeRootProductCategory,
-        pricingStrategy: orderSummary.contentTypePricingStrategy,
-        defaultProductId: orderSummary.defaultProductId,
+        pricingStrategy: orderSummary.contentTypePricingStrategy
       },
       delivery: {
         from: orderSummary.from,
@@ -79,7 +78,6 @@ export default class OrderSummaryDao{
         distance: orderSummary.distance,
         duration: orderSummary.duration,
         noRequiredForOffload: orderSummary.noRequiredForOffload,
-        vehicleTypeId: orderSummary.vehicleTypeId,
         deliveryId: orderSummary.deliveryId,
         customerRating: orderSummary.customerRating,
         driverRating: orderSummary.driverRating,

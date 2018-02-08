@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import {Platform} from 'react-native';
 import { connectStyle } from 'native-base-shoutem-theme';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import icoMoonConfig from './shotgun-icons-config.json';
 import mapPropsToStyleNames from '../mapPropsToStyleNames';
-const ShotgunIcons = createIconSetFromIcoMoon(icoMoonConfig);
+
+let ShotgunIcons;
+
+if (Platform.OS === 'ios') {
+  ShotgunIcons = createIconSetFromIcoMoon(icoMoonConfig);
+} else {
+  ShotgunIcons = createIconSetFromIcoMoon(icoMoonConfig, 'shotgun', 'shotgun-icons.ttf');
+}
 
 class IconNB extends Component {
 	static contextTypes = {
