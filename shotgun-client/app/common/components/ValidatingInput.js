@@ -4,6 +4,7 @@ import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon} from 'common/components';
+import {isEqual} from 'custom-redux';
 
 export class ValidatingInput extends Component {
   constructor(){
@@ -28,6 +29,10 @@ export class ValidatingInput extends Component {
 
   async onChangeText(value){
     this.props.onChangeText(value);
+  }
+
+  shouldComponentUpdate(nextProps){
+    return !isEqual(nextProps, this.props, false, true);
   }
 
   async onBlur(){
@@ -57,7 +62,7 @@ export class ValidatingInput extends Component {
 
     return (
       <Item error={isInvalid} success={isValid} onPress={onPress}>
-        <Input {...this.props} placeholderTextColor={shotgun.silver} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
+        <Input {...this.props} placeholderTextColor={shotgun.silver} onFocus={onPress} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
         {showIcons && isValid ? <Icon name='checkmark' /> : null}
         {showIcons && isInvalid ? <Icon name='cross' /> : null}
       </Item>

@@ -13,7 +13,7 @@ const datePickerOptions = {
   mode: 'date',
   titleIOS: 'Select delivery time',
   minimumDate: moment().add(-100, 'years').toDate(),
-  maximumDate: moment().add(-10, 'years').toDate()
+  maximumDate: moment().add(-1, 'years').toDate()
 };
 
 export default class UserDetails  extends Component{
@@ -54,11 +54,12 @@ export default class UserDetails  extends Component{
   }
 
   render(){
-    const {onChangeText} = this;
+    const {onChangeText, toggleDatePicker} = this;
     const {context, history, next} = this.props;
     const {dobIsDatePickerVisible} = this.state;
     const {user} = context.state;
     const isDriver = user.type === 'driver';
+
 
     return <Container>
       <Header withButton>
@@ -120,7 +121,7 @@ export default class UserDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>DOB</Label>
-                <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} editable={false}maxLength={30}/>
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} maxLength={30}/>
                 <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeText('dob', date)} {...datePickerOptions} />
               </Item>
             </Col>

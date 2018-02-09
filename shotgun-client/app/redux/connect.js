@@ -1,20 +1,6 @@
 import { connectAdvanced } from './connectAdvanced';
 import isEqual from './is-equal';
-const getType = {};
 
-const filterFunctions = (args) => {
-  if (!args){
-    return args;
-  }
-  const result = {};
-  Object.keys(args).forEach( key => {
-    const val = args[key];
-    if (!(val && getType.toString.call(val) === '[object Function]'))   {
-      result[key] = val;
-    }
-  });
-  return result;
-};
 
 const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
   let previousPropsForComparison = {};
@@ -26,12 +12,10 @@ const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
     ownProps = nextOwnProps;
     const propsFromSelector = selector(nextState, nextOwnProps);
     let propsForComparison = propsFromSelector;
-    if (ignorefuncs){
-      propsForComparison = filterFunctions(propsForComparison);
-    }
-    if (!isEqual(previousPropsForComparison, propsForComparison)) {
+    
+    if (!isEqual(previousPropsForComparison, propsForComparison, false, ignorefuncs)) {
       previousPropsForComparison = propsForComparison;
-      previousProps = {...propsFromSelector, dispatch};
+      previousProps = {...propsForComparison, dispatch};
     }
     return previousProps;
   };
