@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
 import {merge} from 'lodash';
 import {Icon} from 'common/components';
+import Swiper from 'react-native-swiper';
 
 class ContentTypeSelect extends Component{
   constructor(props){
@@ -37,12 +38,9 @@ class ContentTypeSelect extends Component{
           <Text subTitle>What kind of service do you need?</Text>
         </View>
         <View style={styles.contentTypeSelectView}>
-
-          <Grid>
-            <Row style={{flexWrap: 'wrap'}}>
-              {contentTypes.map((v, i) => this.renderContentType(v, i))}
-            </Row>
-          </Grid>
+          <Swiper style={styles.wrapper} showsButtons={true}>
+            {contentTypes.map((v, i) => this.renderContentType(v, i))}
+          </Swiper>
         </View>
       </Content>
     );
