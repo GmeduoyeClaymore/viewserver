@@ -1,6 +1,6 @@
-contentTypeId,name,origin,destination,noPeople,fromTime,tillTime,noItems,rootProductCategory,pricingStrategy
-1,Delivery,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,1Vans,JOURNEY_TIME
-2,Rubbish,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,1Waste,FIXED
-3,Tool Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Plant,DURATION
-4,Skip,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Waste,FIXED
-5,Personell,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,1Workers,DURATION
+contentTypeId,name,origin,destination,noPeople,fromTime,tillTime,noItems,rootProductCategory,pricingStrategy,description
+1,Delivery,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,1Vans,JOURNEY_TIME,Schedule deliveries in an instant
+2,Rubbish Collection,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,1Waste,FIXED,Get rid of site rubbish now. Track that driver !!
+3,Tool Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Plant,DURATION, Get that tool you need quick as you like
+4,Skip Hire,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,1Waste,FIXED,Need a wait and load or a skip cleared?? Order here track in realtime
+5,Personell,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,1Workers,DURATION,Need a plumber? Ground worker? Labourer? Electrician? Get one now ... and yes track his porgress !!

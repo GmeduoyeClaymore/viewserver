@@ -8,11 +8,11 @@ export default class ContentTypeNavigationStrategy{
     }
     this.pathIndex = -1;
     this.contentTypePaths = {};
-    this.contentTypePaths[ContentTypes.DELIVERY] = ['DeliveryMap', 'DeliveryOptions', 'VehicleSelect', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.RUBBISH] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.SKIP] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.PERSONELL] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.HIRE] = ['DeliveryMap', 'ProductCategoryList', 'DeliveryOptions', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.DELIVERY] = ['VehicleSelect', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.RUBBISH] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.SKIP] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.PERSONELL] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.HIRE] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
     this.init = this.init.bind(this);
     this.next = this.next.bind(this);
     this.prev = this.prev.bind(this);

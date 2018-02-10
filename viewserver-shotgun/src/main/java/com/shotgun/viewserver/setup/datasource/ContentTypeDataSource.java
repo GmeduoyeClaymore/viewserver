@@ -39,6 +39,7 @@ public class
                                         new Column("tillTime", "tillTime", ColumnType.Bool),
                                         new Column("noItems", "noItems", ColumnType.Bool),
                                         new Column("rootProductCategory", "rootProductCategory", ColumnType.String),
+                                        new Column("description", "description", ColumnType.String),
                                         new Column("pricingStrategy", "pricingStrategy", ColumnType.String)
                                 ))
                                 .withKeyColumns("contentTypeId")

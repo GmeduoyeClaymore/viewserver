@@ -2,7 +2,10 @@ import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
 import {merge} from 'lodash';
 import {Icon} from 'common/components';
+import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
+
+import {resolveIcon} from 'common/assets';
 
 class ContentTypeSelect extends Component{
   constructor(props){
@@ -12,11 +15,14 @@ class ContentTypeSelect extends Component{
   renderContentType(contentType, i){
     const {context} = this.props;
     const {selectedContentType = {}} = context.state;
-    return <View key={i} style={{width: '30%'}}>
-      <Button style={{height: 'auto'}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
-        <Icon name='small-van'/>
-      </Button>
-      <Text style={styles.contentTypeSelectTextRow}>{contentType.name}</Text>
+    return <View key={i} style={{flex: 1, justifyContent: 'center'}}>
+      <TouchableOpacity style={{height: 'auto', borderWidth: 0, justifyContent: 'center', paddingLeft: 25, paddingRight: 30,  flex: 4}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
+        <Image resizeMode="contain" source={resolveIcon(contentType)}  style={styles.picture}/>
+      </TouchableOpacity>
+      <View style={{flex: 2}}>
+        <Text style={styles.contentTypeSelectTextRow}>{contentType.name}</Text>
+        <Text style={styles.contentTypeSelectTextRowSummary}>{contentType.description}</Text>
+      </View>
     </View>;
   }
 
@@ -52,6 +58,15 @@ const styles = {
     width: '80%',
     marginBottom: 30
   },
+  wrapper: {
+    height: 600,
+    justifyContent: 'center'
+  },
+  picture: {
+    width: 300,
+    height: 280,
+    borderWidth: 0
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -67,13 +82,21 @@ const styles = {
     paddingTop: 30
   },
   contentTypeSelectTextRow: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  contentTypeSelectTextRowSummary: {
+    justifyContent: 'center',
+    fontSize: 10,
+    paddingTop: 10,
+    textAlign: 'center'
   },
   contentTypeSelectText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    width: '80%',
-    textAlign: 'center'
+    
   }
 };
 
