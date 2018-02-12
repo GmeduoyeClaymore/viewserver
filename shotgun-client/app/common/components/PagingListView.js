@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import {updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
 import {connectAdvanced} from 'custom-redux';
 import {bindActionCreators} from 'redux';
-import {isEqual} from 'lodash';
+import {isEqual} from 'custom-redux';
 import {ErrorRegion} from 'common/components';
-import {getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize} from 'common/dao';
+import {getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions} from 'common/dao';
 import Logger from 'common/Logger';
 import {List} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -20,21 +20,23 @@ class PagingListView extends Component {
   }
 
   componentWillMount() {
-    const {options = {}, pageSize, setOptions} = this.props;
+    const {options} = this.props;
+    this.setOptions(undefined, options);
+  }
 
-    if (typeof pageSize != undefined) {
-      setOptions({...options, limit: pageSize});
-    } else {
-      setOptions({...options});
+  setOptions(prevOptions, newOptions){
+    const {setOptions} = this.props;
+    if (!isEqual(newOptions, prevOptions, true)){
+      setOptions(newOptions);
     }
   }
 
   componentWillReceiveProps(newProps) {
-    const {options, setOptions, reset} = this.props;
+    const {options, reset} = this.props;
 
-    if (newProps.options !== null && !isEqual(options, newProps.options)) {
+    if (newProps.options !== null && !isEqual(options, newProps.options, true)) {
       reset();
-      setOptions(newProps.options);
+      this.setOptions(options, newProps.options);
       Logger.debug('PagingProps-' + JSON.stringify(newProps.options));
     }
   }
@@ -53,17 +55,17 @@ class PagingListView extends Component {
     }
   }
 
-  renderItem = ({item, isLast, isFirst}) => this.props.rowView({item, isLast, isFirst});
+  renderItem = ({item, isLast, isFirst, ...rest}) => this.props.rowView({item, isLast, isFirst, ...rest});
 
   render() {
-    const {data = [], errors, busy, emptyView, paginationWaitingView, headerView: HeaderView} = this.props;
+    const {data = [], errors, busy, emptyView, paginationWaitingView, headerView: HeaderView, ...rest} = this.props;
 
     return (
       <ErrorRegion errors={errors}>
         <ScrollView style={{flex: 1}} onScroll={this.onScroll}>
-          <HeaderView/>
+          <HeaderView {...this.props}/>
           {(data.length === 0 && !busy) ? emptyView() : <List style={styles.list}>
-            {data.map((c, i) => this.renderItem({item: c, isLast: i == data.length - 1, isFirst: i == 0}))}
+            {data.map((c, i) => this.renderItem({item: c, isLast: i == data.length - 1, isFirst: i == 0, ...rest}))}
           </List>}
           {busy ? paginationWaitingView() : null}
         </ScrollView>
@@ -92,12 +94,14 @@ const selectorFactory = (dispatch, initializationProps) => {
   return (nextState, nextOwnProps) => {
     const data = getDaoState(nextState, initializationProps.dataPath, daoName);
     const size = getDaoSize(nextState, daoName);
+    const options = getDaoOptions(nextState);
     const daoPageStatus = getDaoCommandStatus(nextState, 'updateSubscription', daoName);
     const daoPageResult = getDaoCommandResult(nextState, 'updateSubscription', daoName);
     const busy = daoPageStatus === 'start';
     const limit = daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
     const errors = daoPageStatus === 'fail' ? daoPageResult : undefined;
     const nextResult = {
+      options,
       busy,
       data,
       size,
@@ -109,7 +113,7 @@ const selectorFactory = (dispatch, initializationProps) => {
       ...nextOwnProps
     };
     ownProps = nextOwnProps;
-    if (!isEqual(result, nextResult)) {
+    if (!isEqual(result, nextResult, true, true)) {
       result = nextResult;
     }
     return result;

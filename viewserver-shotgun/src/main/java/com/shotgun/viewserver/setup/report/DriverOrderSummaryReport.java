@@ -27,7 +27,7 @@ public class DriverOrderSummaryReport {
                                         .withRightJoinColumns("userId")
                                         .withConnection("orderFilter", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("orderItemsJoin")
+                new JoinNode("orderItemsJoin")
                                         .withLeftJoinColumns("orderId")
                                         .withRightJoinColumns("orderId")
                                         .withConnection("customerJoin", Constants.OUT, "left")

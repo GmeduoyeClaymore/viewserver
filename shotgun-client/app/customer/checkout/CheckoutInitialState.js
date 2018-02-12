@@ -90,20 +90,20 @@ export const INITIAL_STATE = {
     productId: '1SmallVan',
   },
   selectedProduct: {
-    productId: '1SmallVan',
-    name: 'Small Van',
-    imageUrl: 'small-van'
+    productId: 'GroundWorker',
+    name: 'Ground worker',
+    description: 'These guys just love to dig. Just supply spades indicate where you want the hole then stand back.'
   },
   selectedContentType: {
     contentTypeId: 1,
-    name: 'Delivery',
+    name: 'Personell',
     origin: true,
     destination: true,
     fromTime: true,
     tillTime: false,
     noItems: 1,
-    rootProductCategory: '1Vans',
-    pricingStrategy: 'JOURNEY_TIME'
+    rootProductCategory: '1Workers',
+    pricingStrategy: 'DURATION'
   },
   delivery: {
     from: new Date(),

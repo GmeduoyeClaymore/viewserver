@@ -46,7 +46,7 @@ class OrderSummary extends Component{
       </ListItem>
       {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {contentType.noPeople && noPeople ? <ListItem padded><IconpaddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text></ListItem> : null}
+      {contentType.noPeople && noPeople ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text></ListItem> : null}
       {product ? <ListItem padded>
         {product.imageUrl ? <Icon paddedIcon name={product.imageUrl}/> : null}
         <Text>{`${product.name}`}</Text>

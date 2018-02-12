@@ -4,8 +4,8 @@ import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
-import {updateSubscriptionAction, isAnyLoading, getLoadingErrors, getNavigationProps} from 'common/dao';
-import {LoadingScreen, ErrorRegion, PagingListView, Icon} from 'common/components';
+import {updateSubscriptionAction, isAnyLoading, getNavigationProps} from 'common/dao';
+import {LoadingScreen, PagingListView, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;
@@ -13,15 +13,11 @@ const NoItems = () => <View><Text>No items to display</Text></View>;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     marginTop: 10
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#AAAAAA',
   }
 });
 
+const headerView  = ({options: opts, search}) => <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;
 class ProductList extends Component{
   static propTypes = {
     product: PropTypes.object,
@@ -45,38 +41,37 @@ class ProductList extends Component{
       dispatch(updateSubscriptionAction('productDao', {searchText}));
     };
     this.search = this.search.bind(this);
-    this.rowView = ({item: p}) => {
-      return (<ProductListItem key={p.productId} product={p} history={history} context={context}/>);
+    this.rowView = ({item: p, ...rest}) => {
+      return (<ProductListItem key={p.productId} product={p} {...rest}/>);
     };
   }
 
   render(){
     const {rowView, search, props} = this;
-    const {context, options, history, busy, errors} = props;
-    return   busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
+    const {context, category = {}, navigationStrategy, busy} = props;
+    return   busy ? <LoadingScreen text="Loading Products...." /> : <Container>
       <Header>
         <Left>
           <Button transparent>
-            <Icon name='back-arrow' onPress={() => history.goBack()} />
+            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
           </Button>
         </Left>
         <Body><Title>Select Product</Title></Body>
       </Header>
       <Content padded>
-        <ErrorRegion errors={errors}>
-          <PagingListView
-            style={styles.container}
-            daoName='productDao'
-            dataPath={['product', 'products']}
-            pageSize={10}
-            options={options}
-            context={context}
-            rowView={rowView}
-            paginationWaitingView={Paging}
-            emptyView={NoItems}
-            headerView={() => <SearchBar onChange={search} />}
-          />
-        </ErrorRegion>
+        <PagingListView
+          daoName='productDao'
+          dataPath={['product', 'products']}
+          pageSize={10}
+          options={{categoryId: category.categoryId}}
+          context={context}
+          navigationStrategy={navigationStrategy}
+          rowView={rowView}
+          search={search}
+          paginationWaitingView={Paging}
+          emptyView={NoItems}
+          headerView={headerView}
+        />
       </Content>
     </Container>;
   }
@@ -84,14 +79,9 @@ class ProductList extends Component{
 
 const mapStateToProps = (state, nextOwnProps) => {
   const navProps = getNavigationProps(nextOwnProps);
-  const {category = {}} = navProps;
-  const {categoryId} = category;
-  const options  = {categoryId};
   return {
     ...navProps,
-    busy: isAnyLoading(state, ['productDao']),
-    options,
-    errors: getLoadingErrors(state, ['productDao']), ...nextOwnProps
+    ...nextOwnProps
   };
 };
 

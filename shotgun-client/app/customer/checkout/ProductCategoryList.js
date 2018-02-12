@@ -48,7 +48,7 @@ class ProductCategoryList extends Component{
   rowView({item: row}){
     const {categoryId, category} = row;
  
-    return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory({category: row})} underlayColor={'#EEEEEE'}>
+    return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory(row)} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'row', flex: 1, padding: 0}}>
         <Image resizeMode="contain" source={resolveProductCategoryIcon(row)}  style={styles.picture}/>
         <Text>{`${category}`}</Text>
@@ -72,11 +72,11 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, options, categories = [], navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
+    const {busy, options, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
     const {rowView} = this;
 
-    if (categories.length == 1 && categories[0].isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: categories[0]}}}/>;
+    if (selectedCategory.isLeaf){
+      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
     }
 
     const Paging = () => <Spinner />;
@@ -89,7 +89,7 @@ class ProductCategoryList extends Component{
             <Icon name='back-arrow' onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)} />
           </Button>
         </Left>
-        <Body><Title>{selectedCategory.categoryId} Select Product Category </Title></Body>
+        <Body><Title>Select Product Category </Title></Body>
       </Header>
       <Content padded>
         <ProductListItem product={selectedProduct}/>
@@ -121,10 +121,9 @@ const validationSchema = {
 const mapStateToProps = (state, nextOwnProps) => {
   const {context} = nextOwnProps;
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
-  const {rootProductCategory: rootProductCategoryId} = selectedContentType;
-  const rootProductCategory = {};
+  const {productCategory: rootProductCategory} = selectedContentType;
   const categories = getDaoState(state, ['product', 'categories'], 'productCategoryDao');
-  rootProductCategory.categoryId = rootProductCategoryId;
+
   return {
     categories,
     ...nextOwnProps,
