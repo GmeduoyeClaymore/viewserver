@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, TouchableHighlight} from 'react-native';
+import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ErrorRegion, ValidatingButton, Icon} from 'common/components';
-import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoSize, getDaoState} from 'common/dao';
 import {connect} from 'custom-redux';
+import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
+
+import {resolveProductCategoryIcon} from 'common/assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,6 +25,10 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 30
   },
+  picture: {
+    height: 50,
+    width: 50
+  }
 });
 
 class ProductCategoryList extends Component{
@@ -40,22 +47,17 @@ class ProductCategoryList extends Component{
 
   rowView({item: row}){
     const {categoryId, category} = row;
-    this.redirectIfOnlyOneCategory(row);
+ 
     return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory({category: row})} underlayColor={'#EEEEEE'}>
-      <View style={{flexDirection: 'column', flex: 1, padding: 0}}>
+      <View style={{flexDirection: 'row', flex: 1, padding: 0}}>
+        <Image resizeMode="contain" source={resolveProductCategoryIcon(row)}  style={styles.picture}/>
         <Text>{`${category}`}</Text>
       </View>
     </TouchableHighlight>;
   }
 
-  redirectIfOnlyOneCategory(category){
-    const {numberCategories, busy} = this.props;
-    if (!busy && numberCategories && numberCategories == 1 && category.isLeaf){
-      history.push('/Customer/Checkout/ProductList', {category});
-    }
-  }
 
-  navigateToCategory({category}){
+  navigateToCategory(category){
     const {history} = this.props;
     if (category.isLeaf) {
       history.push('/Customer/Checkout/ProductList', {category});
@@ -70,8 +72,12 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, errors, options, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
+    const {busy, options, categories = [], navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
     const {rowView} = this;
+
+    if (categories.length == 1 && categories[0].isLeaf){
+      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: categories[0]}}}/>;
+    }
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
@@ -83,24 +89,22 @@ class ProductCategoryList extends Component{
             <Icon name='back-arrow' onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)} />
           </Button>
         </Left>
-        <Body><Title>Select Product Category</Title></Body>
+        <Body><Title>{selectedCategory.categoryId} Select Product Category </Title></Body>
       </Header>
       <Content padded>
         <ProductListItem product={selectedProduct}/>
-        <ErrorRegion errors={errors}>
-          <PagingListView
-            style={styles.container}
-            daoName='productCategoryDao'
-            dataPath={['product', 'categories']}
-            pageSize={10}
-            options={{...options, parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId}}
-            history={history}
-            rowView={rowView}
-            paginationWaitingView={Paging}
-            emptyView={NoItems}
-            headerView={() => null}
-          />
-        </ErrorRegion>
+        <PagingListView
+          style={styles.container}
+          daoName='productCategoryDao'
+          dataPath={['product', 'categories']}
+          pageSize={10}
+          options={{...options, parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId}}
+          history={history}
+          rowView={rowView}
+          paginationWaitingView={Paging}
+          emptyView={NoItems}
+          headerView={() => null}
+        />
         <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>
@@ -119,15 +123,15 @@ const mapStateToProps = (state, nextOwnProps) => {
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
   const {rootProductCategory: rootProductCategoryId} = selectedContentType;
   const rootProductCategory = {};
-  const numberCategories = getDaoSize(state, 'productCategoryDao');
+  const categories = getDaoState(state, ['product', 'categories'], 'productCategoryDao');
   rootProductCategory.categoryId = rootProductCategoryId;
   return {
-    numberCategories,
+    categories,
     ...nextOwnProps,
     ...getNavigationProps(nextOwnProps),
     rootProductCategory,
     selectedProduct,
-    selectedCategory,
+    selectedCategory: selectedCategory || rootProductCategory,
     busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
     options: getDaoOptions(state, 'productCategoryDao'),
     errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps

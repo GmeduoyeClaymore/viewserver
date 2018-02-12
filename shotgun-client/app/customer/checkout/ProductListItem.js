@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
 import { merge } from 'lodash';
+import {resolveProductIcon} from 'common/assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,6 +23,9 @@ const styles = StyleSheet.create({
 });
 
 const onChangeProduct = ({history, context, product}) => {
+  if (!context){
+    return;
+  }
   const { orderItem } = context.state;
   const {productId} = product;
   context.setState({ selectedProduct: product, orderItem: merge({}, orderItem, {productId}) });
@@ -37,7 +41,7 @@ const ProductListItem = ({history, context, product}) => {
 
   return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80}} onPress={() => onChangeProduct({history, context, product}) } underlayColor={'#EEEEEE'}>
     <View style={styles.container}>
-      <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
+      <Image resizeMode="contain" source={resolveProductIcon(product)}  style={styles.picture}/>
       <View style={{flex: 1}}>
         <Text style={styles.title}>{product.name}</Text>
         <Text>{product.description}</Text>

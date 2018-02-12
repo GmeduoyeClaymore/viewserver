@@ -5,7 +5,7 @@ import {Icon} from 'common/components';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import {resolveIcon} from 'common/assets';
+import {resolveContentTypeIcon} from 'common/assets';
 
 class ContentTypeSelect extends Component{
   constructor(props){
@@ -17,7 +17,7 @@ class ContentTypeSelect extends Component{
     const {selectedContentType = {}} = context.state;
     return <View key={i} style={{flex: 1, justifyContent: 'center'}}>
       <TouchableOpacity style={{height: 'auto', borderWidth: 0, justifyContent: 'center', paddingLeft: 25, paddingRight: 30,  flex: 4}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
-        <Image resizeMode="contain" source={resolveIcon(contentType)}  style={styles.picture}/>
+        <Image resizeMode="contain" source={resolveContentTypeIcon(contentType)}  style={styles.picture}/>
       </TouchableOpacity>
       <View style={{flex: 2}}>
         <Text style={styles.contentTypeSelectTextRow}>{contentType.name}</Text>
@@ -41,7 +41,7 @@ class ContentTypeSelect extends Component{
       <Content padded contentContainerStyle={styles.container}>
         <View style={styles.titleView}>
           <H1 style={styles.h1}>Start a new job</H1>
-          <Text subTitle>What kind of service do you need?</Text>
+          <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
         </View>
         <View style={styles.contentTypeSelectView}>
           <Swiper style={styles.wrapper} showsButtons={true}>
@@ -55,8 +55,12 @@ class ContentTypeSelect extends Component{
 
 const styles = {
   h1: {
-    width: '80%',
+    justifyContent: 'center',
     marginBottom: 30
+  },
+  subTitle: {
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   wrapper: {
     height: 600,
@@ -77,7 +81,7 @@ const styles = {
     justifyContent: 'flex-end'
   },
   contentTypeSelectView: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'flex-start',
     paddingTop: 30
   },
