@@ -48,7 +48,7 @@ public class
                 .withSchema(schema
                 )
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("rootProductCategory", Cardinality.Int, schema.getColumn("rootProductCategory").getType())))
+                .withDimensions(Arrays.asList(new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String,true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

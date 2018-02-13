@@ -55,7 +55,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int map(IDataSource dataSource, Dimension dimension, Object value){
-        switch (dimension.getColumn().getType()) {
+        switch (dimension.getColumnType()) {
             case Bool: {
                 return mapBool(dataSource, dimension, (value instanceof String) ? Boolean.valueOf(value.toString()) : (boolean) value);
             }
@@ -165,7 +165,7 @@ public class DimensionMapper extends DimensionMapperBase {
 
     public HashPrimitiveIterator getAllValues(IDataSource dataSource, Dimension dimension) {
         Object lookup = getLookup(dataSource, dimension);
-        switch (dimension.getType()) {
+        switch (dimension.getColumnType()) {
             case Byte: {
                 return (HashPrimitiveIterator) ((ByteHashSet)lookup).iterator();
             }
@@ -183,7 +183,7 @@ public class DimensionMapper extends DimensionMapperBase {
             }
             default: {
                 throw new UnsupportedOperationException(String.format("Unhandled dimension type '%s' for dimension '%s' in data source '%s'",
-                        dimension.getType(), dimension.getName(), dataSource.getName()));
+                        dimension.getColumnType(), dimension.getName(), dataSource.getName()));
             }
         }
     }

@@ -38,7 +38,6 @@ ProductDataSource {
                                 null
                         )
                 )
-                .withDimensions(Arrays.asList(new Dimension("productId", Cardinality.Int, schema.getColumn("productId").getType())))
                 .withSchema(schema)
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

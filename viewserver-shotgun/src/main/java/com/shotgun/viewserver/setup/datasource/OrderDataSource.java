@@ -30,7 +30,8 @@ public class
                         new Column("userId", "userId", ColumnType.String),
                         new Column("paymentId", "paymentId", ColumnType.String),
                         new Column("deliveryId", "deliveryId", ColumnType.String),
-                        new Column("totalPrice", "totalPrice", ColumnType.Double)
+                        new Column("totalPrice", "totalPrice", ColumnType.Double)/*,
+                        new Column("rootProductCategory", "rootProductCategory", ColumnType.String)*/
                 ))
                 .withKeyColumns("orderId");
 
@@ -43,7 +44,6 @@ public class
                                 null
                         )
                 )
-                .withColumnToDatasourceMappings("rootProductCategory", ContentTypeDataSource.NAME)
                 .withSchema(schema)
                 .withNodes(
                         new JoinNode("deliveryJoin")
@@ -63,6 +63,11 @@ public class
                                 .withColumnPrefixes("", "contentType_")
                                 .withConnection("orderItemsJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
+                        new ProjectionNode("projectionNode")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "rootProductCategory")
+                                ).withConnection("contentTypeJoin")
                       /*  new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
                                 .withRightJoinColumns("productId")
@@ -70,14 +75,9 @@ public class
                                 .withAlwaysResolveNames()
                                 .withConnection("contentTypeJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),*/
-                        new ProjectionNode("projectionNode")
-                                .withMode(IProjectionConfig.ProjectionMode.Projection)
-                                .withProjectionColumns(
-                                        new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "rootProductCategory")
-                                ).withConnection("contentTypeJoin")
                 )
                 .withOutput("projectionNode")
-                .withDimensions(Arrays.asList(new Dimension("status", Cardinality.Int, ColumnType.String), new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String)))
+                .withDimensions(Arrays.asList(new Dimension("status", Cardinality.Int, ColumnType.String), new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

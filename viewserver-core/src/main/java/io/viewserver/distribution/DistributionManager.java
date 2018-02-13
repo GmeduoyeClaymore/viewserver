@@ -214,7 +214,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
                 final List<IUpdateDimensionMapCommand.IDimension> dimensions = dataSourceBuilder.getDimensions();
                 for (Dimension dimension : dataSource.getDimensions()) {
                     // special cases that don't require a map
-                    if (dimension.getType() == ColumnType.Bool || dimension.getType() == ColumnType.NullableBool) {
+                    if (dimension.getColumnType() == ColumnType.Bool || dimension.getColumnType() == ColumnType.NullableBool) {
                         continue;
                     }
 
@@ -227,7 +227,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
                             .setName(dimension.getName());
 
                     final List<IUpdateDimensionMapCommand.IMapping> mappings = dimensionBuilder.getMappings();
-                    switch (dimension.getType()) {
+                    switch (dimension.getColumnType()) {
                         case Byte: {
                             while (allValues.hasNext()) {
                                 byte value = ((ByteIterator) allValues).next();
@@ -290,7 +290,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
                         }
                         default: {
                             log.warn("Unsupported dimension type '{}' for dimension '{}' in data source '{}'",
-                                    dimension.getType(), dimension.getName(), dataSource.getName());
+                                    dimension.getColumnType(), dimension.getName(), dataSource.getName());
                         }
                     }
                     dimensions.add(dimensionBuilder);
@@ -584,7 +584,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
             IUpdateDimensionMapCommand.IDimension dimensionBuilder = MessagePool.getInstance().get(IUpdateDimensionMapCommand.IDimension.class)
                     .setName(dimension.getKey().getName());
             final List<IUpdateDimensionMapCommand.IMapping> mappings = dimensionBuilder.getMappings();
-            switch (dimension.getKey().getType()) {
+            switch (dimension.getKey().getColumnType()) {
                 case Byte: {
                     for (int i = 0; i < valueCount; i++) {
                         MappedDimensionValue mappedDimensionValue = values.get(i);

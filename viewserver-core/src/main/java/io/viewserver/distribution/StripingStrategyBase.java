@@ -48,7 +48,7 @@ public abstract class StripingStrategyBase implements IStripingStrategy {
 
     @Override
     public void onNodeAdded(ViewServerNode node) {
-//        if (node.getType().equals(InitialiseSlaveCommandMessage.InitialiseSlaveCommandDto.SlaveType.AGGREGATOR)) {
+//        if (node.getColumnType().equals(InitialiseSlaveCommandMessage.InitialiseSlaveCommandDto.SlaveType.AGGREGATOR)) {
 //            if (nodes.size() == 0) {
 //                log.debug("Node {} added as first node", node);
 //                nodes.add(node);
@@ -63,7 +63,7 @@ public abstract class StripingStrategyBase implements IStripingStrategy {
 
     @Override
     public void onNodeRemoved(ViewServerNode node) {
-//        if (node.getType().equals(InitialiseSlaveCommandMessage.InitialiseSlaveCommandDto.SlaveType.AGGREGATOR)) {
+//        if (node.getColumnType().equals(InitialiseSlaveCommandMessage.InitialiseSlaveCommandDto.SlaveType.AGGREGATOR)) {
 //            log.debug("Node {} removed", node);
 //            removedNodes.add(node);
 //        }
