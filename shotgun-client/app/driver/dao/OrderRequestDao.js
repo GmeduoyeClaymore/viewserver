@@ -27,7 +27,7 @@ export default class OrderRequestDaoContext{
     return {
       reportId: 'orderRequest',
       dimensions: {
-        contentTypeIdString: ['3']
+        contentTypeIdString: [2]
       },
       parameters: {
         noRequiredForOffload,

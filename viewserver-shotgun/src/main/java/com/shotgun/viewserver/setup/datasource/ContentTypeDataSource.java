@@ -48,10 +48,10 @@ public class
                 .withSchema(schema
                 )
                 .withCalculatedColumns(
-                        new CalculatedColumn("contentTypeIdString", ColumnType.String, "text(contentTypeId)")
+                        new CalculatedColumn("contentTypeIdString", ColumnType.Int, "contentTypeId")
                 )
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.String, true)))
+                .withDimensions(Arrays.asList(new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

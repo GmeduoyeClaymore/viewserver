@@ -78,7 +78,7 @@ public class
                 )
 
                 .withOutput("projectionNode")
-                .withDimensions(Arrays.asList(/*new Dimension("status", Cardinality.Int, ColumnType.String),*/ new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.String, true)))
+                .withDimensions(Arrays.asList(/*new Dimension("status", Cardinality.Int, ColumnType.String),*/ new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }
