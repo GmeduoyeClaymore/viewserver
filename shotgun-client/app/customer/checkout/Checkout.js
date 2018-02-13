@@ -33,7 +33,7 @@ export default class Checkout extends Component {
       <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/AddressLookup'} exact render={() => <AddressLookup {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...customerProps} context={this}/>} />
-      <Redirect to={'/Customer/Checkout/ContentTypeSelect'}/>
+      <Redirect to={'/Customer/Checkout/VehicleSelect'}/>
     </Switch>;
   }
 }

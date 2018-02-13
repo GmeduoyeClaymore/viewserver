@@ -21,7 +21,7 @@ class VehicleSelect extends Component {
 
   render() {
     const {navigationStrategy, vehicles, context, busy} = this.props;
-    const {orderItem} = context.state;
+    const {orderItem, selectedProduct} = context.state;
 
     const onSelectVehicle = (selectedProduct) => {
       context.setState({orderItem: {...orderItem, productId: selectedProduct.productId}, selectedProduct});
@@ -55,6 +55,7 @@ class VehicleSelect extends Component {
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
+        <Text note style={{marginTop: 10}}>{selectedProduct !== undefined ? selectedProduct.description : null}</Text>
       </Content>
     </Container>;
   }
@@ -67,7 +68,8 @@ const validationSchema = {
 const styles = {
   subTitle: {
     marginTop: 25,
-    marginBottom: 30
+    marginBottom: 30,
+    fontSize: 13
   },
   vehicleSelectText: {
     width: '100%',

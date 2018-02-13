@@ -23,37 +23,13 @@ public class CustomerOrderSummaryReport {
                                 new FilterNode("orderFilter")
                                         .withExpression("userId == \"{userId}\" && status != \"CANCELLED\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
-                                new JoinNode("orderItemsJoin")
-                                        .withLeftJoinColumns("orderId")
-                                        .withRightJoinColumns("orderId")
-                                        .withConnection("orderFilter", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("productJoin")
-                                        .withLeftJoinColumns("productId")
-                                        .withRightJoinColumns("productId")
-                                        .withColumnPrefixes("", "product_")
-                                        .withAlwaysResolveNames()
-                                        .withConnection("orderItemsJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("contentTypeJoin")
-                                        .withLeftJoinColumns("contentTypeId")
-                                        .withRightJoinColumns("contentTypeId")
-                                        .withColumnPrefixes("", "contentType_")
-                                        .withAlwaysResolveNames()
-                                        .withConnection("productJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("deliveryJoin")
-                                        .withLeftJoinColumns("deliveryId")
-                                        .withRightJoinColumns("deliveryId")
-                                        .withConnection("contentTypeJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("driverJoin")
                                         .withLeftJoinColumns("driverId")
                                         .withLeftJoinOuter()
                                         .withRightJoinColumns("userId")
                                         .withColumnPrefixes("", "driver_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("deliveryJoin", Constants.OUT, "left")
+                                        .withConnection("orderFilter", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("vehicleJoin")
                                         .withLeftJoinColumns("driverId")

@@ -26,6 +26,9 @@ export default class OrderRequestDaoContext{
   getReportContext({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
     return {
       reportId: 'orderRequest',
+      dimensions: {
+        rootProductCategory: ['1Vans']
+      },
       parameters: {
         contentTypeId,
         noRequiredForOffload,

@@ -1,12 +1,13 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.execution.nodes.JoinNode;
+import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.projection.IProjectionConfig;
 
 import java.util.Arrays;
 
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * Created by bennett on 26/09/17.
  */
 public class
-OrderDataSource {
+        OrderDataSource {
     public static final String NAME = "order";
 
     public static DataSource getDataSource() {
@@ -42,8 +43,41 @@ OrderDataSource {
                                 null
                         )
                 )
+                .withColumnToDatasourceMappings("rootProductCategory", ContentTypeDataSource.NAME)
                 .withSchema(schema)
-                .withOutput(NAME)
+                .withNodes(
+                        new JoinNode("deliveryJoin")
+                                .withLeftJoinColumns("deliveryId")
+                                .withRightJoinColumns("deliveryId")
+                                .withConnection(OrderDataSource.NAME, Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
+                        new JoinNode("orderItemsJoin")
+                                .withLeftJoinColumns("orderId")
+                                .withRightJoinColumns("orderId")
+                                .withConnection("deliveryJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
+                        new JoinNode("contentTypeJoin")
+                                .withLeftJoinColumns("contentTypeId")
+                                .withRightJoinColumns("contentTypeId")
+                                .withAlwaysResolveNames()
+                                .withColumnPrefixes("", "contentType_")
+                                .withConnection("orderItemsJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
+                      /*  new JoinNode("productJoin")
+                                .withLeftJoinColumns("productId")
+                                .withRightJoinColumns("productId")
+                                .withColumnPrefixes("", "product_")
+                                .withAlwaysResolveNames()
+                                .withConnection("contentTypeJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),*/
+                        new ProjectionNode("projectionNode")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "rootProductCategory")
+                                ).withConnection("contentTypeJoin")
+                )
+                .withOutput("projectionNode")
+                .withDimensions(Arrays.asList(new Dimension("status", Cardinality.Int, ColumnType.String), new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

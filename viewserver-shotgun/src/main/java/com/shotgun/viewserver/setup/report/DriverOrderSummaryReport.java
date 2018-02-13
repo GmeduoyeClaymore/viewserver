@@ -20,46 +20,19 @@ public class DriverOrderSummaryReport {
                         .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("status != \"CANCELLED\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
+                                        .withExpression("status != \"CANCELLED\" && if(\"{userId}\" != \"\", driverId == \"{userId}\", orderId != null) && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
                                         .withConnection("#input", null, Constants.IN),
                                 new JoinNode("customerJoin")
                                         .withLeftJoinColumns("userId")
                                         .withRightJoinColumns("userId")
                                         .withConnection("orderFilter", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("orderItemsJoin")
-                                        .withLeftJoinColumns("orderId")
-                                        .withRightJoinColumns("orderId")
-                                        .withConnection("customerJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("productJoin")
-                                        .withLeftJoinColumns("productId")
-                                        .withRightJoinColumns("productId")
-                                        .withColumnPrefixes("", "product_")
-                                        .withAlwaysResolveNames()
-                                        .withConnection("orderItemsJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("contentTypeJoin")
-                                        .withLeftJoinColumns("contentTypeId")
-                                        .withRightJoinColumns("contentTypeId")
-                                        .withAlwaysResolveNames()
-                                        .withColumnPrefixes("", "contentType_")
-                                        .withConnection("productJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("deliveryJoin")
-                                        .withLeftJoinColumns("deliveryId")
-                                        .withRightJoinColumns("deliveryId")
-                                        .withConnection("contentTypeJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
-                                new FilterNode("driverIdFilter")
-                                        .withExpression("if(\"{userId}\" != \"\", driverId == \"{userId}\", orderId != null)")
-                                        .withConnection("deliveryJoin"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("driverIdFilter", Constants.OUT, "left")
+                                        .withConnection("customerJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")

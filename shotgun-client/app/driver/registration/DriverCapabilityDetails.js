@@ -34,7 +34,7 @@ class DriverCapabilityDetails extends Component{
     const {context, client, vehicle} = this.props;
     try {
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
-      context.setState({vehicle: vehicleDetails, errors: ''});
+      context.setState({vehicle: {...vehicle, ...vehicleDetails}, errors: ''});
     } catch (error){
       context.setState({errors: error});
     }
@@ -43,7 +43,7 @@ class DriverCapabilityDetails extends Component{
 
   printDimensions(){
     const {dimensions} = this.props;
-    return `${Math.floor(dimensions.height / 1000)}m  x ${Math.floor(dimensions.width / 1000)}m x ${Math.floor(dimensions.length / 1000)}m`;
+    return `${(dimensions.height / 1000).toFixed(1)}m  x ${(dimensions.width / 1000).toFixed(1)}m x ${(dimensions.length / 1000).toFixed(1)}m`;
   }
 
   render(){

@@ -23,27 +23,11 @@ public class OrderRequestReport {
                         .withParameter("driverLongitude", "Driver Longitude", double[].class)
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
                         .withNodes(
-                                new JoinNode("deliveryJoin")
-                                        .withLeftJoinColumns("deliveryId")
-                                        .withRightJoinColumns("deliveryId")
-                                        .withConnection("#input", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("orderItemJoin")
-                                        .withLeftJoinColumns("orderId")
-                                        .withRightJoinColumns("orderId")
-                                        .withConnection("deliveryJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("contentTypeJoin")
-                                        .withLeftJoinColumns("contentTypeId")
-                                        .withRightJoinColumns("contentTypeId")
-                                        .withColumnPrefixes("", "contentType_")
-                                        .withConnection("orderItemJoin", Constants.OUT, "left")
-                                        .withAlwaysResolveNames()
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("orderFilter")
                                       /*  .withExpression("status == \"PLACED\" && vehicleTypeId == \"{vehicleTypeId}\" && noRequiredForOffload <= {noRequiredForOffload}")*/
+                                    /*    .withExpression("contentTypeId == \"{contentTypeId}\" &&  *//*(productId in [\"1SmallVan\", \"2MediumVan\", \"4Luton\"])*//* && status == \"PLACED\"")*/
                                         .withExpression("contentTypeId == \"{contentTypeId}\" && status == \"PLACED\"")
-                                        .withConnection("contentTypeJoin"),
+                                        .withConnection("#input", null, Constants.IN),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")

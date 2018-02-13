@@ -18,6 +18,7 @@ public class User{
     private String stripeDefaultSourceId;
     private int chargePercentage;
     private String selectedContentTypes;
+    private String selectedProducts;
     private String imageUrl;
     private String imageData;
 
@@ -147,6 +148,14 @@ public class User{
 
     public String getSelectedContentTypes() {
         return selectedContentTypes;
+    }
+
+    public String getSelectedProducts() {
+        return selectedProducts;
+    }
+
+    public void setSelectedProducts(String selectedProducts) {
+        this.selectedProducts = selectedProducts;
     }
 
     public String getFcmToken() {
