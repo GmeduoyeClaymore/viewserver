@@ -47,8 +47,11 @@ public class
                 )
                 .withSchema(schema
                 )
+                .withCalculatedColumns(
+                        new CalculatedColumn("contentTypeIdString", ColumnType.String, "text(contentTypeId)")
+                )
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String,true)))
+                .withDimensions(Arrays.asList(new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

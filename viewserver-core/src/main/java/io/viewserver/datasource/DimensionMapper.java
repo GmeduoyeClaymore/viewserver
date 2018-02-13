@@ -69,7 +69,8 @@ public class DimensionMapper extends DimensionMapperBase {
                 return mapShort(dataSource, dimension, (short) value);
             }
             case Int: {
-                return mapInt(dataSource, dimension, (int) value);
+                int i = mapInt(dataSource, dimension, value instanceof Integer ? ((Integer) value).intValue() : (int) value);
+                return i;
             }
             case Long: {
                 return mapLong(dataSource, dimension, (long) value);

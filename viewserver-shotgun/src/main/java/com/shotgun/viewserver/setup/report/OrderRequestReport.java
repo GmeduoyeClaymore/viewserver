@@ -17,16 +17,13 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("contentTypeId", "Content Type Id", String[].class)
                         .withParameter("noRequiredForOffload", "Number required for offload", int[].class)
                         .withParameter("driverLatitude", "Driver Latitude", double[].class)
                         .withParameter("driverLongitude", "Driver Longitude", double[].class)
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                      /*  .withExpression("status == \"PLACED\" && vehicleTypeId == \"{vehicleTypeId}\" && noRequiredForOffload <= {noRequiredForOffload}")*/
-                                    /*    .withExpression("contentTypeId == \"{contentTypeId}\" &&  *//*(productId in [\"1SmallVan\", \"2MediumVan\", \"4Luton\"])*//* && status == \"PLACED\"")*/
-                                        .withExpression("contentTypeId == \"{contentTypeId}\" && status == \"PLACED\"")
+                                        .withExpression("status == status")
                                         .withConnection("#input", null, Constants.IN),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
@@ -34,7 +31,8 @@ public class OrderRequestReport {
                                         .withConnection("orderFilter", Constants.OUT, "left")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
+                                        //.withConnection("#input", null, Constants.IN),
+                                      .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")
                                         .withLeftJoinOuter()

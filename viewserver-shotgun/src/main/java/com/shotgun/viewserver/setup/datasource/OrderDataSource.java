@@ -66,7 +66,7 @@ public class
                         new ProjectionNode("projectionNode")
                                 .withMode(IProjectionConfig.ProjectionMode.Projection)
                                 .withProjectionColumns(
-                                        new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "rootProductCategory")
+                                        new IProjectionConfig.ProjectionColumn("contentType_contentTypeIdString", "contentTypeIdString")
                                 ).withConnection("contentTypeJoin")
                       /*  new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
@@ -76,8 +76,9 @@ public class
                                 .withConnection("contentTypeJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),*/
                 )
+
                 .withOutput("projectionNode")
-                .withDimensions(Arrays.asList(new Dimension("status", Cardinality.Int, ColumnType.String), new Dimension("rootProductCategory", Cardinality.Int, ColumnType.String, true)))
+                .withDimensions(Arrays.asList(/*new Dimension("status", Cardinality.Int, ColumnType.String),*/ new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }
