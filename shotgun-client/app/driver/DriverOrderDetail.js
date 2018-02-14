@@ -16,9 +16,7 @@ class DriverOrderDetail extends Component{
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
       dispatch(updateSubscriptionAction('orderSummaryDao', {
-        userId: undefined,
         orderId,
-        isCompleted: '',
         reportId: 'driverOrderSummary'
       }));
     }

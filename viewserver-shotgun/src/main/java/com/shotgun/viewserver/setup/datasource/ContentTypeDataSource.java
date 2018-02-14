@@ -45,13 +45,10 @@ public class
                                 null
                         )
                 )
-                .withSchema(schema
-                )
-                .withCalculatedColumns(
-                        new CalculatedColumn("contentTypeIdString", ColumnType.Int, "contentTypeId")
-                )
+                .withSchema(schema)
+                .withCalculatedColumns(new CalculatedColumn("dimension_contentTypeId", ColumnType.Int, "contentTypeId"))
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.Int, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId", Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

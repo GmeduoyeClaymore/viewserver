@@ -11,10 +11,9 @@ const DriverOrders = ({history, isCompleted, userId}) => {
   const {location} = history;
 
   const reportOptions = {
-    isCompleted: isCompleted ? OrderStatuses.COMPLETED : 'INCOMPLETE',
+    isCompleted,
     columnsToSort: [{ name: 'from', direction: 'asc' }],
-    orderId: undefined,
-    userId,
+    driverId: userId,
     reportId: 'driverOrderSummary'};
 
   const Paging = () => <Spinner />;

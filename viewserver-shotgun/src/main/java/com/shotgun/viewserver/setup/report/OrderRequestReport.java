@@ -23,7 +23,7 @@ public class OrderRequestReport {
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
-                                        .withExpression("status == status")
+                                        .withExpression("status == \"PLACED\"")
                                         .withConnection("#input", null, Constants.IN),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
@@ -31,8 +31,7 @@ public class OrderRequestReport {
                                         .withConnection("orderFilter", Constants.OUT, "left")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        //.withConnection("#input", null, Constants.IN),
-                                      .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")
                                         .withLeftJoinOuter()

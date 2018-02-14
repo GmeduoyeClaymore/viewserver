@@ -13,7 +13,6 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
   const reportOptions = {
     isCompleted,
     userId,
-    orderId: undefined,
     columnsToSort: [{ name: 'from', direction: 'asc' }],
     reportId: 'customerOrderSummary'};
 
@@ -58,7 +57,7 @@ const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
   return {
     ...initialProps,
-    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : 'INCOMPLETE',
+    isCompleted: navigationProps.isCompleted,
     busy: isAnyLoading(state, ['orderSummaryDao']),
   };
 };

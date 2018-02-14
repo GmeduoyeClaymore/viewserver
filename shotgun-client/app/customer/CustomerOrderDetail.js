@@ -27,7 +27,6 @@ class CustomerOrderDetail extends Component{
       dispatch(updateSubscriptionAction('orderSummaryDao', {
         userId,
         orderId,
-        isCompleted: '',
         reportId: 'customerOrderSummary'
       }));
     }

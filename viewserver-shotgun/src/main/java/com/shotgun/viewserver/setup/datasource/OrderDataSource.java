@@ -30,8 +30,7 @@ public class
                         new Column("userId", "userId", ColumnType.String),
                         new Column("paymentId", "paymentId", ColumnType.String),
                         new Column("deliveryId", "deliveryId", ColumnType.String),
-                        new Column("totalPrice", "totalPrice", ColumnType.Double)/*,
-                        new Column("rootProductCategory", "rootProductCategory", ColumnType.String)*/
+                        new Column("totalPrice", "totalPrice", ColumnType.Double)
                 ))
                 .withKeyColumns("orderId");
 
@@ -63,22 +62,32 @@ public class
                                 .withColumnPrefixes("", "contentType_")
                                 .withConnection("orderItemsJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
-                        new ProjectionNode("projectionNode")
-                                .withMode(IProjectionConfig.ProjectionMode.Projection)
-                                .withProjectionColumns(
-                                        new IProjectionConfig.ProjectionColumn("contentType_contentTypeIdString", "contentTypeIdString")
-                                ).withConnection("contentTypeJoin")
-                      /*  new JoinNode("productJoin")
+                        new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
                                 .withRightJoinColumns("productId")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
                                 .withConnection("contentTypeJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),*/
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
+                        new ProjectionNode("projectionNode")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"))
+                                .withConnection("productJoin")
                 )
 
                 .withOutput("projectionNode")
-                .withDimensions(Arrays.asList(/*new Dimension("status", Cardinality.Int, ColumnType.String),*/ new Dimension("contentTypeIdString", Cardinality.Int, ColumnType.Int, true)))
+                .withCalculatedColumns(
+                        new CalculatedColumn("dimension_status", ColumnType.String, "status"),
+                        new CalculatedColumn("dimension_orderId", ColumnType.String, "orderId"),
+                        new CalculatedColumn("dimension_userId", ColumnType.String, "userId")
+                )
+                .withDimensions(Arrays.asList(
+                        new Dimension("dimension_orderId", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_userId", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true),
+                        new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true),
+                        new Dimension("dimension_status", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_contentTypeId", Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

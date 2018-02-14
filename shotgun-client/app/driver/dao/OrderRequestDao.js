@@ -5,8 +5,7 @@ export default class OrderRequestDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
-    filterMode: 2,
-    isCompleted: ''
+    filterMode: 2
   };
 
   constructor(client, options = {}) {
@@ -27,7 +26,7 @@ export default class OrderRequestDaoContext{
     return {
       reportId: 'orderRequest',
       dimensions: {
-        contentTypeIdString: [2]
+        dimension_contentTypeId: [contentTypeId]
       },
       parameters: {
         noRequiredForOffload,

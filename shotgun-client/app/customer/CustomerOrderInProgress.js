@@ -26,7 +26,6 @@ class CustomerOrderInProgress extends Component{
     const {dispatch, orderId, userId} = this.props;
     dispatch(updateSubscriptionAction('orderSummaryDao', {
       userId,
-      isCompleted: '',
       orderId,
       reportId: 'customerOrderSummary'
     }));

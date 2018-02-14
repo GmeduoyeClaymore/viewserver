@@ -590,8 +590,8 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             final int addCount = adds.size();
             if (addCount > 0) {
                 EWAHCompressedBitmap index = indices.get(value);
-                final int[] addsArray = getAdds(addCount);
-                adds.toArray(addsArray);
+                //final int[] addsArray = getAdds(addCount);
+                final int[] addsArray = adds.toArray();
                 int[] sortedAdds = RadixSort.sort2(addsArray, addCount);
                 if (index != null) {
                     indices.put(value, index.or(EWAHCompressedBitmap.bitmapOf(sortedAdds)));
@@ -603,6 +603,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             return true;
         }
 
+        /*This seems to be adding an extra entry to some arrays and causing 0 to be added to indices to which is shouldn't belong
         private int[] getAdds(int size) {
             if (this.adds == null || this.adds.length < size) {
                 int adjustedSize = Integer.highestOneBit(size);
@@ -612,7 +613,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 this.adds = new int[adjustedSize];
             }
             return this.adds;
-        }
+        }*/
 
         private boolean applyRemoves(int value, TIntArrayList removes) {
             if (removes.size() > 0) {

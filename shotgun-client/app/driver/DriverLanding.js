@@ -30,7 +30,7 @@ class DriverLanding extends Component {
   componentWillReceiveProps(newProps){
     this.loadData(newProps);
   }
-  
+
   loadData(newProps){
     if (!this.hasLoadedData ){
       const {dispatch, client, userId, user} = newProps;
@@ -60,7 +60,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
-          <Redirect to={'/Driver/DriverOrderRequests'}/>
+          <Redirect to={'/Driver/DriverOrders'}/>
         </Switch>
         <DriverMenuBar/>
       </Container>;

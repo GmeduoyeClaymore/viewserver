@@ -29,8 +29,6 @@ class DriverOrderInProgress extends Component{
   componentWillMount(){
     const {dispatch, orderId, position} = this.props;
     dispatch(updateSubscriptionAction('orderSummaryDao', {
-      userId: undefined,
-      isCompleted: '',
       orderId,
       reportId: 'driverOrderSummary'
     }));

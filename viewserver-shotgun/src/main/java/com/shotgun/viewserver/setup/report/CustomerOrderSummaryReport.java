@@ -16,27 +16,19 @@ public class CustomerOrderSummaryReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "customerOrderSummary")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("userId", "User Id", String[].class)
-                        .withParameter("isCompleted", "Is Order Complete", String[].class)
-                        .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
-                                new FilterNode("orderFilter")
-                                        .withExpression("userId == \"{userId}\" && status != \"CANCELLED\" && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
-                                        .withConnection("#input", null, Constants.IN),
                                 new JoinNode("driverJoin")
                                         .withLeftJoinColumns("driverId")
                                         .withLeftJoinOuter()
                                         .withRightJoinColumns("userId")
                                         .withColumnPrefixes("", "driver_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection("#input", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("vehicleJoin")
                                         .withLeftJoinColumns("driverId")
                                         .withLeftJoinOuter()
                                         .withRightJoinColumns("userId")
-                                      /*  .withColumnPrefixes("", "vehicle_")
-                                        .withAlwaysResolveNames()*/
                                         .withConnection("driverJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(VehicleDataSource.NAME, VehicleDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")

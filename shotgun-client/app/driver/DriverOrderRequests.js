@@ -6,7 +6,7 @@ import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-b
 import {getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, position, busy, selectedContentTypes, selectedContentType = {}, contentTypeId}) => {
+const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, position, busy, selectedContentTypes, selectedProducts, selectedContentType = {}, contentTypeId}) => {
   if (busy){
     return <LoadingScreen text="Loading Map" />;
   }
@@ -18,6 +18,7 @@ const DriverOrderRequests = ({history, selectedContentTypeIndex, vehicle = {}, p
 
   const reportOptions = {
     contentTypeId,
+    selectedProducts,
     noRequiredForOffload,
     maxDistance,
     driverLatitude: position.latitude,
@@ -66,6 +67,7 @@ const mapStateToProps = (state, initialProps) => {
   let {contentTypeId} = navigationProps;
   contentTypeId = contentTypeId || (contentTypes[0] && contentTypes[0].contentTypeId);
   const selectedContentTypeIds = user ? user.selectedContentTypes.split(',').map( str => parseInt(str, 10)) : [];
+  const selectedProducts = user ? user.selectedProducts.split(',') : [];
   const selectedContentTypes = contentTypes.filter(ct => !!~selectedContentTypeIds.indexOf(ct.contentTypeId));
   const selectedContentType = contentTypes.find(ct => ct.contentTypeId === contentTypeId) || contentTypes[0];
   const selectedContentTypeIndex = selectedContentTypes.indexOf(selectedContentType);
@@ -73,6 +75,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     selectedContentTypes,
+    selectedProducts,
     contentTypeId,
     selectedContentType,
     selectedContentTypeIndex,

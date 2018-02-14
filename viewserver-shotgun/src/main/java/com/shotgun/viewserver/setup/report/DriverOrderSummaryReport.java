@@ -15,17 +15,11 @@ public class DriverOrderSummaryReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "driverOrderSummary")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("userId", "User Id", String[].class)
-                        .withParameter("isCompleted", "Is Order Complete", String[].class)
-                        .withParameter("orderId", "Order Id", String[].class)
                         .withNodes(
-                                new FilterNode("orderFilter")
-                                        .withExpression("status != \"CANCELLED\" && if(\"{userId}\" != \"\", driverId == \"{userId}\", orderId != null) && if(\"{orderId}\" != \"\", orderId == \"{orderId}\", orderId != null) && if(\"{isCompleted}\" != \"\", if(\"{isCompleted}\" == \"COMPLETED\", status == \"COMPLETED\", status != \"COMPLETED\"), orderId != null)")
-                                        .withConnection("#input", null, Constants.IN),
                                 new JoinNode("customerJoin")
                                         .withLeftJoinColumns("userId")
                                         .withRightJoinColumns("userId")
-                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection("#input", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
