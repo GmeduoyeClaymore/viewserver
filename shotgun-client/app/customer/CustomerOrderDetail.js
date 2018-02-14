@@ -3,7 +3,7 @@ import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Col} from 'native-base';
 import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {cancelOrder, rejectDriver} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
 
@@ -24,10 +24,9 @@ class CustomerOrderDetail extends Component{
   subscribeToOrderSummary(props){
     const {dispatch, orderId, orderSummary, userId} = props;
     if (orderSummary == undefined) {
-      dispatch(updateSubscriptionAction('orderSummaryDao', {
+      dispatch(resetSubscriptionAction('orderSummaryDao', {
         userId,
         orderId,
-        isCompleted: '',
         reportId: 'customerOrderSummary'
       }));
     }
@@ -107,7 +106,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     orderId,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };
 };

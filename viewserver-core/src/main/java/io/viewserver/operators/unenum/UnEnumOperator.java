@@ -81,7 +81,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
             Dimension dimension = dataSource.getDimension(columnHolder.getName());
             if (dimension != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
                     && (dimensions == null || dimensions.isEmpty() || dimensions.contains(dimension.getName()))) {
-                ColumnType type = dimension.getType().getColumnType();
+                ColumnType type = dimension.getColumnType().getColumnType();
                 if (type == ColumnType.Bool) {
                     type = ColumnType.NullableBool;
                 }

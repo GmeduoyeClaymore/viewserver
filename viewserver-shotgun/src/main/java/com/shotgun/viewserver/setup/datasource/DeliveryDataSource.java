@@ -47,6 +47,10 @@ DeliveryDataSource {
                                 .withKeyColumns("deliveryId")
                 )
                 .withOutput(NAME)
+                .withCalculatedColumns(
+                        new CalculatedColumn("dimension_driverId", ColumnType.Int, "driverId")
+                )
+                .withDimensions(Arrays.asList(new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

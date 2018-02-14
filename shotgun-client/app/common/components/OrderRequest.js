@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, ListItem, Grid, Col, Row, View} from 'native-base';
+import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import { withRouter } from 'react-router';
 import {OrderStatuses, getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';

@@ -1,5 +1,9 @@
 package com.shotgun.viewserver.delivery;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public  class Vehicle{
     private Dimensions dimensions;
     String vehicleId;
@@ -8,6 +12,7 @@ public  class Vehicle{
     String make;
     String model;
     String bodyStyle;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer numAvailableForOffload;
 
     public Vehicle() {

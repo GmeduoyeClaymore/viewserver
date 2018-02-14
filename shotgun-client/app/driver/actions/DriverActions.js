@@ -12,7 +12,7 @@ export const driverServicesRegistrationAction = (client, userId, continueWith) =
     register(dispatch, new UserDao(client), {userId});
     register(dispatch, new VehicleDao(client), {userId});
     register(dispatch, new OrderRequestDao(client));
-    register(dispatch, new OrderSummaryDao(client), {userId});
+    register(dispatch, new OrderSummaryDao(client));
     registerNakedDao(dispatch, new PaymentDao(client), {userId});
     registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
   };

@@ -53,7 +53,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                         new Column("product", io.viewserver.datasource.ColumnType.Int)
                 ));
                 dataSource.getDimensions().addAll(Arrays.asList(
-                        new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market"))
+                        new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
                 ));
 
                 DimensionMapper dimensionMapper = new DimensionMapper();
@@ -126,7 +126,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 new Column("product", io.viewserver.datasource.ColumnType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
-                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market"))
+                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
         ));
 
         DimensionMapper dimensionMapper = new DimensionMapper();
@@ -198,7 +198,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 new Column("product", io.viewserver.datasource.ColumnType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
-                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market"))
+                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
         ));
 
         DimensionMapper dimensionMapper = new DimensionMapper();
@@ -271,7 +271,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 new Column("product", io.viewserver.datasource.ColumnType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
-                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market"))
+                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
         ));
 
         DimensionMapper dimensionMapper = new DimensionMapper();

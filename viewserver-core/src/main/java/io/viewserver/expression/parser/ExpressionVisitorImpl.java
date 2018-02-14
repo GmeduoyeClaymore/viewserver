@@ -444,7 +444,7 @@ public class ExpressionVisitorImpl extends ExpressionBaseVisitor<IExpression> im
             this.columnHolder = columnHolder;
             this.dataSource = dataSource;
             this.dimension = dimension;
-            this.type = dimension.getColumn().getType().getColumnType();
+            this.type = dimension.getColumnType().getColumnType();
         }
 
         @Override

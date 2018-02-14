@@ -20,6 +20,7 @@ export default class Dao {
     this.subscribed = false;
     this.handleConnectionStatus = this.handleConnectionStatus.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
+    this.resetSubscription = this.resetSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
     this.crx = crx;//force this to load
@@ -55,6 +56,11 @@ export default class Dao {
   async resetData(){
     this.dataSink.onDataReset();
     this.subject.next();
+  }
+
+  async resetSubscription(options) {
+    this.options = this.daoContext.defaultOptions;
+    return this.updateSubscription(options);
   }
 
   async updateSubscription(options, force){

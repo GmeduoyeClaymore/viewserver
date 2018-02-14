@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
  * Created by nickc on 13/10/2014.
  */
-@JsonIgnoreProperties({ "column", "type" })
+@JsonIgnoreProperties({ "type" })
 public class Dimension {
     private boolean aggregator;
     private String name;
@@ -30,20 +30,20 @@ public class Dimension {
     private String group;
     private String plural;
     private Cardinality cardinality;
-    private Column column;
+    private ColumnType columnType;
     private boolean global;
 
     public Dimension() {
     }
 
-    public Dimension(String name, Cardinality cardinality, Column column) {
-        this(name, cardinality, column, false);
+    public Dimension(String name, Cardinality cardinality, ColumnType columnType) {
+        this(name, cardinality, columnType, false);
     }
 
-    public Dimension(String name, Cardinality cardinality, Column column, boolean global) {
+    public Dimension(String name, Cardinality cardinality, ColumnType columnType, boolean global) {
         this.name = name;
         this.cardinality = cardinality;
-        this.column = column;
+        this.columnType = columnType;
         this.global = global;
         this.aggregator = true;
     }
@@ -74,18 +74,12 @@ public class Dimension {
         this.cardinality = cardinality;
     }
 
-    @JsonIgnore
-    public Column getColumn() {
-        return column;
+    public ColumnType getColumnType() {
+        return columnType;
     }
 
-    public void setColumn(Column column) {
-        this.column = column;
-    }
-
-    @JsonIgnore
-    public ColumnType getType() {
-        return column.getType();
+    public void setColumnType(ColumnType columnType) {
+        this.columnType = columnType;
     }
 
     public String getLabel() {

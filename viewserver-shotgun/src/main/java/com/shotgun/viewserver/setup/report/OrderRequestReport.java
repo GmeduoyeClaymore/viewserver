@@ -17,33 +17,14 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("contentTypeId", "Content Type Id", String[].class)
                         .withParameter("noRequiredForOffload", "Number required for offload", int[].class)
                         .withParameter("driverLatitude", "Driver Latitude", double[].class)
                         .withParameter("driverLongitude", "Driver Longitude", double[].class)
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
                         .withNodes(
-                                new JoinNode("deliveryJoin")
-                                        .withLeftJoinColumns("deliveryId")
-                                        .withRightJoinColumns("deliveryId")
-                                        .withConnection("#input", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryDataSource.NAME, DeliveryDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("orderItemJoin")
-                                        .withLeftJoinColumns("orderId")
-                                        .withRightJoinColumns("orderId")
-                                        .withConnection("deliveryJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(OrderItemsDataSource.NAME, OrderItemsDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("contentTypeJoin")
-                                        .withLeftJoinColumns("contentTypeId")
-                                        .withRightJoinColumns("contentTypeId")
-                                        .withColumnPrefixes("", "contentType_")
-                                        .withConnection("orderItemJoin", Constants.OUT, "left")
-                                        .withAlwaysResolveNames()
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "right"),
                                 new FilterNode("orderFilter")
-                                      /*  .withExpression("status == \"PLACED\" && vehicleTypeId == \"{vehicleTypeId}\" && noRequiredForOffload <= {noRequiredForOffload}")*/
-                                        .withExpression("contentTypeId == \"{contentTypeId}\" && status == \"PLACED\"")
-                                        .withConnection("contentTypeJoin"),
+                                        .withExpression("status == \"PLACED\"")
+                                        .withConnection("#input", null, Constants.IN),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")

@@ -3,7 +3,7 @@ import {Dimensions, Image} from 'react-native';
 import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -24,9 +24,8 @@ class CustomerOrderInProgress extends Component{
 
   componentWillMount(){
     const {dispatch, orderId, userId} = this.props;
-    dispatch(updateSubscriptionAction('orderSummaryDao', {
+    dispatch(resetSubscriptionAction('orderSummaryDao', {
       userId,
-      isCompleted: '',
       orderId,
       reportId: 'customerOrderSummary'
     }));
@@ -157,7 +156,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     orderId,
     errors: getOperationError(state, 'customerDao', 'callDriver' ),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
     orderSummary
   };
 };

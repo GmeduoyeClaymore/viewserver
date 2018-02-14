@@ -42,7 +42,7 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
             throw new IllegalStateException(String.format("%s has already been registered as a dimension", key));
         }
 
-        switch (dimension.getColumn().getType()) {
+        switch (dimension.getColumnType()) {
             case Bool:
             case NullableBool: {
                 break;
@@ -68,7 +68,7 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
                 break;
             }
             default: {
-                throw new IllegalArgumentException(String.format("Invalid dimension type '%s'", dimension.getColumn().getType()));
+                throw new IllegalArgumentException(String.format("Invalid dimension type '%s'", dimension.getColumnType()));
             }
         }
     }

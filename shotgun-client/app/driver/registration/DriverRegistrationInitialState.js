@@ -37,7 +37,7 @@ export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
-    email: 'test8@test.com',
+    email: 'test7@test.com',
     contactNo: '07733362799',
     type: 'driver',
     password: 'password',
@@ -56,7 +56,7 @@ export const INITIAL_STATE = {
   },
 
   vehicle: {
-    registrationNumber: 'nx01ert',
+    registrationNumber: 'ab01asd',
     colour: 'blue',
     make: 'Ford',
     model: 'Transit',

@@ -170,7 +170,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                             throw new OperatorConfigurationException(getOwner(), String.format("Cannot sort on column '%s' as it does not exist", columnToSort.getName()));
                         } else {
                             sortColumnHolders[i] = getProducer().getSchema().getColumnHolder(pendingSortDescriptor.columnsToSort.get(i).name);
-//                            ((IWritableColumn)sortColumnHolders[i].getColumn()).storePreviousValues();
+//                            ((IWritableColumn)sortColumnHolders[i].getColumnType()).storePreviousValues();
                             i++;
                         }
                     }

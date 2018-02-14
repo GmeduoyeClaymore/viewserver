@@ -52,7 +52,7 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
             for (int j = 0; j < mappedValues.length; j++) {
                 final Object value;
                 if (values instanceof ValueLists.IBooleanList) {
-                    if (dimension.getColumn().getType() == ColumnType.NullableBool) {
+                    if (dimension.getColumnType() == ColumnType.NullableBool) {
                         value = NullableBool.fromBoolean(((ValueLists.IBooleanList) values).get(j));
                         // commenting out the following, as I can't see a path that gets us to here - the report context
                         // has no capability for dealing with nullable booleans as it stands

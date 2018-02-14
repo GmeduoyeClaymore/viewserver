@@ -52,6 +52,7 @@ public class UserController {
             row.setString("firstName", user.getFirstName());
             row.setString("lastName", user.getLastName());
             row.setString("selectedContentTypes", user.getSelectedContentTypes());
+            row.setString("selectedProducts", user.getSelectedProducts());
             row.setString("password", ControllerUtils.encryptPassword(user.getPassword()));
             row.setString("contactNo", (String) nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
             row.setString("email", user.getEmail().toLowerCase());

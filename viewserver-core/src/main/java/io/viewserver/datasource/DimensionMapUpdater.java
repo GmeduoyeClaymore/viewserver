@@ -59,7 +59,7 @@ public class DimensionMapUpdater {
                 for (int k = 0; k < mappingCount; k++) {
                     IUpdateDimensionMapCommand.IMapping mappingDto = mappings.get(k);
                     int id = mappingDto.getId();
-                    switch (dimension.getType()) {
+                    switch (dimension.getColumnType()) {
                         case Byte: {
                             dimensionMapper.mapByte(dataSource, dimension, (byte) mappingDto.getIntegerValue(), id);
                             break;
@@ -81,7 +81,7 @@ public class DimensionMapUpdater {
                             break;
                         }
                         default: {
-                            log.warn("Unsupported dimension type '{}' for dimension '{}' in map update message", dimension.getType(), dimension.getName());
+                            log.warn("Unsupported dimension type '{}' for dimension '{}' in map update message", dimension.getColumnType(), dimension.getName());
                         }
                     }
                     mappingDto.release();

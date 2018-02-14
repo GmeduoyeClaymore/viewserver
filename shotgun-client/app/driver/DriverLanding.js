@@ -30,7 +30,7 @@ class DriverLanding extends Component {
   componentWillReceiveProps(newProps){
     this.loadData(newProps);
   }
-  
+
   loadData(newProps){
     if (!this.hasLoadedData ){
       const {dispatch, client, userId, user} = newProps;

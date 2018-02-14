@@ -2,6 +2,9 @@ package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.constants.VanProducts;
+import com.shotgun.viewserver.constants.VanVolumes;
+import com.shotgun.viewserver.constants.VehicleBodyStyles;
 import com.shotgun.viewserver.delivery.Vehicle;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
@@ -12,12 +15,16 @@ import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Controller(name = "vehicleController")
 public class VehicleController {
     private static final Logger log = LoggerFactory.getLogger(VehicleController.class);
 
     @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
-    public String addOrUpdateVehicle(Vehicle vehicle){
+    public String addOrUpdateVehicle(Vehicle vehicle) {
         try {
             log.debug("addOrUpdateUser vehicle");
             KeyedTable vehicleTable = ControllerUtils.getKeyedTable(TableNames.VEHICLE_TABLE_NAME);
@@ -39,7 +46,7 @@ public class VehicleController {
                 row.setString("dimensions", ControllerUtils.toString(vehicle.getDimensions()));
                 row.setString("bodyStyle", vehicle.getBodyStyle());
 
-                if(vehicle.getNumAvailableForOffload() != null) {
+                if (vehicle.getNumAvailableForOffload() != null) {
                     row.setInt("numAvailableForOffload", vehicle.getNumAvailableForOffload());
                 }
             };
@@ -53,9 +60,27 @@ public class VehicleController {
                 log.debug("Updated vehicle: " + newVehicleId);
                 return newVehicleId;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("There was a problem updating the vehicle", e);
             throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> getValidProductsVehicle(Vehicle vehicle) {
+        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", vehicle.getDimensions().getVolumeMetresCubed()));
+
+        if (vehicle.getDimensions().getVolumeMetresCubed() < VanVolumes.MediumVan) {
+            log.debug("This is the volume of small van");
+            return Arrays.asList(VanProducts.SmallVan);
+        } else if (vehicle.getDimensions().getVolumeMetresCubed() < VanVolumes.LargeVan) {
+            log.debug("This is the volume of medium van");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan);
+        } else if (vehicle.getDimensions().getVolumeMetresCubed() < VanVolumes.Luton){
+            log.debug("This is the volume of large van");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan);
+        } else {
+            log.debug("This is the volume of luton");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan, VanProducts.Luton);
         }
     }
 

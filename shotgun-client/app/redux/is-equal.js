@@ -42,7 +42,7 @@ const isArrayEqual = (arrayA, arrayB) => {
  * @return {boolean}        true if the values are considered equal; otherwise, false.
  */
 export const isEqual = (objA, objB, deep, ignoreFuncs) => {
-  if(ignoreFuncs){
+  if (ignoreFuncs){
     objA = filterFunctions(objA);
     objB = filterFunctions(objB);
   }

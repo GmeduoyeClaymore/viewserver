@@ -40,6 +40,7 @@ public class
                                 new Column("password", "password", ColumnType.String),
                                 new Column("contactNo", "contactNo", ColumnType.String),
                                 new Column("selectedContentTypes", "selectedContentTypes", ColumnType.String),
+                                new Column("selectedProducts", "selectedProducts", ColumnType.String),
                                 new Column("email", "email", ColumnType.String),
                                 new Column("type", "type", ColumnType.String),
                                 new Column("contentTypes", "contentTypes", ColumnType.String),

@@ -56,7 +56,7 @@ public class DistributedAggregationsTestSetup {
                         (
                                 Arrays.asList
                                         (
-                                                new Dimension("customer", Cardinality.Int, schema.getColumn("customer"))
+                                                new Dimension("customer", Cardinality.Int, schema.getColumn("customer").getType())
                                         )
                         )
                 .withDistributionMode(DistributionMode.Striped)

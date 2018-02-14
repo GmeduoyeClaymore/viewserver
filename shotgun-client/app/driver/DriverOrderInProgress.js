@@ -3,7 +3,7 @@ import {Dimensions, Linking} from 'react-native';
 import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -28,9 +28,7 @@ class DriverOrderInProgress extends Component{
 
   componentWillMount(){
     const {dispatch, orderId, position} = this.props;
-    dispatch(updateSubscriptionAction('orderSummaryDao', {
-      userId: undefined,
-      isCompleted: '',
+    dispatch(resetSubscriptionAction('orderSummaryDao', {
       orderId,
       reportId: 'driverOrderSummary'
     }));
@@ -153,7 +151,7 @@ const mapStateToProps = (state, initialProps) => {
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const position = getDaoState(state, ['position'], 'userDao');
-  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]);
+  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]);
 
   return {
     ...initialProps,
@@ -161,7 +159,7 @@ const mapStateToProps = (state, initialProps) => {
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
     orderSummary
   };
 };

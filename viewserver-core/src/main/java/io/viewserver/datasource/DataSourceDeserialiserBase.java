@@ -42,25 +42,7 @@ public abstract class DataSourceDeserialiserBase<T extends IDataSource> extends 
     protected T doDeserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         T dataSource = (T) defaultDeserialiser.deserialize(p, ctxt);
 
-        updateDimensionColumnReferences(dataSource);
-
         return dataSource;
-    }
-
-    private void updateDimensionColumnReferences(IDataSource dataSource) {
-        List<Dimension> dimensions = dataSource.getDimensions();
-        int count = dimensions.size();
-        for (int i = 0; i < count; i++) {
-            Dimension dimension = dimensions.get(i);
-            Column column = dataSource.getSchema().getColumn(dimension.getName());
-            if (column == null) {
-                column = dataSource.getCalculatedColumn(dimension.getName());
-                if (column == null) {
-                    throw new ViewServerException("No column in data source for dimension '" + dimension.getName() + "'");
-                }
-            }
-            dimension.setColumn(column);
-        }
     }
 
     @Override

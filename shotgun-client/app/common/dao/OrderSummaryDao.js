@@ -1,13 +1,13 @@
 import ReportSubscriptionStrategy from '../subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {isEqual} from 'lodash';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 export default class OrderSummaryDao{
   static OPTIONS = {
     offset: 0,
     limit: 10,
     filterMode: 2,
-    isCompleted: ''
   };
 
   constructor(client, options = {}) {
@@ -24,15 +24,34 @@ export default class OrderSummaryDao{
     return 'orderSummaryDao';
   }
 
-  getReportContext({userId, orderId, isCompleted, reportId}){
-    return {
+  getReportContext({userId, orderId, isCompleted, reportId, driverId, selectedProducts}){
+    const reportContext =  {
       reportId,
-      parameters: {
-        userId,
-        isCompleted,
-        orderId
+      dimensions: {
       }
     };
+
+    if (isCompleted !== undefined) {
+      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP];
+    }
+
+    if (orderId !== undefined){
+      reportContext.dimensions.dimension_orderId = orderId;
+    }
+
+    if (userId !== undefined){
+      reportContext.dimensions.dimension_userId = userId;
+    }
+
+    if (driverId !== undefined){
+      reportContext.dimensions.dimension_driverId = driverId;
+    }
+
+    if (selectedProducts !== undefined){
+      reportContext.dimensions.dimension_selectedProducts = selectedProducts;
+    }
+
+    return reportContext;
   }
 
   createDataSink(){
@@ -116,8 +135,8 @@ export default class OrderSummaryDao{
     };
   }
 
-  createSubscriptionStrategy({userId, isCompleted, reportId, orderId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId, reportId, isCompleted, orderId}), dataSink);
+  createSubscriptionStrategy({driverId, userId, isCompleted, reportId, orderId, selectedProducts}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({driverId, userId, reportId, isCompleted, orderId, selectedProducts}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
@@ -128,9 +147,7 @@ export default class OrderSummaryDao{
     if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'driverOrderSummary')){
       throw new Error('reportId should be defined and be either customerOrderSummary or driverOrderSummary');
     }
-    if (typeof options.isCompleted === 'undefined'){
-      throw new Error('isCompleted  should be defined');
-    }
+
     return options;
   }
 }

@@ -52,7 +52,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
 
     @Override
     public ColumnType getType() {
-        return dimension.getType().getColumnType();
+        return dimension.getColumnType().getColumnType();
     }
 
     @Override

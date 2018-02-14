@@ -4,6 +4,7 @@ export default class ReportContextMapper{
   static toDto(reportContext) {
     const reportContextDto = ProtoLoader.Dto.ReportContextDto.create(reportContext);
     reportContextDto.parameters = ReportContextMapper._mapParameters(reportContext.parameters, ReportContextMapper._buildParameter);
+    reportContextDto.dimensions =  ReportContextMapper._mapParameters(reportContext.dimensions, ReportContextMapper._buildDimension);
     return reportContextDto;
   }
 
@@ -27,7 +28,7 @@ export default class ReportContextMapper{
   }
 
   static _buildDimension(name, value) {
-    return new ProtoLoader.Dto.ReportContextDto.Dimension({
+    return ProtoLoader.Dto.ReportContextDto.Dimension.create({
       name,
       value
     });

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
 import {OrderSummary, PriceSummary, RatingSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {startOrderRequest, cancelOrderRequest, watchPosition, stopWatchingPosition} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
@@ -15,10 +15,8 @@ class DriverOrderDetail extends Component{
   componentWillMount(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
-      dispatch(updateSubscriptionAction('orderSummaryDao', {
-        userId: undefined,
+      dispatch(resetSubscriptionAction('orderSummaryDao', {
         orderId,
-        isCompleted: '',
         reportId: 'driverOrderSummary'
       }));
     }
@@ -85,7 +83,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     orderId,
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'startOrderRequest'}, { driverDao: 'cancelOrderRequest'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || !orderSummary,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || !orderSummary,
     orderSummary
   };
 };

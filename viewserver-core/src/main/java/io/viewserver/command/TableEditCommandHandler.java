@@ -249,7 +249,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                                     dimension = dataSource.getDimension(columnHolder.getName());
                                     if (dimension != null) {
                                         int id = -1;
-                                        switch (dimension.getColumn().getType()) {
+                                        switch (dimension.getColumnType()) {
                                             case Bool: {
                                                 id = dimensionMapper.mapBool(dataSource, dimension, columnValue.getBooleanValue());
                                                 break;
