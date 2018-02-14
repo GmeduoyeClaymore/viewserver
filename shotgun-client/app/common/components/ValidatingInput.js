@@ -31,9 +31,7 @@ export class ValidatingInput extends Component {
     this.props.onChangeText(value);
   }
 
-  shouldComponentUpdate(nextProps){
-    return !isEqual(nextProps, this.props, false, true);
-  }
+
 
   async onBlur(){
     this.formValueTouched();

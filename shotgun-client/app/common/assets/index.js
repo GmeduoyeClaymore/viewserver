@@ -10,6 +10,13 @@ import plumblerIcon from './plumber-icon.png';
 import plastererIcon from './plasterer-icon.png';
 import carpenterIcon from './carpenter-icon.png';
 import groundWorkerIcon from './groundWorker-icon.png';*/
+
+import deliveryIconSml from './delivery-icon-sml.png';
+import toolIconSml from './tool-icon-sml.png';
+import rubbishIconSml from './rubbish-icon-sml.png';
+import skipIconSml from './skip-icon-sml.png';
+import personellIconSml from './personell-icon-sml.png';
+
 import unknownCategory from './unknownCategory-icon.png';
 export {deliveryIcon};
 export {toolIcon};
@@ -27,6 +34,24 @@ export const resolveContentTypeIcon = (contentType) => {
     return personellIcon;
   default:
     return deliveryIcon;
+  }
+};
+
+
+export const resolveContentTypeIconSml = (contentType) => {
+  switch (contentType.name.toLowerCase().replace(' ', '-')){
+  case 'delivery':
+    return deliveryIconSml;
+  case 'tool-hire':
+    return toolIconSml;
+  case 'rubbish-collection':
+    return rubbishIconSml;
+  case 'skip-hire':
+    return skipIconSml;
+  case 'personell':
+    return personellIconSml;
+  default:
+    return deliveryIconSml;
   }
 };
 

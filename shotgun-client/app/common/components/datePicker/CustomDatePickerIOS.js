@@ -150,8 +150,7 @@ export default class CustomDatePickerIOS extends PureComponent {
             style={styles.confirmButton}
             underlayColor="#ebebeb"
             onPress={this._handleConfirm}
-            disabled={!neverDisableConfirmIOS && this.state.userIsInteractingWithPicker}
-          >
+            disabled={!neverDisableConfirmIOS && this.state.userIsInteractingWithPicker}>
             {confirmButton}
           </TouchableHighlight>
         </View>

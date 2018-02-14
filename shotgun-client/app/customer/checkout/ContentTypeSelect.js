@@ -5,6 +5,7 @@ import {Icon} from 'common/components';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
 
+
 import {resolveContentTypeIcon} from 'common/assets';
 
 class ContentTypeSelect extends Component{
