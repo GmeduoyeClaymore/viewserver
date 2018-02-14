@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion, ImageSelector} from 'common/components';
-import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
 import {withRouter} from 'react-router';
@@ -41,7 +40,7 @@ class UpdateUserDetails extends Component{
     const isDriver = user.type == 'driver';
 
     const onChangeText = (field, value) => {
-      this.setState({user: merge(user, {[field]: value})});
+      this.setState({user: {...user, [field]: value}});
     };
 
     const onSelectImage = (response) => {

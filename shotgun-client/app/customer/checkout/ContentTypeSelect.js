@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
-import {merge} from 'lodash';
-import {Icon} from 'common/components';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
 
@@ -30,7 +28,7 @@ class ContentTypeSelect extends Component{
   selectContentType(selectedContentType){
     const {context, navigationStrategy} = this.props;
     let {orderItem} = context.state;
-    orderItem = merge({}, orderItem, {contentTypeId: selectedContentType.contentTypeId});
+    orderItem = {...orderItem, contentTypeId: selectedContentType.contentTypeId};
     context.setState({selectedContentType, orderItem});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();

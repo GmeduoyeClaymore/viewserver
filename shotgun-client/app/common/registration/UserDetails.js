@@ -4,7 +4,6 @@ import yup from 'yup';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
-import {merge} from 'lodash';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 
@@ -38,7 +37,7 @@ export default class UserDetails  extends Component{
   onChangeText(field, value){
     const {context} = this.props;
     const {user} = context.state;
-    context.setState({user: merge(user, {[field]: value})});
+    context.setState({user: {...user, [field]: value}});
   }
 
   onChangeDob(dob){
@@ -59,7 +58,7 @@ export default class UserDetails  extends Component{
   }
 
   render(){
-    const {onChangeText, toggleDatePicker} = this;
+    const {onChangeText} = this;
     const {context, history, next} = this.props;
     const {dobIsDatePickerVisible} = this.state;
     const {user} = context.state;

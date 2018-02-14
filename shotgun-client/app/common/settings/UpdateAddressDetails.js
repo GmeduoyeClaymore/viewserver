@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
-import {merge} from 'lodash';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
@@ -27,7 +26,7 @@ class HomeAddressDetails  extends Component{
     };
 
     const onChangeText = async (field, value) => {
-      this.setState({deliveryAddress: merge(deliveryAddress, {[field]: value})});
+      this.setState({deliveryAddress: {...deliveryAddress, [field]: value}});
     };
 
     const doAddressLookup = (addressLabel) => {

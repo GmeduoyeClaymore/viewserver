@@ -36,8 +36,7 @@ class DriverRegistration extends Component {
       <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...this.props}/>} />
       <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...this.props} context={this}/>} />
       <Route path={'/Driver/Registration/DriverAccountType'} exact render={() => <DriverAccountType {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/DriverCapabilityDetails'} exact render={() => <DriverCapabilityDetails {...this.props} context={this}/>} />
-      <Redirect to={'/Driver/Registration/DriverAccountType'}/>
+      <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
     </Switch>;
   }
 }

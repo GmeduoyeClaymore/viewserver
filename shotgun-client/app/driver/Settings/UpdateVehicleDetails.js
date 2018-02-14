@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
@@ -24,7 +23,7 @@ class UpdateVehicleDetails extends Component {
     const {dimensions} = vehicle;
 
     const onChangeText = async (field, value) => {
-      this.setState({vehicle: merge(vehicle, {[field]: value})});
+      this.setState({vehicle: {...vehicle, [field]: value}});
     };
 
     const onUpdateVehicle = async() => {
@@ -75,7 +74,7 @@ class UpdateVehicleDetails extends Component {
             </Col>
           </Row>
           {vehicle.make != undefined ? (<Row>
-            <Col>
+            <Col  width={60}>
               <Row><Item stackedLabel vehicleDetails>
                 <Label>Vehicle registration</Label>
                 <Text>{vehicle.registrationNumber}</Text>
@@ -84,6 +83,8 @@ class UpdateVehicleDetails extends Component {
                 <Label>Vehicle model</Label>
                 <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
               </Item></Row>
+            </Col>
+            <Col width={60}>
               <Row><Item stackedLabel vehicleDetails>
                 <Label>Vehicle colour</Label>
                 <Text>{vehicle.colour}</Text>

@@ -31,8 +31,6 @@ export class ValidatingInput extends Component {
     this.props.onChangeText(value);
   }
 
-
-
   async onBlur(){
     this.formValueTouched();
     await this.validate(this.props.value);
@@ -56,11 +54,11 @@ export class ValidatingInput extends Component {
   render() {
     const isValid = this.state.touched === true && this.state.error === '';
     const isInvalid = this.state.touched === true &&  this.state.error !== '';
-    const {showIcons = true, onPress} = this.props;
+    const {showIcons = true, onPress, ...rest} = this.props;
 
     return (
       <Item error={isInvalid} success={isValid} onPress={onPress}>
-        <Input {...this.props} placeholderTextColor={shotgun.silver} onFocus={onPress} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
+        <Input {...rest} placeholderTextColor={shotgun.silver} onFocus={onPress} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
         {showIcons && isValid ? <Icon name='checkmark' /> : null}
         {showIcons && isInvalid ? <Icon name='cross' /> : null}
       </Item>
