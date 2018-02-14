@@ -59,7 +59,7 @@ export default class UserDetails  extends Component{
   }
 
   render(){
-    const {onChangeText, toggleDatePicker} = this;
+    const {onChangeText} = this;
     const {context, history, next} = this.props;
     const {dobIsDatePickerVisible} = this.state;
     const {user} = context.state;

@@ -22,11 +22,12 @@ export default class OrderRequestDaoContext{
     return 'orderRequestDao';
   }
 
-  getReportContext({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
+  getReportContext({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
     return {
       reportId: 'orderRequest',
       dimensions: {
-        dimension_contentTypeId: [contentTypeId]
+        dimension_contentTypeId: [contentTypeId],
+        dimension_productId: productIds
       },
       parameters: {
         noRequiredForOffload,
@@ -98,8 +99,8 @@ export default class OrderRequestDaoContext{
     };
   }
 
-  createSubscriptionStrategy({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
+  createSubscriptionStrategy({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

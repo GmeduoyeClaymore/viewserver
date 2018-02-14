@@ -4,7 +4,6 @@ import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon} from 'common/components';
-import {isEqual} from 'custom-redux';
 
 export class ValidatingInput extends Component {
   constructor(){
@@ -30,8 +29,6 @@ export class ValidatingInput extends Component {
   async onChangeText(value){
     this.props.onChangeText(value);
   }
-
-
 
   async onBlur(){
     this.formValueTouched();

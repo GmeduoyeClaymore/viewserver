@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {updateSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';
@@ -15,10 +15,10 @@ class DriverOrderRequestDetail extends Component{
   componentWillMount(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
-      dispatch(updateSubscriptionAction('orderSummaryDao', {
+      dispatch(resetSubscriptionAction('orderSummaryDao', {
         orderId,
         reportId: 'driverOrderSummary'
-      }));
+      }, true));
     }
   }
 
@@ -61,14 +61,14 @@ const mapStateToProps = (state, initialProps) => {
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const errors = getOperationErrors(state, [
     { driverDao: 'acceptOrderRequest'},
-    { orderSummaryDao: 'updateSubscription'}
+    { orderSummaryDao: 'resetSubscription'}
   ]);
   return {
     ...initialProps,
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'updateSubscription'}]) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };
 };

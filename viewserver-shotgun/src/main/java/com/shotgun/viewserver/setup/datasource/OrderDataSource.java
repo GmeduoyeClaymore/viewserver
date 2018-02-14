@@ -72,6 +72,7 @@ public class
                         new ProjectionNode("projectionNode")
                                 .withMode(IProjectionConfig.ProjectionMode.Projection)
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"))
+                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("product_dimension_productId", "dimension_productId"))
                                 .withConnection("productJoin")
                 )
 
@@ -82,7 +83,7 @@ public class
                         new CalculatedColumn("dimension_userId", ColumnType.String, "userId")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_orderId", Cardinality.Byte, ColumnType.String),
                         new Dimension("dimension_userId", Cardinality.Int, ColumnType.String),
                         new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true),

@@ -14,7 +14,7 @@ export class SpinnerButton extends Component {
     return (
       <Button {...this.props} disabled={disabled}>
         {this.props.children}
-        {busy ? <Spinner size={1} color={shotgun.btnDisabledClr} style={styles.spinner}/> : null}
+        {busy ? <Spinner size={24} color={shotgun.btnDisabledClr} style={styles.spinner}/> : null}
       </Button>
     );
   }

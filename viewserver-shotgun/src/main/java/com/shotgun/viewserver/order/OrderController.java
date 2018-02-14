@@ -11,6 +11,8 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.datasource.IDataSource;
+import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -34,7 +36,10 @@ public class OrderController {
     private KeyedTable orderTable;
     private KeyedTable productTable;
 
-    public OrderController(DeliveryAddressController deliveryAddressController, DeliveryController deliveryController, OrderItemController orderItemController, PricingStrategyResolver pricingStrategyResolver) {
+    public OrderController(DeliveryAddressController deliveryAddressController,
+                           DeliveryController deliveryController,
+                           OrderItemController orderItemController,
+                           PricingStrategyResolver pricingStrategyResolver) {
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
@@ -77,6 +82,8 @@ public class OrderController {
         delivery.setDeliveryId(deliveryId);
         Date now = new Date();
         String orderId = ControllerUtils.generateGuid();
+
+       // IDataSource orderDataSource = IDataSourceRegistry.get
 
         //add order
         ITableRowUpdater tableUpdater = row -> {

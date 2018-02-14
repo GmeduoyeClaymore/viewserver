@@ -4,18 +4,12 @@ import {View, StyleSheet, Text} from 'react-native';
 import SearchBar from './SearchBar';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
-import {updateSubscriptionAction, isAnyLoading, getNavigationProps} from 'common/dao';
+import {updateSubscriptionAction, getNavigationProps} from 'common/dao';
 import {LoadingScreen, PagingListView, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 10
-  }
-});
 
 const headerView  = ({options: opts, search}) => <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;
 class ProductList extends Component{
@@ -36,7 +30,7 @@ class ProductList extends Component{
 
   constructor(props){
     super(props);
-    const {history, dispatch, context} = this.props;
+    const {dispatch} = this.props;
     this.search = (searchText) => {
       dispatch(updateSubscriptionAction('productDao', {searchText}));
     };

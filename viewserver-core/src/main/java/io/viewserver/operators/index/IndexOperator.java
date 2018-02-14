@@ -603,8 +603,8 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             return true;
         }
 
-        /*This seems to be adding an extra entry to some arrays and causing 0 to be added to indices to which is shouldn't belong
-        private int[] getAdds(int size) {
+       // This seems to be adding an extra entry to some arrays and causing 0 to be added to indices to which is shouldn't belong
+        /*private int[] getAdds(int size) {
             if (this.adds == null || this.adds.length < size) {
                 int adjustedSize = Integer.highestOneBit(size);
                 if (adjustedSize != size) {

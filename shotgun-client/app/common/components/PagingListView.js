@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import {Dimensions, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
-import {updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
-import {connectAdvanced} from 'custom-redux';
+import {resetSubscriptionAction, updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
+import {isEqual, connectAdvanced} from 'custom-redux';
 import {bindActionCreators} from 'redux';
-import {isEqual} from 'custom-redux';
 import {ErrorRegion} from 'common/components';
-import {getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions} from 'common/dao';
+import {getOperationErrors, getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions, isAnyOperationPending} from 'common/dao';
 import Logger from 'common/Logger';
 import {List} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -86,30 +85,23 @@ const styles = {
 const selectorFactory = (dispatch, initializationProps) => {
   let result = {};
   let ownProps = {};
-  const actions = bindActionCreators({updateSubscriptionAction, resetDataAction}, dispatch);
+  const actions = bindActionCreators({resetSubscriptionAction, updateSubscriptionAction, resetDataAction}, dispatch);
   const {daoName} = initializationProps;
-  const setOptions = options => actions.updateSubscriptionAction(daoName, options);
-  const reset = () => actions.resetDataAction(daoName);
-  const doPage = limit => actions.updateSubscriptionAction(daoName, {limit});
+
   return (nextState, nextOwnProps) => {
-    const data = getDaoState(nextState, initializationProps.dataPath, daoName);
-    const size = getDaoSize(nextState, daoName);
-    const options = getDaoOptions(nextState);
     const daoPageStatus = getDaoCommandStatus(nextState, 'updateSubscription', daoName);
     const daoPageResult = getDaoCommandResult(nextState, 'updateSubscription', daoName);
-    const busy = daoPageStatus === 'start';
-    const limit = daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize);
-    const errors = daoPageStatus === 'fail' ? daoPageResult : undefined;
+
     const nextResult = {
-      options,
-      busy,
-      data,
-      size,
-      doPage,
-      setOptions,
-      reset,
-      errors,
-      limit,
+      options: getDaoOptions(nextState),
+      busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
+      data: getDaoState(nextState, initializationProps.dataPath, daoName),
+      size: getDaoSize(nextState, daoName),
+      doPage: limit => actions.updateSubscriptionAction(daoName, {limit}),
+      setOptions: options => actions.resetSubscriptionAction(daoName, options),
+      reset: () => actions.resetDataAction(daoName),
+      errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
+      limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),
       ...nextOwnProps
     };
     ownProps = nextOwnProps;

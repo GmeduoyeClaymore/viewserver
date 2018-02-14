@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, Grid, Row, Col} from 'native-base';
+import {Text, Content, Container, Item, Label, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import {isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError } from 'common/dao';
-import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 

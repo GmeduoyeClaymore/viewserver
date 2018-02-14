@@ -4,7 +4,6 @@ import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
 import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
 import {getDaoState} from 'common/dao';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const DriverOrders = ({history, isCompleted, userId}) => {

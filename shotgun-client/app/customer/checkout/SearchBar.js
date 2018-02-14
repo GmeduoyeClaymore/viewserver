@@ -27,7 +27,7 @@ class SearchBar extends Component{
     }
   }
 
-  componentWillReceiveProps(newProps = {}){
+  componentWillReceiveProps(){
     //this.setState({text: newProps.text });
   }
 
@@ -37,7 +37,7 @@ class SearchBar extends Component{
   }
 
   render(){
-    const {style = {}, onChange: onChangeProp,  ...rest} = this.props;
+    const {style = {}, ...rest} = this.props;
     const {onChange, state} = this;
     const {text} = state;
     return <TextInput
