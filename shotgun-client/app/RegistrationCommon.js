@@ -14,14 +14,14 @@ export default RegistrationCommon = ({history}) => {
         <Row>
           <Col size={45}>
             <Row size={35}><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='schedule-delivery'/></Button></Row>
-            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Schedule a delivery</Text></Row>
+            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>I need to something ..</Text></Row>
           </Col>
           <Col size={10}>
             <Row style={styles.orRow}><Text>or</Text></Row>
           </Col>
           <Col size={45}>
             <Row size={35}><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='drive'/></Button></Row>
-            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Drive and deliver</Text></Row>
+            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>I have something to supply</Text></Row>
           </Col>
         </Row>
       </Grid>

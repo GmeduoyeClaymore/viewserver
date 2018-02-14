@@ -58,6 +58,11 @@ class DeliveryOptions extends Component {
     context.setState({ delivery: merge({}, delivery, { [field]: value }) });
   }
 
+  onChangeDate(field, value) {
+    this.onChangeValue(field, value);
+    this.toggleDatePicker(field, false);
+  }
+
   onChangeNoItems(quantity){
     const { context } = this.props;
     const { orderItem } = context.state;
@@ -107,12 +112,12 @@ class DeliveryOptions extends Component {
           {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
-            <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeValue('from', date)} {...datePickerOptions} />
+            <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeDate('from', date)} {...datePickerOptions} />
           </ListItem> : null}
           {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a return time</Text>}
-            <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeValue('till', date)} {...datePickerOptions} />
+            <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
           </ListItem> : null}
           <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>
@@ -124,7 +129,7 @@ class DeliveryOptions extends Component {
           {selectedContentType.noPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
               <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
-              <Text style={{ paddingLeft: 10 }}>Request extra people to help carry/lift your item(s)</Text>
+              <Text style={{ paddingLeft: 10 }}>Do you need more than one person ?(s)</Text>
             </ListItem> : null}
 
           {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>

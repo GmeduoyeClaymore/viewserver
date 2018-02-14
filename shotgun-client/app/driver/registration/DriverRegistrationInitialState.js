@@ -1,4 +1,4 @@
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -33,7 +33,7 @@ export const INITIAL_STATE = {
   }
 };
 
-/*
+*/
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
@@ -44,6 +44,18 @@ export const INITIAL_STATE = {
     password: 'password',
     dob: '1982-02-03'
   },
+  
+  address: {
+    line1: 'line1',
+    city: 'London',
+    postCode: 'SW178RS'
+  },
+  
+  /*bankAccount: {
+    accountNumber: '00012345',
+    sortCode: '108800'
+  },
+
   vehicle: {
     registrationNumber: 'ab01asd',
     colour: 'blue',
@@ -56,15 +68,6 @@ export const INITIAL_STATE = {
       length: 2000,
       weight: 1000
     }
-  },
-  address: {
-    line1: 'line1',
-    city: 'London',
-    postCode: 'SW178RS'
-  },
-  bankAccount: {
-    accountNumber: '00012345',
-    sortCode: '108800'
-  }
+  }*/
 };
-*/
+

@@ -6,7 +6,7 @@ export default class ProductCategoryDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
-    parentCategoryId: 'NONE',
+    parentCategoryId: undefined,
     columnsToSort: [{name: 'category', direction: 'asc'}]
   };
 

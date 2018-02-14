@@ -11,16 +11,21 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-class DriverCapabilityDetails extends Component{
+class DeliveryDetails extends Component{
   constructor(props){
     super(props);
     this.onChangeText = this.onChangeText.bind(this);
+    this.togglePeopleVisibility = this.togglePeopleVisibility.bind(this);
     this.requestVehicleDetails = this.requestVehicleDetails.bind(this);
     this.register = this.register.bind(this);
+    this.state = {
+      peopleVisible: false
+    };
   }
 
   onChangeText(field, value){
-    const {vehicle, context} = this.props;
+    const {context} = this.props;
+    const {vehicle = {}} = context.state;
     context.setState({vehicle: merge(vehicle, {[field]: value})});
   }
 
@@ -46,22 +51,19 @@ class DriverCapabilityDetails extends Component{
     return `${(dimensions.height / 1000).toFixed(1)}m  x ${(dimensions.width / 1000).toFixed(1)}m x ${(dimensions.length / 1000).toFixed(1)}m`;
   }
 
+  togglePeopleVisibility(peopleVisible){
+    this.setState({peopleVisible});
+  }
+
   render(){
-    const {history, vehicle = {}, dimensions, selectedContentTypes = [], errors, busy} = this.props;
+    const {context, dimensions, errors, busy} = this.props;
+    const {vehicle = {}} = context.state;
+    const {peopleVisible} = this.state;
     const {numAvailableForOffload} = vehicle;
-    const containsDelivery = !!~selectedContentTypes.indexOf(ContentTypes.DELIVERY);
 
     return <Container>
-      <Header withButton>
-        <Left>
-          <Button>
-            <Icon name='back-arrow' onPress={() => history.goBack()}/>
-          </Button>
-        </Left>
-        <Body><Title>Account Type</Title></Body>
-      </Header>
       <Content keyboardShouldPersistTaps="always" padded>
-        { containsDelivery ? <View>
+        <View>
           <Row>
             <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
               <Label>Vehicle registration</Label>
@@ -95,11 +97,11 @@ class DriverCapabilityDetails extends Component{
               <Grid style={{marginBottom: shotgun.contentPadding, marginTop: 50}}>
                 <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
                 <Row>
-                  <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={numAvailableForOffload > 0} onPress={() => this.onChangeText('numAvailableForOffload', 1)}><Text uppercase={false}>Yes</Text></Button></Col>
-                  <Col><Button fullWidth light active={numAvailableForOffload == 0} onPress={() => this.onChangeText('numAvailableForOffload', 0)}><Text uppercase={false}>No</Text></Button></Col>
+                  <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={peopleVisible} onPress={() => this.togglePeopleVisibility(true)}><Text uppercase={false}>Yes</Text></Button></Col>
+                  <Col><Button fullWidth light active={!peopleVisible} onPress={() => this.togglePeopleVisibility(false)}><Text uppercase={false}>No</Text></Button></Col>
                 </Row>
               </Grid>
-              {numAvailableForOffload > 0 ?
+              {peopleVisible ?
                 <Grid>
                   <Row>
                     <Text style={{paddingBottom: 15}}>How many people will be available?</Text>
@@ -139,7 +141,7 @@ class DriverCapabilityDetails extends Component{
                 </Grid> : null}
             </Col>
           </Row>
-        </View> : null}
+        </View>
       </Content>
       <ErrorRegion errors={errors}>
         <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={vehicle}>
@@ -165,7 +167,7 @@ const styles = {
 
 
 const validationSchema = {
-  registrationNumber: yup.string().required().matches(/ ^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/i),
+  registrationNumber: yup.string().required(), //TODO REGEX DOESNT WORK ON IOS.matches(/ ^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/i),
   colour: yup.string().required(),
   numAvailableForOffload: yup.number().required(),
   make: yup.string().required(),
@@ -195,4 +197,4 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 
-export default withRouter(connect(mapStateToProps)(DriverCapabilityDetails));
+export default withRouter(connect(mapStateToProps)(DeliveryDetails));

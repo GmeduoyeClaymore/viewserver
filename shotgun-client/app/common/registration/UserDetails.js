@@ -13,7 +13,7 @@ const datePickerOptions = {
   mode: 'date',
   titleIOS: 'Select delivery time',
   minimumDate: moment().add(-100, 'years').toDate(),
-  maximumDate: moment().add(-10, 'years').toDate()
+  maximumDate: moment().add(1, 'years').toDate()
 };
 
 export default class UserDetails  extends Component{
@@ -41,6 +41,11 @@ export default class UserDetails  extends Component{
     context.setState({user: merge(user, {[field]: value})});
   }
 
+  onChangeDob(dob){
+    this.onChangeText('dob', dob);
+    this.toggleDatePicker(false);
+  }
+
   toggleDatePicker(dobIsDatePickerVisible){
     this.setState({dobIsDatePickerVisible});
   }
@@ -54,11 +59,12 @@ export default class UserDetails  extends Component{
   }
 
   render(){
-    const {onChangeText} = this;
+    const {onChangeText, toggleDatePicker} = this;
     const {context, history, next} = this.props;
     const {dobIsDatePickerVisible} = this.state;
     const {user} = context.state;
     const isDriver = user.type === 'driver';
+
 
     return <Container>
       <Header withButton>
@@ -120,8 +126,8 @@ export default class UserDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>DOB</Label>
-                <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} editable={false}maxLength={30}/>
-                <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeText('dob', date)} {...datePickerOptions} />
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} maxLength={30}/>
+                <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeDob(date)} {...datePickerOptions} />
               </Item>
             </Col>
           </Row> : null }
@@ -181,13 +187,13 @@ const validationSchema = {
   firstName: yup.string().required().max(30),
   lastName: yup.string().required().max(30),
   password: yup.string().required().max(30),
-  email: yup.string().required().email().max(100),
-  contactNo: yup.string().required().matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
+  email: yup.string().required().email().max(100), //BREAKS in IOS .matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
+  contactNo: yup.string().required().max(35),
 };
 
 
 const drivervalidationSchema = {
   ...validationSchema,
-  imageData: yup.string().required(),
+  // CANT ADD IMAGE IN IOS simulator. Should this be mandatory ???? imageData: yup.string().required(),
   dob: yup.date().required()
 };

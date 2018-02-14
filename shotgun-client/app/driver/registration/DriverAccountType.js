@@ -6,12 +6,17 @@ import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import { getDaoState, isAnyLoading, getLoadingErrors} from 'common/dao';
+import ReactNativeModal from 'react-native-modal';
+import ContentTypeSelector from './ContentTypeSelector';
 
 class DriverAccountType extends Component{
   constructor(props){
     super(props);
     this.selectContentType = this.selectContentType.bind(this);
     this.renderContentType = this.renderContentType.bind(this);
+    this.state = {
+      ...props.context.state
+    };
   }
 
   selectContentType(selectedContentType){
@@ -27,13 +32,11 @@ class DriverAccountType extends Component{
   }
 
   renderContentType(contentType, i){
-    const {selectedContentTypes = []} = this.props;
-    return <View key={i} style={{width: '30%'}}>
-      <Button style={{height: 'auto'}} large active={!!~selectedContentTypes.indexOf(contentType.contentTypeId)} onPress={() => this.selectContentType(contentType)}>
-        <Icon name='small-van'/>
-      </Button>
-      <Text style={styles.productSelectTextRow}>{contentType.name}</Text>
-    </View>;
+    const {context} = this.props;
+    const {state} = context;
+    const {selectedContentTypes = []} = state;
+    return <View key={i} style={{width: '50%', padding: 10}}>
+      <ContentTypeSelector {...{...this.props, context: this, contentType, onContentTypeSelected: this.selectContentType, selected: !!~selectedContentTypes.indexOf(contentType.contentTypeId)}}/></View>;
   }
 
   render(){

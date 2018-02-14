@@ -50,8 +50,8 @@ const BankAccountDetails = ({context, history}) => {
 };
 
 const validationSchema = {
-  accountNumber: yup.string().required().matches(/^\d{8}$/),
-  sortCode: yup.string().required().matches(/^\d{2}-?\d{2}-?\d{2}$/)
+  accountNumber: yup.string().required(),  // BREAKS IN IOS .matches(/^\d{8}$/),
+  sortCode: yup.string().required() // BREAKS IN IOS .matches(/^\d{2}-?\d{2}-?\d{2}$/)
 };
 
 export default withRouter(connect()(BankAccountDetails));

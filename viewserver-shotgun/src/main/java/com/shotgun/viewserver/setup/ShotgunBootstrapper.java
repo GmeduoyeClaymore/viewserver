@@ -37,6 +37,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
+        reportDefinitions.put(ContentTypeReport.ID, ContentTypeReport.getReportDefinition());
         return reportDefinitions;
     }
 }

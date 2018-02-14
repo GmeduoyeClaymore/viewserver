@@ -3,6 +3,24 @@ import {
 }
   from 'lodash';
 
+const getType = {};
+
+
+const filterFunctions = (args) => {
+  if (!args){
+    return args;
+  }
+  const result = {};
+  Object.keys(args).forEach( key => {
+    const val = args[key];
+    if (!(val && getType.toString.call(val) === '[object Function]'))   {
+      result[key] = val;
+    }
+  });
+  return result;
+};
+  
+
 const isArrayEqual = (arrayA, arrayB) => {
   if (arrayA.length !== arrayB.length) {
     return false;
@@ -23,7 +41,12 @@ const isArrayEqual = (arrayA, arrayB) => {
  * @param  {boolean} [deep=false] A value indicating whether the comparison should be deep.
  * @return {boolean}        true if the values are considered equal; otherwise, false.
  */
-const isEqual = (objA, objB, deep) => {
+export const isEqual = (objA, objB, deep, ignoreFuncs) => {
+  if(ignoreFuncs){
+    objA = filterFunctions(objA);
+    objB = filterFunctions(objB);
+  }
+  
   if (deep) {
     return deepIsEqual(objA, objB);
   }

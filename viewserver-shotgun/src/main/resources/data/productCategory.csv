@@ -4,13 +4,7 @@ categoryId,category,parentCategoryId,isLeaf
 2Skips,Skips,1Waste,TRUE
 2Grab,Grab,1Waste,TRUE
 2Cage,Cage,1Waste,TRUE
-1Workers,Workers,NONE,FALSE
-2Carpenters,Carpenter,1Workers,TRUE
-2GroundWorkers,Ground Worker,1Workers,TRUE
-2Tiler,Tiler,1Workers,TRUE
-2Painter,Painter,1Workers,TRUE
-2BrickLayer,Brick Layer,1Workers,TRUE
-2Plumber,Plumber,1Workers,TRUE
+1Workers,Workers,NONE,TRUE
 1Plant,Plant,NONE,FALSE
 2AccessLadder,Access & Ladders ,1Plant,FALSE
 3Ladder,Ladder,2AccessLadder,TRUE

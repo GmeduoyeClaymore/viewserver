@@ -10,6 +10,7 @@ target 'ShotgunClient' do
   pod 'Firebase/Messaging'
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
+  pod 'HockeySDK', '~> 5.1.2'
   target 'ShotgunClientTests' do
     inherit! :search_paths
     # Pods for testing

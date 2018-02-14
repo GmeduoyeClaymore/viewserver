@@ -13,15 +13,22 @@
 #import <React/RCTRootView.h>
 
 @import Firebase;
+@import HockeySDK;
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [FIRApp configure];
   NSURL *jsCodeLocation;
+  
+
+  [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"6bcea6c227c244b69f3fd4b6bb3fc264"];
+  [[BITHockeyManager sharedHockeyManager] startManager];
+  [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
+
 
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
-
+  //jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"ShotgunClient"
                                                initialProperties:nil

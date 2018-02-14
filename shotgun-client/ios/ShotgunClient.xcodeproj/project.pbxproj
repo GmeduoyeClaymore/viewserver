@@ -52,6 +52,8 @@
 		6D540ACB202A1E5F00D406DB /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6D540ACE202A1E6600D406DB /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540ACD202A1E6600D406DB /* QBImagePicker.framework */; };
 		6D540ACF202A1E6600D406DB /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540ACD202A1E6600D406DB /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6D540B5C202B779900D406DB /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6D540B5A202B779900D406DB /* HockeySDKResources.bundle */; };
+		6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540B5B202B779900D406DB /* HockeySDK.framework */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
@@ -423,6 +425,8 @@
 		6D540AB1202A082A00D406DB /* shotgun-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "shotgun-icons.ttf"; sourceTree = "<group>"; };
 		6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D540ACD202A1E6600D406DB /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D540B5A202B779900D406DB /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
+		6D540B5B202B779900D406DB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -482,6 +486,7 @@
 				B4A5D0EB3BA549A09DD57DDA /* libRNImmediatePhoneCall.a in Frameworks */,
 				44CD107B8AC94E20B44C7212 /* libimageCropPicker.a in Frameworks */,
 				9DDBF28D9900CAB40C549988 /* libPods-ShotgunClient.a in Frameworks */,
+				6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,6 +579,7 @@
 		07397DE7C69DBA86BFE7C2E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D540B59202B779900D406DB /* HockeySDK.embeddedframework */,
 				D3D9E8A0A104D8EFC132C7E6 /* libPods-ShotgunClient.a */,
 				5E80DD0779F05CEA3DD6618F /* libPods-ShotgunClient-tvOS.a */,
 				732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */,
@@ -705,6 +711,16 @@
 				6D540A602029E2EC00D406DB /* libRNImmediatePhoneCall.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6D540B59202B779900D406DB /* HockeySDK.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				6D540B5A202B779900D406DB /* HockeySDKResources.bundle */,
+				6D540B5B202B779900D406DB /* HockeySDK.framework */,
+			);
+			name = HockeySDK.embeddedframework;
+			path = "HockeySDK-iOS/HockeySDK.embeddedframework";
 			sourceTree = "<group>";
 		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
@@ -843,6 +859,7 @@
 				42B4F9D6E31D3B609EF01268 /* [CP] Embed Pods Frameworks */,
 				387A6A8784BDBE2A638370BE /* [CP] Copy Pods Resources */,
 				6D540ACC202A1E5F00D406DB /* Embed Frameworks */,
+				6D540AF4202B399400D406DB /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1326,6 +1343,7 @@
 				4F4E68DEE787429DA4B54DC5 /* Roboto.ttf in Resources */,
 				6D540ABE202A082A00D406DB /* shotgun-icons.ttf in Resources */,
 				5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */,
+				6D540B5C202B779900D406DB /* HockeySDKResources.bundle in Resources */,
 				8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */,
 				755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */,
 			);
@@ -1432,11 +1450,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient/Pods-ShotgunClient-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/HockeySDK/HockeySDKResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/QBImagePickerController/QBImagePicker.bundle",
 				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HockeySDKResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RSKImageCropperStrings.bundle",
 			);
@@ -1474,6 +1494,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient-tvOS/Pods-ShotgunClient-tvOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		6D540AF4202B399400D406DB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
 		7095163C08AB2236DB54DEAB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1702,6 +1735,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
@@ -1715,6 +1752,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = shotgun.hockyapp.net;
 				PRODUCT_NAME = ShotgunClient;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1727,6 +1765,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
@@ -1740,6 +1782,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = shotgun.hockyapp.net;
 				PRODUCT_NAME = ShotgunClient;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
