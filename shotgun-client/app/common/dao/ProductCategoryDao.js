@@ -7,7 +7,7 @@ export default class ProductCategoryDaoContext{
     limit: 10,
     filterMode: 2,
     parentCategoryId: undefined,
-    columnsToSort: [{name: 'category', direction: 'asc'}]
+    columnsToSort: [{name: 'path', direction: 'asc'}]
   };
 
   constructor(client, options = {}) {
@@ -23,11 +23,11 @@ export default class ProductCategoryDaoContext{
     return 'productCategoryDao';
   }
 
-  getReportContext(parentCategoryId){
+  getReportContext(parentCategoryId, expandedCategoryIds = []){
     return {
       reportId: 'productCategory',
-      parameters: {
-        parentCategoryId
+      dimensions: {
+        dimension_parentCategoryId: this.addCategoriyIdIfDoesntContain(expandedCategoryIds, parentCategoryId)
       }
     };
   }
@@ -44,8 +44,18 @@ export default class ProductCategoryDaoContext{
     };
   }
 
-  createSubscriptionStrategy({parentCategoryId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(parentCategoryId), dataSink);
+  addCategoriyIdIfDoesntContain(collection, categoryId){
+    if (typeof categoryId === 'undefined'){
+      return collection;
+    }
+    if (!~collection.indexOf(categoryId)){
+      return [categoryId, ...collection];
+    }
+    return collection;
+  }
+
+  createSubscriptionStrategy({parentCategoryId, expandedCategoryIds}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(parentCategoryId, expandedCategoryIds), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
@@ -56,6 +66,8 @@ export default class ProductCategoryDaoContext{
     if (typeof options.parentCategoryId === 'undefined'){
       throw new Error('parentCategoryId should be defined');
     }
-    return options;
+    const {searchText } = options;
+    const filterExpression = searchText ? `category like \"*${searchText}*\"` : 'true == true';
+    return {...options, filterExpression};
   }
 }

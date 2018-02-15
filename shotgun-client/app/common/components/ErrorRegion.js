@@ -36,7 +36,7 @@ export class ErrorRegion extends Component {
   render() {
     const {errors} = this.props;
     return (
-      this.hasErrors(errors) ? <View>
+      this.hasErrors(errors) ? <View style={{flex: 1}}>
         <View style={{height: 25}}>
           <Text style={{flex: 1, color: 'red', fontSize: 10}}>{this.removeStacktrace(errors)}</Text>
         </View>

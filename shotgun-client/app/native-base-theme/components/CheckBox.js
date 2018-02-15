@@ -3,7 +3,6 @@ import variable from './../variables/platform';
 export default (variables = variable) => {
   const checkBoxTheme = {
     '.checked': {
-      borderColor: variables.checkboxBgColor,
       'NativeBase.Icon': {
         color: variables.checkboxTickColor
       },
@@ -11,6 +10,7 @@ export default (variables = variable) => {
         color: variables.checkboxTickColor
       }
     },
+    
     'NativeBase.Icon': {
       color: 'transparent',
       lineHeight: variables.CheckboxIconSize,
@@ -32,7 +32,23 @@ export default (variables = variable) => {
     borderWidth: variables.CheckboxBorderWidth,
     paddingLeft: variables.CheckboxPaddingLeft - 1,
     paddingBottom: variables.CheckboxPaddingBottom,
-    left: 10
+    left: 10,
+    '.categorySelectionCheckbox': {
+      width: 40,
+      height: 40,
+      'NativeBase.IconNB': {
+        lineHeight: 40,
+        marginTop: variables.CheckboxIconMarginTop,
+        marginLeft: 10,
+        fontSize: 40
+      },
+      '.Icon': {
+        lineHeight: 40,
+        marginTop: variables.CheckboxIconMarginTop,
+        fontSize: 40,
+        size: 40
+      }
+    },
   };
 
   return checkBoxTheme;
