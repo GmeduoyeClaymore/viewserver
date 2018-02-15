@@ -2,6 +2,7 @@ import {getAllDaos, invokeDaoCommand, unregisterDao, registerDao, updateSubscrip
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
+import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
   const dao = new Dao(daoContext);
@@ -40,6 +41,7 @@ export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
 export const commonServicesRegistrationAction = (client, userId) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client), {userId});
-    register(dispatch, new ContentTypeDao(client), {userId});
+    register(dispatch, new ContentTypeDao(client), {});
+    register(dispatch, new ProductCategoryDao(client), {});
   };
 };

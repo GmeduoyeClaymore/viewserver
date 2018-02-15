@@ -50,7 +50,7 @@ class ProductCategoryList extends Component{
  
     return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory(row)} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'row', flex: 1, padding: 0}}>
-        <Image resizeMode="contain" source={resolveProductCategoryIcon(row)}  style={styles.picture}/>
+        <Image resizeMode="contain" source={resolveProductCategoryIcon(row.categoryId)}  style={styles.picture}/>
         <Text>{`${category}`}</Text>
       </View>
     </TouchableHighlight>;

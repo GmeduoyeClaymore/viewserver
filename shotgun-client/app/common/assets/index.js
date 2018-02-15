@@ -55,8 +55,8 @@ export const resolveContentTypeIconSml = (contentType) => {
   }
 };
 
-export const resolveProductCategoryIcon = (productCategory) => {
-  switch (productCategory.categoryId.toLowerCase()){
+export const resolveProductCategoryIcon = (categoryId) => {
+  switch (categoryId.toLowerCase()){
   /*case '2tiler':
     return tilerIcon;
   case '2painter':

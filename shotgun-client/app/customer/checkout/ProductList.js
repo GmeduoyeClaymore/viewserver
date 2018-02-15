@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, Text} from 'react-native';
-import SearchBar from './SearchBar';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps} from 'common/dao';
-import {LoadingScreen, PagingListView, Icon} from 'common/components';
+import {LoadingScreen, PagingListView, Icon, SearchBar} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;

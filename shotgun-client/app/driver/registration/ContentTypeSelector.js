@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {resolveContentTypeIconSml} from 'common/assets';
-import {ErrorRegion} from 'common/components';
 import resolveDetailsControl from './ContentTypeDetailRegistry';
 import {Image, StyleSheet, Text, TouchableHighlight, Dimensions, View } from 'react-native';
 import {Button, Col} from 'native-base';
 import ReactNativeModal from 'react-native-modal';
-const {width} = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 const BORDER_RADIUS = 13;
 const BACKGROUND_COLOR = 'white';
 const BORDER_COLOR = '#d5d5d5';
@@ -79,7 +78,7 @@ const styles = {
     backgroundColor: BACKGROUND_COLOR,
     borderRadius: BORDER_RADIUS,
     width: width - 20,
-    height: 600,
+    height: height - 100,
     marginBottom: 8,
     overflow: 'hidden',
   },
