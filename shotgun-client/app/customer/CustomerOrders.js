@@ -34,7 +34,7 @@ const CustomerOrders = ({history, isCompleted, userId}) => {
     <Header hasTabs>
       <Body><Title>My Jobs</Title></Body>
     </Header>
-    <Tabs initialPage={isCompleted === OrderStatuses.COMPLETED ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1 ? OrderStatuses.COMPLETED : 'INCOMPLETE')}>
+    <Tabs initialPage={isCompleted === OrderStatuses.COMPLETED ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
       <Tab heading="Live Jobs"/>
       <Tab heading="Complete"/>
     </Tabs>
@@ -57,7 +57,7 @@ const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
   return {
     ...initialProps,
-    isCompleted: navigationProps.isCompleted,
+    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : false,
     busy: isAnyLoading(state, ['orderSummaryDao']),
   };
 };

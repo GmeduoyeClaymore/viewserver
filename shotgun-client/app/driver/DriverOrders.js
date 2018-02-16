@@ -3,7 +3,7 @@ import {connect} from 'custom-redux';
 import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
 import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
-import {getDaoState} from 'common/dao';
+import {getDaoState, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const DriverOrders = ({history, isCompleted, userId}) => {
@@ -48,12 +48,15 @@ const DriverOrders = ({history, isCompleted, userId}) => {
   </Container>;
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  isCompleted: initialProps.history.location.state && initialProps.history.location.state.isCompleted !== undefined ? initialProps.history.location.state.isCompleted : false,
-  vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
-  position: getDaoState(state, ['position'], 'userDao')
-});
+const mapStateToProps = (state, initialProps) => {
+  const navigationProps = getNavigationProps(initialProps);
+  return {
+    ...initialProps,
+    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : false,
+    vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
+    position: getDaoState(state, ['position'], 'userDao')
+  };
+};
 
 export default withRouter(connect(
   mapStateToProps )(DriverOrders));
