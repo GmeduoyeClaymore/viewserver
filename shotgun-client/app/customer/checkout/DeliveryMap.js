@@ -8,7 +8,6 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
 import { getDaoState, getOperationError, isOperationPending } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {merge} from 'lodash';
 import yup from 'yup';
 import {TextInput} from 'react-native';
 
@@ -65,11 +64,11 @@ const DeliveryMap = ({history, context, client, busy, position, navigationStrate
   };
 
   const setLocation = (address, addressKey) => {
-    context.setState({delivery: merge({}, delivery, { [addressKey]: address })}, () => history.push('/Customer/Checkout/DeliveryMap'));
+    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push('/Customer/Checkout/DeliveryMap'));
   };
 
   const setDurationAndDistance = ({distance, duration}) => {
-    context.setState({delivery: merge({}, delivery, {distance: Math.round(distance),  duration: Math.round(duration)})});
+    context.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
   };
 
   const doAddressLookup = (addressLabel, onAddressSelected) => {

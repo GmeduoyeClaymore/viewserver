@@ -6,7 +6,7 @@ import { connectStyle } from 'native-base-shoutem-theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import icoMoonConfig from './shotgun-icons-config.json';
-import mapPropsToStyleNames from '../mapPropsToStyleNames';
+import mapPropsToStyleNames from 'common/components/utils/mapPropsToStyleNames';
 
 let ShotgunIcons;
 

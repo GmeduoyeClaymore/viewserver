@@ -13,6 +13,7 @@ import DriverDao from 'driver/dao/DriverDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
+import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 
 class DriverRegistration extends Component {
   constructor() {
@@ -25,6 +26,7 @@ class DriverRegistration extends Component {
     dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new DriverDao(client));
     register(dispatch, new ContentTypeDao(client, {userId: undefined}));
+    register(dispatch, new ProductCategoryDao(client), {});
   }
 
   render() {
@@ -36,7 +38,6 @@ class DriverRegistration extends Component {
       <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...this.props}/>} />
       <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...this.props} context={this}/>} />
       <Route path={'/Driver/Registration/DriverAccountType'} exact render={() => <DriverAccountType {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/DriverCapabilityDetails'} exact render={() => <DriverCapabilityDetails {...this.props} context={this}/>} />
       <Redirect to={'/Driver/Registration/DriverAccountType'}/>
     </Switch>;
   }

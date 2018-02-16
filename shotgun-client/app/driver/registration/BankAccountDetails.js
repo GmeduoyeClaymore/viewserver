@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {ValidatingButton, ValidatingInput, Icon} from 'common/components';
-import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 
@@ -10,7 +9,7 @@ const BankAccountDetails = ({context, history}) => {
   const {bankAccount} = context.state;
 
   const onChangeText = async (field, value) => {
-    context.setState({bankAccount: merge(bankAccount, {[field]: value})});
+    context.setState({bankAccount: {...bankAccount, [field]: value}});
   };
 
   return <Container>

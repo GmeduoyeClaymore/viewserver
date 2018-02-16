@@ -5,43 +5,27 @@ import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
-import { getDaoState, isAnyLoading, getLoadingErrors} from 'common/dao';
+import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
+import {registerDriver} from 'driver/actions/DriverActions';
 
 class DriverAccountType extends Component{
   constructor(props){
     super(props);
-    this.selectContentType = this.selectContentType.bind(this);
-    this.renderContentType = this.renderContentType.bind(this);
-    this.state = {
-      ...props.context.state
-    };
+    this.register = this.register.bind(this);
   }
 
-  selectContentType(selectedContentType){
-    let {selectedContentTypes = []} = this.props;
-    const {context} = this.props;
-    const index = selectedContentTypes.indexOf(selectedContentType.contentTypeId);
-    if (!!~index){
-      selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
-    } else {
-      selectedContentTypes = [...selectedContentTypes, selectedContentType.contentTypeId];
-    }
-    context.setState({selectedContentTypes});
+  async register(){
+    const {user, vehicle, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
+    user.selectedContentTypes = selectedContentTypes.join(',');
+    dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
-  renderContentType(contentType, i){
-    const {context} = this.props;
-    const {state} = context;
-    const {selectedContentTypes = []} = state;
-    return <View key={i} style={{width: '50%', padding: 10}}>
-      <ContentTypeSelector {...{...this.props, context: this, contentType, onContentTypeSelected: this.selectContentType, selected: !!~selectedContentTypes.indexOf(contentType.contentTypeId)}}/></View>;
-  }
 
   render(){
-    const {history, contentTypes = [], selectedContentTypes = [], errors, busy} = this.props;
-
+    const {history, contentTypes = [], selectedContentTypes = [], errors, busy, context} = this.props;
+    const {state} = this;
     return <Container>
       <Header withButton>
         <Left>
@@ -59,7 +43,9 @@ class DriverAccountType extends Component{
               <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
-                    {contentTypes.map((v, i) => this.renderContentType(v, i))}
+                    {contentTypes.map((contentType, i) =>
+                      <View key={i} style={{width: '50%', padding: 10}}>
+                        <ContentTypeSelector {...{...this.props, ...state, context, contentType, selected: !!~selectedContentTypes.indexOf(contentType.contentTypeId)}}/></View>)}
                   </Row>
                 </Grid>
               </View>
@@ -67,10 +53,12 @@ class DriverAccountType extends Component{
           </Row>
         </Grid>
       </Content>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={() => history.push('/Driver/Registration/DriverCapabilityDetails')} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes}}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
+      <ErrorRegion errors={errors}>
+        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes}}>
+          <Text uppercase={false}>Register</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
+      </ErrorRegion>
     </Container>;
   }
 }
@@ -102,14 +90,17 @@ const mapStateToProps = (state, initialProps) => {
   const {errors = [], selectedContentTypes} = context.state;
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy = isAnyLoading(state, ['contentTypeDao', 'driverDao']);
+  const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
+  const busy = isAnyOperationPending(state, [{ driverDao: 'registerDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);
+
   return {
     ...initialProps,
     context,
+    ...context.state,
     selectedContentTypes,
     contentTypes,
     busy,
-    errors: [loadingErrors, errors].filter( c=> !!c).join('\n')
+    errors: [loadingErrors, errors, registrationErrors].filter( c=> !!c).join('\n')
   };
 };
 

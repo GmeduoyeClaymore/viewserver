@@ -34,7 +34,7 @@ class PagingListView extends Component {
     const {options, reset} = this.props;
 
     if (newProps.options !== null && !isEqual(options, newProps.options, true)) {
-      reset();
+      //reset();
       this.setOptions(options, newProps.options);
       Logger.debug('PagingProps-' + JSON.stringify(newProps.options));
     }
@@ -98,7 +98,7 @@ const selectorFactory = (dispatch, initializationProps) => {
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
       doPage: limit => actions.updateSubscriptionAction(daoName, {limit}),
-      setOptions: options => actions.resetSubscriptionAction(daoName, options),
+      setOptions: options => actions.updateSubscriptionAction(daoName, options),
       reset: () => actions.resetDataAction(daoName),
       errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),

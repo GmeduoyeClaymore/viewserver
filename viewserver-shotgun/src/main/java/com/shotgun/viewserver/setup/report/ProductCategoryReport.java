@@ -20,9 +20,10 @@ public class ProductCategoryReport {
                         .withParameter("parentCategoryId", "Parent Category Id", String[].class)
                         .withNodes(
                                 new FilterNode("categoryFilter")
-                                        .withExpression("parentCategoryId == \"{parentCategoryId}\"")
+                                        .withExpression("parentCategoryId == parentCategoryId")
                                         .withConnection("#input")
                         )
+
                         .withOutput("categoryFilter");
         }
 }

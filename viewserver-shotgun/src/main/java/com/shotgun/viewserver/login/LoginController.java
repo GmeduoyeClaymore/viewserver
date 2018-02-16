@@ -85,7 +85,7 @@ public class LoginController {
 
         while(rows.moveNext()){
             String email = (String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
-            if(email.equals(loginEmail)){
+            if(email != null && email.equals(loginEmail)){
                 return rows.getRowId();
             }
         }

@@ -5,7 +5,7 @@ import resolveDetailsControl from './ContentTypeDetailRegistry';
 import {Image, StyleSheet, Text, TouchableHighlight, Dimensions, View } from 'react-native';
 import {Button, Col} from 'native-base';
 import ReactNativeModal from 'react-native-modal';
-const {width} = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 const BORDER_RADIUS = 13;
 const BACKGROUND_COLOR = 'white';
 const BORDER_COLOR = '#d5d5d5';
@@ -13,6 +13,7 @@ const TITLE_FONT_SIZE = 13;
 const TITLE_COLOR = '#8f8f8f';
 const BUTTON_FONT_WEIGHT = 'normal';
 const BUTTON_FONT_COLOR = '#007ff9';
+const BUTTON_FONT_COLOR_DISABLED = '#d6e9fc';
 const BUTTON_FONT_SIZE = 20;
 
 const styles = {
@@ -77,7 +78,7 @@ const styles = {
     backgroundColor: BACKGROUND_COLOR,
     borderRadius: BORDER_RADIUS,
     width: width - 20,
-    height: 600,
+    height: height - 100,
     marginBottom: 8,
     overflow: 'hidden',
   },
@@ -107,6 +108,13 @@ const styles = {
     fontWeight: BUTTON_FONT_WEIGHT,
     backgroundColor: 'transparent',
   },
+  confirmTextDisabled: {
+    textAlign: 'center',
+    color: BUTTON_FONT_COLOR_DISABLED,
+    fontSize: BUTTON_FONT_SIZE,
+    fontWeight: BUTTON_FONT_WEIGHT,
+    backgroundColor: 'transparent',
+  },
   cancelButton: {
     backgroundColor: BACKGROUND_COLOR,
     borderRadius: BORDER_RADIUS,
@@ -123,7 +131,7 @@ const styles = {
   }
 };
 
-const  confirmButton = <Text style={[styles.confirmText]}>Confirm</Text>;
+const  confirmButton = (isDisabled) => <Text style={[isDisabled ? styles.confirmTextDisabled : styles.confirmText]}>Confirm</Text>;
 const cancelButton = <Text style={[styles.cancelText]}>Cancel</Text>;
 
 const TitleContainer = ({title}) => (
@@ -140,20 +148,34 @@ export default class ContentTypeSelector extends Component{
     constructor(props){
       super(props);
       this.state = {
-        detailVisible: false
+        detailVisible: false,
+        canSubmit: false,
+        showErrors: false
       };
       this._handleSelectContentType = this._handleSelectContentType.bind(this);
       this._handleOnModalHide = this._handleOnModalHide.bind(this);
       this._handleConfirm = this._handleConfirm.bind(this);
       this._handleCancel = this._handleCancel.bind(this);
+      this.doValidate = this.doValidate.bind(this);
     }
 
     _handleSelectContentType(){
-      const {onContentTypeSelected, selected} = this.props;
-      if (onContentTypeSelected){
-        onContentTypeSelected(!selected);
+      const {selected} = this.props;
+      if (!selected){
+        this._handleToggleDetailVisibility(true);
+      } else {
+        this.deselectContentType();
       }
-      this._handleToggleDetailVisibility(true);
+    }
+
+    deselectContentType(){
+      let {selectedContentTypes = [], contentType} = this.props;
+      const {context} = this.props;
+      const index = selectedContentTypes.indexOf(contentType.contentTypeId);
+      if (!!~index){
+        selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
+        context.setState({selectedContentTypes});
+      }
     }
 
     _handleToggleDetailVisibility(detailVisible){
@@ -165,20 +187,54 @@ export default class ContentTypeSelector extends Component{
     }
 
     _handleCancel(){
-        
+      this._handleToggleDetailVisibility(false);
     }
 
-    _handleConfirm(){
+    async _handleConfirm(){
       const {state} = this;
       const {context} = this.props;
-      if (context){
-        context.setState({...state});
+      const result = await this.getValidationResult();
+      if (result.error == ''){
+        if (context){
+          let {selectedContentTypes = [], contentType} = this.props;
+          const {context} = this.props;
+          const index = selectedContentTypes.indexOf(contentType.contentTypeId);
+          if (!~index){
+            selectedContentTypes = [...selectedContentTypes, contentType.contentTypeId];
+            context.setState({selectedContentTypes, ...state});
+          } else {
+            context.setState({...state});
+          }
+          this._handleToggleDetailVisibility(false);
+        }
+      } else {
+        context.setState({showErrors: true});
       }
+    }
+
+    async getValidationResult(){
+      const {contentType = {}} = this.props;
+      const ContentTypeDetailControl = resolveDetailsControl(contentType);
+      if (ContentTypeDetailControl.canSubmit ){
+        return await ContentTypeDetailControl.canSubmit(this.state);
+      }
+      return undefined;
+    }
+
+    async doValidate(){
+      const result = await this.getValidationResult();
+      if (result){
+        super.setState({canSubmit: result.error == ''});
+      }
+    }
+
+    setState(newState){
+      super.setState({...newState, showErrors: false}, this.doValidate);
     }
 
     render(){
       const {selected, contentType = {}} = this.props;
-      const {detailVisible} = this.state;
+      const {detailVisible, canSubmit} = this.state;
       const ContentTypeDetailControl = resolveDetailsControl(contentType);
       return <View style={{flex: 1, justifyContent: 'center'}}>
         <Button style={{height: 'auto', borderWidth: 0, justifyContent: 'center', paddingLeft: 25, paddingRight: 30,  flex: 4}} large active={selected} onPress={this._handleSelectContentType}>
@@ -195,16 +251,13 @@ export default class ContentTypeSelector extends Component{
           backdropOpacity={0.4}
         >
           <View style={[styles.contentTypeSelectorContainer]}>
-            <View>
-              <TitleContainer title={contentType.name}/>
-              <Text style={styles.contentTypeSelectTextRowSummary}>{contentType.description}</Text>
-            </View>
-            <ContentTypeDetailControl {...{contentType, context: this, ...this.props}}/>
+            <TitleContainer title={contentType.name}/>
+            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state, context: this}}/>
             <TouchableHighlight
               style={styles.confirmButton}
               underlayColor="#ebebeb"
               onPress={this._handleConfirm}>
-              {confirmButton}
+              {confirmButton(!canSubmit)}
             </TouchableHighlight>
           </View>
 

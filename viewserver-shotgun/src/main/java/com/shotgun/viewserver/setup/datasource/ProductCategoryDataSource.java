@@ -24,6 +24,8 @@ ProductCategoryDataSource {
                         new Column("categoryId", "categoryId", ColumnType.String),
                         new Column("category", "category", ColumnType.String),
                         new Column("parentCategoryId", "parentCategoryId", ColumnType.String),
+                        new Column("path", "path", ColumnType.String),
+                        new Column("level", "level", ColumnType.Int),
                         new Column("isLeaf", "isLeaf", ColumnType.Bool)
                 ))
                 .withKeyColumns("categoryId");
@@ -37,6 +39,12 @@ ProductCategoryDataSource {
                                 null
                         )
                 )
+                .withCalculatedColumns(
+                        new CalculatedColumn("dimension_parentCategoryId", ColumnType.String, "parentCategoryId")
+                )
+                .withDimensions(Arrays.asList(
+                        new Dimension("dimension_parentCategoryId", Cardinality.Byte, ColumnType.String)
+                ))
                 .withSchema(schema)
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

@@ -3,7 +3,6 @@ import {connect} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';
-import {merge} from 'lodash';
 import { withRouter } from 'react-router';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 
@@ -13,8 +12,8 @@ const ItemDetails = ({context, navigationStrategy}) => {
   let imageIsVertical = false;
 
   const onChangeValue = (field, value) => {
-    const {orderItem} = context.state;
-    context.setState({orderItem: merge({}, orderItem, {[field]: value})});
+    const {orderItem={}} = context.state;
+    context.setState({orderItem: {...orderItem, [field]: value}});
   };
 
   const onSelectImage = (response) => {

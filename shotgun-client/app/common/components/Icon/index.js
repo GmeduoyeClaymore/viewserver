@@ -8,7 +8,7 @@ import { IconNB } from './IconNB';
 import ic from './NBIcons.json';
 import variable from 'native-base-theme/variables/platform';
 
-import mapPropsToStyleNames from '../mapPropsToStyleNames';
+import mapPropsToStyleNames from 'common/components/utils/mapPropsToStyleNames';
 
 class Icon extends Component {
 	static contextTypes = {

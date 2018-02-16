@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, Col, Item, Label, View} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {merge} from 'lodash';
 import {connect} from 'custom-redux';
 import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
@@ -25,7 +24,7 @@ class UpdateBankAccountDetails extends Component {
     const {bankAccount} = this.state;
 
     const onChangeText = async (field, value) => {
-      this.setState({bankAccount: merge(this.state.bankAccount, {[field]: value})});
+      this.setState({bankAccount: {...this.state.bankAccount, [field]: value}});
     };
 
     const onSetBankAccount = async () => {

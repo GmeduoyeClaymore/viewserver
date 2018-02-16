@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.payments;
 
+import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.user.User;
 import com.stripe.Stripe;
@@ -57,6 +58,8 @@ public class PaymentController {
     public String createPaymentAccount(@ActionParam(name = "user") User user,
                                        @ActionParam(name = "deliveryAddress") DeliveryAddress address,
                                        @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+        Account account = null;
+
         try {
             //https://stripe.com/docs/api#update_account
             Map<String, Object> payoutSchedule = new HashMap<>();
@@ -107,11 +110,11 @@ public class PaymentController {
             accountParams.put("tos_acceptance", tosAcceptance);
             accountParams.put("legal_entity", legalEntity);
 
-            Account account = Account.create(accountParams);
+            account = Account.create(accountParams);
             logger.debug("Added stripe account id {}", account.getId());
             return account.getId();
         } catch (Exception e) {
-            logger.error("There was a problem creating the payment account", e);
+            logger.error(String.format("There was a problem creating the payment account \"%s\"", ControllerUtils.toString(account)), e);
             throw new RuntimeException(e);
         }
     }

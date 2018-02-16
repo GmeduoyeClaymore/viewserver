@@ -13,6 +13,7 @@ export {TermsAgreement} from './TermsAgreement';
 export {ValidatingButton} from './ValidatingButton';
 export {ValidatingInput} from './ValidatingInput';
 export {ImageSelector} from './ImageSelector';
+export {SearchBar} from './SearchBar';
 export {Icon} from './Icon';
 export {Tabs} from './Tabs';
 export {OriginDestinationSummary} from './OriginDestinationSummary';
