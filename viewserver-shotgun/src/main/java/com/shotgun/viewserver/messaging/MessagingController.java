@@ -2,8 +2,11 @@ package com.shotgun.viewserver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
+import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
@@ -45,9 +48,11 @@ public class MessagingController {
     private static String MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
 
     private MessagingApiKey messagingApiKey;
+    private ShotgunTableUpdater shotgunTableUpdater;
 
-    public MessagingController(MessagingApiKey messagingApiKey) {
+    public MessagingController(MessagingApiKey messagingApiKey, ShotgunTableUpdater shotgunTableUpdater) {
         this.messagingApiKey = messagingApiKey;
+        this.shotgunTableUpdater = shotgunTableUpdater;
     }
 
     @ControllerAction(path = "sendMessage")
@@ -75,10 +80,11 @@ public class MessagingController {
 
         logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);
 
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        userTable.updateRow(new TableKey(userId), row -> {
-            row.setString("fcmToken", token);
-        });
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("fcmToken", token);
+
+        shotgunTableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     public String getTokenForUser(String userId){

@@ -1,19 +1,18 @@
 package com.shotgun.viewserver.order;
 
-import com.amazonaws.util.JodaTime;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
-import io.viewserver.datasource.IDataSource;
-import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.operators.table.ITableRowUpdater;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import org.joda.time.Days;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.Map;
 
 @Controller(name = "orderController")
 public class OrderController {
@@ -33,25 +31,21 @@ public class OrderController {
     DeliveryController deliveryController;
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
-    private KeyedTable orderTable;
     private KeyedTable productTable;
+    private ShotgunTableUpdater shotgunTableUpdater;
 
-    public OrderController(DeliveryAddressController deliveryAddressController,
+    public OrderController(ShotgunTableUpdater shotgunTableUpdater,
+                           DeliveryAddressController deliveryAddressController,
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
         this.pricingStrategyResolver = pricingStrategyResolver;
     }
 
-    KeyedTable getOrderTable(){
-        if(this.orderTable == null){
-            this.orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        }
-        return this.orderTable;
-    }
     KeyedTable getProductTable(){
         if(this.productTable == null){
             this.productTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_TABLE_NAME);
@@ -83,21 +77,17 @@ public class OrderController {
         Date now = new Date();
         String orderId = ControllerUtils.generateGuid();
 
-       // IDataSource orderDataSource = IDataSourceRegistry.get
+        IRecord orderRecord = new Record()
+        .addValue("orderId", orderId)
+        .addValue("totalPrice", calculateTotalPrice(delivery, orderItems))
+        .addValue("created", now)
+        .addValue("lastModified", now)
+        .addValue("status", OrderStatuses.PLACED.name())
+        .addValue("userId", userId)
+        .addValue("paymentId", paymentId)
+        .addValue("deliveryId", deliveryId);
 
-        //add order
-        ITableRowUpdater tableUpdater = row -> {
-            row.setString("orderId", orderId);
-            row.setDouble("totalPrice", calculateTotalPrice(delivery, orderItems));
-            row.setLong("created", now.getTime());
-            row.setLong("lastModified", now.getTime());
-            row.setString("status", OrderStatuses.PLACED.name());
-            row.setString("userId", userId);
-            row.setString("paymentId", paymentId);
-            row.setString("deliveryId", deliveryId);
-        };
-
-        getOrderTable().addRow(new TableKey(orderId), tableUpdater);
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         //add orderItems
         for (OrderItem orderItem : orderItems) {
@@ -178,5 +168,4 @@ public class OrderController {
     private PriceStrategy getPriceStrategy(OrderItem orderItem) {
         return pricingStrategyResolver.resolve(orderItem.getProductId());
     }
-
 }

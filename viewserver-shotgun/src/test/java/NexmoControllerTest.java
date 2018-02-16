@@ -13,7 +13,7 @@ public class NexmoControllerTest {
 
     @Before
     public void createSut(){
-        sut = new NexmoController(9000, null, "c03cd396", "33151c6772f2bd52");
+        sut = new NexmoController(9000, null, "c03cd396", "33151c6772f2bd52", null);
     }
 
     @Test

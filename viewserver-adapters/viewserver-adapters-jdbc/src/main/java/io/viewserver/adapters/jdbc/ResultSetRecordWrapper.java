@@ -74,6 +74,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         }
     }
 
+
+
     @Override
     public boolean getBool(String columnName) {
         try {
@@ -237,5 +239,10 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean hasValue(String columnName) {
+        return true;
     }
 }

@@ -123,6 +123,11 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
+    public boolean hasValue(String columnName) {
+        return true;
+    }
+
+    @Override
     public String toString() {
      return this.record.toString();
     }

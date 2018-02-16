@@ -2,6 +2,8 @@ package com.shotgun.viewserver.delivery;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Date;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DeliveryAddress{
     private String deliveryAddressId;
@@ -16,6 +18,7 @@ public class DeliveryAddress{
     private String googlePlaceId;
     private Double latitude;
     private Double longitude;
+    private Date created;
 
     public DeliveryAddress() {
     }
@@ -114,5 +117,13 @@ public class DeliveryAddress{
 
     public void setLine2(String line2) {
         this.line2 = line2;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }

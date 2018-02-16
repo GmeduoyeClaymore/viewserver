@@ -1,8 +1,10 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
@@ -21,8 +23,10 @@ import java.util.Date;
 @Controller(name = "phoneCallController")
 public class PhoneCallController {
     private static final Logger log = LoggerFactory.getLogger(PhoneCallController.class);
+    private ShotgunTableUpdater shotgunTableUpdater;
 
-    public PhoneCallController() {
+    public PhoneCallController(ShotgunTableUpdater shotgunTableUpdater) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
     }
 
     @ControllerAction(path = "getCustomerVirtualNumber", isSynchronous = true)
@@ -60,21 +64,23 @@ public class PhoneCallController {
 
         Date now = new Date();
 
-        phoneNumberTable.updateRow(new TableKey(availablePhoneNumbers.get(0)), row -> {
-            row.setString("userPhoneNumber", customerNumber);
-            row.setString("orderId", orderId);
-            row.setString("status", PhoneNumberStatuses.ASSIGNED.name());
-            row.setLong("assignedTime", now.getTime());
-        });
+        Record customerVirtualNumber = new Record()
+                .addValue("phoneNumber", availablePhoneNumbers.get(0))
+                .addValue("userPhoneNumber", customerNumber)
+                .addValue("orderId", orderId)
+                .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
+                .addValue("assignedTime", now);
 
-        phoneNumberTable.updateRow(new TableKey(availablePhoneNumbers.get(1)), row -> {
-            row.setString("userPhoneNumber", driverNumber);
-            row.setString("orderId", orderId);
-            row.setString("status", PhoneNumberStatuses.ASSIGNED.name());
-            row.setLong("assignedTime", now.getTime());
-        });
+        shotgunTableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
 
-        //TODO - possibly validate the phone number with Nexmo
+        Record driverVirtualNumber = new Record()
+                .addValue("phoneNumber", availablePhoneNumbers.get(1))
+                .addValue("userPhoneNumber", driverNumber)
+                .addValue("orderId", orderId)
+                .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
+                .addValue("assignedTime", now);
+
+        shotgunTableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
 
         return availablePhoneNumbers;
     }

@@ -5,16 +5,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -30,15 +34,19 @@ import java.util.List;
 @Controller(name = "nexmoController")
 public class NexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
+    private final int httpPort;
     private Catalog systemCatalog;
     private final String apiKey;
     private final String apiSecret;
+    private final ShotgunTableUpdater shotgunTableUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret) {
+    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret, ShotgunTableUpdater shotgunTableUpdater) {
+        this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
+        this.shotgunTableUpdater = shotgunTableUpdater;
         this.createHttpServer(httpPort);
     }
 
@@ -139,14 +147,13 @@ public class NexmoController {
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
             if (userPhoneNumber.equals(toNumber.trim()) || userPhoneNumber.equals(fromNumber.trim())) {
-                phoneNumberTable.updateRow(new TableKey(virtualPhoneNumber), row -> {
-                    row.setString("status", status);
+                Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("status", status);
+                if(status.equals(PhoneNumberStatuses.COMPLETED.name())){
+                    phoneNumberRecord.addValue("orderId", "");
+                    phoneNumberRecord.addValue("userPhoneNumber", "");
+                }
 
-                    if(status.equals(PhoneNumberStatuses.COMPLETED.name())){
-                        row.setString("orderId", "");
-                        row.setString("userPhoneNumber", "");
-                    }
-                });
+                shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", phoneNumberRecord);
             }
         }
     }
