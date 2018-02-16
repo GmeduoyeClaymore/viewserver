@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
@@ -11,10 +12,12 @@ import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
@@ -27,6 +30,7 @@ import java.util.HashMap;
 public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
+    private ShotgunTableUpdater shotgunTableUpdater;
     private PaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
     private MessagingController messagingController;
@@ -34,11 +38,13 @@ public class CustomerController {
     private NexmoController nexmoController;
 
 
-    public CustomerController(PaymentController paymentController,
+    public CustomerController(ShotgunTableUpdater shotgunTableUpdater,
+                              PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
                               MessagingController messagingController,
                               UserController userController,
                               NexmoController nexmoController) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
         this.messagingController = messagingController;
@@ -66,14 +72,10 @@ public class CustomerController {
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(String orderId){
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-
-        orderTable.updateRow(new TableKey(orderId), row -> {
-            row.setString("status", OrderStatuses.CANCELLED.name());
-        });
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.CANCELLED.name());
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         rejectDriver(orderId);
-
         return orderId;
     }
 
@@ -86,13 +88,11 @@ public class CustomerController {
         String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
 
         if(driverId != null && driverId != "") {
-            orderTable.updateRow(new TableKey(orderId), row -> {
-                row.setString("status", OrderStatuses.PLACED.name());
-            });
+            IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
+            shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
-            deliveryTable.updateRow(new TableKey(deliveryId), row -> {
-                row.setString("driverId", null);
-            });
+            IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", null);
+            shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
             notifyStatusChanged(orderId, driverId, "cancelled");
         }

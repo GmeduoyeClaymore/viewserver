@@ -1,32 +1,31 @@
 package com.shotgun.viewserver.order;
 
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
-import io.viewserver.operators.table.ITableRowUpdater;
-import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.operators.table.TableKey;
 
 @Controller(name = "orderItemController")
 public class OrderItemController {
 
+    private ShotgunTableUpdater shotgunTableUpdater;
     private ImageController imageController;
 
-    public OrderItemController(ImageController imageController) {
+    public OrderItemController(ShotgunTableUpdater shotgunTableUpdater,
+                               ImageController imageController) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
         this.imageController = imageController;
     }
 
     @ControllerAction(path = "addOrUpdateOrderItem", isSynchronous = true)
     public String addOrUpdateOrderItem(@ActionParam(name = "orderItem")OrderItem orderItem){
         String userId = getUserId();
-        KeyedTable orderItemTable = ControllerUtils.getKeyedTable(TableNames.ORDER_ITEM_TABLE_NAME);
-        String newOrderItemId = ControllerUtils.generateGuid();
 
         //save image if required
         if(orderItem.getImageData() != null){
@@ -35,26 +34,23 @@ public class OrderItemController {
             orderItem.setImageUrl(imageUrl);
         }
 
-        ITableRowUpdater tableUpdater = row -> {
-            if(orderItem.getOrderItemId() == null){
-                row.setString("orderItemId", newOrderItemId);
-            }
-            row.setString("userId", userId);
-            row.setString("orderId", orderItem.getOrderId());
-            row.setString("productId", orderItem.getProductId());
-            row.setInt("contentTypeId", orderItem.getContentTypeId());
-            row.setString("notes", orderItem.getNotes());
-            row.setString("imageUrl", orderItem.getImageUrl());
-            row.setInt("quantity", orderItem.getQuantity());
-        };
-
-        if(orderItem.getOrderItemId() != null){
-            orderItemTable.updateRow(new TableKey(orderItem.getOrderItemId()), tableUpdater);
-            return orderItem.getOrderItemId();
-        }else{
-            orderItemTable.addRow(new TableKey(newOrderItemId), tableUpdater);
-            return newOrderItemId;
+        if(orderItem.getOrderItemId() == null){
+            orderItem.setOrderItemId(ControllerUtils.generateGuid());
         }
+
+        Record orderItemRecord = new Record()
+        .addValue("userId", userId)
+        .addValue("orderId", orderItem.getOrderId())
+        .addValue("productId", orderItem.getProductId())
+        .addValue("contentTypeId", orderItem.getContentTypeId())
+        .addValue("notes", orderItem.getNotes())
+        .addValue("imageUrl", orderItem.getImageUrl())
+        .addValue("quantity", orderItem.getQuantity())
+        .addValue("orderItemId", orderItem.getOrderItemId());
+
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
+
+        return orderItem.getOrderItemId();
     }
 
     private String getUserId() {

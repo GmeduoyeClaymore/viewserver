@@ -35,7 +35,7 @@ public class Record implements IRecord {
         return record;
     }
 
-    Record() {}
+    public Record() {}
 
     void initialiseFromRecord(IRecord source) {
         values.clear();
@@ -45,6 +45,15 @@ public class Record implements IRecord {
             String columnName = columnNames[i];
             values.put(columnName, source.getValue(columnName));
         }
+    }
+
+    public boolean hasValue(String columnName){
+        return values.containsKey(columnName);
+    }
+
+    public Record addValue(String columnName, Object value){
+        values.put(columnName, value);
+        return this;
     }
 
     void clear() {

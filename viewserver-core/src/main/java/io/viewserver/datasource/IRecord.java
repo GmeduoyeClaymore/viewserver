@@ -49,4 +49,6 @@ public interface IRecord {
     Date getDateTime(String columnName);
 
     Object getValue(String columnName);
+
+    boolean hasValue(String columnName);
 }

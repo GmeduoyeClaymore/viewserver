@@ -47,6 +47,10 @@ public class LocalTableUpdater implements ITableUpdater {
         return table;
     }
 
+    public void setTable(ITable table) {
+        this.table = table;
+    }
+
     @Override
     public void addRow(ITableRowUpdater rowUpdater) {
         table.addRow(rowUpdater);

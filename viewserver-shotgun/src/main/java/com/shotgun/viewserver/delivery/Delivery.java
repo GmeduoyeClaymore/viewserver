@@ -10,6 +10,7 @@ public class Delivery {
     private String driverId;
     private Date from;
     private Date till;
+    private Date created;
     private int distance;
     private int duration;
     private DeliveryAddress origin;
@@ -50,6 +51,13 @@ public class Delivery {
         this.from = from;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
     public String getDeliveryId() {
         return deliveryId;

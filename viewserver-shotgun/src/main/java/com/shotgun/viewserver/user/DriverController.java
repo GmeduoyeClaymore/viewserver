@@ -2,6 +2,7 @@ package com.shotgun.viewserver.user;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
@@ -17,10 +18,12 @@ import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentController;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.*;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.ITask;
@@ -34,6 +37,7 @@ import java.util.concurrent.Future;
 @Controller(name = "driverController")
 public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
+    private ShotgunTableUpdater shotgunTableUpdater;
     private PaymentController paymentController;
     private MessagingController messagingController;
     private UserController userController;
@@ -44,7 +48,8 @@ public class DriverController {
     private NexmoController nexmoController;
     private IReactor reactor;
 
-    public DriverController(PaymentController paymentController,
+    public DriverController(ShotgunTableUpdater shotgunTableUpdater,
+                            PaymentController paymentController,
                             MessagingController messagingController,
                             UserController userController,
                             VehicleController vehicleController,
@@ -53,6 +58,7 @@ public class DriverController {
                             ImageController imageController,
                             NexmoController nexmoController,
                             IReactor reactor) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
@@ -119,7 +125,6 @@ public class DriverController {
     public String acceptOrder(@ActionParam(name = "orderId")String orderId){
         String driverId = getUserId();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
 
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String currentStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
@@ -131,18 +136,15 @@ public class DriverController {
             throw new RuntimeException("Order has already been assigned");
         }
 
-        orderTable.updateRow(new TableKey(orderId), row -> {
-            row.setString("status", OrderStatuses.ACCEPTED.name());
-        });
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.ACCEPTED.name());
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
-        deliveryTable.updateRow(new TableKey(deliveryId), row -> {
-            row.setString("driverId", driverId);
-        });
+        IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", driverId);
+        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.ACCEPTED.name());
         return orderId;
     }
-
 
     @ControllerAction(path = "startOrder", isSynchronous = true)
     public String startOrder(@ActionParam(name = "orderId")String orderId){
@@ -152,9 +154,8 @@ public class DriverController {
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
 
-        orderTable.updateRow(new TableKey(orderId), row -> {
-            row.setString("status", OrderStatuses.PICKEDUP.name());
-        });
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PICKEDUP.name());
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
 
@@ -178,9 +179,8 @@ public class DriverController {
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
         Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
-        orderTable.updateRow(new TableKey(orderId), row -> {
-            row.setString("status", OrderStatuses.COMPLETED.name());
-        });
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
@@ -190,19 +190,17 @@ public class DriverController {
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
         String driverId = getUserId();
 
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
         String deliveryId = ControllerUtils.getColumnValue(orderTable, "deliveryId", currentOrderRow).toString();
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
-        orderTable.updateRow(new TableKey(orderId), row -> {
-            row.setString("status", OrderStatuses.PLACED.name());
-        });
 
-        deliveryTable.updateRow(new TableKey(deliveryId), row -> {
-            row.setString("driverId", null);
-        });
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
+        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+
+        IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", null);
+        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;

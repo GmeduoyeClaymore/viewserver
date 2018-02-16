@@ -54,8 +54,10 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                     try {
                         commandResult.setSuccess(true).setMessage(invoke.get()).setComplete(true);
                     } catch (InterruptedException e) {
+                        log.error("Failed to handle generic json command", e);
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
+                        log.error("Failed to handle generic json command", e);
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     }
                 }
