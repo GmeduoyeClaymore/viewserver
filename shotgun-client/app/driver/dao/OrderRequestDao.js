@@ -35,11 +35,11 @@ export default class OrderRequestDaoContext{
   }
 
 
-  getReportContext({contentTypeId, contentTypeOptions = {}, location, maxDistance}){
+  getReportContext({contentTypeId, contentTypeOptions = {}, position = {}, maxDistance}){
     if (typeof contentTypeId === 'undefined') {
       return {};
     }
-    const {driverLatitude, driverLongitude} = location;
+    const {driverLatitude, driverLongitude} = position;
     const {selectedProductIds} = contentTypeOptions;
     const baseReportContext =  {
       reportId: 'orderRequest',
@@ -56,6 +56,8 @@ export default class OrderRequestDaoContext{
     if (selectedProductIds){
       baseReportContext.dimensions.dimension_productId = selectedProductIds;
     }
+
+    return baseReportContext;
   }
 
   createDataSink(){
@@ -132,8 +134,8 @@ export default class OrderRequestDaoContext{
     if (typeof options.contentTypeId === 'undefined'){
       throw new Error('contentTypeId should be defined');
     }
-    if (typeof options.location === 'undefined'){
-      throw new Error('location  should be defined');
+    if (typeof options.position === 'undefined'){
+      throw new Error('position  should be defined');
     }
     if (typeof options.maxDistance === 'undefined'){
       throw new Error('maxDistance  should be defined');
@@ -142,13 +144,16 @@ export default class OrderRequestDaoContext{
     return options;
   }
 
-  generateFilterExpressions(opts){
+  generateFilterExpression(opts){
     const {contentTypeOptions} = opts;
     const {selectedProductCategories = []} = contentTypeOptions;
+    if (!selectedProductCategories.length){
+      return undefined;
+    }
     return selectedProductCategories.filter(cat => !isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression).join(' || ');
   }
 
-  toFilterExpression(){
+  toFilterExpression(searchText){
     return `path like "${searchText}*"`;
   }
 }

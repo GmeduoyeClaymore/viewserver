@@ -3,7 +3,6 @@ package com.shotgun.viewserver.delivery;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public  class Vehicle{
     private Dimensions dimensions;
     String vehicleId;
@@ -12,21 +11,21 @@ public  class Vehicle{
     String make;
     String model;
     String bodyStyle;
-    String[] selectedProducts;
+    String[] selectedProductIds;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer numAvailableForOffload;
 
     public Vehicle() {
     }
 
-    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg, String[] selectedProducts) {
+    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg, String[] selectedProductIds) {
         this.dimensions = dimensions;
         this.model = model;
         this.make = make;
         this.bodyStyle = bodyStyle;
         this.colour = colour;
         this.registrationNumber = reg;
-        this.selectedProducts = selectedProducts;
+        this.selectedProductIds = selectedProductIds;
     }
 
 
@@ -47,12 +46,12 @@ public  class Vehicle{
         this.numAvailableForOffload = numAvailableForOffload;
     }
 
-    public String[] getSelectedProducts() {
-        return selectedProducts;
+    public String[] getSelectedProductIds() {
+        return selectedProductIds;
     }
 
-    public void setSelectedProducts(String[] selectedProducts) {
-        this.selectedProducts = selectedProducts;
+    public void setSelectedProductIds(String[] selectedProductIds) {
+        this.selectedProductIds = selectedProductIds;
     }
 
     public String getBodyStyle() {

@@ -18,7 +18,6 @@ public class VehicleDetailsController {
 
     private static String VEHICLE_DETAILS_QUERY_URL = "https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData";
     private VehicleDetailsApiKey apiKey;
-    private VehicleController vehicleController;
     private static String[] PERMITTED_BODY_STYLES = new String[]{
             VehicleBodyStyles.BOX_VAN, VehicleBodyStyles.PANEL_VAN,
             VehicleBodyStyles.CAR_DERIVED_VAN, VehicleBodyStyles.LIGHT_VAN,
@@ -26,9 +25,8 @@ public class VehicleDetailsController {
             VehicleBodyStyles.LUTON_VAN, VehicleBodyStyles.INSULATED_VAN,
             VehicleBodyStyles.SPECIALLY_FITTED_VAN, VehicleBodyStyles.DROPSIDE_LORRY};
 
-    public VehicleDetailsController(VehicleDetailsApiKey apiKey, VehicleController vehicleController) {
+    public VehicleDetailsController(VehicleDetailsApiKey apiKey) {
         this.apiKey = apiKey;
-        this.vehicleController = vehicleController;
     }
 
     @ControllerAction(path = "getDetails")
@@ -64,7 +62,7 @@ public class VehicleDetailsController {
         String make = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Make"));
         String model = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Model"));
         String color = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Colour"));
-        return new Vehicle(dim,make,model,bodyType,color,reg, vehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
+        return new Vehicle(dim,make,model,bodyType,color,reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
 
     }
 

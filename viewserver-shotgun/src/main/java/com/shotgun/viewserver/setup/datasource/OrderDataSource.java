@@ -70,12 +70,12 @@ public class
                                 .withConnection("contentTypeJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productCategoryJoin")
-                                .withLeftJoinColumns("categoryId")
+                                .withLeftJoinColumns("product_categoryId")
                                 .withRightJoinColumns("categoryId")
                                 .withColumnPrefixes("", "productCategory_")
                                 .withAlwaysResolveNames()
                                 .withConnection("productJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductCategoryDataSource.NAME, ProductCategoryDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("projectionNode")
                                 .withMode(IProjectionConfig.ProjectionMode.Projection)
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"))

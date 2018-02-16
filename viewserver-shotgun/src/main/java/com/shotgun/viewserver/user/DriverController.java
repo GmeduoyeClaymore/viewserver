@@ -97,7 +97,7 @@ public class DriverController {
         }
 
         user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
-        user.setSelectedProducts(String.join(",", vehicleController.getValidProductsVehicle(vehicle)));
+        user.setSelectedProducts(String.join(",", VehicleController.getValidProductsVehicle(vehicle.getDimensions())));
 
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();

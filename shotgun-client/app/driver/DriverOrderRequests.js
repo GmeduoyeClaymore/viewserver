@@ -57,7 +57,7 @@ const mapStateToProps = (state, initialProps) => {
   const selectedContentTypes = contentTypes.filter(ct => !!~selectedContentTypeIds.indexOf(ct.contentTypeId));
   const selectedContentType = contentTypes.find(ct => ct.contentTypeId === contentTypeId) || contentTypes[0];
   const selectedContentTypeIndex = selectedContentTypes.indexOf(selectedContentType);
-  const contentTypeOptions = contentTypeId ? selectedContentTypeOptions[contentTypeId] : {}
+  const contentTypeOptions = contentTypeId ? selectedContentTypeOptions[contentTypeId] : {};
 
   return {
     ...initialProps,

@@ -75,6 +75,9 @@ public class PaymentController {
 
             Map<String, Object> dob = new HashMap<>();
             Calendar c = Calendar.getInstance();
+            if(user.getDob() == null){
+                throw new RuntimeException("No DOB specified");
+            }
             c.setTime(user.getDob());
             dob.put("day", c.get(Calendar.DAY_OF_MONTH));
             dob.put("month", c.get(Calendar.MONTH));

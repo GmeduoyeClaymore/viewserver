@@ -180,7 +180,7 @@ export default class ContentTypeSelector extends Component{
     }
 
     _handleToggleDetailVisibility(detailVisible){
-      this.setState({detailVisible});
+      super.setState({detailVisible});
     }
 
     _handleOnModalHide(){
@@ -200,7 +200,7 @@ export default class ContentTypeSelector extends Component{
           let {selectedContentTypes = {}, contentType} = this.props;
           const {context} = this.props;
           selectedContentTypes = {...selectedContentTypes};
-          selectedContentTypes[contentType.contentTypeId] = {...state};
+          selectedContentTypes[contentType.contentTypeId] = {...state.content};
           context.setState({selectedContentTypes});
           this._handleToggleDetailVisibility(false);
         }
@@ -213,7 +213,7 @@ export default class ContentTypeSelector extends Component{
       const {contentType = {}} = this.props;
       const ContentTypeDetailControl = resolveDetailsControl(contentType);
       if (ContentTypeDetailControl.canSubmit ){
-        return await ContentTypeDetailControl.canSubmit(this.state);
+        return await ContentTypeDetailControl.canSubmit(this.state.content);
       }
       return undefined;
     }
@@ -226,7 +226,7 @@ export default class ContentTypeSelector extends Component{
     }
 
     setState(newState){
-      super.setState({...newState, showErrors: false}, this.doValidate);
+      super.setState({content: {...newState}}, this.doValidate);
     }
 
     render(){
@@ -250,7 +250,7 @@ export default class ContentTypeSelector extends Component{
         >
           <View style={[styles.contentTypeSelectorContainer]}>
             <TitleContainer title={contentType.name}/>
-            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state, ...stateForContentType, context: this}}/>
+            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state.content, ...stateForContentType, context: this, canSubmit}}/>
             <TouchableHighlight
               style={styles.confirmButton}
               underlayColor="#ebebeb"

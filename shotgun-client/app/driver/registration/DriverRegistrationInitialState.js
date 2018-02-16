@@ -1,5 +1,5 @@
-export const INITIAL_STATE = {
-  user: {
+export const IxNITIAL_STATE = {
+  /*user: {
     firstName: undefined,
     lastName: undefined,
     email: undefined,
@@ -30,10 +30,10 @@ export const INITIAL_STATE = {
       length: undefined,
       weight: undefined
     }
-  }
+  }*/
 };
 
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
@@ -50,12 +50,12 @@ export const INITIAL_STATE = {
     postCode: 'SW178RS'
   },
   
-  /*bankAccount: {
+  bankAccount: {
     accountNumber: '00012345',
     sortCode: '108800'
   },
 
-  vehicle: {
+  /*vehicle: {
     registrationNumber: 'ab01asd',
     colour: 'blue',
     make: 'Ford',
@@ -67,6 +67,6 @@ export const INITIAL_STATE = {
       length: 2000,
       weight: 1000
     }
-  }
-};*/
+  }*/
+};
 

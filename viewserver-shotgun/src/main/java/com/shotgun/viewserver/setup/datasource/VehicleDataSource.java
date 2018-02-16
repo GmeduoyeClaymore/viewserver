@@ -35,6 +35,7 @@ public class
                                         new Column("make", "make", ColumnType.String),
                                         new Column("model", "model", ColumnType.String),
                                         new Column("dimensions", "dimensions", ColumnType.String),
+                                        new Column("selectedProductIds", "selectedProductIds", ColumnType.String),
                                         new Column("numAvailableForOffload", "numAvailableForOffload", ColumnType.Int),
                                         new Column("bodyStyle", "bodyStyle", ColumnType.String)
                                 ))

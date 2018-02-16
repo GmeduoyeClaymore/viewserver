@@ -46,7 +46,7 @@ public class VehicleController {
                     .addValue("make", vehicle.getMake())
                     .addValue("model", vehicle.getModel())
                     .addValue("dimensions", ControllerUtils.toString(vehicle.getDimensions()))
-                    .addValue("selectedProducts", ControllerUtils.toString(vehicle.getSelectedProducts()))
+                    .addValue("selectedProductIds", ControllerUtils.toString(vehicle.getSelectedProductIds()))
                     .addValue("bodyStyle", vehicle.getBodyStyle());
 
             if (vehicle.getNumAvailableForOffload() != null) {
@@ -62,7 +62,7 @@ public class VehicleController {
         }
     }
 
-    public List<String> getValidProductsVehicle(Dimensions dimensions) {
+    public static List<String> getValidProductsVehicle(Dimensions dimensions) {
         log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolumeMetresCubed()));
 
         if (dimensions.getVolumeMetresCubed() < VanVolumes.MediumVan) {
