@@ -15,4 +15,5 @@ export {ValidatingInput} from './ValidatingInput';
 export {ImageSelector} from './ImageSelector';
 export {Icon} from './Icon';
 export {Tabs} from './Tabs';
+export {SearchBar} from './SearchBar';
 export {OriginDestinationSummary} from './OriginDestinationSummary';
