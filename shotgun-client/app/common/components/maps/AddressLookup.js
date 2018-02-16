@@ -44,7 +44,7 @@ class AddressLookup extends Component {
     }
     let result = [...addreses];
     result = result.filter(ad => !ad.isDefault);
-    result.sort((e1, e2) => this.compare(moment(e1.created), moment(e2.created)));
+    result.sort((e1, e2) => moment(e1.created).isBefore(moment(e2.created)));
     result = result.slice(0, MAX_RECENT_ADDRESSES);
     return result;
   }
@@ -58,7 +58,7 @@ class AddressLookup extends Component {
   }
 
   render() {
-    const { addressSearchText, suggestedPlaces, busy, errors } = this.state;
+    const { addressSearchText, suggestedPlaces, errors } = this.state;
     const { deliveryAddresses = [], addressLabel, client, history, onAddressSelected} = this.props;
     const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
     const homeAddress = this.getHomeAddress(deliveryAddresses);
@@ -123,7 +123,7 @@ class AddressLookup extends Component {
       <Container>
         <Header>
           <Left>
-            <Button disabled={busy}>
+            <Button>
               <Icon name='cross' onPress={() => history.goBack()} />
             </Button>
           </Left>
