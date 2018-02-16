@@ -59,7 +59,7 @@ export default class ProductCategoryDaoContext{
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.parentCategoryId != newOptions.parentCategoryId;
+    return !previousOptions || previousOptions.parentCategoryId != newOptions.parentCategoryId || previousOptions.expandedCategoryIds != newOptions.expandedCategoryIds;
   }
 
   transformOptions(options){
