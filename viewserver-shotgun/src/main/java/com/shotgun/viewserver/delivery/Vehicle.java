@@ -12,20 +12,24 @@ public  class Vehicle{
     String make;
     String model;
     String bodyStyle;
+    String[] selectedProducts;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer numAvailableForOffload;
 
     public Vehicle() {
     }
 
-    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg) {
+    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg, String[] selectedProducts) {
         this.dimensions = dimensions;
         this.model = model;
         this.make = make;
         this.bodyStyle = bodyStyle;
         this.colour = colour;
         this.registrationNumber = reg;
+        this.selectedProducts = selectedProducts;
     }
+
+
 
     public Dimensions getDimensions() {
         return dimensions;
@@ -41,6 +45,14 @@ public  class Vehicle{
 
     public void setNumAvailableForOffload(Integer numAvailableForOffload) {
         this.numAvailableForOffload = numAvailableForOffload;
+    }
+
+    public String[] getSelectedProducts() {
+        return selectedProducts;
+    }
+
+    public void setSelectedProducts(String[] selectedProducts) {
+        this.selectedProducts = selectedProducts;
     }
 
     public String getBodyStyle() {

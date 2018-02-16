@@ -1,11 +1,23 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
+import isEqual from 'lodash';
+
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+export const isImplicitylChecked = (categoryObj, selectedProductCategories ) => {
+  return !!selectedProductCategories.find(c=> isDescendendantOf(categoryObj, c));
+};
+
+export const isDescendendantOf = (parent, child)=> {
+  return child.path.includes(parent.path + '>') && child.path.length > parent.path.length;
+};
 
 export default class OrderRequestDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
-    filterMode: 2
+    filterMode: 2,
+    maxDistance: 50
   };
 
   constructor(client, options = {}) {
@@ -22,20 +34,28 @@ export default class OrderRequestDaoContext{
     return 'orderRequestDao';
   }
 
-  getReportContext({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}){
-    return {
+
+  getReportContext({contentTypeId, contentTypeOptions = {}, location, maxDistance}){
+    if (typeof contentTypeId === 'undefined') {
+      return {};
+    }
+    const {driverLatitude, driverLongitude} = location;
+    const {selectedProductIds} = contentTypeOptions;
+    const baseReportContext =  {
       reportId: 'orderRequest',
       dimensions: {
-        dimension_contentTypeId: [contentTypeId],
-        dimension_productId: productIds
+        dimension_contentTypeId: [contentTypeId]
       },
       parameters: {
-        noRequiredForOffload,
         driverLatitude,
         driverLongitude,
         maxDistance
       }
     };
+  
+    if (selectedProductIds){
+      baseReportContext.dimensions.dimension_productId = selectedProductIds;
+    }
   }
 
   createDataSink(){
@@ -99,28 +119,36 @@ export default class OrderRequestDaoContext{
     };
   }
 
-  createSubscriptionStrategy({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({contentTypeId, productIds, noRequiredForOffload, driverLatitude, driverLongitude, maxDistance}), dataSink);
+  createSubscriptionStrategy(options, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(options), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
     //TODO - probably needs to be updated as driver position changed but not sure how often
-    return !previousOptions || previousOptions.contentTypeId != newOptions.contentTypeId;
+    return !previousOptions || previousOptions.contentTypeId != newOptions.contentTypeId || !isEqual(previousOptions.location, newOptions.location) || previousOptions.maxDistance != newOptions.maxDistance;
   }
 
   transformOptions(options){
     if (typeof options.contentTypeId === 'undefined'){
       throw new Error('contentTypeId should be defined');
     }
-    if (typeof options.driverLatitude === 'undefined'){
-      throw new Error('driverLatitude  should be defined');
-    }
-    if (typeof options.driverLongitude === 'undefined'){
-      throw new Error('driverLongitude  should be defined');
+    if (typeof options.location === 'undefined'){
+      throw new Error('location  should be defined');
     }
     if (typeof options.maxDistance === 'undefined'){
       throw new Error('maxDistance  should be defined');
     }
+    options.filterExpression = this.generateFilterExpression(options);
     return options;
+  }
+
+  generateFilterExpressions(opts){
+    const {contentTypeOptions} = opts;
+    const {selectedProductCategories = []} = contentTypeOptions;
+    return selectedProductCategories.filter(cat => !isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression).join(' || ');
+  }
+
+  toFilterExpression(){
+    return `path like "${searchText}*"`;
   }
 }

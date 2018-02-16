@@ -39,7 +39,7 @@ class DeliveryDetails extends Component{
     const {context, client, vehicle} = this.props;
     try {
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
-      context.setState({vehicle: vehicleDetails, errors: ''});
+      context.setState({vehicle: vehicleDetails, errors: '', selectedProductIds: vehicleDetails.selectedProducts});
     } catch (error){
       context.setState({errors: error});
     }

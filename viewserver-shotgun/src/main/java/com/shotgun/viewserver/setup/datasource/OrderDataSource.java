@@ -69,11 +69,18 @@ public class
                                 .withAlwaysResolveNames()
                                 .withConnection("contentTypeJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
+                        new JoinNode("productCategoryJoin")
+                                .withLeftJoinColumns("categoryId")
+                                .withRightJoinColumns("categoryId")
+                                .withColumnPrefixes("", "productCategory_")
+                                .withAlwaysResolveNames()
+                                .withConnection("productJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("projectionNode")
                                 .withMode(IProjectionConfig.ProjectionMode.Projection)
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"))
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("product_dimension_productId", "dimension_productId"))
-                                .withConnection("productJoin")
+                                .withConnection("productCategoryJoin")
                 )
 
                 .withOutput("projectionNode")
@@ -87,6 +94,7 @@ public class
                         new Dimension("dimension_userId", Cardinality.Int, ColumnType.String),
                         new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true),
+                        new Dimension("dimension_productCategoryId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_status", Cardinality.Int, ColumnType.String),
                         new Dimension("dimension_contentTypeId", Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

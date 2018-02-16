@@ -87,6 +87,7 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("product_productId", "productProductId"),
                                                 new IProjectionConfig.ProjectionColumn("product_name", "productName"),
                                                 new IProjectionConfig.ProjectionColumn("product_imageUrl", "productImageUrl"),
+                                                new IProjectionConfig.ProjectionColumn("productCategory_path", "path"),
                                                 new IProjectionConfig.ProjectionColumn("origin_flatNumber", "originFlatNumber"),
                                                 new IProjectionConfig.ProjectionColumn("origin_line1", "originLine1"),
                                                 new IProjectionConfig.ProjectionColumn("origin_city", "originCity"),

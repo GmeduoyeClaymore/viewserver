@@ -30,8 +30,12 @@ export default class VehiclesDaoContext{
   }
 
   mapDomainEvent(dataSink){
+    const vehicle = {...dataSink.rows[0]};
+    if (vehicle.selectedProducts && typeof vehicle.selectedProducts === 'string'){
+      vehicle.selectedProducts = JSON.parse(vehicle.selectedProducts);
+    }
     return {
-      vehicle: dataSink.rows[0]
+      vehicle
     };
   }
 

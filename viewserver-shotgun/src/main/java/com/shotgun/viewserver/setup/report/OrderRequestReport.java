@@ -17,7 +17,7 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("noRequiredForOffload", "Number required for offload", int[].class)
+                        .withParameter("noRequiredForOffload", "Number required for offload", int[].class) // not used ?
                         .withParameter("driverLatitude", "Driver Latitude", double[].class)
                         .withParameter("driverLongitude", "Driver Longitude", double[].class)
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
