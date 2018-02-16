@@ -169,11 +169,12 @@ export default class ContentTypeSelector extends Component{
     }
 
     deselectContentType(){
-      let {selectedContentTypes = [], contentType} = this.props;
+      let {selectedContentTypes = {}, contentType} = this.props;
       const {context} = this.props;
-      const index = selectedContentTypes.indexOf(contentType.contentTypeId);
-      if (!!~index){
-        selectedContentTypes = selectedContentTypes.filter((_, idx) => idx !== index);
+      const content = selectedContentTypes[contentType.contentTypeId];
+      if (content){
+        selectedContentTypes = {...selectedContentTypes};
+        selectedContentTypes[contentType.contentTypeId] = undefined;
         context.setState({selectedContentTypes});
       }
     }
@@ -196,15 +197,11 @@ export default class ContentTypeSelector extends Component{
       const result = await this.getValidationResult();
       if (result.error == ''){
         if (context){
-          let {selectedContentTypes = [], contentType} = this.props;
+          let {selectedContentTypes = {}, contentType} = this.props;
           const {context} = this.props;
-          const index = selectedContentTypes.indexOf(contentType.contentTypeId);
-          if (!~index){
-            selectedContentTypes = [...selectedContentTypes, contentType.contentTypeId];
-            context.setState({selectedContentTypes, ...state});
-          } else {
-            context.setState({...state});
-          }
+          selectedContentTypes = {...selectedContentTypes};
+          selectedContentTypes[contentType.contentTypeId] = {...state};
+          context.setState({selectedContentTypes});
           this._handleToggleDetailVisibility(false);
         }
       } else {
@@ -234,8 +231,9 @@ export default class ContentTypeSelector extends Component{
 
     render(){
       const {selected, contentType = {}} = this.props;
-      const {detailVisible, canSubmit} = this.state;
+      const {detailVisible, canSubmit, selectedContentTypes = {}} = this.state;
       const ContentTypeDetailControl = resolveDetailsControl(contentType);
+      const stateForContentType = selectedContentTypes[contentType.contentTypeId] || {};
       return <View style={{flex: 1, justifyContent: 'center'}}>
         <Button style={{height: 'auto', borderWidth: 0, justifyContent: 'center', paddingLeft: 25, paddingRight: 30,  flex: 4}} large active={selected} onPress={this._handleSelectContentType}>
           <Col>
@@ -252,7 +250,7 @@ export default class ContentTypeSelector extends Component{
         >
           <View style={[styles.contentTypeSelectorContainer]}>
             <TitleContainer title={contentType.name}/>
-            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state, context: this}}/>
+            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state, ...stateForContentType, context: this}}/>
             <TouchableHighlight
               style={styles.confirmButton}
               underlayColor="#ebebeb"

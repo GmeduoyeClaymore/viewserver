@@ -14,6 +14,7 @@ import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
+import ProductDao from 'common/dao/ProductDao';
 
 class DriverRegistration extends Component {
   constructor() {
@@ -27,6 +28,7 @@ class DriverRegistration extends Component {
     registerNakedDao(dispatch, new DriverDao(client));
     register(dispatch, new ContentTypeDao(client, {userId: undefined}));
     register(dispatch, new ProductCategoryDao(client), {});
+    register(dispatch, new ProductDao(client), {});
   }
 
   render() {

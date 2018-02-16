@@ -8,6 +8,7 @@ import {withRouter} from 'react-router';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
+import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerDriver} from 'driver/actions/DriverActions';
 
 class DriverAccountType extends Component{
@@ -17,14 +18,15 @@ class DriverAccountType extends Component{
   }
 
   async register(){
-    const {user, vehicle, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
-    user.selectedContentTypes = selectedContentTypes.join(',');
+    const {user, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
+    user.selectedContentTypes = JSON.stringify(selectedContentTypes);
+    const vehicle = selectedContentTypes[ContentTypes.DELIVERY];
     dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
 
   render(){
-    const {history, contentTypes = [], selectedContentTypes = [], errors, busy, context} = this.props;
+    const {history, contentTypes = [], selectedContentTypes = {}, errors, busy, context} = this.props;
     const {state} = this;
     return <Container>
       <Header withButton>
@@ -45,7 +47,7 @@ class DriverAccountType extends Component{
                   <Row style={{flexWrap: 'wrap'}}>
                     {contentTypes.map((contentType, i) =>
                       <View key={i} style={{width: '50%', padding: 10}}>
-                        <ContentTypeSelector {...{...this.props, ...state, context, contentType, selected: !!~selectedContentTypes.indexOf(contentType.contentTypeId)}}/></View>)}
+                        <ContentTypeSelector {...{...this.props, ...state, context, contentType, selected: !!selectedContentTypes[contentType.contentTypeId]}}/></View>)}
                   </Row>
                 </Grid>
               </View>
@@ -82,7 +84,7 @@ const styles = {
 
 
 const validationSchema = {
-  selectedContentTypes: yup.array().required()
+  selectedContentTypes: yup.object().required()
 };
 
 const mapStateToProps = (state, initialProps) => {

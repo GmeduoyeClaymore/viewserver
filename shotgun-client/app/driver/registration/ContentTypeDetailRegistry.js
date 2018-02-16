@@ -1,18 +1,19 @@
 import DriverCapabilityDetails from './DriverCapabilityDetails';
 import ProductCategorySelector from './ProductCategorySelector';
+import ProductSelector from './ProductSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {View} from 'react-native';
-import {Text} from 'native-base';
 import React from 'react';
 
 const detailControlRegistry = {
   [ContentTypes.DELIVERY]: DriverCapabilityDetails,
-  [ContentTypes.HIRE]: ProductCategorySelector
+  [ContentTypes.RUBBISH]: DriverCapabilityDetails,
+  [ContentTypes.HIRE]: ProductCategorySelector,
+  [ContentTypes.SKIP]: ProductCategorySelector
 };
 
 export const resolveDetailsControl = (contentType) => {
   const control = detailControlRegistry[contentType.contentTypeId];
-  return control ? control : () => <View><Text>{contentType.name + ' details'}</Text></View>;
+  return control ? control : ProductSelector;
 };
 
 export default resolveDetailsControl;

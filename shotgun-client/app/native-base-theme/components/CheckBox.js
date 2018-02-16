@@ -10,6 +10,15 @@ export default (variables = variable) => {
         color: variables.checkboxTickColor
       }
     },
+    '.implicitylChecked': {
+      backgroundColor: '#c6ffef',
+      'NativeBase.Icon': {
+        color: '#c6ffef'
+      },
+      'NativeBase.IconNB': {
+        color: '#c6ffef'
+      }
+    },
     
     'NativeBase.Icon': {
       color: 'transparent',
