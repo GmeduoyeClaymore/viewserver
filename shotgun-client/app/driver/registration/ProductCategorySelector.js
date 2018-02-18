@@ -92,7 +92,7 @@ class ProductCategoryList extends Component{
     const {renderExpanderControl: ExpanderControl} = this;
     const {contentType} = this.props;
     const {productCategory} = contentType;
-    const level = (row.level - productCategory.level);
+    const level = (row.level - productCategory.level) - 1;
     return <Row key={categoryId} style={{flexDirection: 'row', flex: 1, padding: 5, backgroundColor: 'white'}}>
       <View style={{width: 50, paddingTop: 10, marginLeft: level * 20}}>
         <SelectionControl categoryObj={row} selectedProductCategories={selectedProductCategories}/>

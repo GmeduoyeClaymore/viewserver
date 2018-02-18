@@ -150,7 +150,8 @@ export default class ContentTypeSelector extends Component{
       this.state = {
         detailVisible: false,
         canSubmit: false,
-        showErrors: false
+        showErrors: false,
+        content: {}
       };
       this._handleSelectContentType = this._handleSelectContentType.bind(this);
       this._handleOnModalHide = this._handleOnModalHide.bind(this);
@@ -226,7 +227,9 @@ export default class ContentTypeSelector extends Component{
     }
 
     setState(newState){
-      super.setState({content: {...newState}}, this.doValidate);
+      const existingContent = this.state.content;
+      const newContent = {...existingContent, ...newState};
+      super.setState({content: newContent}, this.doValidate);
     }
 
     render(){
@@ -250,7 +253,7 @@ export default class ContentTypeSelector extends Component{
         >
           <View style={[styles.contentTypeSelectorContainer]}>
             <TitleContainer title={contentType.name}/>
-            <ContentTypeDetailControl {...{contentType, ...this.props, ...this.state.content, ...stateForContentType, context: this, canSubmit}}/>
+            <ContentTypeDetailControl {...{contentType, ...this.props, ...stateForContentType, ...this.state.content, context: this, canSubmit}}/>
             <TouchableHighlight
               style={styles.confirmButton}
               underlayColor="#ebebeb"

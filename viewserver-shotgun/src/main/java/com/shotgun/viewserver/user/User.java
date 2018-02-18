@@ -150,13 +150,6 @@ public class User{
         return selectedContentTypes;
     }
 
-    public String getSelectedProducts() {
-        return selectedProducts;
-    }
-
-    public void setSelectedProducts(String selectedProducts) {
-        this.selectedProducts = selectedProducts;
-    }
 
     public String getFcmToken() {
         return fcmToken;

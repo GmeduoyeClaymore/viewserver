@@ -24,7 +24,7 @@ const DriverOrderRequests = ({ history, selectedContentTypeIndex, position, busy
 
   return <Container>
     <Header hasTabs>
-      <Body><Title>Available Jobs</Title></Body>
+      <Body><Title>xAvailable Jobs {JSON.stringify(position)}</Title></Body>
     </Header>
     <Tabs initialPage={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
       {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} />)}

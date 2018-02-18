@@ -1,0 +1,1 @@
+rm -rf /usr/local/var/run/watchman && brew uninstall watchman && brew install watchman && rm -rf $TMPDIR/react-* && rm -rf node_modules/ && npm cache clean --force && npm install && npm start -- --reset-cache

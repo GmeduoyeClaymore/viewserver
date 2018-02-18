@@ -59,6 +59,7 @@ public class PaymentController {
                                        @ActionParam(name = "deliveryAddress") DeliveryAddress address,
                                        @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
         Account account = null;
+        Map<String, Object> accountParams = null;
 
         try {
             //https://stripe.com/docs/api#update_account
@@ -70,7 +71,7 @@ public class PaymentController {
             Map<String, Object> tosAcceptance = new HashMap<>();
             tosAcceptance.put("date", (long) System.currentTimeMillis() / 1000L);
             IPeerSession session = ControllerContext.Current().getPeerSession();
-            String ip = ((NioSocketChannel) ((NettyChannel) session.getChannel()).getChannel()).remoteAddress().getHostName();
+            String ip = ((NioSocketChannel) ((NettyChannel) session.getChannel()).getChannel()).remoteAddress().getAddress().toString().substring(1);
             tosAcceptance.put("ip", ip);
 
             Map<String, Object> dob = new HashMap<>();
@@ -103,7 +104,7 @@ public class PaymentController {
             externalAccount.put("country", "GB");
             externalAccount.put("currency", "gbp");
 
-            Map<String, Object> accountParams = new HashMap<>();
+            accountParams = new HashMap<>();
             accountParams.put("type", "custom");
             accountParams.put("country", "GB");
             accountParams.put("default_currency", "gbp");
@@ -114,10 +115,10 @@ public class PaymentController {
             accountParams.put("legal_entity", legalEntity);
 
             account = Account.create(accountParams);
-            logger.debug("Added stripe account id {}", account.getId());
+            logger.debug("Added stripe account id {} params are {}", account.getId(), ControllerUtils.toString(accountParams));
             return account.getId();
         } catch (Exception e) {
-            logger.error(String.format("There was a problem creating the payment account \"%s\"", ControllerUtils.toString(account)), e);
+            logger.error(String.format("There was a problem creating the payment account \"%s\"", ControllerUtils.toString(accountParams)), e);
             throw new RuntimeException(e);
         }
     }

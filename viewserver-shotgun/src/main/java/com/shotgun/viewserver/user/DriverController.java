@@ -97,7 +97,6 @@ public class DriverController {
         }
 
         user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
-        user.setSelectedProducts(String.join(",", VehicleController.getValidProductsVehicle(vehicle.getDimensions())));
 
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
@@ -108,8 +107,10 @@ public class DriverController {
                     ControllerContext.create(context);
                     user.setStripeAccountId(paymentAccountId);
                     String userId = userController.addOrUpdateUser(user);
-                    ControllerContext.set("userId",userId);
-                    vehicleController.addOrUpdateVehicle(vehicle);
+                    ControllerContext.set("userId", userId);
+                    if(vehicle.getDimensions() != null) {
+                        vehicleController.addOrUpdateVehicle(vehicle);
+                    }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     future.set(userId);
                 }catch (Exception ex){

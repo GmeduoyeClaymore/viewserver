@@ -145,7 +145,7 @@ export default class OrderRequestDaoContext{
   }
 
   generateFilterExpression(opts){
-    const {contentTypeOptions} = opts;
+    const {contentTypeOptions = {}} = opts;
     const {selectedProductCategories = []} = contentTypeOptions;
     if (!selectedProductCategories.length){
       return undefined;

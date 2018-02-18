@@ -62,7 +62,6 @@ public class UserController {
                 .addValue("firstName", user.getFirstName())
                 .addValue("lastName", user.getLastName())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("selectedProducts", user.getSelectedProducts())
                 .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
                 .addValue("contactNo", nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"))
                 .addValue("email", user.getEmail().toLowerCase())
