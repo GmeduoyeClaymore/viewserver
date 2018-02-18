@@ -6,7 +6,7 @@ import {Icon} from 'common/components';
 export default RegistrationCommon = ({history}) => {
   return <Content padded contentContainerStyle={styles.container}>
     <View style={styles.titleView}>
-      <H1 style={styles.h1}>Welcome to Shotguns</H1>
+      <H1 style={styles.h1}>Welcome to Shotgun</H1>
       <Text subTitle>What are you here to do?</Text>
     </View>
     <View style={styles.productSelectView}>

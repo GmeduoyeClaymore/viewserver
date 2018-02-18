@@ -1,6 +1,6 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-import isEqual from 'lodash';
+import {isEqual} from 'lodash';
 
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -35,16 +35,16 @@ export default class OrderRequestDaoContext{
   }
 
 
-  getReportContext({contentTypeId, contentTypeOptions = {}, position = {}, maxDistance}){
-    if (typeof contentTypeId === 'undefined') {
+  getReportContext({contentType, contentTypeOptions = {}, position = {}, maxDistance}){
+    if (typeof contentType === 'undefined') {
       return {};
     }
-    const {driverLatitude, driverLongitude} = position;
+    const {latitude: driverLatitude, longitude: driverLongitude} = position;
     const {selectedProductIds} = contentTypeOptions;
     const baseReportContext =  {
       reportId: 'orderRequest',
       dimensions: {
-        dimension_contentTypeId: [contentTypeId]
+        dimension_contentTypeId: [contentType.contentTypeId]
       },
       parameters: {
         driverLatitude,
@@ -127,11 +127,11 @@ export default class OrderRequestDaoContext{
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
     //TODO - probably needs to be updated as driver position changed but not sure how often
-    return !previousOptions || previousOptions.contentTypeId != newOptions.contentTypeId || !isEqual(previousOptions.location, newOptions.location) || previousOptions.maxDistance != newOptions.maxDistance;
+    return !previousOptions || !isEqual(previousOptions.contentType, newOptions.contentType)  || !isEqual(previousOptions.location, newOptions.location) || previousOptions.maxDistance != newOptions.maxDistance;
   }
 
   transformOptions(options){
-    if (typeof options.contentTypeId === 'undefined'){
+    if (typeof options.contentType === 'undefined'){
       throw new Error('contentTypeId should be defined');
     }
     if (typeof options.position === 'undefined'){
@@ -145,15 +145,17 @@ export default class OrderRequestDaoContext{
   }
 
   generateFilterExpression(opts){
-    const {contentTypeOptions = {}} = opts;
+    const {contentTypeOptions = {}, contentType = {}} = opts;
     const {selectedProductCategories = []} = contentTypeOptions;
     if (!selectedProductCategories.length){
       return undefined;
     }
-    return selectedProductCategories.filter(cat => !isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression).join(' || ');
+    const expressionArray = selectedProductCategories.filter(cat => !isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression);
+    expressionArray.push(`contentTypeRootProductCategory == "${contentType.rootProductCategory}"`);
+    return expressionArray.join(' || ');
   }
 
-  toFilterExpression(searchText){
-    return `path like "${searchText}*"`;
+  toFilterExpression({path}){
+    return `path like "${path}*"`;
   }
 }
