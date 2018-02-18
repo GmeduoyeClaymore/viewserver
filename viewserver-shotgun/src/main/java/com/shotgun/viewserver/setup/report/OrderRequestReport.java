@@ -82,6 +82,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("contentType_noPeople", "contentTypeNoPeople"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_fromTime", "contentTypeFromTime"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_tillTime", "contentTypeTillTime"),
+                                                new IProjectionConfig.ProjectionColumn("productCategory_path", "path"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_noItems", "contentTypeNoItems"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_hasVehicle", "contentTypeHasVehicle"),
                                                 new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"),
