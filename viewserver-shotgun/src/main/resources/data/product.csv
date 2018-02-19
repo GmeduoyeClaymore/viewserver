@@ -4,7 +4,7 @@ productId,name,description,categoryId,price,imageUrl
 3LargeVan,Large Van,"Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimesions 4.3x2.2x1.8m",1Vans,100,large-van
 4Luton,Box/Luton Van,"A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimesions 3.9x2.2x2m",1Vans,100,luton-lorry
 6YDSkip,6 Yard Skip,4.6 m3,2Skips,21000,
-8YDSkip,8 Yard Skip,6.1 m3,2Skips,23000,
+8YDSkip,8 Yard Skip,6.1 m3,2Skips,23000,Ø
 10YDSkip,10 Yard Skip,7.3 m3,2Skips,25000,
 12YDSkip,12 Yard Skip,9.2 m3,2Skips,28000,
 GrabLoader,Grab Loader," A Grab Lorry can collect 16 tonne of material at a time,",2Grab,30000,

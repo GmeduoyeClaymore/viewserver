@@ -207,49 +207,57 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
 
                 // TODO: put this logic somewhere more appropriate
                 final ICatalog dataSourceCatalog = ((DataSourceRegistryBase) dataSourceRegistry).getChild(dataSource.getName());
-                ITableUpdater tableUpdater;
-                if (dataSource.hasOption(DataSourceOption.IsPartition)) {
-                    tableUpdater = new TablePartitionUpdater(getServerExecutionContext(), dataSourceCatalog,
-                            dataSource.getPartitionConfig());
-                } else if (dataSource.hasOption(DataSourceOption.IsKeyed)) {
-                    boolean isWritable = dataSource.hasOption(DataSourceOption.IsWritable);
-                    IDataAdapter dataAdapter = dataSource.getDataLoader().getDataAdapter();
-                    if (isWritable && dataAdapter instanceof IWritableDataAdapter) {
-                        tableUpdater = new LocalPersistentKeyedTableUpdater(getServerExecutionContext(), dataSourceCatalog,
-                                (IWritableDataAdapter) dataAdapter);
-                    } else {
-                        if (isWritable) {
-                            log.warn("Data source {} is writable, but its data adapter is not", dataSource.getName());
+                getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZING);
+
+                if(dataSource.getDataLoader() != null) {
+                    ITableUpdater tableUpdater;
+                    if (dataSource.hasOption(DataSourceOption.IsPartition)) {
+                        tableUpdater = new TablePartitionUpdater(getServerExecutionContext(), dataSourceCatalog,
+                                dataSource.getPartitionConfig());
+                    } else if (dataSource.hasOption(DataSourceOption.IsKeyed)) {
+                        boolean isWritable = dataSource.hasOption(DataSourceOption.IsWritable);
+                        IDataAdapter dataAdapter = dataSource.getDataLoader().getDataAdapter();
+                        if (isWritable && dataAdapter instanceof IWritableDataAdapter) {
+                            tableUpdater = new LocalPersistentKeyedTableUpdater(getServerExecutionContext(), dataSourceCatalog,
+                                    (IWritableDataAdapter) dataAdapter);
+                        } else {
+                            if (isWritable) {
+                                log.warn("Data source {} is writable, but its data adapter is not", dataSource.getName());
+                            }
+                            tableUpdater = new LocalKeyedTableUpdater(getServerExecutionContext(), dataSourceCatalog);
                         }
-                        tableUpdater = new LocalKeyedTableUpdater(getServerExecutionContext(), dataSourceCatalog);
+                    } else {
+                        tableUpdater = new LocalTableUpdater(getServerExecutionContext(), dataSourceCatalog);
                     }
-                } else {
-                    tableUpdater = new LocalTableUpdater(getServerExecutionContext(), dataSourceCatalog);
+                    dataSource.initialise(dimensionMapper,
+                            tableUpdater,
+                            getServerExecutionContext().getFunctionRegistry(), getServerExecutionContext().getExpressionParser(),
+                            getServerExecutionContext());
                 }
 
-                getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZING);
-                dataSource.initialise(dimensionMapper,
-                        tableUpdater,
-                        getServerExecutionContext().getFunctionRegistry(), getServerExecutionContext().getExpressionParser(),
-                        getServerExecutionContext());
+
 
                 CommandResult planResult = new CommandResult();
                 planResult.setListener(res -> {
                     if (res.isSuccess()) {
                         dataSourceRegistry.setStatus(dataSource.getName(), DataSourceStatus.BUILT);
-                        getServerReactor().addCallback(dataSource.getDataLoader().getLoadDataFuture(), new FutureCallback<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean o) {
-                                getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
-                            }
+                        if(dataSource.getDataLoader() != null){
+                            getServerReactor().addCallback(dataSource.getDataLoader().getLoadDataFuture(), new FutureCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean o) {
+                                    getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
+                                }
 
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                log.error("Problem occurred loading data for " + dataSource.getName(), throwable);
-                                getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);
-                            }
-                        });
-                        dataLoaderExecutor.submit((Runnable) dataSource::loadData);
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    log.error("Problem occurred loading data for " + dataSource.getName(), throwable);
+                                    getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);
+                                }
+                            });
+                            dataLoaderExecutor.submit((Runnable) dataSource::loadData);
+                        }else{
+                            getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
+                        }
                     } else {
                         log.error("Problem occurred loading data for " + dataSource.getName(), res.getMessage());
                         getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);

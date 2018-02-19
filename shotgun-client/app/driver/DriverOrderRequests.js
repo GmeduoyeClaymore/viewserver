@@ -17,7 +17,6 @@ class DriverOrderRequests extends Component{
     this.state  = {};
   }
 
-
   onChangeTab(index){
     const {selectedContentType, selectedContentTypes, history} = this.props;
     const newSelectedContentType = selectedContentTypes[index];

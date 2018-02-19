@@ -54,9 +54,6 @@ public class
                                 ))
                                 .withKeyColumns("userId")
                 )
-                .withCalculatedColumns(
-                        new CalculatedColumn("userConstantJoinCol", ColumnType.Int, "1")
-                )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

@@ -26,6 +26,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(ProductDataSource.getDataSource());
         dataSources.add(ContentTypeDataSource.getDataSource());
         dataSources.add(PhoneNumberDataSource.getDataSource());
+        dataSources.add(UserProductDataSource.getDataSource());
         return dataSources;
     }
 
@@ -37,6 +38,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
+        reportDefinitions.put(UserProductReport.ID, UserProductReport.getReportDefinition());
         reportDefinitions.put(ContentTypeReport.ID, ContentTypeReport.getReportDefinition());
         return reportDefinitions;
     }
