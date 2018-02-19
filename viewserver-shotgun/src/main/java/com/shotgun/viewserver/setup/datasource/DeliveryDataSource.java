@@ -3,9 +3,6 @@ package com.shotgun.viewserver.setup.datasource;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.operators.calccol.CalcColOperator;
 
 import java.util.Arrays;
 
@@ -31,7 +28,7 @@ DeliveryDataSource {
                 .withSchema(new Schema()
                                 .withColumns(Arrays.asList(
                                         new Column("deliveryId", "deliveryId", ColumnType.String),
-                                        new Column("userIdDelivery", "userIdDelivery", ColumnType.String),
+                                        new Column("customerId", "customerId", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),
                                         new Column("driverId", "driverId", ColumnType.String),
@@ -39,8 +36,6 @@ DeliveryDataSource {
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
                                         new Column("from", "from", ColumnType.DateTime),
                                         new Column("till", "till", ColumnType.DateTime),
-                                        new Column("driverRating", "driverRating", ColumnType.Int),
-                                        new Column("customerRating", "customerRating", ColumnType.Int),
                                         new Column("distance", "distance", ColumnType.Int),
                                         new Column("duration", "duration", ColumnType.Int)
                                 ))

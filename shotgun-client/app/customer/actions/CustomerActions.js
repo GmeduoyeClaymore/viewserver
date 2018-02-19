@@ -64,6 +64,6 @@ export const addPaymentCard = (paymentCard, continueWith) => {
   return invokeDaoCommand('paymentDao', 'addPaymentCard', {paymentCard}, continueWith);
 };
 
-export const rateDriver = (deliveryId, rating, continueWith) => {
-  return invokeDaoCommand('customerDao', 'rateDriver', {deliveryId, rating}, continueWith);
+export const rateDriver = (orderId, rating, continueWith) => {
+  return invokeDaoCommand('customerDao', 'rateDriver', {orderId, rating}, continueWith);
 };

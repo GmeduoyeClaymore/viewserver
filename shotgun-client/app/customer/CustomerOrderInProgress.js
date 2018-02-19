@@ -36,7 +36,7 @@ class CustomerOrderInProgress extends Component{
     const {orderSummary = {status: ''}, history, busy, client, dispatch, errors} = this.props;
     const {delivery = {}, contentType} = orderSummary;
     const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
-    const {origin = {}, destination = {}, driverRating} = delivery;
+    const {origin = {}, destination = {}} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
     const fitMap = () => {
@@ -75,10 +75,10 @@ class CustomerOrderInProgress extends Component{
             <Col>
               <Row>
                 <Col>
-                  <RatingAction isDriver={false} delivery={delivery}/>
+                  <RatingAction isDriver={false} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={driverRating == -1} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={orderSummary.driverRating == 0} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>
@@ -86,8 +86,8 @@ class CustomerOrderInProgress extends Component{
                   <Row>
                     <Col>
                       <Text style={styles.subTitle}>Your driver</Text>
-
                       <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
+                      <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
                     </Col>
                     <Col>
                       <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/>

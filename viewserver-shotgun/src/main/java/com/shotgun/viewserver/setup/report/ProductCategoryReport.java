@@ -1,14 +1,7 @@
 package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.ProductCategoryDataSource;
-import com.shotgun.viewserver.setup.datasource.ProductDataSource;
-import io.viewserver.Constants;
-import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.execution.nodes.GroupByNode;
-import io.viewserver.execution.nodes.JoinNode;
-import io.viewserver.execution.nodes.ProjectionNode;
-import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
 public class ProductCategoryReport {

@@ -19,7 +19,10 @@ const CustomerSettings = ({history, user}) => {
           <Icon name='back-arrow' onPress={() => history.goBack()}/>
         </Button>
       </Left>
-      <Body><Title>{user.firstName} {user.lastName}</Title><Subtitle>{user.email}</Subtitle></Body>
+      <Body>
+        <Title>{user.firstName} {user.lastName}</Title>
+        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg}</Subtitle> : null}
+      </Body>
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>

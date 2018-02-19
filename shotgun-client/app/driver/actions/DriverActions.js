@@ -50,8 +50,8 @@ export const completeOrderRequest = (orderId, continueWith) => {
   return invokeDaoCommand('driverDao', 'completeOrderRequest', {orderId}, continueWith);
 };
 
-export const rateCustomer = (deliveryId, rating, continueWith) => {
-  return invokeDaoCommand('driverDao', 'rateCustomer', {deliveryId, rating}, continueWith);
+export const rateCustomer = (orderId, rating, continueWith) => {
+  return invokeDaoCommand('driverDao', 'rateCustomer', {orderId, rating}, continueWith);
 };
 
 export const callCustomer = (orderId, continueWith) => {

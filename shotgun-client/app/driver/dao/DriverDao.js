@@ -80,8 +80,8 @@ export default class DriverDao{
     RNImmediatePhoneCall.immediatePhoneCall(`+${customerPhoneNumber}`);
   }
 
-  async rateCustomer({deliveryId, rating}){
-    await this.client.invokeJSONCommand('deliveryController', 'addCustomerRating', {deliveryId, rating});
+  async rateCustomer({orderId, rating}){
+    await this.client.invokeJSONCommand('orderController', 'addCustomerRating', {orderId,  rating});
   }
 }
 

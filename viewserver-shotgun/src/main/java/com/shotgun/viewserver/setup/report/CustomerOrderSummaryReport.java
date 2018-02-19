@@ -3,10 +3,8 @@ package com.shotgun.viewserver.setup.report;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.execution.JoinColumnNamer;
-import io.viewserver.execution.nodes.*;
-import io.viewserver.operators.calccol.CalcColOperator;
-import io.viewserver.operators.join.IColumnNameResolver;
+import io.viewserver.execution.nodes.JoinNode;
+import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -24,12 +22,18 @@ public class CustomerOrderSummaryReport {
                                         .withColumnPrefixes("", "driver_")
                                         .withAlwaysResolveNames()
                                         .withConnection("#input", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin"), Constants.OUT, "right"),
+                                new JoinNode("ratingJoin")
+                                        .withLeftJoinColumns("orderId", "driverId")
+                                        .withLeftJoinOuter()
+                                        .withRightJoinColumns("orderId", "userId")
+                                        .withConnection("driverJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(RatingDataSource.NAME, RatingDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("vehicleJoin")
                                         .withLeftJoinColumns("driverId")
                                         .withLeftJoinOuter()
                                         .withRightJoinColumns("userId")
-                                        .withConnection("driverJoin", Constants.OUT, "left")
+                                        .withConnection("ratingJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(VehicleDataSource.NAME, VehicleDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
@@ -57,11 +61,12 @@ public class CustomerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
-                                                new IProjectionConfig.ProjectionColumn("driverRating"),
+                                                new IProjectionConfig.ProjectionColumn("rating","driverRating"),
                                                 new IProjectionConfig.ProjectionColumn("registrationNumber", "registrationNumber"),
                                                 new IProjectionConfig.ProjectionColumn("colour", "vehicleColour"),
                                                 new IProjectionConfig.ProjectionColumn("make", "vehicleMake"),
                                                 new IProjectionConfig.ProjectionColumn("model", "vehicleModel"),
+                                                new IProjectionConfig.ProjectionColumn("driver_ratingAvg", "driverRatingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("driver_firstName", "driverFirstName"),
                                                 new IProjectionConfig.ProjectionColumn("driver_lastName", "driverLastName"),
                                                 new IProjectionConfig.ProjectionColumn("driver_imageUrl", "driverImageUrl"),

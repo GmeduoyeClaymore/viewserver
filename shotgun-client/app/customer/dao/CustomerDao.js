@@ -78,8 +78,8 @@ export default class CustomerDao{
     return orderId;
   }
 
-  async rateDriver({deliveryId, rating}){
-    await this.client.invokeJSONCommand('deliveryController', 'addDriverRating', {deliveryId, rating});
+  async rateDriver({orderId, rating}){
+    await this.client.invokeJSONCommand('orderController', 'addDriverRating', {orderId,  rating});
   }
 }
 

@@ -11,6 +11,12 @@ export default (variables = variable) => {
     '.originPin': {
       color: variables.blue
     },
+    '.avgStar': {
+      fontSize: 12,
+      padding: 2,
+      marginRight: 5,
+      color: variables.gold
+    },
     '.right': {
       position: 'absolute',
       right: 0

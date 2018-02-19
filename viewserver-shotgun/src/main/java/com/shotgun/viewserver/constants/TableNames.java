@@ -6,6 +6,7 @@ public final class TableNames {
     }
 
     public static final String DELIVERY_TABLE_NAME = "/datasources/delivery/delivery";
+    public static final String RATING_TABLE_NAME = "/datasources/rating/rating";
     public static final String ORDER_TABLE_NAME = "/datasources/order/order";
     public static final String PRODUCT_TABLE_NAME = "/datasources/product/product";
     public static final String PRODUCT_CATEGORY_TABLE_NAME = "/datasources/productCategory/productCategory";
