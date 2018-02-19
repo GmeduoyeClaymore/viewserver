@@ -21,6 +21,9 @@ class DriverOrderRequests extends Component{
   onChangeTab(index){
     const {selectedContentType, selectedContentTypes, history} = this.props;
     const newSelectedContentType = selectedContentTypes[index];
+    if (this.pagingListView){
+      this.pagingListView.wrappedInstance.reset();
+    }
     if (selectedContentType.contentTypeId !== newSelectedContentType.contentTypeId) {
       history.replace('/Driver/DriverOrderRequests', { contentTypeId: newSelectedContentType.contentTypeId });
     }
@@ -43,6 +46,7 @@ class DriverOrderRequests extends Component{
       </Tabs>
       <View style={{ flex: 1 }}>
         <PagingListView
+          ref={c=> {this.pagingListView = c;}}
           daoName='orderRequestDao'
           dataPath={['driver', 'orders']}
           rowView={RowView}
