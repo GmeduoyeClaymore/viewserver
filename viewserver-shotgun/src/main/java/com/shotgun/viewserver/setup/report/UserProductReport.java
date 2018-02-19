@@ -1,95 +1,48 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.*;
+import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.UserProductDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.execution.nodes.JoinNode;
-import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.execution.nodes.*;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
-public class OrderRequestReport {
-        public static final String ID = "orderRequest";
+public class UserProductReport {
+        public static final String ID = "usersForProduct";
 
         public static ReportDefinition getReportDefinition() {
-                return new ReportDefinition(ID, "orderRequest")
-                        .withDataSource(OrderDataSource.NAME)
-                        .withParameter("noRequiredForOffload", "Number required for offload", int[].class) // not used ?
-                        .withParameter("driverLatitude", "Driver Latitude", double[].class)
-                        .withParameter("driverLongitude", "Driver Longitude", double[].class)
+                return new ReportDefinition(ID, "usersForProduct")
+                        .withDataSource(UserProductDataSource.NAME)
+                        .withParameter("productId", "Product ID", String[].class) // not used ?
+                        .withParameter("latitude", "User Latitude", double[].class)
+                        .withParameter("longitude", "User Longitude", double[].class)
                         .withParameter("maxDistance", "Maximum Distance", String[].class)
                         .withNodes(
-                                new FilterNode("orderFilter")
-                                        .withExpression("status == \"PLACED\"")
+                                new FilterNode("productFilter")
+                                        .withExpression("product_productId == \"{productId}\"")
                                         .withConnection("#input", null, Constants.IN),
-                                new JoinNode("originDeliveryAddressJoin")
-                                        .withLeftJoinColumns("originDeliveryAddressId")
-                                        .withRightJoinColumns("deliveryAddressId")
-                                        .withConnection("orderFilter", Constants.OUT, "left")
-                                        .withColumnPrefixes("", "origin_")
-                                        .withAlwaysResolveNames()
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
-                                new JoinNode("destinationDeliveryAddressJoin")
-                                        .withLeftJoinColumns("destinationDeliveryAddressId")
-                                        .withLeftJoinOuter()
-                                        .withRightJoinColumns("deliveryAddressId")
-                                        .withConnection("originDeliveryAddressJoin", Constants.OUT, "left")
-                                        .withColumnPrefixes("", "destination_")
-                                        .withAlwaysResolveNames()
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new CalcColNode("distanceCalcCol")
-                                        .withCalculations(new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, {driverLatitude}, {driverLongitude}, \"M\")"))
-                                        .withConnection("destinationDeliveryAddressJoin"),
+                                        .withCalculations(new CalcColOperator.CalculatedColumn("currentDistance", "distance(latitude, longitude, {latitude}, {longitude}, \"M\")"))
+                                        .withConnection("productFilter"),
                                 new FilterNode("distanceFilter")
                                         .withExpression("currentDistance <= {maxDistance}")
                                         .withConnection("distanceCalcCol"),
-                                new ProjectionNode("orderRequestProjection")
-                                        .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
-                                        .withProjectionColumns(
-                                                new IProjectionConfig.ProjectionColumn("orderId"),
-                                                new IProjectionConfig.ProjectionColumn("totalPrice"),
-                                                new IProjectionConfig.ProjectionColumn("productId"),
-                                                new IProjectionConfig.ProjectionColumn("notes"),
-                                                new IProjectionConfig.ProjectionColumn("imageUrl"),
-                                                new IProjectionConfig.ProjectionColumn("deliveryId"),
-                                                new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
-                                                new IProjectionConfig.ProjectionColumn("status"),
-                                                new IProjectionConfig.ProjectionColumn("created"),
-                                                new IProjectionConfig.ProjectionColumn("from"),
-                                                new IProjectionConfig.ProjectionColumn("till"),
-                                                new IProjectionConfig.ProjectionColumn("distance"),
-                                                new IProjectionConfig.ProjectionColumn("duration"),
-                                                new IProjectionConfig.ProjectionColumn("currentDistance"),
-                                                new IProjectionConfig.ProjectionColumn("origin_flatNumber", "originFlatNumber"),
-                                                new IProjectionConfig.ProjectionColumn("origin_line1", "originLine1"),
-                                                new IProjectionConfig.ProjectionColumn("origin_city", "originCity"),
-                                                new IProjectionConfig.ProjectionColumn("origin_postCode", "originPostCode"),
-                                                new IProjectionConfig.ProjectionColumn("origin_latitude", "originLatitude"),
-                                                new IProjectionConfig.ProjectionColumn("origin_longitude", "originLongitude"),
-                                                new IProjectionConfig.ProjectionColumn("destination_flatNumber", "destinationFlatNumber"),
-                                                new IProjectionConfig.ProjectionColumn("destination_line1", "destinationLine1"),
-                                                new IProjectionConfig.ProjectionColumn("destination_city", "destinationCity"),
-                                                new IProjectionConfig.ProjectionColumn("destination_postCode", "destinationPostCode"),
-                                                new IProjectionConfig.ProjectionColumn("destination_latitude", "destinationLatitude"),
-                                                new IProjectionConfig.ProjectionColumn("destination_longitude", "destinationLongitude"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_contentTypeId", "contentTypeContentTypeId"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_name", "contentTypeName"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_origin", "contentTypeOrigin"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_destination", "contentTypeDestination"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_noPeople", "contentTypeNoPeople"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_fromTime", "contentTypeFromTime"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_tillTime", "contentTypeTillTime"),
-                                                new IProjectionConfig.ProjectionColumn("productCategory_path", "path"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_noItems", "contentTypeNoItems"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_hasVehicle", "contentTypeHasVehicle"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"),
-                                                new IProjectionConfig.ProjectionColumn("contentType_pricingStrategy", "contentTypePricingStrategy")
+                                new CalcColNode("distanceCalcColString")
+                                        .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("distance", "text(currentDistance)"),
+                                                new CalcColOperator.CalculatedColumn("latitudeText", "text(latitude)"),
+                                                new CalcColOperator.CalculatedColumn("longitudeText", "text(longitude)")
                                         )
-                                        .withConnection("distanceFilter")
+                                        .withConnection("distanceFilter"),
+                                new GroupByNode("uniqueUserGroupBy")
+                                        .withGroupByColumns("imageUrl","longitudeText","latitudeText","firstName","lastName","userId","distance")
+                                        .withConnection("distanceCalcColString")
+
+
                         )
-                        .withOutput("orderRequestProjection");
+                        .withOutput("uniqueUserGroupBy");
         }
 }
