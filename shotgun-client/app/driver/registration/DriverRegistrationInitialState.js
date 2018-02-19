@@ -55,18 +55,18 @@ export const INITIAL_STATE = {
     sortCode: '108800'
   },
 
-  /*vehicle: {
-    registrationNumber: 'ab01asd',
-    colour: 'blue',
-    make: 'Ford',
-    model: 'Transit',
-    numAvailableForOffload: 0,
+  vehicle: {
+    registrationNumber: 'YA61AYB',
+    colour: undefined,
+    make: undefined,
+    model: undefined,
+    numAvailableForOffload: undefined,
     dimensions: {
-      height: 2000,
-      width: 2000,
-      length: 2000,
-      weight: 1000
+      height: undefined,
+      width: undefined,
+      length: undefined,
+      weight: undefined
     }
-  }*/
+  }
 };
 
