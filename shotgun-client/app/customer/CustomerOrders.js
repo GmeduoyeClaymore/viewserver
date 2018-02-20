@@ -48,7 +48,7 @@ class CustomerOrders extends Component{
       <Header hasTabs>
         <Body><Title>My Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={isCompleted === OrderStatuses.COMPLETED ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
+      <Tabs initialPage={isCompleted ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
         <Tab heading="Live Jobs"/>
         <Tab heading="Complete"/>
       </Tabs>
