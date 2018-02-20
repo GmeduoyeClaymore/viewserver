@@ -3,10 +3,15 @@ import {connect} from 'custom-redux';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
+import {View, Button, Text} from 'native-base';
 import Logger from 'common/Logger';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
-
+import PrincipalService from './common/services/PrincipalService';
+const signOut = async (history) => {
+  await PrincipalService.removeUserIdFromDevice();
+  history.push('/Root');
+};
 class LandingCommon extends Component {
   constructor(props) {
     super(props);
@@ -20,13 +25,15 @@ class LandingCommon extends Component {
   }
 
   render() {
-    const {busy, user} = this.props;
+    const {busy, user, history} = this.props;
 
     if (busy){
       return <LoadingScreen text="Logging You In"/>;
     }
     if (!user){
-      return <LoadingScreen text="Cannot find user on server clear storage then try again"/>;
+      return <View style={{flex: 1}}><LoadingScreen text="Cannot find user on server clear storage then try again"/>
+        <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
+      </View>;
     }
     switch (user.type){
     case 'driver':

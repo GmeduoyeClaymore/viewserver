@@ -38,8 +38,8 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
-    //this.client = new Client('ws://shotgun.ltd:6060/');
-    this.client = new Client('ws://localhost:6060/');
+    this.client = new Client('ws://shotgun.ltd:6060/');
+    //this.client = new Client('ws://localhost:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
@@ -52,13 +52,11 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     try {
-      Logger.debug('Mounting App Component');
       await ProtoLoader.loadAll();
       await this.client.connect(true);
     } catch (error){
       this.setState({ error});
     }
-    Logger.debug('App Component Mounted');
   }
 
   async handleConnectionStatusChanged(isReady){
