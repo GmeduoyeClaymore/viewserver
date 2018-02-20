@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapView from 'react-native-maps';
 import {fetchRoute} from './MapUtils';
+import {setStateIfIsMounted} from 'custom-redux';
 
 class MapViewDirections extends Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class MapViewDirections extends Component {
       distance: null,
       duration: null,
     };
+    setStateIfIsMounted(this);
   }
 
   componentDidMount() {

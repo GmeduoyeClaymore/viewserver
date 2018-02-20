@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import { connect } from 'custom-redux';
+import { connect, setStateIfIsMounted } from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {LoadingScreen, ErrorRegion, Icon} from 'common/components';
@@ -27,9 +27,10 @@ class DeliveryMap extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.fitMap = this.fitMap.bind(this);
     this.state = {};
+    setStateIfIsMounted(this);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
   }
 
@@ -129,7 +130,7 @@ class DeliveryMap extends Component{
             {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
             {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
             {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
-            {usersWithProduct.map( user => <MapView.Marker identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
+            {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
           </MapView>
           <Button transparent style={styles.backButton}>
             <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />

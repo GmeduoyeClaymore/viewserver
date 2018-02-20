@@ -19,7 +19,7 @@ class PagingListView extends Component {
     this.state = {pageSize: props.pageSize, limit: props.pageSize};
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {options} = this.props;
     this.setOptions(undefined, options);
   }

@@ -20,7 +20,7 @@ class OrderConfirmation extends Component{
     dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push('/Customer/CustomerOrders')));
   }
 
-  async componentWillMount(){
+  async componentDidMount(){
     await this.loadEstimatedPrice();
   }
 

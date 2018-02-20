@@ -12,7 +12,7 @@ class CustomerOrderDetail extends Component{
     super(props);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     this.subscribeToOrderSummary(this.props);
   }
 

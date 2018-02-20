@@ -12,13 +12,10 @@ class LandingCommon extends Component {
     super(props);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {dispatch, userId, client} = this.props;
     dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client, userId));
-  }
-
-  componentDidMount(){
     PermissionsService.requestLocationPermission();
   }
 

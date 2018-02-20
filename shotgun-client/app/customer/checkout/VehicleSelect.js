@@ -11,7 +11,7 @@ class VehicleSelect extends Component {
     super(props);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('productDao', {
       categoryId: '1Vans',
