@@ -145,19 +145,23 @@ public class NexmoController {
     private void setPhoneNumberStatus(String status, String toNumber, String fromNumber){
         KeyedTable phoneNumberTable = (KeyedTable)systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
+        String toNumberTrim = toNumber.trim();
+        String fromNumberTrim = fromNumber.trim();
+        log.info(String.format("Attempting to find a user record with userPhoneNumber %s and virtual numnber %s",toNumberTrim,fromNumberTrim));
+
 
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-
-            if (userPhoneNumber.equals(toNumber.trim()) || userPhoneNumber.equals(fromNumber.trim())) {
+            log.debug(String.format("found record with userPhoneNumber %s and virtual numnber %s",userPhoneNumber,virtualPhoneNumber));
+            if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
                 Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("status", status);
                 if(status.equals(PhoneNumberStatuses.COMPLETED.name())){
                     phoneNumberRecord.addValue("orderId", "");
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                shotgunTableUpdater.addOrUpdateRow((KeyedTable)systemCatalog.getOperator(TableNames.ORDER_TABLE_NAME), "order", phoneNumberRecord);
+                shotgunTableUpdater.addOrUpdateRow((KeyedTable)systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "order", phoneNumberRecord);
             }
         }
     }
