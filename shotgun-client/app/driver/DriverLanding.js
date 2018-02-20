@@ -22,7 +22,7 @@ class DriverLanding extends Component {
     this.hasLoadedData = false;
   }
 
-  componentWillMount(){
+  componentDidMount(){
     this.loadData(this.props);
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
   }

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect, setStateIfIsMounted } from 'custom-redux';
 import moment from 'moment';
 import { Text, Button, Header, Left, Body, Container, Title, Input, Grid, Row, List, ListItem, View, Content} from 'native-base';
-import { connect } from 'custom-redux';
 import { getDaoState, getNavigationProps } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import {ErrorRegion, Icon} from 'common/components';
@@ -26,6 +26,7 @@ class AddressLookup extends Component {
       suggestedPlaces: [],
       errors: undefined
     };
+    setStateIfIsMounted(this);
   }
 
   compare(m1, m2) {

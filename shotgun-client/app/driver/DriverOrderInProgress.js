@@ -26,7 +26,7 @@ class DriverOrderInProgress extends Component{
     };
   }
 
-  componentWillMount(){
+  componentDidMount(){
     const {dispatch, orderId, position} = this.props;
     dispatch(resetSubscriptionAction('orderSummaryDao', {
       orderId,

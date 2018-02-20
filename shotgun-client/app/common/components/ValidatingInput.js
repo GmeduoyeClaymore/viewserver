@@ -4,11 +4,13 @@ import ValidationService from 'common/services/ValidationService';
 import {PropTypes} from 'prop-types';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon} from 'common/components';
+import {setStateIfIsMounted} from 'custom-redux';
 
 export class ValidatingInput extends Component {
   constructor(){
     super();
     this.state = {touched: false, error: ''};
+    setStateIfIsMounted(this);
   }
 
   async componentDidMount() {

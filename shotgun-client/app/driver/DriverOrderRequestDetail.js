@@ -12,7 +12,7 @@ class DriverOrderRequestDetail extends Component{
     super(props);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('orderSummaryDao', {

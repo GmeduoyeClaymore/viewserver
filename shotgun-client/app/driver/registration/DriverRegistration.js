@@ -22,7 +22,7 @@ class DriverRegistration extends Component {
     this.state = INITIAL_STATE;
   }
 
-  componentWillMount(){
+  componentDidMount(){
     const {dispatch, client} = this.props;
     dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new DriverDao(client));

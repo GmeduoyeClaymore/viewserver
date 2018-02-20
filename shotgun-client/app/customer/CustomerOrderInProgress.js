@@ -22,7 +22,7 @@ class CustomerOrderInProgress extends Component{
     super(props);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     const {dispatch, orderId, userId} = this.props;
     dispatch(resetSubscriptionAction('orderSummaryDao', {
       userId,

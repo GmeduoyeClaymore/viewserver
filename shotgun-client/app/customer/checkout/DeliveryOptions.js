@@ -26,7 +26,7 @@ class DeliveryOptions extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.defaultCard !== undefined) {
       this.setCard(this.props.defaultCard);
     }
