@@ -50,9 +50,13 @@ public class NexmoController {
         this.createHttpServer(httpPort);
     }
 
-    @ControllerAction(path = "getPhoneNumberInfo", isSynchronous = true)
+    @ControllerAction(path = "getPhoneNumberInfo", isSynchronous = false)
     public HashMap<String, Object> getPhoneNumberInfo(String phoneNumber) {
+        if(phoneNumber == null || "".equals(phoneNumber)){
+            throw new RuntimeException("Phone number cannot be null");
+        }
         try {
+
             HashMap<String, String> params = new HashMap<>();
             params.put("api_key", apiKey);
             params.put("api_secret", apiSecret);

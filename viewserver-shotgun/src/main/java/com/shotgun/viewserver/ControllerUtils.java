@@ -66,7 +66,7 @@ public class ControllerUtils{
             if(sb.length() > 0){
                 sb.append('&');
             }
-            sb.append(URLEncoder.encode(e.getKey(), "UTF-8")).append('=').append(URLEncoder.encode(e.getValue(), "UTF-8"));
+            sb.append(URLEncoder.encode(e.getKey(), "UTF-8")).append('=').append(URLEncoder.encode(e.getValue() == null ? "" : e.getValue(), "UTF-8"));
         }
 
         return execute(method, targetURL, sb.toString());
