@@ -43,7 +43,7 @@ class VehicleSelect extends Component {
             {vehicles.map((v, i) => {
               return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
                 <Button style={{height: 'auto'}} large active={orderItem.productId == v.productId} onPress={() => onSelectVehicle(v)}>
-                  <Icon name={v.imageUrl}/>
+                  <Icon name={v.imageUrl || 'dashed'}/>
                 </Button>
                 <Text style={styles.vehicleSelectText}>{v.name}</Text>
               </View>;

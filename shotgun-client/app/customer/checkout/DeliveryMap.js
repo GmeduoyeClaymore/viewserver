@@ -26,11 +26,14 @@ class DeliveryMap extends Component{
     this.getLocationText = this.getLocationText.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.fitMap = this.fitMap.bind(this);
-    this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
     this.state = {};
   }
 
-  subscribeToUsersForProduct(options){
+  componentWillMount(){
+    this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
+  }
+
+  async subscribeToUsersForProduct(options){
     const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('userProductDao', options));
     this.setState({oldOptions: options});
@@ -52,7 +55,7 @@ class DeliveryMap extends Component{
     }
   }
 
-  onChangeText(location, field, value){
+  async onChangeText(location, field, value){
     const {delivery, context} = this.props;
     newLocation = {...delivery[location], [field]: value};
     context.setState({delivery: {...delivery, [location]: newLocation}});

@@ -12,9 +12,19 @@ export class ValidatingButton extends Component {
 
   async componentDidMount() {
     const {validateOnMount = false} = this.props;
-
+    this.isMountedComponentMounted = true;
     if (validateOnMount){
       await this.validateIfRequired(this.props.model);
+    }
+  }
+
+  componentWillUnmount(){
+    this.isMountedComponentMounted  = false;
+  }
+
+  setState(partialState, continuewWith){
+    if (this.isMountedComponentMounted){
+      super.setState(partialState, continuewWith);
     }
   }
 

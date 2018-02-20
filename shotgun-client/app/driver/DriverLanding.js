@@ -7,7 +7,7 @@ import DriverOrderRequests from './DriverOrderRequests';
 import DriverOrderRequestDetail from './DriverOrderRequestDetail';
 import DriverOrderInProgress from './DriverOrderInProgress';
 import DriverSettings from './Settings/DriverSettings';
-import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount} from 'driver/actions/DriverActions';
+import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -37,6 +37,7 @@ class DriverLanding extends Component {
       if (user){
         dispatch(driverServicesRegistrationAction(client, userId));
         dispatch(getCurrentPosition());
+        dispatch(watchPosition());
         dispatch(getBankAccount());
         this.hasLoadedData = true;
       }
