@@ -100,6 +100,7 @@ public class NexmoController {
                     String fromNumber = parameters.get("from");
                     String toNumber = parameters.get("to");
 
+                    log.debug("Call handler params - " + parameters.toString());
                     String ncco = getConnectNcco(fromNumber, toNumber, systemCatalog).toString();
 
                     he.sendResponseHeaders(200, ncco.length());
@@ -110,7 +111,7 @@ public class NexmoController {
                 } catch (Exception ex) {
                     log.error("Could not handle call", ex);
                 }
-            }, 0, 0);
+            }, 0, -1);
         }
     }
 
@@ -120,7 +121,7 @@ public class NexmoController {
             systemCatalog.getExecutionContext().getReactor().scheduleTask(() -> {
                 try {
                     HashMap<String, String> parameters = getParameters(he.getRequestBody());
-                    log.debug(parameters.toString());
+                    log.debug("Event handler params - " + parameters.toString());
                     setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"));
                 } catch (Exception ex) {
                     log.error("Could not handle call", ex);
