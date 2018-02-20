@@ -1,9 +1,11 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.*;
+import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.RatingDataSource;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.projection.IProjectionConfig;
@@ -20,13 +22,19 @@ public class DriverOrderSummaryReport {
                                         .withLeftJoinColumns("userId")
                                         .withRightJoinColumns("userId")
                                         .withConnection("#input", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin"), Constants.OUT, "right"),
+                                new JoinNode("ratingJoin")
+                                        .withLeftJoinColumns("orderId", "userId")
+                                        .withLeftJoinOuter()
+                                        .withRightJoinColumns("orderId", "userId")
+                                        .withConnection("customerJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(RatingDataSource.NAME, RatingDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
-                                        .withConnection("customerJoin", Constants.OUT, "left")
+                                        .withConnection("ratingJoin", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new JoinNode("destinationDeliveryAddressJoin")
                                         .withLeftJoinColumns("destinationDeliveryAddressId")
@@ -46,7 +54,8 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
-                                                new IProjectionConfig.ProjectionColumn("customerRating"),
+                                                new IProjectionConfig.ProjectionColumn("rating", "customerRating"),
+                                                new IProjectionConfig.ProjectionColumn("ratingAvg", "customerRatingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("firstName", "customerFirstName"),
                                                 new IProjectionConfig.ProjectionColumn("lastName", "customerLastName"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),

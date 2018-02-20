@@ -1,9 +1,22 @@
 import React from 'react';
-import { Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
+import {
+  Button,
+  Text,
+  Content,
+  List,
+  ListItem,
+  Header,
+  Container,
+  Left,
+  Right,
+  Body,
+  Title,
+  Subtitle
+} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image} from 'react-native';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
 
@@ -20,7 +33,10 @@ const DriverSettings = ({history, user}) => {
           <Icon name='back-arrow' onPress={() => history.goBack()}/>
         </Button>
       </Left>
-      <Body><Title>{user.firstName} {user.lastName}</Title><Subtitle>{user.email}</Subtitle></Body>
+      <Body>
+        <Title>{user.firstName} {user.lastName}</Title>
+        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg}</Subtitle> : null}
+      </Body>
       <Right>
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
       </Right>
@@ -33,7 +49,7 @@ const DriverSettings = ({history, user}) => {
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateBankAccountDetails')}>
           <Text style={styles.text}>Bank Details</Text>
-          <Icon style={{paddingRight: 10}}  name='payment'/>
+          <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateVehicleDetails')}>
           <Text style={styles.text}>Vehicle Details</Text>

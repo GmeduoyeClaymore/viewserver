@@ -50,7 +50,7 @@ class DriverOrderDetail extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
-        <RatingSummary orderStatus={orderSummary.status} isDriver={true} delivery={orderSummary.delivery}/>
+        <RatingSummary orderSummary={orderSummary} isDriver={true}/>
         {!isComplete ?
           <View>
             {isStarted ?

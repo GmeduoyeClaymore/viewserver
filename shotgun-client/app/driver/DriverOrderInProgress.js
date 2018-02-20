@@ -41,8 +41,8 @@ class DriverOrderInProgress extends Component{
     const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client, errors} = this.props;
     const {initialPosition} = this.state;
     const {latitude, longitude} = position;
-    const {delivery = {}, contentType} = orderSummary;
-    const {origin = {}, destination = {}, customerRating} = delivery;
+    const {delivery = {}, contentType, customerRating} = orderSummary;
+    const {origin = {}, destination = {}} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
     const onCompletePress = async() => {
@@ -103,10 +103,10 @@ class DriverOrderInProgress extends Component{
             <Col>
               <Row>
                 <Col>
-                  <RatingAction isDriver={true} delivery={delivery}/>
+                  <RatingAction isDriver={true} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == -1} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

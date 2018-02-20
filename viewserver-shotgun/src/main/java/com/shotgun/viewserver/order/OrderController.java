@@ -58,8 +58,8 @@ public class OrderController {
                               @ActionParam(name = "delivery")Delivery delivery,
                               @ActionParam(name = "orderItems")OrderItem[] orderItems){
 
-        String userId = (String) ControllerContext.get("userId");
-        if(userId == null){
+        String customerId = (String) ControllerContext.get("userId");
+        if(customerId == null){
             throw new RuntimeException("User id must be set in the controller context before this method is called");
         }
 
@@ -72,7 +72,7 @@ public class OrderController {
 
         delivery.getOrigin().setDeliveryAddressId(originDeliveryAddressId);
         //add delivery
-        String deliveryId = deliveryController.addOrUpdateDelivery(userId, delivery);
+        String deliveryId = deliveryController.addOrUpdateDelivery(customerId, delivery);
         delivery.setDeliveryId(deliveryId);
         Date now = new Date();
         String orderId = ControllerUtils.generateGuid();
@@ -83,7 +83,7 @@ public class OrderController {
         .addValue("created", now)
         .addValue("lastModified", now)
         .addValue("status", OrderStatuses.PLACED.name())
-        .addValue("userId", userId)
+        .addValue("userId", customerId)
         .addValue("paymentId", paymentId)
         .addValue("deliveryId", deliveryId);
 
@@ -105,6 +105,37 @@ public class OrderController {
             result += calculatePrice(orderItem,delivery);
         }
         return result;
+    }
+
+    @ControllerAction(path = "addCustomerRating", isSynchronous = true)
+    public void addCustomerRating(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating) {
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+        String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
+
+        Record ratingRecord = new Record()
+                .addValue("orderId", orderId)
+                .addValue("userId", orderUserId)
+                .addValue("rating", rating);
+
+        shotgunTableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+    }
+
+    @ControllerAction(path = "addDriverRating", isSynchronous = true)
+    public void addDriverRating(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating) {
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+
+        String deliveryId = (String)ControllerUtils.getColumnValue(orderTable, "deliveryId", orderId);
+        String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
+
+        Record ratingRecord = new Record()
+                .addValue("orderId", orderId)
+                .addValue("userId", driverId)
+                .addValue("rating", rating);
+
+        shotgunTableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Text, View} from 'native-base';
 import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -6,37 +6,32 @@ import {rateCustomer} from 'driver/actions/DriverActions';
 import {rateDriver} from 'customer/actions/CustomerActions';
 import {Icon} from 'common/components';
 
-class RatingAction extends Component{
-  constructor(){
-    super();
-    this.onPressStar = this.onPressStar.bind(this);
-  }
+const RatingAction = ({isDriver, orderSummary, dispatch}) => {
+  const {delivery} = orderSummary;
+  const name = isDriver ? delivery.customerFirstName : delivery.driverFirstName;
+  const rating = isDriver ? orderSummary.customerRating : orderSummary.driverRating;
 
-
-  onPressStar(newRating){
-    const {isDriver, delivery, dispatch} = this.props;
+  const onPressStar = (newRating) => {
     const ratingFunc = isDriver ? rateCustomer : rateDriver;
-    const action = ratingFunc(delivery.deliveryId, newRating);
+    const action = ratingFunc(orderSummary.orderId, newRating);
     dispatch(action);
-  }
+  };
 
-  render() {
-    const {isDriver, delivery} = this.props;
-    const name = isDriver ? delivery.customerFirstName : delivery.driverFirstName;
-    const rating = isDriver ? delivery.customerRating : delivery.driverRating;
-    const {onPressStar} = this;
-
-    return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>
-      <View style={styles.starView}>
-        <Icon name='star' onPress={() => onPressStar(1)} style={[styles.star, rating > 0 ? styles.starFilled : styles.starEmpty]}/>
-        <Icon name='star' onPress={() => onPressStar(2)} style={[styles.star, rating > 1 ? styles.starFilled : styles.starEmpty]}/>
-        <Icon name='star' onPress={() => onPressStar(3)} style={[styles.star, rating > 2 ? styles.starFilled : styles.starEmpty]}/>
-        <Icon name='star' onPress={() => onPressStar(4)} style={[styles.star, rating > 3 ? styles.starFilled : styles.starEmpty]}/>
-        <Icon name='star' onPress={() => onPressStar(5)} style={[styles.star, rating > 4 ? styles.starFilled : styles.starEmpty]}/>
-      </View>
-    </View>;
-  }
-}
+  return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>
+    <View style={styles.starView}>
+      <Icon name='star' onPress={() => onPressStar(1)}
+        style={[styles.star, rating > 0 ? styles.starFilled : styles.starEmpty]}/>
+      <Icon name='star' onPress={() => onPressStar(2)}
+        style={[styles.star, rating > 1 ? styles.starFilled : styles.starEmpty]}/>
+      <Icon name='star' onPress={() => onPressStar(3)}
+        style={[styles.star, rating > 2 ? styles.starFilled : styles.starEmpty]}/>
+      <Icon name='star' onPress={() => onPressStar(4)}
+        style={[styles.star, rating > 3 ? styles.starFilled : styles.starEmpty]}/>
+      <Icon name='star' onPress={() => onPressStar(5)}
+        style={[styles.star, rating > 4 ? styles.starFilled : styles.starEmpty]}/>
+    </View>
+  </View>;
+};
 
 const styles = {
   starView: {

@@ -20,7 +20,6 @@ class CustomerOrderDetail extends Component{
     this.subscribeToOrderSummary(netProps);
   }
 
-
   subscribeToOrderSummary(props){
     const {dispatch, orderId, orderSummary, userId} = props;
     if (orderSummary == undefined) {
@@ -68,11 +67,12 @@ class CustomerOrderDetail extends Component{
           </Col>
           <Col>
             <Text>{delivery.driverFirstName} {delivery.driverLastName}</Text>
+            <Text><Icon name='star' avgStar/>{orderSummary.driverRating}</Text>
           </Col>
         </Grid> : null}
         {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>Reject Driver</Text></SpinnerButton> : null}
         {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push('/Customer/CustomerOrderInProgress', {orderId: orderSummary.orderId})}><Text uppercase={false}>Track Driver</Text></Button> : null}
-        <RatingSummary orderStatus={orderSummary.status} isDriver={false} delivery={orderSummary.delivery}/>
+        <RatingSummary orderSummary={orderSummary} isDriver={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>
     </Container>;

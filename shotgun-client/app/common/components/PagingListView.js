@@ -106,7 +106,7 @@ const selectorFactory = (dispatch, initializationProps) => {
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
       doPage: limit => actions.updateSubscriptionAction(daoName, {limit}),
-      setOptions: options => actions.updateSubscriptionAction(daoName, options),
+      setOptions: options => actions.resetSubscriptionAction(daoName, options),
       reset: () => actions.resetDataAction(daoName),
       errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),

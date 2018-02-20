@@ -1,25 +1,25 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.execution.nodes.GroupByNode;
+import io.viewserver.execution.nodes.JoinNode;
 
 import java.util.Arrays;
 
 /**
  * Created by bennett on 26/09/17.
  */
-public class
-        UserDataSource {
+public class UserDataSource {
     public static final String NAME = "user";
 
     public static DataSource getDataSource() {
         CsvDataAdapter dataAdapter = new CsvDataAdapter();
         dataAdapter.setFileName("data/user.csv");
+
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
@@ -30,34 +30,48 @@ public class
                         )
                 )
                 .withSchema(new Schema()
-                        .withColumns(Arrays.asList(
-                                new Column("userId", "userId", ColumnType.String),
-                                new Column("created", "created", ColumnType.DateTime),
-                                new Column("dob", "dob", ColumnType.DateTime),
-                                new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                new Column("firstName", "firstName", ColumnType.String),
-                                new Column("lastName", "lastName", ColumnType.String),
-                                new Column("password", "password", ColumnType.String),
-                                new Column("contactNo", "contactNo", ColumnType.String),
-                                new Column("selectedContentTypes", "selectedContentTypes", ColumnType.String),
-                                new Column("email", "email", ColumnType.String),
-                                new Column("type", "type", ColumnType.String),
-                                new Column("contentTypes", "contentTypes", ColumnType.String),
-                                new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
-                                new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
-                                new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
-                                new Column("fcmToken", "fcmToken", ColumnType.String),
-                                new Column("chargePercentage", "chargePercentage", ColumnType.Int),
-                                new Column("latitude", "latitude", ColumnType.Double),
-                                new Column("longitude", "longitude", ColumnType.Double),
-                                new Column("imageUrl", "imageUrl", ColumnType.String)
+                                .withColumns(Arrays.asList(
+                                        new Column("userId", "userId", ColumnType.String),
+                                        new Column("created", "created", ColumnType.DateTime),
+                                        new Column("dob", "dob", ColumnType.DateTime),
+                                        new Column("lastModified", "lastModified", ColumnType.DateTime),
+                                        new Column("firstName", "firstName", ColumnType.String),
+                                        new Column("lastName", "lastName", ColumnType.String),
+                                        new Column("password", "password", ColumnType.String),
+                                        new Column("contactNo", "contactNo", ColumnType.String),
+                                        new Column("selectedContentTypes", "selectedContentTypes", ColumnType.String),
+                                        new Column("email", "email", ColumnType.String),
+                                        new Column("type", "type", ColumnType.String),
+                                        new Column("contentTypes", "contentTypes", ColumnType.String),
+                                        new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
+                                        new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
+                                        new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
+                                        new Column("fcmToken", "fcmToken", ColumnType.String),
+                                        new Column("chargePercentage", "chargePercentage", ColumnType.Int),
+                                        new Column("latitude", "latitude", ColumnType.Double),
+                                        new Column("longitude", "longitude", ColumnType.Double),
+                                        new Column("imageUrl", "imageUrl", ColumnType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )
                 .withCalculatedColumns(
                         new CalculatedColumn("userConstantJoinCol", ColumnType.Int, "1")
                 )
-                .withOutput(NAME)
+				.withNodes(
+                        new GroupByNode("ratingGroupBy")
+                                .withGroupByColumns("userId")
+                                .withSummary("ratingAvg", "avg", "rating")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(RatingDataSource.NAME, RatingDataSource.NAME)),
+                        new JoinNode("ratingJoin")
+                                .withLeftJoinColumns("userId")
+                                .withLeftJoinOuter()
+                                .withRightJoinColumns("userId")
+                                .withConnection(UserDataSource.NAME, Constants.OUT, "left")
+                                .withConnection("ratingGroupBy", Constants.OUT, "right")
+                )
+                .withCalculatedColumns(new CalculatedColumn("dimension_userId", ColumnType.String, "userId"))
+                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ColumnType.String)))
+                .withOutput("ratingJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

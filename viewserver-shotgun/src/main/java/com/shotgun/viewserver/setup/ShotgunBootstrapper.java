@@ -17,6 +17,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
         dataSources.add(UserDataSource.getDataSource());
+        dataSources.add(RatingDataSource.getDataSource());
         dataSources.add(DeliveryAddressDataSource.getDataSource());
         dataSources.add(DeliveryDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());

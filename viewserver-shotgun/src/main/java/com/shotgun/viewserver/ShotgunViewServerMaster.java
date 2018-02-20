@@ -68,7 +68,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(imageController);
         this.registerController(new PhoneCallController(new ShotgunTableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry)));
         this.registerController(nexmoController);
-        this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", false)));
+        this.registerController(new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", true)));
     }
 }
 

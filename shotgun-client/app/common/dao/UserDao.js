@@ -27,8 +27,8 @@ export default class UserDaoContext{
   getReportContext({userId}){
     return {
       reportId: 'userReport',
-      parameters: {
-        userId
+      dimensions: {
+        dimension_userId: [userId]
       }
     };
   }

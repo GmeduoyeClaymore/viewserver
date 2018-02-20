@@ -19,7 +19,7 @@ public class DeliveryController {
     }
 
     @ControllerAction(path = "addOrUpdateDelivery", isSynchronous = true)
-    public String addOrUpdateDelivery(@ActionParam(name = "userId") String userId, @ActionParam(name = "delivery") Delivery delivery) {
+    public String addOrUpdateDelivery(@ActionParam(name = "customerId") String customerId, @ActionParam(name = "delivery") Delivery delivery) {
         Date now = new Date();
 
         if (delivery.getDeliveryId() == null) {
@@ -33,7 +33,7 @@ public class DeliveryController {
                 .addValue("distance", delivery.getDistance())
                 .addValue("duration", delivery.getDuration())
                 .addValue("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId())
-                .addValue("userIdDelivery", userId);
+                .addValue("customerId", customerId);
 
 
         if (delivery.getFrom() != null) {
@@ -51,16 +51,6 @@ public class DeliveryController {
         shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         return delivery.getDeliveryId();
-    }
-
-    @ControllerAction(path = "addDriverRating", isSynchronous = true)
-    public String addDriverRating(@ActionParam(name = "deliveryId") String deliveryId, @ActionParam(name = "rating") int rating) {
-        Record deliveryRecord = new Record()
-                .addValue("deliveryId", deliveryId)
-                .addValue("driverRating", rating);
-
-        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
-        return deliveryId;
     }
 
     @ControllerAction(path = "addCustomerRating", isSynchronous = true)
