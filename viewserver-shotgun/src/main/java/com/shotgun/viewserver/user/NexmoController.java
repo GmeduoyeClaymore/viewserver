@@ -108,7 +108,7 @@ public class NexmoController {
                     os.write(ncco.getBytes());
                     os.close();
                 } catch (Exception ex) {
-                    log.error("Could not handle call", ex);
+                    log.error("Could not handle Nexmo call", ex);
                 }
             }, 0, 0);
         }
@@ -123,7 +123,7 @@ public class NexmoController {
                     log.debug(parameters.toString());
                     setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"));
                 } catch (Exception ex) {
-                    log.error("Could not handle call", ex);
+                    log.error("Could not handle Nexmo event", ex);
                 }
             }, 0, 0);
         }

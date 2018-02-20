@@ -147,11 +147,11 @@ export default class UserDetails  extends Component{
             </Col>
           </Row>
         </Grid>
+        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true}onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
       </Content>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true}onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
     </Container>;
   }
 }
