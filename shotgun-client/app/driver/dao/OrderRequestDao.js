@@ -18,7 +18,7 @@ export default class OrderRequestDaoContext{
     offset: 0,
     limit: 10,
     filterMode: 2,
-    maxDistance: 50
+    maxDistance: 50000
   };
 
   constructor(client, options = {}) {

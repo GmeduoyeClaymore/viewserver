@@ -31,7 +31,7 @@ public class RatingDataSource {
                                         new Column("orderId", "orderId", ColumnType.String),
                                         new Column("rating", "rating", ColumnType.Int)
                                 ))
-                                .withKeyColumns("userId", "orderId")
+                                .withKeyColumns("orderId", "userId")
                 )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
