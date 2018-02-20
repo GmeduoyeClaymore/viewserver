@@ -39,7 +39,10 @@ ProductDataSource {
                         )
                 )
                 .withSchema(schema)
-                .withCalculatedColumns(new CalculatedColumn("dimension_productId", ColumnType.String, "productId"))
+                .withCalculatedColumns(
+                        new CalculatedColumn("dimension_productId", ColumnType.String, "productId"),
+                        new CalculatedColumn("prodConstantJoinCol", ColumnType.Int, "1")
+                )
                 .withOutput(NAME)
                 .withDimensions(Arrays.asList(new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

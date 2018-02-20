@@ -198,10 +198,14 @@ export default class ContentTypeSelector extends Component{
       const result = await this.getValidationResult();
       if (result.error == ''){
         if (context){
-          let {selectedContentTypes = {}, contentType} = this.props;
-          const {context} = this.props;
+          let {selectedContentTypes = {}} = this.props;
+          const {contentType, context} = this.props;
           selectedContentTypes = {...selectedContentTypes};
-          selectedContentTypes[contentType.contentTypeId] = {...state.content};
+          let selectedProductCategories = state.content.selectedProductCategories || [];
+          if (!selectedProductCategories.find(c=> c.categoryId === contentType.productCategory.categoryId)){
+            selectedProductCategories = [...selectedProductCategories, contentType.productCategory];
+          }
+          selectedContentTypes[contentType.contentTypeId] = {...state.content, selectedProductCategories};
           context.setState({selectedContentTypes});
           this._handleToggleDetailVisibility(false);
         }

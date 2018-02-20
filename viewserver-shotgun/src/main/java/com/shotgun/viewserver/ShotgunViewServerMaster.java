@@ -32,6 +32,7 @@ import io.viewserver.server.ViewServerMaster;
 public class ShotgunViewServerMaster extends ViewServerMaster {
     public ShotgunViewServerMaster(String name, IViewServerMasterConfiguration configuration) {
         super(name, configuration);
+        this.getServerExecutionContext().getFunctionRegistry().register("containsProduct",ContainsProduct.class);
     }
 
     @Override

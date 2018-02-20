@@ -56,7 +56,7 @@ class DriverAccountType extends Component{
         </Grid>
       </Content>
       <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes}}>
+        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
           <Text uppercase={false}>Register</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
@@ -84,7 +84,7 @@ const styles = {
 
 
 const validationSchema = {
-  selectedContentTypes: yup.object().required()
+  selectedContentTypes: yup.array().required()
 };
 
 const mapStateToProps = (state, initialProps) => {

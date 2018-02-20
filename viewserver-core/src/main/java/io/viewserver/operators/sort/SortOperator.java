@@ -165,7 +165,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                     for (SortColumn columnToSort : pendingSortDescriptor.columnsToSort) {
                         ColumnHolder columnHolder = output.getSchema().getColumnHolder(columnToSort.getName());
                         if (columnHolder == null) {
-                            // put this back how it was - Bem, please explain your thoughts? :)
+                            //TODO put this back how it was - Bem, please explain your thoughts? :)
 //                            log.warn("Cannot sort on column '" + columnToSort.getName() + "' as it does not exist");
                             throw new OperatorConfigurationException(getOwner(), String.format("Cannot sort on column '%s' as it does not exist", columnToSort.getName()));
                         } else {

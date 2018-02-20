@@ -54,7 +54,10 @@ public class UserDataSource {
                                 ))
                                 .withKeyColumns("userId")
                 )
-                .withNodes(
+                .withCalculatedColumns(
+                        new CalculatedColumn("userConstantJoinCol", ColumnType.Int, "1")
+                )
+				.withNodes(
                         new GroupByNode("ratingGroupBy")
                                 .withGroupByColumns("userId")
                                 .withSummary("ratingAvg", "avg", "rating")

@@ -14,6 +14,7 @@ class PagingListView extends Component {
   constructor(props) {
     super(props);
     this.onScroll = this.onScroll.bind(this);
+    this.reset = this.reset.bind(this);
     this.daoName = props.daoName;
     this.state = {pageSize: props.pageSize, limit: props.pageSize};
   }
@@ -27,6 +28,13 @@ class PagingListView extends Component {
     const {setOptions} = this.props;
     if (!isEqual(newOptions, prevOptions, true)){
       setOptions(newOptions);
+    }
+  }
+
+  reset(){
+    const {reset} = this.props;
+    if (reset){
+      reset();
     }
   }
 
@@ -122,7 +130,7 @@ PagingListView.propTypes = {
 };
 
 const ConnectedPagingListView = connectAdvanced(
-  selectorFactory
+  selectorFactory, {WithRef: true}
 )(PagingListView);
 
 export {ConnectedPagingListView as PagingListView};

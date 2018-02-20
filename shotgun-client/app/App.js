@@ -1,6 +1,6 @@
 import React from 'react';
 import {UIManager, View} from 'react-native';
-import {Container, Text, StyleProvider, Root} from 'native-base';
+import {Container, Text, StyleProvider, Root, Button} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -20,6 +20,10 @@ import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
 
+const signOut = async () => {
+  await PrincipalService.removeUserIdFromDevice();
+};
+
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -34,6 +38,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
+    //this.client = new Client('ws://shotgun.ltd:6060/');
     this.client = new Client('ws://localhost:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
@@ -121,6 +126,7 @@ export default class App extends React.Component {
     } else if (!isConnected){
       return  <Container style={{flexDirection: 'column', flex: 1}}>
         <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
+        <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
       </Container>;
     }
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};

@@ -2,6 +2,7 @@ import {invokeDaoCommand} from 'common/dao';
 import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderDao from 'common/dao/OrderDao';
 import CustomerDao from 'customer/dao/CustomerDao';
+import UserProductDao from 'customer/dao/UserProductDao';
 import PaymentDao from 'common/dao/PaymentDao';
 import DeliveryAddressDao from 'customer/dao/DeliveryAddressDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
@@ -20,6 +21,7 @@ export const customerServicesRegistrationAction = (client, userId, continueWith)
     register(dispatch, new ContentTypeDao(client), {userId});
     register(dispatch, new ProductDao(client), {userId});
     register(dispatch, new ProductCategoryDao(client), {userId});
+    register(dispatch, new UserProductDao(client), {userId});
     registerNakedDao(dispatch, new CustomerDao(client, orderDao), {userId}, continueWith);
   };
 };

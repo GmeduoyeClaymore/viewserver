@@ -2,14 +2,15 @@ import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubs
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {isEqual} from 'lodash';
 
-import * as ContentTypes from 'common/constants/ContentTypes';
 
 export const isImplicitylChecked = (categoryObj, selectedProductCategories ) => {
   return !!selectedProductCategories.find(c=> isDescendendantOf(categoryObj, c));
 };
 
 export const isDescendendantOf = (parent, child)=> {
-  return child.path.includes(parent.path + '>') && child.path.length > parent.path.length;
+  const {path: childPath = ''} = child;
+  const {path: parentPath = ''} = parent;
+  return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
 };
 
 export default class OrderRequestDaoContext{
