@@ -157,7 +157,7 @@ public class NexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", phoneNumberRecord);
+                shotgunTableUpdater.addOrUpdateRow((KeyedTable)systemCatalog.getOperator(TableNames.ORDER_TABLE_NAME), "order", phoneNumberRecord);
             }
         }
     }

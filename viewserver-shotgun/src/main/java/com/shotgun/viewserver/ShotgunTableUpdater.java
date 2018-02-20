@@ -18,6 +18,10 @@ public class ShotgunTableUpdater{
 
     public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(tableName);
+        addOrUpdateRow(orderTable, dataSourceName, record);
+    }
+
+    public void addOrUpdateRow( KeyedTable orderTable, String dataSourceName, IRecord record) {
         rowUpdater.setTable(orderTable);
         rowUpdater.setRecord(record);
         rowUpdater.setDataSource(dataSourceRegistry.get(dataSourceName));
