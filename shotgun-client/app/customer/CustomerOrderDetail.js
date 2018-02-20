@@ -67,7 +67,7 @@ class CustomerOrderDetail extends Component{
           </Col>
           <Col>
             <Text>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-            <Text><Icon name='star' avgStar/>{orderSummary.driverRating}</Text>
+            <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
           </Col>
         </Grid> : null}
         {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>Reject Driver</Text></SpinnerButton> : null}

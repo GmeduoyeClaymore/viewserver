@@ -35,7 +35,7 @@ const DriverSettings = ({history, user}) => {
       </Left>
       <Body>
         <Title>{user.firstName} {user.lastName}</Title>
-        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg}</Subtitle> : null}
+        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg.toFixed(1)}</Subtitle> : null}
       </Body>
       <Right>
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
