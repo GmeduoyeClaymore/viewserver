@@ -1,7 +1,10 @@
 package com.shotgun.viewserver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.NamedThreadFactory;
 import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
@@ -36,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Gbemiga on 17/01/18.
@@ -44,6 +48,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessagingController {
 
     private static final Logger logger = LoggerFactory.getLogger(MessagingController.class);
+
+    private ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1,new NamedThreadFactory("messagingThread")));
 
     private static String MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
 
@@ -62,11 +68,12 @@ public class MessagingController {
 
     @ControllerAction(path = "sendMessageToUser")
     public void sendMessageToUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "message")AppMessage message){
-
         String currentToken = getTokenForUser(userId);
         message.setTo(currentToken);
-        logger.info("Sending message \"{}\" to \"{}\" token \"{}\"",message, userId, currentToken);
-        sendPayload(message.toSimpleMessage());
+        service.submit(() -> {
+            logger.info("Sending message \"{}\" to \"{}\" token \"{}\"", message, userId, currentToken);
+            sendPayload(message.toSimpleMessage());
+        });
     }
 
     @ControllerAction(path = "updateUserToken")
