@@ -68,7 +68,7 @@ export const connectAdvanced = (
     storeKey = 'store',
 
     // if true, the wrapped element is exposed by this HOC via the getWrappedInstance() function.
-    withRef = true,
+    withRef = false,
 
     // additional options are passed through to the selectorFactory
     ...connectOptions
@@ -99,7 +99,6 @@ export const connectAdvanced = (
     const displayName = getDisplayName(wrappedComponentName);
 
     const selectorFactoryOptions = {
-      ...connectOptions,
       getDisplayName,
       methodName,
       renderCountProp,
@@ -108,7 +107,8 @@ export const connectAdvanced = (
       withRef,
       displayName,
       wrappedComponentName,
-      WrappedComponent
+      WrappedComponent,
+      ...connectOptions
     };
 
     class Connect extends Component {

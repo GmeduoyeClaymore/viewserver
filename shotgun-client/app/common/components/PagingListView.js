@@ -130,7 +130,7 @@ PagingListView.propTypes = {
 };
 
 const ConnectedPagingListView = connectAdvanced(
-  selectorFactory, {WithRef: true}
+  selectorFactory, {withRef: true}
 )(PagingListView);
 
 export {ConnectedPagingListView as PagingListView};

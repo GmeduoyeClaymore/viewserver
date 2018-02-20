@@ -21,6 +21,9 @@ const DriverOrders = ({history, isCompleted, userId}) => {
 
   const onChangeTab = (newIsCompleted) => {
     if (isCompleted !== newIsCompleted) {
+      if (this.pagingListView){
+        this.pagingListView.wrappedInstance.reset();
+      }
       history.replace(location.pathname, {isCompleted: newIsCompleted});
     }
   };
@@ -35,6 +38,7 @@ const DriverOrders = ({history, isCompleted, userId}) => {
     </Tabs>
     <View style={{flex: 1}}>
       <PagingListView
+        ref={ c => {this.pagingListView = c;}}
         daoName='orderSummaryDao'
         dataPath={['orders']}
         rowView={RowView}
