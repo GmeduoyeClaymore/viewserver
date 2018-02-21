@@ -19,8 +19,6 @@ UserProductDataSource {
     public static final String NAME = "userProduct";
 
     public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/user.csv");
         return new DataSource()
                 .withName(NAME)
                 .withNodes(
