@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 import {PropTypes} from 'prop-types';
 
 
-const JAVA_EXCEPTION_STRING = 'java.lang.RuntimeException';
+const JAVA_EXCEPTION_STRING = 'java.lang.RuntimeException: ';
 
 export class ErrorRegion extends Component {
   constructor(){

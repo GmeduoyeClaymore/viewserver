@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by Gbemiga on 12/12/17.
  */
+
 public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSONCommand>{
     private static final Logger log = LoggerFactory.getLogger(ControllerJSONCommandHandler.class);
 

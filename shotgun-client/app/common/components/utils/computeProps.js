@@ -13,7 +13,6 @@ module.exports = function(incomingProps, defaultProps) {
   const incomingPropsStyle = incomingProps.style;
   delete incomingProps.style;
 
-  // console.log(defaultProps, incomingProps);
   if (incomingProps) {
     _.assign(computedProps, defaultProps, incomingProps);
   } else {
@@ -39,6 +38,5 @@ module.exports = function(incomingProps, defaultProps) {
 
     _.merge(computedProps.style, defaultProps.style, computedPropsStyle);
   }
-  // console.log("computedProps ", computedProps);
   return computedProps;
 };

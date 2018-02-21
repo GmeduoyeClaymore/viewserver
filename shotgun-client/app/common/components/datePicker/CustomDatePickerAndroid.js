@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { DatePickerAndroid, TimePickerAndroid } from 'react-native';
 import moment from 'moment';
+import Logger from 'common/Logger';
 
 export default class CustomDatePickerAndroid extends PureComponent {
   static propTypes = {
@@ -77,7 +78,7 @@ export default class CustomDatePickerAndroid extends PureComponent {
         this.props.onCancel();
       }
     } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
+      Logger.warning('Cannot open date picker', message);
     }
   };
 
@@ -105,7 +106,7 @@ export default class CustomDatePickerAndroid extends PureComponent {
         this.props.onCancel();
       }
     } catch ({ code, message }) {
-      console.warn('Cannot open time picker', message);
+      Logger.warning('Cannot open time picker', message);
     }
   };
 
