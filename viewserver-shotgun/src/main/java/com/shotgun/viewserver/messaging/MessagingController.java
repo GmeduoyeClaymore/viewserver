@@ -61,13 +61,11 @@ public class MessagingController {
         this.shotgunTableUpdater = shotgunTableUpdater;
     }
 
-    @ControllerAction(path = "sendMessage")
     public void sendMessage(AppMessage message){
         sendPayload(message.toSimpleMessage());
     }
 
-    @ControllerAction(path = "sendMessageToUser")
-    public void sendMessageToUser(@ActionParam(name = "userId")String userId, @ActionParam(name = "message")AppMessage message){
+    public void sendMessageToUser(String userId, AppMessage message){
         String currentToken = getTokenForUser(userId);
         message.setTo(currentToken);
         service.submit(() -> {

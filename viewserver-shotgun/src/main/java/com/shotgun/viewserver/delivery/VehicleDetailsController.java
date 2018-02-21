@@ -6,6 +6,9 @@ import com.shotgun.viewserver.user.VehicleController;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import org.apache.commons.lang.WordUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
@@ -16,6 +19,7 @@ import java.util.Map;
 @Controller(name = "vehicleDetailsController")
 public class VehicleDetailsController {
 
+    private static final Logger log = LoggerFactory.getLogger(VehicleDetailsController.class);
     private static String VEHICLE_DETAILS_QUERY_URL = "https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData";
     private VehicleDetailsApiKey apiKey;
     private static String[] PERMITTED_BODY_STYLES = new String[]{
@@ -31,39 +35,45 @@ public class VehicleDetailsController {
 
     @ControllerAction(path = "getDetails")
     public Vehicle getDetails(String registrationNumber){
-        VehicleDetailsQuery query = new VehicleDetailsQuery(registrationNumber);
-        String json = getJSON(query);
-        if(json == null){
-            throw new RuntimeException("Null response returned from query");
+        try {
+            VehicleDetailsQuery query = new VehicleDetailsQuery(registrationNumber);
+            String json = getJSON(query);
+            if (json == null) {
+                log.error(String.format("Null response returned from vehicle details query for reg %s", registrationNumber));
+                throw new RuntimeException("There was a problem fetching your vehicle details");
+            }
+            Map<String, Object> reqres = ControllerUtils.mapDefault(json);
+            Map<String, Object> res = (Map<String, Object>) get(reqres, "Response");
+            if (!get(res, "StatusCode").equals("Success")) {
+                log.error(String.format("Response status code was \"%s\" reason is \"%s\"", res.get("StatusCode"), res.get("StatusMessage")));
+                throw new RuntimeException("Unable to find a vehicle with that registration number");
+            }
+            Map<String, Object> dataItems = (Map<String, Object>) get(res, "DataItems");
+            Map<String, Object> vehicleRegistration = (Map<String, Object>) get(dataItems, "VehicleRegistration");
+            Map<String, Object> SmmtDetails = (Map<String, Object>) get(dataItems, "SmmtDetails");
+            String bodyType = (String) get(SmmtDetails, "BodyStyle");
+            if (Arrays.binarySearch(PERMITTED_BODY_STYLES, bodyType) == -1) {
+                throw new RuntimeException(String.format("Invalid vehicle body type \"%s\" found. In order to register as a Shotgun driver your vehicle must be a type of van", bodyType));
+            }
+            Map<String, Object> technicalDetails = (Map<String, Object>) get(dataItems, "TechnicalDetails");
+            Map<String, Object> dimensions = (Map<String, Object>) get(technicalDetails, "Dimensions");
+
+
+            long length = ((Double) get(dimensions, "LoadLength")).longValue();
+            long width = ((Double) get(dimensions, "Width")).longValue();
+            long height = ((Double) get(dimensions, "Height")).longValue();
+            long weight = ((Double) get(dimensions, "PayloadWeight")).longValue();
+
+            Dimensions dim = new Dimensions(height, width, length, weight);
+            String reg = (String) get(vehicleRegistration, "Vrm");
+            String make = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Make"));
+            String model = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Model"));
+            String color = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Colour"));
+            return new Vehicle(dim, make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
+        }catch (Exception ex){
+            log.error(String.format("Null response returned from vehicle details query for reg %s", registrationNumber), ex);
+            throw new RuntimeException("There was a problem fetching your vehicle details");
         }
-        Map<String,Object> reqres = ControllerUtils.mapDefault(json);
-        Map<String,Object> res = (Map<String, Object>) get(reqres,"Response");
-        if(!get(res,"StatusCode").equals("Success")){
-            throw new RuntimeException(String.format("Response status code was \"%s\" reason is \"%s\"",res.get("StatusCode"),res.get("StatusMessage")));
-        }
-        Map<String,Object> dataItems = (Map<String, Object>) get(res, "DataItems");
-        Map<String, Object> vehicleRegistration = (Map<String, Object>) get(dataItems, "VehicleRegistration");
-        Map<String, Object> SmmtDetails = (Map<String, Object>) get(dataItems, "SmmtDetails");
-        String bodyType = (String) get(SmmtDetails,"BodyStyle");
-        if(Arrays.binarySearch(PERMITTED_BODY_STYLES, bodyType) == -1){
-            throw new RuntimeException(String.format("Invalid vehicle body type \"%s\" found. In order to register as a Shotgun driver your vehicle must be a type of van", bodyType));
-        }
-        Map<String, Object> technicalDetails = (Map<String, Object>) get(dataItems, "TechnicalDetails");
-        Map<String, Object> dimensions = (Map<String, Object>) get(technicalDetails, "Dimensions");
-
-
-        long length = ((Double) get(dimensions, "LoadLength")).longValue();
-        long width = ((Double) get(dimensions, "Width")).longValue();
-        long height = ((Double) get(dimensions, "Height")).longValue();
-        long weight = ((Double) get(dimensions, "PayloadWeight")).longValue();
-
-        Dimensions dim = new Dimensions(height,width,length,weight);
-        String reg = (String)get(vehicleRegistration,"Vrm");
-        String make = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Make"));
-        String model = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Model"));
-        String color = WordUtils.capitalizeFully((String)get(vehicleRegistration,"Colour"));
-        return new Vehicle(dim,make,model,bodyType,color,reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
-
     }
 
     private String getJSON(VehicleDetailsQuery query) {

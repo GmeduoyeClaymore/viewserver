@@ -1,24 +1,14 @@
 import React from 'react';
-import {
-  Button,
-  Text,
-  Content,
-  List,
-  ListItem,
-  Header,
-  Container,
-  Left,
-  Right,
-  Body,
-  Title,
-  Subtitle
-} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
-import {Image} from 'react-native';
+import {Image, Linking} from 'react-native';
 import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
+import DeviceInfo from 'react-native-device-info';
+
+const feedbackSubject = `Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
 const DriverSettings = ({history, user}) => {
   const signOut = async () => {
@@ -29,8 +19,8 @@ const DriverSettings = ({history, user}) => {
   return <Container>
     <Header withButton>
       <Left>
-        <Button>
-          <Icon name='back-arrow' onPress={() => history.goBack()}/>
+        <Button onPress={() => history.goBack()}>
+          <Icon name='back-arrow'/>
         </Button>
       </Left>
       <Body>
@@ -55,7 +45,7 @@ const DriverSettings = ({history, user}) => {
           <Text style={styles.text}>Vehicle Details</Text>
           <Icon style={styles.icon} name='drive'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/UserDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>

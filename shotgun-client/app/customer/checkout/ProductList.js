@@ -45,8 +45,8 @@ class ProductList extends Component{
     return   busy ? <LoadingScreen text="Loading Products...." /> : <Container>
       <Header>
         <Left>
-          <Button transparent>
-            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
+          <Button transparent onPress={() => navigationStrategy.prev()}>
+            <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>Select Product</Title></Body>

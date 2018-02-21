@@ -15,8 +15,8 @@ const BankAccountDetails = ({context, history}) => {
   return <Container>
     <Header withButton>
       <Left>
-        <Button>
-          <Icon name='back-arrow' onPress={() => history.goBack()}/>
+        <Button onPress={() => history.goBack()}>
+          <Icon name='back-arrow'/>
         </Button>
       </Left>
       <Body><Title>Payment Details</Title></Body>

@@ -17,7 +17,7 @@ export default class GenericJSONCommandPromise{
   }
 
   onError(message){
-    Logger.warning(`Promise event handler returned error "${message}"`);
+    Logger.warning(`Generic JSON command handler returned error "${message}"`);
     this.reject(message);
   }
 

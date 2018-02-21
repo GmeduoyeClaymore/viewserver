@@ -8,7 +8,7 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
-import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
+import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon, OriginDestinationSummary} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import Logger from 'common/Logger';
 
@@ -94,8 +94,8 @@ class DriverOrderInProgress extends Component{
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
-          <Button transparent style={styles.backButton}>
-            <Icon name='back-arrow' onPress={() => history.goBack()} />
+          <Button transparent style={styles.backButton} onPress={() => history.push('/Driver/DriverOrders')}>
+            <Icon name='back-arrow'/>
           </Button>
         </Row>
         <Row size={40} style={styles.infoRow}>
@@ -110,8 +110,9 @@ class DriverOrderInProgress extends Component{
             </Col> :
             <Col>
               <Grid>
-                <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-                {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+                <Row>
+                  <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+                </Row>
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
                   <Col><Button fullWidth callButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>

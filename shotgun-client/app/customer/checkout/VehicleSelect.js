@@ -30,8 +30,8 @@ class VehicleSelect extends Component {
     return busy ? <LoadingScreen text="Loading Vehicles"/> : <Container>
       <Header withButton>
         <Left>
-          <Button>
-            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()}/>
+          <Button onPress={() => navigationStrategy.prev()}>
+            <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>Select which size van</Title></Body>

@@ -10,7 +10,7 @@ const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 
 
 const colors = {
   brandPrimary: '#ffffff',
-  brandSecondary: '#0cf5b6',
+  brandSecondary: '#00a2ff',
   brandLight: '#647479',
   brandDark: '#13181a',
   brandDanger: '#ff585f',

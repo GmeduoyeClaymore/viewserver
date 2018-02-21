@@ -5,6 +5,10 @@ import {getDaoState} from 'common/dao';
 import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
+import {Linking} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+
+const feedbackSubject = `Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
 const CustomerSettings = ({history, user}) => {
   const signOut = async () => {
@@ -15,8 +19,8 @@ const CustomerSettings = ({history, user}) => {
   return <Container>
     <Header withButton>
       <Left>
-        <Button>
-          <Icon name='back-arrow' onPress={() => history.goBack()}/>
+        <Button onPress={() => history.goBack()}>
+          <Icon name='back-arrow'/>
         </Button>
       </Left>
       <Body>
@@ -38,7 +42,7 @@ const CustomerSettings = ({history, user}) => {
           <Text style={styles.text}>Payment cards</Text>
           <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/')}>
+        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>

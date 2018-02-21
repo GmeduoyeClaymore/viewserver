@@ -11,6 +11,8 @@ target 'ShotgunClient' do
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
   pod 'HockeySDK', '~> 5.1.2'
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   target 'ShotgunClientTests' do
     inherit! :search_paths
     # Pods for testing

@@ -41,7 +41,7 @@ class DeliveryDetails extends Component{
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
       context.setState({vehicle: vehicleDetails, errors: '', selectedProductIds: vehicleDetails.selectedProductIds});
     } catch (error){
-      this.setState({errors: error});
+      context.setState({vehicle: {registrationNumber: vehicle.registrationNumber}, errors: error});
     }
   }
 
@@ -55,13 +55,13 @@ class DeliveryDetails extends Component{
   }
 
   render(){
-    const {dimensions, errors, vehicle} = this.props;
+    const {dimensions, errors, vehicle, context} = this.props;
     const {numAvailableForOffload} = vehicle;
     const peopleVisible = numAvailableForOffload > 0;
+    const combinedErrors = `${errors}\n${context.errors}`;
 
     return <Content keyboardShouldPersistTaps="always" padded>
       <View>
-        <ErrorRegion errors={errors}/>
         <Row>
           <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
             <Label>Vehicle registration</Label>
@@ -137,6 +137,7 @@ class DeliveryDetails extends Component{
               </Grid> : null}
           </Col>
         </Row>
+        <ErrorRegion errors={combinedErrors}/>
       </View>
     </Content>;
   }

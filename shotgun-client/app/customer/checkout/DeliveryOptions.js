@@ -98,8 +98,8 @@ class DeliveryOptions extends Component {
       <LoadingScreen text="Loading Customer Cards" /> : <Container>
         <Header withButton>
           <Left>
-            <Button>
-              <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
+            <Button onPress={() => navigationStrategy.prev()}>
+              <Icon name='back-arrow'/>
             </Button>
           </Left>
           <Body><Title>Delivery Details</Title></Body>

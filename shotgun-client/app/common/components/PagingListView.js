@@ -39,7 +39,7 @@ class PagingListView extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const {options, reset} = this.props;
+    const {options} = this.props;
 
     if (newProps.options !== null && !isEqual(options, newProps.options, true)) {
       //reset();

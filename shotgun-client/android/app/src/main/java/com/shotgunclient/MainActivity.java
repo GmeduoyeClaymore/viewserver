@@ -5,6 +5,7 @@ import com.facebook.react.ReactActivity;
 import net.hockeyapp.android.UpdateManager;
 import android.os.Bundle;
 
+
 public class MainActivity extends ReactActivity {
 
     @Override

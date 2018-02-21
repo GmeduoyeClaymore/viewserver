@@ -28,8 +28,8 @@ export default AddressDetails  = ({context, match, history, next}) => {
   return <Container>
     <Header withButton>
       <Left>
-        <Button>
-          <Icon name='back-arrow' onPress={() => history.push(`${match.path}/UserDetails`)} />
+        <Button onPress={() => history.push(`${match.path}/UserDetails`)}>
+          <Icon name='back-arrow'/>
         </Button>
       </Left>
       <Body><Title>Address Details</Title></Body>

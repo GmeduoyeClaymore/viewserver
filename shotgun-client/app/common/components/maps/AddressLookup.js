@@ -71,8 +71,11 @@ class AddressLookup extends Component {
           input: value,
           language: 'en'
         });
+
+        const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('postal_code') && !p.types.includes('political'));
+
         this.setState({
-          suggestedPlaces: responseJSON.predictions,
+          suggestedPlaces: filteredPredictions,
           busy: false
         });
       } catch (error) {

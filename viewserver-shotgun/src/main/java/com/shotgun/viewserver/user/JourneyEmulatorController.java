@@ -31,10 +31,7 @@ public class JourneyEmulatorController {
         this.mapsController = mapsController;
     }
 
-    @ControllerAction(path = "emulateJourneyForOrder", isSynchronous = false)
-    public void emulateJourneyForOrder(@ActionParam(name = "orderId") String orderId,
-                                       @ActionParam(name = "emulator") String emulator,
-                                       @ActionParam(name = "userId") String userId) {
+    public void emulateJourneyForOrder(String orderId, String emulator, String userId) {
         log.debug("Emulator journey for order: " + orderId);
 
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
@@ -80,10 +77,7 @@ public class JourneyEmulatorController {
         thread.start();
     }
 
-    @ControllerAction(path = "emulateJourney", isSynchronous = false)
-    public void emulateJourney(@ActionParam(name = "emulator") String emulator,
-                               @ActionParam(name = "directionsRequest") DirectionRequest directionsRequest) {
-
+    public void emulateJourney(String emulator, DirectionRequest directionsRequest) {
         HashMap<String, Object> directions = mapsController.mapDirectionRequest(directionsRequest);
 
         try {

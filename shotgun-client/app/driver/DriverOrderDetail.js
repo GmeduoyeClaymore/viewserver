@@ -34,14 +34,14 @@ class DriverOrderDetail extends Component{
     const navigateToOrderInProgress = () => history.push('/Driver/DriverOrderInProgress', {orderId: orderSummary.orderId});
 
     const onCancelPress = async() => {
-      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push('/Driver')));
+      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
     };
 
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>
         <Left>
-          <Button>
-            <Icon name='back-arrow' onPress={() => history.goBack()} />
+          <Button onPress={() => history.goBack()}>
+            <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>Order Summary</Title></Body>

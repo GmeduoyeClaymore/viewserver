@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MapView from 'react-native-maps';
 import {fetchRoute} from './MapUtils';
 import {setStateIfIsMounted} from 'custom-redux';
+import Logger from 'common/Logger';
 
 class MapViewDirections extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class MapViewDirections extends Component {
 	    })
 	    .catch(errorMessage => {
 	      this.resetState();
-	      console.warn(`MapViewDirections Error: ${errorMessage}`);
+	      Logger.warning('MapViewDirections Error', errorMessage);
 	      onError && onError(errorMessage);
 	    });
 	};
