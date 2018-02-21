@@ -22,6 +22,12 @@ class CustomerOrders extends Component{
     this.getReportOptions = this.getReportOptions.bind(this);
   }
 
+  componentDidMount(){
+    if (this.pagingListView){
+      this.pagingListView.wrappedInstance.reset();
+    }
+  }
+
   onChangeTab(newIsCompleted){
     const {history, isCompleted} = this.props;
     const {location} = history;
@@ -40,6 +46,7 @@ class CustomerOrders extends Component{
       columnsToSort: [{ name: 'from', direction: 'asc' }],
       reportId: 'customerOrderSummary'};
   }
+
   render(){
     const {isCompleted} = this.props;
     const {onChangeTab, getReportOptions} = this;
