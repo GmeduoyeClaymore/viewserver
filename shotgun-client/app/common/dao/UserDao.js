@@ -48,12 +48,12 @@ export default class UserDaoContext{
     };
   }
 
-  createSubscriptionStrategy({userId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({userId}), dataSink);
+  createSubscriptionStrategy(_, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(undefined, dataSink));
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.userId != newOptions.userId;
+    return !previousOptions;
   }
 
   transformOptions(options){

@@ -38,7 +38,11 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
+<<<<<<< HEAD
     //this.client = new Client('ws://shotgun.ltd:6060/');
+=======
+  //  this.client = new Client('ws://shotgun.ltd:6060/');
+>>>>>>> bbaea2bcb61bcb6fc473c78f504088963394ddab
     this.client = new Client('ws://localhost:6060/');
     Client.setCurrent(this.client);
     this.dispatch = store.dispatch;
