@@ -96,8 +96,8 @@ public class PhoneCallController {
             long now = new Date().getTime();
             long assignedAgoMillis = now - assignedTime;
 
-            //if the orderId is not set or the number is assigned but hasn't been updated in 30 seconds then we can use it.
-            if (orderId == null || orderId == "" || (status == PhoneNumberStatuses.ASSIGNED.name() && assignedAgoMillis > (1000 * 30))) {
+            //if the orderId is not set or the number is assigned but hasn't been updated in 300 seconds then we can use it.
+            if (orderId == null || orderId == "" ||(status == PhoneNumberStatuses.ASSIGNED.name() && assignedAgoMillis > (1000 * 300))) {
                 String phoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
                 availableNumbers.add(phoneNumber);
             }

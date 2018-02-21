@@ -8,7 +8,7 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {completeOrderRequest, stopWatchingPosition, callCustomer} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withRouter} from 'react-router';
-import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
+import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon, OriginDestinationSummary} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import Logger from 'common/Logger';
 
@@ -110,8 +110,9 @@ class DriverOrderInProgress extends Component{
             </Col> :
             <Col>
               <Grid>
-                <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-                <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+                <Row>
+                  <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+                </Row>
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
                   <Col><Button fullWidth callButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>

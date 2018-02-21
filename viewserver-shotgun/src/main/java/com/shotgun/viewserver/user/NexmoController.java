@@ -52,7 +52,7 @@ public class NexmoController {
 
     @ControllerAction(path = "getPhoneNumberInfo", isSynchronous = false)
     public HashMap<String, Object> getPhoneNumberInfo(String phoneNumber) {
-        if(phoneNumber == null || "".equals(phoneNumber)){
+        if (phoneNumber == null || "".equals(phoneNumber)) {
             throw new RuntimeException("Phone number cannot be null");
         }
         try {
@@ -64,9 +64,9 @@ public class NexmoController {
             params.put("country", "GB");
 
             String response = ControllerUtils.execute("POST", NUMBER_INSIGHT_URI, params);
-            HashMap<String,Object> map = ControllerUtils.mapDefault(response);
+            HashMap<String, Object> map = ControllerUtils.mapDefault(response);
             return map;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);
             throw new RuntimeException(ex);
         }
@@ -130,45 +130,47 @@ public class NexmoController {
         }
     }
 
-    private HashMap<String, String> getParameters(InputStream request){
+    private HashMap<String, String> getParameters(InputStream request) {
         try {
             InputStreamReader isr = new InputStreamReader(request, "utf-8");
             BufferedReader br = new BufferedReader(isr);
             String query = br.readLine();
 
             return new Gson().fromJson(query, HashMap.class);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             log.error("Could not parse the query string", ex);
             throw new RuntimeException(ex);
         }
     }
 
-    private void setPhoneNumberStatus(String status, String toNumber, String fromNumber){
-        KeyedTable phoneNumberTable = (KeyedTable)systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
+    private void setPhoneNumberStatus(String status, String toNumber, String fromNumber) {
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         String toNumberTrim = toNumber.trim();
         String fromNumberTrim = fromNumber.trim();
-        log.info(String.format("Attempting to find a user record with userPhoneNumber %s and virtual numnber %s",toNumberTrim,fromNumberTrim));
+        log.info(String.format("Attempting to find a user record with userPhoneNumber %s and virtual numnber %s", toNumberTrim, fromNumberTrim));
 
 
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-            log.debug(String.format("found record with userPhoneNumber %s and virtual numnber %s",userPhoneNumber,virtualPhoneNumber));
             if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
                 Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("status", status);
-                if(status.equals(PhoneNumberStatuses.COMPLETED.name())){
+                if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
+                    status.equals(PhoneNumberStatuses.REJECTED.name()) ||
+                    status.equals(PhoneNumberStatuses.CANCELLED.name())) {
                     phoneNumberRecord.addValue("orderId", "");
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                shotgunTableUpdater.addOrUpdateRow((KeyedTable)systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                shotgunTableUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
             }
         }
     }
 
     private HashMap getProxyRoute(String fromNumber, String toNumber, ICatalog systemCatalog) {
-        KeyedTable phoneNumberTable = (KeyedTable)systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         HashMap proxyRoute = new HashMap();
 
@@ -197,7 +199,7 @@ public class NexmoController {
         JsonObject ncco = new JsonObject();
 
         //number is assigned return the proxy connect ncco
-        if(proxyRoute.containsKey("from") && proxyRoute.containsKey("to")) {
+        if (proxyRoute.containsKey("from") && proxyRoute.containsKey("to")) {
             JsonObject endpoint = new JsonObject();
             endpoint.add("type", new JsonPrimitive("phone"));
             endpoint.add("number", new JsonPrimitive(proxyRoute.get("to")));
@@ -205,11 +207,11 @@ public class NexmoController {
             endpointArray.add(endpoint);
 
             ncco.add("action", new JsonPrimitive("connect"));
-            ncco.add("timeout", new JsonPrimitive("5"));
+            ncco.add("timeout", new JsonPrimitive("30"));
             ncco.add("limit", new JsonPrimitive("300"));
             ncco.add("from", new JsonPrimitive(proxyRoute.get("from")));
             ncco.add("endpoint", endpointArray);
-        }else{ //number not assigned tell the customer
+        } else { //number not assigned tell the customer
             ncco.add("action", new JsonPrimitive("talk"));
             ncco.add("voiceName", new JsonPrimitive("Amy"));
             ncco.add("text", new JsonPrimitive("Welcome to shotgun, please use the shotgun App to call your driver or customer"));
