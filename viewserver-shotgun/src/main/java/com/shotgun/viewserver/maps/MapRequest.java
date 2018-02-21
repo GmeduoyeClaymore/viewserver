@@ -34,7 +34,7 @@ public class MapRequest {
     }
 
     public String toQueryString(String key){
-        return "input="+ URLEncoder.encode(this.getInput())+"&key="+key+"&language="+this.getLanguage()+"&types%5B0%5D=address&components=country%3Auk";
+        return "input="+ URLEncoder.encode(this.getInput())+"&key="+key+"&language="+this.getLanguage()+"&components=country%3Auk";
     }
 }
 
