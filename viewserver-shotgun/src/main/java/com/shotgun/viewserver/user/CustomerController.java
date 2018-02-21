@@ -91,7 +91,7 @@ public class CustomerController {
             IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
             shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
-            IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", null);
+            IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");
             shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
             notifyStatusChanged(orderId, driverId, "cancelled");
