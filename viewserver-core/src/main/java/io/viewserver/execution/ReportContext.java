@@ -59,8 +59,14 @@ public class ReportContext implements IParameterHolder {
     }
 
     private final Consumer<Map.Entry<String, ValueLists.IValueList>> addParameterValueProc = parameterValue -> {
-        parameterValues.put(parameterValue.getKey(), parameterValue.getValue().copy());
+        String key = parameterValue.getKey();
+        ValueLists.IValueList copy = parameterValue.getValue().copy();
+        setParameterValue(key, copy);
     };
+
+    public void setParameterValue(String key, ValueLists.IValueList copy) {
+        parameterValues.put(key, copy);
+    }
 
     public String getReportName() {
         return reportName;

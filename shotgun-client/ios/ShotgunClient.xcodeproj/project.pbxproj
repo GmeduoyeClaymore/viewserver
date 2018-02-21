@@ -1731,7 +1731,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9748DF0FE1F116ACB65A0632 /* Pods-ShotgunClient.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
@@ -1762,7 +1762,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1BB90B387A975FC449EE9CA2 /* Pods-ShotgunClient.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
 				FRAMEWORK_SEARCH_PATHS = (

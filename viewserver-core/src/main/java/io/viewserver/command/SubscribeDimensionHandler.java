@@ -61,6 +61,8 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
 
             Options options = Options.fromMessage(data.getOptions());
 
+            SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
+
             // build execution context
             DimensionExecutionPlanContext dimensionExecutionPlanContext = new DimensionExecutionPlanContext();
             dimensionExecutionPlanContext.setInput(dataSource.getFinalOutput());

@@ -576,6 +576,11 @@ public class ReportContext extends PoolableMessage<ReportContext>
                     public void add(String value) {
                         getValueDtoBuilder().getStringListBuilder().addStringValue(value);
                     }
+
+                    @Override
+                    public void add(int index, String value) {
+                        getValueDtoBuilder().getStringListBuilder().setStringValue(index,value);
+                    }
                 };
             }
             return (ValueLists.IStringList) valueList;

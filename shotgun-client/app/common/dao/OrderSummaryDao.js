@@ -24,7 +24,7 @@ export default class OrderSummaryDao{
     return 'orderSummaryDao';
   }
 
-  getReportContext({userId, orderId, isCompleted, reportId, driverId, selectedProducts}){
+  getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts}){
     const reportContext =  {
       reportId,
       dimensions: {
@@ -39,9 +39,7 @@ export default class OrderSummaryDao{
       reportContext.dimensions.dimension_orderId = orderId;
     }
 
-    if (userId !== undefined){
-      reportContext.dimensions.dimension_userId = userId;
-    }
+    reportContext.dimensions.dimension_userId = '@userId';
 
     if (driverId !== undefined){
       reportContext.dimensions.dimension_driverId = driverId;
@@ -137,8 +135,8 @@ export default class OrderSummaryDao{
     };
   }
 
-  createSubscriptionStrategy({driverId, userId, isCompleted, reportId, orderId, selectedProducts}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({driverId, userId, reportId, isCompleted, orderId, selectedProducts}), dataSink);
+  createSubscriptionStrategy({driverId, isCompleted, reportId, orderId, selectedProducts}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({driverId, reportId, isCompleted, orderId, selectedProducts}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){

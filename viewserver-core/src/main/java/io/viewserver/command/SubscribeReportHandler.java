@@ -28,12 +28,16 @@ import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.SystemReportExecutor;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.messages.command.ISubscribeReportCommand;
+import io.viewserver.messages.common.ValueLists;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.report.ReportContextRegistry;
 import io.viewserver.report.ReportRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SubscribeReportHandler extends ReportContextHandler<ISubscribeReportCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeReportHandler.class);
@@ -62,9 +66,38 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             CommandResult userExecutionPlanResult = multiCommandResult.getResultForDependency("User execution plan");
 
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
+            ConcurrentHashMap<String, Object> params = ControllerContext.getParams(peerSession);
+            if(params != null){
+                for(Map.Entry<String,Object> entry : params.entrySet()){
+                    ValueLists.StringList stringList = new ValueLists.StringList();
+                    stringList.add(entry.getValue().toString());
+                    reportContext.setParameterValue("@" + entry, stringList);
+                }
+
+                for (ReportContext.DimensionValue str : reportContext.getDimensionValues()) {
+                    int index = 0;
+                    for(Object val : str.getValues().toArray()){
+                        if(val instanceof String && val.toString().startsWith("@")){
+                            log.info(String.format("Found controller context param %s in report context for dimension %s. Looking for value in controller context to replace it",val,str.getName()));
+                            String parameterName = val.toString().substring(1);
+                            Object contextValue = params.get(parameterName);
+                            if(contextValue != null){
+                                log.info(String.format("Found controller context value %s for %s in controller context",contextValue,val));
+                                setValueAtIndex(contextValue, index, str.getValues());
+                            }else{
+                                log.info(String.format("Unable to find controller context value for %s in controller context",val));
+                            }
+                        }
+                        index++;
+                    }
+                }
+
+            }
 
             Options options = Options.fromMessage(data.getOptions());
             log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+
+            SubscriptionUtils.substituteParamsInFilterExpression(params, options);
 
             final ICatalog graphNodesCatalog = getGraphNodesCatalog(peerSession);
 
@@ -98,5 +131,15 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             commandResult.setSuccess(false).setMessage(ex.getMessage()).setComplete(true);
             log.error("Failed to subscribe to report", ex);
         }
+    }
+
+
+
+
+    private void setValueAtIndex(Object contextValue, int index, ValueLists.IValueList values) {
+        if(!(values instanceof ValueLists.IStringList)){
+            throw new RuntimeException(String.format("Unable to apply controller context param to value list of type %s. The value list should be of type StringValueList",contextValue));
+        }
+        ((ValueLists.IStringList)values).add(index, contextValue.toString());
     }
 }

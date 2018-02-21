@@ -46,9 +46,8 @@ export default class CustomerDao{
   }
 
   async updateCustomer({customer}){
-    const {userId} = this.options;
     Logger.info(`Updating customer ${customer.email}`);
-    const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {userId, user: customer});
+    const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: customer});
     Logger.info(`Customer ${customerId} updated`);
     return customerId;
   }
