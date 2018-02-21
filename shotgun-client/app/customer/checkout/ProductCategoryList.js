@@ -85,8 +85,8 @@ class ProductCategoryList extends Component{
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header>
         <Left>
-          <Button transparent>
-            <Icon name='back-arrow' onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)} />
+          <Button transparent onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
+            <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>Select Product Category </Title></Body>

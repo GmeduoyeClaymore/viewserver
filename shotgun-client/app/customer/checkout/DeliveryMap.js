@@ -132,8 +132,8 @@ class DeliveryMap extends Component{
             {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
             {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
           </MapView>
-          <Button transparent style={styles.backButton}>
-            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
+          <Button transparent style={styles.backButton} onPress={() => navigationStrategy.prev()} >
+            <Icon name='back-arrow'/>
           </Button>
         </Row>
         <Row size={15} style={styles.inputRow}>
@@ -183,12 +183,7 @@ const mapStateToProps = (state, initialProps) => {
   const supportsDestination = selectedContentType.destination;
   const supportsOrigin = selectedContentType.origin;
   const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
-  let positionFromDelivery;
-  if (origin.line1 !== undefined) {
-    positionFromDelivery = origin;
-  } else if (destination.line1 !== undefined) {
-    positionFromDelivery = destination;
-  }
+
   return {
     ...initialProps,
     state,

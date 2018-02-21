@@ -29,8 +29,8 @@ const ItemDetails = ({context, navigationStrategy}) => {
     <Container>
       <Header withButton>
         <Left>
-          <Button>
-            <Icon name='back-arrow' onPress={() => navigationStrategy.prev()} />
+          <Button onPress={() => navigationStrategy.prev()}>
+            <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>Your Item</Title></Body>
