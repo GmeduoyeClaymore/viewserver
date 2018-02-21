@@ -111,7 +111,7 @@ class DriverOrderInProgress extends Component{
             <Col>
               <Grid>
                 <Row><Icon name="pin" paddedIcon originPin/><Text>{origin.line1}, {origin.postCode}</Text></Row>
-                {contentType.destination ? <Row><Icon paddedIcon name="pin"/><Text>{destination.line1}, {destination.postCode}</Text></Row> : null}
+                <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
                   <Col><Button fullWidth callButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>

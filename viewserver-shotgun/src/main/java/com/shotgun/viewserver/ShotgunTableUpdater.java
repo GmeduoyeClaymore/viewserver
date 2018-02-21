@@ -5,7 +5,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.table.KeyedTable;
 
-public class ShotgunTableUpdater {
+public class ShotgunTableUpdater{
     private final RowUpdater rowUpdater;
     private final LocalKeyedTableUpdater tableUpdater;
     private final IDataSourceRegistry<DataSource> dataSourceRegistry;
@@ -16,16 +16,16 @@ public class ShotgunTableUpdater {
         rowUpdater = new RowUpdater(dimensionMapper, executionContext.getFunctionRegistry(), executionContext.getExpressionParser());
     }
 
-    public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record) {
-        KeyedTable table = ControllerUtils.getKeyedTable(tableName);
-        this.addOrUpdateRow(table, dataSourceName, record);
+    public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record){
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(tableName);
+        addOrUpdateRow(orderTable, dataSourceName, record);
     }
 
-    public void addOrUpdateRow(KeyedTable table, String dataSourceName, IRecord record) {
-        rowUpdater.setTable(table);
+    public void addOrUpdateRow( KeyedTable orderTable, String dataSourceName, IRecord record) {
+        rowUpdater.setTable(orderTable);
         rowUpdater.setRecord(record);
         rowUpdater.setDataSource(dataSourceRegistry.get(dataSourceName));
-        tableUpdater.setTable(table);
+        tableUpdater.setTable(orderTable);
         tableUpdater.addOrUpdateRow(rowUpdater);
     }
 }
