@@ -1,83 +1,83 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.constants.VanProducts;
-import com.shotgun.viewserver.constants.VanVolumes;
-import com.shotgun.viewserver.delivery.Dimensions;
-import com.shotgun.viewserver.delivery.Vehicle;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
+@Controller(name = "userRelationshipController")
+public class UserRelationshipController {
+    private static final Logger log = LoggerFactory.getLogger(UserRelationshipController.class);
+    private TableUpdater tableUpdater;
 
-@Controller(name = "vehicleController")
-public class VehicleController {
-    private static final Logger log = LoggerFactory.getLogger(VehicleController.class);
-    private ShotgunTableUpdater shotgunTableUpdater;
-
-    public VehicleController(ShotgunTableUpdater shotgunTableUpdater) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+    public UserRelationshipController(TableUpdater tableUpdater) {
+        this.tableUpdater = tableUpdater;
     }
 
-    @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
-    public String addOrUpdateVehicle(Vehicle vehicle) {
+    @ControllerAction(path = "requestUserRelationship", isSynchronous = true)
+    public String requestUserRelationship(@ActionParam(name = "toUserId", required = true) String toUserId, @ActionParam(name = "type", required = true) UserRelationshipType type){
         try {
-            log.debug("addOrUpdateUser vehicle");
-            String userId = (String) ControllerContext.get("userId");
-            if (userId == null) {
-                throw new RuntimeException("User id must be set in the controller context before this method is called");
-            }
+            String fromUserId = getUserId();
+            log.debug(String.format("Requesting user relationship from \"%s\" to \"%s\" type \"%s\"",fromUserId,toUserId,type));
 
-            if (vehicle.getVehicleId() == null) {
-                vehicle.setVehicleId(ControllerUtils.generateGuid());
-            }
+            String value = ControllerUtils.generateGuid();
+            Record relationshipRecord = new Record()
+                    .addValue("relationshipId", value)
+                    .addValue("fromUserId", fromUserId)
+                    .addValue("toUserId", toUserId)
+                    .addValue("type", type.name())
+                    .addValue("status", UserRelationshipStatus.REQUESTED.name());
 
-            Record vehicleRecord = new Record()
-                    .addValue("userId", userId)
-                    .addValue("registrationNumber", vehicle.getRegistrationNumber())
-                    .addValue("colour", vehicle.getColour())
-                    .addValue("make", vehicle.getMake())
-                    .addValue("model", vehicle.getModel())
-                    .addValue("dimensions", ControllerUtils.toString(vehicle.getDimensions()))
-                    .addValue("selectedProductIds", ControllerUtils.toString(vehicle.getSelectedProductIds()))
-                    .addValue("bodyStyle", vehicle.getBodyStyle());
-
-            if (vehicle.getNumAvailableForOffload() != null) {
-                vehicleRecord.addValue("numAvailableForOffload", vehicle.getNumAvailableForOffload());
-            }
-
-            shotgunTableUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, "vehicle", vehicleRecord);
-            return vehicle.getVehicleId();
+            tableUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            return value;
 
         } catch (Exception e) {
-            log.error("There was a problem updating the vehicle", e);
+            log.error("There was a problem requesting user relationship", e);
             throw new RuntimeException(e);
         }
     }
 
-    public static List<String> getValidProductsVehicle(Dimensions dimensions) {
-        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolumeMetresCubed()));
+    @ControllerAction(path = "updateUserRelationshipStatus", isSynchronous = true)
+    public void updateUserRelationshipStatus(@ActionParam(name = "relationshipId", required = true) String relationshipId, @ActionParam(name = "type", required = true) UserRelationshipStatus status){
+        try {
+            Record relationshipRecord = new Record()
+                    .addValue("relationshipId", relationshipId)
+                    .addValue("status", status.name());
 
-        if (dimensions.getVolumeMetresCubed() < VanVolumes.MediumVan) {
-            log.debug("This is the volume of small van");
-            return Arrays.asList(VanProducts.SmallVan);
-        } else if (dimensions.getVolumeMetresCubed() < VanVolumes.LargeVan) {
-            log.debug("This is the volume of medium van");
-            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan);
-        } else if (dimensions.getVolumeMetresCubed() < VanVolumes.Luton) {
-            log.debug("This is the volume of large van");
-            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan);
-        } else {
-            log.debug("This is the volume of luton");
-            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan, VanProducts.Luton);
+            tableUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+        } catch (Exception e) {
+            log.error("There was a problem updating user relationship status", e);
+            throw new RuntimeException(e);
         }
+    }
+
+    @ControllerAction(path = "updateUserRelationshipType", isSynchronous = true)
+    public void updateUserRelationshipType(@ActionParam(name = "relationshipId", required = true) String relationshipId, @ActionParam(name = "type", required = true) UserRelationshipType type){
+        try {
+            Record relationshipRecord = new Record()
+                    .addValue("relationshipId", relationshipId)
+                    .addValue("type", type.name());
+
+            tableUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+        } catch (Exception e) {
+            log.error("There was a problem updating user relationship type", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private String getUserId() {
+        String userId = (String) ControllerContext.get("userId");
+        if (userId == null) {
+            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
+        }
+        return userId;
     }
 
 }

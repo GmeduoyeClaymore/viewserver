@@ -1,4 +1,8 @@
 package com.shotgun.viewserver.user;
 
-public class UserRelationshipStatus {
+public enum UserRelationshipStatus {
+    ACCEPTED,
+    REQUESTED,
+    REJECTED
 }
+

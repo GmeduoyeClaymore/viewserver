@@ -1,4 +1,6 @@
 package com.shotgun.viewserver.user;
 
-public class UserRelationshipType {
+public enum UserRelationshipType {
+    MANAGER,
+    TYPE
 }
