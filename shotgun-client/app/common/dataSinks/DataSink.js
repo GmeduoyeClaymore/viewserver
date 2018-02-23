@@ -1,8 +1,9 @@
 import Logger from 'common/Logger';
 
 export default DataSink = (superclass) => class extends superclass {
-  constructor(){
+  constructor(name){
     super();
+    this.name = name;
     this.schema = {};
     this.columnsByName = {};
     this.onSnapshotComplete = this.onSnapshotComplete.bind(this);
@@ -22,25 +23,25 @@ export default DataSink = (superclass) => class extends superclass {
 
   onSnapshotComplete(){
     this.isSnapshotComplete = true;
-    Logger.info('Snapshot complete');
+    Logger.info(this.name + ' - Snapshot complete');
     if (super.onSnapshotComplete){
       super.onSnapshotComplete();
     }
   }
 
   onSuccess(){
-    Logger.info('Subscription success');
+    Logger.info(this.name + ' - Subscription success  - ' + this.name );
   }
 
   onError(error){
-    Logger.info('Subscription error - ' + error);
+    Logger.info(this.name + ' - Subscription error - ' + error);
   }
 
   onDataReset(){
     if (super.onDataReset){
       super.onDataReset();
     }
-    Logger.info('Data reset');
+    Logger.info(this.name + ' - Data reset');
     this.rows = [];
     this.idIndexes = {};
     this.idRows = {};
@@ -52,7 +53,7 @@ export default DataSink = (superclass) => class extends superclass {
       super.onTotalRowCount(count);
     }
     this.totalRowCount = count;
-    Logger.debug('Total row count is - ' + this.totalRowCount);
+    Logger.debug(this.name + ' - Total row count is - ' + this.totalRowCount);
   }
 
   onSchemaReset(){
@@ -71,7 +72,7 @@ export default DataSink = (superclass) => class extends superclass {
     this.idRows[rowId] = row;
     this.rows.push(row);
     this.dirtyRows.push(rowId);
-    Logger.fine(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    Logger.fine(this.name + ` - Row added - ${rowId} -  + ${JSON.stringify(row)}`);
   }
 
   onRowUpdated(rowId, row){
@@ -80,10 +81,10 @@ export default DataSink = (superclass) => class extends superclass {
     }
     const rowIndex = this._getRowIndex(rowId);
     if (!~rowIndex){
-      Logger.info('Row not updated as couldnt get index for row ' + rowId);
+      Logger.info(this.name + ' - Row not updated as couldnt get index for row ' + rowId);
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
-    Logger.info('Row updated - ' + JSON.stringify(row));
+    Logger.info(this.name + ' - Row updated - ' + JSON.stringify(row));
   }
 
   onRowRemoved(rowId){
@@ -100,12 +101,12 @@ export default DataSink = (superclass) => class extends superclass {
           this.idIndexes[id] = index - 1;
         }
       });
-      Logger.info(`Row ${rowId} removed`);
+      Logger.info(this.name + ` - Row ${rowId} removed`);
     }
   }
 
   onColumnAdded(colId, col){
-    Logger.fine(`column added - ${colId} -  + ${JSON.stringify(col)}`);
+    Logger.fine(this.name + `column added - ${colId} -  + ${JSON.stringify(col)}`);
     if (super.onColumnAdded){
       super.onColumnAdded(colId, col);
     }
@@ -122,6 +123,7 @@ export default DataSink = (superclass) => class extends superclass {
     if (col){
       delete this.columnsByName[col.name];
       delete this.schema[colId];
+      Logger.fine(this.name + `column removed - ${colId} -  + ${JSON.stringify(col)}`);
     }
   }
 

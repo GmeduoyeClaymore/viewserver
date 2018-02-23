@@ -18,6 +18,7 @@ package io.viewserver.expression.function;
 
 import io.viewserver.expression.function.abs.Abs;
 import io.viewserver.expression.function.conditional.Conditional;
+import io.viewserver.expression.function.conditional.IsNull;
 import io.viewserver.expression.function.sqrt.Sqrt;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class FunctionRegistry {
         functions.put("round", Round.class);
         functions.put("day", DateToDay.class);
         functions.put("if", Conditional.class);
+        functions.put("isNull", IsNull.class);
         functions.put("text", Text.class);
         functions.put("sqrt", Sqrt.class);
         functions.put("stringifjoin", StringIfJoin.class);

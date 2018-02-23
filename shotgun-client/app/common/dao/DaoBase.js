@@ -67,15 +67,19 @@ export default class Dao {
     const newOptions = {...this.options, ...options};
     if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy || force){
       if (this.subscriptionStrategy){
+        Logger.info(`Disposing of subscription - ${this.daoContext.name}`);
         this.subscriptionStrategy.dispose();
       }
       if (this.rowEventSubscription){
+        Logger.info(`Disposing of row event subscription - ${this.daoContext.name}`);
         this.rowEventSubscription.unsubscribe();
       }
       if (this.countSubscription){
+        Logger.info(`Disposing of row count subscription - ${this.daoContext.name}`);
         this.countSubscription.unsubscribe();
       }
       this.dataSink = this.daoContext.createDataSink(newOptions);
+      this.dataSink.name = this.daoContext.name;
       this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
@@ -95,15 +99,15 @@ export default class Dao {
         return Promise.resolve();
       }
       this.options = newOptions;
-      Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
+      Logger.info(`Updating options to ${JSON.stringify(this.options)} ${this.daoContext.name}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
       const snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
       this.subscriptionStrategy.updateSubscription(optionsMessage);
 
-      Logger.info('!!!!!Waiting for snapshot complete!!!!');
+      Logger.info(`!!!!!Waiting for snapshot complete!!!! ${this.daoContext.name}`);
       const result = await snapshotPromise;
-      Logger.info('!!!!!Completed snapshot complete!!!!');
+      Logger.info(`!!!!!Completed snapshot complete!!!! ${this.daoContext.name}`);
       this.subscribed = true;
       return result;
     } catch (error){

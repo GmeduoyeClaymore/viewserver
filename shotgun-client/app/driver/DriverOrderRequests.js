@@ -67,7 +67,6 @@ class DriverOrderRequests extends Component{
 }
 
 const mapStateToProps = (state, initialProps) => {
-  const vehicle = getDaoState(state, ['vehicle'], 'vehicleDao');
   const user = getDaoState(state, ['user'], 'userDao');
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const navigationProps = getNavigationProps(initialProps) || [];
@@ -89,8 +88,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentType,
     selectedContentTypeIndex,
     isDelivery: navigationProps.isDelivery !== undefined ? navigationProps.isDelivery : true,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle || !position,
-    vehicle,
+    busy: isAnyLoading(state, ['vehicleDao', 'userDao']),
     user
   };
 };

@@ -1,4 +1,4 @@
-import electron from 'electron';
+import electron from 'electron'; 
 
 import { createHashHistory } from 'history';
 import { applyMiddleware, createStore, compose } from 'redux';
@@ -82,6 +82,21 @@ const history = createHashHistory({
 // Compile reducers
 reducers = combineReducers( {...reducers,dao} );
 
+Array.prototype.removeIf = function(callback) {
+  var i = 0;
+  const result = [];
+  while (i < this.length) {
+      if (callback(this[i], i)) {
+          result.push(this[i]);
+          this.splice(i, 1);
+      }
+      else {
+          ++i;
+      }
+  }
+  return result;
+};
+
 // Start history
 // Merge middlewares
 let middlewares = [
@@ -108,9 +123,107 @@ const store = undefined === window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
 createStore(finalReducer, compose(applyMiddleware(...middlewares))) :
 createStore(finalReducer, window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(applyMiddleware(...middlewares)));
 
+let middlewares2 = [
+  thunk 
+];
+
+const graphReducer = (state = {}, action) => {
+    if(action.type == 'renderReport'){
+      const {data} = action;
+      return state.setIn([data.name], parseReportFromJson(data.json));
+    }
+};
+const parseReportFromJson = (json) => {
+  const descriptor = JSON.parse(json);
+  const parametersObj = descriptor.parameters;
+  const parameters = [];
+  Object.keys(parametersObj).forEach(
+    (key) => {
+      const param = parametersObj[key];
+      parameters.push(`${param.label} (${param.name} - ${param.type})`)
+    }
+  )
+  const nodes = descriptor.nodes;
+  const nodesByName = {};
+  nodes.forEach(
+    node => {
+      nodesByName[node.name] = node;
+    }
+  )
+  const reportInputNodes = []
+  const normalReportNodes = []
+  const connectionsByName = {};
+  nodes.forEach(
+    node => {
+      node.connections.forEach(
+        connection => {
+          const newObj = {...node,...connection};
+          const {operator: input, name: output, ...rest} = newObj;
+          const result = {input, output};
+          if(!nodesByName[connection.operator]){
+            reportInputNodes.push(result);
+          }else{
+            normalReportNodes.push(result);
+          }
+        }
+      )
+    }
+  );
+  mapConnections(reportInputNodes, normalReportNodes)
+  return {
+    parameters,
+    reportNodes: prettyPrint(reportInputNodes), 
+    withoutConnection: prettyPrint(normalReportNodes)
+  }
+}
+
+const prettyPrint = (nodes, result = {}) => {
+  nodes.forEach(nd => result[nd.input] = nd);
+  return result;
+}
+
+
+const prettyLastParse = (nodes, result = {}) => {
+  nodes.forEach(nd => result[nd.input] = nd);
+  return result;
+}
+
+
+const MAX_LEVELS = 20;
+
+const mapConnections = (inputNodes = [], normalReportNodes, level) => {
+  if(level > MAX_LEVELS){
+    inputNodes.forEach(
+      node => {
+        prettyPrint([{
+          output: 'MAX LEVELS REACHED'
+        }], node);
+      }
+    )
+    return;
+  }
+  inputNodes.forEach(
+    node => {
+      const connections = normalReportNodes.removeIf( cn => cn.input === node.output);
+        prettyPrint(connections, node);
+      mapConnections(connections, normalReportNodes, level + 1)
+    }
+  )
+}
+const finalgraphReducer = makeSeamless(graphReducer);
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+  name: 'Operator Graph', actionsBlacklist: ['REDUX_STORAGE_SAVE']
+});
+
+const store2 = undefined === window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+createStore(finalgraphReducer, compose(applyMiddleware(...middlewares2))) :
+createStore(finalgraphReducer, composeEnhancers(applyMiddleware(...middlewares2)));
+
 // Export all the separate modules
 export {
   components,
   history,
-  store
+  store,
+  store2
 };

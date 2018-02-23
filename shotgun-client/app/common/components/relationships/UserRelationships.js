@@ -1,7 +1,8 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import { Container, Button} from 'native-base';
+import { Container, Button, Tab, View} from 'native-base';
 import { withRouter } from 'react-router';
+import {Tabs, ErrorRegion, Icon} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
@@ -12,8 +13,6 @@ import UserRelationshipDetail from './UserRelationshipDetail';
 class UserRelationships extends Component{
   constructor(props){
     super(props);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.fitMap = this.fitMap.bind(this);
     this.state = {};
     setStateIfIsMounted(this);
     this.UserViews = [
@@ -21,6 +20,9 @@ class UserRelationships extends Component{
       {'List': UserRelationshipList},
       {'Detail': UserRelationshipDetail},
     ];
+    this.getOptionsFromProps = this.getOptionsFromProps.bind(this);
+    this.setState = this.setState.bind(this);
+    this.onChangeTab = this.onChangeTab.bind(this);
   }
 
   componentDidMount(){
@@ -33,11 +35,20 @@ class UserRelationships extends Component{
     this.setState({oldOptions: options});
   }
 
-  subscribeToUsers(newProps){
+  getOptionsFromProps(props){
+    const {reportId = 'userRelationships', productId} = props;
+    return {
+      reportId,
+      productId,
+      columnsToSort: [{name: 'distance', direction: 'asc'}]
+    };
+  }
+
+  componentWillReceiveProps(newProps){
     const {oldOptions} = this.state;
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions)){
-      this.subscribeToUsersForProduct(newOptions);
+      this.subscribeToUsers(newOptions);
     }
   }
 
@@ -52,17 +63,17 @@ class UserRelationships extends Component{
   render(){
     const {onChangeTab, state, UserViews} = this;
     const {history, errors} = this.props;
-    const {selectedUser, selectedTabIndex = 0} = state;
-    const UserView = UserViews[selectedTabIndex];
-
+    const {selectedUser, selectedTabIndex = 0, oldOptions} = state;
+    const UserViewRecord = UserViews[selectedTabIndex];
+    const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
     return <Container style={{ flex: 1 }}>
       <Tabs initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
-        {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={c[Object.keys(c)[0]]} />)}
-      </Tabs>;
+        {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
+      </Tabs>
       <View style={{flex: 1}}>
         <ErrorRegion errors={errors}>
-          <UserView {...this.props} context={this} selectedUser={selectedUser}/>
-        </ErrorRegion>;
+          <UserView {...this.props} context={this} options={oldOptions} selectedUser={selectedUser}/>
+        </ErrorRegion>
       </View>
       <Button transparent style={styles.backButton} onPress={() => history.back()} >
         <Icon name='back-arrow'/>

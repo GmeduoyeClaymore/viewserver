@@ -3,6 +3,8 @@ import PagingListView from 'components/Dao/PagingListView'
 import LoadingScreen from 'common-components/LoadingScreen'
 import { connect } from 'react-redux';
 import ViewServerGrid from 'canv-grid/ViewServerGrid';
+import { withRouter } from 'react-router';
+
 
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
 import {getDaoContext, getDaoCommandStatus} from 'common/dao';
@@ -90,7 +92,6 @@ class OperatorGroupView extends Component{
   constructor(props){
     super(props)
     this.state = {};
-    this.runAllScenarios = this.runAllScenarios.bind(this);
   }
 
   componentWillMount(){
@@ -136,58 +137,18 @@ class OperatorGroupView extends Component{
             headerView={headerView}/> : <div>Render operator graph</div>;
   }
 
-  async runScenario(grid,index){
-    const scenarios = this.scenarios();
-    const scenario = scenarios[index];
-    const {name,options} = scenario;
-    const {scenarioResults = {}} = this.state;
-    scenarioResults[name + " on grid " + grid.props.daoName] = "Pending...";
-    this.setState({scenarioResults});
-    const elapsed = await grid.updateOptionsAndWait(options);
-    //grid.scrollRowIntoView(options.offset);
-    scenarioResults[name + " on grid " +  grid.props.daoName] = elapsed.asSeconds() + " secs "
-    return new Promise((res) => this.setState({scenarioResults}, () => index+1 < scenarios.length ? this.runScenario(grid,index+1) : res()));
-  }
-
-  async runAllScenarios(grid){
-    this.setState({runningScenarios:true,scenarioResults:{}})
-    await this.runScenario(grid,0);
-    this.setState({runningScenarios:false})
-  }
-
-  async runAllScenariosForAllGrids(){
-    this.setState({scenarioResults: {}},() => {
-    this.runAllScenarios(this.grid);
-    this.runAllScenarios(this.grid1);
-    this.runAllScenarios(this.grid2);
-    this.runAllScenarios(this.grid3);});
-  }
-
   static COLUMNS = ['name','description','rating'];
 
-  scenarios(){
-    const COLUMNS = OperatorGroupView.COLUMNS;
-    return  [
-      {name : "Sorting by 1 column", options:{columnsToSort : [{name : COLUMNS[0], direction: "desc"}]}},
-      {name : "Sorting by 2 column", options:{columnsToSort : [{name : COLUMNS[0], direction: "desc"},{name : COLUMNS[1], direction: "desc"}]}},
-      {name : "Sorting by 3 column", options:{columnsToSort : [{name : COLUMNS[0], direction: "desc"},{name : COLUMNS[1], direction: "desc"},{name : COLUMNS[2], direction: "desc"}]}},
-    ];
-  }
 
   render(){
     const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName}  = this.props;
     const {scenarioResults = {}} = this.state;
     return <div className="flex flex-col"> 
                 {operatorListDaoReady ? this.renderOperators() : null}
-                <div className="flex-col">{Object.keys(scenarioResults).map(c=> <div key={c}>{c + " : " + scenarioResults[c]}</div>)}</div>
-                  <button className="btn btn-primary pull-right" onClick={() => this.runAllScenariosForAllGrids()}>Run Scenarios</button>
                 <div style={{position : 'relative',flex:3}} className="flex flex-col">
                   <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName}} />
-                  <ViewServerGrid key="2" ref={vsg => {this.grid1 = vsg}} daoName="02" options={{operatorName}} />
-                  <ViewServerGrid key="3" ref={vsg => {this.grid2 = vsg}} daoName="03" options={{operatorName}} />
-                  <ViewServerGrid key="4" ref={vsg => {this.grid3 = vsg}} daoName="04" options={{operatorName}} />
                 </div>
             </div>
   }
 }
-export default connect(OperatorGroupView_mapStateToProps,OperatorGroupView_mapDispatchToProps)(OperatorGroupView);
+export default withRouter(connect(OperatorGroupView_mapStateToProps,OperatorGroupView_mapDispatchToProps)(OperatorGroupView));

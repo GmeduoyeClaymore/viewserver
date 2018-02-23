@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.login;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.user.User;
@@ -7,14 +9,19 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.operators.IInput;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
+import io.viewserver.operators.InputBase;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import io.viewserver.reactor.ITask;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -25,6 +32,8 @@ import java.util.function.Consumer;
  */
 @Controller(name = "loginController")
 public class LoginController {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @ControllerAction(path = "login", isSynchronous = true)
     public String login(@ActionParam(name = "email")String email, @ActionParam(name = "password")String password){
@@ -53,12 +62,51 @@ public class LoginController {
     }
 
     @ControllerAction(path = "setUserId", isSynchronous = true)
-    public void setUserId(String userId) {
+    public ListenableFuture setUserId(String userId) {
         KeyedTable userTable = (KeyedTable) ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
-        int userRowId = userTable.getRow(new TableKey(userId));
-        if(userRowId == -1){
-            throw new RuntimeException(String.format("Unable to find user for id %s",userId));
+        SettableFuture result = SettableFuture.create();
+        try {
+            int userRowId = userTable.getRow(new TableKey(userId));
+            if (userRowId == -1) {
+
+                InputBase userIdInput = new InputBase("userAdditionListener", userTable) {
+                    @Override
+                    protected void onRowAdd(int row) {
+                        String userId = (String) ControllerUtils.getColumnValue(userTable, "userId", row);
+                        if (userId == userId) {
+                            setupContext(userId, userTable, userRowId);
+                            result.set(userId);
+                            logger.info("Found user " + userId + " after waiting");
+                            userTable.getOutput().unplug(this);
+                        }
+                    }
+                };
+                userTable.getOutput().plugIn(userIdInput);
+                userTable.getExecutionContext().getReactor().scheduleTask(new ITask() {
+                    @Override
+                    public void execute() {
+                        if (result.isDone()) {
+                            result.setException(new RuntimeException("Unable to find user id " + userId));
+                            try {
+                                logger.info("Unable to find user " + userId + " after waiting. NOT WAITING ANY MORE");
+                                userTable.getOutput().unplug(userIdInput);
+                            } catch (Exception ex) {
+                                logger.error("Problem unlistening for user" + userId + "");
+                            }
+                        }
+
+                    }
+                }, 5000, -1);
+            }
+            setupContext(userId, userTable, userRowId);
+            result.set(userId);
+        }catch(Exception ex){
+            result.setException(ex);
         }
+        return result;
+    }
+
+    private void setupContext(String userId, KeyedTable userTable, int userRowId) {
         ControllerContext.set("userId", userId);
         User user = new User();
         setValue(userTable,userRowId,"userId", v ->  user.setUserId((String) v));

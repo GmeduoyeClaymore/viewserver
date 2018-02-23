@@ -32,6 +32,10 @@ public class OperatorConfigurationException extends RuntimeException {
         this.operator = operator;
     }
 
+    public OperatorConfigurationException(IOperator operator, Throwable cause, String message) {
+        super(String.format("Configuration error in operator %s - %s", operator.getName(),message), cause);
+        this.operator = operator;
+    }
     public IOperator getOperator() {
         return operator;
     }

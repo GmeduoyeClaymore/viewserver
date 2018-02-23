@@ -15,11 +15,19 @@ export const isDescendendantOf = (parent, child)=> {
 };
 
 export default class OrderRequestDaoContext{
+  static DEFAULT_POSITION = {
+    latitude: 0,
+    longitude: 0
+  }
   static OPTIONS = {
     offset: 0,
     limit: 10,
-    filterMode: 2
+    filterMode: 2,
+    maxDistance: 0,
+    showOutOfRange: true,
+    position: OrderRequestDaoContext.DEFAULT_POSITION
   };
+
 
   constructor(client, options = {}) {
     this.client = client;
@@ -36,7 +44,7 @@ export default class OrderRequestDaoContext{
   }
 
 
-  getReportContext({contentType, contentTypeOptions = {}, position = {}, maxDistance, showUnrelated = true, showOutOfRange = true}){
+  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
     if (typeof contentType === 'undefined') {
       return {};
     }

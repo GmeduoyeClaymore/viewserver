@@ -47,10 +47,10 @@ class PagingListView extends Component{
     }
 
     _onScroll(e){
-      const windowHeight = Dimensions.get('window').height;
-      const height = e.nativeEvent.contentSize.height;
-      const offset = e.nativeEvent.contentOffset.y;
-      if ( windowHeight + offset >= (height * 0.75) ){
+      const windowHeight = window.innerHeight;
+      const {height = 100,offset = {}} = e;
+      const offsety = offset.y || 0;
+      if ( windowHeight + offsety >= (height * 0.75) ){
         if (!this.props.busy){
           this.loadNextPage();
         }

@@ -11,17 +11,19 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 export default class UserRelationshipMap extends Component{
   constructor(props){
     super(props);
+    this.fitMap = this.fitMap.bind(this);
   }
   
   fitMap(){
-    const {map} = this;
-    const {destination, origin} = this.props;
-    if ((origin.line1 !== undefined && destination.line1 !== undefined) && map) {
-      map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
-        edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
-        animated: false,
-      });
+    const {map, props} = this;
+    let {me, relatedUsers} = props;
+    if (me){
+      relatedUsers = [me, ...relatedUsers];
     }
+    map.fitToCoordinates(relatedUsers.map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
+      edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
+      animated: false,
+    });
   }
   
   render(){

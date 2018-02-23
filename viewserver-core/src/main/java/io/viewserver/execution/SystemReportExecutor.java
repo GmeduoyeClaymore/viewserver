@@ -144,7 +144,7 @@ public class SystemReportExecutor {
         IDataSource dataSource = dataSourceRegistry.get(name);
 
         if(this.dataSourceRegistry.getStatus(name) != DataSourceStatus.INITIALIZED){
-            throw new ViewServerException(String.format("DataSource %s has not been initialised", dataSource.getName()));
+            throw new ViewServerException(String.format("DataSource %s has not been initialised", name));
         }
 
         return dataSource;

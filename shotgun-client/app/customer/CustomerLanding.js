@@ -7,6 +7,7 @@ import CustomerOrders from './CustomerOrders';
 import CustomerOrderDetail from './CustomerOrderDetail';
 import CustomerOrderInProgress from './CustomerOrderInProgress';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
+import {watchPosition} from 'driver/actions/DriverActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -41,6 +42,7 @@ class CustomerLanding extends Component {
     dispatch(customerServicesRegistrationAction(client));
     this.attemptPaymentCards(this.props);
     dispatch(getCurrentPosition());
+    dispatch(watchPosition());
   }
 
   componentWillReceiveProps(props){

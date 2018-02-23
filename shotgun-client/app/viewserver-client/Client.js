@@ -155,6 +155,7 @@ export default class Client {
   };
 
   sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
+    Logger.debug(`sendCommand: ${commandName} Payload ${JSON.stringify(commandDto)}`);
     const command = new Command(commandName, commandDto);
     command.handler = eventHandlers;
     command.continuous = continuous;

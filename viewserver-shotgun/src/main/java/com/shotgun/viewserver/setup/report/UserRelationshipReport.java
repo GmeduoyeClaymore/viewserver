@@ -20,17 +20,17 @@ public class UserRelationshipReport {
                 return Arrays.asList(
                         new CalcColNode("userRelationships")
                                 .withCalculations(
-                                        new CalcColOperator.CalculatedColumn("isRelated", "@userId == fromUserId || @userID == toUserId"),
-                                        new CalcColOperator.CalculatedColumn("relatedToUserId", "if(@userId == fromUserId, toUserId, fromUserId)")
+                                        new CalcColOperator.CalculatedColumn("isRelated", "isNull(\"{_userId}\" == fromUserId, \"{_userId}\" == toUserId)"),
+                                        new CalcColOperator.CalculatedColumn("relatedToUserId", "if(\"{_userId}\" == fromUserId, toUserId, fromUserId)")
                                 )
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserRelationshipDataSource.NAME, UserRelationshipDataSource.NAME)),
                         new FilterNode("relatedFilter")
-                                .withExpression("isRelated || {showUnrelated}")
+                                .withExpression("isNull(isRelated,{showUnrelated})")
                                 .withConnection("userRelationships"),
                         new JoinNode("relatedToUser")
                                 .withLeftJoinColumns("relatedToUserId")
                                 .withRightJoinColumns("userId")
-                                .withColumnPrefixes("relatedToUser_")
+                                .withColumnPrefixes("","relatedToUser_")
                                 .withAlwaysResolveNames()
                                 .withConnection("relatedFilter", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
@@ -42,10 +42,12 @@ public class UserRelationshipReport {
                                 .withConnection("relatedToUser", Constants.OUT, "right"),
 
                         new CalcColNode("distanceCalcCol")
-                                .withCalculations(new CalcColOperator.CalculatedColumn("currentDistance", "if({showOutOfRange},0,distance({latitude} || latitude, {longitude} || longitude, relatedToUser_latitude, relatedToUser_longtitude, \"M\"))"))
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("currentDistance", "distance(isNull({latitude},latitude), isNull({longitude},longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\")"),
+                                        new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},latitude), isNull({longitude},longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\"))"))
                                 .withConnection("userRelationshipJoin"),
                         new FilterNode("distanceFilter")
-                                .withExpression("currentDistance <= {maxDistance} || range  || {showOutOfRange}")
+                                .withExpression("currentDistanceFilter <= isNull({maxDistance},range)")
                                 .withConnection("distanceCalcCol"),
                         new ProjectionNode("userProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -86,13 +88,14 @@ public class UserRelationshipReport {
                                     .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right")));
             nodes.addAll(getSharedGraphNodes("userJoin"));
             return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID, USER_FOR_PRODUCT_REPORT_ID)
-                    .withDataSource(UserProductDataSource.NAME)
+                    .withDataSource(UserRelationshipDataSource.NAME)
                     .withParameter("showUnrelated", "Show Unrelated", boolean[].class)
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                     .withParameter("productId", "Product ID", String[].class)
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
+                    .withParameter("_userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
                     .withOutput("userProjection");
 
@@ -105,7 +108,9 @@ public class UserRelationshipReport {
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
+                    .withParameter("_userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
+                    .withDataSource(UserRelationshipDataSource.NAME)
                     .withOutput("userProjection");
 
         }

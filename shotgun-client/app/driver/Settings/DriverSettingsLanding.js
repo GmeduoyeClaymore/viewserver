@@ -6,9 +6,9 @@ import {Image, Linking} from 'react-native';
 import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
 
-const feedbackSubject = `Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
+const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
 const DriverSettings = ({history, user}) => {
   const signOut = async () => {

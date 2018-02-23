@@ -4,7 +4,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 
 
-import { components, history, store } from '../components.js';
+import { components, history, store, store2 } from '../components.js';
 import styles from './component.less';
 
 const Core = () => {
@@ -14,8 +14,8 @@ const Core = () => {
         <div className="window">
           <div className="window-content">
             <div className="pane-group">
-              <div className="pane-sm flex-col sidebar"><components.Menu /></div>
-              <div className="pane flex-col padded"><AppRouter /></div>
+              <div className="pane-sm flex-col sidebar"><components.Menu graphStore={store2}/></div>
+              <div className="pane flex-col padded"><AppRouter graphStore={store2}/></div>
             </div>
           </div>
           <components.Footer />
@@ -25,27 +25,16 @@ const Core = () => {
   );
 }
 
-const AppRouter = () => {
+ 
+const AppRouter = (props) => { 
   return (
     <Switch>
-      <Route path="/login" exact component={components.Login} />
-      <Route path="/operatorGroupView" exact  component={components.OperatorGroupView} />
+      <Route path="/login" exact component={components.Login} /> 
+      <Route path="/operatorGroupView" render={() => <components.OperatorGroupView {...props}/>} /> 
     </Switch>
   );
-}
+} 
 
-const Home = () => {
-  return (
-    <div>
-      <h1>Hello, Electron!</h1>
-      <p>I hope you enjoy using enhanced-electron-react-boilerplate to start your dev off right!</p>
-      <div className='padded'>
-        <div className={`box padded ${styles.box}`}>
-          This has a different background color, but uses the same 'box' className. However, thanks to CSS modules the names dont collide. Here we are setting a background color, and overriding the shadow.
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 export default Core;

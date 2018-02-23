@@ -23,9 +23,8 @@ class CustomerOrderInProgress extends Component{
   }
 
   componentDidMount(){
-    const {dispatch, orderId, userId} = this.props;
+    const {dispatch, orderId} = this.props;
     dispatch(resetSubscriptionAction('orderSummaryDao', {
-      userId,
       orderId,
       reportId: 'customerOrderSummary'
     }));

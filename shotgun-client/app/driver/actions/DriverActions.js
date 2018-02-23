@@ -7,14 +7,14 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
 import PaymentDao from 'common/dao/PaymentDao';
 
-export const driverServicesRegistrationAction = (client, userId, continueWith) => {
+export const driverServicesRegistrationAction = (client, continueWith) => {
   return async (dispatch) => {
-    register(dispatch, new UserDao(client), {userId});
-    register(dispatch, new VehicleDao(client), {userId});
+    register(dispatch, new UserDao(client));
+    register(dispatch, new VehicleDao(client));
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client));
-    registerNakedDao(dispatch, new PaymentDao(client), {userId});
-    registerNakedDao(dispatch, new DriverDao(client), {userId}, continueWith);
+    registerNakedDao(dispatch, new PaymentDao(client));
+    registerNakedDao(dispatch, new DriverDao(client), continueWith);
   };
 };
   

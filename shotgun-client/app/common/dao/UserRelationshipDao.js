@@ -4,12 +4,19 @@ import {hasAnyOptionChanged} from 'common/dao';
 
 
 export default class UserRelationshipDaoContext{
+  static DEFAULT_POSITION = {
+    latitude: 0,
+    longitude: 0
+  }
+
   static OPTIONS = {
     offset: 0,
     limit: 100,
     filterMode: 20,
     showUnrelated: true,
-    showOutOfRange: true
+    showOutOfRange: true,
+    position: UserRelationshipDaoContext.DEFAULT_POSITION,
+    maxDistance: 0
   };
 
   constructor(client, options = {}) {
@@ -26,7 +33,7 @@ export default class UserRelationshipDaoContext{
     return 'userRelationshipDao';
   }
 
-  getReportContext({reportId, selectedProduct = {}, position = {}, maxDistance, showUnrelated = true, showOutOfRange = true}){
+  getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
     const {latitude, longitude} = position;
     const baseReportContext =  {
       reportId,
@@ -69,8 +76,7 @@ export default class UserRelationshipDaoContext{
       throw new Error('reportId should be defined');
     }
     const {searchText } = options;
-    const productFilter = searchText ? `firstName like "*${searchText}*" || lastName like "*${searchText}*"` : '';
-    const filterExpression = productFilter === '' ? categoryFilterExpression : `${productFilter} && ${categoryFilterExpression}`;
+    const filterExpression = searchText ? `firstName like "*${searchText}*"` : 'true';
     return {...options, filterExpression};
   }
 }
