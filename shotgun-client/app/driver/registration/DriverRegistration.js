@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import UserDetails from 'common/registration/UserDetails';
-import DriverCapabilityDetails from './DriverCapabilityDetails';
 import DriverAccountType from './DriverAccountType';
 import DriverLogin from './DriverLogin';
 import BankAccountDetails from './BankAccountDetails';
@@ -14,6 +13,7 @@ import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
+import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
 
 class DriverRegistration extends Component {
@@ -26,8 +26,9 @@ class DriverRegistration extends Component {
     const {dispatch, client} = this.props;
     dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new DriverDao(client));
-    register(dispatch, new ContentTypeDao(client, {userId: undefined}));
-    register(dispatch, new ProductCategoryDao(client), {});
+    register(dispatch, new ContentTypeDao(client));
+    register(dispatch, new ProductCategoryDao(client));
+    register(dispatch, new UserRelationshipDao(client));
     register(dispatch, new ProductDao(client), {});
   }
 

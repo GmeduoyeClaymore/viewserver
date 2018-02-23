@@ -2,12 +2,12 @@ import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {LoadingScreen, ErrorRegion, Icon} from 'common/components';
+import {ErrorRegion, Icon} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import ProductMarker from 'common/components/maps/ProductMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import { getDaoState, getOperationError, isOperationPending, isAnyOperationPending, updateSubscriptionAction } from 'common/dao';
+import { getDaoState, updateSubscriptionAction } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {TextInput} from 'react-native';
@@ -36,12 +36,12 @@ class DeliveryMap extends Component{
 
   async subscribeToUsersForProduct(options){
     const {dispatch} = this.props;
-    dispatch(updateSubscriptionAction('userProductDao', options));
+    dispatch(updateSubscriptionAction('userRelationshipDao', options));
     this.setState({oldOptions: options});
   }
 
   getOptionsFromProps(props){
-    const {selectedProduct, position} = props;
+    const {selectedProduct} = props;
     return {
       selectedProduct,
       position,
@@ -104,16 +104,8 @@ class DeliveryMap extends Component{
 
   render(){
     const {fitMap, setDurationAndDistance, getLocationText} = this;
-
-    const {busy, destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, position, navigationStrategy, errors, selectedProduct, usersWithProduct} = this.props;
-
-    if (busy){
-      return <LoadingScreen text="Waiting for position from device" />;
-    }
-    if (errors){
-      return <ErrorRegion errors={errors}/>;
-    }
-    const {latitude, longitude} = position;
+    const {destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct} = this.props;
+    const {latitude, longitude} = me;
   
     const initialRegion = {
       latitude,
@@ -125,13 +117,15 @@ class DeliveryMap extends Component{
     return <Container style={{ flex: 1 }}>
       <Grid>
         <Row size={85}>
-          <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-            showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-            {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
-            {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-            {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
-            {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
-          </MapView>
+          <ErrorRegion errors={errors}>
+            <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
+              showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+              {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
+              {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+              {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
+              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
+            </MapView>
+          </ErrorRegion>
           <Button transparent style={styles.backButton} onPress={() => navigationStrategy.prev()} >
             <Icon name='back-arrow'/>
           </Button>
@@ -187,11 +181,10 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     state,
+    me: getDaoState(state, ['user'], 'userDao'),
     delivery, selectedProduct, selectedContentType, destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton,
-    position: getDaoState(state, ['position'], 'userDao'),
-    usersWithProduct: getDaoState(state, ['users', 'productUsers'], 'userProductDao') || [],
-    busy: isAnyOperationPending(state, [{userDao: 'getCurrentPosition'}, {userProductDao: 'updateSubscription'}]),
-    errors: getOperationError(state, 'userDao', 'getCurrentPosition') };
+    usersWithProduct: getDaoState(state, ['users'], 'userRelationshipDao') || []
+  };
 };
 
 export default withRouter(connect(

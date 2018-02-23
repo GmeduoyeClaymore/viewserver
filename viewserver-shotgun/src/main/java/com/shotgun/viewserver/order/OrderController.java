@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
@@ -32,14 +32,14 @@ public class OrderController {
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
     private KeyedTable productTable;
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
 
-    public OrderController(ShotgunTableUpdater shotgunTableUpdater,
+    public OrderController(TableUpdater tableUpdater,
                            DeliveryAddressController deliveryAddressController,
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
@@ -87,7 +87,7 @@ public class OrderController {
         .addValue("paymentId", paymentId)
         .addValue("deliveryId", deliveryId);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         //add orderItems
         for (OrderItem orderItem : orderItems) {
@@ -119,7 +119,7 @@ public class OrderController {
                 .addValue("userId", orderUserId)
                 .addValue("rating", rating);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        tableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
     @ControllerAction(path = "addDriverRating", isSynchronous = true)
@@ -135,7 +135,7 @@ public class OrderController {
                 .addValue("userId", driverId)
                 .addValue("rating", rating);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        tableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {

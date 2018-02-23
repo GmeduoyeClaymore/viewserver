@@ -15,6 +15,7 @@ import {LoadingScreen} from 'common/components';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
+import UserRelationships from 'common/components/relationships/UserRelationships';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -35,9 +36,9 @@ class CustomerLanding extends Component {
   }
 
   async componentDidMount() {
-    const {dispatch, userId, client, history} = this.props;
+    const {dispatch, client, history} = this.props;
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, 'Customer', actionUri));
-    dispatch(customerServicesRegistrationAction(client, userId));
+    dispatch(customerServicesRegistrationAction(client));
     this.attemptPaymentCards(this.props);
     dispatch(getCurrentPosition());
   }
@@ -65,6 +66,7 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
+          <Route path={'/Customer/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
           <Redirect to={'/Customer/Checkout'}/>
         </Switch>
         <CustomerMenuBar/>

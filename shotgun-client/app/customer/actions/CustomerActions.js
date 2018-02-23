@@ -2,27 +2,27 @@ import {invokeDaoCommand} from 'common/dao';
 import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderDao from 'common/dao/OrderDao';
 import CustomerDao from 'customer/dao/CustomerDao';
-import UserProductDao from 'customer/dao/UserProductDao';
 import PaymentDao from 'common/dao/PaymentDao';
 import DeliveryAddressDao from 'customer/dao/DeliveryAddressDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
+import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
 import UserDao from 'common/dao/UserDao';
 
-export const customerServicesRegistrationAction = (client, userId, continueWith) => {
+export const customerServicesRegistrationAction = (client, continueWith) => {
   return async (dispatch) => {
-    register(dispatch, new UserDao(client), {userId});
-    const orderDao = registerNakedDao(dispatch, new OrderDao(client), {userId});
-    registerNakedDao(dispatch, new PaymentDao(client), {userId});
-    register(dispatch, new DeliveryAddressDao(client), {userId});
-    register(dispatch, new OrderSummaryDao(client), {userId});
-    register(dispatch, new ContentTypeDao(client), {userId});
-    register(dispatch, new ProductDao(client), {userId});
-    register(dispatch, new ProductCategoryDao(client), {userId});
-    register(dispatch, new UserProductDao(client), {userId});
-    registerNakedDao(dispatch, new CustomerDao(client, orderDao), {userId}, continueWith);
+    register(dispatch, new UserDao(client));
+    const orderDao = registerNakedDao(dispatch, new OrderDao(client));
+    registerNakedDao(dispatch, new PaymentDao(client));
+    register(dispatch, new DeliveryAddressDao(client));
+    register(dispatch, new OrderSummaryDao(client));
+    register(dispatch, new ContentTypeDao(client));
+    register(dispatch, new ProductDao(client));
+    register(dispatch, new ProductCategoryDao(client));
+    register(dispatch, new UserRelationshipDao(client));
+    registerNakedDao(dispatch, new CustomerDao(client, orderDao), undefined, continueWith);
   };
 };
 

@@ -1,44 +1,26 @@
 package com.shotgun.viewserver.messaging;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.NamedThreadFactory;
-import com.shotgun.viewserver.ShotgunTableUpdater;
-import com.shotgun.viewserver.constants.OrderStatuses;
-import com.shotgun.viewserver.constants.PhoneNumberStatuses;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.catalog.ICatalog;
-import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
-import io.viewserver.operators.IOutput;
-import io.viewserver.operators.IRowSequence;
-import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
-import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
-import io.viewserver.schema.column.ColumnHolderUtils;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
 /**
@@ -54,11 +36,11 @@ public class MessagingController {
     private static String MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
 
     private MessagingApiKey messagingApiKey;
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
 
-    public MessagingController(MessagingApiKey messagingApiKey, ShotgunTableUpdater shotgunTableUpdater) {
+    public MessagingController(MessagingApiKey messagingApiKey, TableUpdater tableUpdater) {
         this.messagingApiKey = messagingApiKey;
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
     }
 
     public void sendMessage(AppMessage message){
@@ -89,7 +71,7 @@ public class MessagingController {
                 .addValue("userId", userId)
                 .addValue("fcmToken", token);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     public String getTokenForUser(String userId){

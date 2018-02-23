@@ -1,20 +1,16 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.adapters.common.RowUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.datasource.LocalKeyedTableUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +24,13 @@ public class UserController {
     private LoginController loginController;
     private ImageController imageController;
     private NexmoController nexmoController;
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
 
-    public UserController(ShotgunTableUpdater shotgunTableUpdater,
+    public UserController(TableUpdater tableUpdater,
                           LoginController loginController,
                           ImageController imageController,
                           NexmoController nexmoController) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
 
         this.loginController = loginController;
         this.imageController = imageController;
@@ -71,7 +67,7 @@ public class UserController {
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl());
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
         return user.getUserId();
     }
 
@@ -97,14 +93,14 @@ public class UserController {
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("imageUrl", user.getImageUrl());
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
 
         log.debug("Updated user: " + user.getEmail() + " with id " + userId);
         return userId;
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)
-    public String setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
+    public void setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
         String userId = getUserId();
 
         Record userRecord = new Record()
@@ -112,9 +108,19 @@ public class UserController {
                 .addValue("latitude", latitude)
                 .addValue("longitude", longitude);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+    }
 
-        return userId;
+    @ControllerAction(path = "updateStatus", isSynchronous = true)
+    public void updateStatus(@ActionParam(name = "status", required = true) UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
+        String userId = getUserId();
+
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("status", status.name())
+                .addValue("statusMessage", statusMessage);
+
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     private String getUserId() {

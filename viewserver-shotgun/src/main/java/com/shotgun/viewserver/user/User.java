@@ -18,16 +18,33 @@ public class User{
     private String stripeDefaultSourceId;
     private int chargePercentage;
     private String selectedContentTypes;
-    private String selectedProducts;
     private String imageUrl;
     private String imageData;
 
     private String fcmToken;
     private Double latitude;
     private Double longitude;
+    private String status;
+    private boolean online;
 
 
     public User() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public String getEmail() {

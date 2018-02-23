@@ -53,7 +53,7 @@ public class ControllerActionEntry{
                 if(an instanceof ActionParam){
                     found = true;
                     Class<?>[] parameterTypes = method.getParameterTypes();
-                    result.add(new ControllerParamEntry(((ActionParam) an).name(),parameterTypes[i],i));
+                    result.add(new ControllerParamEntry(((ActionParam) an).name(),parameterTypes[i],i, ((ActionParam) an).required()));
                     continue;
                 }
             }
@@ -84,7 +84,11 @@ public class ControllerActionEntry{
                 for(ControllerParamEntry paramEntry : this.actionParams){
                     Object parameter = map.get(paramEntry.getName());
                     if(parameter == null){
-                        errors.add(String.format("Unable to find parameter named \"%s\" in argument map \"%s\"",paramEntry.getName(),param));
+                        if(paramEntry.isRequired()){
+                            errors.add(String.format("Unable to find parameter named \"%s\" in argument map \"%s\"",paramEntry.getName(),param));
+                        }else{
+                            args[paramEntry.index] = parameter;
+                        }
                     }else{
                         try{
                             try{

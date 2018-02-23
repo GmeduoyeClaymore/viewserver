@@ -2,6 +2,8 @@ import ReportSubscriptionStrategy from '../subscriptionStrategies/ReportSubscrip
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {isEqual} from 'lodash';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {hasAnyOptionChanged} from 'common/dao';
+
 
 export default class OrderSummaryDao{
   static OPTIONS = {
@@ -140,7 +142,7 @@ export default class OrderSummaryDao{
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || !isEqual(previousOptions, newOptions);
+    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['orderId', 'isCompleted', 'reportId', 'driverId', 'selectedProducts']);
   }
 
   transformOptions(options){

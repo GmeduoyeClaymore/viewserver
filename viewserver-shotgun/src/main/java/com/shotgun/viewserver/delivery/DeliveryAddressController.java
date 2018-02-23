@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -16,10 +16,10 @@ import java.util.Date;
 @Controller(name = "deliveryAddressController")
 public class DeliveryAddressController {
     private static final Logger log = LoggerFactory.getLogger(DeliveryAddressController.class);
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
 
-    public DeliveryAddressController(ShotgunTableUpdater shotgunTableUpdater) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+    public DeliveryAddressController(TableUpdater tableUpdater) {
+        this.tableUpdater = tableUpdater;
     }
 
     @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
@@ -51,7 +51,7 @@ public class DeliveryAddressController {
                 .addValue("latitude", deliveryAddress.getLatitude())
                 .addValue("longitude", deliveryAddress.getLongitude());
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
+        tableUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
 
         return deliveryAddress.getDeliveryAddressId();
     }

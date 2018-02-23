@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
@@ -14,12 +14,12 @@ import io.viewserver.command.ControllerContext;
 @Controller(name = "orderItemController")
 public class OrderItemController {
 
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
     private ImageController imageController;
 
-    public OrderItemController(ShotgunTableUpdater shotgunTableUpdater,
+    public OrderItemController(TableUpdater tableUpdater,
                                ImageController imageController) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
         this.imageController = imageController;
     }
 
@@ -48,7 +48,7 @@ public class OrderItemController {
         .addValue("quantity", orderItem.getQuantity())
         .addValue("orderItemId", orderItem.getOrderItemId());
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
 
         return orderItem.getOrderItemId();
     }

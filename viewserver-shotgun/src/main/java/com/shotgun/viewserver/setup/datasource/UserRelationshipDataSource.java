@@ -29,7 +29,7 @@ public class UserRelationshipDataSource {
                                 new Column("status", "status", ColumnType.String),
                                 new Column("type", "type", ColumnType.String)
                         ))
-                        .withKeyColumns("phoneNumber")
+                        .withKeyColumns("relationshipId")
                 )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

@@ -1,6 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {isEqual} from 'lodash';
+import {hasAnyOptionChanged} from 'common/dao';
 
 
 export const isImplicitylChecked = (categoryObj, selectedProductCategories ) => {
@@ -17,8 +18,7 @@ export default class OrderRequestDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 10,
-    filterMode: 2,
-    maxDistance: 50000
+    filterMode: 2
   };
 
   constructor(client, options = {}) {
@@ -36,7 +36,7 @@ export default class OrderRequestDaoContext{
   }
 
 
-  getReportContext({contentType, contentTypeOptions = {}, position = {}, maxDistance}){
+  getReportContext({contentType, contentTypeOptions = {}, position = {}, maxDistance, showUnrelated = true, showOutOfRange = true}){
     if (typeof contentType === 'undefined') {
       return {};
     }
@@ -50,7 +50,10 @@ export default class OrderRequestDaoContext{
       parameters: {
         driverLatitude,
         driverLongitude,
-        maxDistance
+        maxDistance,
+        showUnrelated,
+        showOutOfRange
+
       }
     };
   
@@ -128,18 +131,12 @@ export default class OrderRequestDaoContext{
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
     //TODO - probably needs to be updated as driver position changed but not sure how often
-    return !previousOptions || !isEqual(previousOptions.contentType, newOptions.contentType)  || !isEqual(previousOptions.location, newOptions.location) || previousOptions.maxDistance != newOptions.maxDistance;
+    return hasAnyOptionChanged(previousOptions, newOptions, ['contentType', 'location', 'maxDistance', 'showUnrelated', 'showOutOfRange']);
   }
 
   transformOptions(options){
     if (typeof options.contentType === 'undefined'){
       throw new Error('contentTypeId should be defined');
-    }
-    if (typeof options.position === 'undefined'){
-      throw new Error('position  should be defined');
-    }
-    if (typeof options.maxDistance === 'undefined'){
-      throw new Error('maxDistance  should be defined');
     }
     options.filterExpression = this.generateFilterExpression(options);
     return options;

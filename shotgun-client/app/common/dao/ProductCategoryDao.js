@@ -1,5 +1,7 @@
 import RxDataSink from '../../common/dataSinks/RxDataSink';
 import ReportSubscriptionStrategy from '../../common/subscriptionStrategies/ReportSubscriptionStrategy';
+import {hasAnyOptionChanged} from 'common/dao';
+
 
 export default class ProductCategoryDaoContext{
   static OPTIONS = {
@@ -59,7 +61,7 @@ export default class ProductCategoryDaoContext{
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || previousOptions.parentCategoryId != newOptions.parentCategoryId || previousOptions.expandedCategoryIds != newOptions.expandedCategoryIds;
+    return hasAnyOptionChanged(previousOptions, newOptions, ['parentCategoryId', 'expandedCategoryIds']);
   }
 
   transformOptions(options){

@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.TableUpdater;
+import com.shotgun.viewserver.ShotgunTableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.constants.VanProducts;
 import com.shotgun.viewserver.constants.VanVolumes;
@@ -20,10 +20,10 @@ import java.util.List;
 @Controller(name = "vehicleController")
 public class VehicleController {
     private static final Logger log = LoggerFactory.getLogger(VehicleController.class);
-    private TableUpdater tableUpdater;
+    private ShotgunTableUpdater shotgunTableUpdater;
 
-    public VehicleController(TableUpdater tableUpdater) {
-        this.tableUpdater = tableUpdater;
+    public VehicleController(ShotgunTableUpdater shotgunTableUpdater) {
+        this.shotgunTableUpdater = shotgunTableUpdater;
     }
 
     @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
@@ -53,7 +53,7 @@ public class VehicleController {
                 vehicleRecord.addValue("numAvailableForOffload", vehicle.getNumAvailableForOffload());
             }
 
-            tableUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, "vehicle", vehicleRecord);
+            shotgunTableUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, "vehicle", vehicleRecord);
             return vehicle.getVehicleId();
 
         } catch (Exception e) {

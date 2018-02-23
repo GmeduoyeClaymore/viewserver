@@ -15,6 +15,7 @@ import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
+import UserRelationships from 'common/components/relationships/UserRelationships';
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -60,7 +61,9 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrders'} exact render={() => <DriverOrders client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
+          <Route path={'/Driver/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
           <Redirect to={'/Driver/DriverOrderRequests'}/>
         </Switch>
         <DriverMenuBar/>
