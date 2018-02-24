@@ -20,6 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.util.*;
 
@@ -172,6 +173,10 @@ public abstract class OperatorBase implements IOperator {
         if (inputsReadyCount == commitDependencyCount) {
             executionContext.submit(() -> commit(), 0);
         }
+    }
+
+    public Observable<IOperator> getOperatorObservable(String name) {
+        return catalog.getOperatorObservable(name);
     }
 
     protected void commit() {

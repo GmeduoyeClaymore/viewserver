@@ -20,6 +20,8 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 
+import java.util.Observable;
+
 /**
  * Created by nickc on 07/10/2014.
  */
@@ -35,6 +37,8 @@ public interface ICatalog {
     void registerOperator(IOperator operator);
 
     IOperator getOperator(String name);
+
+    rx.Observable<IOperator> getOperatorObservable(String name);
 
     void unregisterOperator(IOperator operator);
 

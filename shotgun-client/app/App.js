@@ -1,5 +1,6 @@
 import React from 'react';
-import {UIManager, View} from 'react-native';
+import {UIManager, View, Modal} from 'react-native';
+import ReactNativeModal from 'react-native-modal';
 import {Container, Text, StyleProvider, Root, Button, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
@@ -22,6 +23,20 @@ import FCM from 'react-native-fcm';
 
 const signOut = async () => {
   await PrincipalService.removeUserIdFromDevice();
+};
+
+const styles = {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    alignItems: 'center',
+  },
 };
 
 const store = configureStore();
@@ -134,10 +149,16 @@ export default class App extends React.Component {
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
 
     return <Container style={{flexDirection: 'column', flex: 1}}>
-      {isReady ? null : <View style={{height: 80, width: '100%', padding: 5, paddingLeft: 30, backgroundColor: 'red', flexDirection: 'row' }}>
-        <Spinner/>
-        <Text style={{padding: 30, marginLeft: 40}}>Connecting....</Text>
-      </View>}
+      <ReactNativeModal
+        isVisible={!isReady}
+        backdropOpacity={0.4}>
+        <View style={styles.modalContainer}>
+          <View style={styles.innerContainer}>
+            <Spinner/>
+            <Text>Awaiting Connection ....</Text>
+          </View>
+        </View>
+      </ReactNativeModal>
       <Container style={{flex: 1}}>
         <Provider store={store}>
           <Root>

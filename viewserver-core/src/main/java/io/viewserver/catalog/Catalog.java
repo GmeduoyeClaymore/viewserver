@@ -21,6 +21,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.InputOperatorBase;
+import rx.Observable;
 
 import java.util.Collection;
 
@@ -61,6 +62,10 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     public void registerOperator(IOperator operator) {
         catalogHolder.registerOperator(operator);
         output.handleAdd(catalogHolder.getRowIdForOperator(operator));
+    }
+
+    public Observable<IOperator> getOperatorObservable(String name) {
+        return catalogHolder.getOperatorObservable(name);
     }
 
     @Override

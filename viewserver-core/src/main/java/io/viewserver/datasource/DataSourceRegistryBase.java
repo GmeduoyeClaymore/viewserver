@@ -33,6 +33,7 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnStringBase;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,6 +103,11 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
                 }
             });
         }, 0, -1);
+    }
+
+    @Override
+    public Observable<IOperator> getOperatorObservable(String name) {
+        return catalogHolder.getOperatorObservable(name);
     }
 
     @Override
@@ -324,6 +330,11 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         @Override
         public IOperator getOperator(String name) {
             return catalogHolder.getOperator(name);
+        }
+
+        @Override
+        public Observable<IOperator> getOperatorObservable(String name) {
+            return catalogHolder.getOperatorObservable(name);
         }
 
         @Override

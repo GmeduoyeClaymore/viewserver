@@ -19,6 +19,6 @@ public class OperatorNotFoundException extends RuntimeException{
     }
 
     public static OperatorNotFoundException forName(String operatorName){
-        throw new OperatorNotFoundException(String.format("Unable to find operator named \"%s\"",operatorName));
+        return new OperatorNotFoundException(String.format("Unable to find operator named \"%s\"",operatorName));
     }
 }

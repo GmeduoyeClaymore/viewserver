@@ -207,22 +207,13 @@ public class ControllerUtils{
 
     public static Observable<IOperator> getOperatorObservable(String tableName){
         ICatalog systemCatalog = ControllerContext.Current().getPeerSession().getSystemCatalog();
-        IOperator table = systemCatalog.getOperator(tableName);
-        if(table != null){
-            return Observable.just(table);
-        }
-        return systemCatalog.getOutput().
-                observable().
-                filter(ev -> isOperatorNamed(ev,tableName)).
-                take(1).
-                timeout(10, TimeUnit.SECONDS, Observable.error(OperatorNotFoundException.forName(tableName))).
-                map( ev -> systemCatalog.getOperator(tableName));
+        return systemCatalog.getOperatorObservable(tableName);
     }
 
     private static boolean isOperatorNamed(OperatorEvent ev, String tableName) {
         if(ev.getEventType().equals(EventType.ROW_ADD)){
             Map<String,Object> result = (Map<String, Object>) ev.getEventData();
-            String nameFromColumn = (String) result.get(CatalogOutput.NAME_COLUMN);
+            String nameFromColumn = (String) result.get(CatalogOutput.PATH_COLUMN);
             return nameFromColumn.equals(tableName);
         }
         return false;

@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         this.columnHolderFactory = new ColumnHolderFactory();
         this.metaData = new TableMetaData();
         owner.getExecutionContext().getMetadataRegistry().registerOutput(this);
-        this.subject =  PublishSubject.create();
+        this.subject = PublishSubject.create();
     }
     //be careful when using this it will start spamming alot of objects if you subscribe
     @Override
