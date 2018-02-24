@@ -1,6 +1,6 @@
 import React from 'react';
 import {UIManager, View} from 'react-native';
-import {Container, Text, StyleProvider, Root, Button} from 'native-base';
+import {Container, Text, StyleProvider, Root, Button, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -54,6 +54,7 @@ export default class App extends React.Component {
     try {
       await ProtoLoader.loadAll();
       await this.client.connect(true);
+      this.setState({ error: ''});
     } catch (error){
       this.setState({ error});
     }
@@ -66,12 +67,14 @@ export default class App extends React.Component {
         await this.setUserId();
         await this.initMessaging();
         this.setInitialRoot();
+        this.setState({ error: '', isReady, isConnected: isReady, hasBeenReady: true});
       } catch (error){
         this.setState({ error, isReady: true, isConnected: false});
         return;
       }
+    } else {
+      this.setState({ isReady, isConnected: isReady});
     }
-    this.setState({ isReady, isConnected: isReady});
   }
 
   async initMessaging(){
@@ -118,39 +121,48 @@ export default class App extends React.Component {
   }
 
   render() {
-    const {isReady, isConnected, error} = this.state;
-    if (!isReady) {
+    const {isReady, isConnected, error, hasBeenReady} = this.state;
+    if (!isReady && !hasBeenReady){
       return <LoadingScreen text="Connecting"/>;
-    } else if (!isConnected){
-      return  <Container style={{flexDirection: 'column', flex: 1}}>
+    }
+    if (!isConnected && error && (error + '').trim().length){
+      return  <Container style={{marginTop: 15}}>
         <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
         <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
       </Container>;
     }
-    const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch};
+    const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
 
-    return <Provider store={store}>
-      <Root>
-        <NativeRouter>
-          <AndroidBackButton>
-            <StyleProvider style={getTheme(shotgun)}>
-              <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-                <Switch>
-                  <Route path="/Root" component={App}/>
-                  <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
-                  <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
-                  <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
-                  <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
-                  <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
-                  <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
-                  <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
-                  <Redirect to={App.INITIAL_ROOT_NAME}/>
-                </Switch>
-              </View>
-            </StyleProvider>
-          </AndroidBackButton>
-        </NativeRouter>
-      </Root>
-    </Provider>;
+    return <Container style={{flexDirection: 'column', flex: 1}}>
+      {isReady ? null : <View style={{height: 80, width: '100%', padding: 5, paddingLeft: 30, backgroundColor: 'red', flexDirection: 'row' }}>
+        <Spinner/>
+        <Text style={{padding: 30, marginLeft: 40}}>Connecting....</Text>
+      </View>}
+      <Container style={{flex: 1}}>
+        <Provider store={store}>
+          <Root>
+            <NativeRouter>
+              <AndroidBackButton>
+                <StyleProvider style={getTheme(shotgun)}>
+                  <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+                    <Switch>
+                      <Route path="/Root" component={App}/>
+                      <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
+                      <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
+                      <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
+                      <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
+                      <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
+                      <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
+                      <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
+                      <Redirect to={App.INITIAL_ROOT_NAME}/>
+                    </Switch>
+                  </View>
+                </StyleProvider>
+              </AndroidBackButton>
+            </NativeRouter>
+          </Root>
+        </Provider>
+      </Container>
+    </Container>;
   }
 }

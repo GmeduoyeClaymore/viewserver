@@ -5,9 +5,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import io.viewserver.catalog.CatalogOutput;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
+import io.viewserver.operators.OperatorNotFoundException;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -20,6 +25,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +35,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 public class ControllerUtils{
@@ -196,6 +203,29 @@ public class ControllerUtils{
         }
 
         return (ITable)table;
+    }
+
+    public static Observable<IOperator> getOperatorObservable(String tableName){
+        ICatalog systemCatalog = ControllerContext.Current().getPeerSession().getSystemCatalog();
+        IOperator table = systemCatalog.getOperator(tableName);
+        if(table != null){
+            return Observable.just(table);
+        }
+        return systemCatalog.getOutput().
+                observable().
+                filter(ev -> isOperatorNamed(ev,tableName)).
+                take(1).
+                timeout(10, TimeUnit.SECONDS, Observable.error(OperatorNotFoundException.forName(tableName))).
+                map( ev -> systemCatalog.getOperator(tableName));
+    }
+
+    private static boolean isOperatorNamed(OperatorEvent ev, String tableName) {
+        if(ev.getEventType().equals(EventType.ROW_ADD)){
+            Map<String,Object> result = (Map<String, Object>) ev.getEventData();
+            String nameFromColumn = (String) result.get(CatalogOutput.NAME_COLUMN);
+            return nameFromColumn.equals(tableName);
+        }
+        return false;
     }
 
     public static KeyedTable getKeyedTable(String tableName){

@@ -53,8 +53,12 @@ public class ControllerContext implements AutoCloseable{
 
     public static void set(String name, Object value) {
         IPeerSession peerSession1 = current.get().getPeerSession();
+        set(name, value, peerSession1);
+    }
+
+    public static void set(String name, Object value, IPeerSession peerSession1) {
         synchronized (peerSession1){
-            ConcurrentHashMap<String,Object> params = getParams();
+            ConcurrentHashMap<String,Object> params = getParams(peerSession1);
             if(params == null){
                 params = new ConcurrentHashMap<>();
                 peerSession1.addDisconnectionHandler(new PeerSession.IDisconnectionHandler() {

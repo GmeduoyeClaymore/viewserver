@@ -16,9 +16,7 @@
 
 package io.viewserver.operators;
 
-/**
- * Created by nickc on 05/12/2014.
- */
+
 public class OperatorConfigurationException extends RuntimeException {
     private IOperator operator;
 

@@ -71,7 +71,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
                 for(Map.Entry<String,Object> entry : params.entrySet()){
                     ValueLists.StringList stringList = new ValueLists.StringList();
                     stringList.add(entry.getValue().toString());
-                    reportContext.setParameterValue("_" + entry, stringList);
+                    reportContext.setParameterValue("@" + entry, stringList);
                 }
 
                 for (ReportContext.DimensionValue str : reportContext.getDimensionValues()) {

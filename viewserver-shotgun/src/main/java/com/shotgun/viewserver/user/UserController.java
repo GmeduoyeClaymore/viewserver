@@ -11,11 +11,20 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
 import io.viewserver.command.ControllerContext;
+import io.viewserver.operators.IOutput;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 
 @Controller(name = "userController")
@@ -121,6 +130,26 @@ public class UserController {
                 .addValue("statusMessage", statusMessage);
 
         tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+    }
+
+    public static rx.Observable<Map<String,Object>> waitForUser(String userId, KeyedTable userTable){
+        int userRowId = userTable.getRow(new TableKey(userId));
+        IOutput output = userTable.getOutput();
+        if (userRowId == -1) {
+            return output.observable().filter(ev -> hasUserId(ev,userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String,Object>)ev.getEventData());
+        }
+        return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));
+    }
+
+    private static boolean hasUserId(OperatorEvent ev, String userId) {
+        if(!ev.getEventType().equals(EventType.ROW_ADD)){
+            return false;
+        }
+        if(ev.getEventData() == null){
+            return false;
+        }
+        HashMap<String,Object> result = (HashMap<String,Object>)ev.getEventData();
+        return userId.equals(result.get("userId"));
     }
 
     private String getUserId() {

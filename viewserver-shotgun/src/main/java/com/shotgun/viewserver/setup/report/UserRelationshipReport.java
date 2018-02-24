@@ -20,8 +20,8 @@ public class UserRelationshipReport {
                 return Arrays.asList(
                         new CalcColNode("userRelationships")
                                 .withCalculations(
-                                        new CalcColOperator.CalculatedColumn("isRelated", "isNull(\"{_userId}\" == fromUserId, \"{_userId}\" == toUserId)"),
-                                        new CalcColOperator.CalculatedColumn("relatedToUserId", "if(\"{_userId}\" == fromUserId, toUserId, fromUserId)")
+                                        new CalcColOperator.CalculatedColumn("isRelated", "isNull(\"{@userId}\" == fromUserId, \"{@userId}\" == toUserId)"),
+                                        new CalcColOperator.CalculatedColumn("relatedToUserId", "if(\"{@userId}\" == fromUserId, toUserId, fromUserId)")
                                 )
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserRelationshipDataSource.NAME, UserRelationshipDataSource.NAME)),
                         new FilterNode("relatedFilter")
@@ -95,7 +95,6 @@ public class UserRelationshipReport {
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
-                    .withParameter("_userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
                     .withOutput("userProjection");
 
