@@ -140,7 +140,7 @@ export default class App extends React.Component {
     if (!isReady && !hasBeenReady){
       return <LoadingScreen text="Connecting"/>;
     }
-    if (!isConnected && error && (error + '').trim().length){
+    if (!isConnected && error && (error + '').trim().length && (error + '') != 'null'){
       return  <Container style={{marginTop: 15}}>
         <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
         <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>

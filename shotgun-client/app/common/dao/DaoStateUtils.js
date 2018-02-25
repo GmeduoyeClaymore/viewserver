@@ -69,7 +69,7 @@ export const getNavigationProps = (props) => {
   return (props && props.location && props.location.state ? props.location.state : {});
 };
 
-export const hasAnyOptionChanged = ({prev = {}, current = {}, properties = []}) => {
+export const hasAnyOptionChanged = (prev = {}, current = {}, properties = []) => {
   for (let i = 0, len = properties.length; i < len; i++) {
     const propertyName = properties[i];
     const prevValue = prev[propertyName];
