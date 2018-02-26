@@ -4,7 +4,7 @@ import LoadingScreen from 'common-components/LoadingScreen'
 import { connect } from 'react-redux';
 import ViewServerGrid from 'canv-grid/ViewServerGrid';
 import { withRouter } from 'react-router';
-
+import NodeGraph from 'common-components/NodeGraph';
 
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
 import {getDaoContext, getDaoCommandStatus} from 'common/dao';
@@ -92,6 +92,8 @@ class OperatorGroupView extends Component{
   constructor(props){
     super(props)
     this.state = {};
+    const nodeCount = 100;
+    this.nodes = [];
   }
 
   componentWillMount(){
@@ -136,15 +138,17 @@ class OperatorGroupView extends Component{
             pageSize={10}
             headerView={headerView}/> : <div>Render operator graph</div>;
   }
-
-  static COLUMNS = ['name','description','rating'];
-
+  renderOperatorGraph(){
+    const {context={},mode,history} = this.props;
+    const {nodes, links} = this;
+    return <NodeGraph nodes={nodes} links={links} height={500} width={500}/>
+  }
 
   render(){
     const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName}  = this.props;
     const {scenarioResults = {}} = this.state;
     return <div className="flex flex-col"> 
-                {operatorListDaoReady ? this.renderOperators() : null}
+                {operatorListDaoReady ? this.renderOperatorGraph() : null}
                 <div style={{position : 'relative',flex:3}} className="flex flex-col">
                   <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName}} />
                 </div>

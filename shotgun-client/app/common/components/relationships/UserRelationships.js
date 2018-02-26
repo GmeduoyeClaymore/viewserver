@@ -66,7 +66,7 @@ class UserRelationships extends Component{
     const {selectedUser, selectedTabIndex = 0, oldOptions} = state;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
-    return <Container style={{ flex: 1 }}>
+    return <Container style={{ flex: 1, padding: 15}}>
       <Tabs initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>

@@ -33,7 +33,7 @@ const UserRelationshipDetail = ({context, user, selectedUser = {}}) => {
   }
   const isSelected = user.userId === selectedUser.userId;
 
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80, backgroundColor: 'white'}} onPress={() => context.onSelectUser(user) } underlayColor={'#EEEEEE'}>
+  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80, backgroundColor: 'white'}} onPress={() => context.setSelectedUser(user) } underlayColor={'#EEEEEE'}>
     <View style={isSelected ? styles.container : containerSelected}>
       <Image resizeMode="contain" source={user.imageUrl}  style={styles.picture}/>
       <View style={{flex: 1, padding: 5}}>

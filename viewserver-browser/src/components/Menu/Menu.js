@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {getDaoCommandStatus, getDaoState, isLoading, getLoadingError} from 'common/dao';
 import { ClipLoader } from 'react-spinners';
-
+import {actions as configurationViewActions} from 'components/OperatorConfigurationView/component';
+import { withRouter } from 'react-router';
 
 const errorStyle = {
   color : 'red'
@@ -27,14 +28,14 @@ const Settings_mapStateToProps = (state, props) => { return {
 } }
 
 
-const Menu = ({graphStore, dispatch,loggedIn,dataSources,reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
+const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
   return (
     <nav className="nav-group">
       <h5 className="nav-group-title">Navigation</h5>
       {!loggedIn ? <MenuRow path="/login" label="Login" icon="login" />: null}
       {loggedIn ? <DataSources dispatch={dispatch} dataSources={dataSources} loading={dataSourcesLoading} loadingErrors={dataSourcesLoadingErrors} icon="star" />: null}
-      {loggedIn ? <Reports  graphStore={graphStore} reports={reports} loading={reportsLoading} loadingErrors={reportsLoadingErrors} icon="login" />: null}
-      {loggedIn ? <ReportContexts  reportContexts={reportContexts} loading={reportContextsLoading} loadingErrors={reportContextsLoadingErrors} icon="login" />: null}
+      {loggedIn ? <Reports  history={history} dispatch={dispatch}  graphStore={graphStore} reports={reports} loading={reportsLoading} loadingErrors={reportsLoadingErrors} icon="login" />: null}
+      {loggedIn ? <ReportContexts  history={history}  dispatch={dispatch}  reportContexts={reportContexts} loading={reportContextsLoading} loadingErrors={reportContextsLoadingErrors} icon="login" />: null}
       {loggedIn ? <Sessions sessions={sessions}  loading={sessionsLoading} loadingErrors={sessionsLoadingErrors} path="/sessions" label="Sessions" icon="user" />: null}
       {loggedIn ? <MenuRow path="/diagnostics" label="Diagnostics" icon="chart-bar" />: null}
       {loggedIn ? <MenuRow path="/logout" label="Logout" icon="login" />: null}
@@ -43,70 +44,74 @@ const Menu = ({graphStore, dispatch,loggedIn,dataSources,reportContexts,reportCo
 } 
 
 const DataSources = ({dataSources = [], loading, icon, loadingErrors, dispatch}) => {
-  return (<NavLink to="/dataSources" className="nav-group-item" activeClassName="active" exact={true}>
+  return ( <div className="nav-group-item">
 
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Data Sources"}
   {dataSources.map((d) => (<DataSourceLink {...{...d, dispatch}}/>))}
-</NavLink>
+</div>
 )};
 
 const DataSourceLink = ({name, path,dispatch}) => (
-  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" activeClassName="active" exact={true}>
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" >
     {name}
   </NavLink>
 );
 
 
-const Reports = ({reports = [], loading, icon, loadingErrors,graphStore}) => (
-  <NavLink to="/reports" className="nav-group-item" activeClassName="active" exact={true}>
+const Reports = ({reports = [], dispatch, history, loading, icon, loadingErrors,graphStore}) => (
+  <div className="nav-group-item" >
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Reports"}
-  {reports.map(r => <ReportsLink {...r} graphStore={graphStore}/>)} 
-</NavLink>
+  {reports.map(r => <ReportsLink {...{...r,dispatch, history,graphStore}}/>)} 
+</div>
 );
 
-const ReportsLink = ({graphStore, ...report}) => (
-  <div style={{height: 25}} className="nav-group-item" onClick={() => graphStore.dispatch({type: 'renderReport', data: report})} className="nav-group-item" activeClassName="active" exact={true}>
+const ReportsLink = ({dispatch, history, ...report}) => (
+  <div style={{height: 25}} className="nav-group-item" onClick={
+    () => {
+      dispatch(configurationViewActions.showReportGraph(report));
+      history.push('/operatorConfigurationView');
+    }} className="nav-group-item" >
     {report.name}
   </div>
 );
 
 const ReportContexts = ({reportContexts = [], loading, icon, loadingErrors}) => (
-  <NavLink to="/reportContextRegistry" className="nav-group-item" activeClassName="active" exact={true}>
+  <div className="nav-group-item"className="nav-group-item" >
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Report Contexts"}
   {reportContexts.map(r => <ReportContextLink {...r}/>)}
-</NavLink>
+</div>
 );
 
 const ReportContextLink = ({reportName : name, path,dispatch}) => (
-  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" activeClassName="active" exact={true}>
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" >
     {name}
   </NavLink> 
 );
 
 const Sessions = ({sessions = [], loading, icon, loadingErrors}) => (
-  <NavLink to="/sessions" className="nav-group-item" activeClassName="active" exact={true}>
+  <div className="nav-group-item" className="nav-group-item" >
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Sessions"}
   {sessions.map(r => <SessionsLink {...r}/>)}
-</NavLink>
+</div>
 );
 
 const SessionsLink = ({sessionId}) => (
-  <NavLink to={"/sessions" + sessionId} className="nav-group-item" activeClassName="active" exact={true}>
+  <NavLink to={"/sessions" + sessionId} className="nav-group-item" >
     {sessionId}
   </NavLink>
 );
 
 const MenuRow = (props) => {
   return (
-    <NavLink to={props.path} className="nav-group-item" activeClassName="active" exact={true}>
+    <NavLink to={props.path} className="nav-group-item" >
       <span className={"icon icon-" + props.icon}></span>
       {props.label}
     </NavLink>
   )
 }
 
-export default connect(Settings_mapStateToProps)(Menu);
+export default withRouter(connect(Settings_mapStateToProps)(Menu));

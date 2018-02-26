@@ -27,12 +27,15 @@ public class UserRelationshipReport {
                         new FilterNode("relatedFilter")
                                 .withExpression("isNull(isRelated,{showUnrelated})")
                                 .withConnection("userRelationships"),
+                        new GroupByNode("uniqueUserGroupBy")
+                                .withGroupByColumns("relatedToUserId")
+                                .withConnection("relatedFilter"),
                         new JoinNode("relatedToUser")
                                 .withLeftJoinColumns("relatedToUserId")
                                 .withRightJoinColumns("userId")
                                 .withColumnPrefixes("","relatedToUser_")
                                 .withAlwaysResolveNames()
-                                .withConnection("relatedFilter", Constants.OUT, "left")
+                                .withConnection("uniqueUserGroupBy", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
 
                         new JoinNode("userRelationshipJoin")
@@ -51,6 +54,7 @@ public class UserRelationshipReport {
                                 .withConnection("distanceCalcCol"),
                         new ProjectionNode("userProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
+                                .withConnection("distanceFilter")
                                 .withProjectionColumns(
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_userId", "userId"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_firstName", "firstName"),

@@ -52,7 +52,7 @@ class CustomerOrders extends Component{
   
     return <Container>
       <Header hasTabs>
-        <Body><Title>My Jobsx</Title></Body>
+        <Body><Title>My Jobs</Title></Body>
       </Header>
       <Tabs initialPage={isCompleted ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
         <Tab heading="Live Jobs"/>
