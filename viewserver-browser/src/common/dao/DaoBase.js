@@ -69,7 +69,7 @@ export default class Dao {
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       const _this = this;
-      this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink)).subscribe(ev => this.subject.next(ev));
+      this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink, newOptions)).subscribe(ev => this.subject.next(ev));
       this.rawDataEventSubscription = this.dataSink.dataSinkUpdated.subscribe(ev => this.rawDataSubject.next(ev));
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);
     }

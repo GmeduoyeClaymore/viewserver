@@ -53,11 +53,10 @@ const DataSources = ({dataSources = [], loading, icon, loadingErrors, dispatch})
 )};
 
 const DataSourceLink = ({name, path,dispatch}) => (
-  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" >
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=path`}} className="nav-group-item" >
     {name}
   </NavLink>
 );
-
 
 const Reports = ({reports = [], dispatch, history, loading, icon, loadingErrors,graphStore}) => (
   <div className="nav-group-item" >
@@ -86,7 +85,7 @@ const ReportContexts = ({reportContexts = [], loading, icon, loadingErrors}) => 
 );
 
 const ReportContextLink = ({reportName : name, path,dispatch}) => (
-  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}`}} className="nav-group-item" >
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=opName&operatorPathPrefix=/graphNodes/`}} className="nav-group-item" >
     {name}
   </NavLink> 
 );

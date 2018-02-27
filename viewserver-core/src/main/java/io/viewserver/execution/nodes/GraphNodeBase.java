@@ -70,13 +70,14 @@ public abstract class GraphNodeBase<TNode> implements IGraphNode {
     @Override
     @JsonIgnore
     public String getOperatorName(ParameterHelper parameterHelper) {
-        if (name.startsWith("/")) {
-            return name;
+        String parameterizedName = parameterHelper == null ? name : parameterHelper.substituteParameterValues(name);
+        if (parameterizedName.startsWith("/")) {
+            return parameterizedName;
         }
 
         StringBuilder builder = new StringBuilder();
         builder.append('{');
-        builder.append("name: \"").append(name).append('"');
+        builder.append("name: \"").append(parameterizedName).append('"');
         builder.append(",type: \"").append(type).append('"');
         if (!connections.isEmpty()) {
             builder.append(",inputs: [");
@@ -89,9 +90,9 @@ public abstract class GraphNodeBase<TNode> implements IGraphNode {
                 }
                 first = false;
                 builder.append("{");
-                builder.append("input:\"").append(connection.getInput()).append('"');
-                builder.append(",operator:\"").append(connection.getOperator()).append('"');
-                builder.append(",output:\"").append(connection.getOutput()).append('"');
+                builder.append("input:\"").append(parameterHelper == null ? connection.getInput() : parameterHelper.substituteParameterValues(connection.getInput())).append('"');
+                builder.append(",operator:\"").append(parameterHelper == null ? connection.getOperator() : parameterHelper.substituteParameterValues(connection.getOperator())).append('"');
+                builder.append(",output:\"").append(parameterHelper == null ? connection.getOutput() : parameterHelper.substituteParameterValues(connection.getOutput())).append('"');
                 builder.append("}");
             }
             builder.append("]");
@@ -167,9 +168,19 @@ public abstract class GraphNodeBase<TNode> implements IGraphNode {
         }
         int count = connections.size();
         for (int i = 0; i < count; i++) {
-            operatorSpec.getConnections().add(connections.get(i));
+            operatorSpec.getConnections().add(getConnection(parameterHelper,connections.get(i)));
         }
         return operatorSpec;
+    }
+
+    private IConfiguratorSpec.Connection getConnection(ParameterHelper parameterHelper, IConfiguratorSpec.Connection connection) {
+        if(parameterHelper == null){
+            return connection;
+        }
+        return new IConfiguratorSpec.Connection(
+                parameterHelper.substituteParameterValues(connection.getOperator())
+                ,parameterHelper.substituteParameterValues(connection.getOutput())
+                ,parameterHelper.substituteParameterValues(connection.getInput()));
     }
 
     @Override

@@ -30,6 +30,7 @@ import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
+import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +94,7 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
         } else {
             reportContexts.add(reportContext);
 
-            ReportCatalog reportCatalog = new ReportCatalog(hash, executionPlanContext, this, distributionManager);
+            ReportCatalog reportCatalog = new ReportCatalog(hash, executionPlanContext, this, distributionManager, new ChunkedColumnStorage(1024));
 
             addRow(tableKey, row -> {
                 row.setString(COL_ID, hash);

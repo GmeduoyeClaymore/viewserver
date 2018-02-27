@@ -6,7 +6,7 @@ const OPERATOR_TYPE_COLORS = {
     'Projection': '#f83e04',
     'Sort': '#0ee8f0',
     'GroupBy': '#9a65d2',
-    'CalcCol': '#80d620'
+    'CalcCol': '#4a49ea'
 }
 
 const getColor = node => {

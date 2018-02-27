@@ -93,7 +93,7 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
         return new IJoinConfig() {
             @Override
             public String[] getLeftJoinColumns() {
-                return leftJoinColumns;
+                return parameterize(leftJoinColumns,parameterHelper);
             }
 
             @Override
@@ -103,7 +103,7 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
 
             @Override
             public String[] getRightJoinColumns() {
-                return rightJoinColumns;
+                return parameterize(rightJoinColumns,parameterHelper);
             }
 
             @Override
@@ -127,6 +127,14 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
                 return alwaysResolveNames;
             }
         };
+    }
+
+    private String[] parameterize(String[] columns, ParameterHelper parameterHelper) {
+        String[] result = new String[columns.length];
+        for(int i=0;i<columns.length;i++){
+            result[i] = parameterHelper.substituteParameterValues(columns[i]);
+        }
+        return result;
     }
 
     @Override

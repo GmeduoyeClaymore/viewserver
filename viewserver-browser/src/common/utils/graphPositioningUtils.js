@@ -14,12 +14,14 @@ export const determinePositionFactory = ({
     const nodesForName = {};
     const linksByTarget = {};
     const linksBySource = {};
+    const resultLinks = [];
     let maxLevels = undefined;
 
-    nodes.forEach(nd => {nodesForName[nd.id] = nd} )
+    nodes.forEach(nd => {nodesForName[nd.id] = {...nd}} )
     links.forEach(ln => {
         linksByTarget[ln.target.id] = ln;
         linksBySource[ln.source.id] = ln;
+        resultLinks.push({...ln});
     })
 
     const getMaxLevels = (node, level = 0) => {
@@ -76,7 +78,11 @@ export const determinePositionFactory = ({
             positionChildren(node,1, maxLevels);
         }
     }
-    nodes.forEach(getNodePosition)
+    Object.values(nodesForName).forEach(getNodePosition);
+    return {
+        nodes: Object.values(nodesForName),
+        links: resultLinks
+    };
 }
 
 export default determinePositionFactory;

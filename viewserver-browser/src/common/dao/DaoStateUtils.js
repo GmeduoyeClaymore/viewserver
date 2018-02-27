@@ -19,10 +19,6 @@ export const getAllDaos = (state) => {
 
 export const getDaoContext = (state, daoName) => {
   const dao = state.getIn(['dao', daoName]);
-
-  if (dao == undefined){
-    Logger.warning(`getDao for dao ${daoName} could not find dao`);
-  }
   return dao;
 };
 

@@ -57,6 +57,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
     private IColumnNameResolver columnNameResolver;
     private boolean alwaysResolveNames;
     private int[] joinKeyComponents;
+    private String columnsOnOutput = "";
 
     public JoinOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
@@ -140,8 +141,22 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
 
     private int getJoinKey(int row, boolean isLeft, boolean usePreviousValues) {
         ColumnHolder[] joinColumns = isLeft ? leftJoinHolders : rightJoinHolders;
+        String[] joinColumnNames = isLeft ? leftJoinColumns : rightJoinColumns;
         if (joinColumns == null || joinColumns.length == 0) {
             return 0;
+        }
+        String error = "";
+        for(int i= 0;i< joinColumns.length;i++){
+            if(error.length() > 0){
+                error += ",";
+            }
+            if(joinColumns[i] == null){
+                error += joinColumnNames[i];
+            }
+
+        }
+        if(error.length() > 0){
+            throw new RuntimeException(String.format("Attempting to join on keys \"%s\" but keys \"%s\" have not been found. Columns available on output are  \"%s\"",String.join(",",joinColumnNames),error, columnsOnOutput));
         }
 
         if (joinColumns.length == 1) {
@@ -221,13 +236,17 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
                     Arrays.fill(rightJoinHolders, null);
                 }
             }
-
+            columnsOnOutput = "";
             super.onSchemaReset();
         }
 
         @Override
         protected void onColumnAdd(ColumnHolder columnHolder) {
             String name = columnHolder.getName();
+            if(columnsOnOutput.length() > 0){
+                columnsOnOutput += ",";
+            }
+            columnsOnOutput += name;
             if(alwaysResolveNames || output.getSchema().getColumnHolder(name) != null) {
                 if (columnNameResolver != null) {
                     name = columnNameResolver.resolveColumnName(name, this.isLeft);

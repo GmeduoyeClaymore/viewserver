@@ -70,7 +70,7 @@ public class SystemReportExecutor {
         ReportContextExecutionPlanContext activeExecutionPlanContext;
 
         ReportDefinition reportDefinition = getReportDefinition(reportContext);
-        IDataSource dataSource = getDataSource(reportDefinition.getDataSource());
+        IDataSource dataSource = reportDefinition.getDataSource() == null ? null : getDataSource(reportDefinition.getDataSource());
 
         if (!reportContext.getChildContexts().isEmpty()) {
             MultiCommandResult childContextsResult = MultiCommandResult.wrap("ExecuteContext" + prefix, commandResult);
@@ -130,7 +130,9 @@ public class SystemReportExecutor {
     private ReportExecutionPlanContext buildReportExecutionPlanContext(ReportContext reportContext, IDataSource dataSource, ReportDefinition reportDefinition, CommandResult remoteConfigurationResult) {
 
         ReportExecutionPlanContext reportExecutionPlanContext = new ReportExecutionPlanContext();
-        reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
+        if(dataSource != null) {
+            reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
+        }
         reportExecutionPlanContext.setReportContext(reportContext);
         reportExecutionPlanContext.setGraphDefinition(reportDefinition);
         reportExecutionPlanContext.setDataSource(dataSource);

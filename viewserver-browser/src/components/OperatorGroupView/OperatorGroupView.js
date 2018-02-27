@@ -5,13 +5,16 @@ import { connect } from 'react-redux';
 import ViewServerGrid from 'canv-grid/ViewServerGrid';
 import { withRouter } from 'react-router';
 import NodeGraph from 'common-components/NodeGraph';
-
+import {getNodesAndLinksFromConnectionsAndOperators} from './operatorConfigurationUtils'
 import { updateSubscriptionAction} from 'common/dao/DaoActions';
-import {getDaoContext, getDaoCommandStatus} from 'common/dao';
+import {getDaoContext, getDaoCommandStatus, getDaoState} from 'common/dao';
 import {stringify,parse} from 'query-string';
 import {isEqual} from 'lodash';
 //TEMP TESTING IMPORT
 import {actions as groupViewActions} from 'components/OperatorGroupView/component';
+import uuid from 'uuid/v1';
+import Logger from 'common/Logger';
+
 
 const styles ={
   container: {
@@ -41,17 +44,23 @@ const noItems = () => {
 const OperatorGroupView_mapStateToProps = (state, props) => { 
   const {search} = props.location;
   const queryStringParams = parse(search);
+  const operators = getDaoState(state,[], 'operatorListDao');
+  const {nodes,links} = getDaoState(state,[], 'connectionsDao') || {};
+
   return {
-    operatorListDaoReady : getDaoContext(state,'operatorListDao'),
-    operatorContentsDaoReady : getDaoContext(state,'operatorContentsDao'),
-  ...props,
-  ...queryStringParams,
-  ...state.OperatorGroupView
-} }
+      nodes,
+      links,
+      operatorListDaoReady : getDaoContext(state,'operatorListDao'),
+      operatorContentsDaoReady : getDaoContext(state,'operatorContentsDao'),
+    ...props,
+    ...queryStringParams,
+    ...state.OperatorGroupView
+  }  
+}
 
 const OperatorGroupView_mapDispatchToProps = (dispatch, props) => { 
   return {
-    selectOperator: ({operatorGroup,operator}) => {
+    selectOperator: ({operatorGroup,operator,operatorPathPrefix,operatorPathField}) => {
         const {pathname,search} = props.location;
         const queryStringParams = parse(search);
         if(operatorGroup){
@@ -60,11 +69,20 @@ const OperatorGroupView_mapDispatchToProps = (dispatch, props) => {
         if(operator){
           queryStringParams.operator = operator;
         }
+        if(operatorPathPrefix){
+          queryStringParams.operatorPathPrefix = operatorPathPrefix;
+        }
+        if(operatorPathField){
+          queryStringParams.operatorPathField = operatorPathField;
+        }
         const queryString = stringify(queryStringParams)
         props.history.push({pathname, search: queryString})
     },
     updateSubscription: (daoName,option) => {
       dispatch(updateSubscriptionAction(daoName,option))
+    },
+    toggleMode: () => {
+      dispatch(groupViewActions.toggleMode());
     },
     checkLogin: (continueWith) => {
       dispatch((disp, getState) => {
@@ -97,31 +115,32 @@ class OperatorGroupView extends Component{
   }
 
   componentWillMount(){
-    const {operatorGroup,operator,selectOperator} = this.props;
-    this.props.checkLogin(() => this.subscribeTooperatorcontents(({operatorGroup,operator})));
+    const {operatorGroup,operator,selectOperator, operatorPathPrefix, operatorPathField} = this.props;
+    this.props.checkLogin(() => this.subscribeTooperatorcontents(({operatorGroup,operator, operatorPathPrefix, operatorPathField})));
   }
 
   onRowClick(row, {history}){
-    const {path} = row;
-    const {operatorGroup} = this.props;
-    this.props.selectOperator({operatorGroup, operator : path});
+    const {operatorGroup,operatorPathField='path',operatorPathPrefix} = this.props;
+    const path = row[operatorPathField];
+    this.props.selectOperator({operatorGroup, operator : path, operatorPathPrefix, operatorPathField});
   }
 
   componentWillReceiveProps(props){
-    const {operatorGroup,operator} = props;
-    if(!isEqual({operatorGroup,operator},{operatorGroup : this.props.operatorGroup, operator : this.props.operator})){
-      this.subscribeTooperatorcontents({operatorGroup,operator});  
+    const {operatorGroup,operator,operatorPathPrefix, operatorPathField} = props;
+    if(!isEqual({operatorGroup,operator,operatorPathPrefix, operatorPathField},{operatorPathField: this.props.operatorPathField, operatorPathPrefix: this.props.operatorPathPrefix, operatorGroup : this.props.operatorGroup, operator : this.props.operator})){
+      this.subscribeTooperatorcontents({operatorGroup,operator,operatorPathPrefix, operatorPathField});  
     }
   }
 
-  showOperatorContents({operatorGroup,operator}){
-    this.props.selectOperator({operatorGroup,operator});
+  showOperatorContents({operatorGroup,operator, operatorPathField, operatorPathPrefix}){
+    this.props.selectOperator({operatorGroup,operator, operatorPathField, operatorPathPrefix});
   }
 
   subscribeTooperatorcontents({operatorGroup,operator}){
-    const {updateSubscription} = this.props;
-    updateSubscription("operatorListDao", {operatorName : operatorGroup})
-    //updateSubscription("operatorContentsDao", {operatorName : operator})
+    const {updateSubscription, operatorPathPrefix = '', operatorPathField} = this.props;
+    updateSubscription("operatorListDao", {operatorName : operatorGroup, operatorPathField})
+    updateSubscription("connectionsDao", {operatorName : operatorGroup, operatorPathField})
+    //updateSubscription("operatorContentsDao", {operatorName : operatorPathPrefix + operator})
   }
 
   renderOperators(){
@@ -138,20 +157,21 @@ class OperatorGroupView extends Component{
             pageSize={10}
             headerView={headerView}/> : <div>Render operator graph</div>;
   }
-  renderOperatorGraph(){
-    const {context={},mode,history} = this.props;
-    const {nodes, links} = this;
-    return <NodeGraph nodes={nodes} links={links} height={500} width={500}/>
+
+  renderOperatorGraph(fullScreen){
+    const {context={},mode,history, nodes, links} = this.props;
+    return <NodeGraph  nodes={nodes} links={links} height={fullScreen ? 800 : 400} width={1300}/>
   }
 
   render(){
-    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName}  = this.props;
+    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, mode, toggleMode, operatorPathPrefix = ''}  = this.props;
     const {scenarioResults = {}} = this.state;
     return <div className="flex flex-col"> 
-                {operatorListDaoReady ? this.renderOperatorGraph() : null}
-                <div style={{position : 'relative',flex:3}} className="flex flex-col">
-                  <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName}} />
-                </div>
+                <a onClick={toggleMode}>{mode === 'graph' ? 'Table' : 'Graph'}</a>
+                {mode == 'graph' ?  this.renderOperatorGraph(!operatorName) : this.renderOperators()}
+                {operatorName ? <div style={{position : 'relative',flex:3}} className="flex flex-col">
+                  <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName: operatorPathPrefix + '' + operatorName}} />
+                </div> : null}
             </div>
   }
 }

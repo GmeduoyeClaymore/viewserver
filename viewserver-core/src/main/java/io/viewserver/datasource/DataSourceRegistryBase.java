@@ -27,6 +27,7 @@ import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.operators.*;
 import io.viewserver.operators.table.*;
+import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+
+
 
 /**
  * Created by nick on 18/02/2015.
@@ -122,7 +125,7 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
                 row.setString(PATH_COL, String.format("%s/%s", getPath(), values[0]));
             }
         });
-        new DataSourceCatalog(values[0]);
+        new DataSourceCatalog(values[0], new ChunkedColumnStorage(1024));
         fireListeners(l -> l.onDataSourceRegistered(getDataSourceForRow(row)));
         return row;
     }
@@ -276,16 +279,42 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         private final IntHashSet nodeIds = new IntHashSet(8, 0.75f, -1);
         private final Output output;
         private final ICatalog catalogHolder;
+        private final ITableStorage storage;
+        private final TableRow myTableRow;
         private DataSourceExecutionPlanContext executionPlanContext;
+        protected boolean initialised;
 
-        public DataSourceCatalog(String id) {
+        public static final String NAME_COLUMN = "name";
+        public static final String TYPE_COLUMN = "type";
+        public static final String OPNAME_COLUMN = "opName";
+        public static final String PATH_COLUMN = "path";
+
+        public DataSourceCatalog(String id, ITableStorage storage) {
             super(id, DataSourceRegistryBase.this.executionContext, DataSourceRegistryBase.this);
 
+            this.storage = storage;
             output = new Output(Constants.OUT, this);
             addOutput(output);
 
             catalogHolder = new CatalogHolder(this);
+
+            setSystemOperator(true);
+
+            initialise(1024);
+
+            myTableRow = new TableRow(0, output.getSchema());
         }
+
+        public void initialise(int capacity) {
+            if (initialised) {
+                throw new RuntimeException("Table already initialised");
+            }
+
+            storage.initialise(capacity, output.getSchema(), output.getCurrentChanges());
+
+            initialised = true;
+        }
+
 
         public void registerNodes(DataSourceExecutionPlanContext executionPlanContext) {
             this.executionPlanContext = executionPlanContext;
@@ -304,12 +333,17 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
             final int hashCode = node.hashCode();
             nodes.put(hashCode, node);
             final int rowId = nodeIds.addInt(hashCode);
+            myTableRow.setRowId(rowId);
+            myTableRow.setString(NAME_COLUMN,  node.name );
+            myTableRow.setString(TYPE_COLUMN,  node.type);
+            myTableRow.setString(OPNAME_COLUMN,  getOperatorName(node));
+            myTableRow.setString(PATH_COLUMN,  getOperator(getOperatorName(node)).getPath());
             output.handleAdd(rowId);
         }
 
-        private NodeSpec getNodeForRow(int row) {
-            int hash = nodeIds.get(row);
-            return nodes.get(hash);
+
+        private String getOperatorName(NodeSpec node) {
+            return "Table".equals(node.type) ? node.name : executionPlanContext.getOperatorName(node.name);
         }
 
         @Override
@@ -403,44 +437,19 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         }
 
         private class Output extends OutputBase {
-            public static final String NAME_COLUMN = "name";
-            public static final String TYPE_COLUMN = "type";
-            public static final String OPNAME_COLUMN = "opName";
-            public static final String PATH_COLUMN = "path";
+
 
             public Output(String name, IOperator owner) {
                 super(name, owner);
 
-                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(NAME_COLUMN) {
-                    @Override
-                    public String getString(int row) {
-                        return getNodeForRow(row).name;
-                    }
-                }));
-                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(TYPE_COLUMN) {
-                    @Override
-                    public String getString(int row) {
-                        return getNodeForRow(row).type;
-                    }
-                }));
-                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(OPNAME_COLUMN) {
-                    @Override
-                    public String getString(int row) {
-                        return getOperatorName(row);
-                    }
-                }));
-                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(PATH_COLUMN) {
-                    @Override
-                    public String getString(int row) {
-                        return getOperator(getOperatorName(row)).getPath();
-                    }
-                }));
+                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(TYPE_COLUMN, io.viewserver.schema.column.ColumnType.String));
+                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(OPNAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+                getSchema().addColumn(ColumnHolderUtils.createColumnHolder(PATH_COLUMN, io.viewserver.schema.column.ColumnType.String));
+
             }
 
-            private String getOperatorName(int row) {
-                final NodeSpec node = getNodeForRow(row);
-                return "Table".equals(node.type) ? node.name : executionPlanContext.getOperatorName(node.name);
-            }
+
         }
     }
 }

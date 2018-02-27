@@ -20,27 +20,35 @@ import io.viewserver.Constants;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
+import io.viewserver.operators.table.TableRow;
+import io.viewserver.schema.ITableStorage;
+import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnStringBase;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import io.viewserver.schema.column.chunked.ChunkedColumnString;
 
 /**
  * Created by nick on 10/03/2015.
  */
 public class ConnectionManager extends InputOperatorBase implements IMetadataListener {
     public static final String OPERATOR_NAME = "connections";
-    private static final String OUTPUT_OPERATOR_NAME_COLUMN = "outputOperator";
+    public static final String OUTPUT_OPERATOR_NAME_COLUMN = "outputOperator";
     private static final String OUTPUT_OPERATOR_TYPE_COLUMN = "outputOperatorType";
     private static final String OUTPUT_NAME_COLUMN = "output";
-    private static final String INPUT_OPERATOR_NAME_COLUMN = "inputOperator";
+    public static final String INPUT_OPERATOR_NAME_COLUMN = "inputOperator";
     private static final String INPUT_OPERATOR_TYPE_COLUMN = "inputOperatorType";
     private static final String INPUT_NAME_COLUMN = "input";
     private Output output;
     private TIntObjectHashMap<Link> links = new TIntObjectHashMap<>(8, 0.75f, -1);
     private IntHashSet linkHashes = new IntHashSet(8, 0.75f, -1);
+    private boolean initialised ;
+    private ITableStorage storage;
+    protected TableRow tableRow;
 
-    public ConnectionManager(IExecutionContext executionContext, ICatalog catalog) {
+    public ConnectionManager(IExecutionContext executionContext, ICatalog catalog, ITableStorage storage) {
         super(OPERATOR_NAME, executionContext, catalog);
+        this.storage = storage;
 
         executionContext.getMetadataRegistry().addListener(this, true);
 
@@ -48,7 +56,22 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
         addOutput(output);
 
         setSystemOperator(true);
+
+        initialise(1024);
+
+        tableRow = new TableRow(0, output.getSchema());
     }
+
+    public void initialise(int capacity) {
+        if (initialised) {
+            throw new RuntimeException("Table already initialised");
+        }
+
+        storage.initialise(capacity, output.getSchema(), output.getCurrentChanges());
+
+        initialised = true;
+    }
+
 
     @Override
     public void doTearDown() {
@@ -63,6 +86,15 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
         int hashCode = link.hashCode();
         links.put(hashCode, link);
         int rowId = linkHashes.addInt(hashCode);
+        storage.ensureCapacity(rowId + 1, output.getSchema());
+        tableRow.setRowId(rowId);
+        tableRow.setString(OUTPUT_OPERATOR_NAME_COLUMN,  link.getOutput().getOwner().getPath() );
+        tableRow.setString(OUTPUT_OPERATOR_TYPE_COLUMN,  link.getOutput().getOwner().getClass().getName());
+        tableRow.setString(OUTPUT_NAME_COLUMN,  link.getOutput().getName());
+
+        tableRow.setString(INPUT_OPERATOR_NAME_COLUMN,  link.getInput().getOwner().getPath() );
+        tableRow.setString(INPUT_OPERATOR_TYPE_COLUMN,  link.getInput().getOwner().getClass().getName());
+        tableRow.setString(INPUT_NAME_COLUMN,  link.getInput().getName());
         this.output.handleAdd(rowId);
     }
 
@@ -96,153 +128,18 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
 
     }
 
-    private Link getLinkForRow(int row) {
-        int hashCode = linkHashes.get(row);
-        return links.get(hashCode);
-    }
-
     private class Output extends OutputBase {
         public Output(String name, IOperator owner) {
             super(name, owner);
-
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new OutputOperatorNameColumn()));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new OutputOperatorTypeColumn()));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new OutputNameColumn()));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new InputOperatorNameColumn()));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new InputOperatorTypeColumn()));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new InputNameColumn()));
+            Schema schema = getSchema();
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(OUTPUT_OPERATOR_NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(OUTPUT_OPERATOR_TYPE_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(OUTPUT_NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(INPUT_OPERATOR_NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(INPUT_OPERATOR_TYPE_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(INPUT_NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
         }
+
     }
 
-    private class OutputOperatorNameColumn extends ColumnStringBase {
-        public OutputOperatorNameColumn() {
-            super(OUTPUT_OPERATOR_NAME_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getOutput().getOwner().getPath();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
-
-    private class OutputOperatorTypeColumn extends ColumnStringBase {
-        public OutputOperatorTypeColumn() {
-            super(OUTPUT_OPERATOR_TYPE_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getOutput().getOwner().getClass().getName();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
-
-    private class OutputNameColumn extends ColumnStringBase {
-        public OutputNameColumn() {
-            super(OUTPUT_NAME_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getOutput().getName();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
-
-    private class InputOperatorNameColumn extends ColumnStringBase {
-        public InputOperatorNameColumn() {
-            super(INPUT_OPERATOR_NAME_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getInput().getOwner().getPath();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
-
-    private class InputOperatorTypeColumn extends ColumnStringBase {
-        public InputOperatorTypeColumn() {
-            super(INPUT_OPERATOR_TYPE_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getInput().getOwner().getClass().getName();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
-
-    private class InputNameColumn extends ColumnStringBase {
-        public InputNameColumn() {
-            super(INPUT_NAME_COLUMN);
-        }
-
-        @Override
-        public String getString(int row) {
-            Link link = getLinkForRow(row);
-            return link.getInput().getName();
-        }
-
-        @Override
-        public String getPreviousString(int row) {
-            return null;
-        }
-
-        @Override
-        public boolean supportsPreviousValues() {
-            return false;
-        }
-    }
 }
