@@ -7,7 +7,7 @@ export default class DataSourceSubscriptionStrategyStrategy{
     this.path = path;
     this.editTable = this.editTable.bind(this);
     this.dispose = this.dispose.bind(this);
-    this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
+    this.updateSubscription = this.updateSubscription.bind(this);
   }
 
   editTable(rowEvents){
@@ -16,12 +16,13 @@ export default class DataSourceSubscriptionStrategyStrategy{
     return commandExecutedPromise;
   }
 
-  updateSubscription(options){
+  async updateSubscription(options){
     if (this.subscribeCommand === undefined){
       this.subscribeCommand = this.client.subscribeToDataSource(this.path, options, this.dataSink);
     } else {
       this.client.updateSubscription(this.subscribeCommand.id, options, this.dataSink);
     }
+    return this.dataSink.dataSinkUpdated.waitForSuccess().toPromise();
   }
 
   dispose(){

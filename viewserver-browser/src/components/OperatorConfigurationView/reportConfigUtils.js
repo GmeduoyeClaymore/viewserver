@@ -1,17 +1,5 @@
 
-const OPERATOR_TYPE_COLORS = {
-    'Filter' : '#9cbd79',
-    'Table' :  '#d89676',
-    'Join' : '#92135b',
-    'Projection': '#f83e04',
-    'Sort': '#0ee8f0',
-    'GroupBy': '#9a65d2',
-    'CalcCol': '#4a49ea'
-}
 
-const getColor = node => {
-    return OPERATOR_TYPE_COLORS[node.type];
-}
 
 export const parseReportFromJson = (descriptor) => {
     const parametersObj = descriptor.parameters;
@@ -31,6 +19,7 @@ export const parseReportFromJson = (descriptor) => {
       if(!node){
         node = {key: name, id: name, radius: 25};
         nodes.push(node);
+        node.data = {}
         nodesForName[name] = node;
       }
       return node;
@@ -39,8 +28,7 @@ export const parseReportFromJson = (descriptor) => {
     descriptor.nodes.forEach(
       node => {
         const nd = getNodeForName(node.name);
-        nd.data = node;
-        nd.color = getColor(node);
+        nd.data = node
       });
   
     descriptor.nodes.forEach(

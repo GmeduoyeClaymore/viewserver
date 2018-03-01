@@ -28,8 +28,8 @@ export default class DataSink {
     Logger.info('Subscription success');
   }
 
-  onError(){
-    Logger.error('Subscription error');
+  onError(error){
+    Logger.error('Subscription error  - ' + error);
   }
 
   onDataReset(){

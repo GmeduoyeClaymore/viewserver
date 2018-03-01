@@ -37,7 +37,7 @@ const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,reportContexts,
       {loggedIn ? <Reports  history={history} dispatch={dispatch}  graphStore={graphStore} reports={reports} loading={reportsLoading} loadingErrors={reportsLoadingErrors} icon="login" />: null}
       {loggedIn ? <ReportContexts  history={history}  dispatch={dispatch}  reportContexts={reportContexts} loading={reportContextsLoading} loadingErrors={reportContextsLoadingErrors} icon="login" />: null}
       {loggedIn ? <Sessions sessions={sessions}  loading={sessionsLoading} loadingErrors={sessionsLoadingErrors} path="/sessions" label="Sessions" icon="user" />: null}
-      {loggedIn ? <MenuRow path="/diagnostics" label="Diagnostics" icon="chart-bar" />: null}
+      {loggedIn ? <Diagnostics path="/diagnostics" label="Diagnostics" icon="chart-bar" />: null}
       {loggedIn ? <MenuRow path="/logout" label="Logout" icon="login" />: null}
     </nav>
   );
@@ -51,6 +51,22 @@ const DataSources = ({dataSources = [], loading, icon, loadingErrors, dispatch})
   {dataSources.map((d) => (<DataSourceLink {...{...d, dispatch}}/>))}
 </div>
 )};
+
+const Diagnostics = ({icon, loadingErrors, loading}) => {
+  return ( <div className="nav-group-item">
+
+  {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
+  {"Diagnostics"}
+  <FullOperatorLink name="Connections" path="/connections"/>
+  <FullOperatorLink name="Sessions" path="/sessions"/>
+</div>
+)};
+
+const FullOperatorLink = ({name, path}) => (
+  <NavLink to={{pathname : "/fullOperatorView", search: `operator=${path}`}} className="nav-group-item" >
+    {name}
+  </NavLink>
+);
 
 const DataSourceLink = ({name, path,dispatch}) => (
   <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=path`}} className="nav-group-item" >
@@ -98,10 +114,10 @@ const Sessions = ({sessions = [], loading, icon, loadingErrors}) => (
 </div>
 );
 
-const SessionsLink = ({sessionId}) => (
-  <NavLink to={"/sessions" + sessionId} className="nav-group-item" >
-    {sessionId}
-  </NavLink>
+const SessionsLink = ({sessionId,path}) => (
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=path&operatorPathPrefix=`}} className="nav-group-item" >
+  {sessionId}
+</NavLink>
 );
 
 const MenuRow = (props) => {

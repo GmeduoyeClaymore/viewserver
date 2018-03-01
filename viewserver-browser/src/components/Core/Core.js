@@ -32,6 +32,7 @@ const AppRouter = (props) => {
       <Route path="/login" exact component={components.Login} /> 
       <Route path="/operatorGroupView" render={() => <components.OperatorGroupView {...props}/>} /> 
       <Route path="/operatorConfigurationView" render={() => <components.OperatorConfigurationView {...props}/>} /> 
+      <Route path="/fullOperatorView" render={() => <components.FullOperatorView {...props}/>} /> 
     </Switch>
   );
 } 

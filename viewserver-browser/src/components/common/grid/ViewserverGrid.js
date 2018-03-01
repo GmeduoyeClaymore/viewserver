@@ -8,6 +8,7 @@ import GenericOperatorDaoContext from 'dao/GenericOperatorDaoContext';
 import Logger from 'common/Logger';
 import Dao from 'common/dao/DaoBase';
 import { ScaleLoader } from 'react-spinners';
+import ErrorRegion from 'common-components/ErrorRegion';
 import moment from 'moment';
 
 const CONTAINER_STYLE = { display: 'flex', flexDirection: 'column', flex: '1', overflow: 'hidden' };
@@ -60,30 +61,41 @@ export default class ViewServerGrid extends Component {
         }
         this.handleScrollStarted = this.handleScrollStarted.bind(this);
         this.trackOperation = this.trackOperation.bind(this);
+        this.subscribeToData = this.subscribeToData.bind(this);
+        this.handleColumnResized = this.handleColumnResized.bind(this);
     }
 
-    async componentWillMount(){
+    async componentDidMount(){
         Logger.info(`Waiting for registration of Dao ${this.props.daoName}`)
-        this.dao = this.dao || await this.getDao(this.props.daoName);
-        const dataSource = new DaoDataSource(this.dao);      
-        this.disposables.push(dataSource.onDataRequested.subscribe(this.trackOperation));
-        this.disposables.push(dataSource.columnsChanged.debounceTime(50).subscribe(this.setColumns.bind(this)));
-        this.disposables.push(dataSource.onResized.debounceTime(500).subscribe(this.setSummary.bind(this)));
-        this.disposables.push(dataSource.onChanged.debounceTime(500).subscribe(this.setSummary.bind(this)));
-        this.setState({dataSource});
+        this.subscribeToData(this.props);
+        
     }
 
     componentWillReceiveProps(newProps){
-        if(!isEqual(newProps.options, this.props.options)){
-            const {dataSource} = this.state;
-            dataSource.updateSubscription(newProps.options);
+        if(!this.props.options || !isEqual(newProps.options, this.props.options)){
+            this.subscribeToData(newProps);
+        }
+    }
+
+    async subscribeToData(newProps){
+        this.dao = this.dao || await this.getDao(newProps.daoName);
+        this.dataSource = new DaoDataSource(this.dao);     
+        this.disposables.push( this.dataSource.onDataRequested.subscribe(this.trackOperation));
+        this.disposables.push( this.dataSource.columnsChanged.debounceTime(50).subscribe(this.setColumns.bind(this)));
+        this.disposables.push( this.dataSource.onResized.debounceTime(500).subscribe(this.setSummary.bind(this)));
+        this.disposables.push( this.dataSource.onChanged.debounceTime(500).subscribe(this.setSummary.bind(this)));
+        try{
+            await this.dataSource.updateSubscription(newProps.options);
+            this.setState({errors: undefined});
+        }catch(errors){
+            this.setState({errors: errors + ''});
         }
     }
 
     async updateOptionsAndWait(options){
-        const {dataSource} = this.state;
+        const {dataSource} = this;
         const start =  moment();
-        await dataSource.undebouncedUpdateSubscrption(options);
+        await dataSource.updateSubscription(options);
         return moment.duration(moment() - start)
     }
 
@@ -100,19 +112,23 @@ export default class ViewServerGrid extends Component {
         }
     }
 
+    setState(state, callback){
+        super.setState(state, callback);
+    }
+
     setColumns(columns){
-        const {dataSource} = this.state;
+        const {dataSource} = this;
         this.setState({columns : dataSource.columns});
     }
     setSummary(){
-        const {dataSource} = this.state;
+        const {dataSource} = this;
         const summary = {size: dataSource.size, options: dataSource.dao.options};
         this.setState({summary});
     }
 
     componentWillUnmount(){
         Logger.info("Unmounting grid");
-        this.disposables.forEach(dis => dis.unsubscribe())
+        //this.disposables.forEach(dis => dis.unsubscribe())
     }
 
     async getDao(daoName){
@@ -131,7 +147,11 @@ export default class ViewServerGrid extends Component {
 
     render() {
         let baselineHeight = ROW_HEIGHT + 2;
-        const {dataSource, busy, summary ={}, elapsed} = this.state;
+        const {busy, summary ={}, elapsed, errors} = this.state;
+        const {dataSource } = this;
+        if(errors){
+            return <ErrorRegion errors={errors}/>;
+        }
         if(!dataSource){
             return <div>Awaiting registration of data source</div>;
         }
@@ -186,7 +206,7 @@ export default class ViewServerGrid extends Component {
     }
 
     handleColumnHeaderClick(column) {
-        const {dataSource, busy} = this.state;
+        const {dataSource} = this;
         if (column.sortable) {
             dataSource.sort(column.key);
         }

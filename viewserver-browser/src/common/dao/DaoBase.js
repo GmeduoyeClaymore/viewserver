@@ -75,12 +75,11 @@ export default class Dao {
     }
         
     try {
-      
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
-      this.subscriptionStrategy.updateSubscription(optionsMessage);
+      await this.subscriptionStrategy.updateSubscription(optionsMessage);
       this.isSubscribed = true;
     } catch (error){
       return Promise.reject(error);

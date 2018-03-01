@@ -53,7 +53,7 @@ class OperatorConfigurationView extends Component{
                 <ul>
                 {parameters.map(c=> <li>{JSON.stringify(c)}</li>)}
                 </ul>
-                <NodeGraph nodes={nodes} links={links} height={300} width={1000} selectNode={selectNode}/>
+                <NodeGraph nodes={nodes} links={links} height={800} width={1000} selectNode={selectNode}/>
                 <div style={{flex: 1}}>
                   <h2>{nodeData.name}</h2>
                   <JSONPretty id="json-pretty" json={nodeData}></JSONPretty>

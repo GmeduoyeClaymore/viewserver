@@ -33,10 +33,9 @@ public class CatalogOutput extends OutputBase {
     public CatalogOutput(String name, IOperator owner, CatalogHolder catalogHolder) {
         super(name, owner);
         this.catalogHolder = catalogHolder;
-
-        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new NameColumn()));
-        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new TypeColumn()));
-        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new PathColumn()));
+        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(TYPE_COLUMN, io.viewserver.schema.column.ColumnType.String));
+        getSchema().addColumn(ColumnHolderUtils.createColumnHolder(PATH_COLUMN, io.viewserver.schema.column.ColumnType.String));
     }
 
     @Override

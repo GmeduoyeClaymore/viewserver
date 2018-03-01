@@ -1,3 +1,4 @@
+const Immutable = require("seamless-immutable");
 
 const DEFAULT_TOTAL_HEIGHT = 1000;
 const DEFAULT_TOTAL_WIDTH = 500;
@@ -15,10 +16,13 @@ export const determinePositionFactory = ({
     const linksByTarget = {};
     const linksBySource = {};
     const resultLinks = [];
-    let maxLevels = undefined;
 
-    nodes.forEach(nd => {nodesForName[nd.id] = {...nd}} )
-    links.forEach(ln => {
+    const myNodes =  Immutable.asMutable(nodes, {deep: true});
+    const myLinks =  Immutable.asMutable(links, {deep: true});
+
+    myNodes.forEach(nd => {nodesForName[nd.id] =  nd})
+    
+    myLinks.forEach(ln => {
         linksByTarget[ln.target.id] = ln;
         linksBySource[ln.source.id] = ln;
         resultLinks.push({...ln});
@@ -29,10 +33,10 @@ export const determinePositionFactory = ({
             return level-1;
         }
         let maxChild = level;
-        const linksForChild = links.filter(ln => ln.target.id === node.id);
+        const linksForChild = myLinks.filter(ln => ln.source.id === node.id);
         linksForChild.forEach((ln,index)  => 
         { 
-            let maxLevel = getMaxLevels(nodesForName[ln.source.id], level + 1)  
+            let maxLevel = getMaxLevels(nodesForName[ln.target.id], level + 1)  
             if(maxLevel > maxChild){
             maxChild = maxLevel;
             }
@@ -40,45 +44,54 @@ export const determinePositionFactory = ({
         return maxChild;
     }
 
-    const positionChildren = (node, level, maxLevels) => {
-        if(!node){
-            return;
-        }
-        const linksForChild = links.filter(ln => ln.target.id === node.id);
-        if(!linksForChild.length){
-            return;
-        }
-        const rangeY = Height - (PaddingY * 2);
-        const rangeX = Width - (PaddingX * 2);
-        const ySteps = (linksForChild.length + 1);;
-        const xSteps = (maxLevels + 1);;
-        const incremetY = rangeY/ySteps
-        const incremetX = rangeX/xSteps;
-        const xposition = (rangeX - (incremetX * level)); 
-        linksForChild.forEach((ln,index)  => 
-            { 
-            const child = nodesForName[ln.source.id];
-            child.fy = PaddingY + (incremetY * (index + 1)); 
-            child.fx = ln.fx && ln.fx > xposition ? ln.fx : xposition
-            positionChildren(child, level + 1, maxLevels)  
-            });
+    const getNodeChildren = (node) => {
+        const linksFromMe = myLinks.filter(ln => ln.source.id === node.id);
+        return linksFromMe.map(ln => nodesForName[ln.target.id])
     }
 
-    const getNodePosition  = (node) => {
-        const {id} = node;
-        if(!linksBySource[id]){
-            const rangeX = Width - (PaddingX * 2);
-            const maxLevels = getMaxLevels(node);
-            const xSteps = (maxLevels + 1);;
-            const incremetX = rangeX/xSteps;
-            const xposition = Width - PaddingX - incremetX; 
-            const rangeY = Height - (PaddingY * 2);
-            node.fx = xposition;
-            node.fy = PaddingY + (rangeY/2);
-            positionChildren(node,1, maxLevels);
+    const howMuchOfTheYAxesDoINeed = (node) => {
+        const nodeChildren = getNodeChildren(node);
+        if(!nodeChildren.length){
+            return 1;
         }
+        let range = 0;
+        nodeChildren.forEach(
+            nd => {
+                range += howMuchOfTheYAxesDoINeed(nd);
+            }
+        )
+        return range;
     }
-    Object.values(nodesForName).forEach(getNodePosition);
+
+    const getNodePositions  = (roots, yl, yp, xl, xu, level) => {
+
+        const howMuchOfYs = roots.map(rt => howMuchOfTheYAxesDoINeed(rt));
+        const totalY = howMuchOfYs.reduce((a, b) => a + b, 0); 
+
+        let yLower = yl;
+        let yUpper = yp;
+
+        roots.forEach(
+            (rt,idx) => {
+                const maxLevels = getMaxLevels(rt);
+                const howMuchOfY = howMuchOfYs[idx];
+                const xOffset = maxLevels ? ((xu - xl)/maxLevels) * level : 0;
+                const newUpper = ((yUpper - yLower) * (howMuchOfY/totalY));
+                rt.fy = ((newUpper - yLower)/2) + yLower;
+                rt.fx = xl + xOffset
+
+                getNodePositions(getNodeChildren(rt), yLower, yUpper, xl + xOffset, xu, level + 1);
+                
+                yLower = yUpper;
+                yUpper = newUpper;
+            }
+        )
+    }
+
+    const rootNodes = Object.values(nodesForName).filter(nd => !linksByTarget[nd.id]);
+
+    getNodePositions(rootNodes, PaddingY, Width - PaddingY, PaddingX, Height - PaddingX, 1);
+
     return {
         nodes: Object.values(nodesForName),
         links: resultLinks

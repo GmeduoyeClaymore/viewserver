@@ -1,8 +1,10 @@
 package com.shotgun.viewserver.setup.report;
 
 import io.viewserver.Constants;
+import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -13,30 +15,31 @@ public class OperatorAndConnectionReport {
         return new ReportDefinition(ID, ID)
                 .withParameter("operatorPath", "OperatorName", String[].class)
                 .withParameter("operatorPathField", "OperatorName", String[].class)
+                .withParameter("operatorPathPrefix", "Operator Path Prefic", String[].class)
                 .withNodes(
-                        new JoinNode("operatorInputJoin")
-                                .withLeftJoinColumns("{operatorPathField}")
+                        new CalcColNode("mainOperatorCalc")
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("nodeName", "\"{operatorPathPrefix}\" + {operatorPathField}"))
+                                .withConnection("{operatorPath}"),
+                            new JoinNode("operatorInputJoin")
+                                .withLeftJoinColumns("nodeName")
                                 .withRightJoinColumns("inputOperator")
-                                .withConnection("{operatorPath}", Constants.OUT, "left")
+                                .withLeftJoinOuter()
+                                .withConnection("mainOperatorCalc", Constants.OUT, "left")
                                 .withConnection("connections", Constants.OUT, "right")
                                 .withColumnPrefixes("", "input_")
                                 .withAlwaysResolveNames(),
-                        new JoinNode("operatorOutputJoin")
-                                .withLeftJoinColumns("{operatorPathField}")
+                            new JoinNode("operatorOutputJoin")
+                                .withLeftJoinColumns("nodeName")
+                                .withLeftJoinOuter()
                                 .withRightJoinColumns("outputOperator")
                                 .withConnection("operatorInputJoin", Constants.OUT, "left")
                                 .withConnection("connections", Constants.OUT, "right")
                                 .withColumnPrefixes("", "output_")
-                                .withAlwaysResolveNames(),
-                        new ProjectionNode("projectionNode")
-                                .withMode(IProjectionConfig.ProjectionMode.Projection)
-                                .withProjectionColumns(
-                                        new IProjectionConfig.ProjectionColumn("{operatorPathField}", "nodeName")
-                                )
-                                .withConnection("operatorOutputJoin")
+                                .withAlwaysResolveNames()
 
                 )
 
-                .withOutput("projectionNode");
+                .withOutput("operatorOutputJoin");
     }
 }

@@ -21,6 +21,9 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.InputOperatorBase;
+import io.viewserver.operators.table.TableRow;
+import io.viewserver.schema.ITableStorage;
+import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import rx.Observable;
 
 import java.util.Collection;
@@ -31,7 +34,7 @@ import java.util.Collection;
 public class Catalog extends InputOperatorBase implements ICatalog {
     private final CatalogOutput output;
     private final CatalogHolder catalogHolder;
-
+    private boolean initialised ;
     public Catalog(IExecutionContext executionContext) {
         this("/", executionContext, null);
     }
@@ -40,16 +43,36 @@ public class Catalog extends InputOperatorBase implements ICatalog {
         this(name, parent.getExecutionContext(), parent);
     }
 
+    private ITableStorage storage;
+    protected TableRow tableRow;
+
     private Catalog(String name, IExecutionContext executionContext, ICatalog parent) {
         super(name, executionContext, parent);
 
         catalogHolder = new CatalogHolder(this);
 
+        storage = new ChunkedColumnStorage(1024);
+
         output = new CatalogOutput(Constants.OUT, this, catalogHolder);
         addOutput(output);
 
         setSystemOperator(true);
+
+        initialise(1024);
+
+        tableRow = new TableRow(0, output.getSchema());
     }
+
+    public void initialise(int capacity) {
+        if (initialised) {
+            throw new RuntimeException("Table already initialised");
+        }
+
+        storage.initialise(capacity, output.getSchema(), output.getCurrentChanges());
+
+        initialised = true;
+    }
+
 
     public IOutput getOutput() { return output; }
 
@@ -61,7 +84,14 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     @Override
     public void registerOperator(IOperator operator) {
         catalogHolder.registerOperator(operator);
-        output.handleAdd(catalogHolder.getRowIdForOperator(operator));
+        int rowId = catalogHolder.getRowIdForOperator(operator);
+        storage.ensureCapacity(rowId + 1, output.getSchema());
+
+        tableRow.setRowId(rowId);
+        tableRow.setString(CatalogOutput.NAME_COLUMN,  operator.getName() );
+        tableRow.setString(CatalogOutput.TYPE_COLUMN,  operator.getClass().getName() );
+        tableRow.setString(CatalogOutput.PATH_COLUMN,  operator.getPath() );
+        output.handleAdd(rowId);
     }
 
     public Observable<IOperator> getOperatorObservable(String name) {

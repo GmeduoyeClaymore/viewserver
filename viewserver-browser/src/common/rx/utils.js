@@ -25,6 +25,18 @@ Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
     .timeoutWithError(timeout, new Error('No snapshot complete event detected 10 seconds after update'));
 };
 
+Rx.Observable.prototype.waitForSuccess = function (timeout = 10000) {
+  return this.filter(ev => SUCCESS === ev.Type || ERROR === ev.Type)
+    .take(1)
+    .timeoutWithError(timeout, new Error('No success or error detected within 10 seconds'))
+    .map(ev => {
+      if(ev.Type === ERROR){
+        throw new Error(ev.error)
+      }
+      return ev;
+    });
+};
+
 Rx.Observable.prototype.filterRowEvents = function () {
   return this.filter(ev => !!~DOMAIN_EVENT_TYPES.indexOf(ev.Type));
 };
