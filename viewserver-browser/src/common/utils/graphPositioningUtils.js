@@ -63,34 +63,32 @@ export const determinePositionFactory = ({
         return range;
     }
 
-    const getNodePositions  = (roots, yl, yp, xl, xu, level) => {
 
-        const howMuchOfYs = roots.map(rt => howMuchOfTheYAxesDoINeed(rt));
-        const totalY = howMuchOfYs.reduce((a, b) => a + b, 0); 
+    const getNodePositions  = xIncrement => (roots, yl, yp, xl, xu, level) => {
+
 
         let yLower = yl;
         let yUpper = yp;
 
+        const yIncrement = (yUpper - yLower) / (roots.length + 1);
         roots.forEach(
             (rt,idx) => {
-                const maxLevels = getMaxLevels(rt);
-                const howMuchOfY = howMuchOfYs[idx];
-                const xOffset = maxLevels ? ((xu - xl)/maxLevels) * level : 0;
-                const newUpper = ((yUpper - yLower) * (howMuchOfY/totalY));
-                rt.fy = ((newUpper - yLower)/2) + yLower;
-                rt.fx = xl + xOffset
+                const yOffset = yIncrement * (idx);
+                rt.fy = yl + yOffset;
+                rt.fx = xl + xIncrement;
 
-                getNodePositions(getNodeChildren(rt), yLower, yUpper, xl + xOffset, xu, level + 1);
-                
-                yLower = yUpper;
-                yUpper = newUpper;
+                getNodePositions(xIncrement)(getNodeChildren(rt), rt.fy, rt.fy  + yIncrement, rt.fx, Height - PaddingX, level + 1);
             }
         )
     }
 
     const rootNodes = Object.values(nodesForName).filter(nd => !linksByTarget[nd.id]);
 
-    getNodePositions(rootNodes, PaddingY, Width - PaddingY, PaddingX, Height - PaddingX, 1);
+    const maxLevels = Math.max(...rootNodes.map(nd => getMaxLevels(nd)));
+
+    const xIncrement = (Width - PaddingX - PaddingX) / (maxLevels + 1);
+
+    getNodePositions(xIncrement)(rootNodes, PaddingY, Height - PaddingY, PaddingX, Width - PaddingX, 1);
 
     return {
         nodes: Object.values(nodesForName),

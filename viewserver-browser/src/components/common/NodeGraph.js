@@ -16,14 +16,20 @@ const OPERATOR_TYPE_COLORS = {
 }
 
 const getColor = node => {
-  return OPERATOR_TYPE_COLORS[node.type];
+  if(!node.type){
+    return undefined;
+  }
+  const resultKey = Object.keys(OPERATOR_TYPE_COLORS).find(
+    key => node.type.includes(key)
+  );
+  return OPERATOR_TYPE_COLORS[resultKey];
 }
  
 
 const TOTAL_HEIGHT = 300;
 const TOTAL_WIDTH = 1000;
-const PADDING_X = 100;
-const PADDING_Y = 30;
+const PADDING_X = 50;
+const PADDING_Y = 50;
 
 export default class NodeGraph extends React.Component {
     constructor(props) {
@@ -38,9 +44,9 @@ export default class NodeGraph extends React.Component {
       return null;
     }
     render() {
-      const {nodes = [], links = [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
+      const {nodes: immutableNodes = [], links: immutableLinks = [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
 
-      //const {nodes,links} = determinePosition({Height, Width, PaddingX, PaddingY})(immutableLinks, immutableNodes);
+      const {nodes,links} = determinePosition({Height, Width, PaddingX, PaddingY})(immutableLinks, immutableNodes);
 
       return <div style={{flex:1}}><InteractiveForceGraph zoom 
       key={uuid()}

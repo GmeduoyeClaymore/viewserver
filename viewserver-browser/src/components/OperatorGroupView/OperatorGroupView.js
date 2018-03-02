@@ -45,12 +45,15 @@ const noItems = () => {
 const OperatorGroupView_mapStateToProps = (state, props) => { 
   const {search} = props.location;
   const queryStringParams = parse(search);
-  const operators = getDaoState(state,[], 'operatorListDao');
+  const operators = getDaoState(state,[], 'operatorListDao') || [];
   const {nodes,links} = getDaoState(state,[], 'connectionsDao') || {};
+  const {operator: selectedOperator, operatorPathField='path'} = queryStringParams;
+  const selectedOperatorObj = selectedOperator ? operators.find(op => op[operatorPathField] === selectedOperator) : undefined;
 
   return {
       nodes,
       links,
+      selectedOperatorObj,
       connectionErrors: getLoadingError(state,'connectionsDao'),
       operatorListErrors: getLoadingError(state,'operatorListDao'),
       operatorContentsErrors: getLoadingError(state,'operatorContentsDao'),
@@ -175,14 +178,14 @@ class OperatorGroupView extends Component{
   }
 
   render(){
-    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, mode, toggleMode, operatorPathPrefix = '', operatorGroup, operatorContentsErrors}  = this.props;
+    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, selectedOperatorObj, mode, toggleMode, operatorPathPrefix = '', operatorGroup, operatorContentsErrors}  = this.props;
     const {scenarioResults = {}} = this.state;
     return <div className="flex flex-col"> 
                 <h1>{operatorGroup}</h1>
                 <a onClick={toggleMode}>{mode === 'graph' ? 'Table' : 'Graph'}</a>
                 {mode == 'graph' ?  this.renderOperatorGraph(!operatorName) : this.renderOperators()}
                 {operatorName ? <div style={{position : 'relative',flex:3}} className="flex flex-col">
-                  <h1>{operatorName}</h1>
+                  <h1>{selectedOperatorObj ? selectedOperatorObj.type + " " + selectedOperatorObj.name + " " +  operatorName : operatorName}</h1>
                   <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName: operatorPathPrefix + '' + operatorName}} />
                 </div> : null}
             </div>
