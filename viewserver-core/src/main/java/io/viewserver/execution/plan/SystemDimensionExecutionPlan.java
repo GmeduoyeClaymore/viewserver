@@ -19,6 +19,7 @@ package io.viewserver.execution.plan;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.execution.context.DimensionExecutionPlanContext;
 import io.viewserver.execution.steps.DimensionGroupByStep;
+import io.viewserver.execution.steps.DimensionUnEnumStep;
 import io.viewserver.execution.steps.DimensionValuesStep;
 import io.viewserver.execution.steps.IExecutionPlanStep;
 
@@ -37,7 +38,8 @@ public class SystemDimensionExecutionPlan implements IExecutionPlan<DimensionExe
     public List<IExecutionPlanStep<DimensionExecutionPlanContext>> getSteps() {
         return Arrays.asList(
                 new DimensionValuesStep(dimensionMapper),
-                new DimensionGroupByStep()
+                new DimensionGroupByStep(),
+                new DimensionUnEnumStep()
         );
 
     }

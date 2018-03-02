@@ -76,13 +76,6 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
             if(this.distributionManager.getNodeType().equals(IInitialiseSlaveCommand.Type.Master)) {
                 multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
 
-                CommandResult unenumeratorResult = multiCommandResult.getResultForDependency("Unenumerator");
-                IConfiguratorSpec.OperatorSpec unEnumSpec = this.getUnEnumSpec(peerSession.getExecutionContext(),
-                        graphNodesCatalog,
-                        optionsExecutionPlanContext,
-                        unenumeratorResult);
-                optionsExecutionPlanContext.setInput(unEnumSpec.getName());
-
                 String inputOperator = optionsExecutionPlanContext.getInputOperator();
                 if (inputOperator.charAt(0) != '/') {
                     inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();

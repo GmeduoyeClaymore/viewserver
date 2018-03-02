@@ -133,7 +133,7 @@ export default class ViewServerGrid extends Component {
 
     async getDao(daoName){
         const context = new GenericOperatorDaoContext(daoName, {});
-        const dao = new Dao(context);
+        const dao = new Dao(context, true);
         return dao; 
     }
 

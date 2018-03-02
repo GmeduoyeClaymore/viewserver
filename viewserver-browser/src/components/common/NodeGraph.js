@@ -4,6 +4,7 @@ import ForceGraphArrowLink from 'common-components/ForceGraph/ForceGraphArrowLin
 import ForceGraphNode from 'common-components/ForceGraph/ForceGraphNode';
 import determinePosition from 'common/utils/graphPositioningUtils';
 import uuid from 'uuid/v1';
+import {isEqual} from 'lodash';
 
 const OPERATOR_TYPE_COLORS = {
   'Filter' : '#9cbd79',
@@ -17,7 +18,7 @@ const OPERATOR_TYPE_COLORS = {
 
 const getColor = node => {
   if(!node.type){
-    return undefined;
+    return 'white';
   }
   const resultKey = Object.keys(OPERATOR_TYPE_COLORS).find(
     key => node.type.includes(key)
@@ -43,8 +44,14 @@ export default class NodeGraph extends React.Component {
       }
       return null;
     }
+
+    shouldComponentUpdate(nextProps, nextState){
+      const {nodes : oldNodes,links: oldLinks}  = this.props; 
+      const {nodes,links}  = nextProps; 
+      return !isEqual({nodes : oldNodes,links: oldLinks}, {nodes,links} );
+    }
     render() {
-      const {nodes: immutableNodes = [], links: immutableLinks = [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
+      const {nodes : immutableNodes = [], links : immutableLinks= [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
 
       const {nodes,links} = determinePosition({Height, Width, PaddingX, PaddingY})(immutableLinks, immutableNodes);
 
@@ -53,9 +60,9 @@ export default class NodeGraph extends React.Component {
       ref={gr => {this.graph = gr}}
       onSelectNode={selectNode}
       zoomOptions={{minScale: 0.25, maxScale: 5}}
-      simulationOptions={{ animate: true, height: Height, width: Width, radiusMargin: 40, }}>
+      simulationOptions={{ animate: false, height: Height, width: Width, radiusMargin: 40, }}>
       {nodes.map(nd => <ForceGraphNode key={uuid()} node={{ ...nd }} fill={getColor(nd.data) || "black"} />)}
-      {links.map(ln => <ForceGraphArrowLink key={uuid()} targetRadius={12}  length={200} link={{ source: ln.source.id, target: ln.target.id}}/>)}
+      {links.map(ln => <ForceGraphArrowLink key={uuid()} targetRadius={5}  length={200} link={{ source: ln.source.id, target: ln.target.id}}/>)}
     </InteractiveForceGraph>{this.graphUpdater()}</div>
     }
 }

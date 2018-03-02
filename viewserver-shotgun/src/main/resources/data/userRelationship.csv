@@ -1,4 +1,4 @@
-relationshipId,fromUserId,toUserId,status,type
+relationshipId,fromUserId,toUserId,relationshipStatus,relationshipType
 a1,3ABCD,3ABCD2,ACCEPTED,MANAGER
 a2,3ABCD,3ABCD3,REQUESTED,MANAGER
 a3,3ABCD4,3ABCD5,ACCEPTED,MANAGER

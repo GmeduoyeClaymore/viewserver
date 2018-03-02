@@ -11,7 +11,7 @@ export default class OperatorWithLinksDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 20,
+      limit: 1000,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering
@@ -51,7 +51,7 @@ export default class OperatorWithLinksDaoContext{
     const nodesByName = {};
     const linksByKey = {};
 
-    rows = rows.filter(rw => !rw.type.includes("Serialiser"));
+    //rows = rows.filter(rw => !rw.type.includes("Serialiser"));
 
     rows.forEach(rw => {
       nodesByName[rw.nodeName] = this.processNode(rw)
@@ -65,7 +65,8 @@ export default class OperatorWithLinksDaoContext{
       if(!result){
           result = {id: name};
           result.key = result.id;
-          result.radius = name.includes('remotes') ? 15 : 25;
+          result.radius = 0;
+          result.color = 'white';
           result.data = {};
           nodesByName[name] = result;
       }
@@ -111,7 +112,7 @@ export default class OperatorWithLinksDaoContext{
     );
     result.id = row.nodeName;
     result.key = result.id;
-    result.radius = 25;
+    result.radius = 10;
     result.data = data;
     return result;
   }

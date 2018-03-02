@@ -22,12 +22,19 @@ UserProductDataSource {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(
+                        new ProjectionNode("userProjection")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(Arrays.asList(
+                                        new IProjectionConfig.ProjectionColumn("type", "userType"),
+                                        new IProjectionConfig.ProjectionColumn("status", "userStatus"))
+                                )
+                                .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME)),
                         new JoinNode("productJoin")
                                 .withLeftJoinColumns("userConstantJoinCol")
                                 .withRightJoinColumns("prodConstantJoinCol")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
-                                .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "left")
+                                .withConnection("userProjection", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productCategoryJoin")
                                 .withLeftJoinColumns("product_categoryId")
@@ -43,7 +50,9 @@ UserProductDataSource {
                                 .withExpression("hasProduct")
                                 .withConnection("userHasProductCalc")
                 )
-
+                .withDimensions(Arrays.asList(
+                        new Dimension("status", Cardinality.Int, ColumnType.String),
+                        new Dimension("type", Cardinality.Int, ColumnType.String)))
                 .withOutput("hasProductFilter")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

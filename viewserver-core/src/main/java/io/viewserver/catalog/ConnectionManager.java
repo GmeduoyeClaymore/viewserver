@@ -105,6 +105,7 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
         links.remove(hashCode);
         int rowId = linkHashes.index(hashCode);
         linkHashes.remove(hashCode);
+
         this.output.handleRemove(rowId);
     }
 

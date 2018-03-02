@@ -2,9 +2,11 @@ package com.shotgun.viewserver.setup.report;
 
 import io.viewserver.Constants;
 import io.viewserver.execution.nodes.CalcColNode;
+import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.operators.filter.FilterOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -14,6 +16,7 @@ public class OperatorAndConnectionReport {
     public static ReportDefinition getReportDefinition() {
         return new ReportDefinition(ID, ID)
                 .withParameter("operatorPath", "OperatorName", String[].class)
+                .withParameter("@catalogName", "@catalogName", String[].class)
                 .withParameter("operatorPathField", "OperatorName", String[].class)
                 .withParameter("operatorPathPrefix", "Operator Path Prefic", String[].class)
                 .withNodes(
@@ -21,6 +24,7 @@ public class OperatorAndConnectionReport {
                                 .withCalculations(
                                         new CalcColOperator.CalculatedColumn("nodeName", "\"{operatorPathPrefix}\" + {operatorPathField}"))
                                 .withConnection("{operatorPath}"),
+
                             new JoinNode("operatorInputJoin")
                                 .withLeftJoinColumns("nodeName")
                                 .withRightJoinColumns("inputOperator")
@@ -36,10 +40,15 @@ public class OperatorAndConnectionReport {
                                 .withConnection("operatorInputJoin", Constants.OUT, "left")
                                 .withConnection("connections", Constants.OUT, "right")
                                 .withColumnPrefixes("", "output_")
-                                .withAlwaysResolveNames()
+                                .withAlwaysResolveNames(),
+                            new FilterNode("filterOutThisSession")
+                                    .withExpression("!(input_outputOperator like \"*{@catalogName}*\") && !(input_inputOperator like \"*{@catalogName}*\") && !(output_outputOperator like \"*{@catalogName}*\") && !(output_inputOperator like \"*{@catalogName}*\")")
+                                    .withMode(FilterOperator.FilterMode.Filter)
+                        .withConnection("operatorOutputJoin")
+
 
                 )
 
-                .withOutput("operatorOutputJoin");
+                .withOutput("filterOutThisSession");
     }
 }

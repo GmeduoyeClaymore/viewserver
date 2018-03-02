@@ -18,6 +18,7 @@ const Settings_mapStateToProps = (state, props) => { return {
   reportsLoading: isLoading(state,'reportsDao'),
   reportsLoadingErrors: getLoadingError(state,'reportsDao'),
   reportContexts: getDaoState(state,[],'reportContextsDao'),
+  graphNodes: getDaoState(state,[],'graphNodesDao'),
   reportContextsLoading: isLoading(state,'reportContextsDao'),
   reportContextsLoadingErrors: getLoadingError(state,'reportContextsDao'),
   sessions: getDaoState(state,[],'sessionsDao'),
@@ -28,7 +29,7 @@ const Settings_mapStateToProps = (state, props) => { return {
 } }
 
 
-const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
+const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,graphNodes, reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
   return (
     <nav className="nav-group">
       <h5 className="nav-group-title">Navigation</h5>
@@ -59,8 +60,15 @@ const Diagnostics = ({icon, loadingErrors, loading}) => {
   {"Diagnostics"}
   <FullOperatorLink name="Connections" path="/connections"/>
   <FullOperatorLink name="Sessions" path="/sessions"/>
+  <GraphNodesLink name="Graph Nodes" path="/graphNodes"/>
 </div>
 )};
+
+const GraphNodesLink = ({name,path}) => (
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=opName&operatorPathPrefix=/graphNodes/`}} className="nav-group-item" >
+    {name}
+  </NavLink> 
+);
 
 const FullOperatorLink = ({name, path}) => (
   <NavLink to={{pathname : "/fullOperatorView", search: `operator=${path}`}} className="nav-group-item" >
@@ -96,7 +104,7 @@ const ReportContexts = ({reportContexts = [], loading, icon, loadingErrors}) => 
   <div className="nav-group-item"className="nav-group-item" >
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Report Contexts"}
-  {reportContexts.map(r => <ReportContextLink {...r}/>)}
+  {reportContexts.filter(rc => rc.reportName != 'operatorsAndConnections').map(r => <ReportContextLink {...r}/>)}
 </div>
 );
 
@@ -110,7 +118,7 @@ const Sessions = ({sessions = [], loading, icon, loadingErrors}) => (
   <div className="nav-group-item" className="nav-group-item" >
   {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
   {"Sessions"}
-  {sessions.map(r => <SessionsLink {...r}/>)}
+  {sessions.filter(ses => ses.userType != 'slave').map(r => <SessionsLink {...r}/>)}
 </div>
 );
 
@@ -119,6 +127,7 @@ const SessionsLink = ({sessionId,path}) => (
   {sessionId}
 </NavLink>
 );
+
 
 const MenuRow = (props) => {
   return (

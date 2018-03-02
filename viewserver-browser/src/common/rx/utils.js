@@ -13,7 +13,7 @@ export const COLUMN_REMOVED = 'ColumnRemoved';
 export const ERROR = 'Error';
 export const SUCCESS = 'Success';
 
-const DOMAIN_EVENT_TYPES = [ROW_ADDED, ROW_UPDATED, ROW_REMOVED, DATA_RESET];
+const DOMAIN_EVENT_TYPES = [ROW_ADDED, ROW_UPDATED, ROW_REMOVED, DATA_RESET, SNAPSHOT_COMPLETE, DATA_RESET];
 
 Rx.Observable.prototype.timeoutWithError = function (timeout, error) {
   return this.timeoutWith(timeout, Rx.Observable.throw(error));

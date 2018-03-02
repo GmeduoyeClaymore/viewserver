@@ -26,14 +26,14 @@ public class UserRelationshipDataSource {
                                 new Column("relationshipId", "relationshipId", ColumnType.String),
                                 new Column("fromUserId", "fromUserId", ColumnType.String),
                                 new Column("toUserId", "toUserId", ColumnType.String),
-                                new Column("status", "status", ColumnType.String),
-                                new Column("type", "type", ColumnType.String)
+                                new Column("relationshipStatus", "status", ColumnType.String),
+                                new Column("relationshipType", "relationshipType", ColumnType.String)
                         ))
                         .withKeyColumns("relationshipId")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("status", Cardinality.Int, ColumnType.String),
-                        new Dimension("type", Cardinality.Int, ColumnType.String)))
+                        new Dimension("relationshipStatus", Cardinality.Int, ColumnType.String),
+                        new Dimension("relationshipType", Cardinality.Int, ColumnType.String)))
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

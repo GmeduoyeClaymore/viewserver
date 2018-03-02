@@ -131,12 +131,14 @@ class OperatorGroupView extends Component{
     const {operatorGroup,operatorPathField='path',operatorPathPrefix} = this.props;
     const path = row[operatorPathField];
     this.props.selectOperator({operatorGroup, operator : path, operatorPathPrefix, operatorPathField});
+    this.setState({selectedOperatorObj: row});
   }
 
   onNodeClick(event, node){
     const {operatorGroup,operatorPathField='path',operatorPathPrefix} = this.props;
     const path = node.id;
     this.props.selectOperator({operatorGroup, operator : path, operatorPathPrefix, operatorPathField});
+    this.setState({selectedOperatorObj: node.data});
   }
 
   componentWillReceiveProps(props){
@@ -178,8 +180,8 @@ class OperatorGroupView extends Component{
   }
 
   render(){
-    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, selectedOperatorObj, mode, toggleMode, operatorPathPrefix = '', operatorGroup, operatorContentsErrors}  = this.props;
-    const {scenarioResults = {}} = this.state;
+    const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, mode, toggleMode, operatorPathPrefix = '', operatorGroup, operatorContentsErrors}  = this.props;
+    const {scenarioResults = {}, selectedOperatorObj} = this.state;
     return <div className="flex flex-col"> 
                 <h1>{operatorGroup}</h1>
                 <a onClick={toggleMode}>{mode === 'graph' ? 'Table' : 'Graph'}</a>
