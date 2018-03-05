@@ -75,7 +75,7 @@ class AddressLookup extends Component {
         const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('postal_code') && !p.types.includes('political'));
 
         this.setState({
-          suggestedPlaces: filteredPredictions,
+          suggestedPlaces: responseJSON.predictions,
           busy: false
         });
       } catch (error) {
