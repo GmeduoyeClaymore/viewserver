@@ -71,7 +71,7 @@ public class VehicleDetailsController {
             String color = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Colour"));
             return new Vehicle(dim, make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
         }catch (Exception ex){
-            log.error(String.format("Null response returned from vehicle details query for reg %s", registrationNumber), ex);
+            log.error(String.format("There was a problem fetching vehicle details for reg %s", registrationNumber), ex);
             throw new RuntimeException("There was a problem fetching your vehicle details");
         }
     }
