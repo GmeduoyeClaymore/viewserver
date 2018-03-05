@@ -26,7 +26,7 @@ export default class OrderSummaryDao{
     return 'orderSummaryDao';
   }
 
-  getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts}){
+  getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts, userId}){
     const reportContext =  {
       reportId,
       dimensions: {
@@ -41,8 +41,9 @@ export default class OrderSummaryDao{
       reportContext.dimensions.dimension_orderId = orderId;
     }
 
-    reportContext.dimensions.dimension_userId = '@userId';
-
+    if (userId != undefined){
+      reportContext.dimensions.dimension_userId = userId;
+    }
     if (driverId !== undefined){
       reportContext.dimensions.dimension_driverId = driverId;
     }
