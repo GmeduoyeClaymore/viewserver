@@ -26,7 +26,7 @@ public class UserRelationshipDataSource {
                                 new Column("relationshipId", "relationshipId", ColumnType.String),
                                 new Column("fromUserId", "fromUserId", ColumnType.String),
                                 new Column("toUserId", "toUserId", ColumnType.String),
-                                new Column("relationshipStatus", "status", ColumnType.String),
+                                new Column("relationshipStatus", "relationshipStatus", ColumnType.String),
                                 new Column("relationshipType", "relationshipType", ColumnType.String)
                         ))
                         .withKeyColumns("relationshipId")

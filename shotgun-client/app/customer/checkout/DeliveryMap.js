@@ -41,7 +41,7 @@ class DeliveryMap extends Component{
   }
 
   getOptionsFromProps(props){
-    const {selectedProduct} = props;
+    const {selectedProduct, position} = props;
     return {
       selectedProduct,
       position,

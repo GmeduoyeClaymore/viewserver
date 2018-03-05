@@ -131,7 +131,7 @@ public class ControllerUtils{
             for(Map.Entry<String,String> entry :  requestHeaders.entrySet()){
                 connection.setRequestProperty(entry.getKey(),entry.getValue());
             }
-            connection.setConnectTimeout(2000);
+            connection.setConnectTimeout(10000);
             connection.setUseCaches(false);
             connection.setDoOutput(true);
 

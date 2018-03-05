@@ -58,6 +58,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
     private boolean alwaysResolveNames;
     private int[] joinKeyComponents;
     private String columnsOnOutput = "";
+    private boolean hasVerifiedJoinColumns;
 
     public JoinOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
@@ -145,18 +146,23 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
         if (joinColumns == null || joinColumns.length == 0) {
             return 0;
         }
-        String error = "";
-        for(int i= 0;i< joinColumns.length;i++){
-            if(error.length() > 0){
-                error += ",";
-            }
-            if(joinColumns[i] == null){
-                error += joinColumnNames[i];
-            }
 
-        }
-        if(error.length() > 0){
-            throw new RuntimeException(String.format("Attempting to join on keys \"%s\" but keys \"%s\" have not been found. Columns available on output are  \"%s\"",String.join(",",joinColumnNames),error, columnsOnOutput));
+
+        if(!hasVerifiedJoinColumns) {
+            String error = "";
+            for (int i = 0; i < joinColumns.length; i++) {
+                if (error.length() > 0) {
+                    error += ",";
+                }
+                if (joinColumns[i] == null) {
+                    error += joinColumnNames[i];
+                }
+
+            }
+            if (error.length() > 0) {
+                throw new RuntimeException(String.format("Attempting to join on keys \"%s\" but keys \"%s\" have not been found. Columns available on output are  \"%s\"", String.join(",", joinColumnNames), error, columnsOnOutput));
+            }
+            hasVerifiedJoinColumns = true;
         }
 
         if (joinColumns.length == 1) {
@@ -236,6 +242,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
                     Arrays.fill(rightJoinHolders, null);
                 }
             }
+            hasVerifiedJoinColumns = false;
             columnsOnOutput = "";
             super.onSchemaReset();
         }
@@ -273,6 +280,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
 
         @Override
         protected void onColumnRemove(ColumnHolder columnHolder) {
+            hasVerifiedJoinColumns = false;
         }
 
         @Override
