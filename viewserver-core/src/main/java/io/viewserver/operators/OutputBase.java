@@ -16,16 +16,24 @@
 
 package io.viewserver.operators;
 
+import io.viewserver.Constants;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.execution.TableMetaData;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.schema.Schema;
 import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 
 /**
  * Created by nickc on 26/09/2014.
@@ -40,6 +48,8 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     private Schema schema;
     private IChangeQueue changeQueue;
     protected TableMetaData metaData;
+    private PublishSubject<OperatorEvent> subject;
+
 
     protected OutputBase(String name, IOperator owner) {
         this.name = name;
@@ -51,8 +61,13 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         this.schema.setOwner(this);
         this.columnHolderFactory = new ColumnHolderFactory();
         this.metaData = new TableMetaData();
-
         owner.getExecutionContext().getMetadataRegistry().registerOutput(this);
+        this.subject = PublishSubject.create();
+    }
+    //be careful when using this it will start spamming alot of objects if you subscribe
+    @Override
+    public Observable<OperatorEvent>  observable(){
+        return this.subject;
     }
 
     public String getName() {
@@ -79,6 +94,14 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
             getRowTracker().handleAdd(row);
         }
         getCurrentChanges().handleAdd(row);
+        if(subject.hasObservers()){
+            log.info("RX Subject Handling Add - " +row);
+            subject.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),row,null)));
+        }
+    }
+
+    private IOutput getProducer() {
+        return this;
     }
 
     @Override
@@ -87,6 +110,10 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
             throw new IllegalStateException("Cannot handle update for inactive row " + row);
         }
         getCurrentChanges().handleUpdate(row);
+        if(subject.hasObservers()){
+            log.info("RX Subject Handling UPDATE - " +row);
+            subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(),row,null)));
+        }
     }
 
     @Override
@@ -95,6 +122,10 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
             getRowTracker().handleRemove(row);
         }
         getCurrentChanges().handleRemove(row);
+        if(subject.hasObservers()){
+            log.info("RX Subject Handling REMOVE - " +row);
+            subject.onNext(new OperatorEvent(EventType.ROW_REMOVE,getRowDetails(getProducer(),row,null)));
+        }
     }
 
     @Override
@@ -213,17 +244,28 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     @Override
     public void resetSchema() {
+
         getCurrentChanges().handleStatus(Status.SchemaReset);
+        if(subject.hasObservers()){
+            log.info("RX Subject Handling reset schema");
+            subject.onNext(new OperatorEvent(EventType.SCHEMA_RESET,null));
+        }
     }
 
     @Override
     public void clearSchema() {
+
         getSchema().clear();
     }
 
     @Override
     public void resetData() {
+
         getCurrentChanges().handleStatus(Status.DataReset);
+        if(subject.hasObservers()){
+            log.info("RX Subject Handling reset DATA");
+            subject.onNext(new OperatorEvent(EventType.DATA_RESET,null));
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
@@ -11,8 +11,6 @@ import io.viewserver.command.ControllerContext;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.operators.table.TableKey;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +21,10 @@ import java.util.Date;
 @Controller(name = "phoneCallController")
 public class PhoneCallController {
     private static final Logger log = LoggerFactory.getLogger(PhoneCallController.class);
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
 
-    public PhoneCallController(ShotgunTableUpdater shotgunTableUpdater) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+    public PhoneCallController(TableUpdater tableUpdater) {
+        this.tableUpdater = tableUpdater;
     }
 
     @ControllerAction(path = "getCustomerVirtualNumber", isSynchronous = true)
@@ -71,7 +69,7 @@ public class PhoneCallController {
                 .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
+        tableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
 
         Record driverVirtualNumber = new Record()
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
@@ -80,7 +78,7 @@ public class PhoneCallController {
                 .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        shotgunTableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
+        tableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
 
         return availablePhoneNumbers;
     }

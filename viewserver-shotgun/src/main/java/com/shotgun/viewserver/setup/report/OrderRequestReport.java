@@ -18,17 +18,25 @@ public class OrderRequestReport {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
                         .withParameter("noRequiredForOffload", "Number required for offload", int[].class) // not used ?
-                        .withParameter("driverLatitude", "Driver Latitude", double[].class)
-                        .withParameter("driverLongitude", "Driver Longitude", double[].class)
-                        .withParameter("maxDistance", "Maximum Distance", String[].class)
+                        .withParameter("driverLatitude", "Driver Latitude Override", double[].class)
+                        .withParameter("driverLongitude", "Driver Longitude Override", double[].class)
+                        .withParameter("maxDistance", "Maximum Distance Override", String[].class)
+                        .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                         .withNodes(
                                 new FilterNode("orderFilter")
                                         .withExpression("status == \"PLACED\"")
                                         .withConnection("#input", null, Constants.IN),
+                                new JoinNode("userJoin")
+                                        .withLeftJoinColumns("userId")
+                                        .withRightJoinColumns("userId")
+                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right")
+                                        .withColumnPrefixes("", "driver_")
+                                        .withAlwaysResolveNames(),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
                                         .withRightJoinColumns("deliveryAddressId")
-                                        .withConnection("orderFilter", Constants.OUT, "left")
+                                        .withConnection("userJoin", Constants.OUT, "left")
                                         .withColumnPrefixes("", "origin_")
                                         .withAlwaysResolveNames()
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
@@ -41,10 +49,12 @@ public class OrderRequestReport {
                                         .withAlwaysResolveNames()
                                         .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new CalcColNode("distanceCalcCol")
-                                        .withCalculations(new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, {driverLatitude}, {driverLongitude}, \"M\")"))
+                                        .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, isNull({driverLatitude},driver_latitude), isNull({driverLongitude},driver_longitude), \"M\")"),
+                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(origin_latitude, origin_longitude, isNull({driverLatitude},driver_latitude), isNull({driverLongitude},driver_longitude), \"M\"))"))
                                         .withConnection("destinationDeliveryAddressJoin"),
                                 new FilterNode("distanceFilter")
-                                        .withExpression("currentDistance <= {maxDistance}")
+                                        .withExpression("if((currentDistanceFilter <= isNull({maxDistance},driver_range)) ")
                                         .withConnection("distanceCalcCol"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

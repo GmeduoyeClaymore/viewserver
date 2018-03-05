@@ -16,8 +16,7 @@ export default class DaoDataSource{
         this.dao.rawDataObservable.subscribe(this.handleDataSinkUpdate.bind(this));
         this.columnSorting = {};
         const {updateSubscription} = this;
-        this.undebouncedUpdateSubscrption = updateSubscription;
-        this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
+        this.updateSubscription = this.updateSubscription.bind(this);
     }
 
     static DIRECTION_CYCLE=['asc','desc',undefined];
@@ -110,6 +109,7 @@ export default class DaoDataSource{
             await this.dao.updateSubscription({...options,columnsToSort : options.columnsToSort || this.getViewServerColumnSorting()});
         }catch(exception){
             Logger.warning(`Issue updating subscription ${exception}. Options have been updated though.`)
+            throw exception;
         }finally{
             this.onDataRequested.next(false)
         }

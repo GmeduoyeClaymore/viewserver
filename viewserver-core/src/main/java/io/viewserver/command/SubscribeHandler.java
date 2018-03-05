@@ -56,6 +56,9 @@ public class SubscribeHandler extends SubscriptionHandlerBase<ISubscribeCommand>
                 options = Options.fromMessage(data.getOptions());
                 optionsExecutionPlanContext.setOptions(options);
             }
+
+            SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
+
             String output = data.getOutputName();
             if (output == null) {
                 output = Constants.OUT;

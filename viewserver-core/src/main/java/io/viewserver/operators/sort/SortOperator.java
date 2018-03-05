@@ -191,7 +191,9 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             }
 
             tableStorage.initialise(128, output.getSchema(), output.getCurrentChanges());
-            ((IWritableColumn) rankColumn.getColumn()).storePreviousValues();
+            if(rankColumn != null) {
+                ((IWritableColumn) rankColumn.getColumn()).storePreviousValues();
+            }
         }
 
         @Override

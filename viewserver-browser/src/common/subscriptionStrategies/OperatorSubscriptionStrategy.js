@@ -6,15 +6,16 @@ export default class OperatorSubscriptionStrategyStrategy{
     this.dataSink = dataSink;
     this.path = path;
     this.dispose = this.dispose.bind(this);
-    this.updateSubscription = debounce(this.updateSubscription.bind(this), 500);
+    this.updateSubscription = this.updateSubscription.bind(this);
   }
 
-  updateSubscription(options){
+  async updateSubscription(options){
     if (this.subscribeCommand === undefined){
       this.subscribeCommand = this.client.subscribe(this.path, options, this.dataSink);
     } else {
       this.client.updateSubscription(this.subscribeCommand.id, options, this.dataSink);
     }
+    return this.dataSink.dataSinkUpdated.waitForSuccess().toPromise();
   }
 
   dispose(){

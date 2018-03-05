@@ -4,13 +4,20 @@ import {Button, Footer, FooterTab} from 'native-base';
 import {withRouter} from 'react-router';
 import {Icon} from 'common/components';
 
-const CustomerMenuBar = ({history, match}) => {
+const CustomerMenuBar = ({history, match, isReady}) => {
   return <Footer>
-    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/Checkout`)}><Icon name='list'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/CustomerOrders`)}><Icon name='jobs'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/Settings/CustomerSettings`)}><Icon name='one-person'/></Button></FooterTab>
+    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/Checkout`)}><Icon name='list'/></Button></FooterTab>
+    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/CustomerOrders`)}><Icon name='jobs'/></Button></FooterTab>
+    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/Settings/CustomerSettings`)}><Icon name='one-person'/></Button></FooterTab>
+    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/UserRelationships`)}><Icon name='two-people'/></Button></FooterTab>
   </Footer>;
 };
 
-export default withRouter(connect()(CustomerMenuBar));
+const mapStateToProps = (state, initialProps) => {
+  return {
+    ...initialProps
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(CustomerMenuBar));
 

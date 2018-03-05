@@ -18,11 +18,12 @@ package io.viewserver.catalog;
 
 import io.viewserver.Constants;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.operators.IOutput;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import java.util.*;
 
@@ -31,6 +32,7 @@ import java.util.*;
  */
 public class CatalogHolder implements ICatalog {
     private final HashMap<String, IOperator> operatorsByName = new HashMap<>();
+    private PublishSubject<IOperator> operatorRegistrations = PublishSubject.create();
     private final TIntObjectHashMap<IOperator> operatorsByHash = new TIntObjectHashMap<>();
     private final IntHashSet operatorIds = new IntHashSet(8, 0.75f, -1);
     private Map<String, ICatalog> children = new HashMap<>();
@@ -75,13 +77,53 @@ public class CatalogHolder implements ICatalog {
         if (operatorsByName.putIfAbsent(operator.getName(), operator) != null) {
             throw new IllegalArgumentException("Operator '" + operator.getName() + "' already exists");
         }
+
         int hashCode = operator.hashCode();
         operatorsByHash.put(hashCode, operator);
         operatorIds.addInt(hashCode);
 
         if (operator instanceof ICatalog) {
             addChild((ICatalog)operator);
+        }else{
+            operatorRegistrations.onNext(operator);
         }
+    }
+
+    @Override
+    public Observable<IOperator> getOperatorObservable(String name) {
+        int slash = name.indexOf('/');
+        boolean isLocalName = (slash == -1);
+
+        if (slash == 0) {
+            // root catalog
+            if (name.length() == 1) {
+                if (getParent() != null) {
+                    // we're not the root, so go to our parent
+                    return getParent().getOperatorObservable(name);
+                }
+                // we're the root
+                return rx.Observable.just(owner);
+            }
+
+            // absolute path
+            String myPath = owner.getPath();
+            if (getParent() != null) {
+                myPath += "/";
+            }
+            if (name.startsWith(myPath)) {
+                // the path points to a descendant of this catalog, so grab the path relative to here
+                name = name.substring(myPath.length());
+            } else if (getParent() != null) {
+                // the path doesn't start with our path, so go up the tree
+                return getParent().getOperatorObservable(name);
+            } else {
+                // the path doesn't start with our path, and we are at the root, so nowhere else to look!
+                return null;
+            }
+        }
+
+        // relative path
+        return getRelativeOperatorObservable(name, isLocalName);
     }
 
     @Override
@@ -151,6 +193,48 @@ public class CatalogHolder implements ICatalog {
         }
         // we either found it here, or it doesn't exist
         return operator;
+    }
+
+    private Observable<IOperator> getRelativeOperatorObservable(String relativePath, boolean isLocalName) {
+        String name;
+        int nextSlash = relativePath.indexOf("/");
+        if (nextSlash > -1) {
+            // a descendant of a child catalog
+            name = relativePath.substring(0, nextSlash);
+            relativePath = relativePath.substring(nextSlash + 1);
+        } else {
+            // a child of this catalog
+            name = relativePath;
+            relativePath = null;
+        }
+        if ("..".equals(name)) {
+            if (getParent() != null) {
+                return getParent().getOperatorObservable(relativePath);
+            } else {
+                return null;
+            }
+        }
+        String finalRelativePath = relativePath;
+        return waitForOperator(name).flatMap(operator -> {
+            if (finalRelativePath != null && operator instanceof ICatalog) {
+                // pass the path to the child catalog
+                return ((ICatalog) operator).getOperatorObservable(finalRelativePath);
+            }
+            if (operator == null && isLocalName && getParent() != null) {
+                // if it's a local name, search up the tree
+                return getParent().getOperatorObservable(name);
+            }
+            return rx.Observable.just(operator);
+
+        });
+
+    }
+
+    private Observable<IOperator> waitForOperator(String name) {
+        if(operatorsByName.containsKey(name)){
+            return rx.Observable.just(operatorsByName.get(name));
+        }
+        return operatorRegistrations.filter(op -> op.getName().equals(name)).take(1);
     }
 
     @Override

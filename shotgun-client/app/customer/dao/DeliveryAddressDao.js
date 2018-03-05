@@ -45,11 +45,7 @@ export default class DeliveryAddressDao{
   }
 
   transformOptions(options){
-    const {userId} = options;
-    if (typeof userId === 'undefined'){
-      throw new Error('userId should be defined');
-    }
-    return {...options, filterExpression: `userId == \"${userId}\"`};
+    return {...options, filterExpression: 'userId == "@userId"'};
   }
 
   extendDao(dao){

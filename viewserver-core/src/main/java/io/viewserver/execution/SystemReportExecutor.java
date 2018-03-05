@@ -70,7 +70,7 @@ public class SystemReportExecutor {
         ReportContextExecutionPlanContext activeExecutionPlanContext;
 
         ReportDefinition reportDefinition = getReportDefinition(reportContext);
-        IDataSource dataSource = getDataSource(reportDefinition.getDataSource());
+        IDataSource dataSource = reportDefinition.getDataSource() == null ? null : getDataSource(reportDefinition.getDataSource());
 
         if (!reportContext.getChildContexts().isEmpty()) {
             MultiCommandResult childContextsResult = MultiCommandResult.wrap("ExecuteContext" + prefix, commandResult);
@@ -130,7 +130,9 @@ public class SystemReportExecutor {
     private ReportExecutionPlanContext buildReportExecutionPlanContext(ReportContext reportContext, IDataSource dataSource, ReportDefinition reportDefinition, CommandResult remoteConfigurationResult) {
 
         ReportExecutionPlanContext reportExecutionPlanContext = new ReportExecutionPlanContext();
-        reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
+        if(dataSource != null) {
+            reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
+        }
         reportExecutionPlanContext.setReportContext(reportContext);
         reportExecutionPlanContext.setGraphDefinition(reportDefinition);
         reportExecutionPlanContext.setDataSource(dataSource);
@@ -144,7 +146,7 @@ public class SystemReportExecutor {
         IDataSource dataSource = dataSourceRegistry.get(name);
 
         if(this.dataSourceRegistry.getStatus(name) != DataSourceStatus.INITIALIZED){
-            throw new ViewServerException(String.format("DataSource %s has not been initialised", dataSource.getName()));
+            throw new ViewServerException(String.format("DataSource %s has not been initialised", name));
         }
 
         return dataSource;

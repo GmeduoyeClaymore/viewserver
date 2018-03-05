@@ -35,7 +35,7 @@ class DriverOrderRequests extends Component{
   }
 
   render(){
-    const { selectedContentTypeIndex, position, busy, selectedContentTypes, contentTypeOptions, selectedContentType } = this.props;
+    const { selectedContentTypeIndex, busy, selectedContentTypes, contentTypeOptions, selectedContentType } = this.props;
     if (busy) {
       return <LoadingScreen text="Loading Map" />;
     }
@@ -55,7 +55,7 @@ class DriverOrderRequests extends Component{
           daoName='orderRequestDao'
           dataPath={['driver', 'orders']}
           rowView={RowView}
-          options={{contentType: selectedContentType, contentTypeOptions, position}}
+          options={{contentType: selectedContentType, contentTypeOptions}}
           paginationWaitingView={Paging}
           emptyView={NoItems}
           pageSize={10}
@@ -67,8 +67,6 @@ class DriverOrderRequests extends Component{
 }
 
 const mapStateToProps = (state, initialProps) => {
-  const vehicle = getDaoState(state, ['vehicle'], 'vehicleDao');
-  const position = getDaoState(state, ['position'], 'userDao');
   const user = getDaoState(state, ['user'], 'userDao');
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const navigationProps = getNavigationProps(initialProps) || [];
@@ -90,10 +88,8 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentType,
     selectedContentTypeIndex,
     isDelivery: navigationProps.isDelivery !== undefined ? navigationProps.isDelivery : true,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !vehicle || !position,
-    vehicle,
-    user,
-    position
+    busy: isAnyLoading(state, ['vehicleDao', 'userDao']),
+    user
   };
 };
 

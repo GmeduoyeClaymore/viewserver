@@ -6,8 +6,9 @@ import {isEqual} from 'lodash';
 import {GetConnectedClientFromLoginDao} from 'common/dao/loginUtils'
 
 export default class Dao {
-  constructor(daoContext) {
+  constructor(daoContext, sendAllEvents) {
     this.daoContext = daoContext;
+    this.sendAllEvents = sendAllEvents;
     this.subject = new Rx.Subject();
     this.rawDataSubject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
@@ -69,18 +70,22 @@ export default class Dao {
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       const _this = this;
-      this.rowEventSubscription = this.rowEventObservable.map(ev => this.daoContext.mapDomainEvent(ev, _this.dataSink)).subscribe(ev => this.subject.next(ev));
+      const {sendAllEvents} = _this;
+      this.rowEventSubscription = this.rowEventObservable.subscribe((ev) => {
+        if (sendAllEvents || this.dataSink.isSnapshotComplete || ev.Type == Rx.DATA_RESET) {
+          this.subject.next(this.daoContext.mapDomainEvent(ev, this.dataSink));
+        }
+      });
       this.rawDataEventSubscription = this.dataSink.dataSinkUpdated.subscribe(ev => this.rawDataSubject.next(ev));
       Logger.info(`Updating subscription for  ${this.daoContext.name}`);
     }
         
     try {
-      
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
-      this.subscriptionStrategy.updateSubscription(optionsMessage);
+      await this.subscriptionStrategy.updateSubscription(optionsMessage);
       this.isSubscribed = true;
     } catch (error){
       return Promise.reject(error);

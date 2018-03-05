@@ -21,6 +21,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(DeliveryAddressDataSource.getDataSource());
         dataSources.add(DeliveryDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());
+        dataSources.add(UserRelationshipDataSource.getDataSource());
         dataSources.add(OrderItemsDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());
         dataSources.add(ProductCategoryDataSource.getDataSource());
@@ -36,10 +37,12 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
         reportDefinitions.put(CustomerOrderSummaryReport.ID, CustomerOrderSummaryReport.getReportDefinition());
         reportDefinitions.put(DriverOrderSummaryReport.ID, DriverOrderSummaryReport.getReportDefinition());
-        reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
+        reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
+        reportDefinitions.put(OperatorAndConnectionReport.ID, OperatorAndConnectionReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
-        reportDefinitions.put(UserProductReport.ID, UserProductReport.getReportDefinition());
+        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS, UserRelationshipReport.getReportDefinition());
+        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, UserRelationshipReport.getUsersForProductReportDefinition());
         reportDefinitions.put(ContentTypeReport.ID, ContentTypeReport.getReportDefinition());
         return reportDefinitions;
     }

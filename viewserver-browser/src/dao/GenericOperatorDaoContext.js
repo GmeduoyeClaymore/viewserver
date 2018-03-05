@@ -11,7 +11,7 @@ export default class GenericOperatorDaoContext{
   get defaultOptions(){
     return {
       offset: 0,
-      limit: 20,
+      limit: 50,
       columnName: undefined,
       columnsToSort: undefined,
       filterMode: 2, //Filtering

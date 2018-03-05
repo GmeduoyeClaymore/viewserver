@@ -5,8 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.ShotgunTableUpdater;
-import com.shotgun.viewserver.constants.OrderStatuses;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.sun.net.httpserver.HttpExchange;
@@ -17,19 +16,14 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.Controller;
 import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
-import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Controller(name = "nexmoController")
 public class NexmoController {
@@ -38,15 +32,15 @@ public class NexmoController {
     private Catalog systemCatalog;
     private final String apiKey;
     private final String apiSecret;
-    private final ShotgunTableUpdater shotgunTableUpdater;
+    private final TableUpdater tableUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret, ShotgunTableUpdater shotgunTableUpdater) {
+    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret, TableUpdater tableUpdater) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
         this.createHttpServer(httpPort);
     }
 
@@ -164,7 +158,7 @@ public class NexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                shotgunTableUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                tableUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
             }
         }
     }

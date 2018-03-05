@@ -43,13 +43,22 @@ public class ControllerContext implements AutoCloseable{
     }
 
     private static ConcurrentHashMap<String,Object> getParams(){
-        return contextParams.get(current.get().getPeerSession());
+        IPeerSession peerSession = current.get().getPeerSession();
+        return getParams(peerSession);
+    }
+
+    public static ConcurrentHashMap<String, Object> getParams(IPeerSession peerSession) {
+        return contextParams.get(peerSession);
     }
 
     public static void set(String name, Object value) {
         IPeerSession peerSession1 = current.get().getPeerSession();
+        set(name, value, peerSession1);
+    }
+
+    public static void set(String name, Object value, IPeerSession peerSession1) {
         synchronized (peerSession1){
-            ConcurrentHashMap<String,Object> params = getParams();
+            ConcurrentHashMap<String,Object> params = getParams(peerSession1);
             if(params == null){
                 params = new ConcurrentHashMap<>();
                 peerSession1.addDisconnectionHandler(new PeerSession.IDisconnectionHandler() {
@@ -70,8 +79,13 @@ public class ControllerContext implements AutoCloseable{
     }
 
     public static Object get(String name) {
-        synchronized (current.get().getPeerSession()){
-            ConcurrentHashMap<String,Object> params = getParams();
+        IPeerSession peerSession = current.get().getPeerSession();
+        return get(name, peerSession);
+    }
+
+    private static Object get(String name, IPeerSession peerSession) {
+        synchronized (peerSession){
+            ConcurrentHashMap<String,Object> params = getParams(peerSession);
             if(params == null){
                 return null;
             }

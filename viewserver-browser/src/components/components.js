@@ -1,4 +1,4 @@
-import electron from 'electron';
+import electron from 'electron'; 
 
 import { createHashHistory } from 'history';
 import { applyMiddleware, createStore, compose } from 'redux';
@@ -82,6 +82,21 @@ const history = createHashHistory({
 // Compile reducers
 reducers = combineReducers( {...reducers,dao} );
 
+Array.prototype.removeIf = function(callback) {
+  var i = 0;
+  const result = [];
+  while (i < this.length) {
+      if (callback(this[i], i)) {
+          result.push(this[i]);
+          this.splice(i, 1);
+      }
+      else {
+          ++i;
+      }
+  }
+  return result;
+};
+
 // Start history
 // Merge middlewares
 let middlewares = [
@@ -108,9 +123,29 @@ const store = undefined === window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
 createStore(finalReducer, compose(applyMiddleware(...middlewares))) :
 createStore(finalReducer, window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(applyMiddleware(...middlewares)));
 
+let middlewares2 = [
+  thunk 
+];
+
+const graphReducer = (state = {}, action) => {
+    if(action.type == 'renderReport'){
+      const {data} = action;
+      return state.setIn([data.name], parseReportFromJson(data.json));
+    }
+};
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+  name: 'Operator Graph', actionsBlacklist: ['REDUX_STORAGE_SAVE']
+});
+
+const store2 = undefined === window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+createStore(graphReducer, compose(applyMiddleware(...middlewares2))) :
+createStore(graphReducer, composeEnhancers(applyMiddleware(...middlewares2)));
+
 // Export all the separate modules
 export {
   components,
   history,
-  store
+  store,
+  store2
 };

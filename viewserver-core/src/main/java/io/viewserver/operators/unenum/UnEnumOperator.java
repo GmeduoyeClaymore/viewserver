@@ -59,7 +59,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
     @Override
     protected IUnEnumConfig mergePendingConfig(IUnEnumConfig pendingConfig, IUnEnumConfig newConfig) {
-        if (!pendingConfig.getDataSource().getName().equals(newConfig.getDataSource().getName())) {
+        if (pendingConfig.getDataSource() != null && !pendingConfig.getDataSource().getName().equals(newConfig.getDataSource().getName())) {
             throw new IllegalStateException("Cannot merge configs with conflicting data sources");
         }
         return pendingConfig;
@@ -78,7 +78,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
         @Override
         protected void onColumnAdd(ColumnHolder columnHolder) {
-            Dimension dimension = dataSource.getDimension(columnHolder.getName());
+            Dimension dimension = dataSource == null ? null : dataSource.getDimension(columnHolder.getName());
             if (dimension != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
                     && (dimensions == null || dimensions.isEmpty() || dimensions.contains(dimension.getName()))) {
                 ColumnType type = dimension.getColumnType().getColumnType();

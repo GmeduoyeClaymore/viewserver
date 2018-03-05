@@ -71,6 +71,9 @@ public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
 
     @Override
     protected String getConfigForOperatorName(ParameterHelper parameterHelper) {
+        if(dataSource == null){
+            return null;
+        }
         return String.format("unenum:%s:%s", dataSource.getName(), StringUtils.join(dimensions, ','));
     }
 }

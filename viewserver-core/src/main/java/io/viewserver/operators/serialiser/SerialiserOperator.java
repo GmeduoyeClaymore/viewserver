@@ -230,6 +230,7 @@ public class SerialiserOperator extends OperatorBase {
 
         @Override
         protected void onRowAdd(int row) {
+            log.debug("Row added on serialiser {}",commandId);
             if (snapshotComplete && isSnapshotOnly) {
                 return;
             }
@@ -238,6 +239,7 @@ public class SerialiserOperator extends OperatorBase {
 
         @Override
         protected void onRowUpdate(int row, IRowFlags rowFlags) {
+            log.debug("Row updated on serialiser {}",commandId);
             if (snapshotComplete && isSnapshotOnly) {
                 return;
             }
@@ -415,6 +417,7 @@ public class SerialiserOperator extends OperatorBase {
                 rowEvent.getColumnValues().add(columnValue);
                 columnValue.release();
             }
+            log.debug("Added row event on serialiser {}",commandId);
             pendingMessage.getTableEvent().getRowEvents().add(rowEvent);
             rowEvent.release();
         }

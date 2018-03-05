@@ -16,5 +16,6 @@ public final class TableNames {
     public static final String ORDER_ITEM_TABLE_NAME = "/datasources/orderItem/orderItem";
     public static final String CONTENT_TYPE_TABLE_NAME = "/datasources/contentType/contentType";
     public static final String PHONE_NUMBER_TABLE_NAME = "/datasources/phoneNumber/phoneNumber";
+    public static final String USER_RELATIONSHIP_TABLE_NAME = "/datasources/userRelationship/userRelationship";
 }
 

@@ -1,4 +1,5 @@
 import Logger from 'common/Logger';
+import {isEqual} from 'lodash';
 
 export const getDaoCommandStatus = (state, commandName, daoName) => {
   return state.getIn(['dao', daoName, 'commands', commandName, 'status']);
@@ -66,4 +67,19 @@ export const isAnyLoading = (state, daoNames) => {
 
 export const getNavigationProps = (props) => {
   return (props && props.location && props.location.state ? props.location.state : {});
+};
+
+export const hasAnyOptionChanged = (prev = {}, current = {}, properties = []) => {
+  for (let i = 0, len = properties.length; i < len; i++) {
+    const propertyName = properties[i];
+    const prevValue = prev[propertyName];
+    const currentValue = current[propertyName];
+    if (!prevValue && !currentValue){
+      continue;
+    }
+    if (!isEqual(prevValue, currentValue)){
+      return true;
+    }
+  }
+  return false;
 };

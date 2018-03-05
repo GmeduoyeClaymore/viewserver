@@ -39,10 +39,9 @@ class CustomerOrders extends Component{
     }
   }
   getReportOptions(){
-    const {isCompleted, userId} = this.props;
+    const {isCompleted} = this.props;
     return  {
       isCompleted,
-      userId,
       columnsToSort: [{ name: 'from', direction: 'asc' }],
       reportId: 'customerOrderSummary'};
   }

@@ -22,9 +22,7 @@ import io.viewserver.execution.steps.*;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by nickc on 31/10/2014.
- */
+
 public class UserExecutionPlan implements IExecutionPlan<OptionsExecutionPlanContext> {
     private int commandId;
 
@@ -39,7 +37,8 @@ public class UserExecutionPlan implements IExecutionPlan<OptionsExecutionPlanCon
                 new UserParametersStep(),
                 new UserFilterStep(commandId),
                 new UserProjectionStep(commandId),
-                new SortAndPageStep(commandId)
-        );
+                new SortAndPageStep(commandId),
+                new UserUnEnumStep(commandId)
+                );
     }
 }

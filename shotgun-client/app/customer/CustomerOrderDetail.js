@@ -21,10 +21,9 @@ class CustomerOrderDetail extends Component{
   }
 
   subscribeToOrderSummary(props){
-    const {dispatch, orderId, orderSummary, userId} = props;
+    const {dispatch, orderId, orderSummary} = props;
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('orderSummaryDao', {
-        userId,
         orderId,
         reportId: 'customerOrderSummary'
       }));

@@ -61,6 +61,8 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
                 optionsExecutionPlanContext.setOptions(options);
             }
 
+            SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
+
             optionsExecutionPlanContext.setDataSource(dataSource);
             optionsExecutionPlanContext.setInput(dataSource.getFinalOutput());
             optionsExecutionPlanContext.setDistributionManager(distributionManager);
@@ -73,13 +75,6 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
             //for sorting, paging etc - only allow on the master node
             if(this.distributionManager.getNodeType().equals(IInitialiseSlaveCommand.Type.Master)) {
                 multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
-
-                CommandResult unenumeratorResult = multiCommandResult.getResultForDependency("Unenumerator");
-                IConfiguratorSpec.OperatorSpec unEnumSpec = this.getUnEnumSpec(peerSession.getExecutionContext(),
-                        graphNodesCatalog,
-                        optionsExecutionPlanContext,
-                        unenumeratorResult);
-                optionsExecutionPlanContext.setInput(unEnumSpec.getName());
 
                 String inputOperator = optionsExecutionPlanContext.getInputOperator();
                 if (inputOperator.charAt(0) != '/') {

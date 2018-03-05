@@ -1,0 +1,41 @@
+export const setStateIfIsMounted = (component) => {
+    //if we're debugging then use the redux devtools extension
+    let {componentDidMount, componentWillUnmount, setState} = component;
+    if (componentDidMount){
+      componentDidMount = componentDidMount.bind(component);
+    }
+    if (componentWillUnmount){
+      componentWillUnmount = componentWillUnmount.bind(component);
+    }
+    if (setState){
+      setState = setState.bind(component);
+    }
+    component.componentDidMount = () => {
+      component.isMountedComponentMounted = true;
+      if (componentDidMount){
+        componentDidMount();
+      }
+    };
+  
+  
+    component.componentWillUnmount = () => {
+      component.isMountedComponentMounted = false;
+      if (componentWillUnmount){
+        componentWillUnmount();
+      }
+    };
+  
+  
+    component.setState = (partialState, continuewWith) => {
+      if (component.isMountedComponentMounted){
+        if (setState){
+          setState(partialState, continuewWith);
+        }
+      }
+    };
+
+    return component;
+  };
+
+  export default setStateIfIsMounted;
+  

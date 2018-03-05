@@ -468,6 +468,8 @@ public class ValueLists {
 
         void add(String value);
 
+        void add(int index, String value);
+
         default String getValuesString(String separator) {
             final int size = size();
             if (size == 0) {
@@ -534,6 +536,11 @@ public class ValueLists {
         @Override
         public void add(String value) {
             innerList.add(value);
+        }
+
+        @Override
+        public void add(int index, String value) {
+            innerList.set(index, value);
         }
 
         @Override

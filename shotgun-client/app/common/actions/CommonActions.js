@@ -38,10 +38,10 @@ export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
   return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
 };
 
-export const commonServicesRegistrationAction = (client, userId) => {
+export const commonServicesRegistrationAction = (client) => {
   return (dispatch) => {
-    register(dispatch, new UserDao(client), {userId});
-    register(dispatch, new ContentTypeDao(client), {});
-    register(dispatch, new ProductCategoryDao(client), {});
+    register(dispatch, new UserDao(client));
+    register(dispatch, new ContentTypeDao(client));
+    register(dispatch, new ProductCategoryDao(client));
   };
 };

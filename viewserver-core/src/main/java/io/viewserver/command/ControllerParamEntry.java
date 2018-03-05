@@ -4,11 +4,21 @@ public class ControllerParamEntry{
     String name;
     Class type;
     int index;
+    private boolean required;
 
-    public ControllerParamEntry(String name, Class type, int index) {
+    public ControllerParamEntry(String name, Class type, int index, boolean required) {
         this.name = name;
         this.type = type;
         this.index = index;
+        this.required = required;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 
     public String getName() {

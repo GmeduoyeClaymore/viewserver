@@ -61,6 +61,8 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
 
             Options options = Options.fromMessage(data.getOptions());
 
+            SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
+
             // build execution context
             DimensionExecutionPlanContext dimensionExecutionPlanContext = new DimensionExecutionPlanContext();
             dimensionExecutionPlanContext.setInput(dataSource.getFinalOutput());
@@ -86,12 +88,6 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
                     graphNodesCatalog,
                     systemPlanResult);
 
-            //converts int values back to strings
-            IConfiguratorSpec.OperatorSpec unEnumSpec = this.getUnEnumSpec(peerSession.getExecutionContext(),
-                    graphNodesCatalog,
-                    dimensionExecutionPlanContext,
-                    unenumeratorResult);
-            dimensionExecutionPlanContext.setInput(unEnumSpec.getName());
 
             //for sorting, paging etc
             String inputOperator = dimensionExecutionPlanContext.getInputOperator();

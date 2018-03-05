@@ -42,6 +42,7 @@ import io.viewserver.reactor.EventLoopReactor;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.reactor.ITask;
+import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,7 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
     }
 
     protected void createSystemOperators() {
-        new ConnectionManager(serverExecutionContext, getServerCatalog());
+        new ConnectionManager(serverExecutionContext, getServerCatalog(), new ChunkedColumnStorage(1024));
     }
 
     protected void initCommandHandlerRegistry() {

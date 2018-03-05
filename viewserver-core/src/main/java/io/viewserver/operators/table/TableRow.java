@@ -37,7 +37,7 @@ public class TableRow implements ITableRow {
         return rowId;
     }
 
-    protected void setRowId(int rowId) {
+    public void setRowId(int rowId) {
         this.rowId = rowId;
     }
 

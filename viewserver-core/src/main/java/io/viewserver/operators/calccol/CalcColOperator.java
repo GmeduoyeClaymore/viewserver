@@ -338,7 +338,8 @@ public class CalcColOperator extends ConfigurableOperatorBase<ICalcColConfig> {
                     refreshData();
                 }
             } catch (Throwable t) {
-                throw new OperatorConfigurationException(CalcColOperator.this, t);
+                log.error("Error configuring operator {} with expression {}",CalcColOperator.this.getName(), expressionText);
+                throw new OperatorConfigurationException(CalcColOperator.this, t, expressionText);
             }
 
 //            log.trace("Took {}ms to add calc col {} [{}]", (System.nanoTime() - start) / 1000000f, name, expressionText);

@@ -2,17 +2,15 @@ package com.shotgun.viewserver.user;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.shotgun.viewserver.ShotgunTableUpdater;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
-import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
-import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.MessagingController;
@@ -30,14 +28,11 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.concurrent.Future;
-
 
 @Controller(name = "driverController")
 public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
-    private ShotgunTableUpdater shotgunTableUpdater;
+    private TableUpdater tableUpdater;
     private PaymentController paymentController;
     private MessagingController messagingController;
     private UserController userController;
@@ -48,7 +43,7 @@ public class DriverController {
     private NexmoController nexmoController;
     private IReactor reactor;
 
-    public DriverController(ShotgunTableUpdater shotgunTableUpdater,
+    public DriverController(TableUpdater tableUpdater,
                             PaymentController paymentController,
                             MessagingController messagingController,
                             UserController userController,
@@ -58,7 +53,7 @@ public class DriverController {
                             ImageController imageController,
                             NexmoController nexmoController,
                             IReactor reactor) {
-        this.shotgunTableUpdater = shotgunTableUpdater;
+        this.tableUpdater = tableUpdater;
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
@@ -138,10 +133,10 @@ public class DriverController {
         }
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.ACCEPTED.name());
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", driverId);
-        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        tableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.ACCEPTED.name());
         return orderId;
@@ -156,7 +151,7 @@ public class DriverController {
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PICKEDUP.name());
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
 
@@ -181,7 +176,7 @@ public class DriverController {
         Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
@@ -198,10 +193,10 @@ public class DriverController {
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
-        shotgunTableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");
-        shotgunTableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        tableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;

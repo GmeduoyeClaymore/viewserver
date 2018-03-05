@@ -29,10 +29,12 @@ import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.InputOperatorBase;
 import io.viewserver.operators.OutputBase;
-import io.viewserver.schema.column.ColumnBoolBase;
+import io.viewserver.operators.table.TableRow;
+import io.viewserver.schema.ITableStorage;
+import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.ColumnStringBase;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,22 +55,42 @@ public class ReportCatalog extends InputOperatorBase implements INodeMonitor {
     private final IntHashSet nodeIds = new IntHashSet(8, 0.75f, -1);
     private ReportContextExecutionPlanContext executionPlanContext;
     private IDistributionManager distributionManager;
+    private ITableStorage storage;
+    protected TableRow tableRow;
+    private boolean initialised;
 
     public ReportCatalog(String name, ReportContextExecutionPlanContext executionPlanContext, ICatalog parent,
-                         IDistributionManager distributionManager) {
+                         IDistributionManager distributionManager, ITableStorage storage) {
         super(name, parent.getExecutionContext(), parent);
         this.executionPlanContext = executionPlanContext;
         this.distributionManager = distributionManager;
+        this.storage = storage;
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        tableRow = new TableRow(0, output.getSchema());
+
+        initialise(1024);
 
         setSystemOperator(true);
 
         registerNodes();
 
         distributionManager.addNodeMonitor(this, false);
+
+
     }
+
+    public void initialise(int capacity) {
+        if (initialised) {
+            throw new RuntimeException("Table already initialised");
+        }
+
+        storage.initialise(capacity, output.getSchema(), output.getCurrentChanges());
+
+        initialised = true;
+    }
+
 
     private void registerNodes() {
         List<ViewServerNode> viewServerNodes = distributionManager.getAggregatorNodes();
@@ -94,13 +116,15 @@ public class ReportCatalog extends InputOperatorBase implements INodeMonitor {
         int hash = nodeSpec.hashCode();
         nodes.put(hash, nodeSpec);
         int rowId = nodeIds.addInt(hash);
+        tableRow.setRowId(rowId);
+        tableRow.setString(PATH_COLUMN, nodeSpec.path);
+        tableRow.setString(OPNAME_COLUMN, nodeSpec.getOpName());
+        tableRow.setBool(DISTRIBUTED_COLUMN, nodeSpec.isDistributed());
+        tableRow.setString(TYPE_COLUMN, nodeSpec.getType());
+        tableRow.setString(NAME_COLUMN, nodeSpec.getName());
         output.handleAdd(rowId);
     }
 
-    private NodeSpec getNodeForRow(int row) {
-        int hash = nodeIds.get(row);
-        return nodes.get(hash);
-    }
 
     @Override
     public void onNodeAdded(ViewServerNode node) {
@@ -163,36 +187,12 @@ public class ReportCatalog extends InputOperatorBase implements INodeMonitor {
         public Output(String name, IOperator owner) {
             super(name, owner);
 
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(NAME_COLUMN) {
-                @Override
-                public String getString(int row) {
-                    return getNodeForRow(row).getName();
-                }
-            }));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(TYPE_COLUMN) {
-                @Override
-                public String getString(int row) {
-                    return getNodeForRow(row).getType();
-                }
-            }));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnBoolBase(DISTRIBUTED_COLUMN) {
-                @Override
-                public boolean getBool(int row) {
-                    return getNodeForRow(row).isDistributed();
-                }
-            }));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(OPNAME_COLUMN) {
-                @Override
-                public String getString(int row) {
-                    return getNodeForRow(row).getOpName();
-                }
-            }));
-            getSchema().addColumn(ColumnHolderUtils.createColumnHolder(new ColumnStringBase(PATH_COLUMN) {
-                @Override
-                public String getString(int row) {
-                    return getNodeForRow(row).getPath();
-                }
-            }));
+            Schema schema = getSchema();
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(TYPE_COLUMN, io.viewserver.schema.column.ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(DISTRIBUTED_COLUMN, ColumnType.Bool));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(OPNAME_COLUMN, ColumnType.String));
+            schema.addColumn(ColumnHolderUtils.createColumnHolder(PATH_COLUMN, ColumnType.String));
         }
     }
 

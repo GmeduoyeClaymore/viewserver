@@ -1,8 +1,11 @@
-import { PermissionsAndroid } from 'react-native';
+import { Platform, PermissionsAndroid } from 'react-native';
 import Logger from 'common/Logger';
-
+const IS_ANDROID = Platform.OS === 'android';
 export default class PermissionsService {
   static async requestLocationPermission(){
+    if (!IS_ANDROID){
+      return;
+    }
     try {
       const alreadyGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
       if (!alreadyGranted) {

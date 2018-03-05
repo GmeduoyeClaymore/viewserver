@@ -87,26 +87,7 @@ public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBa
         operator.getOutput(executionPlanContext.getInputOutputName()).plugIn(serialiser.getInput());
     }
 
-    protected IConfiguratorSpec.OperatorSpec getUnEnumSpec(IExecutionContext executionContext, ICatalog catalog, OptionsExecutionPlanContext executionPlanContext, CommandResult commandResult){
-        // unenum
-        UnEnumNode unEnumNode = new UnEnumNode("unenum", executionPlanContext.getDataSource())
-                .withConnection(executionPlanContext.getInputOperator(), executionPlanContext.getInputOutputName(), Constants.IN);
 
-        IConfiguratorSpec.OperatorSpec unEnumSpec = unEnumNode.getOperatorSpec(null, true);
-
-        configurator.process(new IConfiguratorSpec() {
-            @Override
-            public List<OperatorSpec> getOperators() {
-                return Collections.singletonList(unEnumSpec);
-            }
-
-            @Override
-            public void reset() {
-            }
-        }, executionContext, catalog, commandResult);
-
-        return unEnumSpec;
-    }
 
     protected ICatalog getGraphNodesCatalog(IPeerSession peerSession) {
         final ICatalog systemCatalog = peerSession.getSystemCatalog();

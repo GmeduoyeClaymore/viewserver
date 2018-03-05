@@ -50,7 +50,11 @@ public class UserDataSource {
                                         new Column("chargePercentage", "chargePercentage", ColumnType.Int),
                                         new Column("latitude", "latitude", ColumnType.Double),
                                         new Column("longitude", "longitude", ColumnType.Double),
-                                        new Column("imageUrl", "imageUrl", ColumnType.String)
+                                        new Column("range", "range", ColumnType.Double),
+                                        new Column("imageUrl", "imageUrl", ColumnType.String),
+                                        new Column("online", "online", ColumnType.Bool),
+                                        new Column("status", "status", ColumnType.String),
+                                        new Column("statusMessage", "statusMessage", ColumnType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )
@@ -70,7 +74,7 @@ public class UserDataSource {
                                 .withConnection("ratingGroupBy", Constants.OUT, "right")
                 )
                 .withCalculatedColumns(new CalculatedColumn("dimension_userId", ColumnType.String, "userId"))
-                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ColumnType.String)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ColumnType.String), new Dimension("status", Cardinality.Byte, ColumnType.String), new Dimension("online", Cardinality.Byte, ColumnType.Bool)))
                 .withOutput("ratingJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

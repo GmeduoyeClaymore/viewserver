@@ -9,15 +9,26 @@ const reduxUtil = reduxHelper('OperatorGroupView');
 import component from './OperatorGroupView.js';
 const SELECT_GROUP = reduxUtil.defineAction('SELECT_GROUP');
 const TOGGLE_MODE = reduxUtil.defineAction('TOGGLE_MODE');
+const SHOW_OPERATOR_GROUP_GRAPH = reduxUtil.defineAction('SHOW_OPERATOR_GROUP_GRAPH');
+const SELECT_OPERATOR_NODE = reduxUtil.defineAction('SELECT_OPERATOR_NODE');
 // Initial State
 const initialState = {
-  mode : 'table'
+  mode : 'graph',
+  graphConfig: {
+    links: [],
+    nodes: []
+  }
 };
+
+
+
 
 // Make Actions
 const actions = {
   selectGroup: reduxUtil.createAction(SELECT_GROUP),
-  toggleMode: reduxUtil.createAction(TOGGLE_MODE)
+  toggleMode: reduxUtil.createAction(TOGGLE_MODE),
+  selectOperatorNode: reduxUtil.createAction(SELECT_OPERATOR_NODE),
+  showOperatorGroupGraph: reduxUtil.createAction(SHOW_OPERATOR_GROUP_GRAPH),
 };
 // Make reducer
 const reducer = reduxUtil.createReducer({

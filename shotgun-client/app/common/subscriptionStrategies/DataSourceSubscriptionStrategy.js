@@ -5,6 +5,12 @@ export default class DataSourceSubscriptionStrategyStrategy{
     this.client = client;
     this.dataSink = dataSink;
     this.path = path;
+    if (!this.dataSink){
+      throw new Error('Data sink must be specified');
+    }
+    if (!this.path){
+      throw new Error('path context must be specified');
+    }
     this.dispose = this.dispose.bind(this);
     this.updateSubscription = debounce(this.updateSubscription.bind(this), 50);
   }

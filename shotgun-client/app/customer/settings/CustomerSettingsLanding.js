@@ -6,9 +6,9 @@ import { withRouter } from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
 import {Linking} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
 
-const feedbackSubject = `Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
+const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
 const CustomerSettings = ({history, user}) => {
   const signOut = async () => {
