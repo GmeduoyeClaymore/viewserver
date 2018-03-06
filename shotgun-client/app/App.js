@@ -1,5 +1,5 @@
 import React from 'react';
-import {UIManager, View, Alert} from 'react-native';
+import {UIManager, View} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {Container, Text, StyleProvider, Root, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
@@ -20,37 +20,11 @@ import {LoadingScreen} from 'common/components';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
-import RNRestart from 'react-native-restart';
-import {setJSExceptionHandler, setNativeExceptionHandler, getJSExceptionHandler} from 'react-native-exception-handler';
 
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-const errorHandler = (e, isFatal) => {
-  console.log(e);
-  if (isFatal) {
-    Alert.alert(
-      'Unexpected error occurred',
-      `
-        Error: ${(isFatal) ? 'Fatal:' : ''} ${e.name} ${e.message}
-
-        We will need to restart the app.
-        `,
-      [{
-        text: 'Restart',
-        onPress: () => {
-          RNRestart.Restart();
-        }
-      }]
-    );
-  } else {
-    console.log(e);
-  }
-};
-
-setJSExceptionHandler(errorHandler, true);
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'LandingCommon';
@@ -70,14 +44,10 @@ export default class App extends React.Component {
     this.initMessaging = this.initMessaging.bind(this);
     this.setInitialRoot = this.setInitialRoot.bind(this);
     this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
-    this.handleJsError = this.handleJsError.bind(this);
     this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
-   // setJSExceptionHandler(this.handleJsError, true);
-    setNativeExceptionHandler(() => {}, false);
   }
 
   async componentDidMount() {
-    //setJSExceptionHandler(this.handleJsError, true);
     await ProtoLoader.loadAll();
     await this.client.connect(true);
   }
@@ -131,28 +101,6 @@ export default class App extends React.Component {
     await PrincipalService.removeUserIdFromDevice();
   }
 
-  handleJsError(e, isFatal){
-    if (isFatal) {
-      Alert.alert(
-        'An unexpected error occurred',
-        `
-        Error: ${(isFatal) ? 'Fatal:' : ''} ${e.name} ${e.message}
-
-        We will need to restart the app.
-        `,
-        [{
-          text: 'Restart',
-          onPress: () => {
-            RNRestart.Restart();
-          }
-        }]
-      );
-    } else {
-      //if not fatal then warn
-      Logger.warning(e);
-    }
-  }
-
   setInitialRoot(){
     if (this.userId == undefined){
       App.INITIAL_ROOT_NAME = '/RegistrationCommon';
@@ -167,16 +115,6 @@ export default class App extends React.Component {
     if (!isReady && !hasBeenReady){
       return <LoadingScreen text="Connecting"/>;
     }
-
-   /* const currentHandler = getJSExceptionHandler();
-
-    console.log(currentHandler);
-
-    try {
-      this.sdsds();
-    }catch(e){
-      console.log(e);
-    }*/
 
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
 

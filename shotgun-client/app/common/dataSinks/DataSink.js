@@ -84,7 +84,7 @@ export default DataSink = (superclass) => class extends superclass {
       Logger.info(this.name + ' - Row not updated as couldnt get index for row ' + rowId);
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
-    Logger.info(this.name + ' - Row updated - ' + JSON.stringify(row));
+    Logger.fine(this.name + ' - Row updated - ' + JSON.stringify(row));
   }
 
   onRowRemoved(rowId){
