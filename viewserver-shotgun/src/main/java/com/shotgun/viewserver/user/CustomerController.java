@@ -1,5 +1,8 @@
 package com.shotgun.viewserver.user;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
@@ -104,7 +107,20 @@ public class CustomerController {
             AppMessage builder = new AppMessageBuilder().withDefaults()
                     .withAction(createActionUri(orderId, status))
                     .message(String.format("Shotgun order %s", formattedStatus), String.format("Shotgun order has been %s by the customer", formattedStatus)).build();
-            messagingController.sendMessageToUser(orderDriverId, builder);
+            ListenableFuture future = messagingController.sendMessageToUser(orderDriverId, builder);
+
+            Futures.addCallback(future, new FutureCallback<Object>() {
+                @Override
+                public void onSuccess(Object o) {
+                    log.debug("Message sent successfully");
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    log.error("There was a problem sending the notification", throwable);
+                }
+            });
+
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);
         }

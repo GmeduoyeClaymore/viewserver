@@ -54,7 +54,8 @@ public class MessagingController {
         return ListenableFutureObservable.to(waitForUser(userId, userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, userId, currentToken);
-            logger.info(format);
+            logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, userId, currentToken));
+            message.setTo(currentToken);
             sendPayload(message.toSimpleMessage());
             return format;
         }));
