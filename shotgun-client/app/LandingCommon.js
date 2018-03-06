@@ -4,7 +4,6 @@ import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/action
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Redirect} from 'react-router-native';
 import {View, Button, Text} from 'native-base';
-import Logger from 'common/Logger';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
 import PrincipalService from './common/services/PrincipalService';
@@ -31,7 +30,7 @@ class LandingCommon extends Component {
       return <LoadingScreen text="Logging You In"/>;
     }
     if (!user){
-      return <View style={{flex: 1}}><LoadingScreen text="Cannot find user on server clear storage then try again"/>
+      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Unable to find your user details. Please sign out and log back in</Text>
         <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
       </View>;
     }
@@ -41,9 +40,7 @@ class LandingCommon extends Component {
     case 'customer':
       return <Redirect to="/Customer/Landing"/>;
     default:
-      Logger.error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
-      //TODO -return an error screen here
-      return null;
+      throw new Error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
     }
   }
 }

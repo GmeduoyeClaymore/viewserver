@@ -60,7 +60,7 @@ export class ImageSelector{
         }
       );
     } catch (error){
-      Logger.error(error);
+      Logger.warning(error);
     }
   }
 }

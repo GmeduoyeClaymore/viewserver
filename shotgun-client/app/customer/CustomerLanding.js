@@ -60,6 +60,8 @@ class CustomerLanding extends Component {
   render() {
     const {busy, client} = this.props;
 
+   // this.dfdf();
+
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>

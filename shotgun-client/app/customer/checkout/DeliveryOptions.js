@@ -129,7 +129,7 @@ class DeliveryOptions extends Component {
           {selectedContentType.noPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
               <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
-              <Text style={{ paddingLeft: 10 }}>Do you need more than one person ?(s)</Text>
+              <Text style={{ paddingLeft: 10 }}>Do you need more than one person to lift your item?</Text>
             </ListItem> : null}
 
           {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
