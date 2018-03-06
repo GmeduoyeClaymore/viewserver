@@ -18,7 +18,7 @@ export default class UserRelationshipMap extends Component{
     const {map, props} = this;
     let {me, relatedUsers} = props;
     if (me){
-      relatedUsers = [...relatedUsers];
+      relatedUsers = [...relatedUsers, me];
     }
     map.fitToCoordinates(relatedUsers.map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
       edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },

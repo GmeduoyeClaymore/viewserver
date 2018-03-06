@@ -25,6 +25,7 @@ class DriverOrders  extends Component{
 
     const reportOptions = {
       isCompleted,
+      userId: '@userId',
       columnsToSort: [{ name: 'from', direction: 'asc' }],
       driverId: userId,
       reportId: 'driverOrderSummary'};

@@ -5,6 +5,7 @@ import DriverDao from 'driver/dao/DriverDao';
 import VehicleDao from 'driver/dao/VehicleDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'driver/dao/OrderRequestDao';
+import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import PaymentDao from 'common/dao/PaymentDao';
 
 export const driverServicesRegistrationAction = (client, continueWith) => {
@@ -13,6 +14,7 @@ export const driverServicesRegistrationAction = (client, continueWith) => {
     register(dispatch, new VehicleDao(client));
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client));
+    register(dispatch, new UserRelationshipDao(client));
     registerNakedDao(dispatch, new PaymentDao(client));
     registerNakedDao(dispatch, new DriverDao(client), continueWith);
   };

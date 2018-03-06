@@ -22,7 +22,7 @@ class DriverOrderRequests extends Component{
       this.pagingListView.wrappedInstance.reset();
     }
   }
-
+  
   onChangeTab(index){
     const {selectedContentType, selectedContentTypes, history} = this.props;
     const newSelectedContentType = selectedContentTypes[index];
