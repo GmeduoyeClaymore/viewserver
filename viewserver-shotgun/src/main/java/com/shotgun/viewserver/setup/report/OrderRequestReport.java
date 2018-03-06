@@ -54,7 +54,7 @@ public class OrderRequestReport {
                                                 new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(origin_latitude, origin_longitude, isNull({driverLatitude},driver_latitude), isNull({driverLongitude},driver_longitude), \"M\"))"))
                                         .withConnection("destinationDeliveryAddressJoin"),
                                 new FilterNode("distanceFilter")
-                                        .withExpression("if((currentDistanceFilter <= isNull({maxDistance},driver_range)) ")
+                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},driver_range)")
                                         .withConnection("distanceCalcCol"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

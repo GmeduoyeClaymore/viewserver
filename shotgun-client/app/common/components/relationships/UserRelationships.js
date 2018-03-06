@@ -1,9 +1,9 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import { Container, Button, Tab, View} from 'native-base';
+import { Container, Button, Tab, View, Text} from 'native-base';
 import { withRouter } from 'react-router';
 import {Tabs, ErrorRegion, Icon} from 'common/components';
-import { getDaoState, isAnyOperationPending, updateSubscriptionAction } from 'common/dao';
+import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
@@ -62,11 +62,16 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, state, UserViews} = this;
-    const {history, errors} = this.props;
+    const {history, errors, noRelationships} = this.props;
     const {selectedUser, selectedTabIndex = 0, oldOptions} = state;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
     return <Container style={{ flex: 1, padding: 15}}>
+      <View>
+        <Text>
+          {noRelationships + ' users found'}
+        </Text>
+      </View>
       <Tabs initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
@@ -100,6 +105,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     state,
+    noRelationships: getDaoSize(state, 'userRelationshipDao'),
     me: getDaoState(state, ['user'], 'userDao'),
     relatedUsers: getDaoState(state, ['users'], 'userRelationshipDao') || [],
     busy: isAnyOperationPending(state, [{userRelationshipDao: 'updateSubscription'}])

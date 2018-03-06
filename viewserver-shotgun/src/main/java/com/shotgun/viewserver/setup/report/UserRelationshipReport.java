@@ -30,25 +30,30 @@ public class UserRelationshipReport {
                         new GroupByNode("uniqueUserGroupBy")
                                 .withGroupByColumns("relatedToUserId")
                                 .withConnection("relatedFilter"),
+                        new CalcColNode("meCalcCol")
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("meUserId", "\"{@userId}\"")
+                                )
+                                .withConnection("uniqueUserGroupBy"),
                         new JoinNode("relatedToUser")
                                 .withLeftJoinColumns("relatedToUserId")
                                 .withRightJoinColumns("userId")
                                 .withColumnPrefixes("","relatedToUser_")
                                 .withAlwaysResolveNames()
-                                .withConnection("uniqueUserGroupBy", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right"),
-
-                        new JoinNode("userRelationshipJoin")
-                                .withLeftJoinColumns("userId")
-                                .withRightJoinColumns("relatedToUser_userId")
-                                .withConnection(userOperatorName, Constants.OUT, "left")
-                                .withConnection("relatedToUser", Constants.OUT, "right"),
-
+                                .withConnection("meCalcCol", Constants.OUT, "left")
+                                .withConnection(userOperatorName, Constants.OUT, "right"),
+                        new JoinNode("meUser")
+                                .withLeftJoinColumns("meUserId")
+                                .withRightJoinColumns("userId")
+                                .withColumnPrefixes("","meUser_")
+                                .withAlwaysResolveNames()
+                                .withConnection("relatedToUser", Constants.OUT, "left")
+                                .withConnection(userOperatorName, Constants.OUT, "right"),
                         new CalcColNode("distanceCalcCol")
                                 .withCalculations(
-                                        new CalcColOperator.CalculatedColumn("currentDistance", "distance(isNull({latitude},latitude), isNull({longitude},longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\")"),
-                                        new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},latitude), isNull({longitude},longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\"))"))
-                                .withConnection("userRelationshipJoin"),
+                                        new CalcColOperator.CalculatedColumn("currentDistance", "distance(isNull({latitude},meUser_latitude), isNull({longitude},meUser_longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\")"),
+                                        new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},meUser_latitude), isNull({longitude},meUser_longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\"))"))
+                                .withConnection("meUser"),
                         new FilterNode("distanceFilter")
                                 .withExpression("currentDistanceFilter <= isNull({maxDistance},range)")
                                 .withConnection("distanceCalcCol"),
