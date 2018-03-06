@@ -75,7 +75,7 @@ class DeliveryDetails extends Component{
         </Row>
         {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
           <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-            <Label>Vehicle modelxs</Label>
+            <Label>Vehicle model</Label>
             <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
           </Item></View>
           <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>

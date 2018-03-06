@@ -1,7 +1,7 @@
 import React from 'react';
-import {UIManager, View, Modal} from 'react-native';
+import {UIManager, View} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {Container, Text, StyleProvider, Root, Button, Spinner} from 'native-base';
+import {Container, Text, StyleProvider, Root, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -20,24 +20,6 @@ import {LoadingScreen} from 'common/components';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
-
-const signOut = async () => {
-  await PrincipalService.removeUserIdFromDevice();
-};
-
-const styles = {
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  innerContainer: {
-    alignItems: 'center',
-  },
-};
 
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
@@ -66,13 +48,8 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    try {
-      await ProtoLoader.loadAll();
-      await this.client.connect(true);
-      this.setState({ error: ''});
-    } catch (error){
-      this.setState({ error});
-    }
+    await ProtoLoader.loadAll();
+    await this.client.connect(true);
   }
 
   async handleConnectionStatusChanged(isReady){
@@ -82,10 +59,9 @@ export default class App extends React.Component {
         await this.setUserId();
         await this.initMessaging();
         this.setInitialRoot();
-        this.setState({ error: '', isReady, isConnected: isReady, hasBeenReady: true});
+        this.setState({isReady, isConnected: isReady, hasBeenReady: true});
       } catch (error){
-        this.setState({ error, isReady: true, isConnected: false});
-        return;
+        this.setState({isReady: true, isConnected: false});
       }
     } else {
       this.setState({ isReady, isConnected: isReady});
@@ -99,15 +75,10 @@ export default class App extends React.Component {
       return;
     }
 
-    try {
-      await FCM.requestPermissions({badge: false, sound: true, alert: true});
-      const token = await FCM.getFCMToken();
-      await this.onChangeToken(token);
-      this.setState({token: token || ''});
-    } catch (error){
-      //Logger.error(error);
-      this.setState({error});
-    }
+    await FCM.requestPermissions({badge: false, sound: true, alert: true});
+    const token = await FCM.getFCMToken();
+    await this.onChangeToken(token);
+    this.setState({token: token || ''});
     Logger.info('!!! Finished initializing firebase messaging');
   }
 
@@ -126,6 +97,10 @@ export default class App extends React.Component {
     Logger.info(`!!! Got user id ${this.userId} from device`);
   }
 
+  async signOut(){
+    await PrincipalService.removeUserIdFromDevice();
+  }
+
   setInitialRoot(){
     if (this.userId == undefined){
       App.INITIAL_ROOT_NAME = '/RegistrationCommon';
@@ -136,16 +111,11 @@ export default class App extends React.Component {
   }
 
   render() {
-    const {isReady, isConnected, error, hasBeenReady} = this.state;
+    const {isReady, hasBeenReady} = this.state;
     if (!isReady && !hasBeenReady){
       return <LoadingScreen text="Connecting"/>;
     }
-    if (!isConnected && error && (error + '').trim().length && (error + '') != 'null'){
-      return  <Container style={{marginTop: 15}}>
-        <Text>{'Not connected - ERROR IS:' + JSON.stringify(error)}</Text>
-        <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
-      </Container>;
-    }
+
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
 
     return <Container style={{flexDirection: 'column', flex: 1}}>
@@ -187,3 +157,17 @@ export default class App extends React.Component {
     </Container>;
   }
 }
+
+const styles = {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    alignItems: 'center',
+  },
+};

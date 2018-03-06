@@ -37,7 +37,7 @@ export const parseGooglePlacesData = (details) => {
       longitude: location.lng
     };
   } catch (err) {
-    Logger.error(err);
+    Logger.warning(err);
   }
 };
 

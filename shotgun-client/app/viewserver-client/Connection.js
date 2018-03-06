@@ -144,7 +144,7 @@ export default class Connection {
       }
 
       if (e.code > 1000 && e.wasClean === false){
-        Logger.error(`Error ${e.code} \'${reason}\' when closing socket`);
+        Logger.warning(`Error ${e.code} \'${reason}\' when closing socket`);
       }
     }
 
