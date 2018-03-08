@@ -18,7 +18,7 @@ const OPERATOR_TYPE_COLORS = {
 
 const getColor = node => {
   if(!node.type){
-    return 'white';
+    return '#D3D3D3';
   }
   const resultKey = Object.keys(OPERATOR_TYPE_COLORS).find(
     key => node.type.includes(key)

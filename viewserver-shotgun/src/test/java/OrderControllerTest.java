@@ -2,7 +2,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.delivery.Delivery;
 import com.shotgun.viewserver.order.OrderController;
-import io.viewserver.command.ControllerRegistration;
+import io.viewserver.controller.ControllerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 

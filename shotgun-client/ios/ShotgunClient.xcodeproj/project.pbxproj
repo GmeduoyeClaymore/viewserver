@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -39,12 +40,14 @@
 		2EE10B66577A4A98BF93882B /* libRNFIRMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 997EFFD2248F42DA87351B24 /* libRNFIRMessaging.a */; };
 		430E2B53B30A48F9A6872C6B /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CDF2C24E09714B629842FA38 /* Octicons.ttf */; };
 		44CD107B8AC94E20B44C7212 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B4330D789142E5B249ECB6 /* libimageCropPicker.a */; };
+		4B31EEEE7EC1461394570B34 /* libReactNativeExceptionHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A55F8065C24080A34AAADC /* libReactNativeExceptionHandler.a */; };
 		4F4E68DEE787429DA4B54DC5 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04E8A86CC17348EE8C73B849 /* Roboto.ttf */; };
 		53E369FEE5EF470CBE6E786F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A2AE69195264DC9974181C5 /* Ionicons.ttf */; };
 		55813A86D6C34186BDE2BE83 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 08A03FF6BE1F42A281B2FA8C /* Foundation.ttf */; };
 		55A5C08400E9C385734AA76E /* libPods-ShotgunClient-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E80DD0779F05CEA3DD6618F /* libPods-ShotgunClient-tvOS.a */; };
 		5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A86A459FCDF94F09A3E5821E /* rubicon-icon-font.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6D45BB5E204F04B300FEFA1E /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D45BB5D204F04B300FEFA1E /* CloudKit.framework */; };
 		6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D540A732029F0BE00D406DB /* GoogleService-Info.plist */; };
 		6D540ABE202A082A00D406DB /* shotgun-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D540AB1202A082A00D406DB /* shotgun-icons.ttf */; };
 		6D540ACA202A1E5F00D406DB /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */; };
@@ -61,11 +64,10 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B4A5D0EB3BA549A09DD57DDA /* libRNImmediatePhoneCall.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D2E2532C53C411A978CA224 /* libRNImmediatePhoneCall.a */; };
 		CEB306A391BB42C8E5EB41EA /* libPods-ShotgunClient-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */; };
+		CF438B09124247268C669A0E /* libRCTRestart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BC5629A708A4D4CBF774213 /* libRCTRestart.a */; };
 		D05E1F04D2A44C2891E45C54 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA0AB02C07614E9483583959 /* EvilIcons.ttf */; };
 		EAFF47D6560C4393ACD02E64 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B593F4CACFB249EF97996EB5 /* FontAwesome.ttf */; };
 		EB441CACF8DF450CBD77DC92 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC0B4F8402CE4480AFF69AC6 /* Roboto_medium.ttf */; };
-		4B31EEEE7EC1461394570B34 /* libReactNativeExceptionHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66A55F8065C24080A34AAADC /* libReactNativeExceptionHandler.a */; };
-		CF438B09124247268C669A0E /* libRCTRestart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BC5629A708A4D4CBF774213 /* libRCTRestart.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -244,6 +246,34 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		6D428915204EC3D800290784 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF7484CE9F8B476D9B8B6ED9 /* ReactNativeExceptionHandler.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = ReactNativeExceptionHandler;
+		};
+		6D42891B204EC3DC00290784 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = ReactNativeExceptionHandler;
+		};
+		6D428920204EC49600290784 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56E09CA91AB24EA4A0D31311 /* RCTRestart.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3245CDED1BFEE35C00EABF68;
+			remoteInfo = RCTRestart;
+		};
+		6D428926204EC49A00290784 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D428922204EC49A00290784 /* RCTRestart.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3245CDED1BFEE35C00EABF68;
+			remoteInfo = RCTRestart;
+		};
 		6D540A352029E2EB00D406DB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
@@ -419,9 +449,15 @@
 		3A2AE69195264DC9974181C5 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		446992BFD1344910997AAFC5 /* libAirMaps.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libAirMaps.a; sourceTree = "<group>"; };
 		4DF8F5CD70FF40A0B0FD62F4 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		56E09CA91AB24EA4A0D31311 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTRestart.xcodeproj; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; };
 		5D2E2532C53C411A978CA224 /* libRNImmediatePhoneCall.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImmediatePhoneCall.a; sourceTree = "<group>"; };
 		5E80DD0779F05CEA3DD6618F /* libPods-ShotgunClient-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		66A55F8065C24080A34AAADC /* libReactNativeExceptionHandler.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeExceptionHandler.a; sourceTree = "<group>"; };
+		6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeExceptionHandler.xcodeproj; path = "../node_modules/react-native-exception-handler/ios/ReactNativeExceptionHandler.xcodeproj"; sourceTree = "<group>"; };
+		6D428922204EC49A00290784 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRestart.xcodeproj; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; };
+		6D428928204EC9D100290784 /* ShotgunClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ShotgunClient.entitlements; path = ShotgunClient/ShotgunClient.entitlements; sourceTree = "<group>"; };
+		6D45BB5D204F04B300FEFA1E /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		6D540A732029F0BE00D406DB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6D540AB1202A082A00D406DB /* shotgun-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "shotgun-icons.ttf"; sourceTree = "<group>"; };
 		6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -431,6 +467,7 @@
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		7BC5629A708A4D4CBF774213 /* libRCTRestart.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTRestart.a; sourceTree = "<group>"; };
 		82B9C94F516A4207A85103F6 /* RNImmediatePhoneCall.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImmediatePhoneCall.xcodeproj; path = "../node_modules/react-native-immediate-phone-call/ios/RNImmediatePhoneCall.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8BC70DBF87984366B319CACB /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
@@ -446,15 +483,12 @@
 		C1B652D90E44ECC5981ECAA0 /* Pods-ShotgunClient-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShotgunClient-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ShotgunClient-tvOSTests/Pods-ShotgunClient-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C5716077337575EC1C63396D /* Pods-ShotgunClientTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShotgunClientTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ShotgunClientTests/Pods-ShotgunClientTests.release.xcconfig"; sourceTree = "<group>"; };
 		CDF2C24E09714B629842FA38 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		CF7484CE9F8B476D9B8B6ED9 /* ReactNativeExceptionHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeExceptionHandler.xcodeproj; path = "../node_modules/react-native-exception-handler/ios/ReactNativeExceptionHandler.xcodeproj"; sourceTree = "<group>"; };
 		D3D9E8A0A104D8EFC132C7E6 /* libPods-ShotgunClient.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA0AB02C07614E9483583959 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		EFD4B35EB37C4303BB5A68DD /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
 		F46CA5B820E44384B2405A65 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		CF7484CE9F8B476D9B8B6ED9 /* ReactNativeExceptionHandler.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeExceptionHandler.xcodeproj"; path = "../node_modules/react-native-exception-handler/ios/ReactNativeExceptionHandler.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		66A55F8065C24080A34AAADC /* libReactNativeExceptionHandler.a */ = {isa = PBXFileReference; name = "libReactNativeExceptionHandler.a"; path = "libReactNativeExceptionHandler.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		56E09CA91AB24EA4A0D31311 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; name = "RCTRestart.xcodeproj"; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		7BC5629A708A4D4CBF774213 /* libRCTRestart.a */ = {isa = PBXFileReference; name = "libRCTRestart.a"; path = "libRCTRestart.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -492,6 +526,7 @@
 				44CD107B8AC94E20B44C7212 /* libimageCropPicker.a in Frameworks */,
 				9DDBF28D9900CAB40C549988 /* libPods-ShotgunClient.a in Frameworks */,
 				6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */,
+				6D45BB5E204F04B300FEFA1E /* CloudKit.framework in Frameworks */,
 				4B31EEEE7EC1461394570B34 /* libReactNativeExceptionHandler.a in Frameworks */,
 				CF438B09124247268C669A0E /* libRCTRestart.a in Frameworks */,
 			);
@@ -586,6 +621,7 @@
 		07397DE7C69DBA86BFE7C2E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D45BB5D204F04B300FEFA1E /* CloudKit.framework */,
 				6D540B59202B779900D406DB /* HockeySDK.embeddedframework */,
 				D3D9E8A0A104D8EFC132C7E6 /* libPods-ShotgunClient.a */,
 				5E80DD0779F05CEA3DD6618F /* libPods-ShotgunClient-tvOS.a */,
@@ -618,6 +654,7 @@
 		13B07FAE1A68108700A75B9A /* ShotgunClient */ = {
 			isa = PBXGroup;
 			children = (
+				6D428928204EC9D100290784 /* ShotgunClient.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -677,6 +714,38 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6D428912204EC3D800290784 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D428916204EC3D800290784 /* libReactNativeExceptionHandler.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D428918204EC3DC00290784 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D42891C204EC3DC00290784 /* libReactNativeExceptionHandler.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D42891D204EC49600290784 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D428921204EC49600290784 /* libRCTRestart.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6D428923204EC49A00290784 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6D428927204EC49A00290784 /* libRCTRestart.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		6D540A2F2029E2EB00D406DB /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -684,6 +753,8 @@
 				997EFFD2248F42DA87351B24 /* libRNFIRMessaging.a */,
 				5D2E2532C53C411A978CA224 /* libRNImmediatePhoneCall.a */,
 				A5B4330D789142E5B249ECB6 /* libimageCropPicker.a */,
+				66A55F8065C24080A34AAADC /* libReactNativeExceptionHandler.a */,
+				7BC5629A708A4D4CBF774213 /* libRCTRestart.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -776,6 +847,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				6D428922204EC49A00290784 /* RCTRestart.xcodeproj */,
+				6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */,
 				6D540ACD202A1E6600D406DB /* QBImagePicker.framework */,
 				6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */,
 				13B07FAE1A68108700A75B9A /* ShotgunClient */,
@@ -791,6 +864,7 @@
 			sourceTree = "<group>";
 			tabWidth = 2;
 			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
@@ -937,6 +1011,17 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 3DYD5U82S8;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -998,6 +1083,14 @@
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
 				},
 				{
+					ProductGroup = 6D42891D204EC49600290784 /* Products */;
+					ProjectRef = 56E09CA91AB24EA4A0D31311 /* RCTRestart.xcodeproj */;
+				},
+				{
+					ProductGroup = 6D428923204EC49A00290784 /* Products */;
+					ProjectRef = 6D428922204EC49A00290784 /* RCTRestart.xcodeproj */;
+				},
+				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
 					ProjectRef = 139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */;
 				},
@@ -1016,6 +1109,14 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 6D428918204EC3DC00290784 /* Products */;
+					ProjectRef = 6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */;
+				},
+				{
+					ProductGroup = 6D428912204EC3D800290784 /* Products */;
+					ProjectRef = CF7484CE9F8B476D9B8B6ED9 /* ReactNativeExceptionHandler.xcodeproj */;
 				},
 				{
 					ProductGroup = 6D540A4B2029E2EC00D406DB /* Products */;
@@ -1196,6 +1297,34 @@
 			fileType = archive.ar;
 			path = libRCTAnimation.a;
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D428916204EC3D800290784 /* libReactNativeExceptionHandler.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeExceptionHandler.a;
+			remoteRef = 6D428915204EC3D800290784 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D42891C204EC3DC00290784 /* libReactNativeExceptionHandler.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeExceptionHandler.a;
+			remoteRef = 6D42891B204EC3DC00290784 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D428921204EC49600290784 /* libRCTRestart.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTRestart.a;
+			remoteRef = 6D428920204EC49600290784 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6D428927204EC49A00290784 /* libRCTRestart.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTRestart.a;
+			remoteRef = 6D428926204EC49A00290784 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6D540A362029E2EB00D406DB /* libRCTBlob-tvOS.a */ = {
@@ -1696,8 +1825,8 @@
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
 					"$(SRCROOT)..\node_modules\neact-native-fcmios",
 					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)..\node_modules\neact-native-exception-handlerios",
+					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart/**",
 				);
 				INFOPLIST_FILE = ShotgunClientTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1728,8 +1857,8 @@
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
 					"$(SRCROOT)..\node_modules\neact-native-fcmios",
 					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)..\node_modules\neact-native-exception-handlerios",
+					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart/**",
 				);
 				INFOPLIST_FILE = ShotgunClientTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1752,6 +1881,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9748DF0FE1F116ACB65A0632 /* Pods-ShotgunClient.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
@@ -1761,11 +1891,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
-					"$(SRCROOT)..\node_modules\neact-native-fcmios",
-					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios/**",
 				);
 				INFOPLIST_FILE = ShotgunClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1774,7 +1900,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = shotgun.hockyapp.net;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1784,6 +1910,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1BB90B387A975FC449EE9CA2 /* Pods-ShotgunClient.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1792,11 +1919,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
-					"$(SRCROOT)..\node_modules\neact-native-fcmios",
-					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios/**",
 				);
 				INFOPLIST_FILE = ShotgunClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1805,7 +1928,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = shotgun.hockyapp.net;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1829,8 +1952,8 @@
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
 					"$(SRCROOT)..\node_modules\neact-native-fcmios",
 					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)..\node_modules\neact-native-exception-handlerios",
+					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart/**",
 				);
 				INFOPLIST_FILE = "ShotgunClient-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1869,8 +1992,8 @@
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
 					"$(SRCROOT)..\node_modules\neact-native-fcmios",
 					"$(SRCROOT)..\node_modules\neact-native-image-crop-pickerios/**",
-					"$(SRCROOT)\..\node_modules\react-native-exception-handler\ios",
-					"$(SRCROOT)\..\node_modules\react-native-restart\ios\RCTRestart/**",
+					"$(SRCROOT)..\node_modules\neact-native-exception-handlerios",
+					"$(SRCROOT)..\node_modules\neact-native-restartiosRCTRestart/**",
 				);
 				INFOPLIST_FILE = "ShotgunClient-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

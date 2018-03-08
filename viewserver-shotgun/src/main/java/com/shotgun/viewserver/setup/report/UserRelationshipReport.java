@@ -55,7 +55,7 @@ public class UserRelationshipReport {
                                         new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},meUser_latitude), isNull({longitude},meUser_longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\"))"))
                                 .withConnection("meUser"),
                         new FilterNode("distanceFilter")
-                                .withExpression("currentDistanceFilter <= isNull({maxDistance},range)")
+                                .withExpression("currentDistanceFilter <= isNull({maxDistance},relatedToUser_range)")
                                 .withConnection("distanceCalcCol"),
                         new ProjectionNode("userProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

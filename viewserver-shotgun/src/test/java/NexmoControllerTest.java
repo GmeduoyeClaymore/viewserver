@@ -1,6 +1,4 @@
-import com.shotgun.viewserver.user.DriverController;
 import com.shotgun.viewserver.user.NexmoController;
-import io.viewserver.command.ControllerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 

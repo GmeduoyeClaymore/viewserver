@@ -1,10 +1,8 @@
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.shotgun.viewserver.user.User;
-import io.viewserver.command.ControllerContext;
-import io.viewserver.command.ControllerRegistration;
-
-import java.util.concurrent.ExecutionException;
+import io.viewserver.controller.ControllerContext;
+import io.viewserver.controller.ControllerRegistration;
 
 /**
  * Created by Gbemiga on 30/01/18.

@@ -7,6 +7,12 @@ import { ConnectedRouter } from 'connected-react-router';
 import { components, history, store, store2 } from '../components.js';
 import styles from './component.less';
 
+import { connect } from 'react-redux';
+
+const AppRouter_mapStateToProps = (state, props) => { return {
+  ...props
+} }
+
 const Core = () => {
   return (
     <Provider store={store}>
@@ -37,6 +43,6 @@ const AppRouter = (props) => {
   );
 } 
 
-
+const ConnectedAppRouter = connect(AppRouter_mapStateToProps)(AppRouter);
 
 export default Core;

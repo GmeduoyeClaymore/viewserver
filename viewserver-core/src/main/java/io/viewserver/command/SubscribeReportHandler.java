@@ -18,7 +18,7 @@ package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.configurator.IConfiguratorSpec;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.distribution.IDistributionManager;
@@ -62,14 +62,13 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeReportHandler", commandResult);
             CommandResult systemExecutionPlanResult = multiCommandResult.getResultForDependency("System Execution Plan");
-            CommandResult unenumeratorResult = multiCommandResult.getResultForDependency("Unenumerator");
             CommandResult userExecutionPlanResult = multiCommandResult.getResultForDependency("User execution plan");
 
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
             Options options = Options.fromMessage(data.getOptions());
-            log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
-
             substituteParamValues(peerSession, reportContext, options);
+
+            log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
             final ICatalog graphNodesCatalog = getGraphNodesCatalog(peerSession);
 
@@ -110,7 +109,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             for(Map.Entry<String,Object> entry : params.entrySet()){
                 stringList = new ValueLists.StringList();
                 stringList.add(entry.getValue().toString());
-                reportContext.setParameterValue("@" + entry, stringList);
+                reportContext.setParameterValue("@" + entry.getKey(), stringList);
             }
 
             for (ReportContext.DimensionValue str : reportContext.getDimensionValues()) {

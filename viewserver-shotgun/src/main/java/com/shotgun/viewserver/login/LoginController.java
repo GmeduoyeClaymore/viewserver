@@ -1,35 +1,23 @@
 package com.shotgun.viewserver.login;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.command.ActionParam;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.*;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.operators.table.TableKey;
-import io.viewserver.reactor.ITask;
-import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
-import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observable.ListenableFutureObservable;
 
-import javax.annotation.Nullable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import static com.shotgun.viewserver.user.UserController.waitForUser;

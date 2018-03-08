@@ -1,8 +1,8 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.ControllerUtils;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

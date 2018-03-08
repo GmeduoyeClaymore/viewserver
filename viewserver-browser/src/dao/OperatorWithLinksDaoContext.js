@@ -57,7 +57,7 @@ export default class OperatorWithLinksDaoContext{
       nodesByName[rw.nodeName] = this.processNode(rw)
     });
 
-    const getNodeByName = (name) => {
+    const getNodeByName = (name,type) => {
       if(!name){
         throw new Error("Cannot get node with null name")
       }
@@ -65,24 +65,41 @@ export default class OperatorWithLinksDaoContext{
       if(!result){
           result = {id: name};
           result.key = result.id;
-          result.radius = 0;
-          result.color = 'white';
+          result.radius = 20;
+          result.color = '#D3D3D3';
           result.data = {};
+          result.data.type = type;
           nodesByName[name] = result;
       }
       return result;
     }
 
-    const getLink = (targetOperator,sourceOperator) => {
+    const getLink = (targetOperatorName,sourceOperatorName,row) => {
+      
+      const targetOperator = row[targetOperatorName];
+      const targetOperatorType = row[targetOperatorName + 'Type'];
+      const sourceOperator = row[sourceOperatorName];
+      const sourceOperatorType = row[sourceOperatorName + 'Type'];
+
       if(!sourceOperator || !targetOperator){
         return null;
       }
       if(sourceOperator === targetOperator){
         return null;
       }
-      const link = {key: sourceOperator+ targetOperator, source: getNodeByName(sourceOperator), target: getNodeByName(targetOperator)};
-    linksByKey[link.key] = link;
+      const link = {key: sourceOperator+ targetOperator, source: getNodeByName(sourceOperator,sourceOperatorType), target: getNodeByName(targetOperator,targetOperatorType)};
+      linksByKey[link.key] = link;
       return link;
+    }
+
+    const processAdditionalNode = (row, nodeNameField) => {
+      if(!row[nodeNameField]){
+        return;
+      }
+      if(nodesByName[nodeNameField]){
+        return;
+      }
+
     }
 
     rows.forEach(rw => {
@@ -90,9 +107,11 @@ export default class OperatorWithLinksDaoContext{
     });
 
     rows.forEach(rw => {
-      getLink(rw["input_inputOperator"],rw["input_outputOperator"]);
-      getLink(rw["output_inputOperator"],rw["output_outputOperator"]);
+      getLink("input_inputOperator" , "input_outputOperator", rw);
+      getLink("output_inputOperator" , "output_outputOperator", rw);
     });
+
+
 
     return {
       links: Object.values(linksByKey),
@@ -112,7 +131,7 @@ export default class OperatorWithLinksDaoContext{
     );
     result.id = row.nodeName;
     result.key = result.id;
-    result.radius = 10;
+    result.radius = 20;
     result.data = data;
     return result;
   }

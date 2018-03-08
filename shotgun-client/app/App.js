@@ -20,6 +20,7 @@ import {LoadingScreen} from 'common/components';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
+import {registerTokenListener} from 'common/Listeners';
 
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
@@ -35,6 +36,7 @@ export default class App extends React.Component {
       isReady: false,
       isConnected: false,
     };
+    registerTokenListener();
     //this.client = new Client('ws://shotgun.ltd:6060/');
     this.client = new Client('ws://localhost:6060/');
     Client.setCurrent(this.client);

@@ -38,7 +38,7 @@ export default class Client {
   }
 
   unsubscribe = function (commandId, eventHandlers) {
-    const unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({commandId});
+    const unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({subscriptionId : commandId});
     this.network.connection.removeOpenCommand(commandId);
     return this.sendCommand('unsubscribe', unsubscribeCommand, false, eventHandlers);
   };

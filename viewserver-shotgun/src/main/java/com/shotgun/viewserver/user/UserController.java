@@ -8,9 +8,9 @@ import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 
 @Controller(name = "userController")

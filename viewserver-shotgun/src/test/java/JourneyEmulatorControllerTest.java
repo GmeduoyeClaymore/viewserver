@@ -1,8 +1,7 @@
 import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.user.JourneyEmulatorController;
-import io.viewserver.command.ControllerContext;
-import io.viewserver.command.ControllerRegistration;
+import io.viewserver.controller.ControllerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -89,7 +89,7 @@ const OperatorGroupView_mapDispatchToProps = (dispatch, props) => {
       dispatch(updateSubscriptionAction(daoName,option))
     },
     toggleMode: () => {
-      dispatch(groupViewActions.toggleMode());
+      dispatch(groupViewActions.toggleMode());  
     },
     checkLogin: (continueWith) => {
       dispatch((disp, getState) => {
@@ -179,16 +179,27 @@ class OperatorGroupView extends Component{
     return   <ErrorRegion errors={connectionErrors}><NodeGraph  nodes={nodes} selectNode={this.onNodeClick} links={links} height={fullScreen ? 800 : 800} width={1300}/></ErrorRegion>
   }
 
+
+  getOperatorName(prefix,opName){
+    if(!prefix){
+      return opName;
+    }
+    if(opName.includes('/')){
+      return prefix + opName.substring(opName.lastIndexOf("/") + 1);
+    }
+    return prefix + opName;
+  }
+
   render(){
     const {operatorListDaoReady,operatorContentsDaoReady,operator : operatorName, mode, toggleMode, operatorPathPrefix = '', operatorGroup, operatorContentsErrors}  = this.props;
     const {scenarioResults = {}, selectedOperatorObj} = this.state;
     return <div className="flex flex-col"> 
-                <h1>{operatorGroup}</h1>
+                <h1 style={{height:50}}>{operatorGroup}</h1>
                 <a onClick={toggleMode}>{mode === 'graph' ? 'Table' : 'Graph'}</a>
                 {mode == 'graph' ?  this.renderOperatorGraph(!operatorName) : this.renderOperators()}
                 {operatorName ? <div style={{position : 'relative',flex:3}} className="flex flex-col">
                   <h1>{selectedOperatorObj ? selectedOperatorObj.type + " " + selectedOperatorObj.name + " " +  operatorName : operatorName}</h1>
-                  <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName: operatorPathPrefix + '' + operatorName}} />
+                  <ViewServerGrid key="1" ref={vsg => {this.grid = vsg}} daoName="01" options={{operatorName: this.getOperatorName(operatorPathPrefix,operatorName)}} />
                 </div> : null}
             </div>
   }

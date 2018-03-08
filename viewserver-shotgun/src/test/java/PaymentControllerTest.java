@@ -1,11 +1,8 @@
-import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.payments.*;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.Card;
-import io.viewserver.command.ControllerContext;
-import org.apache.logging.log4j.core.util.Assert;
+import io.viewserver.controller.ControllerContext;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
