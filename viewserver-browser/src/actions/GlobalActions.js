@@ -12,6 +12,7 @@ export const registerDataDaos = (continueWith) => {
       register(dispatch, new GenericOperatorDaoContext("dataSourcesDao", {operatorName : "/datasources"}));
       register(dispatch, new GenericOperatorDaoContext("reportsDao", {operatorName : "/report_registry"}));
       register(dispatch, new GenericOperatorDaoContext("sessionsDao", {operatorName : "/sessions"}));
+      register(dispatch, new GenericOperatorDaoContext("controllersDao", {operatorName : "/controllers"}));
       register(dispatch, new GenericOperatorDaoContext("reportContextsDao", {operatorName : "/reportContextRegistry"}));
       //register(dispatch, new GenericOperatorDaoContext("graphNodesDao", {operatorName : "/graphNodes"}));
       register(dispatch, new GenericOperatorDaoContext("operatorListDao", {}));

@@ -21,6 +21,7 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.*;
 import io.viewserver.configurator.IConfiguratorSpec;
+import io.viewserver.controller.ControllerCatalog;
 import io.viewserver.controller.ControllerJSONCommandHandler;
 import io.viewserver.datasource.*;
 import io.viewserver.distribution.CoalescorFactory;
@@ -81,12 +82,12 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
     private final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
     private SystemReportExecutor systemReportExecutor;
     private ControllerJSONCommandHandler controllerHandler;
+    private ControllerCatalog controllerCatalog;
 
     public ViewServerMaster(String name, IViewServerMasterConfiguration configuration) {
         super(name);
         this.configuration = configuration;
         localStorageDataAdapterFactory = new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath());
-        controllerHandler = new ControllerJSONCommandHandler();
     }
 
     public ReportRegistry getReportRegistry() {
@@ -126,6 +127,8 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
         new Catalog("graphNodes", getServerCatalog());
         reportRegistry = new ReportRegistry(getServerCatalog(), getServerExecutionContext(), jsonSerialiser, localStorageDataAdapterFactory, dataLoaderExecutor);
         reportContextRegistry = new ReportContextRegistry(getServerExecutionContext(), getServerCatalog(), new ChunkedColumnStorage(1024));
+        controllerCatalog = new ControllerCatalog(new ChunkedColumnStorage(1024),getServerExecutionContext(),getServerCatalog());
+        controllerHandler = new ControllerJSONCommandHandler(controllerCatalog);
         multiContextHandlerRegistry = new MultiContextHandlerRegistry();
         multiContextHandlerRegistry.register("uniongroup", new UnionGroupMultiContextHandler(distributionManager, executionPlanRunner));
         multiContextHandlerRegistry.register("uniontranspose", new UnionTransposeMultiContextHandler(distributionManager, executionPlanRunner));
@@ -351,7 +354,7 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
     }
 
     public Object registerController(Object controller){
-        this.controllerHandler.registerController(controller);
+        this.controllerCatalog.registerController(controller);
         return controller;
     }
 

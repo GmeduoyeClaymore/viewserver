@@ -29,6 +29,14 @@ export const updateSubscriptionAction = (daoName, options, continueWith) => {
   };
 };
 
+
+export const invokeJSONCommand = (daoName, options, continueWith) => {
+  return async (dispatch, getState) => {
+      const {controller, command, payload} = options;
+      dispatch(invokeDaoCommand(daoName, 'invokeJSONCommand', {controller, command, payload}, continueWith));
+  };
+};
+
 export const pageAction = (daoName, offset, limit) => {
   return invokeDaoCommand(daoName, 'page', {offset, limit});
 };

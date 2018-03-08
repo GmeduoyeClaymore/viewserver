@@ -88,6 +88,26 @@ export default class Client {
     return this.sendCommand('subscribeReport', subscribeReportCommand, true, dataSink);
   };
 
+  invokeJSONCommand = function (controllerName, action, payload) {
+    const commandExecutedPromise = new GenericJSONCommandPromise();
+    Logger.debug(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+    
+    if (!controllerName){
+      throw new Error('Controller name is required');
+    }
+    if (!action){
+      throw new Error('Action name is required');
+    }
+
+    const jsonCommand = ProtoLoader.Dto.GenericJSONCommandDto.create({
+      payload: JSON.stringify(payload),
+      action,
+      path: controllerName,
+    });
+    this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
+    return commandExecutedPromise.promise;
+  };
+
   subscribeToDimension = function (dimension, reportContext, options, dataSink) {
     const context = ReportContextMapper.toDto(reportContext);
     const optionsDto = OptionsMapper.toDto(options);

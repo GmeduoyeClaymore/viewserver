@@ -22,10 +22,17 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
 
     private ListeningExecutorService asyncExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setNameFormat("controller-command-handler-%d").build()));
     private ListeningExecutorService currentThreadExecutor = MoreExecutors.newDirectExecutorService();
-    public ControllerJSONCommandHandler() {
+    public ControllerJSONCommandHandler(ControllerCatalog controllerCatalog) {
         super(IGenericJSONCommand.class);
+        this.controllerCatalog = controllerCatalog;
     }
-    private HashMap<String,ControllerRegistration> registrationHashMap = new HashMap<>();
+
+    private ControllerCatalog controllerCatalog;
+
+    public ControllerJSONCommandHandler(Class<IGenericJSONCommand> clazz, ControllerCatalog controllerCatalog) {
+        super(clazz);
+        this.controllerCatalog = controllerCatalog;
+    }
 
     @Override
     protected void handleCommand(Command command, IGenericJSONCommand data, IPeerSession peerSession, CommandResult commandResult) {
@@ -38,7 +45,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             if(action == null || "".equals(action)){
                 throw new RuntimeException("\"action\" argument not specified on command message");
             }
-            ControllerRegistration registration = registrationHashMap.get(controllerName);
+            ControllerRegistration registration = controllerCatalog.getController(controllerName);
             if(registration == null){
                 throw new RuntimeException("Unable to find registration for controller named \"" + controllerName + "\"");
             }
@@ -85,12 +92,6 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
         }
     }
 
-    public void registerController(Object controller) {
-        ControllerRegistration reg = new ControllerRegistration(controller);
-        if(registrationHashMap.containsKey(reg.getName())){
-            throw new RuntimeException("Already have a controller registered for name \"" + reg.getName() + "\"");
-        }
-        registrationHashMap.put(reg.getName(), reg);
-    }
+
 }
 

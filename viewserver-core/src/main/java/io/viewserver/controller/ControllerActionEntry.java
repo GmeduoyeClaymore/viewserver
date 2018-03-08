@@ -75,7 +75,37 @@ public class ControllerActionEntry{
         return an.isSynchronous();
     }
 
-    public ListenableFuture<String> invoke(String param,ControllerContext ctxt,ListeningExecutorService executorService){
+    public String path() {
+        return an.path();
+    }
+
+
+    public Class<?> returnType() {
+        return this.method.getReturnType();
+    }
+
+
+    public String parameterJSON(){
+        try{
+            if(this.actionParams != null && actionParams.size() > 0){
+                HashMap<String,Object> result = new HashMap<>();
+                for(ControllerParamEntry str : this.actionParams){
+                    result.put(str.name,getDefaultInstanceOf(str.type));
+                }
+                return mapper.writeValueAsString(result);
+            }
+            return mapper.writeValueAsString(getDefaultInstanceOf(this.parameterType));
+        }catch (Exception ex){
+            return ex.toString();
+        }
+
+    }
+
+    private Object getDefaultInstanceOf(Class type) throws IllegalAccessException, InstantiationException {
+        return type.newInstance();
+    }
+
+    public ListenableFuture<String> invoke(String param, ControllerContext ctxt, ListeningExecutorService executorService){
         try {
             ListenableFuture result;
             if(this.actionParams != null && actionParams.size() > 0){

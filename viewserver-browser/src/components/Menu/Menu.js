@@ -11,6 +11,9 @@ const errorStyle = {
 }
 
 const Settings_mapStateToProps = (state, props) => { return {
+  controllers: getDaoState(state,[],'controllersDao'),
+  controllersLoading: isLoading(state,'controllersDao'),
+  controllersLoadingErrors: getLoadingError(state,'controllersDao'),
   dataSources: getDaoState(state,[],'dataSourcesDao'),
   dataSourcesLoading: isLoading(state,'dataSourcesDao'),
   dataSourcesLoadingErrors: getLoadingError(state,'dataSourcesDao'),
@@ -29,12 +32,13 @@ const Settings_mapStateToProps = (state, props) => { return {
 } }
 
 
-const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,graphNodes, reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
+const Menu = ({graphStore,history, dispatch,loggedIn,controllers, controllersLoading, controllersLoadingErrors, dataSources,graphNodes, reportContexts,reportContextsLoading, reportContextsLoadingErrors, dataSourcesLoading,reportsLoading, sessions, sessionsLoading, dataSourcesLoadingErrors, reports,reportsLoadingErrors, sessionsLoadingErrors}) => {
   return (
     <nav className="nav-group">
       <h5 className="nav-group-title">Navigation</h5>
       {!loggedIn ? <MenuRow path="/login" label="Login" icon="login" />: null}
       {loggedIn ? <DataSources dispatch={dispatch} dataSources={dataSources} loading={dataSourcesLoading} loadingErrors={dataSourcesLoadingErrors} icon="star" />: null}
+      {loggedIn ? <Controllers dispatch={dispatch} controllers={controllers} loading={controllersLoading} loadingErrors={controllersLoadingErrors} icon="star" />: null}
       {loggedIn ? <Reports  history={history} dispatch={dispatch}  graphStore={graphStore} reports={reports} loading={reportsLoading} loadingErrors={reportsLoadingErrors} icon="login" />: null}
       {loggedIn ? <ReportContexts  history={history}  dispatch={dispatch}  reportContexts={reportContexts} loading={reportContextsLoading} loadingErrors={reportContextsLoadingErrors} icon="login" />: null}
       {loggedIn ? <Sessions sessions={sessions}  loading={sessionsLoading} loadingErrors={sessionsLoadingErrors} path="/sessions" label="Sessions" icon="user" />: null}
@@ -43,6 +47,22 @@ const Menu = ({graphStore,history, dispatch,loggedIn,dataSources,graphNodes, rep
     </nav>
   );
 } 
+
+
+const Controllers = ({controllers = [], loading, icon, loadingErrors, dispatch}) => {
+  return ( <div className="nav-group-item">
+
+  {loading ? <ClipLoader size={12}/> :   <span className={"icon icon-" + icon} title={loadingErrors} style={loadingErrors? errorStyle : undefined} ></span>}
+  {"Controllers"}
+  {controllers.map((d) => (<ControllersLink {...{...d, dispatch}}/>))}
+</div>
+)};
+
+const ControllersLink = ({name, path,dispatch}) => (
+  <NavLink to={{pathname : "/controllers", search: `controller=${path}`}} className="nav-group-item" >
+    {name}
+  </NavLink>
+);
 
 const DataSources = ({dataSources = [], loading, icon, loadingErrors, dispatch}) => {
   return ( <div className="nav-group-item">
@@ -61,8 +81,11 @@ const Diagnostics = ({icon, loadingErrors, loading}) => {
   <FullOperatorLink name="Connections" path="/connections"/>
   <FullOperatorLink name="Sessions" path="/sessions"/>
   <GraphNodesLink name="Graph Nodes" path="/graphNodes"/>
+  
 </div>
 )};
+
+
 
 const GraphNodesLink = ({name,path}) => (
   <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=opName&operatorPathPrefix=/graphNodes/`}} className="nav-group-item" >

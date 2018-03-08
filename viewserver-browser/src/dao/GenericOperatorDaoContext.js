@@ -43,6 +43,9 @@ export default class GenericOperatorDaoContext{
 
   extendDao(dao){
     dao._observable = dao.subject.throttleTime(100)
+    dao.invokeJSONCommand = async ({controller, command, payload}) => {
+      return await this.client.invokeJSONCommand(controller, command, payload);
+    };
   }
 
   transformOptions(options){
