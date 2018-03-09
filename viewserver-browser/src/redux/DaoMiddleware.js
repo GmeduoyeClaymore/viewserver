@@ -93,11 +93,13 @@ export default ({ getState, dispatch }) => {
     const dao = DAOS[action.daoName];
     Logger.info(`Invoking command ${JSON.stringify(action)}`);
     if (!dao){
-      throw new Error(`Unable to find DAO named ${action.daoName}`);
+      Logger.warning(`Unable to find DAO named ${action.daoName}`);
+      return;
     }
     const method = dao[action.method];
     if (!method){ 
-      throw new Error(`Unable to find method named ${action.method} on ${action.daoName} method names are ${listMethodNames(dao).join(',')}`);
+      Logger.warning(`Unable to find method named ${action.method} on ${action.daoName} method names are ${listMethodNames(dao).join(',')}`);
+      return;
     }
     asyncDispatch(action, method);
     return getState();

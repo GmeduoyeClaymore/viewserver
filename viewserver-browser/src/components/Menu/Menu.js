@@ -59,7 +59,7 @@ const Controllers = ({controllers = [], loading, icon, loadingErrors, dispatch})
 )};
 
 const ControllersLink = ({name, path,dispatch}) => (
-  <NavLink to={{pathname : "/controllers", search: `controller=${path}`}} className="nav-group-item" >
+  <NavLink to={{pathname : "/controllers", search: `controller=${path}&controllerName=${name}`}} className="nav-group-item" >
     {name}
   </NavLink>
 );

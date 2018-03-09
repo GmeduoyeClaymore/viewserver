@@ -96,13 +96,23 @@ public class ControllerActionEntry{
             }
             return mapper.writeValueAsString(getDefaultInstanceOf(this.parameterType));
         }catch (Exception ex){
-            return ex.toString();
+            try {
+                return mapper.writeValueAsString(ex);
+            } catch (JsonProcessingException e) {
+                return e.toString();
+            }
         }
 
     }
 
-    private Object getDefaultInstanceOf(Class type) throws IllegalAccessException, InstantiationException {
-        return type.newInstance();
+    private Object getDefaultInstanceOf(Class type) throws IllegalAccessException, InstantiationException, JsonProcessingException {
+        if(type.isAssignableFrom(String.class)){
+            return "";
+        }
+        if(type.isAssignableFrom(Date.class)){
+            return mapper.writeValueAsString(Calendar.getInstance().getTime());
+        }
+        return  type.newInstance();
     }
 
     public ListenableFuture<String> invoke(String param, ControllerContext ctxt, ListeningExecutorService executorService){

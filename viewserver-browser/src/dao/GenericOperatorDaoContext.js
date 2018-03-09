@@ -1,6 +1,6 @@
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import OperatorSubscriptionStrategy from 'common/subscriptionStrategies/OperatorSubscriptionStrategy';
-
+import {GetConnectedClientFromLoginDao} from 'common/dao/loginUtils'
 
 export default class GenericOperatorDaoContext{
   constructor(name, options = {}) {
@@ -43,8 +43,10 @@ export default class GenericOperatorDaoContext{
 
   extendDao(dao){
     dao._observable = dao.subject.throttleTime(100)
+    const daoContext = this;
     dao.invokeJSONCommand = async ({controller, command, payload}) => {
-      return await this.client.invokeJSONCommand(controller, command, payload);
+      const client = await GetConnectedClientFromLoginDao(daoContext);
+      return await client.invokeJSONCommand(controller, command, payload);
     };
   }
 

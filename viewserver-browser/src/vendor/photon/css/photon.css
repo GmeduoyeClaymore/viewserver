@@ -123,12 +123,10 @@ th {
 
 * {
   cursor: default;
-  -webkit-user-select: none;
 }
 
 input,
 textarea {
-  -webkit-user-select: text;
 }
 
 form,
@@ -136,8 +134,6 @@ input,
 optgroup,
 select,
 textarea {
-  -webkit-user-select: text;
-  -webkit-app-region: no-drag;
 }
 
 * {
@@ -223,7 +219,6 @@ h6 {
 
 .selectable-text {
   cursor: text;
-  -webkit-user-select: text;
 }
 
 .text-center {

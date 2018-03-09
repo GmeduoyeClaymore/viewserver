@@ -6,6 +6,7 @@ import RowEventMapper from './mappers/RowEventMapper';
 import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
 import Logger from 'common/Logger';
+import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
 
 export default class Client {
   constructor(url, protocol) {

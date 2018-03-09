@@ -15,6 +15,22 @@
   flex : 1
 }
 
+.jsonArea{
+  height: 100%;
+}
+
+.jsonArea textarea{
+  height: 100%;
+  width: 100%;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  font-size: 16px;
+  margin: 2;
+  padding: 8px;
+  border: 1px solid grey;
+  border-radius: 2;
+  cursor: text;
+}
 
 
 .flex-col{
@@ -181,7 +197,7 @@ background: #00716d;
 
 .canv-grid-container {
 display: flex;
-flexDirection: column;
+flex-direction: column;
 flex: 1;
 overflow: hidden;
   border-top:1px solid rgb(255, 255, 255);

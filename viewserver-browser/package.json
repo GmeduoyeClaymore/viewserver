@@ -25,6 +25,7 @@
     "edge-flow": "^0.1.13",
     "electron-devtools-installer": "^2.2.0",
     "eslint": "^4.18.1",
+    "jsonarea": "^0.1.0",
     "moment": "^2.19.1",
     "query-string": "^5.0.1",
     "react": "^15.4.2",
