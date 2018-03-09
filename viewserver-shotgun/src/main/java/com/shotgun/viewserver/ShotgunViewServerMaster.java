@@ -44,7 +44,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         VehicleController vehicleController = new VehicleController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
         JourneyEmulatorController journeyEmulatorController = new JourneyEmulatorController(mapsController);
         LoginController loginController = new LoginController();
-        UserController userController = new UserController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), loginController, imageController, nexmoController);
+        UserController userController = new UserController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), loginController, imageController, nexmoController, mapsController, getServerReactor());
 
 
         this.registerController(paymentController);

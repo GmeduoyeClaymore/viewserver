@@ -48,6 +48,30 @@ public class MapsController {
         }
         return get;
     }
+    @ControllerAction(path = "getLocationFromPostcode", isSynchronous = false)
+    public HashMap<String,Object> getLocationFromPostcode(String postcode){
+        HashMap<String, Object> x = this.makeAutoCompleteRequest(new MapRequest(postcode, "en"));
+        List result = (List) x.get("predictions");
+
+        if(result == null || result.size() == 0){
+            throw new RuntimeException(String.format("unable to find predictions for postcode \"%s\"", postcode));
+        }
+        HashMap<String, Object> prediction = (HashMap<String, Object>) result.get(0);
+        if(prediction == null || prediction.size() == 0){
+            throw new RuntimeException(String.format("unable to find prediction for postcode \"%s\"", postcode));
+        }
+
+        String placeId = (String) prediction.get("place_id");
+        System.out.println();
+
+        x = this.mapPlaceRequest(new PlaceRequest(placeId, "en"));
+        x = (HashMap<String, Object>) x.get("result");
+        if(x == null || x.size() == 0){
+            throw new RuntimeException(String.format("unable to find result for place for postcode \"%s\"", postcode));
+        }
+        HashMap<String, Object> geometry = (HashMap<String, Object>) x.get("geometry");
+        return(HashMap<String, Object>) geometry.get("location");
+    }
 
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)
     public HashMap<String,Object> makeAutoCompleteRequest(MapRequest request){

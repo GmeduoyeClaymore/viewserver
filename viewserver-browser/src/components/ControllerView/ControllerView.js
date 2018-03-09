@@ -171,17 +171,12 @@ class ControllerView extends Component{
     this.props.checkLogin();
   }
 
-  /*componentWillReceiveProps(props){
+  componentWillReceiveProps(props){
     const {controller} = props;
     if(controller != this.props.controller){
-      this.subscribeTooperatorcontents(controller);  
+      this.setState({parameterJSON: undefined});
     }
   }
-
-  subscribeTooperatorcontents(controller){
-    const {updateSubscription} = this.props;
-    updateSubscription("operatorListDao", {operatorName : controller})
-  }*/
 
   handleSubmit(){
   }
