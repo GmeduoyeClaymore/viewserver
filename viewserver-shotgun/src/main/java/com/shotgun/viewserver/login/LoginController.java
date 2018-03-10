@@ -4,15 +4,19 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.user.User;
 import com.shotgun.viewserver.user.UserStatus;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.*;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
@@ -20,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.shotgun.viewserver.user.UserController.waitForUser;
@@ -34,9 +37,11 @@ public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     private TableUpdater tableUpdater;
+    private ICatalog systemcatalog;
 
-    public LoginController(TableUpdater tableUpdater) {
+    public LoginController(TableUpdater tableUpdater, ICatalog systemcatalog) {
         this.tableUpdater = tableUpdater;
+        this.systemcatalog = systemcatalog;
     }
 
     @ControllerAction(path = "login", isSynchronous = true)
@@ -59,10 +64,12 @@ public class LoginController {
     }
 
     @ControllerAction(path = "setUserId", isSynchronous = true)
-    public ListenableFuture setUserId(String userId) {
+    public ListenableFuture<Object> setUserId(String userId) {
+        rx.Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME, OrderItemsDataSource.NAME);
         rx.Observable<IOperator> userTable = ControllerUtils.getOperatorObservable(TableNames.USER_TABLE_NAME);
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
-        return ListenableFutureObservable.to(userTable.cast(KeyedTable.class).
+        return ListenableFutureObservable.to(
+                datasources.flatMap(obj -> userTable.cast(KeyedTable.class).
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
                                 rec -> {
@@ -70,7 +77,7 @@ public class LoginController {
                                     setUserOnline(user, ut);
                                     return user;
                                 })
-                ));
+                )));
     }
 
     private Observable<Integer> setUserOnline(User user, KeyedTable table) {
@@ -124,6 +131,27 @@ public class LoginController {
             valueSetter.accept((T) columnValue);
         }
     }
+
+    public Observable<Object> waitForDataSources(String... dataSourceNames){
+        List<Observable<OperatorEvent>> waitedForDataSources = new ArrayList<Observable<OperatorEvent>>();
+        for(String dataSource : dataSourceNames){
+            waitedForDataSources.add(waitForDataSource(dataSource));
+        }
+        return rx.Observable.zip(waitedForDataSources.toArray(new Observable[0]), objects -> null).take(1);
+    }
+
+    private Observable<OperatorEvent> waitForDataSource(String dataSource) {
+        return systemcatalog.getOperator("datasources").getOutput("out").observable().filter(c-> isInitialized(c,dataSource));
+    }
+
+    private static boolean isInitialized(OperatorEvent ev, String name) {
+        if(!ev.getEventType().equals(EventType.ROW_ADD) && !ev.getEventType().equals(EventType.ROW_UPDATE)){
+            return false;
+        }
+        HashMap<String,Object> result = (HashMap<String,Object>)ev.getEventData();
+        return "INITIALIZED".equals(result.get("status")) && name.equals(result.get("name"));
+    }
+
 
 
 

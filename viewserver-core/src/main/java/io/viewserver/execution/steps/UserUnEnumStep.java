@@ -24,10 +24,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
-import io.viewserver.execution.nodes.IContextNode;
-import io.viewserver.execution.nodes.IGraphNode;
-import io.viewserver.execution.nodes.IMeasureNode;
-import io.viewserver.execution.nodes.UnEnumNode;
+import io.viewserver.execution.nodes.*;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.report.IGraphDefinition;
 import io.viewserver.report.IMeasuringGraphDefinition;
@@ -49,7 +46,7 @@ public class UserUnEnumStep implements IExecutionPlanStep<OptionsExecutionPlanCo
     @Override
     public void execute(OptionsExecutionPlanContext optionsExecutionPlanContext) {
 
-        UnEnumNode userUnEnum = new UnEnumNode("userUnEnum:" + commandId, optionsExecutionPlanContext.getDataSource())
+        UnEnumNode userUnEnum = new UserUnEnumNode("userUnEnum:" + commandId, optionsExecutionPlanContext.getDataSource())
                 .withMetadata("isUserExecutionPlanNode", true)
                 .withConnection(optionsExecutionPlanContext.getInputOperator(), optionsExecutionPlanContext.getInputOutputName(), Constants.IN);
 

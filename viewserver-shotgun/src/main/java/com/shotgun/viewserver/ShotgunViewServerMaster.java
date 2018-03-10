@@ -43,7 +43,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), "c03cd396", "33151c6772f2bd52", new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
         VehicleController vehicleController = new VehicleController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
         JourneyEmulatorController journeyEmulatorController = new JourneyEmulatorController(mapsController);
-        LoginController loginController = new LoginController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
+        LoginController loginController = new LoginController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), getServerCatalog());
         UserController userController = new UserController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), loginController, imageController, nexmoController, mapsController, getServerReactor());
 
 

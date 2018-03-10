@@ -10,6 +10,7 @@ import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.MapsController;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -40,6 +41,7 @@ public class UserController {
     private IReactor reactor;
 
 
+
     public UserController(TableUpdater tableUpdater,
                           LoginController loginController,
                           ImageController imageController,
@@ -52,6 +54,7 @@ public class UserController {
         this.nexmoController = nexmoController;
         this.mapsController = mapsController;
         this.reactor = reactor;
+
     }
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
@@ -163,7 +166,7 @@ public class UserController {
 
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("status", status.name())
+                .addValue("status", status == null ? null : status.name())
                 .addValue("statusMessage", statusMessage);
 
         tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
@@ -212,6 +215,9 @@ public class UserController {
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));
     }
+
+
+
 
     private static boolean hasUserId(OperatorEvent ev, String userId) {
         if(!ev.getEventType().equals(EventType.ROW_ADD)){
