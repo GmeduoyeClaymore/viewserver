@@ -25,10 +25,19 @@ public class User{
     private Double latitude;
     private Double longitude;
     private String status;
+    private String statusMessage;
     private boolean online;
 
 
     public User() {
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
     public String getStatus() {

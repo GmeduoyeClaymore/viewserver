@@ -48,9 +48,10 @@ public class LocalPersistentKeyedTableUpdater extends LocalKeyedTableUpdater {
     }
 
     @Override
-    public void addRow(ITableRowUpdater rowUpdater) {
+    public int addRow(ITableRowUpdater rowUpdater) {
         ((PersistentKeyedTable) table).setLoadingData(true);
-        super.addRow(rowUpdater);
+        int result = super.addRow(rowUpdater);
         ((PersistentKeyedTable) table).setLoadingData(false);
+        return result;
     }
 }

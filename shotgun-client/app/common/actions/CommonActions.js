@@ -38,6 +38,18 @@ export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
   return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
 };
 
+export const updateRange = (range) => {
+  return invokeDaoCommand('userDao', 'updateRange', {range});
+};
+
+export const updateStatus = ({status, statusMessage}) => {
+  return invokeDaoCommand('userDao', 'updateStatus', {status, statusMessage});
+};
+
+export const updateRelationship = (options, continueWith) => {
+  return invokeDaoCommand('userRelationshipDao', 'updateRelationship', options, continueWith);
+};
+
 export const commonServicesRegistrationAction = (client) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client));

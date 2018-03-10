@@ -3,9 +3,9 @@ import MapView from 'react-native-maps';
 import UserMarker from 'common/components/maps/UserMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import shotgun from 'native-base-theme/variables/shotgun';
-
+import {isEqual} from 'lodash';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
-const LATITUDE_DELTA = 0.0322;
+const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export default class UserRelationshipMap extends Component{
@@ -14,9 +14,9 @@ export default class UserRelationshipMap extends Component{
     this.fitMap = this.fitMap.bind(this);
   }
   
-  fitMap(){
-    const {map, props} = this;
-    let {me, relatedUsers} = props;
+  fitMap(newProps){
+    const {map} = this;
+    let {me, relatedUsers} = newProps;
     if (me){
       relatedUsers = [...relatedUsers, me];
     }
@@ -25,9 +25,22 @@ export default class UserRelationshipMap extends Component{
       animated: false,
     });
   }
+
+  componentDidMount(){
+    if (this.map){
+      this.fitMap(this.props);
+    }
+  }
+
+  componentWillReceiveProps(newProps){
+    const {relatedUsers} = newProps;
+    if (!isEqual(relatedUsers, this.props.relatedUsers)){
+      this.fitMap(newProps);
+    }
+  }
   
   render(){
-    const {me, selectedUser, relatedUsers, context} = this.props;
+    const {me, selectedUser, relatedUsers = [], context} = this.props;
     const {fitMap} = this;
     const {setSelectedUser} = context;
     const {latitude, longitude} = me;
@@ -39,10 +52,10 @@ export default class UserRelationshipMap extends Component{
       longitudeDelta: LONGITUDE_DELTA
     };
   
-    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-      showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-      {selectedUser ? <MapViewDirections client={client} locations={[me, selectedUser]} strokeWidth={3} /> : null}
-      {relatedUsers.map( (user,i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
+    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => fitMap(this.props)}
+      region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+      {selectedUser && me ? <MapViewDirections client={client} locations={[me, selectedUser]} strokeWidth={3} /> : null}
+      {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;
   }
 }

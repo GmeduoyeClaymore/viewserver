@@ -1,6 +1,11 @@
 package io.viewserver.controller;
 
+import io.viewserver.command.ActionParam;
+
+import java.lang.annotation.Annotation;
+
 public class ControllerParamEntry{
+    ActionParam an;
     String name;
     Class type;
     int index;
@@ -13,8 +18,22 @@ public class ControllerParamEntry{
         this.required = required;
     }
 
+
+    public ControllerParamEntry(ActionParam an,Class type, int index) {
+        this(an.name(),type,index, an.required());
+        this.an = an;
+    }
+
     public boolean isRequired() {
         return required;
+    }
+
+    public ActionParam getAn() {
+        return an;
+    }
+
+    public void setAn(ActionParam an) {
+        this.an = an;
     }
 
     public void setRequired(boolean required) {

@@ -53,7 +53,7 @@ export default class CustomerDao{
   }
 
   async loginCustomer({email, password}){
-    const customerId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});
+    const customerId = await this.client.login(email, password);
     Logger.info(`Customer ${customerId} logged in`);
     await PrincipalService.setUserIdOnDevice(customerId);
     return customerId;

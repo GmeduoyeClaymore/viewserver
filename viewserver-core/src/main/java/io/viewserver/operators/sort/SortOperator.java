@@ -530,6 +530,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
 
         @Override
         protected void onRowRemove(int row) {
+            setTotalSize();
             if (processingDataChange) {
                 removedRows.add(row);
             }
@@ -539,8 +540,10 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
         public void onAfterCommit() {
             super.onAfterCommit();
 
-            rowsToRemove.forEach(removeRowProc);
-            rowsToRemove.resetQuick();
+            if(rowsToRemove.size() > 0) {
+                rowsToRemove.forEach(removeRowProc);
+                rowsToRemove.resetQuick();
+            }
         }
 
         private final TIntProcedure removeRowProc = (row) -> {

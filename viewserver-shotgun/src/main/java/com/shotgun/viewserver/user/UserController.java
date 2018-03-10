@@ -25,9 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -160,7 +158,7 @@ public class UserController {
 
 
     @ControllerAction(path = "updateStatus", isSynchronous = true)
-    public void updateStatus(@ActionParam(name = "status", required = true) UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
+    public void updateStatus(@ActionParam(name = "status") UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
         String userId = getUserId();
 
         Record userRecord = new Record()
@@ -171,7 +169,42 @@ public class UserController {
         tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
-    public static rx.Observable<Map<String,Object>> waitForUser(String userId, KeyedTable userTable){
+    @ControllerAction(path = "updateRelationship", isSynchronous = true)
+    public int updateRelationship(@ActionParam(name = "targetUserId") String targetUserId, @ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus, @ActionParam(name = "relationshipType") UserRelationshipType relationshipType) {
+        String userId = getUserId();
+
+        Record userRecord = new Record()
+                .addValue("relationshipId", constructKey(userId,targetUserId))
+                .addValue("fromUserId", userId)
+                .addValue("toUserId", targetUserId)
+                .addValue("relationshipStatus", userRelationshipStatus == null ? null : userRelationshipStatus.name())
+                .addValue("relationshipType", relationshipType == null ? null : relationshipType.name());
+
+        return tableUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", userRecord);
+    }
+
+    private String constructKey(String userId, String targetUserId) {
+        List<String> list = Arrays.asList(userId, targetUserId);
+        Collections.sort(list);
+        return String.join(">",list);
+    }
+
+
+    @ControllerAction(path = "updateRange", isSynchronous = true)
+    public void updateRange(@ActionParam(name = "range") int range) {
+        String userId = getUserId();
+
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("range", range);
+
+        tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+    }
+
+    public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){
+        if(userId == null){
+            throw new RuntimeException("Userid must be specified");
+        }
         int userRowId = userTable.getRow(new TableKey(userId));
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {

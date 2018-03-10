@@ -94,7 +94,7 @@ export default class App extends React.Component {
     const {userId} = this;
     if (userId){
       //TODO this is really unsafe really we should be saving credentials in the client not just the userID
-      await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
+      await this.client.loginUserById(userId);
     }
     Logger.info(`!!! Got user id ${this.userId} from device`);
   }

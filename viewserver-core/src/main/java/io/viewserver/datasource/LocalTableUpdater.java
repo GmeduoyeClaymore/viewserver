@@ -52,8 +52,8 @@ public class LocalTableUpdater implements ITableUpdater {
     }
 
     @Override
-    public void addRow(ITableRowUpdater rowUpdater) {
-        table.addRow(rowUpdater);
+    public int addRow(ITableRowUpdater rowUpdater) {
+        return table.addRow(rowUpdater);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class LocalTableUpdater implements ITableUpdater {
     }
 
     @Override
-    public void addOrUpdateRow(ITableRowUpdater rowUpdater) {
-        addRow(rowUpdater);
+    public int addOrUpdateRow(ITableRowUpdater rowUpdater) {
+        return addRow(rowUpdater);
     }
 }

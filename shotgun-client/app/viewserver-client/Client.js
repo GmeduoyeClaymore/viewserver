@@ -7,6 +7,7 @@ import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
 import Logger from 'common/Logger';
 import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
+import Rx from 'rxjs/Rx';
 
 export default class Client {
   static Current;
@@ -14,6 +15,7 @@ export default class Client {
     this.url = url;
     this.protocol = protocol;
     this.network = new Network(this.url);
+    this.loggedInSubject = new Rx.Subject();
   }
 
   static setCurrent(client){
@@ -22,6 +24,10 @@ export default class Client {
 
   get connection(){
     return this.network.connection;
+  }
+
+  get loggedInObservable(){
+    return this.loggedInSubject;
   }
 
   connect(autoReconnect){
@@ -133,6 +139,18 @@ export default class Client {
     const tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({tableName, tableEvent, operation: 2 /* EDIT */});
     return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   };
+
+
+  async loginUserById(userId){
+    await this.invokeJSONCommand('loginController', 'setUserId', userId);
+    this.loggedInSubject.next(true);
+  }
+
+  async login(email, password){
+    const customerId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});
+    this.loggedInSubject.next(true);
+    return customerId;
+  }
 
   invokeJSONCommand = function (controllerName, action, payload) {
     const commandExecutedPromise = new GenericJSONCommandPromise();

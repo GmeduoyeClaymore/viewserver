@@ -131,7 +131,7 @@ export default class OperatorWithLinksDaoContext{
     );
     result.id = row.nodeName;
     result.key = result.id;
-    result.radius = 20;
+    result.radius = row.nodeName.startsWith('/remotes') ? 10 : 20;
     result.data = data;
     return result;
   }

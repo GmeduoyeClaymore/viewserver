@@ -90,6 +90,14 @@ export default class UserDaoContext{
     dao.stopWatchingPosition = async () => {
       navigator.geolocation.clearWatch(this.watchId);
     };
+
+    dao.updateRange = async ({range}) => {
+      await this.client.invokeJSONCommand('userController', 'updateRange', {range});
+    };
+
+    dao.updateStatus = async ({status, statusMessage}) => {
+      await this.client.invokeJSONCommand('userController', 'updateStatus', {status, statusMessage});
+    };
   }
 }
 

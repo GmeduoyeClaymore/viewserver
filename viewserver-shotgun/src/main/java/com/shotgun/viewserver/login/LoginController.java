@@ -2,8 +2,11 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.user.UserStatus;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -14,6 +17,7 @@ import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 
 import java.util.Date;
@@ -29,9 +33,14 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private TableUpdater tableUpdater;
+
+    public LoginController(TableUpdater tableUpdater) {
+        this.tableUpdater = tableUpdater;
+    }
 
     @ControllerAction(path = "login", isSynchronous = true)
-    public String login(@ActionParam(name = "email")String email, @ActionParam(name = "password")String password){
+    public String login(@ActionParam(name = "email", exampleValue = "1John.Customer@email.com")String email, @ActionParam(name = "password", exampleValue = "customer")String password){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         int userRowId = getUserRow(userTable, email.toLowerCase());
@@ -53,9 +62,23 @@ public class LoginController {
     public ListenableFuture setUserId(String userId) {
         rx.Observable<IOperator> userTable = ControllerUtils.getOperatorObservable(TableNames.USER_TABLE_NAME);
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
-        return ListenableFutureObservable.to(
-                userTable.cast(KeyedTable.class).
-                            flatMap( ut -> waitForUser(userId, ut).map(rec -> setupContext(rec,peerSession))));
+        return ListenableFutureObservable.to(userTable.cast(KeyedTable.class).
+                flatMap(ut ->
+                        waitForUser(userId, ut).map(
+                                rec -> {
+                                    User user = setupContext(rec, peerSession);
+                                    setUserOnline(user, ut);
+                                    return user;
+                                })
+                ));
+    }
+
+    private Observable<Integer> setUserOnline(User user, KeyedTable table) {
+        Record userRecord = new Record()
+                .addValue("userId", user.getUserId())
+                .addValue("status", UserStatus.ONLINE.name());
+
+        return tableUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
     }
 
     private User setupContext(Map<String,Object> userRecord, IPeerSession session) {
@@ -75,6 +98,7 @@ public class LoginController {
         setValue(userRecord,"stripeAccountId", v ->  user.setStripeAccountId((String) v));
         setValue(userRecord,"stripeCustomerId", v ->  user.setStripeCustomerId((String) v));
         setValue(userRecord,"stripeDefaultSourceId", v ->  user.setStripeDefaultSourceId((String) v));
+        setValue(userRecord,"statusMessage", v ->  user.setStatusMessage((String) v));
         setValue(userRecord,"type", v ->  user.setType((String) v));
         ControllerContext.set("user", user, session);
         return user;
@@ -100,5 +124,8 @@ public class LoginController {
             valueSetter.accept((T) columnValue);
         }
     }
+
+
+
 
 }

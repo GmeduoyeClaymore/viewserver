@@ -108,7 +108,7 @@ const ControllerView_mapDispatchToProps = (dispatch, props) => {
         queryStringParams.actionName = actionName;
       }
       const queryString = stringify(queryStringParams)
-      props.history.push({pathname, search: queryString})
+      props.history.replace({pathname, search: queryString})
     },
     checkLogin: (continueWith) => {
       dispatch((disp, getState) => {
@@ -172,9 +172,13 @@ class ControllerView extends Component{
   }
 
   componentWillReceiveProps(props){
-    const {controller} = props;
-    if(controller != this.props.controller){
+    const {controller, actionName} = props;
+    if(controller != this.props.controller || actionName != this.props.actionName){
       this.setState({parameterJSON: undefined});
+    }
+    const {parameterJSON} = this.state;
+    if(!parameterJSON && props.parameterJSON){
+      this.setState({parameterJSON: props.parameterJSON});
     }
   }
 
@@ -190,6 +194,14 @@ class ControllerView extends Component{
 
   handleChange(event){
     this.setState({parameterJSON: JSON.stringify(event)});
+  }
+
+
+  tryParse(param){
+    try{
+      return JSON.parse(param)
+    }catch(error){}
+    return param
   }
 
   render(){
@@ -210,7 +222,7 @@ class ControllerView extends Component{
                 {actionName ? <div style={{flex: 1}} className="flex flex-row"> 
                     <div style={{flex:1}}>
                       <form className="flex flex-col" onSubmit={this.handleSubmit} style={{flex:1, height: '100%'}}>
-                      <JSONArea className="jsonArea selectable-text" value={parameterJSON ? JSON.parse(parameterJSON) : null} onChange={this.handleChange} />
+                      <JSONArea className="jsonArea selectable-text" value={parameterJSON ? this.tryParse(parameterJSON) : null} onChange={this.handleChange} />
                         <button style={styles.button} onClick={this.handleSubmit} disabled={isControllerActionPending}>
                             {"Invoke " + actionName}
                         </button>

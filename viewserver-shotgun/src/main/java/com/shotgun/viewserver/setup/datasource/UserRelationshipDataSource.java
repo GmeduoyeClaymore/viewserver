@@ -32,7 +32,6 @@ public class UserRelationshipDataSource {
                         .withKeyColumns("relationshipId")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("relationshipStatus", Cardinality.Int, ColumnType.String),
                         new Dimension("relationshipType", Cardinality.Int, ColumnType.String)))
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

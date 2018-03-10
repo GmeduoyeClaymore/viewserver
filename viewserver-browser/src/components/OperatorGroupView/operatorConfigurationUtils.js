@@ -22,7 +22,7 @@ export const getNodesAndLinksFromConnectionsAndOperators = (connections = [], op
     const getNodeForName = (name) => {
       let node = nodesForName[name];
       if(!node){
-        node = {key: name, id: name, radius: 25};
+        node = {key: name, id: name, radius: name.startsWith('/remotes') ? 10 : 25};
         nodes.push(node);
         nodesForName[name] = node;
       }

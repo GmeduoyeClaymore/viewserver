@@ -19,6 +19,7 @@ package io.viewserver.operators;
 import io.viewserver.Constants;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -106,6 +107,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     @Override
     public void handleUpdate(int row) {
+        ExecutionContext.AssertUpdateThread();
         if (!getRowTracker().isActive(row)) {
             throw new IllegalStateException("Cannot handle update for inactive row " + row);
         }

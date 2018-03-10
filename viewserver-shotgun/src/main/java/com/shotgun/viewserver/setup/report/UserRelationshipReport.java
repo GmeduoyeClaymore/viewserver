@@ -2,6 +2,7 @@ package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
+import io.viewserver.controller.ControllerActionEntry;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.*;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -16,38 +17,41 @@ public class UserRelationshipReport {
         public static final String USER_FOR_PRODUCT_REPORT_ID = "usersForProduct";
         public static final String USER_RELATIONSHIPS = "userRelationships";
 
-        public static List<IGraphNode> getSharedGraphNodes(String userOperatorName){
+        public static List<IGraphNode> getSharedGraphNodes(String userOperatorName, boolean showUnrelated){
                 return Arrays.asList(
                         new CalcColNode("userRelationships")
                                 .withCalculations(
-                                        new CalcColOperator.CalculatedColumn("isRelated", "isNull(\"{@userId}\" == fromUserId, \"{@userId}\" == toUserId)"),
+                                        new CalcColOperator.CalculatedColumn("isRelated", "isNull(\"{@userId}\" == fromUserId, \"{@userId}\" == toUserId) && relationshipStatus != \"UNKNOWN\""),
+                                        new CalcColOperator.CalculatedColumn("initiatedByMe", "\"{@userId}\" == fromUserId"),
                                         new CalcColOperator.CalculatedColumn("relatedToUserId", "if(\"{@userId}\" == fromUserId, toUserId, fromUserId)")
                                 )
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserRelationshipDataSource.NAME, UserRelationshipDataSource.NAME)),
                         new FilterNode("relatedFilter")
-                                .withExpression("isNull(isRelated,{showUnrelated})")
+                                .withExpression("isRelated")
                                 .withConnection("userRelationships"),
                         new GroupByNode("uniqueUserGroupBy")
-                                .withGroupByColumns("relatedToUserId")
+                                .withGroupByColumns("relatedToUserId","relationshipStatus", "initiatedByMe")
                                 .withConnection("relatedFilter"),
-                        new CalcColNode("meCalcCol")
-                                .withCalculations(
-                                        new CalcColOperator.CalculatedColumn("meUserId", "\"{@userId}\"")
-                                )
-                                .withConnection("uniqueUserGroupBy"),
+
                         new JoinNode("relatedToUser")
                                 .withLeftJoinColumns("relatedToUserId")
                                 .withRightJoinColumns("userId")
                                 .withColumnPrefixes("","relatedToUser_")
                                 .withAlwaysResolveNames()
-                                .withConnection("meCalcCol", Constants.OUT, "left")
+                                .withRightJoinOuter(showUnrelated)
+                                .withConnection("uniqueUserGroupBy", Constants.OUT, "left")
                                 .withConnection(userOperatorName, Constants.OUT, "right"),
+                        new CalcColNode("meCalcCol")
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("meUserId", "\"{@userId}\"")
+                                )
+                                .withConnection("relatedToUser"),
                         new JoinNode("meUser")
                                 .withLeftJoinColumns("meUserId")
                                 .withRightJoinColumns("userId")
                                 .withColumnPrefixes("","meUser_")
                                 .withAlwaysResolveNames()
-                                .withConnection("relatedToUser", Constants.OUT, "left")
+                                .withConnection("meCalcCol", Constants.OUT, "left")
                                 .withConnection(userOperatorName, Constants.OUT, "right"),
                         new CalcColNode("distanceCalcCol")
                                 .withCalculations(
@@ -55,7 +59,7 @@ public class UserRelationshipReport {
                                         new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},meUser_latitude), isNull({longitude},meUser_longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\"))"))
                                 .withConnection("meUser"),
                         new FilterNode("distanceFilter")
-                                .withExpression("currentDistanceFilter <= isNull({maxDistance},relatedToUser_range)")
+                                .withExpression("currentDistanceFilter <= isNull({maxDistance},meUser_range)")
                                 .withConnection("distanceCalcCol"),
                         new ProjectionNode("userProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -74,14 +78,18 @@ public class UserRelationshipReport {
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_imageUrl", "imageUrl"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_online", "online"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_status", "status"),
-                                new IProjectionConfig.ProjectionColumn("relatedToUser_status", "status"),
+                                new IProjectionConfig.ProjectionColumn("relationshipStatus", "relationshipStatus"),
                                 new IProjectionConfig.ProjectionColumn("currentDistance", "distance"),
+                                new IProjectionConfig.ProjectionColumn("initiatedByMe", "initiatedByMe"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_statusMessage", "statusMessage")
-                        )
+                        ),
+                        new FilterNode("meFilter")
+                                .withExpression("userId != \"{@userId}\"")
+                                .withConnection("userProjection")
                 );
         }
 
-        public static ReportDefinition getUsersForProductReportDefinition() {
+        public static ReportDefinition getUsersForProductReportDefinition(boolean showUnrelated) {
             List<IGraphNode> nodes = new ArrayList<IGraphNode>(
                     Arrays.asList(
                             new FilterNode("productFilter")
@@ -95,23 +103,21 @@ public class UserRelationshipReport {
                                     .withRightJoinColumns("userId")
                                     .withConnection("uniqueUserGroupBy", Constants.OUT, "left")
                                     .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME), Constants.OUT, "right")));
-            nodes.addAll(getSharedGraphNodes("userJoin"));
-            return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID, USER_FOR_PRODUCT_REPORT_ID)
+            nodes.addAll(getSharedGraphNodes("userJoin",showUnrelated));
+            return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""), USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""))
                     .withDataSource(UserRelationshipDataSource.NAME)
-                    .withParameter("showUnrelated", "Show Unrelated", boolean[].class)
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                     .withParameter("productId", "Product ID", String[].class)
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
-                    .withOutput("userProjection");
+                    .withOutput("meFilter");
 
         }
-        public static ReportDefinition getReportDefinition() {
-            List<IGraphNode> nodes = getSharedGraphNodes(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME));
-            return new ReportDefinition(USER_RELATIONSHIPS, USER_RELATIONSHIPS)
-                    .withParameter("showUnrelated", "Show Unrelated", boolean[].class)
+        public static ReportDefinition getReportDefinition(boolean showUnrelated) {
+            List<IGraphNode> nodes = getSharedGraphNodes(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME),showUnrelated);
+            return new ReportDefinition(USER_RELATIONSHIPS + ((showUnrelated) ? "All" : ""), USER_RELATIONSHIPS + ((showUnrelated) ? "All" : ""))
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
@@ -119,7 +125,7 @@ public class UserRelationshipReport {
                     .withParameter("_userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
                     .withDataSource(UserRelationshipDataSource.NAME)
-                    .withOutput("userProjection");
+                    .withOutput("meFilter");
 
         }
 }

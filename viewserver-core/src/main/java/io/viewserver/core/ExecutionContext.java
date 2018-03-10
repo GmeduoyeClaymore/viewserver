@@ -55,6 +55,12 @@ public class ExecutionContext implements IExecutionContext{
     private int numberThreads;
 
 
+    public static void AssertUpdateThread(){
+        if(!Thread.currentThread().getName().startsWith("reactor-")){
+            throw new RuntimeException("This code is being called from a non reactor thread this is wrong");
+        }
+    }
+
     public ExecutionContext(){
         this(1);
     }

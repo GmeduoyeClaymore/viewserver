@@ -17,6 +17,7 @@
 package io.viewserver.operators.table;
 
 import io.viewserver.catalog.ICatalog;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
@@ -108,6 +109,7 @@ public class KeyedTable extends Table {
     }
 
     public void updateRow(TableKey tableKey, ITableRowUpdater updater) {
+        ExecutionContext.AssertUpdateThread();
         Object keyValue = tableKeyDefinition.getValue(tableKey);
         int rowId = keys.get(keyValue);
         if (rowId == -1) {
@@ -120,13 +122,15 @@ public class KeyedTable extends Table {
         updateRow(getTableKey(updater), updater);
     }
 
-    public void addOrUpdateRow(ITableRowUpdater updater) {
+    public int addOrUpdateRow(ITableRowUpdater updater) {
+        ExecutionContext.AssertUpdateThread();
         TableKey tableKey = getTableKey(updater);
         int rowId = getRow(tableKey);
         if (rowId != -1) {
             updateRow(tableKey, updater);
+            return rowId;
         } else {
-            addRow(updater);
+            return addRow(updater);
         }
     }
 

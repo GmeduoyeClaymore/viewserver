@@ -54,7 +54,7 @@ public class ControllerActionEntry{
                 if(an instanceof ActionParam){
                     found = true;
                     Class<?>[] parameterTypes = method.getParameterTypes();
-                    result.add(new ControllerParamEntry(((ActionParam) an).name(),parameterTypes[i],i, ((ActionParam) an).required()));
+                    result.add(new ControllerParamEntry((ActionParam) an,parameterTypes[i],i));
                     continue;
                 }
             }
@@ -90,30 +90,43 @@ public class ControllerActionEntry{
             if(this.actionParams != null && actionParams.size() > 0){
                 HashMap<String,Object> result = new HashMap<>();
                 for(ControllerParamEntry str : this.actionParams){
-                    result.put(str.name,getDefaultInstanceOf(str.type));
+                    result.put(str.name,getDefaultInstanceOf(str));
                 }
                 return mapper.writeValueAsString(result);
             }
-            return mapper.writeValueAsString(getDefaultInstanceOf(this.parameterType));
+            return this.parameterType == null ? null : mapper.writeValueAsString(getDefaultInstanceOf(this.parameterType));
         }catch (Exception ex){
-            try {
-                return mapper.writeValueAsString(ex);
-            } catch (JsonProcessingException e) {
-                return e.toString();
-            }
+            return ex.toString();
         }
 
     }
 
+    private Object getDefaultInstanceOf(ControllerParamEntry controllerParamEntry) throws IllegalAccessException, JsonProcessingException, InstantiationException {
+        String defaultValueForParam = controllerParamEntry.getAn() == null ? null : controllerParamEntry.getAn().exampleValue();
+        return defaultValueForParam == null || "".equals(defaultValueForParam) ? getDefaultInstanceOf(controllerParamEntry.type) : (controllerParamEntry.type.isAssignableFrom(String.class) ? defaultValueForParam : mapper.writeValueAsString(defaultValueForParam));
+    }
+
     private Object getDefaultInstanceOf(Class type) throws IllegalAccessException, InstantiationException, JsonProcessingException {
+        if(type.isEnum()){
+            return type.getEnumConstants()[0];
+        }
         if(type.isAssignableFrom(String.class)){
             return "";
+        }
+        if(type.isAssignableFrom(int.class)){
+            return 0;
+        }
+        if(type.isAssignableFrom(double.class)){
+            return 0;
+        }
+        if(type.isAssignableFrom(Double.class)){
+            return new Double(0);
         }
         if(type.isAssignableFrom(Date.class)){
             return mapper.writeValueAsString(Calendar.getInstance().getTime());
         }
-        return  type.newInstance();
-    }
+        return  mapper.getTypeFactory().constructType(type);
+}
 
     public ListenableFuture<String> invoke(String param, ControllerContext ctxt, ListeningExecutorService executorService){
         try {
@@ -259,6 +272,9 @@ public class ControllerActionEntry{
     }
 
     public static Object toObject( Class clazz, Object value ) {
+        if(clazz.isEnum()){
+            return Enum.valueOf(clazz,value.toString());
+        }
         if( Boolean.class == clazz  || boolean.class == clazz) return Boolean.parseBoolean( value + "" );
         if( Byte.class == clazz || byte.class == clazz) return Byte.parseByte( value  + "");
         if( Short.class == clazz || short.class == clazz) return Short.parseShort( value  + "");
