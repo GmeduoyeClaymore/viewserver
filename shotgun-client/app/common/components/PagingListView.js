@@ -27,6 +27,7 @@ class PagingListView extends Component {
   setOptions(prevOptions, newOptions){
     const {setOptions} = this.props;
     if (!isEqual(newOptions, prevOptions, true)){
+      Logger.info('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - options have been changed');
       setOptions(newOptions);
     }
   }
@@ -34,6 +35,7 @@ class PagingListView extends Component {
   reset(){
     const {reset} = this.props;
     if (reset){
+      Logger.info('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - Reset called explicitly on paging list view');
       reset();
     }
   }
@@ -57,6 +59,7 @@ class PagingListView extends Component {
       const limit = this.state.limit + this.state.pageSize;
       if (!busy && limit < (size + this.state.pageSize)) {
         this.setState({limit});
+        Logger.info('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - Paging paging list view because the scroll area has changed');
         doPage(limit);
       }
     }
@@ -65,7 +68,7 @@ class PagingListView extends Component {
   renderItem = ({item, isLast, isFirst, ...rest}) => this.props.rowView({item, isLast, isFirst, ...rest});
 
   render() {
-    const {data = [], errors, busy, emptyView, paginationWaitingView, headerView: HeaderView, ...rest} = this.props;
+    const {data = [], errors, busy, emptyView, paginationWaitingView, headerView: HeaderView = () => null, ...rest} = this.props;
 
     return (
       <ErrorRegion errors={errors}>
@@ -99,14 +102,17 @@ const selectorFactory = (dispatch, initializationProps) => {
   return (nextState, nextOwnProps) => {
     const daoPageStatus = getDaoCommandStatus(nextState, 'updateSubscription', daoName);
     const daoPageResult = getDaoCommandResult(nextState, 'updateSubscription', daoName);
+    const optionsFromDao = getDaoOptions(nextState, daoName);
+    const {options: optionsFromProps} = nextOwnProps;
+    const options = {...optionsFromProps, ...optionsFromDao};
 
     const nextResult = {
-      options: getDaoOptions(nextState),
       busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
+      options,
       doPage: limit => actions.updateSubscriptionAction(daoName, {limit}),
-      setOptions: options => actions.resetSubscriptionAction(daoName, options),
+      setOptions: options => actions.updateSubscriptionAction(daoName, options),
       reset: () => actions.resetDataAction(daoName),
       errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),

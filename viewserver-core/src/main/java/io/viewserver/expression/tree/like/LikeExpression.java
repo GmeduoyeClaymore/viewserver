@@ -50,7 +50,7 @@ public class LikeExpression implements IExpressionBool {
                 if(rhsString.length() <= 2){
                     return true;
                 }else{
-                    return lhsString.toLowerCase().contains(rhsString.toLowerCase().substring(1, rhsString.length() - 2));
+                    return lhsString.toLowerCase().contains(rhsString.toLowerCase().substring(1, rhsString.length() - 1));
                 }
             }
             return lhsString.toLowerCase().endsWith(rhsString.toLowerCase().substring(1));

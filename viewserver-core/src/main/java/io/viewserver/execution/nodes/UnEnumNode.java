@@ -76,4 +76,11 @@ public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
         }
         return String.format("unenum:%s:%s", dataSource.getName(), StringUtils.join(dimensions, ','));
     }
+
+    @Override
+    public String toString() {
+        return "UnEnumNode{" +
+                "dimensions=" + dimensions +
+                '}';
+    }
 }

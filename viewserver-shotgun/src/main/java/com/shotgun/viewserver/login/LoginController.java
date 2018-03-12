@@ -66,15 +66,14 @@ public class LoginController {
     @ControllerAction(path = "setUserId", isSynchronous = true)
     public ListenableFuture<Object> setUserId(String userId) {
         rx.Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME, OrderItemsDataSource.NAME);
-        rx.Observable<IOperator> userTable = ControllerUtils.getOperatorObservable(TableNames.USER_TABLE_NAME);
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
         return ListenableFutureObservable.to(
-                datasources.flatMap(obj -> userTable.cast(KeyedTable.class).
+                datasources.flatMap(obj -> systemcatalog.getOperatorObservable(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
                                 rec -> {
                                     User user = setupContext(rec, peerSession);
-                                    setUserOnline(user, ut);
+                                    setUserOnline(user, ut).subscribe();
                                     return user;
                                 })
                 )));
@@ -133,15 +132,19 @@ public class LoginController {
     }
 
     public Observable<Object> waitForDataSources(String... dataSourceNames){
+        logger.info("Waiting for data");
         List<Observable<OperatorEvent>> waitedForDataSources = new ArrayList<Observable<OperatorEvent>>();
         for(String dataSource : dataSourceNames){
             waitedForDataSources.add(waitForDataSource(dataSource));
         }
-        return rx.Observable.zip(waitedForDataSources.toArray(new Observable[0]), objects -> null).take(1);
+        return rx.Observable.zip(waitedForDataSources.toArray(new Observable[0]), objects -> null).take(1).map(c-> {
+            logger.info("!!!! All datasources initialized !!!!");
+            return null;
+        });
     }
 
     private Observable<OperatorEvent> waitForDataSource(String dataSource) {
-        return systemcatalog.getOperator("datasources").getOutput("out").observable().filter(c-> isInitialized(c,dataSource));
+        return systemcatalog.getOperator("datasources").getOutput("out").observable().filter(c-> isInitialized(c,dataSource)).take(1);
     }
 
     private static boolean isInitialized(OperatorEvent ev, String name) {
@@ -149,7 +152,11 @@ public class LoginController {
             return false;
         }
         HashMap<String,Object> result = (HashMap<String,Object>)ev.getEventData();
-        return "INITIALIZED".equals(result.get("status")) && name.equals(result.get("name"));
+        boolean b = "INITIALIZED".equals(result.get("status")) && name.equals(result.get("name"));
+        if(b){
+            logger.info("Data source {} initialized",name);
+        }
+        return b;
     }
 
 

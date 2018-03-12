@@ -99,17 +99,29 @@ export default class Dao {
       if (isEqual(this.options, newOptions) && this.subscribed && !force){
         return Promise.resolve();
       }
+      if (this.snapshotSubscription){
+        Logger.info(`!!!!!Found in flight subscription to snapshot complete cancelling !!!! ${this.daoContext.name}`);
+        this.snapshotSubscription.unsubscribe();
+        this.snapshotSubscription = undefined;
+      }
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)} ${this.daoContext.name}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
-      const snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete(force ? 30000 : 10000).toPromise();
+      const snapshotObservable = this.dataSink.dataSinkUpdated.waitForSnapshotComplete(10000);
+      const _this = this;
+      const result = new Promise((resolve, reject) => {
+        _this.snapshotSubscription = snapshotObservable.subscribe(
+          ev => {
+            Logger.info(`!!!!!Completed snapshot complete!!!! ${this.daoContext.name}`);
+            resolve(ev);
+            this.subscribed = true;
+          },
+          err => reject(err)
+        );
+      });
       this.subscriptionStrategy.updateSubscription(optionsMessage);
-
       Logger.info(`!!!!!Waiting for snapshot complete!!!! ${this.daoContext.name}`);
-      const result = await snapshotPromise;
-      Logger.info(`!!!!!Completed snapshot complete!!!! ${this.daoContext.name}`);
-      this.subscribed = true;
       return result;
     } catch (error){
       Logger.warning(error);

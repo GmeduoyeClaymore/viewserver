@@ -33,6 +33,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
@@ -69,19 +70,21 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     //be careful when using this it will start spamming alot of objects if you subscribe
     @Override
     public Observable<OperatorEvent>  observable(){
-        
+
+
         Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
             try{
                 IRowSequence rows = (this.getAllRows());
                 while(rows.moveNext()){
-                    subscriber.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),rows.getRowId(),null)));
+                    HashMap<String, Object> rowDetails = getRowDetails(getProducer(), rows.getRowId(), null);
+                    subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
                 }
                 subscriber.onCompleted();
             }catch (Exception ex){
                 subscriber.onError(ex);
             }}, Emitter.BackpressureMode.BUFFER);
 
-        return snapshot.flatMap(snap -> this.subject);
+        return Observable.concat(snapshot,subject);
     }
 
     public String getName() {

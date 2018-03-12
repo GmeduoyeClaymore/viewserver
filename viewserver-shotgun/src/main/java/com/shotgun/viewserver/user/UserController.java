@@ -166,8 +166,12 @@ public class UserController {
 
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("status", status == null ? null : status.name())
                 .addValue("statusMessage", statusMessage);
+
+        if(status != null){
+            userRecord.addValue("status", status.name());
+
+        }
 
         tableUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
@@ -205,12 +209,14 @@ public class UserController {
     }
 
     public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){
+
         if(userId == null){
             throw new RuntimeException("Userid must be specified");
         }
         int userRowId = userTable.getRow(new TableKey(userId));
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
+            log.info("Waiting for user {}",userId);
             return output.observable().filter(ev -> hasUserId(ev,userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String,Object>)ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));

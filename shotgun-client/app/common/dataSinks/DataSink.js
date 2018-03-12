@@ -43,9 +43,26 @@ export default DataSink = (superclass) => class extends superclass {
     }
     Logger.info(this.name + ' - Data reset');
     this.rows = [];
+    this._orderedRows = undefined;
     this.idIndexes = {};
     this.idRows = {};
     this.isSnapshotComplete = false;
+  }
+
+  get orderedRows(){
+    if (!this._orderedRows){
+      this._orderedRows = [...this.rows];
+      this._orderedRows.sort((r1, r2) => {
+        if (r1.rank < r2.rank){
+          return -1;
+        }
+        if (r1.rank > r2.rank){
+          return 1;
+        }
+        return 0;
+      });
+    }
+    return this._orderedRows;
   }
 
   onTotalRowCount(count){
@@ -72,6 +89,7 @@ export default DataSink = (superclass) => class extends superclass {
     this.idRows[rowId] = row;
     this.rows.push(row);
     this.dirtyRows.push(rowId);
+    this._orderedRows = undefined;
     Logger.fine(this.name + ` - Row added - ${rowId} -  + ${JSON.stringify(row)}`);
   }
 
@@ -84,6 +102,7 @@ export default DataSink = (superclass) => class extends superclass {
       Logger.info(this.name + ' - Row not updated as couldnt get index for row ' + rowId);
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
+    this._orderedRows = undefined;
     Logger.fine(this.name + ' - Row updated - ' + JSON.stringify(row));
   }
 
@@ -101,6 +120,7 @@ export default DataSink = (superclass) => class extends superclass {
           this.idIndexes[id] = index - 1;
         }
       });
+      this._orderedRows = undefined;
       Logger.info(this.name + ` - Row ${rowId} removed`);
     }
   }

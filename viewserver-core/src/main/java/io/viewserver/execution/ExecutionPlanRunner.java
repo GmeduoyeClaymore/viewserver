@@ -20,6 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
+import io.viewserver.command.UpdateSubscriptionHandler;
 import io.viewserver.configurator.ConfiguratorSpec;
 import io.viewserver.configurator.IConfigurator;
 import io.viewserver.configurator.IConfiguratorSpec;
@@ -42,6 +43,8 @@ import io.viewserver.operators.join.IColumnNameResolver;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.IGraphDefinition;
 import io.viewserver.util.ViewServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -50,6 +53,7 @@ public class ExecutionPlanRunner {
     private IConfigurator configurator;
     private IDistributionManager distributionManager;
     private final List<IProjectionConfig.ProjectionColumn> projectionColumns = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(UpdateSubscriptionHandler.class);
 
     public ExecutionPlanRunner(IConfigurator configurator, IDistributionManager distributionManager) {
         this.configurator = configurator;
@@ -69,7 +73,7 @@ public class ExecutionPlanRunner {
         if (distributionManager == null) {
             throw new ViewServerException("distributionManager is null");
         }
-
+        log.debug("Commencing execution plan");
         context.clearNodes();
 
         context.setExecutionContext(executionContext);
@@ -77,7 +81,9 @@ public class ExecutionPlanRunner {
 
         List<IExecutionPlanStep<TContext>> steps = executionPlan.getSteps();
         int stepCount = steps.size();
+        log.debug("Found {} steps in execution plan",stepCount);
         for (int i = 0; i < stepCount; i++) {
+            log.debug("Executing step {}",steps.get(i));
             steps.get(i).execute(context);
         }
 
@@ -86,14 +92,17 @@ public class ExecutionPlanRunner {
 
         List<IGraphNode> graphNodes = context.getGraphNodes();
         if (graphNodes.isEmpty()) {
+            log.debug("Setting success no nodes to created");
             commandResult.setSuccess(true).setComplete(true);
             return;
         }
 
+        log.debug("Found {} graph nodes to create", graphNodes.size());
         ParameterHelper parameterHelper = context.getParameterHelper();
         int nodeCount = graphNodes.size();
         Set<String> nodeNames = new HashSet<>();
         for (int i = 0; i < nodeCount; i++) {
+            log.debug("Found  graph node {}", graphNodes.get(i).getName());
             nodeNames.add(graphNodes.get(i).getName());
             graphNodes.get(i).setParameterHelper(parameterHelper);
         }
@@ -107,12 +116,14 @@ public class ExecutionPlanRunner {
             for (int i = 0; i < nodeCount; i++) {
                 IGraphNode node = graphNodes.get(i);
                 if (hashedNodes.contains(node)) {
+                    log.debug("node {} already created not creating again", node);
                     continue;
                 }
 
                 List<IConfiguratorSpec.Connection> connections = node.getConnections();
                 int connectionCount = connections.size();
                 boolean allConnectionsOk = true;
+                log.debug("Creating {} connections for {}", connections.size(),node.getName());
                 for (int j = 0; j < connectionCount; j++) {
                     IConfiguratorSpec.Connection connection = connections.get(j);
                     String inOperator = connection.getOperator();
@@ -132,6 +143,7 @@ public class ExecutionPlanRunner {
                     }
                 }
                 if (!allConnectionsOk) {
+                    log.debug("All connections for {} are not ok aborting",node.getName());
                     continue;
                 }
                 nodesWereHashed = true;
@@ -146,9 +158,11 @@ public class ExecutionPlanRunner {
                         String hashedName = hashedOperatorNames.get(inOperator);
                         connection.setOperator(hashedName);
                     }
+                    log.debug("Found connection {}",connection);
                 }
 
                 String operatorName = node.getNameForOperatorSpec(context.shouldHashNames());
+                log.debug("Adding hashed operator name {} for {}",node.getName(), operatorName);
                 hashedOperatorNames.put(node.getName(), operatorName);
                 context.setOperatorName(node.getName(), operatorName);
             }
@@ -227,11 +241,13 @@ public class ExecutionPlanRunner {
         }
 
         if (!localConfiguratorSpec.getOperators().isEmpty()) {
+            log.debug("Creating {} operators",localConfiguratorSpec.getOperators().size());
             CommandResult configuratorResult = multiCommandResult.getResultForDependency("Configurator");
             configurator.process(localConfiguratorSpec, executionContext, catalog, configuratorResult);
         }
 
         if (coalescorPlaceholderResult != null) {
+            log.debug("Successfully configuring execution plan");
             coalescorPlaceholderResult.setSuccess(true).setComplete(true);
         }
     }

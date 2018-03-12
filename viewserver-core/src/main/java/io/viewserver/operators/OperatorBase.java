@@ -28,7 +28,7 @@ import java.util.*;
  * Created by nickc on 26/09/2014.
  */
 public abstract class OperatorBase implements IOperator {
-    private static final Logger log = LoggerFactory.getLogger(OperatorBase.class);
+    static final Logger log = LoggerFactory.getLogger(OperatorBase.class);
     private final String name;
     private final IExecutionContext executionContext;
     private ICatalog catalog;
