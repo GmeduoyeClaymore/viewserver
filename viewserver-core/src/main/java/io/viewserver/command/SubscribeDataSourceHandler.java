@@ -57,10 +57,9 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
             OptionsExecutionPlanContext optionsExecutionPlanContext = new OptionsExecutionPlanContext();
             Options options = null;
 
-            SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
-
             if (data.getOptions() != null) {
                 options = Options.fromMessage(data.getOptions());
+                SubscriptionUtils.substituteParamsInFilterExpression(peerSession, options);
                 optionsExecutionPlanContext.setOptions(options);
             }
 
