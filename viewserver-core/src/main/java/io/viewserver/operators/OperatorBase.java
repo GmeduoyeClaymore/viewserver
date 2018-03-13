@@ -375,7 +375,7 @@ public abstract class OperatorBase implements IOperator {
         return statuses.contains(status);
     }
 
-    private void setError(Error error) {
+    protected void setError(Error error) {
         errors.add(error);
     }
 
@@ -605,7 +605,7 @@ public abstract class OperatorBase implements IOperator {
         return String.format("%s [%s]", path, getClass().getName());
     }
 
-    private enum Error {
+    protected enum Error {
         ConfigError,
         SchemaError,
         DataError;

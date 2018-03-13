@@ -38,25 +38,31 @@ export default DataSink = (superclass) => class extends superclass {
   }
 
   onSchemaError(error){
+    this.hasSchemaError = true;
     Logger.info(this.name + ' - Schema error - ' + error);
   }
 
   onDataError(error){
+    this.hasDataError = true;
     Logger.info(this.name + ' - Data error - ' + error);
   }
 
   onConfigError(error){
+    this.hasConfigError = true;
     Logger.info(this.name + ' - Config error - ' + error);
   }
 
   onSchemaErrorCleared(){
+    this.hasSchemaError = false;
     Logger.info(this.name + ' - Schema error cleared');
   }
 
   onDataErrorCleared(){
+    this.hasDataError = false;
     Logger.info(this.name + ' - Data error cleared');
   }
   onConfigErrorCleared(){
+    this.hasConfigError = false;
     Logger.info(this.name + ' - Config error cleared');
   }
 

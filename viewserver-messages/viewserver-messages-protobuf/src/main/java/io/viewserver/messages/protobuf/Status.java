@@ -50,6 +50,24 @@ public class Status extends PoolableMessage<Status> implements IStatus<Status> {
             case SCHEMARESET: {
                 return StatusId.SchemaReset;
             }
+            case SCHEMAERROR: {
+                return StatusId.SchemaError;
+            }
+            case SCHEMAERRORCLEARED: {
+                return StatusId.SchemaErrorCleared;
+            }
+            case DATAERROR: {
+                return StatusId.DataError;
+            }
+            case DATAERRORCLEARED: {
+                return StatusId.DataErrorCleared;
+            }
+            case CONFIGERROR:{
+                return StatusId.ConfigError;
+            }
+            case CONFIGERRORCLEARED:{
+                return StatusId.ConfigErrorCleared;
+            }
             default: {
                 throw new UnsupportedOperationException(String.format("Unknown status id '%s'", status));
             }
@@ -65,6 +83,30 @@ public class Status extends PoolableMessage<Status> implements IStatus<Status> {
             }
             case SchemaReset: {
                 getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.SCHEMARESET);
+                break;
+            }
+            case SchemaError: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.SCHEMAERROR);
+                break;
+            }
+            case SchemaErrorCleared: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.SCHEMAERRORCLEARED);
+                break;
+            }
+            case DataError: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.DATAERROR);
+                break;
+            }
+            case DataErrorCleared: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.DATAERRORCLEARED);
+                break;
+            }
+            case ConfigError: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.CONFIGERROR);
+                break;
+            }
+            case ConfigErrorCleared: {
+                getStatusDtoBuilder().setStatus(StatusMessage.StatusDto.StatusId.CONFIGERRORCLEARED);
                 break;
             }
             default: {

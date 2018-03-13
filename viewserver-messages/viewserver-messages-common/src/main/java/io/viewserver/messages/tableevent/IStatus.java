@@ -28,6 +28,12 @@ public interface IStatus<T> extends IRecyclableMessage<T> {
 
     enum StatusId {
         DataReset,
-        SchemaReset;
+        SchemaReset,
+        SchemaError,
+        SchemaErrorCleared,
+        DataError,
+        DataErrorCleared,
+        ConfigError,
+        ConfigErrorCleared
     }
 }

@@ -24,7 +24,7 @@ class CustomerOrders extends Component{
 
   componentDidMount(){
     if (this.pagingListView){
-      this.pagingListView.wrappedInstance.reset();
+      //this.pagingListView.wrappedInstance.reset();
     }
   }
 

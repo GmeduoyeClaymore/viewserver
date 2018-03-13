@@ -21,6 +21,14 @@ message StatusDto {
     enum StatusId {
         DATARESET = 0;
         SCHEMARESET = 1;
+        SCHEMAERROR = 2;
+        SCHEMAERRORCLEARED = 3;
+        CONFIGERROR = 4;
+        CONFIGERRORCLEARED = 5;
+        DATAERROR = 6;
+        DATAERRORCLEARED = 7;
     }
     required StatusId status = 1;
+    optional string error = 2;
 }
+

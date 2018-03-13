@@ -149,7 +149,7 @@ export default class Network {
     if (statuses) {
       statuses.forEach((statusDto) => {
         switch (statusDto.status) {
-        case 1:
+        case 0:
         {
           Logger.debug('Received data reset');
           if (handler.onDataReset){
@@ -157,7 +157,7 @@ export default class Network {
           }
           break;
         }
-        case 2:
+        case 1:
         {
           Logger.debug('Received schema reset');
           if (handler.onSchemaReset){
@@ -165,7 +165,7 @@ export default class Network {
           }
           break;
         }
-        case 3:
+        case 2:
         {
           Logger.fine('Received schema error');
           if (handler.onSchemaError){
@@ -173,7 +173,7 @@ export default class Network {
           }
           break;
         }
-        case 4:
+        case 3:
         {
           Logger.fine('Received schema error cleared');
           if (handler.onSchemaErrorCleared){
@@ -181,7 +181,7 @@ export default class Network {
           }
           break;
         }
-        case 5:
+        case 4:
         {
           Logger.fine('Received Config error');
           if (handler.onConfigError){
@@ -189,7 +189,7 @@ export default class Network {
           }
           break;
         }
-        case 6:
+        case 5:
         {
           Logger.fine('Received Config error cleared');
           if (handler.onConfigErrorCleared){
@@ -197,7 +197,7 @@ export default class Network {
           }
           break;
         }
-        case 7:
+        case 6:
         {
           Logger.fine('Received Data error');
           if (handler.onDataError){
@@ -205,7 +205,7 @@ export default class Network {
           }
           break;
         }
-        case 8:
+        case 7:
         {
           Logger.fine('Received Data error cleared');
           if (handler.onDataErrorCleared){
