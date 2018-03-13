@@ -3,7 +3,7 @@ import { connect, setStateIfIsMounted } from 'custom-redux';
 import { Container, Button, Tab, View, Text, Row, Picker, Input, Switch} from 'native-base';
 import { withRouter } from 'react-router';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
-import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError } from 'common/dao';
+import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
@@ -19,15 +19,13 @@ class UserRelationships extends Component{
     this.UserViews = [
       {'Map': UserRelationshipMap},
       {'List': UserRelationshipList},
-    //  {'Detail': UserRelationshipDetail},
     ];
     this.getOptionsFromProps = this.getOptionsFromProps.bind(this);
     this.setState = this.setState.bind(this);
     this.onChangeTab = this.onChangeTab.bind(this);
-    this.updateStatusMessage = this.updateStatusMessage.bind(this);
+    this.setSelectedUser = this.setSelectedUser.bind(this);
     this.updateDistance = this.updateDistance.bind(this);
     this.setRange = this.setRange.bind(this);
-    this.setStatus = this.setStatus.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
   }
 
@@ -48,7 +46,7 @@ class UserRelationships extends Component{
       reportId,
       productId,
       showUnrelated: showAll,
-      columnsToSort: [{name: 'distance', direction: 'asc'}]
+      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
   }
 
@@ -67,30 +65,17 @@ class UserRelationships extends Component{
       this.subscribeToUsers(newOptions);
     }
     const {me} = newProps;
-    if (me && me.statusMessage  !== this.state.statusMessage){
-      this.setState({statusMessage: me.statusMessage});
-    }
     if (me && me.range  !== this.state.distance){
       this.setState({distance: me.range});
     }
   }
 
   setSelectedUser(selectedUser){
-    this.setState({selectedUser, selectedTabIndex: 2});
+    this.setState({selectedUser});
   }
 
   onChangeTab(selectedTabIndex){
     this.setState({selectedTabIndex});
-  }
-
-  updateStatusMessage(statusMessage){
-    this.setState({statusMessage});
-  }
-
-  setStatus(args){
-    const {statusMessage, status, setStatus} = this.props;
-    const payload = {statusMessage, status, ...args};
-    setStatus(payload);
   }
 
   async updateDistance(distance){
@@ -105,7 +90,7 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, state, UserViews} = this;
-    const {history, errors, noRelationships, me} = this.props;
+    const {history, errors, noRelationships, me, searchText} = this.props;
     const {selectedUser, selectedTabIndex = 0, oldOptions, showAll} = state;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
@@ -118,24 +103,10 @@ class UserRelationships extends Component{
       </View>
       {typeof noRelationships != undefined ? <Row style={{flex: 1}}>
         <Text>
-          {noRelationships + ' ' + (showAll ? 'users' : 'friends') + ' found in ' + state.distance + 'miles'}
+          {noRelationships + ' ' + (showAll ? 'users' : 'friends') + ' found in ' + state.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
         <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ this.state.showAll }/>
       </Row> : null}
-      <Row style={{flex: 1}}>
-        <Picker
-          iosHeader="Select one"
-          mode="dropdown"
-          selectedValue={me.status}
-          onValueChange={(status) => this.setStatus({status})}>
-          <Picker.Item label="Online" value="ONLINE" />
-          <Picker.Item label="Busy" value="BUSY" />
-          <Picker.Item label="Appear Offline" value="OFFLINE" />
-        </Picker>
-      </Row>
-      <Row style={{flex: 1}}>
-        <Input value={state.statusMessage} placeholder="What are you up to ?" placeholderTextColor={shotgun.silver} onChangeText={value => this.updateStatusMessage(value)} onBlur={() => this.setStatus({statusMessage: state.statusMessage})}/>
-      </Row>
       <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
@@ -147,6 +118,7 @@ class UserRelationships extends Component{
       <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
         <Icon name='back-arrow'/>
       </Button>
+      <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser}/>
     </Container>;
   }
 }
@@ -177,9 +149,12 @@ const mapStateToProps = (state, initialProps) => {
   const {dispatch} = initialProps;
   const setRange = (range) => dispatch(updateRange(range));
   const setStatus = ({status, statusMessage}) => dispatch(updateStatus({status, statusMessage}));
+  const options = getDaoOptions(state, 'userRelationshipDao') || {};
+  const {searchText} = options;
+
   return {
     ...initialProps,
-    state,
+    searchText,
     setRange,
     setStatus,
     noRelationships: getDaoSize(state, 'userRelationshipDao'),

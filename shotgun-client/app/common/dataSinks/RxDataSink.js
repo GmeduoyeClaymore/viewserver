@@ -13,6 +13,13 @@ export default class RxDataSink extends DataSink(null){
   static COLUMN_REMOVED = 'ColumnRemoved';
   static ERROR = 'Error';
   static SUCCESS = 'Success';
+  static SCHEMA_ERROR = 'SchemaError';
+  static SCHEMA_ERROR_CLEARED = 'SchemaErrorCleared';
+  static DATA_ERROR = 'DataError';
+  static DATA_ERROR_CLEARED = 'DataErrorCleared';
+  static CONFIG_ERROR = 'ConfigError';
+  static CONFIG_ERROR_CLEARED = 'ConfigErrorCleared';
+
 
   constructor(){
     super();
@@ -82,5 +89,34 @@ export default class RxDataSink extends DataSink(null){
   onSuccess(commandResultId, message){
     super.onSuccess(commandResultId, message);
     this._dataSinkUpdated.next({Type: RxDataSink.SUCCESS, commandResultId, message});
+  }
+
+  onSchemaError(error){
+    super.onSchemaError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_ERROR, error});
+  }
+
+  onDataError(error){
+    super.onDataError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.DATA_ERROR, error});
+  }
+
+  onConfigError(error){
+    super.onConfigError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.CONFIG_ERROR, error});
+  }
+
+  onSchemaErrorCleared(){
+    super.onSchemaErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_ERROR_CLEARED});
+  }
+
+  onDataErrorCleared(){
+    super.onDataErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.DATA_ERROR_CLEARED});
+  }
+  onConfigErrorCleared(){
+    super.onConfigErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.CONFIG_ERROR_CLEARED});
   }
 }

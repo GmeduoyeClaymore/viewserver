@@ -71,7 +71,6 @@ const styles = {
   },
   
   contentContainer: {
-    justifyContent: 'flex-end',
     margin: 10,
   },
   contentTypeSelectorContainer: {

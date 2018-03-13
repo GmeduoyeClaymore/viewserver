@@ -38,11 +38,17 @@ public abstract class ConfigurableOperatorBase<TConfig> extends OperatorBase imp
     @Override
     public final void configure(TConfig config, CommandResult configureResult) {
         if (this.pendingConfig != null) {
-            this.pendingConfig = mergePendingConfig(pendingConfig, config);
+            try {
+                this.pendingConfig = mergePendingConfig(pendingConfig, config);
+            }catch (Exception ex){
+                log.warn("Problem merging filter expression config",ex);
+                this.pendingConfig = config;
+            }
         } else {
             this.pendingConfig = config;
         }
         this.pendingConfigResults.add(configureResult.setSuccess(true));
+        log.debug("Configured operator {} with config {} pending config is {}",this.getName(),config,this.pendingConfig);
     }
 
     protected TConfig mergePendingConfig(TConfig pendingConfig, TConfig config) {

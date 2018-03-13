@@ -1,11 +1,12 @@
 import React from 'react';
-import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
+import {Row, Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
 import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
+import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
@@ -30,7 +31,11 @@ const DriverSettings = ({history, user}) => {
       <Right>
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
       </Right>
+      <Row>
+        <UserStatusControl/>
+      </Row>
     </Header>
+
     <Content padded keyboardShouldPersistTaps="always">
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>

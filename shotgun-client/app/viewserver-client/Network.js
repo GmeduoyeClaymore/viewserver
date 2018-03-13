@@ -136,23 +136,80 @@ export default class Network {
     }
   }
 
+  //DataReset(1),
+  //SchemaReset(2),
+  //SchemaError(3),
+  //SchemaErrorCleared(4),
+  //ConfigError(5),
+  //ConfigErrorCleared(6),
+  //DataError(7),
+  //DataErrorCleared(8);
+
   handleStatuses(statuses, handler) {
     if (statuses) {
       statuses.forEach((statusDto) => {
         switch (statusDto.status) {
         case 1:
         {
-          Logger.fine('Received schema reset');
+          Logger.debug('Received data reset');
+          if (handler.onDataReset){
+            handler.onDataReset();
+          }
+          break;
+        }
+        case 2:
+        {
+          Logger.debug('Received schema reset');
           if (handler.onSchemaReset){
             handler.onSchemaReset();
           }
           break;
         }
-        case 0:
+        case 3:
         {
-          Logger.fine('Received data reset');
-          if (handler.onDataReset){
-            handler.onDataReset();
+          Logger.fine('Received schema error');
+          if (handler.onSchemaError){
+            handler.onSchemaError(statusDto.error);
+          }
+          break;
+        }
+        case 4:
+        {
+          Logger.fine('Received schema error cleared');
+          if (handler.onSchemaErrorCleared){
+            handler.onSchemaErrorCleared();
+          }
+          break;
+        }
+        case 5:
+        {
+          Logger.fine('Received Config error');
+          if (handler.onConfigError){
+            handler.onConfigError(statusDto.error);
+          }
+          break;
+        }
+        case 6:
+        {
+          Logger.fine('Received Config error cleared');
+          if (handler.onConfigErrorCleared){
+            handler.onConfigErrorCleared();
+          }
+          break;
+        }
+        case 7:
+        {
+          Logger.fine('Received Data error');
+          if (handler.onDataError){
+            handler.onDataError(statusDto.error);
+          }
+          break;
+        }
+        case 8:
+        {
+          Logger.fine('Received Data error cleared');
+          if (handler.onDataErrorCleared){
+            handler.onDataErrorCleared();
           }
           break;
         }

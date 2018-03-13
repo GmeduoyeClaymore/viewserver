@@ -45,15 +45,19 @@ public class Configurator implements IConfigurator {
         ConfiguratorState state = new ConfiguratorState(configurator, executionContext, catalog, commandResult);
 
         try {
+
             queueOperatorsForRemoval(state);
+            log.debug("Queued {} operators from removal", state.operatorsToRemove.size());
 
             createOperators(state);
+            log.debug("Created {} operators", state.newOperators.size());
 
             connectOperators(state);
-
+            log.debug("Finished connecting operators");
             configureOperators(state);
-
+            log.debug("Finished configuring operators");
             tearDownOperators(state);
+            log.debug("Finished tearing down operators");
         } catch (Throwable e) {
             rollback(state);
             throw e;
@@ -183,6 +187,8 @@ public class Configurator implements IConfigurator {
                     }
                 }
 
+                log.debug("connecting output {} to input {}", output.getName(), input.getName());
+
                 output.plugIn(input);
             }
         }
@@ -209,6 +215,7 @@ public class Configurator implements IConfigurator {
                     CommandResult resultForDependency = state.configureResult.getResultForDependency("Configure operator '" + operatorConfig.getName() + "'");
                     commandResults.add(resultForDependency);
                 } else {
+                    log.debug("Configuring operator {} operators", operator.getName());
                     ((IConfigurableOperatorFactory) operatorFactory).configureOperator(operator, operatorConfig.getConfig(), state, commandResults.get(j++));
                 }
             }

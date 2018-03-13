@@ -111,4 +111,12 @@ public class FilterNode extends GraphNodeBase<FilterNode> {
     public void setExpression(String expression) {
         this.expression = expression;
     }
+
+    @Override
+    public String toString() {
+        return "FilterNode{" +
+                "mode=" + mode +
+                ", expression='" + expression + '\'' +
+                '}';
+    }
 }

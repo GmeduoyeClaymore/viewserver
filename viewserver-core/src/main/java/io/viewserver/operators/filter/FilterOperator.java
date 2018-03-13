@@ -24,6 +24,7 @@ import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionBool;
 import io.viewserver.operators.*;
+import io.viewserver.operators.sort.ISortConfig;
 import io.viewserver.schema.SchemaChange;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.IRowFlags;
@@ -31,6 +32,7 @@ import io.viewserver.schema.column.IRowMapper;
 import io.viewserver.schema.column.RowMapperBase;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.procedure.TIntProcedure;
+import org.apache.commons.lang.ObjectUtils;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -90,6 +92,22 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
         this.filterExpression = filterExpression;
     }
 
+
+    /* @Overrideprotected void processConfig(IFilterConfig config) {
+        if (configChanged(config)) {
+            attemptToSetFilterExpression(config.getExpression());
+            this.resetData();
+        }
+    }*/
+
+    private boolean configChanged(IFilterConfig config) {
+        if (this.config == null) {
+            return true;
+        }
+
+        return !config.getExpression().equals(this.config.getExpression()) || !config.getMode().equals(this.config.getMode());
+    }
+
     @Override
     protected IFilterConfig mergePendingConfig(IFilterConfig pendingConfig, IFilterConfig newConfig) {
         if (!pendingConfig.getMode().equals(newConfig.getMode())) {
@@ -143,6 +161,26 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
         return outputRows.get(row);
     }
 
+
+    public void attemptToSetFilterExpression(String expressionString) {
+        if (expressionString != null) {
+            filteredColumns = new BitSet();
+            IExpression expression;
+            try {
+                expression = expressionParser.parse(expressionString, input.getProducer().getSchema(),
+                        pendingConfig.getColumnAliases(), filteredColumns, null);
+            } catch (Throwable e) {
+                mode = FilterMode.Transparent;
+                throw e;
+            }
+            if (!(expression instanceof IExpressionBool)) {
+                throw new IllegalArgumentException("Filter expression must evaluate to a boolean");
+            }
+            filterExpression = (IExpressionBool) expression;
+            input.resetData();
+        }
+    }
+
     protected class Input extends InputBase {
         private final BitSet removedColumns;
         private final TIntArrayList removedRows = new TIntArrayList(8, -1);
@@ -151,6 +189,8 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
             super(name, owner);
             removedColumns = new BitSet();
         }
+
+
 
         @Override
         public void onSchema() {
@@ -166,22 +206,7 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
                     if (config == null ||
                             !Objects.equals(pendingConfig.getExpression(), config.getExpression())) {
                         String expressionString = pendingConfig.getExpression();
-                        if (expressionString != null) {
-                            filteredColumns = new BitSet();
-                            IExpression expression;
-                            try {
-                                expression = expressionParser.parse(expressionString, input.getProducer().getSchema(),
-                                        pendingConfig.getColumnAliases(), filteredColumns, null);
-                            } catch (Throwable e) {
-                                mode = FilterMode.Transparent;
-                                throw e;
-                            }
-                            if (!(expression instanceof IExpressionBool)) {
-                                throw new IllegalArgumentException("Filter expression must evaluate to a boolean");
-                            }
-                            filterExpression = (IExpressionBool) expression;
-                            input.resetData();
-                        }
+                        attemptToSetFilterExpression(expressionString);
                     }
                 } else {
                     filterExpression = null;
@@ -189,6 +214,8 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
                 }
             }
         }
+
+
 
         @Override
         protected void onSchemaChange(SchemaChange schemaChange) {

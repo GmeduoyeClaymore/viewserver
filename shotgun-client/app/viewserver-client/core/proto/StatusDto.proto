@@ -19,8 +19,14 @@ option java_outer_classname = "StatusMessage";
 
 message StatusDto {
     enum StatusId {
-        DATARESET = 0;
-        SCHEMARESET = 1;
+        DATARESET = 1;
+        SCHEMARESET = 2;
+        SCHEMAERROR = 3;
+        CONFIGERROR = 4;
+        CONFIGERRORCLEARED = 5;
+        DATAERROR = 6;
+        DATAERRORCLEARED = 7;
     }
+    string error = 1;
     required StatusId status = 1;
 }

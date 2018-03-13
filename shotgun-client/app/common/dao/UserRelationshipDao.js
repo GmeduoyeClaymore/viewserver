@@ -12,7 +12,7 @@ export default class UserRelationshipDaoContext{
   static OPTIONS = {
     offset: 0,
     limit: 100,
-    filterMode: 20,
+    filterMode: 2,
     showUnrelated: true,
     showOutOfRange: false,
     position: UserRelationshipDaoContext.DEFAULT_POSITION,
@@ -59,7 +59,7 @@ export default class UserRelationshipDaoContext{
 
   mapDomainEvent(dataSink){
     return {
-      users: dataSink.rows.map(r => this.mapUser(r))
+      users: dataSink.orderedRows.map(r => this.mapUser(r))
     };
   }
 

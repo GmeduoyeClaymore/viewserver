@@ -4,7 +4,6 @@ import {connect} from 'custom-redux';
 import { isOperationPending } from 'common/dao';
 import {updateRelationship} from 'common/actions/CommonActions';
 import {Button, Text} from 'native-base';
-
 const styles = {
   container: {
     flex: 1,
@@ -18,6 +17,7 @@ const styles = {
     width: 60,
     height: 60,
   },
+  
   title: {
     fontWeight: 'bold',
     color: '#848484',
@@ -46,7 +46,7 @@ const mapButtonStateToProps = (state, props) => {
   };
 };
 
-const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>;
+const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>
 const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps)(ButtonElementFactory(tartgetStatus, text) );
 const DisconnectButton = StatusButtonElement('UNKNOWN', 'Disconnect');
 const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept');
@@ -87,6 +87,7 @@ const UserRelationshipItem = ({context, user, selectedUser = {}}) => {
         <Text style={styles.summary}>{'RELATIONSHIP STATUS: ' + user.relationshipStatus}</Text>
         <Text style={styles.summary}>{'TYPE: ' + user.type}</Text>
         <Text style={styles.summary}>{'STATUS MESSAGE: ' + user.statusMessage}</Text>
+        <Text style={styles.summary}>{'RATING: ' + user.rating}</Text>
         <Text style={styles.summary}>{'DISTANCE: ' + user.distance}</Text>
       </View>
       <StatusButton user={user}/>

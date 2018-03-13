@@ -137,4 +137,14 @@ public class SortNode extends GraphNodeBase<SortNode> {
     public List<SortOperator.SortColumn> getColumnsToSort() {
         return columnsToSort;
     }
+
+    @Override
+    public String toString() {
+        return "SortNode{" +
+                "columnsToSort=" + columnsToSort +
+                ", offset=" + offset +
+                ", limit=" + limit +
+                ", columnName='" + columnName + '\'' +
+                '}';
+    }
 }
