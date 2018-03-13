@@ -1,8 +1,6 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-import {isEqual} from 'lodash';
 import {hasAnyOptionChanged} from 'common/dao';
-
 
 export const isImplicitylChecked = (categoryObj, selectedProductCategories ) => {
   return !!selectedProductCategories.find(c=> isDescendendantOf(categoryObj, c));

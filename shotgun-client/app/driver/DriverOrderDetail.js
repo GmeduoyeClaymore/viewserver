@@ -3,7 +3,7 @@ import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, View} from 'native-base';
 import {OrderSummary, PriceSummary, RatingSummary, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
-import {startOrderRequest, cancelOrderRequest, stopWatchingPosition} from 'driver/actions/DriverActions';
+import {startOrderRequest, cancelOrderRequest} from 'driver/actions/DriverActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 

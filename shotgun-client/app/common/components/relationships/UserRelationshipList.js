@@ -1,6 +1,5 @@
 import React, {Component}  from 'react';
 import {updateSubscriptionAction } from 'common/dao';
-import shotgun from 'native-base-theme/variables/shotgun';
 import UserRelationshipItem from './UserRelationshipItem';
 import {PagingListView, SearchBar} from 'common/components';
 import {View, Spinner} from 'native-base';

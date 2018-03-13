@@ -40,7 +40,7 @@ export class SearchBar extends Component{
   }
 
   render(){
-    const {style = {}, value, onChange: onChangeFromProps /* Don't get clever and remove this */, ...rest} = this.props;
+    const {style = {}, value, onChange: onChangeFromProps /* Don't get clever and remove this ..wtf why not?*/, ...rest} = this.props;
     const {onChange, state} = this;
     const {text = value} = state;
     return <TextInput

@@ -5,7 +5,6 @@ import IconNB from 'react-native-vector-icons/Ionicons';
 import { connectStyle } from 'native-base-shoutem-theme';
 import mapPropsToStyleNames from 'common/components/utils/mapPropsToStyleNames';
 import variable from 'native-base-theme/variables/platform';
-import _ from 'lodash';
 import computeProps from 'common/components/utils/computeProps';
 
 const StyledIconNB = connectStyle('NativeBase.IconNB', {}, mapPropsToStyleNames)(IconNB);

@@ -4,7 +4,7 @@ import {connect} from 'custom-redux';
 import { isOperationPending } from 'common/dao';
 import {updateRelationship} from 'common/actions/CommonActions';
 import {Button, Text} from 'native-base';
-import {ErrorRegion} from 'common/components';
+
 const styles = {
   container: {
     flex: 1,
@@ -46,7 +46,7 @@ const mapButtonStateToProps = (state, props) => {
   };
 };
 
-const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>
+const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>;
 const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps)(ButtonElementFactory(tartgetStatus, text) );
 const DisconnectButton = StatusButtonElement('UNKNOWN', 'Disconnect');
 const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept');

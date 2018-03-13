@@ -1,5 +1,5 @@
-export const IxNITIAL_STATE = {
-  /*user: {
+export const INITIAL_STATE = {
+  user: {
     firstName: undefined,
     lastName: undefined,
     email: undefined,
@@ -30,9 +30,10 @@ export const IxNITIAL_STATE = {
       length: undefined,
       weight: undefined
     }
-  }*/
+  }
 };
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
@@ -69,4 +70,5 @@ export const INITIAL_STATE = {
     }
   }
 };
+*/
 

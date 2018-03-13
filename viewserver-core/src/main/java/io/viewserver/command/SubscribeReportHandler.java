@@ -132,7 +132,6 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
         }
 
-
         SubscriptionUtils.substituteParamsInFilterExpression(params, options);
     }
 
