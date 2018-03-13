@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
  */
 public class XmlViewServerConfiguration implements IViewServerConfiguration {
     private static final Logger log = LoggerFactory.getLogger(XmlViewServerConfiguration.class);
+    public static final String VIEWSERVER_ISMOCK = "viewserver.ismock";
     public static final String VIEWSERVER_SERVERS_MASTER_BOOTSTRAPPER = "viewserver.servers.master.bootstrapper";
     public static final String VIEWSERVER_SERVERS_MASTER_ENDPOINTS_ENDPOINT = "viewserver.servers.master.endpoints.endpoint";
     public static final String VIEWSERVER_SERVERS_MASTER_DATABASE = "viewserver.servers.master.database";
@@ -77,6 +78,8 @@ public class XmlViewServerConfiguration implements IViewServerConfiguration {
         }).filter(x -> x != null).collect(Collectors.toList());
     }
 
+
+
     @Override
     public String getMasterDatabasePath() {
         return configuration.getString(VIEWSERVER_SERVERS_MASTER_DATABASE, "%user.home%/viewserver");
@@ -85,6 +88,11 @@ public class XmlViewServerConfiguration implements IViewServerConfiguration {
     @Override
     public boolean isMaster() {
         return configuration.getKeys(VIEWSERVER_SERVERS_MASTER).hasNext();
+    }
+
+    @Override
+    public boolean isMock() {
+        return configuration.getBoolean(VIEWSERVER_ISMOCK);
     }
 
     @Override

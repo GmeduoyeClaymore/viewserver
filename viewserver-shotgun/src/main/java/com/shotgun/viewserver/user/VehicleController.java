@@ -63,15 +63,15 @@ public class VehicleController {
     }
 
     public static List<String> getValidProductsVehicle(Dimensions dimensions) {
-        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolumeMetresCubed()));
+        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolume()));
 
-        if (dimensions.getVolumeMetresCubed() < VanVolumes.MediumVan) {
+        if (dimensions.getVolume() < VanVolumes.MediumVan) {
             log.debug("This is the volume of small van");
             return Arrays.asList(VanProducts.SmallVan);
-        } else if (dimensions.getVolumeMetresCubed() < VanVolumes.LargeVan) {
+        } else if (dimensions.getVolume() < VanVolumes.LargeVan) {
             log.debug("This is the volume of medium van");
             return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan);
-        } else if (dimensions.getVolumeMetresCubed() < VanVolumes.Luton) {
+        } else if (dimensions.getVolume() < VanVolumes.Luton) {
             log.debug("This is the volume of large van");
             return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan);
         } else {

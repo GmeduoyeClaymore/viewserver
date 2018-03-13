@@ -14,7 +14,7 @@ public class DriverControllerTest {
 
     @Before
     public void createSut(){
-        sut = new DriverController(null,null,null,null,null,null,null, null, null, null);
+        sut = new DriverController(null,null,null,null,null,null,null, null, null, null, true);
     }
 
     @Test

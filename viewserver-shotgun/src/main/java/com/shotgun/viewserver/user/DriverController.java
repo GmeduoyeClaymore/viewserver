@@ -42,6 +42,7 @@ public class DriverController {
     private ImageController imageController;
     private NexmoController nexmoController;
     private IReactor reactor;
+    private boolean isMock;
 
     public DriverController(TableUpdater tableUpdater,
                             PaymentController paymentController,
@@ -52,7 +53,8 @@ public class DriverController {
                             LoginController loginController,
                             ImageController imageController,
                             NexmoController nexmoController,
-                            IReactor reactor) {
+                            IReactor reactor,
+                            boolean isMock) {
         this.tableUpdater = tableUpdater;
         this.paymentController = paymentController;
         this.messagingController = messagingController;
@@ -63,6 +65,7 @@ public class DriverController {
         this.imageController = imageController;
         this.nexmoController = nexmoController;
         this.reactor = reactor;
+        this.isMock = isMock;
     }
 
     @ControllerAction(path = "registerDriver", isSynchronous = false)
@@ -155,7 +158,10 @@ public class DriverController {
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
 
-        journeyEmulatorController.emulateJourneyForOrder(orderId, "emulator-5558", driverId);
+        if(isMock) {
+            journeyEmulatorController.emulateJourneyForOrder(orderId, "emulator-5558", driverId);
+        }
+
         return orderId;
     }
 
