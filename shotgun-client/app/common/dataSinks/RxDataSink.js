@@ -13,6 +13,13 @@ export default class RxDataSink extends DataSink(null){
   static COLUMN_REMOVED = 'ColumnRemoved';
   static ERROR = 'Error';
   static SUCCESS = 'Success';
+  static SCHEMA_ERROR = 'SchemaError';
+  static SCHEMA_ERROR_CLEARED = 'SchemaErrorCleared';
+  static DATA_ERROR = 'DataError';
+  static DATA_ERROR_CLEARED = 'DataErrorCleared';
+  static CONFIG_ERROR = 'ConfigError';
+  static CONFIG_ERROR_CLEARED = 'ConfigErrorCleared';
+
 
   constructor(){
     super();

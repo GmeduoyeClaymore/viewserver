@@ -83,6 +83,7 @@ class UserRelationshipDetail extends Component{
           <Text style={styles.summary}>{'STATUS: ' + user.status}</Text>
           <Text style={styles.summary}>{'STATUS MESSAGE: ' + user.statusMessage}</Text>
           <Text style={styles.summary}>{'DISTANCE: ' + user.distance}</Text>
+          <Text style={styles.summary}>{'RATING: ' + user.rating}</Text>
         </View>
       </View>
       <PagingListView

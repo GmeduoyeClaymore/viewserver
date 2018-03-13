@@ -87,6 +87,7 @@ const UserRelationshipItem = ({context, user, selectedUser = {}}) => {
         <Text style={styles.summary}>{'RELATIONSHIP STATUS: ' + user.relationshipStatus}</Text>
         <Text style={styles.summary}>{'TYPE: ' + user.type}</Text>
         <Text style={styles.summary}>{'STATUS MESSAGE: ' + user.statusMessage}</Text>
+        <Text style={styles.summary}>{'RATING: ' + user.rating}</Text>
         <Text style={styles.summary}>{'DISTANCE: ' + user.distance}</Text>
       </View>
       <StatusButton user={user}/>

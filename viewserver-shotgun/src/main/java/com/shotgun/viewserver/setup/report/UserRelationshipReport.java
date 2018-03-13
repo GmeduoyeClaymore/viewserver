@@ -78,6 +78,7 @@ public class UserRelationshipReport {
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_imageUrl", "imageUrl"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_online", "online"),
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_status", "status"),
+                                new IProjectionConfig.ProjectionColumn("relatedToUser_rating", "rating"),
                                 new IProjectionConfig.ProjectionColumn("relationshipStatus", "relationshipStatus"),
                                 new IProjectionConfig.ProjectionColumn("currentDistance", "distance"),
                                 new IProjectionConfig.ProjectionColumn("initiatedByMe", "initiatedByMe"),

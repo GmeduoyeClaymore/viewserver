@@ -37,6 +37,29 @@ export default DataSink = (superclass) => class extends superclass {
     Logger.info(this.name + ' - Subscription error - ' + error);
   }
 
+  onSchemaError(error){
+    Logger.info(this.name + ' - Schema error - ' + error);
+  }
+
+  onDataError(error){
+    Logger.info(this.name + ' - Data error - ' + error);
+  }
+
+  onConfigError(error){
+    Logger.info(this.name + ' - Config error - ' + error);
+  }
+
+  onSchemaErrorCleared(){
+    Logger.info(this.name + ' - Schema error cleared');
+  }
+
+  onDataErrorCleared(){
+    Logger.info(this.name + ' - Data error cleared');
+  }
+  onConfigErrorCleared(){
+    Logger.info(this.name + ' - Config error cleared');
+  }
+
   onDataReset(){
     if (super.onDataReset){
       super.onDataReset();

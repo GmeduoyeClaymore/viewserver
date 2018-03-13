@@ -47,7 +47,7 @@ class UserRelationships extends Component{
       reportId,
       productId,
       showUnrelated: showAll,
-      columnsToSort: [{name: 'distance', direction: 'asc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
+      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
   }
 
