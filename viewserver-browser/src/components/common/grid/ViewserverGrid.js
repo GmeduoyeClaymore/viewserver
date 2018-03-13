@@ -79,7 +79,7 @@ export default class ViewServerGrid extends Component {
 
     async subscribeToData(newProps){
         this.dao = this.dao || await this.getDao(newProps.daoName);
-        this.dataSource = new DaoDataSource(this.dao);     
+        
         this.disposables.push( this.dataSource.onDataRequested.subscribe(this.trackOperation));
         this.disposables.push( this.dataSource.columnsChanged.debounceTime(50).subscribe(this.setColumns.bind(this)));
         this.disposables.push( this.dataSource.onResized.debounceTime(500).subscribe(this.setSummary.bind(this)));
@@ -128,12 +128,13 @@ export default class ViewServerGrid extends Component {
 
     componentWillUnmount(){
         Logger.info("Unmounting grid");
-        //this.disposables.forEach(dis => dis.unsubscribe())
+        this.disposables.forEach(dis => dis.unsubscribe())
     }
 
     async getDao(daoName){
         const context = new GenericOperatorDaoContext(daoName, {});
         const dao = new Dao(context, true);
+        this.dataSource = new DaoDataSource(dao);     
         return dao; 
     }
 

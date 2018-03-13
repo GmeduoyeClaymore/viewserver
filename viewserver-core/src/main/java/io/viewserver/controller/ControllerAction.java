@@ -1,4 +1,4 @@
-package io.viewserver.command;
+package io.viewserver.controller;
 
 /**
  * Created by Gbemiga on 12/12/17.

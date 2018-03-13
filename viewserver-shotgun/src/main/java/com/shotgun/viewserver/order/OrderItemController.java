@@ -7,9 +7,9 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 
 @Controller(name = "orderItemController")
 public class OrderItemController {

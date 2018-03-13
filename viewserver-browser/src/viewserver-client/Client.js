@@ -6,6 +6,7 @@ import RowEventMapper from './mappers/RowEventMapper';
 import ProjectionMapper from './mappers/ProjectionMapper';
 import ProtoLoader from './core/ProtoLoader';
 import Logger from 'common/Logger';
+import GenericJSONCommandPromise from 'common/promises/GenericJSONCommandPromise';
 
 export default class Client {
   constructor(url, protocol) {
@@ -38,7 +39,7 @@ export default class Client {
   }
 
   unsubscribe = function (commandId, eventHandlers) {
-    const unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({commandId});
+    const unsubscribeCommand = ProtoLoader.Dto.UnsubscribeCommandDto.create({subscriptionId : commandId});
     this.network.connection.removeOpenCommand(commandId);
     return this.sendCommand('unsubscribe', unsubscribeCommand, false, eventHandlers);
   };
@@ -86,6 +87,26 @@ export default class Client {
     });
 
     return this.sendCommand('subscribeReport', subscribeReportCommand, true, dataSink);
+  };
+
+  invokeJSONCommand = function (controllerName, action, payload) {
+    const commandExecutedPromise = new GenericJSONCommandPromise();
+    Logger.debug(`JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+    
+    if (!controllerName){
+      throw new Error('Controller name is required');
+    }
+    if (!action){
+      throw new Error('Action name is required');
+    }
+
+    const jsonCommand = ProtoLoader.Dto.GenericJSONCommandDto.create({
+      payload: JSON.stringify(payload),
+      action,
+      path: controllerName,
+    });
+    this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
+    return commandExecutedPromise.promise;
   };
 
   subscribeToDimension = function (dimension, reportContext, options, dataSink) {

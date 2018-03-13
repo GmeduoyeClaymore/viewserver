@@ -5,6 +5,9 @@ public class NearbyPlaceRequest{
     private double longitude;
     private String rankby;
 
+    public NearbyPlaceRequest() {
+    }
+
     public NearbyPlaceRequest(double longitude, double latitude, String rankby) {
         this.longitude = longitude;
         this.latitude = latitude;

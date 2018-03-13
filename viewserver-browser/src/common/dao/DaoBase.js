@@ -71,7 +71,7 @@ export default class Dao {
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       const _this = this;
       const {sendAllEvents} = _this;
-      this.rowEventSubscription = this.rowEventObservable.subscribe((ev) => {
+      this.rowEventSubscription = (this.daoContext.adapt ?  this.daoContext.adapt(this.rowEventObservable) : this.rowEventObservable).subscribe((ev) => {
         if (sendAllEvents || this.dataSink.isSnapshotComplete || ev.Type == Rx.DATA_RESET) {
           this.subject.next(this.daoContext.mapDomainEvent(ev, this.dataSink));
         }

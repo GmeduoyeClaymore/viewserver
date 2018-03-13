@@ -41,8 +41,10 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(OperatorAndConnectionReport.ID, OperatorAndConnectionReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
-        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS, UserRelationshipReport.getReportDefinition());
-        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, UserRelationshipReport.getUsersForProductReportDefinition());
+        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS, UserRelationshipReport.getReportDefinition(false));
+        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS + "All", UserRelationshipReport.getReportDefinition(true));
+        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, UserRelationshipReport.getUsersForProductReportDefinition(false));
+        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID + "All", UserRelationshipReport.getUsersForProductReportDefinition(true));
         reportDefinitions.put(ContentTypeReport.ID, ContentTypeReport.getReportDefinition());
         return reportDefinitions;
     }

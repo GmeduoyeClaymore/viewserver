@@ -17,6 +17,8 @@ public class Delivery {
     private DeliveryAddress destination;
 
     public Delivery() {
+        origin = new DeliveryAddress();
+        destination = new DeliveryAddress();
     }
 
     public Date getFrom() {

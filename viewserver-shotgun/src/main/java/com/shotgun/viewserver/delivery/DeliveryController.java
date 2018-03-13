@@ -5,8 +5,8 @@ import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
 import java.util.Date;
 
 @Controller(name = "deliveryController")

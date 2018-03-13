@@ -8,9 +8,9 @@ import com.shotgun.viewserver.constants.VanVolumes;
 import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.Vehicle;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

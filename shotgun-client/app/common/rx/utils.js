@@ -10,7 +10,7 @@ Rx.Observable.prototype.timeoutWithError = function (timeout, error) {
 Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
   return this.filter(ev => RxDataSink.SNAPSHOT_COMPLETE === ev.Type)
     .take(1)
-    .timeoutWithError(timeout, new Error('No snapshot complete event detected 10 seconds after update'));
+    .timeoutWithError(timeout, new Error(`No snapshot complete event detected ${timeout} millis seconds after update`));
 };
 
 Rx.Observable.prototype.filterRowEvents = function () {

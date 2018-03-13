@@ -1,4 +1,4 @@
-package io.viewserver.command;
+package io.viewserver.controller;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.user.DriverController;
-import io.viewserver.command.ControllerRegistration;
+import io.viewserver.controller.ControllerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 

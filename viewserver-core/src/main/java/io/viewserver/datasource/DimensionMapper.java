@@ -51,7 +51,9 @@ public class DimensionMapper extends DimensionMapperBase {
 
     @Override
     protected StringHashSet createStringLookup() {
-        return new StringHashSet(8, 0.75f, "!!___NULL___!!");
+        StringHashSet stringHashSet = new StringHashSet(8, 0.75f, "!!___NULL___!!");
+        stringHashSet.addString(null);
+        return stringHashSet;
     }
 
     public int map(IDataSource dataSource, Dimension dimension, Object value){

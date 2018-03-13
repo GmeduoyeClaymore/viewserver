@@ -15,6 +15,7 @@ export default class UserRelationshipList extends Component{
       return (<UserRelationshipItem key={user.userId} user={user} {...rest}/>);
     };
     this.search = (searchText) => {
+      const {dispatch} = this.props;
       dispatch(updateSubscriptionAction('userRelationshipDao', {searchText}));
     };
     this.search = this.search.bind(this);

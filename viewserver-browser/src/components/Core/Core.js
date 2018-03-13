@@ -7,6 +7,12 @@ import { ConnectedRouter } from 'connected-react-router';
 import { components, history, store, store2 } from '../components.js';
 import styles from './component.less';
 
+import { connect } from 'react-redux';
+
+const AppRouter_mapStateToProps = (state, props) => { return {
+  ...props
+} }
+
 const Core = () => {
   return (
     <Provider store={store}>
@@ -31,12 +37,13 @@ const AppRouter = (props) => {
     <Switch>
       <Route path="/login" exact component={components.Login} /> 
       <Route path="/operatorGroupView" render={() => <components.OperatorGroupView {...props}/>} /> 
+      <Route path="/controllers" render={() => <components.ControllerView {...props}/>} /> 
       <Route path="/operatorConfigurationView" render={() => <components.OperatorConfigurationView {...props}/>} /> 
       <Route path="/fullOperatorView" render={() => <components.FullOperatorView {...props}/>} /> 
     </Switch>
   );
 } 
 
-
+const ConnectedAppRouter = connect(AppRouter_mapStateToProps)(AppRouter);
 
 export default Core;

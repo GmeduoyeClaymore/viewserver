@@ -1,4 +1,4 @@
-package io.viewserver.command;
+package io.viewserver.controller;
 
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;

@@ -10,7 +10,7 @@ const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
   }
   return (nextState, nextOwnProps) => {
     ownProps = nextOwnProps;
-    const propsFromSelector = selector(nextState, nextOwnProps);
+    const propsFromSelector = selector(nextState, {...nextOwnProps, dispatch});
     const propsForComparison = propsFromSelector;
     
     if (!isEqual(previousPropsForComparison, propsForComparison, false, ignorefuncs)) {

@@ -27,6 +27,7 @@ const containerSelected = {
   backgroundColor: 'red'
 };
 
+
 const UserRelationshipDetail = ({context, user, selectedUser = {}}) => {
   if (!user){
     return null;

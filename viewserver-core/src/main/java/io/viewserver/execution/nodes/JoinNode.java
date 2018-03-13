@@ -154,13 +154,20 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
     }
 
     public JoinNode withLeftJoinOuter() {
-        this.isLeftJoinOuter = true;
+        return withLeftJoinOuter(true);
+    }
+
+    public JoinNode withLeftJoinOuter(boolean shouldLeftOuter) {
+        this.isLeftJoinOuter = shouldLeftOuter;
         return this;
     }
 
-    public JoinNode withRightJoinOuter() {
-        this.isRightJoinOuter = true;
+    public JoinNode withRightJoinOuter(boolean shouldRightOuter) {
+        this.isRightJoinOuter = shouldRightOuter;
         return this;
+    }
+    public JoinNode withRightJoinOuter() {
+        return withRightJoinOuter(true);
     }
 
     public IColumnNameResolver getColumnNameResolver() {

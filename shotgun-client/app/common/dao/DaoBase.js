@@ -26,12 +26,13 @@ export default class Dao {
     this.crx = crx;//force this to load
     if (!this.daoContext.client){
       Logger.warning('Unable to link up reconnect event as cannot find client in DAO context');
-      this.daoContext.client.connection.connectionObservable.subscribe(this.handleConnectionStatus);
+    } else {
+      this.daoContext.client.loggedInObservable.subscribe(this.handleConnectionStatus);
     }
   }
 
   handleConnectionStatus(status){
-    if (status){
+    if (status && this.subscribed){
       Logger.info('Handling reconnection logic');
       this.updateSubscription(this.options, true);
     }
@@ -85,7 +86,7 @@ export default class Dao {
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       this.countSubscription = this.dataSink.dataSinkUpdated.filter(ev => ev.Type === RxDataSink.TOTAL_ROW_COUNT).subscribe(ev => this.countSubject.next(ev.count));
 
-      this.rowEventSubscription = this.rowEventObservable.subscribe((ev) => {
+      this.rowEventSubscription =  (this.daoContext.adapt ?  this.daoContext.adapt(this.rowEventObservable) : this.rowEventObservable).subscribe((ev) => {
         if (this.dataSink.isSnapshotComplete || ev.Type == RxDataSink.DATA_RESET) {
           this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
         }
@@ -95,14 +96,14 @@ export default class Dao {
     }
 
     try {
-      if (isEqual(this.options, newOptions) && this.subscribed){
+      if (isEqual(this.options, newOptions) && this.subscribed && !force){
         return Promise.resolve();
       }
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)} ${this.daoContext.name}`);
       this.optionsSubject.next(this.options);
       const optionsMessage = this.daoContext.transformOptions(this.options);
-      const snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete().toPromise();
+      const snapshotPromise = this.dataSink.dataSinkUpdated.waitForSnapshotComplete(force ? 30000 : 10000).toPromise();
       this.subscriptionStrategy.updateSubscription(optionsMessage);
 
       Logger.info(`!!!!!Waiting for snapshot complete!!!! ${this.daoContext.name}`);

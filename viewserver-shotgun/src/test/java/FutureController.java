@@ -1,8 +1,8 @@
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
 
 import java.util.concurrent.Executors;
 

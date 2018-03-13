@@ -5,16 +5,15 @@ import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.TableUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.command.Controller;
-import io.viewserver.command.ControllerAction;
-import io.viewserver.command.ControllerContext;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.table.KeyedTable;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Scheduler;
 import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 

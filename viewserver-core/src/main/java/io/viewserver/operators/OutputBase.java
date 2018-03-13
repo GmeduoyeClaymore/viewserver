@@ -19,6 +19,7 @@ package io.viewserver.operators;
 import io.viewserver.Constants;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -26,6 +27,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Emitter;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
@@ -67,7 +69,19 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     //be careful when using this it will start spamming alot of objects if you subscribe
     @Override
     public Observable<OperatorEvent>  observable(){
-        return this.subject;
+        
+        Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
+            try{
+                IRowSequence rows = (this.getAllRows());
+                while(rows.moveNext()){
+                    subscriber.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),rows.getRowId(),null)));
+                }
+                subscriber.onCompleted();
+            }catch (Exception ex){
+                subscriber.onError(ex);
+            }}, Emitter.BackpressureMode.BUFFER);
+
+        return snapshot.flatMap(snap -> this.subject);
     }
 
     public String getName() {
@@ -106,6 +120,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     @Override
     public void handleUpdate(int row) {
+        ExecutionContext.AssertUpdateThread();
         if (!getRowTracker().isActive(row)) {
             throw new IllegalStateException("Cannot handle update for inactive row " + row);
         }

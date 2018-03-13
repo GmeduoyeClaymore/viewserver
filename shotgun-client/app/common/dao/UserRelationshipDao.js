@@ -14,7 +14,7 @@ export default class UserRelationshipDaoContext{
     limit: 100,
     filterMode: 20,
     showUnrelated: true,
-    showOutOfRange: true,
+    showOutOfRange: false,
     position: UserRelationshipDaoContext.DEFAULT_POSITION,
     maxDistance: 0
   };
@@ -33,10 +33,14 @@ export default class UserRelationshipDaoContext{
     return 'userRelationshipDao';
   }
 
-  getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
+  adapt(observable){
+    return observable.debounceTime(50);
+  }
+
+  getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = false, showOutOfRange = false}){
     const {latitude, longitude} = position;
     const baseReportContext =  {
-      reportId,
+      reportId: reportId + (showUnrelated ? 'All' : ''),
       parameters: {
         latitude,
         longitude,
@@ -78,5 +82,11 @@ export default class UserRelationshipDaoContext{
     const {searchText } = options;
     const filterExpression = searchText ? `firstName like "*${searchText}*"` : 'true';
     return {...options, filterExpression};
+  }
+
+  extendDao(dao){
+    dao.updateRelationship = async ({targetUserId, relationshipStatus, relationshipType}) => {
+      await this.client.invokeJSONCommand('userController', 'updateRelationship', {targetUserId, relationshipStatus, relationshipType});
+    };
   }
 }

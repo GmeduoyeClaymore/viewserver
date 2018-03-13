@@ -58,7 +58,7 @@ public class LocalKeyedTableUpdater extends LocalTableUpdater implements IKeyedT
     }
 
     @Override
-    public void addOrUpdateRow(ITableRowUpdater rowUpdater) {
-        ((KeyedTable)table).addOrUpdateRow(rowUpdater);
+    public int addOrUpdateRow(ITableRowUpdater rowUpdater) {
+        return ((KeyedTable)table).addOrUpdateRow(rowUpdater);
     }
 }

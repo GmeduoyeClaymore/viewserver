@@ -18,7 +18,7 @@ const OPERATOR_TYPE_COLORS = {
 
 const getColor = node => {
   if(!node.type){
-    return 'white';
+    return '#D3D3D3';
   }
   const resultKey = Object.keys(OPERATOR_TYPE_COLORS).find(
     key => node.type.includes(key)
@@ -51,7 +51,7 @@ export default class NodeGraph extends React.Component {
       return !isEqual({nodes : oldNodes,links: oldLinks}, {nodes,links} );
     }
     render() {
-      const {nodes : immutableNodes = [], links : immutableLinks= [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
+      const {nodes : immutableNodes = [], links : immutableLinks = [], selectNode, height: Height = TOTAL_HEIGHT, width: Width = TOTAL_WIDTH, PaddingX = PADDING_X, PaddingY = PADDING_Y} = this.props;
 
       const {nodes,links} = determinePosition({Height, Width, PaddingX, PaddingY})(immutableLinks, immutableNodes);
 
