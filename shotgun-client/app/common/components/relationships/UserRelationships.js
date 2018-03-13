@@ -10,6 +10,7 @@ import UserRelationshipMap from './UserRelationshipMap';
 import UserRelationshipList from './UserRelationshipList';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
+import UserRelationshipDetail from './UserRelationshipDetail';
 
 class UserRelationships extends Component{
   constructor(props){
