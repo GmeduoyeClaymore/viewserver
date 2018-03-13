@@ -12,7 +12,7 @@ const ItemDetails = ({context, navigationStrategy}) => {
   let imageIsVertical = false;
 
   const onChangeValue = (field, value) => {
-    const {orderItem={}} = context.state;
+    const {orderItem = {}} = context.state;
     context.setState({orderItem: {...orderItem, [field]: value}});
   };
 

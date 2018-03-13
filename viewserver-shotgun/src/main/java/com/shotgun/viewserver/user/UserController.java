@@ -95,6 +95,11 @@ public class UserController {
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
+            throw new RuntimeException(String.format("The email address %s is already in use", user.getEmail()));
+        }
+
         String userId = getUserId();
         Date now = new Date();
 

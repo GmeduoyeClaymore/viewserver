@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {View, StyleSheet, Image, Dimensions} from 'react-native';
-import {Text, Spinner, Container, Row, Content, Item} from 'native-base';
+import {View, StyleSheet, Dimensions} from 'react-native';
+import {Text, Spinner, Row, Content, Item} from 'native-base';
 import {LoadingScreen, PagingListView, SearchBar, Icon} from 'common/components';
 import {updateSubscriptionAction} from 'common/dao/DaoActions';
 import {CheckBox} from 'common/components/basic';
@@ -9,8 +8,7 @@ import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {connect} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
-const {height, width} = Dimensions.get('window');
-import {resolveProductCategoryIcon} from 'common/assets';
+const {height} = Dimensions.get('window');
 
 const styles = {
   container: {
@@ -107,7 +105,8 @@ class ProductCategoryList extends Component{
   }
 
   toggleCategory(categoryObj){
-    let {context, selectedProductCategories = []} = this.props;
+    const {context} = this.props;
+    let {selectedProductCategories = []} = this.props;
     const index = selectedProductCategories.findIndex(c=> c.categoryId === categoryObj.categoryId);
     if (!!~index || isImplicitylChecked(categoryObj, selectedProductCategories)){
       selectedProductCategories = selectedProductCategories.filter((category, idx) => idx !== index);
@@ -131,7 +130,7 @@ class ProductCategoryList extends Component{
   }
 
   getOptions(){
-    const {options, expandedCategoryIds, selectedProductCategories, contentType} = this.props;
+    const {options, expandedCategoryIds, contentType} = this.props;
     return {...options, parentCategoryId: contentType.rootProductCategory, expandedCategoryIds};
   }
 

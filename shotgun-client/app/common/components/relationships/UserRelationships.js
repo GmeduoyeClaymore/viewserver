@@ -8,7 +8,6 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
 import UserRelationshipList from './UserRelationshipList';
-import UserRelationshipDetail from './UserRelationshipDetail';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 

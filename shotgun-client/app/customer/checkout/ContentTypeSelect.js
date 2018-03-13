@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Content, Button, H1, Grid, Row, View} from 'native-base';
+import {Text, Content, H1, View} from 'native-base';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
 

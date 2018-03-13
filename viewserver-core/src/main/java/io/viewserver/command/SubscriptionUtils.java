@@ -19,8 +19,10 @@ public class SubscriptionUtils {
         String filterExpression = options.getFilterExpression();
         if (filterExpression != null && filterExpression.contains("@")) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                if (entry.getValue() != null && filterExpression.contains("@" + entry)) {
-                    options.setFilterExpression(filterExpression.replace("@" + entry, entry.getValue().toString()));
+                Object value = entry.getValue();
+                String key = entry.getKey();
+                if (value != null && filterExpression.contains(String.format("\"@%s\"", key))) {
+                    options.setFilterExpression(filterExpression.replace("@" + key, value.toString()));
                 }
             }
         }

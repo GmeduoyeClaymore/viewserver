@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, Text} from 'react-native';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps} from 'common/dao';

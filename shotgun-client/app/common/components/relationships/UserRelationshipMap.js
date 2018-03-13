@@ -16,7 +16,8 @@ export default class UserRelationshipMap extends Component{
   
   fitMap(newProps){
     const {map} = this;
-    let {me, relatedUsers} = newProps;
+    const {me} = newProps;
+    let {relatedUsers} = newProps;
     if (me){
       relatedUsers = [...relatedUsers, me];
     }

@@ -45,7 +45,7 @@ export default class DeliveryAddressDao{
   }
 
   transformOptions(options){
-    return {...options, filterExpression: 'userId == "@userId"'};
+    return {...options, filterExpression: 'userId == \"@userId\"'};
   }
 
   extendDao(dao){

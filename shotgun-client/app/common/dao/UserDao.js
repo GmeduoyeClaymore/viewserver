@@ -49,10 +49,10 @@ export default class UserDaoContext{
   }
 
   createSubscriptionStrategy(_, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(), dataSink); 
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(), dataSink);
   }
 
-  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+  doesSubscriptionNeedToBeRecreated(previousOptions){
     return !previousOptions;
   }
 

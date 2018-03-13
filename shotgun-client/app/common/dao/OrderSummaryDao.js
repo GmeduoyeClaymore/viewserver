@@ -1,6 +1,5 @@
 import ReportSubscriptionStrategy from '../subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-import {isEqual} from 'lodash';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {hasAnyOptionChanged} from 'common/dao';
 

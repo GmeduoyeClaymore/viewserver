@@ -169,7 +169,8 @@ export default class ContentTypeSelector extends Component{
     }
 
     deselectContentType(){
-      let {selectedContentTypes = {}, contentType} = this.props;
+      const {contentType} = this.props;
+      let {selectedContentTypes = {}} = this.props;
       const {context} = this.props;
       const content = selectedContentTypes[contentType.contentTypeId];
       if (content){

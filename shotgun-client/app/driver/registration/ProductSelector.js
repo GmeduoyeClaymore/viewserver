@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
-import {Text, Spinner, Container, Row, Col, Content, Item} from 'native-base';
-import {LoadingScreen, PagingListView, SearchBar, Icon} from 'common/components';
+import {View, StyleSheet} from 'react-native';
+import {Text, Spinner, Container, Row, Col, Content} from 'native-base';
+import {LoadingScreen, PagingListView, SearchBar} from 'common/components';
 import {CheckBox} from 'common/components/basic';
 import {updateSubscriptionAction} from 'common/dao/DaoActions';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {connect} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
-import {resolveProductCategoryIcon} from 'common/assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -69,7 +68,8 @@ class ProductList extends Component{
   }
 
   toggleProduct(productId){
-    let {context, selectedProductIds = []} = this.props;
+    const {context} = this.props;
+    let {selectedProductIds = []} = this.props;
     const index = selectedProductIds.indexOf(productId);
     if (!!~index){
       selectedProductIds = selectedProductIds.filter((_, idx) => idx !== index);
@@ -81,7 +81,7 @@ class ProductList extends Component{
 
 
   getOptions(){
-    const {options, selectedProductIds, contentType} = this.props;
+    const {options, contentType} = this.props;
     return {...options, categoryId: contentType.rootProductCategory};
   }
 
