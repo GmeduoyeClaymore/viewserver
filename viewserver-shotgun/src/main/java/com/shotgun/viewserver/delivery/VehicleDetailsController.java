@@ -52,24 +52,24 @@ public class VehicleDetailsController {
             Map<String, Object> vehicleRegistration = (Map<String, Object>) get(dataItems, "VehicleRegistration");
             Map<String, Object> SmmtDetails = (Map<String, Object>) get(dataItems, "SmmtDetails");
             String bodyType = (String) get(SmmtDetails, "BodyStyle");
-            if (Arrays.binarySearch(PERMITTED_BODY_STYLES, bodyType) == -1) {
-                throw new RuntimeException(String.format("Invalid vehicle body type \"%s\" found. In order to register as a Shotgun driver your vehicle must be a type of van", bodyType));
+            if (!Arrays.asList(PERMITTED_BODY_STYLES).contains(bodyType)) {
+                throw new RuntimeException(String.format("Invalid vehicle of type \"%s\" found. In order to register as a Shotgun driver your vehicle must be a type of van", bodyType));
             }
             Map<String, Object> technicalDetails = (Map<String, Object>) get(dataItems, "TechnicalDetails");
             Map<String, Object> dimensions = (Map<String, Object>) get(technicalDetails, "Dimensions");
 
 
-            long length = ((Double) get(dimensions, "LoadLength")).longValue();
-            long width = ((Double) get(dimensions, "Width")).longValue();
-            long height = ((Double) get(dimensions, "Height")).longValue();
             long weight = ((Double) get(dimensions, "PayloadWeight")).longValue();
+            double volume = ((Double) get(dimensions, "PayloadVolume")).doubleValue();
 
-            Dimensions dim = new Dimensions(height, width, length, weight);
+            Dimensions dim = new Dimensions(volume, weight);
             String reg = (String) get(vehicleRegistration, "Vrm");
             String make = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Make"));
             String model = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Model"));
             String color = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Colour"));
             return new Vehicle(dim, make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
+        }catch(RuntimeException ex){
+            throw ex;
         }catch (Exception ex){
             log.error(String.format("There was a problem fetching vehicle details for reg %s", registrationNumber), ex);
             throw new RuntimeException("There was a problem fetching your vehicle details");
@@ -77,15 +77,8 @@ public class VehicleDetailsController {
     }
 
     private String getJSON(VehicleDetailsQuery query) {
-        if(apiKey.isMock()){
-            if(!query.getRegNo().toUpperCase().contains("A")){
-                throw new RuntimeException("Limited API reg no should contain the letter A");
-            }
-            URL resource = getClass().getClassLoader().getResource("mock//vehicleDetails.json");
-            if(resource == null){
-                throw new RuntimeException("Unable to find mock vehicle details");
-            }
-            return ControllerUtils.urlToString(resource);
+        if(apiKey.isMock() && !query.getRegNo().toUpperCase().contains("A")){
+            throw new RuntimeException("Limited API reg no should contain the letter A");
         }
         return ControllerUtils.execute("GET", VEHICLE_DETAILS_QUERY_URL, query.toQueryString(apiKey.getKey()));
     }

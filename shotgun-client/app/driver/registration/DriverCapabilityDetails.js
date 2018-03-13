@@ -45,11 +45,6 @@ class DeliveryDetails extends Component{
     }
   }
 
-  printDimensions(){
-    const {dimensions} = this.props;
-    return `${Math.floor(dimensions.height / 1000)}m  x ${Math.floor(dimensions.width / 1000)}m x ${Math.floor(dimensions.length / 1000)}m`;
-  }
-
   togglePeopleVisibility(peopleVisible){
     this.onChangeText('numAvailableForOffload', peopleVisible ? 1 : undefined);
   }
@@ -84,7 +79,7 @@ class DeliveryDetails extends Component{
           </Item></View>
           <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>
             <Label>Approx dimensions</Label>
-            <Text>{this.printDimensions()}</Text>
+            <Text>{`${dimensions.volume}m\xB3 load space`}</Text>
             <Text>{`${dimensions.weight}kg Max`}</Text>
           </Item></View>
         </Row>) : null}

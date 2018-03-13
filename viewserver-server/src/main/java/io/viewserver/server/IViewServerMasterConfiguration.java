@@ -22,6 +22,8 @@ import io.viewserver.network.IEndpoint;
  * Created by nick on 12/08/15.
  */
 public interface IViewServerMasterConfiguration {
+    boolean isMock();
+
     String getBootstrapperClass();
 
     Iterable<IEndpoint> getMasterEndpoints();

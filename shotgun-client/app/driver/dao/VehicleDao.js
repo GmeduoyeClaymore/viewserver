@@ -43,7 +43,7 @@ export default class VehiclesDaoContext{
     return new DataSourceSubscriptionStrategy(this.client, TableNames.VEHICLE_TABLE_NAME, dataSink);
   }
 
-  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+  doesSubscriptionNeedToBeRecreated(previousOptions){
     return !previousOptions;
   }
 
