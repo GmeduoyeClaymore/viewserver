@@ -90,4 +90,33 @@ export default class RxDataSink extends DataSink(null){
     super.onSuccess(commandResultId, message);
     this._dataSinkUpdated.next({Type: RxDataSink.SUCCESS, commandResultId, message});
   }
+
+  onSchemaError(error){
+    super.onSchemaError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_ERROR, error});
+  }
+
+  onDataError(error){
+    super.onDataError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.DATA_ERROR, error});
+  }
+
+  onConfigError(error){
+    super.onConfigError(error);
+    this._dataSinkUpdated.next({Type: RxDataSink.CONFIG_ERROR, error});
+  }
+
+  onSchemaErrorCleared(){
+    super.onSchemaErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.SCHEMA_ERROR_CLEARED});
+  }
+
+  onDataErrorCleared(){
+    super.onDataErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.DATA_ERROR_CLEARED});
+  }
+  onConfigErrorCleared(){
+    super.onConfigErrorCleared();
+    this._dataSinkUpdated.next({Type: RxDataSink.CONFIG_ERROR_CLEARED});
+  }
 }

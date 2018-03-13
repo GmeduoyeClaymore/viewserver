@@ -27,6 +27,6 @@ message StatusDto {
         DATAERROR = 6;
         DATAERRORCLEARED = 7;
     }
-    string payload = 1;
+    string error = 1;
     required StatusId status = 1;
 }
