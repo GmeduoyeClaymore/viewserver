@@ -1,5 +1,6 @@
 export const INITIAL_STATE = {
   totalPrice: undefined,
+  selectedProduct: undefined,
   orderItem: {
     productId: undefined,
     notes: undefined,

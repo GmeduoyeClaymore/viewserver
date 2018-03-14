@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, H1, View} from 'native-base';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
-
+import {INITIAL_STATE} from './CheckoutInitialState';
 
 import {resolveContentTypeIcon} from 'common/assets';
 
@@ -27,9 +27,8 @@ class ContentTypeSelect extends Component{
 
   selectContentType(selectedContentType){
     const {context, navigationStrategy} = this.props;
-    let {orderItem} = context.state;
-    orderItem = {...orderItem, contentTypeId: selectedContentType.contentTypeId};
-    context.setState({selectedContentType, orderItem});
+    const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
+    context.setState({...INITIAL_STATE, selectedContentType, orderItem});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();
   }
