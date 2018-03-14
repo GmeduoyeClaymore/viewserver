@@ -3,10 +3,10 @@ import {connect} from 'custom-redux';
 import {PagingListView, Tabs, OrderRequest} from 'common/components';
 import { withRouter } from 'react-router';
 import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
-import {isAnyLoading, getNavigationProps} from 'common/dao';
+import {isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-
+import Logger from 'common/Logger';
 const Paging = () => <Spinner />;
 const NoItems = () => <Text empty>No orders to display</Text>;
 const RowView = ({item: orderSummary, isLast, isFirst}) => {
@@ -15,16 +15,21 @@ const RowView = ({item: orderSummary, isLast, isFirst}) => {
   return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
 };
 
+const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+  reportId: 'customerOrderSummary'
+};
+
 class CustomerOrders extends Component{
   constructor(props){
     super(props);
     this.onChangeTab = this.onChangeTab.bind(this);
-    this.getReportOptions = this.getReportOptions.bind(this);
   }
 
-  componentDidMount(){
-    if (this.pagingListView){
-      //this.pagingListView.wrappedInstance.reset();
+  componentWillMount(){
+    const {resetOrders} = this.props;
+    if (resetOrders){
+      resetOrders();
     }
   }
 
@@ -38,17 +43,11 @@ class CustomerOrders extends Component{
       history.replace(location.pathname, {isCompleted: newIsCompleted});
     }
   }
-  getReportOptions(){
-    const {isCompleted} = this.props;
-    return  {
-      isCompleted,
-      columnsToSort: [{ name: 'from', direction: 'asc' }],
-      reportId: 'customerOrderSummary'};
-  }
+
 
   render(){
-    const {isCompleted} = this.props;
-    const {onChangeTab, getReportOptions} = this;
+    const {isCompleted, defaultOptions} = this.props;
+    const {onChangeTab} = this;
   
     return <Container>
       <Header hasTabs>
@@ -64,7 +63,7 @@ class CustomerOrders extends Component{
           daoName='orderSummaryDao'
           dataPath={['orders']}
           rowView={RowView}
-          options={getReportOptions()}
+          options={defaultOptions}
           paginationWaitingView={Paging}
           emptyView={NoItems}
           pageSize={4}
@@ -77,7 +76,18 @@ class CustomerOrders extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
+  const {dispatch} = initialProps;
+  const {isCompleted = false} = navigationProps;
+  const defaultOptions = {
+    ...CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS,
+    isCompleted
+  };
+  const resetOrders = () => {
+    dispatch(resetSubscriptionAction('orderSummaryDao', defaultOptions));
+  };
   return {
+    resetOrders,
+    defaultOptions,
     ...initialProps,
     isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : false,
     busy: isAnyLoading(state, ['orderSummaryDao']),

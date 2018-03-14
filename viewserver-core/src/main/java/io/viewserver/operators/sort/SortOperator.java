@@ -41,6 +41,9 @@ import java.util.*;
  */
 public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
     private static final Logger log = LoggerFactory.getLogger(SortOperator.class);
+    private boolean FORCE_COMPLETE_SORT = true; // this variable is a hack as the partial sorting logic seems to assume that when a row rank is updated the other ranks will somehow remain unaffected
+    //clearly this is wrong we need to fix this
+
     private Input input;
     private Output output;
     private SortDescriptor sortDescriptor;
@@ -132,6 +135,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
         public Input(String name, IOperator owner) {
             super(name, owner);
         }
+
 
         @Override
         public void onSchema() {
@@ -262,6 +266,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             int updatedRowsCount = updatedRows.size();
             int removedRowsCount = removedRows.size();
 
+            log.trace("input - added {}, updated {}, removed {}",addedRowsCount,updatedRowsCount,removedRowsCount);
             if (addedRows.isEmpty() && removedRows.isEmpty() && !hasUpdatesWithDirtySortColumns) {
                 for (int i = 0; i < updatedRowsCount; i++) {
                     Integer updatedRow = getOutputRow(updatedRows.get(i));
@@ -278,7 +283,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             NavigableSet<Integer> pluses = new TreeSet<>();
             NavigableSet<Integer> minuses = new TreeSet<>();
             TIntIntHashMap nexts = new TIntIntHashMap(addedRows.size() + updatedRows.size(), 0.75f, -1, -1);
-            if (addedRowsCount + updatedRowsCount - removedRowsCount == getProducer().getRowCount()) {
+            if (addedRowsCount + updatedRowsCount - removedRowsCount == getProducer().getRowCount() || FORCE_COMPLETE_SORT) {
                 sort();
             } else {
                 for (int i = 0; i < removedRowsCount; i++) {
@@ -402,12 +407,18 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
 //            pluses = pluses.descendingSet();
 //            minuses = minuses.descendingSet();
             allRows.reset();
+
+            for(int i : removedRows){
+                output.handleRemove(i);
+            }
             ArrayList<Integer> plusesList = new ArrayList<>(pluses);
             int plusesCount = pluses.size();
             ArrayList<Integer> minusesList = new ArrayList<>(minuses);
             int minusesCount = minuses.size();
             while (allRows.moveNext()) {
                 int rowId = allRows.getRowId();
+
+
                 int outputRow = getOutputRow(rowId);
                 int oldRank = rankColumn.getPreviousInt(outputRow);
                 int newRank = rankColumn.getInt(outputRow);

@@ -1,4 +1,4 @@
-import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, INVOKE_DAO_COMMAND} from 'common/dao/ActionConstants';
+import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, INVOKE_DAO_COMMAND, UPDATE_COMMAND_STATUS} from 'common/dao/ActionConstants';
 import {getDaoOptions} from './DaoStateUtils';
 import {isEqual} from 'lodash';
 
@@ -15,6 +15,13 @@ export const invokeDaoCommand = (daoName, method, options, continueWith) => {
 export const resetDataAction = (daoName, continueWith) => {
   return async (dispatch) => {
     dispatch(invokeDaoCommand(daoName, 'resetData', {}, continueWith));
+  };
+};
+
+export const clearCommandStatus = (daoName, commandName) => {
+  const path = [daoName, 'commands', commandName];
+  return async (dispatch) => {
+    dispatch({ type: UPDATE_COMMAND_STATUS(daoName, commandName), path, data: {status: undefined, message: undefined} });
   };
 };
 

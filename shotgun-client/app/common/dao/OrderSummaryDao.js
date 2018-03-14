@@ -60,7 +60,7 @@ export default class OrderSummaryDao{
 
   mapDomainEvent(dataSink){
     return {
-      orders: dataSink.rows.map(r => this.mapOrderSummary(r))
+      orders: dataSink.orderedRows.map(r => this.mapOrderSummary(r))
     };
   }
 
@@ -68,6 +68,7 @@ export default class OrderSummaryDao{
     return {
       orderId: orderSummary.orderId,
       status: orderSummary.status,
+      rank: orderSummary.rank,
       totalPrice: orderSummary.totalPrice,
       customerRating: orderSummary.customerRating,
       driverRating: orderSummary.driverRating,

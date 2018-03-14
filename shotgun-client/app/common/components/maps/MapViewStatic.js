@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {Image} from 'react-native';
 import {fetchRoute} from './MapUtils';
+import {setStateIfIsMounted } from 'custom-redux';
+
 
 export default class MapViewStatic extends Component {
   constructor (props) {
@@ -10,6 +12,7 @@ export default class MapViewStatic extends Component {
         coordinates: []
       }
     };
+    setStateIfIsMounted(this);
   }
 
   async componentDidMount() {

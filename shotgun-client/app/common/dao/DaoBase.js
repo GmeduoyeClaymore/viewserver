@@ -103,6 +103,10 @@ export default class Dao {
         Logger.info(`!!!!!Found in flight subscription to snapshot complete cancelling !!!! ${this.daoContext.name}`);
         this.snapshotSubscription.unsubscribe();
         this.snapshotSubscription = undefined;
+        if (this.promiseReject){
+          this.promiseReject('Operation cancelled by another subscription operation');
+          this.promiseReject = undefined;
+        }
       }
       this.options = newOptions;
       Logger.info(`Updating options to ${JSON.stringify(this.options)} ${this.daoContext.name}`);
@@ -111,6 +115,7 @@ export default class Dao {
       const snapshotObservable = this.dataSink.dataSinkUpdated.waitForSnapshotComplete(10000);
       const _this = this;
       const result = new Promise((resolve, reject) => {
+        _this.promiseReject = resolve;
         _this.snapshotSubscription = snapshotObservable.subscribe(
           ev => {
             Logger.info(`!!!!!Completed snapshot complete!!!! ${this.daoContext.name}`);

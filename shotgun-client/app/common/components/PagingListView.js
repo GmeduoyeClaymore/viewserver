@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Dimensions, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
-import {resetSubscriptionAction, updateSubscriptionAction, resetDataAction} from 'common/dao/DaoActions';
+import {resetSubscriptionAction, updateSubscriptionAction, resetDataAction, clearCommandStatus} from 'common/dao/DaoActions';
 import {isEqual, connectAdvanced} from 'custom-redux';
 import {bindActionCreators} from 'redux';
 import {ErrorRegion} from 'common/components';
@@ -20,6 +20,7 @@ class PagingListView extends Component {
   }
 
   componentDidMount() {
+    Logger.info('Component would mount called on paging list view');
     const {options} = this.props;
     this.setOptions(undefined, options);
   }
@@ -96,7 +97,7 @@ const styles = {
 const selectorFactory = (dispatch, initializationProps) => {
   let result = {};
   let ownProps = {};
-  const actions = bindActionCreators({resetSubscriptionAction, updateSubscriptionAction, resetDataAction}, dispatch);
+  const actions = bindActionCreators({resetSubscriptionAction, updateSubscriptionAction, resetDataAction, clearCommandStatus}, dispatch);
   const {daoName} = initializationProps;
 
   return (nextState, nextOwnProps) => {
@@ -105,14 +106,20 @@ const selectorFactory = (dispatch, initializationProps) => {
     const optionsFromDao = getDaoOptions(nextState, daoName);
     const {options: optionsFromProps} = nextOwnProps;
     const options = {...optionsFromProps, ...optionsFromDao};
+    
+    const clearStatusThen = func => {
+      actions.clearCommandStatus(daoName, 'updateSubscription');
+      actions.clearCommandStatus(daoName, 'resetSubscription');
+      func();
+    };
 
     const nextResult = {
       busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
       options,
-      doPage: limit => actions.updateSubscriptionAction(daoName, {limit}),
-      setOptions: options => actions.updateSubscriptionAction(daoName, options),
+      doPage: limit => clearStatusThen(() => actions.updateSubscriptionAction(daoName, {limit})),
+      setOptions: options => clearStatusThen(() => actions.updateSubscriptionAction(daoName, options)),
       reset: () => actions.resetDataAction(daoName),
       errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),

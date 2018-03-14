@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
-import {isAnyLoading, getDaoState} from 'common/dao';
+import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
 import {Redirect} from 'react-router-native';
 import {View, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
@@ -24,13 +24,13 @@ class LandingCommon extends Component {
   }
 
   render() {
-    const {busy, user, history} = this.props;
+    const {busy, user, history, errors} = this.props;
 
-    if (busy){
+    if (busy || !user){
       return <LoadingScreen text="Logging You In"/>;
     }
-    if (!user){
-      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Unable to find your user details. Please sign out and log back in</Text>
+    if (errors){
+      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Unable to find your user details. Please sign out and log back in {errors}</Text>
         <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
       </View>;
     }
@@ -48,6 +48,7 @@ class LandingCommon extends Component {
 const mapStateToProps = (state, nextOwnProps) => ({
   busy: isAnyLoading(state, ['userDao']),
   user: getDaoState(state, ['user'], 'userDao'),
+  errors: getLoadingError(state, 'userDao'),
   ...nextOwnProps
 });
 

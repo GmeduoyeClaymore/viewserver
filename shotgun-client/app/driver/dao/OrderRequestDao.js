@@ -77,7 +77,7 @@ export default class OrderRequestDaoContext{
   mapDomainEvent(dataSink){
     return {
       driver: {
-        orders: dataSink.rows.map(r => this.mapOrderRequest(r)),
+        orders: dataSink.orderedRows.map(r => this.mapOrderRequest(r)),
       }
     };
   }
