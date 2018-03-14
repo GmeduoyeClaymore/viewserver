@@ -4,7 +4,7 @@ import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState, resetSubscriptionAction} from 'common/dao';
 import {connect} from 'custom-redux';
 import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
@@ -66,18 +66,14 @@ class ProductCategoryList extends Component{
     }
   }
 
-  goToCategory(category){
+  goToCategory(selectedCategory){
     const {context} = this.props;
-    context.setState({selectedCategory: category});
+    context.setState({selectedCategory});
   }
 
   render(){
-    const {busy, options, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
+    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
     const {rowView} = this;
-
-    if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
-    }
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
@@ -98,7 +94,7 @@ class ProductCategoryList extends Component{
           daoName='productCategoryDao'
           dataPath={['product', 'categories']}
           pageSize={10}
-          options={{...options, parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId}}
+          options={defaultOptions}
           history={history}
           rowView={rowView}
           paginationWaitingView={Paging}
@@ -118,22 +114,27 @@ const validationSchema = {
   productId: yup.string().required(),
 };
 
-const mapStateToProps = (state, nextOwnProps) => {
-  const {context} = nextOwnProps;
+const mapStateToProps = (state, initialProps) => {
+  const {context} = initialProps;
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
   const {productCategory: rootProductCategory} = selectedContentType;
   const categories = getDaoState(state, ['product', 'categories'], 'productCategoryDao');
 
+  const defaultOptions = {
+    ...getDaoOptions(state, 'productCategoryDao'),
+    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
+  };
+
   return {
     categories,
-    ...nextOwnProps,
-    ...getNavigationProps(nextOwnProps),
+    ...initialProps,
+    ...getNavigationProps(initialProps),
     rootProductCategory,
     selectedProduct,
     selectedCategory: selectedCategory || rootProductCategory,
     busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
-    options: getDaoOptions(state, 'productCategoryDao'),
-    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
+    defaultOptions,
+    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...initialProps
   };
 };
 

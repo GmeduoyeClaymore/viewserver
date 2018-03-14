@@ -65,7 +65,7 @@ class CustomerOrders extends Component{
           options={defaultOptions}
           paginationWaitingView={Paging}
           emptyView={NoItems}
-          pageSize={4}
+          pageSize={10}
           headerView={() => null}
         />
       </View>
@@ -85,9 +85,9 @@ const mapStateToProps = (state, initialProps) => {
     dispatch(resetSubscriptionAction('orderSummaryDao', defaultOptions));
   };
   return {
+    ...initialProps,
     resetOrders,
     defaultOptions,
-    ...initialProps,
     isCompleted,
     busy: isAnyLoading(state, ['orderSummaryDao']),
   };
