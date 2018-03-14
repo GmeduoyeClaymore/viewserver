@@ -15,6 +15,7 @@ public class Delivery {
     private int duration;
     private DeliveryAddress origin;
     private DeliveryAddress destination;
+    private int numRequiredForOffload;
 
     public Delivery() {
         origin = new DeliveryAddress();
@@ -93,4 +94,11 @@ public class Delivery {
         this.driverId = driverId;
     }
 
+    public int getNumRequiredForOffload() {
+        return numRequiredForOffload;
+    }
+
+    public void setNumRequiredForOffload(int numRequiredForOffload) {
+        this.numRequiredForOffload = numRequiredForOffload;
+    }
 }
