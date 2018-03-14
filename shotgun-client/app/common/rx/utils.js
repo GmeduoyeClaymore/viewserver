@@ -21,7 +21,7 @@ const checkForErrorEventTypes = (ev) => {
 };
 
 Rx.Observable.prototype.waitForSnapshotComplete = function (timeout = 10000) {
-  return this.filter(ev => !~[RxDataSink.SNAPSHOT_COMPLETE, RxDataSink.DATA_ERROR, RxDataSink.SCHEMA_ERROR,  RxDataSink.CONFIG_ERROR].indexOf(ev.Type))
+  return this.filter(ev => !!~[RxDataSink.SNAPSHOT_COMPLETE, RxDataSink.DATA_ERROR, RxDataSink.SCHEMA_ERROR,  RxDataSink.CONFIG_ERROR].indexOf(ev.Type))
     .take(1)
     .map(c => checkForErrorEventTypes(c))
     .timeoutWithError(timeout, new Error(`No snapshot complete event detected ${timeout} millis seconds after update`));

@@ -40,6 +40,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
   const DAO_OPTIONS_SUBSCRIPTIONS = {};
   const DAO_COUNT_SUBSCRIPTIONS = {};
   const DAOS = {};
+  const DAO_SNAPSHOT_COMPLETE_SUBSCRIPTIONS = {};
 
   const registerDao = ({name, dao}) => {
     if (DAOS[name]){
@@ -75,6 +76,15 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       DAO_COUNT_SUBSCRIPTIONS[name] = countSub;
     }
 
+    if (dao.snapshotCompleteObservable){
+      const daoSnapshotComplete = c => {
+        dispatch({type: UPDATE_STATE(name), path: [name, 'snapshotComplete'], data: c});
+      };
+      const snapshotCompleteSub = dao.snapshotCompleteObservable.subscribe(daoSnapshotComplete);
+      DAO_SNAPSHOT_COMPLETE_SUBSCRIPTIONS[name] = snapshotCompleteSub;
+    }
+
+
     return getState();
   };
 
@@ -92,6 +102,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
     unsub(name, DAO_SUBSCRIPTIONS);
     unsub(name, DAO_OPTIONS_SUBSCRIPTIONS);
     unsub(name, DAO_COUNT_SUBSCRIPTIONS);
+    unsub(name, DAO_SNAPSHOT_COMPLETE_SUBSCRIPTIONS);
     DAOS[name] = undefined;
 
     dispatch({type: UPDATE_STATE(name), path: [name], data: undefined});

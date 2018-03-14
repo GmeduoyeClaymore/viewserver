@@ -11,6 +11,7 @@ export default class Dao {
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.countSubject = new Rx.Subject();
+    this.snapshotCompleteSubject = new Rx.Subject();
     this.options = this.daoContext.defaultOptions;
     if (this.daoContext.extendDao){
       this.daoContext.extendDao(this);
@@ -23,6 +24,7 @@ export default class Dao {
     this.resetSubscription = this.resetSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
+
     this.crx = crx;//force this to load
     if (!this.daoContext.client){
       Logger.warning('Unable to link up reconnect event as cannot find client in DAO context');
@@ -48,6 +50,9 @@ export default class Dao {
     
   get countObservable(){
     return this.countSubject;
+  }
+  get snapshotCompleteObservable(){
+    return this.snapshotCompleteSubject;
   }
 
   async updateOptions(options){
@@ -79,12 +84,17 @@ export default class Dao {
         Logger.info(`Disposing of row count subscription - ${this.daoContext.name}`);
         this.countSubscription.unsubscribe();
       }
+      if (this.snapshotCompleteSubscription){
+        Logger.info(`Disposing of snapshotcomplete subscription - ${this.daoContext.name}`);
+        this.snapshotCompleteSubscription.unsubscribe();
+      }
       this.dataSink = this.daoContext.createDataSink(newOptions);
       this.dataSink.name = this.daoContext.name;
       this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);
 
       this.rowEventObservable = this.dataSink.dataSinkUpdated.filterRowEvents();
       this.countSubscription = this.dataSink.dataSinkUpdated.filter(ev => ev.Type === RxDataSink.TOTAL_ROW_COUNT).subscribe(ev => this.countSubject.next(ev.count));
+      this.snapshotCompleteSubscription = this.dataSink.dataSinkUpdated.filter(ev => !!~[RxDataSink.DATA_RESET, RxDataSink.SNAPSHOT_COMPLETE].indexOf(ev.Type)).subscribe(() => this.snapshotCompleteSubject.next(this.dataSink.isSnapshotComplete));
 
       this.rowEventSubscription =  (this.daoContext.adapt ?  this.daoContext.adapt(this.rowEventObservable) : this.rowEventObservable).subscribe((ev) => {
         if (this.dataSink.isSnapshotComplete || ev.Type == RxDataSink.DATA_RESET) {

@@ -33,10 +33,6 @@ export default class UserRelationshipDaoContext{
     return 'userRelationshipDao';
   }
 
-  adapt(observable){
-    return observable.debounceTime(50);
-  }
-
   getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = false, showOutOfRange = false}){
     const {latitude, longitude} = position;
     const baseReportContext =  {

@@ -1,6 +1,9 @@
 import Logger from 'common/Logger';
 import {isEqual} from 'lodash';
 
+export const getDaoCommandStateObject = (state, commandName, daoName) => {
+  return state.getIn(['dao', daoName, 'commands', commandName]) || {};
+};
 export const getDaoCommandStatus = (state, commandName, daoName) => {
   return state.getIn(['dao', daoName, 'commands', commandName, 'status']);
 };
@@ -15,6 +18,9 @@ export const getDaoOptions = (state, daoName) => {
 };
 export const getDaoSize = (state, daoName) => {
   return state.getIn(['dao', daoName, 'size']);
+};
+export const getSnapshotComplete = (state, daoName) => {
+  return state.getIn(['dao', daoName, 'snapshotComplete']);
 };
 
 export const getAllDaos = (state) => {
@@ -39,14 +45,13 @@ export const isOperationPending = (state, daoName, operationName) => {
   return status === null || status === 'start';
 };
 
-export const getOperationError = (state, daoName, operationName) => {
-  const status = getDaoCommandStatus(state, operationName, daoName);
-  return status === 'fail' ? getDaoCommandResult(state, operationName, daoName) : undefined;
+export const getOperationError = (state, daoName, operationName, includeCleared) => {
+  const {status, message, cleared} = getDaoCommandStateObject(state, operationName, daoName);
+  return status === 'fail' && (!cleared || includeCleared) ? message : undefined;
 };
 
-export const getLoadingError = (state, daoName) => {
-  const status = getDaoCommandStatus(state, 'updateSubscription', daoName);
-  return status === 'fail' ? getDaoCommandResult(state, 'updateSubscription', daoName) : undefined;
+export const getLoadingError = (state, daoName, includeCleared) => {
+  return getOperationError(state, 'updateSubscription', daoName, includeCleared);
 };
 
 export const getLoadingErrors = (state, daoNames) => {

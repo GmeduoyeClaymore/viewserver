@@ -5,7 +5,7 @@ import {resetSubscriptionAction, updateSubscriptionAction, resetDataAction, clea
 import {isEqual, connectAdvanced} from 'custom-redux';
 import {bindActionCreators} from 'redux';
 import {ErrorRegion} from 'common/components';
-import {getOperationErrors, getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions, isAnyOperationPending} from 'common/dao';
+import {getOperationErrors, getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions, isAnyOperationPending, getSnapshotComplete} from 'common/dao';
 import Logger from 'common/Logger';
 import {List} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -113,15 +113,18 @@ const selectorFactory = (dispatch, initializationProps) => {
       func();
     };
 
+    const errors = getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]);
+
     const nextResult = {
-      busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
+      busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]) || (!getSnapshotComplete(nextState, daoName) && !errors),
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
+      errors,
       options,
       doPage: limit => clearStatusThen(() => actions.updateSubscriptionAction(daoName, {limit})),
       setOptions: options => clearStatusThen(() => actions.updateSubscriptionAction(daoName, options)),
       reset: () => actions.resetDataAction(daoName),
-      errors: getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]),
+      
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),
       ...nextOwnProps
     };

@@ -25,7 +25,7 @@ export default class ProductDaoContext{
   createDataSink(){
     return new RxDataSink();
   }
-
+ 
   mapDomainEvent(dataSink){
     return {
       product: {
