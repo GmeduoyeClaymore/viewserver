@@ -12,25 +12,6 @@ import yup from 'yup';
 
 import {resolveProductCategoryIcon} from 'common/assets';
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 10
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#AAAAAA',
-  },
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30
-  },
-  picture: {
-    height: 50,
-    width: 50
-  }
-});
-
 class ProductCategoryList extends Component{
   static propTypes = {
     product: PropTypes.object,
@@ -79,13 +60,13 @@ class ProductCategoryList extends Component{
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
+          <Button onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>Select Product Category </Title></Body>
+        <Body><Title>Category</Title></Body>
       </Header>
       <Content padded>
         <ProductListItem product={selectedProduct}/>
@@ -101,11 +82,11 @@ class ProductCategoryList extends Component{
           emptyView={NoItems}
           headerView={() => null}
         />
-        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
       </Content>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }
@@ -137,6 +118,24 @@ const mapStateToProps = (state, initialProps) => {
     errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...initialProps
   };
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 10
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+  },
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30
+  },
+  picture: {
+    height: 50,
+    width: 50
+  }
+});
 
 const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
 

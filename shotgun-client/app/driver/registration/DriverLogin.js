@@ -41,7 +41,7 @@ class DriverLogin extends Component {
         <Grid>
           <Row>
             <Col>
-              <Item stackedLabel first>
+              <Item stackedLabel>
                 <Label>Email</Label>
                 <ValidatingInput bold value={email}
                   onChangeText={(value) => onChangeText('email', value)}

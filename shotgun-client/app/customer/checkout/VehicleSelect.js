@@ -37,7 +37,6 @@ class VehicleSelect extends Component {
         <Body><Title>Select which size van</Title></Body>
       </Header>
       <Content padded>
-        <Text style={styles.subTitle}>Select the type of van you think you will need for your order</Text>
         <Grid>
           <Row style={{flexWrap: 'wrap'}}>
             {vehicles.map((v, i) => {
@@ -50,13 +49,13 @@ class VehicleSelect extends Component {
             })}
           </Row>
         </Grid>
-        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() => navigationStrategy.next()}
-          validateOnMount={true} validationSchema={yup.object(validationSchema)} model={orderItem}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
         <Text note style={{marginTop: 10}}>{selectedProduct !== undefined ? selectedProduct.description : null}</Text>
       </Content>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()}
+        validateOnMount={true} validationSchema={yup.object(validationSchema)} model={orderItem}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }

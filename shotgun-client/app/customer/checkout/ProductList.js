@@ -49,9 +49,9 @@ class ProductList extends Component{
     const {rowView, search, props} = this;
     const {context, defaultOptions, navigationStrategy} = props;
     return  <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent onPress={() => navigationStrategy.prev()}>
+          <Button onPress={() => navigationStrategy.prev()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>

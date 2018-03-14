@@ -80,7 +80,7 @@ export default class UserDetails  extends Component{
             <Col width={isDriver ? 40 : 100}>
               <Row>
                 <Col>
-                  <Item stackedLabel first>
+                  <Item stackedLabel>
                     <Label>First name</Label>
                     <ValidatingInput bold value={user.firstName} placeholder="John" validateOnMount={user.firstName !== undefined} onChangeText={(value) => onChangeText('firstName', value)} validationSchema={validationSchema.firstName} maxLength={30}/>
                   </Item>
@@ -140,18 +140,18 @@ export default class UserDetails  extends Component{
           </Row>
           <Row>
             <Col>
-              <Item stackedLabel last>
+              <Item stackedLabel>
                 <Label>Create an account password</Label>
                 <ValidatingInput bold secureTextEntry={true} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => this.onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
               </Item>
             </Col>
           </Row>
         </Grid>
-        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true}onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
       </Content>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }

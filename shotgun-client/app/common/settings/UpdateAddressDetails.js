@@ -56,7 +56,7 @@ class HomeAddressDetails  extends Component{
         <Grid>
           <Row>
             <Col>
-              <Item stackedLabel first>
+              <Item stackedLabel>
                 <Label>Street Address</Label>
                 {getLocationText(deliveryAddress, 'Search for your home address')}
               </Item>

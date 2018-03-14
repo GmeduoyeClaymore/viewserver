@@ -62,7 +62,7 @@ class PaymentCardDetails extends Component {
           <ListItem paddedTopBottom>
             <View style={{flex: 1}}>
               <Text>Add a new card</Text>
-              {paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
+              {paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} onChange={(details) => onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
             </View>
           </ListItem>
         </List>

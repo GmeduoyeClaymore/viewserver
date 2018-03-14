@@ -57,7 +57,7 @@ class UpdateVehicleDetails extends Component {
         <Grid>
           <Row>
             <Col>
-              <Item stackedLabel first>
+              <Item stackedLabel>
                 <Label>Vehicle registration</Label>
                 <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.newRegistrationNumber}
                   validateOnMount={vehicle.newRegistrationNumber !== undefined}

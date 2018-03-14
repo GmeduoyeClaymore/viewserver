@@ -3,7 +3,7 @@ import CustomDatePickerAndroid from './CustomDatePickerAndroid';
 import CustomDatePickerIOS from './CustomDatePickerIOS';
 import React, {Component} from 'react';
 import moment from 'moment';
-import {Button, Text} from 'native-base';
+import {Button, Text, Right} from 'native-base';
 const IS_ANDROID = Platform.OS === 'android';
 
 export const DatePicker =  (IS_ANDROID ? CustomDatePickerAndroid : CustomDatePickerIOS);
@@ -34,9 +34,9 @@ export default class DatePickerControl extends Component{
     const {hideAsap} = props;
     const {date} = state;
     const newProps = {...props, date};
-    return <View>
+    return <View style={{flex: 1}}>
       <DatePicker {...newProps}/>
-      {hideAsap ? null : <Button onPress={this.setAsap} style={{marginLeft: 15}}>
+      {hideAsap ? null : <Button onPress={this.setAsap} style={{marginLeft: 15, alignSelf: 'flex-end'}}>
         <Text>ASAP</Text>
       </Button>}
     </View>;

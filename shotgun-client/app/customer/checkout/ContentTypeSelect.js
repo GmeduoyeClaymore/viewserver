@@ -37,7 +37,7 @@ class ContentTypeSelect extends Component{
     const {contentTypes = []} = this.props;
     return (
       <Content padded contentContainerStyle={styles.container}>
-        <View style={styles.titleView}>
+        <View>
           <H1 style={styles.h1}>Start a new job</H1>
           <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
         </View>
@@ -73,10 +73,6 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center'
-  },
-  titleView: {
-    flex: 1,
-    justifyContent: 'flex-end'
   },
   contentTypeSelectView: {
     flex: 3,

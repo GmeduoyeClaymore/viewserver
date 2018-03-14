@@ -70,7 +70,7 @@ class UpdateUserDetails extends Component{
             <Col width={isDriver ? 40 : 100}>
               <Row>
                 <Col>
-                  <Item stackedLabel first>
+                  <Item stackedLabel>
                     <Label>First name</Label>
                     <ValidatingInput bold value={user.firstName} placeholder="John"
                       validateOnMount={user.firstName !== undefined}
