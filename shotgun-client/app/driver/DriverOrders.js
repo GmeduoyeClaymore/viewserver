@@ -3,9 +3,14 @@ import {connect} from 'custom-redux';
 import {PagingListView, OrderRequest, Tabs} from 'common/components';
 import { withRouter } from 'react-router';
 import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
-import {getDaoState, getNavigationProps} from 'common/dao';
+import {getDaoState, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+
+const DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+  reportId: 'driverOrderSummary'
+};
 
 
 class DriverOrders  extends Component{
@@ -13,22 +18,16 @@ class DriverOrders  extends Component{
     super(props);
   }
 
-  componentDidMount(){
-    if (this.pagingListView){
-      this.pagingListView.wrappedInstance.reset();
+  componentWillMount(){
+    const {resetOrders} = this.props;
+    if (resetOrders){
+      resetOrders();
     }
   }
 
   render() {
-    const {history, isCompleted, userId} = this.props;
+    const {history, isCompleted, defaultOptions} = this.props;
     const {location} = history;
-
-    const reportOptions = {
-      isCompleted,
-      userId: '@userId',
-      columnsToSort: [{ name: 'from', direction: 'asc' }],
-      driverId: userId,
-      reportId: 'driverOrderSummary'};
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>{isCompleted ? 'You have no completed jobs' : 'You have no live jobs'}</Text>;
@@ -64,7 +63,7 @@ class DriverOrders  extends Component{
           daoName='orderSummaryDao'
           dataPath={['orders']}
           rowView={RowView}
-          options={reportOptions}
+          options={defaultOptions}
           paginationWaitingView={Paging}
           emptyView={NoItems}
           pageSize={10}
@@ -77,13 +76,25 @@ class DriverOrders  extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
+  const {isCompleted = false} = navigationProps;
+  const {dispatch} = initialProps;
+  const defaultOptions = {
+    ...DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS,
+    isCompleted
+  };
+
+  const resetOrders = () => {
+    dispatch(resetSubscriptionAction('orderSummaryDao', defaultOptions));
+  };
+
   return {
     ...initialProps,
-    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : false,
+    resetOrders,
+    defaultOptions,
+    isCompleted,
     vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
     position: getDaoState(state, ['position'], 'userDao')
   };
 };
 
-export default withRouter(connect(
-  mapStateToProps )(DriverOrders));
+export default withRouter(connect(mapStateToProps )(DriverOrders));
