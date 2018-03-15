@@ -52,8 +52,8 @@ public abstract class OperatorBase implements IOperator {
     private EnumSet<Status> statuses = EnumSet.noneOf(Status.class);
     private Map<String, Object> metadata;
     private String path;
-    private Throwable lastConfigError;
-    private Throwable lastSchemaError;
+    protected Throwable lastConfigError;
+    protected Throwable lastSchemaError;
     private Throwable lastDataError;
 
     protected OperatorBase(String name, IExecutionContext executionContext, ICatalog catalog) {
@@ -201,6 +201,8 @@ public abstract class OperatorBase implements IOperator {
                         processData();
                     } else if (hasStatus(Status.DataError)) {
                         propagateStatus(Status.DataError);
+                    } else if (hasStatus(Status.SchemaError)) {
+                        propagateStatus(Status.SchemaError);
                     }
                 } else if (hasStatus(Status.SchemaError)) {
                     propagateStatus(Status.SchemaError);
@@ -302,10 +304,6 @@ public abstract class OperatorBase implements IOperator {
 
     private void processSchema() {
         try {
-            if (hasError(Error.SchemaError)) {
-                resetSchema();
-            }
-
             if (!isSchemaResetRequested) {
                 int count = inputs.size();
                 for (int i = 0; i < count; i++) {
@@ -325,11 +323,9 @@ public abstract class OperatorBase implements IOperator {
             }
 
             if (hasError(Error.SchemaError)) {
-                clearError(Error.SchemaError);
-                lastSchemaError = null;
-                log.info("Schema error cleared in {}", this);
-                propagateStatus(Status.SchemaErrorCleared);
-            } else if (hasStatus(Status.SchemaErrorCleared)) {
+                propagateStatus(Status.SchemaError);
+            }
+            else if (hasStatus(Status.SchemaErrorCleared)) {
                 propagateStatus(Status.SchemaErrorCleared);
             }
         } catch (Throwable e) {
@@ -356,7 +352,7 @@ public abstract class OperatorBase implements IOperator {
         }
     }
 
-    private void propagateStatus(Status status) {
+    protected void propagateStatus(Status status) {
         int count = outputs.size();
         for (int i = 0; i < count; i++) {
             outputs.get(i).getCurrentChanges().handleStatus(status);

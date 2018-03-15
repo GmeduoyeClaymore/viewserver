@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import { View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ReactNativeModal from 'react-native-modal';
-import {Spinner} from 'native-base';
-import {PagingListView} from 'common/components';
+import {Spinner, Row} from 'native-base';
+import {PagingListView, Icon} from 'common/components';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
@@ -30,6 +31,12 @@ const styles = {
     width: 60,
     height: 60,
   },
+  view: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    marginTop: 5
+  },
   title: {
     fontWeight: 'bold',
     color: '#848484',
@@ -49,20 +56,37 @@ const styles = {
     fontWeight: '600',
     backgroundColor: 'transparent',
   },
+  star: {
+    fontSize: 15,
+    padding: 2,
+    color: shotgun.gold,
+  },
+  starFilled: {
+    fontSize: 15,
+    padding: 2,
+    color: shotgun.gold,
+  },
+  starEmpty: {
+    fontSize: 15,
+    padding: 2,
+    color: shotgun.brandLight
+  },
   summary: {
-    fontSize: 10
+    fontSize: 10,
+    paddingTop: 5,
+    paddingBottom: 5
   }
 };
 
 const cancelButton = <Text style={[styles.cancelText]}>Cancel</Text>;
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-
+const starsControl = (rating) => <View style={styles.view}>{[...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(5 - rating)].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
 const jobSummary = ({item: order}) => <View key={order.orderId} style={{flexDirection: 'row'}}>
   {order.orderItem ? <Image resizeMode="contain" source={{url: order.orderItem.imageUrl}}  style={styles.picture}/> : null}
   <View style={{flex: 1, padding: 5}}>
     <Text style={styles.title}>{order.product.name }</Text>
-    <Text style={styles.summary}>{'RATING: ' + order.customerRating}</Text>
+    {starsControl(order.customerRating)}
   </View>
 </View>;
 
@@ -83,7 +107,9 @@ class UserRelationshipDetail extends Component{
           <Text style={styles.summary}>{'STATUS: ' + user.status}</Text>
           <Text style={styles.summary}>{'STATUS MESSAGE: ' + user.statusMessage}</Text>
           <Text style={styles.summary}>{'DISTANCE: ' + user.distance}</Text>
-          <Text style={styles.summary}>{'RATING: ' + user.rating}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.summary}>{'RATING: '}</Text>{starsControl(user.rating)}
+          </View>
         </View>
       </View>
       <PagingListView

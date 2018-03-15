@@ -37,6 +37,8 @@ import io.viewserver.subscription.SubscriptionFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,6 +54,8 @@ public class SerialiserOperator extends OperatorBase {
     private int commandId;
     private boolean snapshotComplete;
     private IMessage pendingMessage;
+    private HashMap<Status,Status> statusWorkFlow = new HashMap<>();
+    private List<Status> alreadySentStatus = new ArrayList<>();
 
     public SerialiserOperator(String name, IExecutionContext executionContext, ICatalog catalog,
                               IMessageManager messageManager, SubscriptionManager subscriptionManager, int connectionId,
@@ -89,9 +93,13 @@ public class SerialiserOperator extends OperatorBase {
     }
 
     @Override
+    protected void propagateStatus(Status status) {
+        this.input.addStatus(status);
+    }
+
+    @Override
     public void doTearDown() {
         subscriptionManager.unregisterSubscription(connectionId, commandId);
-
         super.doTearDown();
     }
 
@@ -290,6 +298,9 @@ public class SerialiserOperator extends OperatorBase {
                     .setType(eventType)
                     .setRowId(row);
         }
+
+
+
 
         private void addStatus(Status status) {
             ensureMessageBuilder();

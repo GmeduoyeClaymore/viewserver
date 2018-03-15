@@ -63,6 +63,24 @@ public enum Status {
             case SchemaReset: {
                 return IStatus.StatusId.SchemaReset;
             }
+            case SchemaError: {
+                return IStatus.StatusId.SchemaError;
+            }
+            case SchemaErrorCleared: {
+                return IStatus.StatusId.SchemaErrorCleared;
+            }
+            case ConfigError: {
+                return IStatus.StatusId.ConfigError;
+            }
+            case ConfigErrorCleared: {
+                return IStatus.StatusId.ConfigErrorCleared;
+            }
+            case DataError: {
+                return IStatus.StatusId.DataError;
+            }
+            case DataErrorCleared: {
+                return IStatus.StatusId.DataErrorCleared;
+            }
             default: {
                 throw new UnsupportedOperationException("Cannot serialise status '" + this + "'");
             }
@@ -76,6 +94,24 @@ public enum Status {
             }
             case SchemaReset: {
                 return SchemaReset;
+            }
+            case SchemaError: {
+                return SchemaError;
+            }
+            case SchemaErrorCleared: {
+                return SchemaErrorCleared;
+            }
+            case DataError: {
+                return DataError;
+            }
+            case DataErrorCleared: {
+                return DataErrorCleared;
+            }
+            case ConfigError: {
+                return ConfigError;
+            }
+            case ConfigErrorCleared: {
+                return ConfigErrorCleared;
             }
             default: {
                 throw new IllegalArgumentException("Cannot deserialise status '" + statusId + "'");

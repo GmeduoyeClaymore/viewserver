@@ -24,18 +24,17 @@ const DriverSettings = ({history, user}) => {
           <Icon name='back-arrow'/>
         </Button>
       </Left>
-      <Body>
+      <Body style={{width: '100%'}}>
         <Title>{user.firstName} {user.lastName}</Title>
         {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg.toFixed(1)}</Subtitle> : null}
       </Body>
       <Right>
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
       </Right>
-      <Row>
-        <UserStatusControl/>
-      </Row>
     </Header>
-
+    <Row style={{height: 35, paddingLeft: 10}}>
+      <UserStatusControl/>
+    </Row>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>

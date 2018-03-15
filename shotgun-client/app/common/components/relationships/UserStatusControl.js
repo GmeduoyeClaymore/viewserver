@@ -14,11 +14,6 @@ class UserRelationships extends Component{
     setStateIfIsMounted(this);
     this.updateStatusMessage = this.updateStatusMessage.bind(this);
     this.setStatus = this.setStatus.bind(this);
-    this.updateSubscription = this.updateSubscription.bind(this);
-  }
-
-  componentDidMount(){
-    this.subscribeToUsers(this.getOptionsFromProps(this.props));
   }
 
   componentWillReceiveProps(newProps){
