@@ -51,6 +51,15 @@ public class PhoneCallController {
         return availablePhoneNumbers.get(1);
     }
 
+    @ControllerAction(path = "getVirtualNumber", isSynchronous = true)
+    public String getVirtualNumber(String userId) {
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+
+        String customerId = (String) ControllerContext.get("userId");
+        ArrayList<String> availablePhoneNumbers = assignPhoneNumbers(null, customerId, userId);
+        return availablePhoneNumbers.get(1);
+    }
+
     private ArrayList<String> assignPhoneNumbers(String orderId, String customerId, String driverId) {
         KeyedTable phoneNumberTable = ControllerUtils.getKeyedTable(TableNames.PHONE_NUMBER_TABLE_NAME);
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);

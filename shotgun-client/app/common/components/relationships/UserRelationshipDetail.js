@@ -2,10 +2,13 @@ import React, {Component} from 'react';
 import { View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ReactNativeModal from 'react-native-modal';
-import {Spinner, Row} from 'native-base';
-import {PagingListView, Icon} from 'common/components';
+import {Spinner, Row, Button} from 'native-base';
+import {PagingListView, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-
+import {callUser} from 'common/actions/CommonActions';
+import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import {connect} from 'custom-redux';
+import {getOperationError} from 'common/dao';
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;
@@ -81,8 +84,8 @@ const styles = {
 const cancelButton = <Text style={[styles.cancelText]}>Cancel</Text>;
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-const starsControl = (rating) => <View style={styles.view}>{[...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(5 - rating)].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
-const jobSummary = ({item: order}) => <View key={order.orderId} style={{flexDirection: 'row'}}>
+const starsControl = (rating) => <View style={styles.view}>{[...Array(Math.round(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(5 - Math.round(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
+const jobSummary = ({item: order}) => <View key={order.orderId} style={{flexDirection: 'row', backgroundColor: 'white'}}>
   {order.orderItem ? <Image resizeMode="contain" source={{url: order.orderItem.imageUrl}}  style={styles.picture}/> : null}
   <View style={{flex: 1, padding: 5}}>
     <Text style={styles.title}>{order.product.name }</Text>
@@ -90,15 +93,18 @@ const jobSummary = ({item: order}) => <View key={order.orderId} style={{flexDire
   </View>
 </View>;
 
+
 class UserRelationshipDetail extends Component{
   constructor(props){
     super(props);
     this.handleCancel = this.handleCancel.bind(this);
+    this.RelatedUser = this.RelatedUser.bind(this);
     this.selectUserByIndex = this.selectUserByIndex.bind(this);
   }
 
-  renderRelatedUser(user, key){
-    return <View key={key} style={{flex: 1, width: width - 20, paddingLeft: 10, paddingTop: 10}}>
+  RelatedUser = ({user}) => {
+    const {onPressCallUser, errors} = this.props;
+    return <View style={{flex: 1, width: width - 55, paddingLeft: 10, paddingTop: 10}}>
       <View style={{flexDirection: 'row'}}>
         <Image resizeMode="contain" source={{url: user.imageUrl}}  style={styles.picture}/>
         <View style={{flex: 1, padding: 5}}>
@@ -110,12 +116,18 @@ class UserRelationshipDetail extends Component{
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.summary}>{'RATING: '}</Text>{starsControl(user.rating)}
           </View>
+          <ErrorRegion errors={errors}>
+            <Button fullWidth callButton onPress={() => onPressCallUser(user)}>
+              <Icon name="phone" paddedIcon/>
+              <Text uppercase={false}>Call User</Text>
+            </Button>
+          </ErrorRegion>
         </View>
       </View>
       <PagingListView
         ref={oc => {this.ordersControl = oc;}}
         daoName='orderSummaryDao'
-        dataPath={['orders']}
+        dataPath={['orders']}C
         options={{driverId: user.userId, reportId: 'driverOrderSummary'}}
         rowView={jobSummary}
         paginationWaitingView={Paging}
@@ -140,12 +152,13 @@ class UserRelationshipDetail extends Component{
 
   render(){
     const {selectedUser, relatedUsers} = this.props;
+    const {RelatedUser} = this;
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
       <View style={styles.userSelector}>
         <Swiper bounces={false} showsButtons={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={true}>
-          {relatedUsers.map((v, i) => this.renderRelatedUser(v, i))}
+          {relatedUsers.map((v, i) => <RelatedUser user={v} key={i}/>)}
         </Swiper>
       </View>
       <TouchableHighlight
@@ -158,6 +171,25 @@ class UserRelationshipDetail extends Component{
   }
 }
 
-export default UserRelationshipDetail;
+const mapStateToProps = (state, initialProps) => {
+  const {dispatch} = initialProps;
+  const onPressCallUser = async (user) => {
+    const {userId, relationshipStatus} = user;
+    if (relationshipStatus === 'ACCEPTED'){
+      RNImmediatePhoneCall.immediatePhoneCall(`+${user.contactNo}`);
+    } else {
+      dispatch(callUser({userId}));
+    }
+  };
+  return {
+    ...initialProps,
+    onPressCallUser,
+    errors: getOperationError(state, 'userRelationshipDao', 'callUser'),
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(UserRelationshipDetail);
 
 

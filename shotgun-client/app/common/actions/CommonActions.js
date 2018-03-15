@@ -50,6 +50,10 @@ export const updateRelationship = (options, continueWith) => {
   return invokeDaoCommand('userRelationshipDao', 'updateRelationship', options, continueWith);
 };
 
+export const callUser = (userId, continueWith) => {
+  return invokeDaoCommand('customerDao', 'callUser', {userId}, continueWith);
+};
+
 export const commonServicesRegistrationAction = (client) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client));

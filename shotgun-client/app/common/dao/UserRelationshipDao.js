@@ -84,5 +84,10 @@ export default class UserRelationshipDaoContext{
     dao.updateRelationship = async ({targetUserId, relationshipStatus, relationshipType}) => {
       await this.client.invokeJSONCommand('userController', 'updateRelationship', {targetUserId, relationshipStatus, relationshipType});
     };
+
+    dao.callUser = async ({userId}) => {
+      const virtualContactNo = await this.client.invokeJSONCommand('phoneCallController', 'getVirtualNumber', userId);
+      RNImmediatePhoneCall.immediatePhoneCall(`+${virtualContactNo}`);
+    };
   }
 }
