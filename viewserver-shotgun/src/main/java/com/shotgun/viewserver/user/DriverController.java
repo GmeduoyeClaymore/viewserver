@@ -181,10 +181,10 @@ public class DriverController {
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
         Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
-        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
+      /*  IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
         tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
-        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());*/
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
         return orderId;
     }

@@ -85,7 +85,6 @@ class DriverOrderInProgress extends Component{
     return busy ? <LoadingScreen text="Loading Order"/> : <Container style={{flex: 1}}>
       <Grid>
         <Row size={60}>
-          <ErrorRegion errors={errors}/>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
             showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
             <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>

@@ -4,32 +4,13 @@ import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState, resetSubscriptionAction} from 'common/dao';
 import {connect} from 'custom-redux';
 import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
 
 import {resolveProductCategoryIcon} from 'common/assets';
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 10
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#AAAAAA',
-  },
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30
-  },
-  picture: {
-    height: 50,
-    width: 50
-  }
-});
 
 class ProductCategoryList extends Component{
   static propTypes = {
@@ -66,30 +47,26 @@ class ProductCategoryList extends Component{
     }
   }
 
-  goToCategory(category){
+  goToCategory(selectedCategory){
     const {context} = this.props;
-    context.setState({selectedCategory: category});
+    context.setState({selectedCategory});
   }
 
   render(){
-    const {busy, options, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory} = this.props;
+    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
     const {rowView} = this;
-
-    if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
-    }
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
-      <Header>
+      <Header withButton>
         <Left>
-          <Button transparent onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
+          <Button onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>Select Product Category </Title></Body>
+        <Body><Title>Category</Title></Body>
       </Header>
       <Content padded>
         <ProductListItem product={selectedProduct}/>
@@ -98,18 +75,18 @@ class ProductCategoryList extends Component{
           daoName='productCategoryDao'
           dataPath={['product', 'categories']}
           pageSize={10}
-          options={{...options, parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId}}
+          options={defaultOptions}
           history={history}
           rowView={rowView}
           paginationWaitingView={Paging}
           emptyView={NoItems}
           headerView={() => null}
         />
-        <ValidatingButton fullWidth paddedLeftRight iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
       </Content>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }
@@ -118,24 +95,47 @@ const validationSchema = {
   productId: yup.string().required(),
 };
 
-const mapStateToProps = (state, nextOwnProps) => {
-  const {context} = nextOwnProps;
+const mapStateToProps = (state, initialProps) => {
+  const {context} = initialProps;
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
   const {productCategory: rootProductCategory} = selectedContentType;
   const categories = getDaoState(state, ['product', 'categories'], 'productCategoryDao');
 
+  const defaultOptions = {
+    ...getDaoOptions(state, 'productCategoryDao'),
+    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
+  };
+
   return {
     categories,
-    ...nextOwnProps,
-    ...getNavigationProps(nextOwnProps),
+    ...initialProps,
+    ...getNavigationProps(initialProps),
     rootProductCategory,
     selectedProduct,
     selectedCategory: selectedCategory || rootProductCategory,
     busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
-    options: getDaoOptions(state, 'productCategoryDao'),
-    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...nextOwnProps
+    defaultOptions,
+    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']), ...initialProps
   };
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 10
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+  },
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30
+  },
+  picture: {
+    height: 50,
+    width: 50
+  }
+});
 
 const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
 

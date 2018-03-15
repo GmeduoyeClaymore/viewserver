@@ -25,7 +25,7 @@ const BankAccountDetails = ({context, history}) => {
       <Grid>
         <Row>
           <Col>
-            <Item stackedLabel first>
+            <Item stackedLabel>
               <Label>Account number</Label>
               <ValidatingInput bold placeholder="123456789" value={bankAccount.accountNumber} validateOnMount={bankAccount.accountNumber !== undefined} onChangeText={(value) => onChangeText('accountNumber', value)} validationSchema={validationSchema.accountNumber} maxLength={8}/>
             </Item>

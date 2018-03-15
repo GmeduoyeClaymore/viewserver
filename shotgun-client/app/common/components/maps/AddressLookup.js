@@ -125,7 +125,7 @@ class AddressLookup extends Component {
 
     return (
       <Container>
-        <Header>
+        <Header withButton>
           <Left>
             <Button>
               <Icon name='cross' onPress={() => history.goBack()} />
@@ -138,7 +138,7 @@ class AddressLookup extends Component {
             <Row size={10} style={styles.searchContainer}>
               <ErrorRegion errors={errors}>
                 <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-                <Input placeholder={addressLabel} value={addressSearchText} onChangeText={onAddressChanged} />
+                <Input placeholder={addressLabel} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
               </ErrorRegion>
             </Row>
             <Row size={80}>
@@ -164,8 +164,7 @@ class AddressLookup extends Component {
 
 const styles = {
   title: {
-    fontSize: 16,
-    alignSelf: 'center'
+    fontSize: 20,
   },
   searchContainer: {
     paddingLeft: shotgun.contentPadding

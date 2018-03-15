@@ -41,7 +41,7 @@ class CustomerLogin extends Component {
         <Grid>
           <Row>
             <Col>
-              <Item stackedLabel first>
+              <Item stackedLabel>
                 <Label>Email</Label>
                 <ValidatingInput bold value={email}
                   placeholder="email@email.com"
@@ -63,13 +63,12 @@ class CustomerLogin extends Component {
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight
-          onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
-          <Text uppercase={false}>Sign In</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <ValidatingButton paddedBottom fullWidth iconRight
+        onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
+        <Text uppercase={false}>Sign In</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }

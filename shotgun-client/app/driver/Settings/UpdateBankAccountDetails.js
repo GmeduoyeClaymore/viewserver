@@ -59,7 +59,7 @@ class UpdateBankAccountDetails extends Component {
           </Row>
           <Row>
             <Col>
-              <Item stackedLabel first>
+              <Item stackedLabel>
                 <Label>Account number</Label>
                 <ValidatingInput bold placeholder="123456789" value={bankAccount.accountNumber}
                   validateOnMount={bankAccount.accountNumber !== undefined}

@@ -38,7 +38,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
       <Grid>
         <Row>
           <Col>
-            <Item stackedLabel first>
+            <Item stackedLabel>
               <Label>Street Address</Label>
               {getLocationText(deliveryAddress, 'Search for your home address')}
             </Item>
@@ -69,11 +69,11 @@ export default AddressDetails  = ({context, match, history, next}) => {
           </Col>
         </Row>
       </Grid>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon name='forward-arrow' next/>
+      </ValidatingButton>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
-      <Text uppercase={false}>Continue</Text>
-      <Icon name='forward-arrow' next/>
-    </ValidatingButton>
   </Container>;
 };
 

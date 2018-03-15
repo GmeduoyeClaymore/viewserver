@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {View, Text} from 'react-native';
 import {Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import ProductListItem from './ProductListItem';
-import {updateSubscriptionAction, getNavigationProps} from 'common/dao';
-import {LoadingScreen, PagingListView, Icon, SearchBar} from 'common/components';
+import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
+import {PagingListView, Icon, SearchBar} from 'common/components';
 import {connect} from 'custom-redux';
 
 const Paging = () => <View><Spinner /></View>;
@@ -39,13 +39,19 @@ class ProductList extends Component{
     };
   }
 
+  componentDidMount(){
+    if (this.pagingListView){
+      this.pagingListView.wrappedInstance.reset();
+    }
+  }
+
   render(){
     const {rowView, search, props} = this;
-    const {context, category = {}, navigationStrategy, busy} = props;
-    return   busy ? <LoadingScreen text="Loading Products...." /> : <Container>
-      <Header>
+    const {context, defaultOptions, navigationStrategy} = props;
+    return  <Container>
+      <Header withButton>
         <Left>
-          <Button transparent onPress={() => navigationStrategy.prev()}>
+          <Button onPress={() => navigationStrategy.prev()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -53,10 +59,13 @@ class ProductList extends Component{
       </Header>
       <Content padded>
         <PagingListView
+          ref={c => {
+            this.pagingListView = c;
+          }}
           daoName='productDao'
           dataPath={['product', 'products']}
           pageSize={10}
-          options={{categoryId: category.categoryId}}
+          options={defaultOptions}
           context={context}
           navigationStrategy={navigationStrategy}
           rowView={rowView}
@@ -70,11 +79,23 @@ class ProductList extends Component{
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => {
-  const navProps = getNavigationProps(nextOwnProps);
+const mapStateToProps = (state, initialProps) => {
+  const {dispatch} = initialProps;
+  const navProps = getNavigationProps(initialProps);
+
+  const defaultOptions = {
+    categoryId: navProps.category.categoryId
+  };
+
+  const resetProducts = () => {
+    dispatch(resetSubscriptionAction('productDao', defaultOptions));
+  };
+
   return {
     ...navProps,
-    ...nextOwnProps
+    ...initialProps,
+    resetProducts,
+    defaultOptions
   };
 };
 

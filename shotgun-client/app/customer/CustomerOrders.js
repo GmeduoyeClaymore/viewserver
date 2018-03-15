@@ -6,7 +6,6 @@ import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-b
 import {isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import Logger from 'common/Logger';
 const Paging = () => <Spinner />;
 const NoItems = () => <Text empty>No orders to display</Text>;
 const RowView = ({item: orderSummary, isLast, isFirst}) => {
@@ -66,7 +65,7 @@ class CustomerOrders extends Component{
           options={defaultOptions}
           paginationWaitingView={Paging}
           emptyView={NoItems}
-          pageSize={4}
+          pageSize={10}
           headerView={() => null}
         />
       </View>
@@ -86,10 +85,10 @@ const mapStateToProps = (state, initialProps) => {
     dispatch(resetSubscriptionAction('orderSummaryDao', defaultOptions));
   };
   return {
+    ...initialProps,
     resetOrders,
     defaultOptions,
-    ...initialProps,
-    isCompleted: navigationProps.isCompleted !== undefined ? navigationProps.isCompleted : false,
+    isCompleted,
     busy: isAnyLoading(state, ['orderSummaryDao']),
   };
 };

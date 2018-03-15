@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, Content, H1, View} from 'native-base';
 import { Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
-
+import {INITIAL_STATE} from './CheckoutInitialState';
 
 import {resolveContentTypeIcon} from 'common/assets';
 
@@ -27,9 +27,8 @@ class ContentTypeSelect extends Component{
 
   selectContentType(selectedContentType){
     const {context, navigationStrategy} = this.props;
-    let {orderItem} = context.state;
-    orderItem = {...orderItem, contentTypeId: selectedContentType.contentTypeId};
-    context.setState({selectedContentType, orderItem});
+    const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
+    context.setState({...INITIAL_STATE, selectedContentType, orderItem});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();
   }
@@ -38,7 +37,7 @@ class ContentTypeSelect extends Component{
     const {contentTypes = []} = this.props;
     return (
       <Content padded contentContainerStyle={styles.container}>
-        <View style={styles.titleView}>
+        <View>
           <H1 style={styles.h1}>Start a new job</H1>
           <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
         </View>
@@ -74,10 +73,6 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center'
-  },
-  titleView: {
-    flex: 1,
-    justifyContent: 'flex-end'
   },
   contentTypeSelectView: {
     flex: 3,

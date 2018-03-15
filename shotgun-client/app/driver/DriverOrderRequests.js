@@ -3,8 +3,13 @@ import { connect } from 'custom-redux';
 import { PagingListView, LoadingScreen, OrderRequest, Tabs } from 'common/components';
 import { withRouter } from 'react-router';
 import { View, Text, Container, Spinner, Header, Body, Title, Tab } from 'native-base';
-import { getDaoState, isAnyLoading, getNavigationProps } from 'common/dao';
+import { getDaoState, isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
+
+const DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
+  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+  reportId: 'driverOrderRequest'
+};
 
 const Paging = () => <Spinner />;
 const NoItems = () => <Text empty>No jobs available</Text>;
@@ -17,9 +22,10 @@ class DriverOrderRequests extends Component{
     this.state  = {};
   }
 
-  componentDidMount(){
-    if (this.pagingListView){
-      this.pagingListView.wrappedInstance.reset();
+  componentWillMount(){
+    const {resetOrderRequests} = this.props;
+    if (resetOrderRequests){
+      resetOrderRequests();
     }
   }
   
@@ -35,7 +41,7 @@ class DriverOrderRequests extends Component{
   }
 
   render(){
-    const { selectedContentTypeIndex, busy, selectedContentTypes, contentTypeOptions, selectedContentType } = this.props;
+    const { selectedContentTypeIndex, busy, selectedContentTypes,  defaultOptions} = this.props;
     if (busy) {
       return <LoadingScreen text="Loading Map" />;
     }
@@ -55,7 +61,7 @@ class DriverOrderRequests extends Component{
           daoName='orderRequestDao'
           dataPath={['driver', 'orders']}
           rowView={RowView}
-          options={{contentType: selectedContentType, contentTypeOptions}}
+          options={defaultOptions}
           paginationWaitingView={Paging}
           emptyView={NoItems}
           pageSize={10}
@@ -67,6 +73,7 @@ class DriverOrderRequests extends Component{
 }
 
 const mapStateToProps = (state, initialProps) => {
+  const {dispatch} = initialProps;
   const user = getDaoState(state, ['user'], 'userDao');
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const navigationProps = getNavigationProps(initialProps) || [];
@@ -80,8 +87,20 @@ const mapStateToProps = (state, initialProps) => {
   const selectedContentTypeIndex = selectedContentTypes.indexOf(selectedContentType);
   const contentTypeOptions = contentTypeId ? selectedContentTypeOptions[contentTypeId] : {};
 
+  const defaultOptions = {
+    ...DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS,
+    contentType: selectedContentType,
+    contentTypeOptions
+  };
+
+  const resetOrderRequests = () => {
+    dispatch(resetSubscriptionAction('orderRequestDao', defaultOptions));
+  };
+
   return {
     ...initialProps,
+    resetOrderRequests,
+    defaultOptions,
     selectedContentTypes,
     contentTypeOptions,
     contentTypeId,

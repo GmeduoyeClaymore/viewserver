@@ -143,7 +143,7 @@ public class OrderController {
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining
             case JOURNEY_TIME:
-                return getQuantity(orderItem) * calculateDistance(delivery) * calculateDuration(delivery) * product.getPrice();
+                return (getQuantity(orderItem) * calculateDistance(delivery)) + product.getPrice() + calculateOffload(delivery);
             case FIXED:
                 return getQuantity(orderItem) * product.getPrice();
             case DURATION:
@@ -151,6 +151,10 @@ public class OrderController {
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
+    }
+
+    private int calculateOffload(Delivery delivery){
+        return (delivery.getNumRequiredForOffload() - 1 * 12);
     }
 
     private int calculateDays(Delivery delivery) {
@@ -186,7 +190,8 @@ public class OrderController {
         if(delivery.getDistance() == 0){
             throw new RuntimeException("Zero delivery distance found for delivery");
         }
-        return delivery.getDistance();
+        //Currently set to £1 per km
+        return (delivery.getDistance() / 1000) * 100;
     }
 
     private int calculateDuration(Delivery delivery) {
