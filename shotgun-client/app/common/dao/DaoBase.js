@@ -65,6 +65,9 @@ export default class Dao {
   }
 
   async resetSubscription(options) {
+    if (this.dataSink){
+      this.dataSink.onDataReset();
+    }
     this.options = this.daoContext.defaultOptions;
     return this.updateSubscription(options);
   }
