@@ -16,7 +16,8 @@ export default class UserRelationshipMap extends Component{
   
   fitMap(newProps){
     const {map} = this;
-    const {me} = newProps;
+    let {me, location} = newProps;
+    me = location || me;
     let {relatedUsers} = newProps;
     if (me){
       relatedUsers = [...relatedUsers, me];
@@ -41,7 +42,9 @@ export default class UserRelationshipMap extends Component{
   }
   
   render(){
-    const {me, selectedUser, relatedUsers = [], context, client} = this.props;
+    const {selectedUser, relatedUsers = [], context, client, location} = this.props;
+    let {me} = this.props;
+    me = location || me;
     const {fitMap} = this;
     const {setSelectedUser} = context;
     const {latitude, longitude} = me;

@@ -56,6 +56,10 @@ class ProductCategoryList extends Component{
     const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
     const {rowView} = this;
 
+    if (selectedCategory.isLeaf){
+      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
+    }
+
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 

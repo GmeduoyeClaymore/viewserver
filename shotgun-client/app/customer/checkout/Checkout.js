@@ -6,6 +6,7 @@ import VehicleSelect from './VehicleSelect';
 import ItemDetails from './ItemDetails';
 import OrderConfirmation from './OrderConfirmation';
 import ProductCategoryList from './ProductCategoryList';
+import UsersForProductMap from './UsersForProductMap';
 import ProductList from './ProductList';
 import AddressLookup from 'common/components/maps/AddressLookup';
 import {Route, Redirect, Switch} from 'react-router-native';
@@ -33,6 +34,7 @@ export default class Checkout extends Component {
       <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/AddressLookup'} exact render={() => <AddressLookup {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/OrderConfirmation'} exact render={() => <OrderConfirmation {...customerProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/UsersForProductMap'} exact render={() => <UsersForProductMap {...customerProps} context={this}/>} />
       <Redirect to={'/Customer/Checkout/ContentTypeSelect'}/>
     </Switch>;
   }

@@ -18,8 +18,8 @@ const styles = {
   userSelector: {
     backgroundColor: BACKGROUND_COLOR,
     borderRadius: BORDER_RADIUS,
+    height: height - 80,
     width: width - 40,
-    height: height - 100,
     margin: 0,
     overflow: 'hidden',
     marginBottom: 10
@@ -103,8 +103,8 @@ class UserRelationshipDetail extends Component{
   }
 
   RelatedUser = ({user}) => {
-    const {onPressCallUser, errors} = this.props;
-    return <View style={{flex: 1, width: width - 55, paddingLeft: 10, paddingTop: 10}}>
+    const {onPressCallUser, onPressAssignUser, errors} = this.props;
+    return <View style={{flex: 1, width: width - 60}}>
       <View style={{flexDirection: 'row'}}>
         <Image resizeMode="contain" source={{url: user.imageUrl}}  style={styles.picture}/>
         <View style={{flex: 1, padding: 5}}>
@@ -121,13 +121,19 @@ class UserRelationshipDetail extends Component{
               <Icon name="phone" paddedIcon/>
               <Text uppercase={false}>Call User</Text>
             </Button>
+            {
+              onPressAssignUser ? <Button fullWidth callButton onPress={() => onPressAssignUser(user)}>
+                <Icon name="one-person" paddedIcon/>
+                <Text uppercase={false}>Assign Job To User</Text>
+              </Button> : null
+            }
           </ErrorRegion>
         </View>
       </View>
       <PagingListView
         ref={oc => {this.ordersControl = oc;}}
         daoName='orderSummaryDao'
-        dataPath={['orders']}C
+        dataPath={['orders']}
         options={{driverId: user.userId, reportId: 'driverOrderSummary'}}
         rowView={jobSummary}
         paginationWaitingView={Paging}
@@ -157,7 +163,7 @@ class UserRelationshipDetail extends Component{
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
       <View style={styles.userSelector}>
-        <Swiper bounces={false} showsButtons={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={true}>
+        <Swiper height={height} contentContainerStyle={{width: '100%'}} width={width - 40} style={{width: width - 40, height}} scrollViewStyle={{width: width - 40, height}} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={false}>
           {relatedUsers.map((v, i) => <RelatedUser user={v} key={i}/>)}
         </Swiper>
       </View>

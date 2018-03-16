@@ -41,11 +41,15 @@ class UserRelationships extends Component{
   }
 
   getOptionsFromProps(props){
-    const {reportId = 'userRelationships', productId} = props;
+    const {selectedProduct = {}, location = {}} = props;
     const {showAll} = this.state;
+    const {latitude, longitude} = location;
+    const {productId} = selectedProduct;
     return {
-      reportId,
+      reportId: productId ? 'usersForProduct' : 'userRelationships',
       productId,
+      latitude,
+      longitude,
       showUnrelated: showAll,
       columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };

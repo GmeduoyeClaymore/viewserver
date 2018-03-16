@@ -7,6 +7,10 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
+import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.messaging.AppMessageBuilder;
+import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -31,6 +35,7 @@ public class OrderController {
     DeliveryController deliveryController;
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
+    private MessagingController messagingController;
     private KeyedTable productTable;
     private TableUpdater tableUpdater;
 
@@ -38,12 +43,14 @@ public class OrderController {
                            DeliveryAddressController deliveryAddressController,
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
-                           PricingStrategyResolver pricingStrategyResolver) {
+                           PricingStrategyResolver pricingStrategyResolver,
+                           MessagingController messagingController) {
         this.tableUpdater = tableUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
         this.pricingStrategyResolver = pricingStrategyResolver;
+        this.messagingController = messagingController;
     }
 
     KeyedTable getProductTable(){
@@ -82,7 +89,7 @@ public class OrderController {
         .addValue("totalPrice", calculateTotalPrice(delivery, orderItems))
         .addValue("created", now)
         .addValue("lastModified", now)
-        .addValue("status", OrderStatuses.PLACED.name())
+        .addValue("status", delivery.getDriverId() == null ? OrderStatuses.PLACED.name() : OrderStatuses.ACCEPTED.name())
         .addValue("userId", customerId)
         .addValue("paymentId", paymentId)
         .addValue("deliveryId", deliveryId);
@@ -95,7 +102,29 @@ public class OrderController {
             orderItemController.addOrUpdateOrderItem(orderItem);
         }
 
+        if(delivery.getDriverId() != null){
+            notifyJobAssigned(orderId,delivery.getDriverId());
+        }
+
         return orderId;
+    }
+
+    private void notifyJobAssigned(String orderId, String driverId) {
+        try {
+            User user = (User) ControllerContext.get("user");
+
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(orderId))
+                    .message(String.format("Shotgun job assigned to you"), String.format("%s has  just assigned a job to you in shotgun", user.getFirstName() + " " + user.getLastName()))
+                    .build();
+            messagingController.sendMessageToUser(driverId, builder);
+        }catch (Exception ex){
+            logger.error("There was a problem sending the notification", ex);
+        }
+    }
+
+    private String createActionUri(String orderId){
+        return String.format("shotgun://DriverOrderDetail/%s", orderId);
     }
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
