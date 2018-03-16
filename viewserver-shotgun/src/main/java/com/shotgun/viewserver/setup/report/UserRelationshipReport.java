@@ -98,17 +98,17 @@ public class UserRelationshipReport {
                             new FilterNode("productFilter")
                                     .withExpression("product_productId == \"{productId}\"")
                                     .withConnection("#input", null, Constants.IN),
-                            new GroupByNode("uniqueUserGroupBy")
+                            new GroupByNode("uniqueUserByProductGroupBy")
                                     .withGroupByColumns("userId")
                                     .withConnection("productFilter"),
                             new JoinNode("userJoin")
                                     .withLeftJoinColumns("userId")
                                     .withRightJoinColumns("userId")
-                                    .withConnection("uniqueUserGroupBy", Constants.OUT, "left")
+                                    .withConnection("uniqueUserByProductGroupBy", Constants.OUT, "left")
                                     .withConnection(userOperatorName, Constants.OUT, "right")));
             nodes.addAll(getSharedGraphNodes("userJoin",showUnrelated));
             return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""), USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""))
-                    .withDataSource(UserRelationshipDataSource.NAME)
+                    .withDataSource(UserProductDataSource.NAME)
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                     .withParameter("productId", "Product ID", String[].class)
                     .withParameter("latitude", "Latitude Override", double[].class)
