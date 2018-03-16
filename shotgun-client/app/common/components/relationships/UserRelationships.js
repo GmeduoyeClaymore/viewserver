@@ -95,7 +95,7 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, state, UserViews} = this;
-    const {history, errors, noRelationships, me, searchText} = this.props;
+    const {history, errors, noRelationships, me, searchText, title, selectedProduct} = this.props;
     const {selectedUser, selectedTabIndex = 0, oldOptions, showAll} = state;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
@@ -103,12 +103,18 @@ class UserRelationships extends Component{
       return <LoadingScreen text="Loading.."/>;
     }
     return <Container style={{ flex: 1, padding: 15}}>
+      {title ? <View>
+        <Text  style={styles.title}>{title}</Text>
+      </View> : null}
       <View style={styles.container}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={state.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
       {typeof noRelationships != undefined ? <Row style={{flex: 1}}>
         <Text>
-          {noRelationships + ' ' + (showAll ? 'users' : 'friends') + ' found in ' + state.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + state.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+        </Text>
+        <Text style={{marginLeft: 15}}>
+          {this.state.showAll ? 'Show Just Friends' : 'Show Everyone'}
         </Text>
         <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ this.state.showAll }/>
       </Row> : null}
@@ -133,6 +139,12 @@ const styles = {
     position: 'absolute',
     left: 0,
     top: 0
+  },
+  title: {
+    fontWeight: 'bold',
+    color: '#848484',
+    fontSize: 18,
+    marginTop: 30
   },
   locationTextPlaceholder: {
     color: shotgun.silver

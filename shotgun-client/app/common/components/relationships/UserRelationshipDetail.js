@@ -103,6 +103,7 @@ class UserRelationshipDetail extends Component{
   }
 
   RelatedUser = ({user}) => {
+    const {handleCancel} = this;
     const {onPressCallUser, onPressAssignUser, errors} = this.props;
     return <View style={{flex: 1, width: width - 60}}>
       <View style={{flexDirection: 'row'}}>
@@ -122,7 +123,10 @@ class UserRelationshipDetail extends Component{
               <Text uppercase={false}>Call User</Text>
             </Button>
             {
-              onPressAssignUser ? <Button fullWidth callButton onPress={() => onPressAssignUser(user)}>
+              onPressAssignUser ? <Button fullWidth callButton onPress={() => {
+                onPressAssignUser(user);
+                handleCancel();
+              }}>
                 <Icon name="one-person" paddedIcon/>
                 <Text uppercase={false}>Assign Job To User</Text>
               </Button> : null

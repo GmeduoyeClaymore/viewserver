@@ -46,7 +46,7 @@ const mapButtonStateToProps = (state, props) => {
   };
 };
 
-const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>
+const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, user, busy}) => <Button  disabled={busy} onPress={() => updateRelationshipCmd(user, tartgetStatus, 'COLLEAGUE')} style={{marginLeft: 15}}><Text>{text}</Text></Button>;
 const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps)(ButtonElementFactory(tartgetStatus, text) );
 const DisconnectButton = StatusButtonElement('UNKNOWN', 'Disconnect');
 const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept');
@@ -71,7 +71,7 @@ const StatusButton = ({user}) => {
 };
 
 
-const UserRelationshipItem = ({context, user, selectedUser = {}}) => {
+const UserRelationshipItem = ({context, user, selectedUser = {}, onPressAssignUser, onPressCallUser}) => {
   if (!user){
     return null;
   }
@@ -90,7 +90,16 @@ const UserRelationshipItem = ({context, user, selectedUser = {}}) => {
         <Text style={styles.summary}>{'RATING: ' + user.rating}</Text>
         <Text style={styles.summary}>{'DISTANCE: ' + user.distance}</Text>
       </View>
-      <StatusButton user={user}/>
+      <View style={{flexDirection: 'column'}}>
+        {onPressAssignUser ? <Button onPresss={() => {
+          onPressAssignUser(user);
+        }} style={{marginLeft: 15}}><Text>Assign job</Text></Button> : null}
+        <StatusButton user={user}/>
+        <Button fullWidth callButton onPress={() => onPressCallUser(user)}>
+          <Icon name="phone" paddedIcon/>
+          <Text uppercase={false}>Call User</Text>
+        </Button>
+      </View>
     </View>
   </TouchableHighlight>;
 };
