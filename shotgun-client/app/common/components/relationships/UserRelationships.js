@@ -41,15 +41,12 @@ class UserRelationships extends Component{
   }
 
   getOptionsFromProps(props){
-    const {selectedProduct = {}, location = {}} = props;
-    const {showAll} = this.state;
-    const {latitude, longitude} = location;
-    const {productId} = selectedProduct;
+    const {selectedProduct, geoLocation} = props;
+    const {showAll} = this.parentState;
     return {
-      reportId: productId ? 'usersForProduct' : 'userRelationships',
-      productId,
-      latitude,
-      longitude,
+      reportId: selectedProduct ? 'usersForProduct' : 'userRelationships',
+      selectedProduct,
+      position: geoLocation,
       showUnrelated: showAll,
       columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
@@ -57,20 +54,20 @@ class UserRelationships extends Component{
 
   updateSubscription(){
     const newOptions = this.getOptionsFromProps(this.props);
-    const {oldOptions} = this.state;
+    const {oldOptions} = this.parentState;
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsers(newOptions);
     }
   }
 
   componentWillReceiveProps(newProps){
-    const {oldOptions} = this.state;
+    const {oldOptions} = this.parentState;
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsers(newOptions);
     }
     const {me} = newProps;
-    if (me && me.range  !== this.state.distance){
+    if (me && me.range  !== this.parentState.distance){
       this.setState({distance: me.range});
     }
   }
@@ -92,11 +89,26 @@ class UserRelationships extends Component{
     setRange(distance);
   }
 
+  setState(newState, continueWith){
+    const {context} = this.props;
+    if (context){
+      return context.setState(newState, continueWith);
+    }
+    super.setState(context, continueWith);
+  }
+
+  get parentState(){
+    const {context} = this.props;
+    if (context){
+      return context.state;
+    }
+    return this.state;
+  }
 
   render(){
-    const {onChangeTab, state, UserViews} = this;
-    const {history, errors, noRelationships, me, searchText, title, selectedProduct} = this.props;
-    const {selectedUser, selectedTabIndex = 0, oldOptions, showAll} = state;
+    const {onChangeTab, UserViews, parentState} = this;
+    const {history, errors, noRelationships, me, searchText, title, selectedProduct, backAction} = this.props;
+    const {selectedUser, selectedTabIndex = 0, oldOptions, showAll} = parentState;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
     if (!me){
@@ -107,16 +119,16 @@ class UserRelationships extends Component{
         <Text  style={styles.title}>{title}</Text>
       </View> : null}
       <View style={styles.container}>
-        {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={state.distance} onSlidingComplete={this.setRange}/> : null}
+        {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
       {typeof noRelationships != undefined ? <Row style={{flex: 1}}>
         <Text>
-          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + state.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
         <Text style={{marginLeft: 15}}>
-          {this.state.showAll ? 'Show Just Friends' : 'Show Everyone'}
+          {parentState.showAll ? 'Show Just Friends' : 'Show Everyone'}
         </Text>
-        <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ this.state.showAll }/>
+        <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
       </Row> : null}
       <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
@@ -126,7 +138,7 @@ class UserRelationships extends Component{
           <UserView {...this.props} context={this} options={oldOptions} selectedUser={selectedUser}/>
         </ErrorRegion>
       </View>
-      <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
+      <Button transparent style={styles.backButton} onPress={() => backAction ? backAction() : history.goBack()} >
         <Icon name='back-arrow'/>
       </Button>
       <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser}/>
@@ -169,13 +181,17 @@ const mapStateToProps = (state, initialProps) => {
   const options = getDaoOptions(state, 'userRelationshipDao') || {};
   const {searchText} = options;
 
+  const updateRelationshipError = getOperationError(state, 'userRelationshipDao', 'updateRelationship') || '';
+  const updateRelationshipSubscriptionError = getOperationError(state, 'userRelationshipDao', 'updateSubscription') || '';
+
+
   return {
     ...initialProps,
     searchText,
     setRange,
     setStatus,
     noRelationships: getDaoSize(state, 'userRelationshipDao'),
-    errors: getOperationError(state, 'userRelationshipDao', 'updateRelationship'),
+    errors: updateRelationshipError + '\n' + updateRelationshipSubscriptionError,
     me: getDaoState(state, ['user'], 'userDao'),
     relatedUsers: getDaoState(state, ['users'], 'userRelationshipDao') || [],
     busy: isAnyOperationPending(state, [{userRelationshipDao: 'updateSubscription'}])

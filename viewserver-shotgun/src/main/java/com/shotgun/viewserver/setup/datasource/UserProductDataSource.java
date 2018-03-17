@@ -50,9 +50,6 @@ UserProductDataSource {
                                 .withExpression("hasProduct")
                                 .withConnection("userHasProductCalc")
                 )
-                .withDimensions(Arrays.asList(
-                        new Dimension("status", Cardinality.Int, ColumnType.String),
-                        new Dimension("type", Cardinality.Int, ColumnType.String)))
                 .withOutput("hasProductFilter")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

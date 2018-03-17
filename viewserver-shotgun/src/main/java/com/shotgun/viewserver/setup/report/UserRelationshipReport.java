@@ -16,6 +16,7 @@ import java.util.List;
 public class UserRelationshipReport {
         public static final String USER_FOR_PRODUCT_REPORT_ID = "usersForProduct";
         public static final String USER_RELATIONSHIPS = "userRelationships";
+        public static String MainuserOperatorName = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin");
 
         public static List<IGraphNode> getSharedGraphNodes(String userOperatorName, boolean showUnrelated){
                 return Arrays.asList(
@@ -52,7 +53,7 @@ public class UserRelationshipReport {
                                 .withColumnPrefixes("","meUser_")
                                 .withAlwaysResolveNames()
                                 .withConnection("meCalcCol", Constants.OUT, "left")
-                                .withConnection(userOperatorName, Constants.OUT, "right"),
+                                .withConnection(MainuserOperatorName, Constants.OUT, "right"),
                         new CalcColNode("distanceCalcCol")
                                 .withCalculations(
                                         new CalcColOperator.CalculatedColumn("currentDistance", "distance(isNull({latitude},meUser_latitude), isNull({longitude},meUser_longitude) , relatedToUser_latitude, relatedToUser_longitude, \"M\")"),
@@ -90,7 +91,6 @@ public class UserRelationshipReport {
                 );
         }
 
-    static String userOperatorName = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin");
         public static ReportDefinition getUsersForProductReportDefinition(boolean showUnrelated) {
 
             List<IGraphNode> nodes = new ArrayList<IGraphNode>(
@@ -105,7 +105,7 @@ public class UserRelationshipReport {
                                     .withLeftJoinColumns("userId")
                                     .withRightJoinColumns("userId")
                                     .withConnection("uniqueUserByProductGroupBy", Constants.OUT, "left")
-                                    .withConnection(userOperatorName, Constants.OUT, "right")));
+                                    .withConnection(MainuserOperatorName, Constants.OUT, "right")));
             nodes.addAll(getSharedGraphNodes("userJoin",showUnrelated));
             return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""), USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""))
                     .withDataSource(UserProductDataSource.NAME)
@@ -119,7 +119,7 @@ public class UserRelationshipReport {
 
         }
         public static ReportDefinition getReportDefinition(boolean showUnrelated) {
-            List<IGraphNode> nodes = getSharedGraphNodes(userOperatorName,showUnrelated);
+            List<IGraphNode> nodes = getSharedGraphNodes(MainuserOperatorName,showUnrelated);
             return new ReportDefinition(USER_RELATIONSHIPS + ((showUnrelated) ? "All" : ""), USER_RELATIONSHIPS + ((showUnrelated) ? "All" : ""))
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                     .withParameter("latitude", "Latitude Override", double[].class)

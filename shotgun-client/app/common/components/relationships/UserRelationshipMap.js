@@ -42,9 +42,9 @@ export default class UserRelationshipMap extends Component{
   }
   
   render(){
-    const {selectedUser, relatedUsers = [], context, client, location} = this.props;
+    const {selectedUser, relatedUsers = [], context, client, geoLocation} = this.props;
     let {me} = this.props;
-    me = location || me;
+    me = geoLocation && geoLocation.latitude ? geoLocation : me;
     const {fitMap} = this;
     const {setSelectedUser} = context;
     const {latitude, longitude} = me;

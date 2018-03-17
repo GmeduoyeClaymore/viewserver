@@ -40,7 +40,7 @@ class UsersForProductMap extends Component{
   componentDidMount(){
     const {me = {}, context, delivery} = this.props;
     const {latitude, longitude} = me;
-    context.setState({delivery: {...delivery, origin: getAddressForlocation({longitude, latitude})}});
+    context.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : getAddressForlocation({longitude, latitude})}});
   }
 
   async onChangeText(location, field, value){
@@ -102,12 +102,12 @@ class UsersForProductMap extends Component{
       <Grid>
         <Row size={85}>
           <ErrorRegion errors={errors}>
-            <UserRelationships title={title} location={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+            <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           </ErrorRegion>
         </Row>
-        <Row size={15} style={styles.inputRow}>
+        <Row size={9} style={styles.inputRow}>
           <Col>
-            <Row>
+            <Row style={{backgroundColor: 'white', padding: 15}}>
               <Icon name="pin" paddedIcon originPin />
               {getLocationTextInput(origin, 'origin', 'Enter job location')}
             </Row>

@@ -24,6 +24,7 @@ export default class Dao {
     this.resetSubscription = this.resetSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
+    this.forceNexUpdate = false;
 
     this.crx = crx;//force this to load
     if (!this.daoContext.client){
@@ -61,6 +62,7 @@ export default class Dao {
 
   async resetData(){
     this.dataSink.onDataReset();
+    this.forceNexUpdate = true;
     this.subject.next();
   }
 
@@ -69,12 +71,12 @@ export default class Dao {
       this.dataSink.onDataReset();
     }
     this.options = this.daoContext.defaultOptions;
-    return this.updateSubscription(options);
+    return this.updateSubscription(options, true);
   }
 
   async updateSubscription(options, force){
     const newOptions = {...this.options, ...options};
-    if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy || force){
+    if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy || force || this.forceNexUpdate){
       if (this.subscriptionStrategy){
         Logger.info(`Disposing of subscription - ${this.daoContext.name}`);
         this.subscriptionStrategy.dispose();
@@ -109,7 +111,7 @@ export default class Dao {
     }
 
     try {
-      if (isEqual(this.options, newOptions) && this.subscribed && !force){
+      if (isEqual(this.options, newOptions) && this.subscribed && !force && !this.forceNexUpdate){
         return Promise.resolve();
       }
       if (this.snapshotSubscription){
@@ -138,6 +140,7 @@ export default class Dao {
           err => reject(err)
         );
       });
+      this.forceNexUpdate = false;
       this.subscriptionStrategy.updateSubscription(optionsMessage);
       Logger.info(`!!!!!Waiting for snapshot complete!!!! ${this.daoContext.name}`);
       return result;

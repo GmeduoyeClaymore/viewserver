@@ -12,6 +12,6 @@
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
         <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
         <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
-        <Logger name="io.viewserver.operators.sort" level="trace"/>
+        <Logger name="io.viewserver.operators.sortxx" level="trace"/>
     </Loggers>
 </configuration>

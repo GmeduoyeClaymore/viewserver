@@ -34,7 +34,7 @@ export default class UserRelationshipDaoContext{
   }
 
   getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = false, showOutOfRange = false}){
-    const {latitude, longitude} = position;
+    const {latitude = 0, longitude = 0} = position;
     const baseReportContext =  {
       reportId: reportId + (showUnrelated ? 'All' : ''),
       parameters: {
@@ -74,6 +74,9 @@ export default class UserRelationshipDaoContext{
   transformOptions(options){
     if (typeof options.reportId === 'undefined'){
       throw new Error('reportId should be defined');
+    }
+    if (options.reportId.startsWith('usersForProduct') && !options.selectedProduct){
+      throw new Error('Selected product must me specifed for users for product report');
     }
     const {searchText } = options;
     const filterExpression = searchText ? `firstName like "*${searchText}*"` : 'true';
