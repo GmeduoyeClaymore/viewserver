@@ -85,7 +85,13 @@ const styles = {
 const cancelButton = <Text style={[styles.cancelText]}>Cancel</Text>;
 const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View><Text>No items to display</Text></View>;
-const starsControl = (rating) => <View style={styles.view}>{[...Array(Math.round(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(5 - Math.round(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
+const sortRating = (rating, defaultVal = 0) => {
+  if (!rating || rating < 0){
+    return defaultVal;
+  }
+  return Math.round(rating);
+};
+const starsControl = (rating) => <View style={styles.view}>{[...Array(sortRating(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(sortRating(5 - Math.round(sortRating(rating))))].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
 const jobSummary = ({item: order}) => <View key={order.orderId} style={{flexDirection: 'row', backgroundColor: 'white'}}>
   {order.orderItem ? <Image resizeMode="contain" source={{url: order.orderItem.imageUrl}}  style={styles.picture}/> : null}
   <View style={{flex: 1, padding: 5}}>
@@ -103,9 +109,7 @@ class UserRelationshipDetail extends Component{
     this.selectUserByIndex = this.selectUserByIndex.bind(this);
   }
 
-  RelatedUser = ({user}) => {
-    const {handleCancel} = this;
-    const {onPressCallUser, onPressAssignUser, errors} = this.props;
+  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel}) => {
     return <View style={{flex: 1, width: width - 60}}>
       <View style={{flexDirection: 'row'}}>
         <Image resizeMode="contain" source={{url: user.imageUrl}}  style={styles.picture}/>
@@ -162,14 +166,14 @@ class UserRelationshipDetail extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers} = this.props;
+    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser} = this.props;
     const {RelatedUser} = this;
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
       <View style={styles.userSelector}>
         <Swiper height={height} contentContainerStyle={{width: '100%'}} width={width - 40} style={{width: width - 40, height}} scrollViewStyle={{width: width - 40, height}} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={false}>
-          {relatedUsers.map((v, i) => <RelatedUser user={v} key={i}/>)}
+          {relatedUsers.map((v, i) => <RelatedUser handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
         </Swiper>
       </View>
       <TouchableHighlight

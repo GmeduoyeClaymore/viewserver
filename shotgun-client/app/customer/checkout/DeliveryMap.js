@@ -12,6 +12,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {TextInput} from 'react-native';
 import {isEqual} from 'lodash';
+import {addressToText} from 'common/utils';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
@@ -64,7 +65,7 @@ class DeliveryMap extends Component{
 
   getLocationText(address, addressKey, placeholder){
     style = address.line1 ? {} : styles.locationTextPlaceholder;
-    text = address.line1 ? `${address.line1}, ${address.postCode}` : placeholder;
+    text = addressToText(address) || placeholder;
     const {onChangeText, setLocation, doAddressLookup} = this;
     return  <Row>
       {address.line1 !== undefined ? <Col size={30}>

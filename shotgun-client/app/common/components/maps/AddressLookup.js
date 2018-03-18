@@ -8,6 +8,7 @@ import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import {ErrorRegion, Icon} from 'common/components';
 import {debounce} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {addressToText} from 'common/utils';
 
 const MAX_RECENT_ADDRESSES = 10;
 
@@ -111,7 +112,7 @@ class AddressLookup extends Component {
 
     const address = (address, i) => <ListItem paddedTopBottom key={i} onPress={() => onAddressSelected(address)}>
       <View>
-        <Text style={styles.addressText}>{`${address.line1}, ${address.postCode}`}</Text>
+        <Text style={styles.addressText}>{addressToText(address)}</Text>
         <Text style={styles.smallText}>{address.city}</Text>
       </View>
     </ListItem>;
