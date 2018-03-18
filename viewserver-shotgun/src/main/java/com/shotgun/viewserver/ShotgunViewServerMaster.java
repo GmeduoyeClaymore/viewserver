@@ -8,6 +8,8 @@ import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.order.PricingStrategyResolver;
+import com.shotgun.viewserver.payments.PaymentControllerImpl;
+import com.shotgun.viewserver.payments.MockPaymentController;
 import com.shotgun.viewserver.user.*;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
@@ -70,9 +72,12 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
     }
 
     private PaymentController getPaymentController(){
+        if(isMock){
+            return new MockPaymentController();
+        }
         //StripeApiKey apiKey = isMock ? new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4") : new StripeApiKey("pk_live_7zCPIyqeDeEnLvwzPeS4vXQv", "sk_live_ZZXR0KcIO0s4CswZC3eQrewL");
         StripeApiKey apiKey = new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4");
-        return new PaymentController(apiKey);
+        return new PaymentControllerImpl(apiKey);
     }
 
     private VehicleDetailsController getVehicleDetailsController(){

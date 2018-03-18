@@ -4,6 +4,7 @@ import {Grid, Row, Text} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {addressToText} from 'common/utils';
 
 export class OriginDestinationSummary extends Component{
   constructor(){
@@ -22,7 +23,7 @@ export class OriginDestinationSummary extends Component{
     return <Grid>
       {contentType.origin ? <Row>
         <Icon name="pin" paddedIcon originPin/>
-        <Text style={{alignSelf: 'flex-start'}}>{origin.flatNumber} {origin.line1}, {origin.postCode}</Text>
+        <Text style={{alignSelf: 'flex-start'}}>{addressToText(origin)}</Text>
       </Row> : null}
       {contentType.destination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>

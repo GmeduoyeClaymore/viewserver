@@ -4,6 +4,7 @@ import {connect} from 'custom-redux';
 import { isOperationPending } from 'common/dao';
 import {updateRelationship} from 'common/actions/CommonActions';
 import {Button, Text} from 'native-base';
+import {Icon} from 'common/components';
 const styles = {
   container: {
     flex: 1,

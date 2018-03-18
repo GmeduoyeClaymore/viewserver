@@ -21,6 +21,7 @@ const styles = {
     height: height - 80,
     width: width - 40,
     margin: 0,
+    padding: 15,
     overflow: 'hidden',
     marginBottom: 10
   },
@@ -43,7 +44,7 @@ const styles = {
   title: {
     fontWeight: 'bold',
     color: '#848484',
-    fontSize: 12
+    fontSize: 18
   },
   cancelButton: {
     backgroundColor: BACKGROUND_COLOR,

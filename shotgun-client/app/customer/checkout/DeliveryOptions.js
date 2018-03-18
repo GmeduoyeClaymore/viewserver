@@ -10,6 +10,24 @@ import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDest
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('PageTitle', 'Delivery Options').
+    delivery('Delivery Details').
+    personell('Job Details').
+    rubbish('Collection Details').
+  property('NoPeopleCaption', 'How Many People Do you need?').
+    delivery('Do you need more than one person to lift your item?').
+    personell('Does this job require additional labourers?').
+  property('JobStartCaption', 'Set a collection time').
+    delivery('Set a collection time').
+    personell('Job Start Date').
+  property('JobEndCaption', 'Set a return time').
+    delivery('Set a return time').
+    personell('Job End Date');
+
 
 class DeliveryOptions extends Component {
   constructor(props) {
@@ -24,6 +42,8 @@ class DeliveryOptions extends Component {
       selectedCard: undefined,
       date: undefined
     };
+
+    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
   }
 
   componentDidMount() {
@@ -33,6 +53,7 @@ class DeliveryOptions extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
     if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined) {
       this.setCard(nextProps.defaultCard);
     }
@@ -70,6 +91,7 @@ class DeliveryOptions extends Component {
   }
 
   render() {
+    const {resources} = this;
     const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
     const { delivery, payment, orderItem, selectedContentType} = context.state;
     const { quantity: noRequiredForOffload } = orderItem;
@@ -102,7 +124,7 @@ class DeliveryOptions extends Component {
               <Icon name='back-arrow'/>
             </Button>
           </Left>
-          <Body><Title>Delivery Details</Title></Body>
+          <Body><Title>{resources.PageTitle}</Title></Body>
         </Header>
         <Content>
           <ErrorRegion errors={errors}/>
@@ -111,17 +133,17 @@ class DeliveryOptions extends Component {
           </ListItem>
           {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />
-            {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a collection time</Text>}
+            {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
             <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeDate('from', date)} {...datePickerOptions} />
           </ListItem> : null}
           {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="delivery-time" />
-            {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>Set a return time</Text>}
+            {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
             <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
           </ListItem> : null}
           <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>
-            <Picker style={styles.cardPicker} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
+            <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
               {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c} />)}
             </Picker>
           </ListItem>
@@ -129,13 +151,13 @@ class DeliveryOptions extends Component {
           {selectedContentType.noPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
               <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
-              <Text style={{ paddingLeft: 10 }}>Do you need more than one person to lift your item?</Text>
+              <Text style={{ paddingLeft: 10 }}>{resources.NoPeopleCaption}</Text>
             </ListItem> : null}
 
           {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
             <Grid>
               <Row>
-                <Text style={{ paddingBottom: 15 }}>How many people do you need?</Text>
+                <Text style={{ paddingBottom: 5 }}>How many people do you need?</Text>
               </Row>
               <Row>
                 <Col style={{ marginRight: 10 }}>
@@ -196,9 +218,11 @@ const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
   const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
-
+  const {context} = initialProps;
+  const {selectedContentType} = context.state;
   return {
     ...initialProps,
+    selectedContentType,
     ...getNavigationProps(initialProps),
     busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),

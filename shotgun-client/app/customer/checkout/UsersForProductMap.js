@@ -1,19 +1,14 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted } from 'custom-redux';
+import { connect, setStateIfIsMounted } from 'custom-redux'; 2;
 import { Container, Button, Text, Grid, Col, Row, View} from 'native-base';
-import MapView from 'react-native-maps';
 import {ErrorRegion, Icon} from 'common/components';
-import AddressMarker from 'common/components/maps/AddressMarker';
-import ProductMarker from 'common/components/maps/ProductMarker';
-import MapViewDirections from 'common/components/maps/MapViewDirections';
 import { withRouter } from 'react-router';
-import { getDaoState, updateSubscriptionAction } from 'common/dao';
+import { getDaoState } from 'common/dao';
+import {TextInput} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
-import {TextInput} from 'react-native';
-import {isEqual} from 'lodash';
+import {addressToText} from 'common/utils';
 import UserRelationships from 'common/components/relationships/UserRelationships';
-
 const getAddressForlocation = (location) => {
   if (!location || !location.latitude || !location.longitude){
     return undefined;
@@ -49,19 +44,9 @@ class UsersForProductMap extends Component{
     context.setState({delivery: {...delivery, [location]: newLocation}});
   }
 
-  addressToText(address){
-    if (address.line1){
-      if (address.line1.startsWith('LOCATION_PLACEHOLDER_ADDRESS')){
-        return 'Current Location';
-      }
-      return `${address.line1}, ${address.postCode}`;
-    }
-    return undefined;
-  }
-
   getLocationTextInput(address, addressKey, placeholder){
     style = address.line1 ? {} : styles.locationTextPlaceholder;
-    text = this.addressToText(address) || placeholder;
+    text = addressToText(address) || placeholder;
     const {onChangeText, setLocation, doAddressLookup} = this;
     return  <Row>
       {address.line1 !== undefined ? <Col size={30}>
@@ -98,9 +83,9 @@ class UsersForProductMap extends Component{
     const {deliveryUser} = state;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
 
-    return <Container style={{ flex: 1 }}>
+    return <Container >
       <Grid>
-        <Row size={85}>
+        <Row size={89}>
           <ErrorRegion errors={errors}>
             <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           </ErrorRegion>

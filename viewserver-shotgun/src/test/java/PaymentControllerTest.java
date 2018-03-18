@@ -24,7 +24,7 @@ public class PaymentControllerTest {
 
     @Before
     public void createSut(){
-        sut = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
+        sut = new PaymentControllerImpl(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
         TestControllerUtils.getControllerContext("foo");
         User user = (User) ControllerContext.get("user");
         user.setStripeCustomerId(this.customerId);

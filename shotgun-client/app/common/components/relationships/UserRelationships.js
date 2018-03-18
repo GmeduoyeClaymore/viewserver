@@ -114,14 +114,14 @@ class UserRelationships extends Component{
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <Container style={{ flex: 1, padding: 15}}>
+    return <View style={{ flex: 1, padding: 15}}>
       {title ? <View>
         <Text  style={styles.title}>{title}</Text>
       </View> : null}
       <View style={styles.container}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
-      {typeof noRelationships != undefined ? <Row style={{flex: 1}}>
+      {typeof noRelationships != undefined ? <Row style={{flex: 2}}>
         <Text>
           {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
@@ -142,7 +142,7 @@ class UserRelationships extends Component{
         <Icon name='back-arrow'/>
       </Button>
       <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser}/>
-    </Container>;
+    </View>;
   }
 }
 
