@@ -12,21 +12,45 @@ import moment from 'moment';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
+const TommorowDateOption = {
+  name: 'Tmrw',
+  resolver: () => moment().add(1, 'days').startOf('day').add(9, 'hours').minute(0).toDate()
+};
+
+const ASAPWorkingDateOption = {
+  name: 'ASAP',
+  resolver: () => moment().add(1, 'days').startOf('day').add(8, 'hours').toDate()
+};
+
+const OneWorkingDayOption = {
+  name: '1 Day',
+  resolver: ({from}) => (moment(from) || moment()).startOf('day').add(9, 'hours').add(8, 'hours').toDate()
+};
+
+const TwoWorkingDayOption = {
+  name: '2 Days',
+  resolver: ({from}) => (moment(from) || moment()).startOf('day').add(1, 'days').add(9, 'hours').add(8, 'hours').toDate()
+};
+
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', 'Delivery Options').
-    delivery('Delivery Details').
-    personell('Job Details').
-    rubbish('Collection Details').
+  delivery('Delivery Details').
+  personell('Job Details').
+  rubbish('Collection Details').
   property('NoPeopleCaption', 'How Many People Do you need?').
-    delivery('Do you need more than one person to lift your item?').
-    personell('Does this job require additional labourers?').
+  delivery('Do you need more than one person to lift your item?').
+  personell('Does this job require additional labourers?').
   property('JobStartCaption', 'Set a collection time').
-    delivery('Set a collection time').
-    personell('Job Start Date').
+  delivery('Set a collection time').
+  personell('Job Start Date').
   property('JobEndCaption', 'Set a return time').
-    delivery('Set a return time').
-    personell('Job End Date');
+  delivery('Set a return time').
+  personell('Job End Date').
+  property('CannedStartDateOptions', undefined).
+  personell([ASAPWorkingDateOption, TommorowDateOption]).
+  property('CannedEndDateOptions', undefined).
+  personell([OneWorkingDayOption, TwoWorkingDayOption]);
 
 
 class DeliveryOptions extends Component {
@@ -134,12 +158,12 @@ class DeliveryOptions extends Component {
           {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
-            <DatePicker isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeDate('from', date)} {...datePickerOptions} />
+            <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}  isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => this.onChangeDate('from', date)} {...datePickerOptions} />
           </ListItem> : null}
           {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
-            <DatePicker isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
+            <DatePicker cannedDateOptions={resources.CannedEndDateOptions} from={delivery.from} asapDateResolver={resources.AsapEndDateResolver} isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
           </ListItem> : null}
           <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>

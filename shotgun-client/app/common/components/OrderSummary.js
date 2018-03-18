@@ -36,7 +36,7 @@ class OrderSummary extends Component{
   }
 
   render() {
-    const {orderItem, delivery, contentType, product} = this.props;
+    const {orderItem, delivery, contentType, product, deliveryUser} = this.props;
     const {quantity: noPeople} = orderItem;
     
     return <List>
@@ -44,6 +44,7 @@ class OrderSummary extends Component{
       <ListItem padded>
         <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
       </ListItem>
+      {deliveryUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}`}</Text></ListItem> : null}
       {contentType.fromTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.tillTime ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {contentType.noPeople && noPeople ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeople} people required`}</Text></ListItem> : null}

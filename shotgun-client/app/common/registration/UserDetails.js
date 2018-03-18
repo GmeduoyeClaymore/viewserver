@@ -126,7 +126,7 @@ export default class UserDetails  extends Component{
               <Item stackedLabel>
                 <Label>DOB</Label>
                 <ValidatingInput onPress={() => this.toggleDatePicker(true)} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} maxLength={30}/>
-                <DatePicker isVisible={dobIsDatePickerVisible} hideAsap={true} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeDob(date)} {...datePickerOptions} />
+                <DatePicker isVisible={dobIsDatePickerVisible} cannedDateOptions={[]} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeDob(date)} {...datePickerOptions} />
               </Item>
             </Col>
           </Row> : null }

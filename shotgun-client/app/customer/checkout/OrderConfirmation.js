@@ -31,7 +31,7 @@ class OrderConfirmation extends Component{
   }
 
   render(){
-    const {client, navigationStrategy, errors, busy, orderItem, delivery, selectedProduct, selectedContentType} = this.props;
+    const {client, navigationStrategy, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType} = this.props;
     const {price} = this.state;
 
     return <Container>
@@ -45,7 +45,7 @@ class OrderConfirmation extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={price}/>
-        <OrderSummary delivery={delivery} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
+        <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
         <ErrorRegion errors={errors}>
           <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>Create Job</Text><Icon next name='forward-arrow'/></SpinnerButton>
         </ErrorRegion>
@@ -62,12 +62,13 @@ OrderConfirmation.PropTypes = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, payment, orderItem, selectedProduct, selectedContentType} = context.state;
+  const {delivery, payment, orderItem, selectedProduct, selectedContentType, deliveryUser} = context.state;
 
   return {
     ...initialProps,
     orderItem,
     delivery,
+    deliveryUser,
     selectedProduct,
     selectedContentType,
     payment,
