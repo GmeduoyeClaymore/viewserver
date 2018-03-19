@@ -22,6 +22,7 @@ import io.viewserver.operators.table.TableKey;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +181,7 @@ public class OrderController {
             case DURATION:
                 return getQuantity(orderItem) * product.getPrice() * calculateDays(delivery);
             case JOB_DURATION:
-                return product.getPrice() * calculateHours(delivery) + calculateAdditionalLabour(orderItem);
+                return (product.getPrice() / 9) * calculateHours(delivery) + calculateAdditionalLabour(orderItem);
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
@@ -220,7 +221,7 @@ public class OrderController {
         if(delivery.getTill() == null){
             throw new RuntimeException("Till date must be specified");
         }
-        return Hours.hoursBetween(new LocalDate(delivery.getFrom()), new LocalDate(delivery.getTill())).getHours();
+        return Hours.hoursBetween(new LocalDateTime(delivery.getFrom()), new LocalDateTime(delivery.getTill())).getHours();
     }
 
     private int getQuantity(OrderItem orderItem) {
