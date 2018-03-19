@@ -11,11 +11,11 @@ export class ResourceDictionaryProperty{
   }
 
   value(valuePair){
-    if (!Object.keys(valuePair).length == 2){
+    if (Object.keys(valuePair).length != 1){
       throw new Error('Value pair must have two entries key and value');
     }
     const contentTypeId =  Object.keys(valuePair)[0];
-    const dictionary = this.resourceDictionary.resolve(contentTypeId, true);
+    const dictionary = this.resourceDictionary.resolve(contentTypeId);
     this.resourceDictionary.dictionaries[contentTypeId] = {...dictionary, ...{[this.propertyName]: valuePair[contentTypeId]}};
     return this;
   }
@@ -78,13 +78,13 @@ export class ResourceDictionary{
     return result;
   }
 
-  resolve(contentTypeId, strict){
+  resolve(contentTypeId){
     const dictionary = this.dictionaries[contentTypeId];
     if (!dictionary){
-      if (strict){
-        throw new Error(`${contentTypeId} is not a valid content type value`);
-      }
-      return dictionary.DEFAULT;
+      throw new Error(`${contentTypeId} is not a valid content type value`);
+    }
+    if (!Object.keys(dictionary).length){
+      return this.dictionaries.DEFAULT;
     }
     return dictionary;
   }

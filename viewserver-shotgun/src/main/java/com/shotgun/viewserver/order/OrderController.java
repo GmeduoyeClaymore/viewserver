@@ -189,7 +189,7 @@ public class OrderController {
 
     private double calculateAdditionalLabour(OrderItem item) {
         if(item.getQuantity() > 1){
-            return item.getQuantity() - 1 * getLabourerRate();
+            return (item.getQuantity() - 1) * getLabourerRate();
         }
         return 0;
     }

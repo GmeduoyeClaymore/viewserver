@@ -6,18 +6,39 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
 import {cancelOrder, rejectDriver} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('PageTitle', () => 'Order Summary').
+    delivery(() => 'Delivery Summary').
+    personell(({product}) => `${product.name} Job`).
+    rubbish(() => 'Collection Summary').
+  property('RejectButtonCaption', 'Reject').
+    delivery('Reject Driver').
+    personell('Reject Worker').
+    rubbish('Reject Driver').
+  property('TrackButtonCaption', 'Track').
+    delivery('Track Driver').
+    personell('Track Worker').
+    rubbish('Track Driver');
+/*eslint-enable */
 
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
+    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
   }
 
   componentDidMount(){
     this.subscribeToOrderSummary(this.props);
   }
 
-  componentWillReceiveProps(netProps){
-    this.subscribeToOrderSummary(netProps);
+  componentWillReceiveProps(newProps){
+    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
+    this.subscribeToOrderSummary(newProps);
   }
 
   subscribeToOrderSummary(props){
@@ -39,6 +60,7 @@ class CustomerOrderDetail extends Component{
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
     const showCancelButton = !isComplete && !isCancelled && !hasDriver;
     const showRejectDriverButton = hasDriver && !isComplete && !isOnRoute;
+    const {resources} = this;
 
     const onCancelOrder = () => {
       dispatch(cancelOrder(orderSummary.orderId, () => history.push('/Customer/CustomerOrders')));
@@ -55,7 +77,7 @@ class CustomerOrderDetail extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>Order Summary</Title></Body>
+        <Body><Title>{resources.PageTitle(orderSummary)}</Title></Body>
       </Header>
       <Content>
         <PriceSummary orderStatus={orderSummary.status} isDriver={false} price={orderSummary.totalPrice}/>
@@ -69,8 +91,8 @@ class CustomerOrderDetail extends Component{
             <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
           </Col>
         </Grid> : null}
-        {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>Reject Driver</Text></SpinnerButton> : null}
-        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push('/Customer/CustomerOrderInProgress', {orderId: orderSummary.orderId})}><Text uppercase={false}>Track Driver</Text></Button> : null}
+        {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
+        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push('/Customer/CustomerOrderInProgress', {orderId: orderSummary.orderId})}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
         <RatingSummary orderSummary={orderSummary} isDriver={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>
@@ -100,9 +122,10 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-
+  const {contentType: selectedContentType} = orderSummary;
   return {
     ...initialProps,
+    selectedContentType,
     orderId,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,

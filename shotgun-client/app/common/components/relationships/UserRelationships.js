@@ -94,7 +94,7 @@ class UserRelationships extends Component{
     if (context){
       return context.setState(newState, continueWith);
     }
-    super.setState(context, continueWith);
+    super.setState(newState, continueWith);
   }
 
   get parentState(){

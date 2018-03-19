@@ -2,16 +2,33 @@ import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import { withRouter } from 'react-router';
-import {OrderStatuses, getFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
+import {OrderStatuses, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary} from 'common/components';
+import * as ContentTypes from 'common/constants/ContentTypes';
+import {connect} from 'custom-redux';
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('OrderStatusResolver', getProductBasedFriendlyOrderStatusName).
+    delivery(getDeliveryFriendlyOrderStatusName).
+    rubbish(getRubbishFriendlyOrderStatusName);
+
+/*eslint-enable */
 
 class OrderRequest extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+  }
+
+  componentWillReceiveProps(newProps){
+    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
   }
 
   render() {
+    const {resources} = this;
     const {orderSummary, history, next, isLast, isFirst} = this.props;
     const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
@@ -24,7 +41,7 @@ class OrderRequest extends Component {
           </Col>
           <Col size={30} style={styles.priceRow}>
             <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
-            <Text note style={styles.orderStatus}>{getFriendlyOrderStatusName(orderSummary.status)}</Text>
+            <Text note style={styles.orderStatus}>{resources.OrderStatusResolver(orderSummary)}</Text>
           </Col>
         </Row>
         <Row size={25}>
@@ -93,5 +110,15 @@ const styles = {
   }
 };
 
-const OrderRequestWithRouter = withRouter(OrderRequest);
+
+const mapStateToProps = (state, initialProps) => {
+  const {orderSummary = {}} = initialProps;
+  const {contentType: selectedContentType} = orderSummary;
+  return {
+    selectedContentType,
+    ...initialProps,
+  };
+};
+
+const OrderRequestWithRouter = withRouter(connect(mapStateToProps)(OrderRequest));
 export {OrderRequestWithRouter as OrderRequest};

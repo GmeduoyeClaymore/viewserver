@@ -104,6 +104,11 @@ export default class OrderRequestDaoContext{
         rootProductCategory: orderRequest.contentTypeRootProductCategory,
         pricingStrategy: orderRequest.contentTypePricingStrategy
       },
+      product: {
+        productId: orderRequest.productProductId,
+        name: orderRequest.productName,
+        imageUrl: orderRequest.productImageUrl
+      },
       delivery: {
         from: orderRequest.from,
         till: orderRequest.till,

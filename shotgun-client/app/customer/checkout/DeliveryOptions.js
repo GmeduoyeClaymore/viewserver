@@ -33,26 +33,27 @@ const TwoWorkingDayOption = {
   resolver: ({from}) => (moment(from) || moment()).startOf('day').add(1, 'days').add(9, 'hours').add(8, 'hours').toDate()
 };
 
+/*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', 'Delivery Options').
-  delivery('Delivery Details').
-  personell('Job Details').
-  rubbish('Collection Details').
+    delivery('Delivery Details').
+    personell('Job Details').
+    rubbish('Collection Details').
   property('NoPeopleCaption', 'How Many People Do you need?').
-  delivery('Do you need more than one person to lift your item?').
-  personell('Does this job require additional labourers?').
+    delivery('Do you need more than one person to lift your item?').
+    personell('Does this job require additional labourers?').
   property('JobStartCaption', 'Set a collection time').
-  delivery('Set a collection time').
-  personell('Job Start Date').
+    delivery('Set a collection time').
+    personell('Job Start Date').
   property('JobEndCaption', 'Set a return time').
-  delivery('Set a return time').
-  personell('Job End Date').
+    delivery('Set a return time').
+    personell('Job End Date').
   property('CannedStartDateOptions', undefined).
-  personell([ASAPWorkingDateOption, TommorowDateOption]).
-  property('CannedEndDateOptions', undefined).
-  personell([OneWorkingDayOption, TwoWorkingDayOption]);
-
+    personell([ASAPWorkingDateOption, TommorowDateOption]).
+    property('CannedEndDateOptions', undefined).
+    personell([OneWorkingDayOption, TwoWorkingDayOption]);
+/*eslint-enable */
 
 class DeliveryOptions extends Component {
   constructor(props) {
