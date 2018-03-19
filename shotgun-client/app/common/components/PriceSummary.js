@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid, Row, Text} from 'native-base';
+import {Grid, Row, Text, Spinner} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 export class PriceSummary extends Component{
@@ -16,7 +16,7 @@ export class PriceSummary extends Component{
 
     return <Grid>
       <Row style={styles.row}><Text style={styles.heading}>{isDriver ? getDriverHeading() : getCustomerHeading()}</Text></Row>
-      <Row style={styles.row}><Text style={styles.price}>£{(price / 100).toFixed(2)}</Text></Row>
+      <Row style={styles.row}>{!price ? <Spinner/> : <Text style={styles.price}>£{(price / 100).toFixed(2)}</Text>}</Row>
     </Grid>;
   }
 }

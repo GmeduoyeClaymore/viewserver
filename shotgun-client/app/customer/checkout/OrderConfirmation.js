@@ -47,7 +47,7 @@ class OrderConfirmation extends Component{
 
   async loadEstimatedPrice(){
     const {client, orderItem, payment, delivery} = this.props;
-    const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery});
+    const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery}).timeoutWithError(10000,"Unable to load total price after 10 seconds");
     this.setState({price});
   }
 
