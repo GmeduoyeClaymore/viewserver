@@ -5,6 +5,7 @@ import {page} from 'common/dao/DaoExtensions';
 import {isEqual} from 'lodash';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
 
+
 export default class Dao {
   constructor(daoContext) {
     this.daoContext = daoContext;
@@ -76,7 +77,16 @@ export default class Dao {
 
   async updateSubscription(options, force){
     const newOptions = {...this.options, ...options};
+    if (this.daoContext.doesDataSinkNeedToBeCleared && this.daoContext.doesDataSinkNeedToBeCleared(this.options, newOptions)) {
+      if (this.dataSink){
+        this.dataSink.onDataReset();
+      }
+    }
+
     if (this.daoContext.doesSubscriptionNeedToBeRecreated(this.options, newOptions) || !this.subscriptionStrategy || force || this.forceNexUpdate){
+      if (this.dataSink){
+        this.dataSink.onDataReset();
+      }
       if (this.subscriptionStrategy){
         Logger.info(`Disposing of subscription - ${this.daoContext.name}`);
         this.subscriptionStrategy.dispose();
@@ -93,6 +103,7 @@ export default class Dao {
         Logger.info(`Disposing of snapshotcomplete subscription - ${this.daoContext.name}`);
         this.snapshotCompleteSubscription.unsubscribe();
       }
+      
       this.dataSink = this.daoContext.createDataSink(newOptions);
       this.dataSink.name = this.daoContext.name;
       this.subscriptionStrategy = this.daoContext.createSubscriptionStrategy(newOptions, this.dataSink);

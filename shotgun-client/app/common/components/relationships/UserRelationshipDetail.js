@@ -158,9 +158,6 @@ class UserRelationshipDetail extends Component{
   }
 
   selectUserByIndex(idx){
-    if (this.ordersControl){
-      this.ordersControl.wrappedInstance.reset();
-    }
     const {relatedUsers, context} = this.props;
     context.setState({selectedUser: relatedUsers[idx]});
   }

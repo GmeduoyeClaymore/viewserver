@@ -40,9 +40,6 @@ class DriverOrders  extends Component{
 
     const onChangeTab = (newIsCompleted) => {
       if (isCompleted !== newIsCompleted) {
-        if (this.pagingListView){
-          this.pagingListView.wrappedInstance.reset();
-        }
         history.replace(location.pathname, {isCompleted: newIsCompleted});
       }
     };

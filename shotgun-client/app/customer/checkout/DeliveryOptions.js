@@ -11,6 +11,7 @@ import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {getPaymentCardsIfNotAlreadySucceeded} from 'customer/actions/CustomerActions';
 
 const TommorowDateOption = {
   name: 'Tmrw',
@@ -71,6 +72,10 @@ class DeliveryOptions extends Component {
   }
 
   componentDidMount() {
+    const {getPaymentCardsIfNotAlreadyGot} = this.props;
+    if (getPaymentCardsIfNotAlreadyGot){
+      getPaymentCardsIfNotAlreadyGot();
+    }
     if (this.props.defaultCard !== undefined) {
       this.setCard(this.props.defaultCard);
     }
@@ -140,7 +145,7 @@ class DeliveryOptions extends Component {
     }
     
 
-    return busy  || !selectedCard ?
+    return busy ?
       <LoadingScreen text="Loading Customer Cards" /> : <Container>
         <Header withButton>
           <Left>
@@ -165,12 +170,12 @@ class DeliveryOptions extends Component {
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
             <DatePicker cannedDateOptions={resources.CannedEndDateOptions} from={delivery.from} asapDateResolver={resources.AsapEndDateResolver} isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
           </ListItem> : null}
-          <ListItem padded >
+          {selectedCard ? <ListItem padded >
             <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>
             <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
               {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c} />)}
             </Picker>
-          </ListItem>
+          </ListItem> : null}
           
           {selectedContentType.noPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
@@ -240,16 +245,22 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
+  const {dispatch} = initialProps;
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
   const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
   const {context} = initialProps;
   const {selectedContentType} = context.state;
+  const getPaymentCardsIfNotAlreadyGot = () =>{
+    dispatch(getPaymentCardsIfNotAlreadySucceeded());
+  };
   return {
+    getPaymentCardsIfNotAlreadyGot,
     ...initialProps,
     selectedContentType,
     ...getNavigationProps(initialProps),
     busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
+   
     paymentCards,
     user,
     defaultCard

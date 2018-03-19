@@ -36,9 +36,6 @@ class CustomerOrders extends Component{
     const {history, isCompleted} = this.props;
     const {location} = history;
     if (isCompleted !== newIsCompleted) {
-      if (this.pagingListView){
-        this.pagingListView.wrappedInstance.reset();
-      }
       history.replace(location.pathname, {isCompleted: newIsCompleted});
     }
   }

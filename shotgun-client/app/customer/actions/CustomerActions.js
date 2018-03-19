@@ -8,6 +8,8 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
+import {getDaoCommandStatus} from 'common/dao';
+
 import ProductDao from 'common/dao/ProductDao';
 import UserDao from 'common/dao/UserDao';
 
@@ -44,6 +46,17 @@ export const loginCustomer = (email, password, continueWith) => {
 
 export const getPaymentCards = (continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', continueWith);
+};
+
+export const getPaymentCardsIfNotAlreadySucceeded =  (continueWith) =>  async (dispatch, getState) => {
+  const paymentCardCommandStatus = getDaoCommandStatus(getState(), 'getCustomerPaymentCards', 'paymentDao' );
+  const succeededInGettingCards =  paymentCardCommandStatus === 'success';
+  const getPaymentCardsCommandInFlight = paymentCardCommandStatus === 'start';
+  if (!succeededInGettingCards && !getPaymentCardsCommandInFlight){
+    dispatch(getPaymentCards());
+  } else if (continueWith){
+    continueWith();
+  }
 };
 
 export const cancelOrder = (orderId, continueWith) => {

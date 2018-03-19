@@ -20,6 +20,7 @@ import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import org.joda.time.Days;
+import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class OrderController {
     private MessagingController messagingController;
     private KeyedTable productTable;
     private TableUpdater tableUpdater;
+    private Double labourerRate;
 
     public OrderController(TableUpdater tableUpdater,
                            DeliveryAddressController deliveryAddressController,
@@ -172,19 +174,33 @@ public class OrderController {
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining
             case JOURNEY_TIME:
-                return (getQuantity(orderItem) * calculateDistance(delivery)) + product.getPrice() + calculateOffload(delivery);
+                return (calculatePricePerDistance(delivery)) + product.getPrice() + (calculateAdditionalLabour(orderItem) / 18 /* labourers cost is a day rate 9hrs we want to see what that costs for 30 mins */);
             case FIXED:
                 return getQuantity(orderItem) * product.getPrice();
             case DURATION:
                 return getQuantity(orderItem) * product.getPrice() * calculateDays(delivery);
+            case JOB_DURATION:
+                return product.getPrice() * calculateHours(delivery) + calculateAdditionalLabour(orderItem);
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
     }
 
-    private int calculateOffload(Delivery delivery){
-        return (delivery.getNumRequiredForOffload() - 1 * 12);
+    private double calculateAdditionalLabour(OrderItem item) {
+        if(item.getQuantity() > 1){
+            return item.getQuantity() - 1 * getLabourerRate();
+        }
+        return 0;
     }
+
+    private double getLabourerRate() {
+        if(this.labourerRate == null) {
+            Product product = getProduct("Labourer");
+            this.labourerRate = product.getPrice();
+        }
+        return this.labourerRate;
+    }
+
 
     private int calculateDays(Delivery delivery) {
         if(delivery.getFrom() == null){
@@ -194,6 +210,17 @@ public class OrderController {
             throw new RuntimeException("Till date must be specified");
         }
        return Days.daysBetween(new LocalDate(delivery.getFrom()), new LocalDate(delivery.getTill())).getDays();
+    }
+
+
+    private int calculateHours(Delivery delivery) {
+        if(delivery.getFrom() == null){
+            throw new RuntimeException("From date must be specified");
+        }
+        if(delivery.getTill() == null){
+            throw new RuntimeException("Till date must be specified");
+        }
+        return Hours.hoursBetween(new LocalDate(delivery.getFrom()), new LocalDate(delivery.getTill())).getHours();
     }
 
     private int getQuantity(OrderItem orderItem) {
@@ -215,7 +242,7 @@ public class OrderController {
         return result;
     }
 
-    private int calculateDistance(Delivery delivery) {
+    private int calculatePricePerDistance(Delivery delivery) {
         if(delivery.getDistance() == 0){
             throw new RuntimeException("Zero delivery distance found for delivery");
         }

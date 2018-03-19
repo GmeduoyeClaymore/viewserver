@@ -32,9 +32,6 @@ class DriverOrderRequests extends Component{
   onChangeTab(index){
     const {selectedContentType, selectedContentTypes, history} = this.props;
     const newSelectedContentType = selectedContentTypes[index];
-    if (this.pagingListView){
-      this.pagingListView.wrappedInstance.reset();
-    }
     if (selectedContentType.contentTypeId !== newSelectedContentType.contentTypeId) {
       history.replace('/Driver/DriverOrderRequests', { contentTypeId: newSelectedContentType.contentTypeId });
     }

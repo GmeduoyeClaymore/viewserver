@@ -241,6 +241,7 @@ Painter,Painter,Sand mist coat sand under coat sand main coat sand final coat,1W
 BrickLayer,Brick Layer,Any one can lay a new brick the reclaimed ones are the charm. Give us four corners and we'll work wonders,1Workers,15000,
 Plumber,Plumber,Buteline copper fit push fit whatever you need,1Workers,15000,
 Plasterer,Plasterer,Keep your tools clean and never leave a ceiling half way works we live by,1Workers,15000,
+Labourer,Labourer,Keep active and move briskly around the site keeping everything running and clean,1Workers,12000,
 HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,4000,
 HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000,
 HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000,

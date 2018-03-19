@@ -1,5 +1,6 @@
 import DataSourceSubscriptionStrategy from '../../common/subscriptionStrategies/DataSourceSubscriptionStrategy';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
+import {hasAnyOptionChanged} from 'common/dao';
 
 export default class ProductDaoContext{
   static OPTIONS = {
@@ -40,6 +41,10 @@ export default class ProductDaoContext{
 
   doesSubscriptionNeedToBeRecreated(previousOptions){
     return !previousOptions;
+  }
+
+  doesDataSinkNeedToBeCleared(previousOptions, newOptions){
+    return hasAnyOptionChanged(previousOptions, newOptions, ['categoryId']);
   }
 
   transformOptions(options){

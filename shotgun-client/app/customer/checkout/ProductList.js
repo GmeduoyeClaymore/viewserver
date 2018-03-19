@@ -39,12 +39,6 @@ class ProductList extends Component{
     };
   }
 
-  componentDidMount(){
-    if (this.pagingListView){
-      this.pagingListView.wrappedInstance.reset();
-    }
-  }
-
   render(){
     const {rowView, search, props} = this;
     const {context, defaultOptions, navigationStrategy} = props;
