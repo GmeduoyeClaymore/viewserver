@@ -4,6 +4,8 @@ import CustomDatePickerIOS from './CustomDatePickerIOS';
 import React, {Component} from 'react';
 import moment from 'moment';
 import {Button, Text, Right} from 'native-base';
+import {isEqual} from 'lodash';
+import Logger from 'common/Logger';
 const IS_ANDROID = Platform.OS === 'android';
 
 export const DatePicker =  (IS_ANDROID ? CustomDatePickerAndroid : CustomDatePickerIOS);
@@ -19,10 +21,23 @@ export default class DatePickerControl extends Component{
     this.state = {};
     this.setDate = this.setDate.bind(this);
     this.setCannedDateOption = this.setCannedDateOption.bind(this);
+    this.attemptToSetCannedDate = this.attemptToSetCannedDate.bind(this);
   }
 
   setDate(date, canned){
     this.setState({date, canned});
+  }
+
+  attemptToSetCannedDate(){
+    const {state} = this;
+    const {canned, date} = state;
+    if (canned){
+      const {resolver} = canned;
+      const cannedDate = resolver(this.props);
+      if (!isEqual(date, cannedDate)){
+        this.setCannedDateOption(canned);
+      }
+    }
   }
 
   setCannedDateOption(canned){
@@ -38,12 +53,12 @@ export default class DatePickerControl extends Component{
   render(){
     const {props, state} = this;
     const {cannedDateOptions = [AsapCannedDateOption]} = props;
-    const {date, canned} = state;
-    const newProps = {...props, date: canned ? canned.resolver(props) : date};
+    const {date} = state;
+    const newProps = {...props, date};
     return <View style={{flex: 1}}>
       <DatePicker {...newProps}/>
       <View style={{marginLeft: 15, alignSelf: 'flex-end', flexDirection: 'row'}}>
-        {cannedDateOptions.map( (opt) => <Button style={{paddingRight: 10, width:70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
+        {cannedDateOptions.map( (opt) => <Button style={{paddingRight: 10, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
           <Text style={{fontSize: 8}}>{opt.name}</Text>
         </Button>)}
       </View>

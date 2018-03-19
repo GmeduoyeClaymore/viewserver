@@ -13,9 +13,9 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Order Summary').
-    delivery(() => 'Delivery Summary').
+    delivery(() => 'Delivery Job').
     personell(({product}) => `${product.name} Job`).
-    rubbish(() => 'Collection Summary').
+    rubbish(() => 'Rubbish Collection').
   property('RejectButtonCaption', 'Reject').
     delivery('Reject Driver').
     personell('Reject Worker').

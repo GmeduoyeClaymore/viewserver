@@ -11,6 +11,7 @@ import UserRelationshipList from './UserRelationshipList';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 import UserRelationshipDetail from './UserRelationshipDetail';
+import {Spinner} from 'native-base';
 
 class UserRelationships extends Component{
   constructor(props){
@@ -121,7 +122,7 @@ class UserRelationships extends Component{
       <View style={styles.container}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
-      {typeof noRelationships != undefined ? <Row style={{flex: 2}}>
+      {typeof noRelationships != 'undefined' ? <Row style={{flex: 2}}>
         <Text>
           {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>

@@ -49,7 +49,7 @@ export const getProductBasedFriendlyOrderStatusName = (summary) => {
   case OrderStatuses.ACCEPTED:
     return product.name + ' assigned';
   case OrderStatuses.PICKEDUP:
-    return product.name + 'On their way';
+    return product.name + ' on their way';
   case OrderStatuses.COMPLETED:
     return 'Complete';
   case OrderStatuses.CANCELLED:

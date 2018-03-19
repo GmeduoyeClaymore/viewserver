@@ -12,10 +12,10 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
-  property('PageTitle', 'Order Summary').
-    delivery('Delivery Summary').
-    personell('Job Summary').
-    rubbish('Rubbish Collection Summary').
+  property('PageTitle', ({product}) => `${product.name} Job`).
+    delivery(() => 'Delivery').
+    personell(({product}) => `${product.name} Job`).
+    rubbish(() => 'Rubbish Collection').
   property('SubmitButtonCaption', 'Create Job').
     delivery('Create Delivery').
     personell('Create Job');
@@ -63,7 +63,7 @@ class OrderConfirmation extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>{resources.PageTitle}</Title></Body>
+        <Body><Title>{resources.PageTitle({product: selectedProduct})}</Title></Body>
       </Header>
       <Content>
         <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={price}/>
