@@ -32,7 +32,7 @@ const DriverSettings = ({history, user}) => {
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
       </Right>
     </Header>
-    <Row style={{height: 35, paddingLeft: 10}}>
+    <Row style={{height: 65, paddingLeft: 10}}>
       <UserStatusControl/>
     </Row>
     <Content padded keyboardShouldPersistTaps="always">
@@ -48,6 +48,10 @@ const DriverSettings = ({history, user}) => {
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateVehicleDetails')}>
           <Text style={styles.text}>Vehicle Details</Text>
           <Icon style={styles.icon} name='drive'/>
+        </ListItem>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/ConfigureServices')}>
+          <Text style={styles.text}>Configure Services</Text>
+          <Icon style={styles.icon} name='two-people'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>

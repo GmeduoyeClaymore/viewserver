@@ -96,9 +96,6 @@ public class UserController {
     public String updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
-            throw new RuntimeException(String.format("The email address %s is already in use", user.getEmail()));
-        }
 
         String userId = getUserId();
         Date now = new Date();
@@ -114,6 +111,7 @@ public class UserController {
                 .addValue("lastModified", now)
                 .addValue("firstName", user.getFirstName())
                 .addValue("lastName", user.getLastName())
+                .addValue("selectedContentTypes", user.getSelectedContentTypes())
                 .addValue("contactNo", user.getContactNo())
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("imageUrl", user.getImageUrl());

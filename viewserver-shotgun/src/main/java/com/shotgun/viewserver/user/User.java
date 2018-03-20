@@ -1,7 +1,10 @@
 package com.shotgun.viewserver.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User{
     private String userId;
     private Date created;
