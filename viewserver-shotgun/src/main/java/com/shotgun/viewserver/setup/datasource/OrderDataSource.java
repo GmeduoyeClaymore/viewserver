@@ -4,6 +4,7 @@ package com.shotgun.viewserver.setup.datasource;
 import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
@@ -14,13 +15,10 @@ import java.util.Arrays;
 /**
  * Created by bennett on 26/09/17.
  */
-public class
-        OrderDataSource {
+public class OrderDataSource {
     public static final String NAME = "order";
 
-    public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/order.csv");
+    public static DataSource getDataSource(String firebaseKeyPath) {
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("orderId", "orderId", ColumnType.String),
@@ -39,7 +37,7 @@ public class
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                dataAdapter,
+                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/order.csv"),
                                 null
                         )
                 )

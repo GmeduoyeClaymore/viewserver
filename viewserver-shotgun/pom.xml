@@ -127,6 +127,11 @@
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
+            <artifactId>viewserver-adapters-firebase</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-common</artifactId>
             <version>0.8.0-SNAPSHOT</version>
         </dependency>
@@ -171,6 +176,12 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.11.250</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>5.9.0</version>
         </dependency>
 
         <dependency>

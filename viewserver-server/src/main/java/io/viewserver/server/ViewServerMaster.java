@@ -71,7 +71,7 @@ public class ViewServerMaster extends ViewServerBase<DataSource> implements IDat
     private static final Logger log = LoggerFactory.getLogger(ViewServerMaster.class);
     private static final String DATASOURCE_DEPENDENCY_PREFIX = "/" + IDataSourceRegistry.TABLE_NAME + "/";
     protected final DimensionMapper dimensionMapper = new DimensionMapper();
-    private final H2LocalStorageDataAdapterFactory localStorageDataAdapterFactory;
+    protected ILocalStorageDataAdapterFactory localStorageDataAdapterFactory;
     private ExecutionPlanRunner executionPlanRunner;
     protected ReportRegistry reportRegistry;
     protected MultiContextHandlerRegistry multiContextHandlerRegistry;

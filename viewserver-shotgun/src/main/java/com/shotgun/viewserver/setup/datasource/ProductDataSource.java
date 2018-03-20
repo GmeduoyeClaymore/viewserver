@@ -3,6 +3,7 @@
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -14,9 +15,7 @@ public class
 ProductDataSource {
     public static final String NAME = "product";
 
-    public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/product.csv");
+    public static DataSource getDataSource(String firebaseKeyPath) {
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("productId", "productId", ColumnType.String),
@@ -24,7 +23,6 @@ ProductDataSource {
                         new Column("description", "description", ColumnType.String),
                         new Column("categoryId", "categoryId", ColumnType.String),
                         new Column("price", "price", ColumnType.Double),
-                        new Column("rating", "rating", ColumnType.Double),
                         new Column("imageUrl", "imageUrl", ColumnType.String)
                 ))
                 .withKeyColumns("productId");
@@ -34,7 +32,7 @@ ProductDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                dataAdapter,
+                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/product.csv"),
                                 null
                         )
                 )

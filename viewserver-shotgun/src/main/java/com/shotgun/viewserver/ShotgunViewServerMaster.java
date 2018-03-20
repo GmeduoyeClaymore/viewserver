@@ -19,6 +19,7 @@ import com.shotgun.viewserver.order.OrderController;
 import com.shotgun.viewserver.order.OrderItemController;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
+import io.viewserver.server.FirebaseInstallingDataAdapterFactory;
 import io.viewserver.server.IViewServerMasterConfiguration;
 import io.viewserver.server.ViewServerMaster;
 
@@ -32,6 +33,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         super(name, configuration);
         this.getServerExecutionContext().getFunctionRegistry().register("containsProduct",ContainsProduct.class);
         isMock = configuration.isMock();
+        localStorageDataAdapterFactory = new FirebaseInstallingDataAdapterFactory("firebase//shotgunDelivery.json");
     }
 
     @Override

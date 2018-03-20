@@ -44,7 +44,8 @@ import java.util.Map;
  */
 public abstract class BootstrapperBase implements IBootstrapper {
     private static final Logger log = LoggerFactory.getLogger(BootstrapperBase.class);
-    private IJsonSerialiser serialiser = new JacksonSerialiser();
+    protected IJsonSerialiser serialiser = new JacksonSerialiser();
+
     public static void bootstrap(IViewServerMasterConfiguration configuration) {
         Class<?> bootstrapperClass;
         String bootstrapperClassName = configuration.getBootstrapperClass();

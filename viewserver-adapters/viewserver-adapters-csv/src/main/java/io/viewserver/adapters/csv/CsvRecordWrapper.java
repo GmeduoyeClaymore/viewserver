@@ -69,7 +69,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
         this.startDate = startTime.withMillisOfDay(0);
     }
 
-    void setDataSource(DataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

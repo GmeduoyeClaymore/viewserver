@@ -55,6 +55,11 @@
 
         <dependency>
             <groupId>io.viewserver</groupId>
+            <artifactId>viewserver-adapters-firebase</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-h2</artifactId>
         </dependency>
 

@@ -86,7 +86,7 @@ export default class CustomDatePickerAndroid extends PureComponent {
     try {
       const { action, hour, minute } = await TimePickerAndroid.open({
         hour: moment(this.props.date).hour(),
-        minute: moment(this.props.date).minute(),
+        minute: 0,
         is24Hour: this.props.is24Hour,
       });
       if (action !== TimePickerAndroid.dismissedAction) {

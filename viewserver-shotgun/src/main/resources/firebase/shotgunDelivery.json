@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "shotgundelivery-188314",
+  "private_key_id": "e8ad8c433fa9d6b506b7df613436fdbec2176df9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCnjAijVEBALCdk\nOeTde5PKeDj2rnmG02kkqU/URMeNhvNceoi73nhpChLT63mj9xFFV8Cov0zfPLCg\nCD30MMZnHwiDEE9dpIrnNCK9MqV5yOEO0GzmzHp9nVDucjdfVzsQeq3czMk2WM1I\n3EGu2Lj1juhy/X7eMD/NkbUJvmdpcmUHwJcK+tjcZScnxDuqjxcemK053PZHU2wy\nO0tl3JbSDUlH6adGlqIyCBLTqvu3/2XLT5/cDmK9yDdxKub0qap22jiFE7n7/Xsr\nQY0T43kH/gFuf6nu0Zya7TnruB3c2uvB9dWdQV5/u4BgnmT98S4j9R1lw/5FG70n\nn6rprRWrAgMBAAECggEAB2DNSJP/OFQ5b9p0z6QPgA0HRSWtyFgq+yhRkaFtwDe/\nI8VpnAxR9R4ycg6ejq/knM8eds/lzLbZeFKkl8pGEmh1cYAYXqFOVJwhI3/FdbV4\n47Qd95PtmPaCh92TvqkSuskMOvrxqWkDsT+xzMdSbc3bQqUTHym0xZKzDDjMSQJk\nRAyASvjQIbBRdy3mQJzrMEoLlR1sp4zLXk7tg9uFsjXPLvMuMP9uNZcj/wo2Zhey\nXYKJCIRPlDMQn1HqVPwJa1SE9I7FqjxoOYImG4zaNm5nzHt18dQOgKNuiQP++SFg\n4WaNPmPt1PtaBruhw6e2Xk84hghwy6iGgdMZMyatoQKBgQDml5TfsPIsAdHGr6YW\nxKQ1WTgnOHfkwHB3/I5YIWIOxLClWlHFqiqHzTSaBbxfLxlK2szCLdzPlKx+nhRH\nwCr1EPaebw02s85yRsZAQwQU5vuFE83QD3OueCUe0wFRxHvcojZE+dYVGaMFcQjZ\nTrclkuWk8A7ojPg57xShVZWMQwKBgQC6AhwS8Oj/qK8gpZcv2hrMuszuZV0bBUAD\nA57F9XCi3VQASlhyAWasfNV1xcC2aMeM5+psk/7T3ooso1Ff98nk0nfjytQb8OR7\ngXRqStgjcEGfZwBnr0oH+c5jcHvmEwSUd0LKNmLtxoAssP1JCtDUDUhYPNnpiS+P\nySpvvlNueQKBgQCqEDU93LRefGEIVdb6h8BLkCd31Y+m576K33rjyIsXNTzKVphk\nXaHMUi1vQreww3211TSaKVTmy1GEeHWgjTuhTgd0xZZLN8UURtpD3qkN+WSauwZZ\nYmwAyp8l4pzgfzaSfBfmOxQGr8epZboO+pzcW0B+qoV0QTN5FrhyXDpVHQKBgQCo\nTDpchO88SsLR1iG6ISw4axf652nbhd+KGp9w24cjRQC5Fot583yTuotk+R1JrfpH\nqpq3zRw3VNZOVyLMoyVgTXI+gAl0knwYp2POvJNdVTd647ZBGh/woXy1ClSAMlrl\nfhbHYXgXTZAxX558lTWnd7EqbTx5ii+neEtWOa3BeQKBgG/mz/LNBI+aq4wvwTmn\nF+j2uZ2rIphIUJhzziZ4v1B4cTW/AGikX66bf4vAnNUDrW/phgnS4tcR9AfUmpF6\n82UBQheso5AWWd/ygmZKe2rGa3fzT9DIDKw1GWwN5VLsXXfHBK/e8/IqROrraA8X\nknOeLsLHk7VA2hzMyqLANbgg\n-----END PRIVATE KEY-----\n",
+  "client_email": "shotgundelivery-188314@appspot.gserviceaccount.com",
+  "client_id": "101735095207037189127",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/shotgundelivery-188314%40appspot.gserviceaccount.com"
+}
