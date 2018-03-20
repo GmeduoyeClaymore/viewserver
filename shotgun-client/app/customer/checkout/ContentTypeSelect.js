@@ -32,7 +32,7 @@ class ContentTypeSelect extends Component{
     return (
       <Container>
         <Content padded>
-          <View>
+          <View style={{marginTop: 25}}>
             <H1 style={styles.h1}>Start a new job</H1>
             <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
           </View>

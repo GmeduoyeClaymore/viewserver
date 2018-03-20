@@ -51,7 +51,7 @@ const DriverSettings = ({history, user}) => {
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/ConfigureServices')}>
           <Text style={styles.text}>Configure Services</Text>
-          <Icon style={styles.icon} name='two-people'/>
+          <Icon style={styles.icon} name='dashed'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>
