@@ -203,7 +203,7 @@ public class DataLoader implements IDataLoader {
         snapshotSize = dataAdapter.getRecords(dataQueryProvider != null ? dataQueryProvider.getSnapshotQuery() : null, consumer);
     }
 
-    protected void addOrUpdateRecord(IRecord record, boolean isSnapshot) {
+    public void addOrUpdateRecord(IRecord record, boolean isSnapshot) {
         PooledItem<Record> pendingRecord = getRecordPool().take();
         pendingRecord.getItem().initialiseFromRecord(record);
         pendingRecords.add(pendingRecord);

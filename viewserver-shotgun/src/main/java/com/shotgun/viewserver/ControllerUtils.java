@@ -203,20 +203,6 @@ public class ControllerUtils{
         return (ITable)table;
     }
 
-    public static Observable<IOperator> getOperatorObservable(String tableName){
-        ICatalog systemCatalog = ControllerContext.Current().getPeerSession().getSystemCatalog();
-        return systemCatalog.getOperatorObservable(tableName);
-    }
-
-    private static boolean isOperatorNamed(OperatorEvent ev, String tableName) {
-        if(ev.getEventType().equals(EventType.ROW_ADD)){
-            Map<String,Object> result = (Map<String, Object>) ev.getEventData();
-            String nameFromColumn = (String) result.get(CatalogOutput.PATH_COLUMN);
-            return nameFromColumn.equals(tableName);
-        }
-        return false;
-    }
-
     public static KeyedTable getKeyedTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
         if (!(table instanceof KeyedTable)) {

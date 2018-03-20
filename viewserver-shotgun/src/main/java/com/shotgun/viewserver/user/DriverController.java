@@ -21,6 +21,9 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.IDataLoader;
+import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.*;
 import io.viewserver.reactor.IReactor;
@@ -32,7 +35,7 @@ import org.slf4j.LoggerFactory;
 @Controller(name = "driverController")
 public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
-    private TableUpdater tableUpdater;
+    private IDataSourceRegistry dataSourceRegistry;
     private PaymentController paymentController;
     private MessagingController messagingController;
     private UserController userController;
@@ -44,7 +47,7 @@ public class DriverController {
     private IReactor reactor;
     private boolean isMock;
 
-    public DriverController(TableUpdater tableUpdater,
+    public DriverController(IDataSourceRegistry dataSourceRegistry,
                             PaymentController paymentController,
                             MessagingController messagingController,
                             UserController userController,
@@ -55,7 +58,7 @@ public class DriverController {
                             NexmoController nexmoController,
                             IReactor reactor,
                             boolean isMock) {
-        this.tableUpdater = tableUpdater;
+        this.dataSourceRegistry = dataSourceRegistry;
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
@@ -75,7 +78,6 @@ public class DriverController {
                                  @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount
 
     ){
-
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
             throw new RuntimeException("Already  user registered for email " + user.getEmail());
@@ -123,6 +125,8 @@ public class DriverController {
     @ControllerAction(path = "acceptOrder", isSynchronous = true)
     public String acceptOrder(@ActionParam(name = "orderId")String orderId){
         String driverId = getUserId();
+        IDataLoader orderDataLoader = ((DataSource)dataSourceRegistry.get("order")).getDataLoader();
+        IDataLoader deliveryDataLoader = ((DataSource)dataSourceRegistry.get("delivery")).getDataLoader();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
 
         int currentRow = orderTable.getRow(new TableKey(orderId));
@@ -136,10 +140,10 @@ public class DriverController {
         }
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.ACCEPTED.name());
-        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        orderDataLoader.addOrUpdateRecord(orderRecord, false);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", driverId);
-        tableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        deliveryDataLoader.addOrUpdateRecord(deliveryRecord, false);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.ACCEPTED.name());
         return orderId;
@@ -147,6 +151,7 @@ public class DriverController {
 
     @ControllerAction(path = "startOrder", isSynchronous = true)
     public String startOrder(@ActionParam(name = "orderId")String orderId){
+        IDataLoader orderDataLoader = ((DataSource)dataSourceRegistry.get("order")).getDataLoader();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         String driverId = getUserId();
 
@@ -154,7 +159,7 @@ public class DriverController {
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PICKEDUP.name());
-        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        orderDataLoader.addOrUpdateRecord(orderRecord, false);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
 
@@ -167,6 +172,7 @@ public class DriverController {
 
     @ControllerAction(path = "completeOrder", isSynchronous = true)
     public String completeOrder(@ActionParam(name = "orderId")String orderId){
+        IDataLoader orderDataLoader = ((DataSource)dataSourceRegistry.get("order")).getDataLoader();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         String driverId = getUserId();
@@ -181,16 +187,18 @@ public class DriverController {
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
         Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
-      /*  IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
-        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
+        orderDataLoader.addOrUpdateRecord(orderRecord, false);
 
-        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());*/
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
         return orderId;
     }
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(@ActionParam(name = "orderId")String orderId){
+        IDataLoader orderDataLoader = ((DataSource)dataSourceRegistry.get("order")).getDataLoader();
+        IDataLoader deliveryDataLoader = ((DataSource)dataSourceRegistry.get("delivery")).getDataLoader();
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
         String driverId = getUserId();
 
@@ -199,10 +207,10 @@ public class DriverController {
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
-        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        orderDataLoader.addOrUpdateRecord(orderRecord, false);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");
-        tableUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        deliveryDataLoader.addOrUpdateRecord(deliveryRecord, false);
 
         notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;

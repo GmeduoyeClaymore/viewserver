@@ -35,6 +35,7 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
 
     @Override
     public int getRecords(String query, Consumer<IRecord> consumer) {
+        FirebaseUtils.deleteCollection(getCollection(), 1000);
         loadRecordsFromCsv();
         return super.getRecords(query, consumer);
     }
