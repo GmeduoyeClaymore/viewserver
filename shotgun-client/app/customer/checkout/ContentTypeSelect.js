@@ -1,100 +1,99 @@
 import React, {Component} from 'react';
-import {Text, Content, H1, View} from 'native-base';
-import { Image, TouchableOpacity} from 'react-native';
-import Swiper from 'react-native-swiper';
+import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
+import { Image} from 'react-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
-
+import yup from 'yup';
+import {ValidatingButton, Icon} from 'common/components';
 import {resolveContentTypeIcon} from 'common/assets';
 
 class ContentTypeSelect extends Component{
   constructor(props){
     super(props);
-  }
-
-  renderContentType(contentType, i){
-    const {context} = this.props;
-    const {selectedContentType = {}} = context.state;
-    return <View key={i} style={{flex: 1, justifyContent: 'center'}}>
-      <TouchableOpacity style={{height: 'auto', borderWidth: 0, justifyContent: 'center', paddingLeft: 25, paddingRight: 30,  flex: 4}} large active={contentType.contentTypeId == selectedContentType.contentTypeId} onPress={() => this.selectContentType(contentType)}>
-        <Image resizeMode="contain" source={resolveContentTypeIcon(contentType)}  style={styles.picture}/>
-      </TouchableOpacity>
-      <View style={{flex: 2}}>
-        <Text style={styles.contentTypeSelectTextRow}>{contentType.name}</Text>
-        <Text style={styles.contentTypeSelectTextRowSummary}>{contentType.description}</Text>
-      </View>
-    </View>;
+    this.startOrder = this.startOrder.bind(this);
+    this.selectContentType = this.selectContentType.bind(this);
   }
 
   selectContentType(selectedContentType){
-    const {context, navigationStrategy} = this.props;
+    const {context} = this.props;
     const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
     context.setState({...INITIAL_STATE, selectedContentType, orderItem});
+  }
+
+  startOrder(){
+    const {context, navigationStrategy} = this.props;
+    const {selectedContentType} = context.state;
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next();
   }
 
   render(){
-    const {contentTypes = []} = this.props;
+    const {contentTypes = [], context = {}} = this.props;
+    const {selectedContentType} = context.state;
     return (
-      <Content padded contentContainerStyle={styles.container}>
-        <View>
-          <H1 style={styles.h1}>Start a new job</H1>
-          <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
-        </View>
-        <View style={styles.contentTypeSelectView}>
-          <Swiper style={styles.wrapper} showsButtons={true}>
-            {contentTypes.map((v, i) => this.renderContentType(v, i))}
-          </Swiper>
-        </View>
-      </Content>
+      <Container>
+        <Content padded>
+          <View>
+            <H1 style={styles.h1}>Start a new job</H1>
+            <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
+          </View>
+          <Grid>
+            <Row style={{flexWrap: 'wrap'}}>
+              {contentTypes.map((v, i) => {
+                return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+                  <Button style={{height: 'auto'}} large active={selectedContentType.contentTypeId == v.contentTypeId} onPress={() => this.selectContentType(v)}>
+                    <Icon name={v.imageUrl || 'dashed'}/>
+                  </Button>
+                  <Text style={styles.contentTypeSelectText}>{v.name}</Text>
+                </View>;
+              })}
+            </Row>
+          </Grid>
+          <Text note style={{marginTop: 20}}>{selectedContentType !== undefined ? selectedContentType.description : null}</Text>
+        </Content>
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.startOrder()}
+          validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedContentType}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
+      </Container>
     );
   }
 }
 
+const validationSchema = {
+  contentTypeId: yup.string().required()
+};
+
 const styles = {
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30,
+    fontSize: 13
+  },
+  contentTypeSelectText: {
+    width: '100%',
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
+    textAlign: 'center'
+  },
   h1: {
     justifyContent: 'center',
     marginBottom: 30
-  },
-  subTitle: {
-    justifyContent: 'center',
-    textAlign: 'center'
   },
   wrapper: {
     height: 600,
     justifyContent: 'center'
   },
   picture: {
-    width: 300,
-    height: 280,
+    width: 90,
+    height: 90,
     borderWidth: 0
   },
   container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center'
-  },
-  contentTypeSelectView: {
-    flex: 3,
-    justifyContent: 'flex-start',
-    paddingTop: 30
-  },
-  contentTypeSelectTextRow: {
-    justifyContent: 'center',
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingTop: 10,
-    paddingBottom: 10
-  },
-  contentTypeSelectTextRowSummary: {
-    justifyContent: 'center',
-    fontSize: 10,
-    paddingTop: 10,
-    textAlign: 'center'
-  },
-  contentTypeSelectText: {
-    
   }
 };
 
