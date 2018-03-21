@@ -88,6 +88,6 @@ export class ResourceDictionary{
     if (!Object.keys(dictionary).length){
       return this.dictionaries.DEFAULT;
     }
-    return dictionary;
+    return {...this.dictionaries.DEFAULT, ...dictionary};
   }
 }
