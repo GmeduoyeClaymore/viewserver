@@ -13,9 +13,7 @@ public class FirebaseUtils{
     public static void deleteCollection(CollectionReference collection) {
         try {
             WriteBatch batch = collection.getFirestore().batch();
-            // retrieve a small batch of documents to avoid out-of-memory errors
             ApiFuture<QuerySnapshot> future = collection.get();
-            // future.get() blocks on document retrieval
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
                 batch.delete(document.getReference());

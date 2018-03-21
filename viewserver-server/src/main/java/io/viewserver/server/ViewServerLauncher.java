@@ -76,7 +76,7 @@ public class ViewServerLauncher<TConfiguration extends IViewServerConfiguration>
         int noSlaves = configuration.getNumberOfSlaves();
 
         if (isMaster) {
-            ViewServerMaster viewServerMaster = masterFactory.createMaster("master", configuration);
+            ViewServerMasterBase viewServerMaster = masterFactory.createMaster("master", configuration);
             viewServerMaster.run();
         }
 
@@ -106,6 +106,6 @@ public class ViewServerLauncher<TConfiguration extends IViewServerConfiguration>
     }
 
     public interface IViewServerMasterFactory<TConfiguration extends IViewServerConfiguration> {
-        ViewServerMaster createMaster(String name, TConfiguration viewServerConfiguration);
+        ViewServerMasterBase createMaster(String name, TConfiguration viewServerConfiguration);
     }
 }

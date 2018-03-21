@@ -39,11 +39,6 @@ public class InProcessViewServerContext implements IViewServerContext {
     public String bootstrapperClass = DefaultBootstrapper.class.getName();
     public IViewServerMasterConfiguration masterConfiguration = new IViewServerMasterConfiguration() {
         @Override
-        public boolean isMock() {
-            return false;
-        }
-
-        @Override
         public String getBootstrapperClass() {
             return bootstrapperClass;
         }

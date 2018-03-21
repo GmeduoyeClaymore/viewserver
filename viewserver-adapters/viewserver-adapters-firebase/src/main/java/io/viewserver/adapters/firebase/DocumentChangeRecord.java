@@ -26,16 +26,12 @@ public class DocumentChangeRecord extends Record {
         values.clear();
 
         for (ColumnHolder columnHolder : schema.getColumnHolders()) {
-            try {
-                ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
-                if (dataType == null) {
-                    continue;
-                }
-
-                values.put(columnHolder.getName(), getFirebaseDocumentValue(dataType, columnHolder.getName(), doc));
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
+            ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
+            if (dataType == null) {
+                continue;
             }
+
+            values.put(columnHolder.getName(), getFirebaseDocumentValue(dataType, columnHolder.getName(), doc));
         }
     }
 

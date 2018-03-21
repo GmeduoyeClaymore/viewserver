@@ -11,7 +11,9 @@
     <option name="ENV_VARIABLES" />
     <option name="PASS_PARENT_ENVS" value="true" />
     <module name="viewsserver-shotgun" />
-    <envs />
+    <envs>
+      <env name="viewserver.configurationFile" value="config-test.xml" />
+    </envs>
     <RunnerSettings RunnerId="Cover" />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

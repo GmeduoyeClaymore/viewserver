@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -10,30 +10,30 @@ public class VehicleDetailsControllerTest {
 
     private VehicleDetailsController sut;
 
-    public void createSut(boolean mock){
-        sut = new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c", mock));
+    public void createSut(){
+        sut = new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c"));
     }
 
     @Test
     public void canRetrieveDetails(){
-        createSut(false);
+        createSut();
         System.out.println(sut.getDetails("YA61AYB"));
     }
 
     @Test
     public void canRetrieveMockDetails(){
-        createSut(true);
+        createSut();
         System.out.println(sut.getDetails("YA61AYB"));
     }
     @Test(expected = RuntimeException.class)
     public void EXCEPTION_invalidRegistrationNumber(){
-        createSut(false);
+        createSut();
         System.out.println(sut.getDetails("YA57MNX"));
     }
 
     @Test(expected = RuntimeException.class)
     public void EXCEPTION_invalidVehicleType(){
-        createSut(false);
+        createSut();
         System.out.println(sut.getDetails("AU06KUC"));
     }
 

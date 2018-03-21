@@ -28,7 +28,6 @@ public class FirebaseConnectionFactory{
             GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(credentials)
-                    .setProjectId("shotgundelivery-188314")
                     .build();
             FirebaseApp.initializeApp(options);
 

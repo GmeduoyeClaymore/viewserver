@@ -1,8 +1,6 @@
 package io.viewserver.adapters.firebase;
 
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.WriteBatch;
-import com.google.cloud.firestore.WriteResult;
 import io.viewserver.adapters.csv.CsvRecordWrapper;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.DataSource;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
+public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
     private static final Logger log = LoggerFactory.getLogger(FirebaseCsvDataAdapter.class);
     private CsvRecordWrapper recordWrapper;
     private String fileName;
@@ -72,20 +70,15 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
         recordWrapper.setRecord(record);
         String documentId = getCsvDocumentId(recordWrapper);
         Map<String, Object> docData = getDocumentData(recordWrapper);
-        try {
-            batch.set( getCollection().document(documentId), docData);
-        }catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
+        batch.set(getCollection().document(documentId), docData);
     }
 
-    private String getCsvDocumentId(IRecord record){
+    private String getCsvDocumentId(IRecord record) {
         List<String> values = new ArrayList<>();
 
-        for(String key: tableKeyDefinition.getKeys()){
+        for (String key : tableKeyDefinition.getKeys()) {
             values.add(record.getValue(key).toString());
         }
-
         return String.join("_", values);
     }
 
@@ -95,10 +88,10 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
         recordWrapper.setDataSource(dataSource);
     }
 
-    private Map<String, Object> getDocumentData(IRecord record){
+    private Map<String, Object> getDocumentData(IRecord record) {
         Map<String, Object> docData = new HashMap<>();
 
-        for(Column col: dataSource.getSchema().getColumns()){
+        for (Column col : dataSource.getSchema().getColumns()) {
             docData.put(col.getName(), record.getValue(col.getName()));
         }
 

@@ -6,6 +6,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.io.Resources;
+import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.setup.report.*;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
@@ -35,8 +36,7 @@ import java.util.Map;
  */
 public class ShotgunBootstrapper extends BootstrapperBase {
     private static final Logger log = LoggerFactory.getLogger(ShotgunBootstrapper.class);
-    String firebaseKeyPath = "firebase//shotgunDelivery.json";
-    private final FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory("firebase//shotgunDelivery.json");
+    String firebaseKeyPath;
 
     @Override
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
@@ -77,6 +77,8 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     @Override
     public void run(IViewServerMasterConfiguration configuration) {
         log.info("Bootstrapping local database");
+        firebaseKeyPath = ((IShotgunViewServerConfiguration) configuration).getFirebaseKeyPath();
+        FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
         setup(firebaseConnectionFactory.getConnection());
     }
 

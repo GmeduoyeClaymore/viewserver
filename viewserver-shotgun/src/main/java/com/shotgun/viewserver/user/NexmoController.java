@@ -30,16 +30,14 @@ public class NexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
     private Catalog systemCatalog;
-    private final String apiKey;
-    private final String apiSecret;
+    private NexmoControllerKey nexmoControllerKey;
     private final FirebaseDatabaseUpdater firebaseDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret, FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
+    public NexmoController(int httpPort, Catalog systemCatalog, NexmoControllerKey nexmoControllerKey, FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
+        this.nexmoControllerKey = nexmoControllerKey;
         this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
         this.createHttpServer(httpPort);
     }
@@ -52,8 +50,8 @@ public class NexmoController {
         try {
 
             HashMap<String, String> params = new HashMap<>();
-            params.put("api_key", apiKey);
-            params.put("api_secret", apiSecret);
+            params.put("api_key", nexmoControllerKey.getKey());
+            params.put("api_secret", nexmoControllerKey.getSecret());
             params.put("number", phoneNumber);
             params.put("country", "GB");
 

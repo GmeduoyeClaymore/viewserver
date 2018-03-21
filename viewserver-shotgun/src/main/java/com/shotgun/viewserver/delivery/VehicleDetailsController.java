@@ -8,8 +8,6 @@ import io.viewserver.controller.ControllerAction;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -77,9 +75,6 @@ public class VehicleDetailsController {
     }
 
     private String getJSON(VehicleDetailsQuery query) {
-        if(apiKey.isMock() && !query.getRegNo().toUpperCase().contains("A")){
-            throw new RuntimeException("Limited API reg no should contain the letter A");
-        }
         return ControllerUtils.execute("GET", VEHICLE_DETAILS_QUERY_URL, query.toQueryString(apiKey.getKey()));
     }
 
