@@ -126,11 +126,13 @@ class UserRelationships extends Component{
         <Text>
           {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
-        <Text style={{marginLeft: 15}}>
+      </Row> : null}
+      <Row style={{flex: 2}}>
+        <Text style={{marginRight: 5, paddingTop: 5}}>
           {parentState.showAll ? 'Show Just Friends' : 'Show Everyone'}
         </Text>
         <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
-      </Row> : null}
+      </Row>
       <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
@@ -168,7 +170,7 @@ const styles = {
   container: {
     flex: 1,
     marginTop: 10,
-    marginLeft: 10,
+    marginLeft: 0,
     marginRight: 10,
     alignItems: 'stretch',
     justifyContent: 'center',

@@ -85,7 +85,7 @@ class UsersForProductMap extends Component{
 
     return <Container >
       <Grid>
-        <Row size={89}>
+        <Row size={89} style={{marginTop: 15}}>
           <ErrorRegion errors={errors}>
             <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           </ErrorRegion>

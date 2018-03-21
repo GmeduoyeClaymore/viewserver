@@ -55,6 +55,8 @@ export const resolveResourceFromProps = (props, resourceDictionary, caller) => {
     caller.resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
   } else if (contentType){
     caller.resources = resourceDictionary.resolve(contentType.contentTypeId);
+  } else {
+    throw new Error('Could not resolve resource dictionary as no content type was found in props');
   }
 };
 

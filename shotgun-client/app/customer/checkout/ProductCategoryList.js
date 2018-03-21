@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
-import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
+import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState, resetSubscriptionAction} from 'common/dao';
@@ -96,11 +96,11 @@ class ProductCategoryList extends Component{
   }
 }
 
-const validationSchema = {
+export const validationSchema = {
   productId: yup.string().required(),
 };
 
-const mapStateToProps = (state, initialProps) => {
+export const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
   const {productCategory: rootProductCategory} = selectedContentType;
@@ -116,6 +116,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     ...getNavigationProps(initialProps),
     rootProductCategory,
+    selectedContentType,
     selectedProduct,
     selectedCategory: selectedCategory || rootProductCategory,
     busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
