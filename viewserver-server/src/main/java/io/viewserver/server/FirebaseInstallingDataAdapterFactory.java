@@ -48,7 +48,7 @@ public class FirebaseInstallingDataAdapterFactory implements ILocalStorageDataAd
     public IDataLoader getAdapter(String name, String tableName, int batchSize) {
         return new DataLoader(
                 name,
-                new FirebaseDataAdapter(firebaseKeyPath, tableName),
+                new FirebaseDataAdapter(firebaseKeyPath, tableName.toLowerCase()),
                 null
         ).withBatchSize(batchSize);
     }
