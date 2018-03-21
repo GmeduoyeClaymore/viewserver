@@ -19,7 +19,7 @@ resourceDictionary.
   property('SubmitButtonCaption', 'Create Job').
     delivery('Create Delivery').
     personell('Create Job');
-
+/*eslint-enable */
 class OrderConfirmation extends Component{
   constructor(props){
     super(props);

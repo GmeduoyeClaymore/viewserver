@@ -49,8 +49,8 @@ class ProductCategoryList extends Component{
 
   goToCategory(selectedCategory){
     const {context} = this.props;
-    const {selectedCategory: parentSelectedCateogy} = context.state;
-    context.setState({selectedCategory, parentSelectedCateogy});
+    const {selectedCategory: parentSelectedCategory} = context.state;
+    context.setState({selectedCategory, parentSelectedCategory});
   }
 
   render(){
