@@ -18,7 +18,7 @@ public class PhoneNumberDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/phoneNumber.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/phoneNumber.csv"),
                                 null
                         )
                 )

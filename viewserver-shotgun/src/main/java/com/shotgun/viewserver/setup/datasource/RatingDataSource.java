@@ -20,7 +20,7 @@ public class RatingDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/rating.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/rating.csv"),
                                 null
                         )
                 )

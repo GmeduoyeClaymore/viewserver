@@ -2,7 +2,7 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.user.User;
@@ -36,11 +36,11 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
     private ICatalog systemcatalog;
 
-    public LoginController(FirebaseDatabaseUpdater firebaseDatabaseUpdater, ICatalog systemcatalog) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+    public LoginController(IDatabaseUpdater iDatabaseUpdater, ICatalog systemcatalog) {
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.systemcatalog = systemcatalog;
     }
 
@@ -84,7 +84,7 @@ public class LoginController {
                 .addValue("userId", user.getUserId())
                 .addValue("status", UserStatus.ONLINE.name());
 
-        return firebaseDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
+        return iDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
     }
 
     private User setupContext(Map<String,Object> userRecord, IPeerSession session) {

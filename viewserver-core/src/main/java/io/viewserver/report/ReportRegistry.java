@@ -73,7 +73,7 @@ public class ReportRegistry {
         this.executionContext = executionContext;
         this.dataLoaderExecutor = dataLoaderExecutor;
 
-        this.dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "reports", 100);
+        this.dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "Reports", 100);
     }
 
     public void register(ReportDefinition report) {

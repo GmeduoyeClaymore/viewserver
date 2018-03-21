@@ -78,8 +78,12 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     public void run(IViewServerMasterConfiguration configuration) {
         log.info("Bootstrapping local database");
         firebaseKeyPath = ((IShotgunViewServerConfiguration) configuration).getFirebaseKeyPath();
-        FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
-        setup(firebaseConnectionFactory.getConnection());
+        if(!"MOCK".equals(firebaseKeyPath)) {
+            FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
+            setup(firebaseConnectionFactory.getConnection());
+        }else{
+            super.run(configuration);
+        }
     }
 
     private void setup(Firestore db) {

@@ -21,7 +21,7 @@ public class DeliveryAddressDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/deliveryAddress.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/deliveryAddress.csv"),
                                 null
                         )
                 )

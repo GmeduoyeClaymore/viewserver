@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -16,10 +16,10 @@ import java.util.Date;
 @Controller(name = "deliveryAddressController")
 public class DeliveryAddressController {
     private static final Logger log = LoggerFactory.getLogger(DeliveryAddressController.class);
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
 
-    public DeliveryAddressController(FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+    public DeliveryAddressController(IDatabaseUpdater iDatabaseUpdater) {
+        this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
     @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
@@ -51,7 +51,7 @@ public class DeliveryAddressController {
                 .addValue("latitude", deliveryAddress.getLatitude())
                 .addValue("longitude", deliveryAddress.getLongitude());
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
 
         return deliveryAddress.getDeliveryAddressId();
     }

@@ -21,7 +21,7 @@ public class
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/vehicle.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/vehicle.csv"),
                                 null
                         )
                 )

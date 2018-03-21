@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.sun.net.httpserver.HttpExchange;
@@ -31,14 +31,14 @@ public class NexmoController {
     private final int httpPort;
     private Catalog systemCatalog;
     private NexmoControllerKey nexmoControllerKey;
-    private final FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, NexmoControllerKey nexmoControllerKey, FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
+    public NexmoController(int httpPort, Catalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.nexmoControllerKey = nexmoControllerKey;
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.createHttpServer(httpPort);
     }
 
@@ -156,7 +156,7 @@ public class NexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                firebaseDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
             }
         }
     }

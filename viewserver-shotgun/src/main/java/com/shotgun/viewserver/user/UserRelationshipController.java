@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 @Controller(name = "userRelationshipController")
 public class UserRelationshipController {
     private static final Logger log = LoggerFactory.getLogger(UserRelationshipController.class);
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
 
-    public UserRelationshipController(FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+    public UserRelationshipController(IDatabaseUpdater iDatabaseUpdater) {
+        this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
     @ControllerAction(path = "requestUserRelationship", isSynchronous = true)
@@ -34,7 +34,7 @@ public class UserRelationshipController {
                     .addValue("type", type.name())
                     .addValue("status", UserRelationshipStatus.REQUESTED.name());
 
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
             return value;
 
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class UserRelationshipController {
                     .addValue("relationshipId", relationshipId)
                     .addValue("status", status.name());
 
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
         } catch (Exception e) {
             log.error("There was a problem updating user relationship status", e);
             throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class UserRelationshipController {
                     .addValue("relationshipId", relationshipId)
                     .addValue("type", type.name());
 
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
         } catch (Exception e) {
             log.error("There was a problem updating user relationship type", e);
             throw new RuntimeException(e);

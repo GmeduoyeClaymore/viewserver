@@ -32,7 +32,7 @@ ProductDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/product.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/product.csv"),
                                 null
                         )
                 )

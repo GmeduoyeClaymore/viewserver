@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
@@ -14,12 +14,12 @@ import io.viewserver.controller.ControllerContext;
 @Controller(name = "orderItemController")
 public class OrderItemController {
 
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
     private ImageController imageController;
 
-    public OrderItemController(FirebaseDatabaseUpdater firebaseDatabaseUpdater,
+    public OrderItemController(IDatabaseUpdater iDatabaseUpdater,
                                ImageController imageController) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.imageController = imageController;
     }
 
@@ -48,7 +48,7 @@ public class OrderItemController {
         .addValue("quantity", orderItem.getQuantity())
         .addValue("orderItemId", orderItem.getOrderItemId());
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
 
         return orderItem.getOrderItemId();
     }

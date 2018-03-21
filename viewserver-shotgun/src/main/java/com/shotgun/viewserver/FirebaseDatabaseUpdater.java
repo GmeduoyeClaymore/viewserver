@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FirebaseDatabaseUpdater {
+public class FirebaseDatabaseUpdater implements IDatabaseUpdater {
     private final IReactor reactor;
     private FirebaseConnectionFactory connectionFactory;
     private String firebaseKeyPath;
@@ -33,11 +33,13 @@ public class FirebaseDatabaseUpdater {
         this.reactor = executionContext.getReactor();
     }
 
+    @Override
     public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record){
         KeyedTable table = ControllerUtils.getKeyedTable(tableName);
         addOrUpdateRow(table, dataSourceName, record);
     }
 
+    @Override
     public void addOrUpdateRow(KeyedTable table, String dataSourceName, IRecord record) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
             throw new RuntimeException("This code is being called from a non reactor thread this is wrong");
@@ -63,6 +65,7 @@ public class FirebaseDatabaseUpdater {
         //TODO - add result listener
     }
 
+    @Override
     public Observable<Boolean> scheduleAddOrUpdateRow(KeyedTable table, String dataSourceName, IRecord record){
         return Observable.create(subscriber -> reactor.scheduleTask(() -> {
             try{

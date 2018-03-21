@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
     private PaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
     private MessagingController messagingController;
@@ -39,13 +39,13 @@ public class CustomerController {
     private NexmoController nexmoController;
 
 
-    public CustomerController(FirebaseDatabaseUpdater firebaseDatabaseUpdater,
+    public CustomerController(IDatabaseUpdater iDatabaseUpdater,
                               PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
                               MessagingController messagingController,
                               UserController userController,
                               NexmoController nexmoController) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
         this.messagingController = messagingController;
@@ -74,7 +74,7 @@ public class CustomerController {
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(String orderId){
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.CANCELLED.name());
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         rejectDriver(orderId);
         return orderId;
@@ -90,10 +90,10 @@ public class CustomerController {
 
         if(driverId != null && driverId != "") {
             IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
             IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
             notifyStatusChanged(orderId, driverId, "cancelled");
         }

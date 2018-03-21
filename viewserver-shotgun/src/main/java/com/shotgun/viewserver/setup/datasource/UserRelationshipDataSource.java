@@ -16,7 +16,7 @@ public class UserRelationshipDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/userRelationship.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/userRelationship.csv"),
                                 null
                         )
                 )

@@ -23,7 +23,7 @@ public class UserDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/user.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/user.csv"),
                                 null
                         )
                 )

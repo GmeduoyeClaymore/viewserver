@@ -3,7 +3,7 @@ package com.shotgun.viewserver.user;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
@@ -36,17 +36,17 @@ public class UserController {
     private ImageController imageController;
     private NexmoController nexmoController;
     private MapsController mapsController;
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
 
 
 
-    public UserController(FirebaseDatabaseUpdater firebaseDatabaseUpdater,
+    public UserController(IDatabaseUpdater iDatabaseUpdater,
                           LoginController loginController,
                           ImageController imageController,
                           NexmoController nexmoController,
                           MapsController mapsController, IReactor reactor) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+        this.iDatabaseUpdater = iDatabaseUpdater;
 
         this.loginController = loginController;
         this.imageController = imageController;
@@ -86,7 +86,7 @@ public class UserController {
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl());
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
         return user.getUserId();
     }
 
@@ -115,7 +115,7 @@ public class UserController {
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("imageUrl", user.getImageUrl());
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
 
         log.debug("Updated user: " + user.getEmail() + " with id " + userId);
         return userId;
@@ -130,7 +130,7 @@ public class UserController {
                 .addValue("latitude", latitude)
                 .addValue("longitude", longitude);
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     @ControllerAction(path = "setLocationFromPostcode", isSynchronous = false)
@@ -149,7 +149,7 @@ public class UserController {
             @Override
             public void execute() {
                 try{
-                    firebaseDatabaseUpdater.addOrUpdateRow(table, "user", userRecord);
+                    iDatabaseUpdater.addOrUpdateRow(table, "user", userRecord);
                     future.set(result);
                 }catch (Exception ex){
                     log.error("There was a problem setting user location from postcode", ex);
@@ -175,7 +175,7 @@ public class UserController {
 
         }
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     @ControllerAction(path = "updateRelationship", isSynchronous = true)
@@ -189,7 +189,7 @@ public class UserController {
                 .addValue("relationshipStatus", userRelationshipStatus == null ? null : userRelationshipStatus.name())
                 .addValue("relationshipType", relationshipType == null ? null : relationshipType.name());
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", userRecord);
     }
 
     private String constructKey(String userId, String targetUserId) {
@@ -207,7 +207,7 @@ public class UserController {
                 .addValue("userId", userId)
                 .addValue("range", range);
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
     }
 
     public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){

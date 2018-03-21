@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -12,10 +12,10 @@ import java.util.Date;
 @Controller(name = "deliveryController")
 public class DeliveryController {
 
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
 
-    public DeliveryController(FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+    public DeliveryController(IDatabaseUpdater iDatabaseUpdater) {
+        this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
     @ControllerAction(path = "addOrUpdateDelivery", isSynchronous = true)
@@ -48,7 +48,7 @@ public class DeliveryController {
             deliveryRecord.addValue("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
         }
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
 
         return delivery.getDeliveryId();
     }
@@ -59,7 +59,7 @@ public class DeliveryController {
                 .addValue("deliveryId", deliveryId)
                 .addValue("customerRating", rating);
 
-        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
         return deliveryId;
     }
 }

@@ -40,7 +40,7 @@ public class
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/contentTypes.csv"),
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/contentTypes.csv"),
                                 null
                         )
                 )

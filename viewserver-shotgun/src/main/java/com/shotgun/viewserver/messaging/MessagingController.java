@@ -2,7 +2,7 @@ package com.shotgun.viewserver.messaging;
 
 import com.google.common.util.concurrent.*;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.FirebaseDatabaseUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
@@ -37,11 +37,11 @@ public class MessagingController {
     private static String MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
 
     private MessagingApiKey messagingApiKey;
-    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
 
-    public MessagingController(MessagingApiKey messagingApiKey, FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
+    public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater) {
         this.messagingApiKey = messagingApiKey;
-        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
+        this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
     public void sendMessage(AppMessage message){
@@ -74,7 +74,7 @@ public class MessagingController {
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
-            firebaseDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
             return userRecord;
         }));
     }

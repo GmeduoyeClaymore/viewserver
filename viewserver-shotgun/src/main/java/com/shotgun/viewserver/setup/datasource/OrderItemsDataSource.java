@@ -20,7 +20,7 @@ public class OrderItemsDataSource {
                         .withDataLoader(
                                 new DataLoader(
                                         NAME,
-                                        new FirebaseCsvDataAdapter(firebaseKeyPath, NAME, "data/orderItem.csv"),
+                                        DataSourceUtils.get(firebaseKeyPath, NAME, "data/orderItem.csv"),
                                         null
                                 )
                         )
