@@ -15,7 +15,7 @@ export class ResourceDictionaryProperty{
       throw new Error('Value pair must have two entries key and value');
     }
     const contentTypeId =  Object.keys(valuePair)[0];
-    const dictionary = this.resourceDictionary.resolve(contentTypeId);
+    const dictionary = this.resourceDictionary.resolveInternal(contentTypeId);
     this.resourceDictionary.dictionaries[contentTypeId] = {...dictionary, ...{[this.propertyName]: valuePair[contentTypeId]}};
     return this;
   }
@@ -44,8 +44,8 @@ export class ResourceDictionaryProperty{
     return this.value({DEFAULT: value});
   }
 
-  property(propertyName){
-    return this.resourceDictionary.property(propertyName);
+  property(propertyName, defaultValue){
+    return this.resourceDictionary.property(propertyName, defaultValue);
   }
 }
 
@@ -80,12 +80,20 @@ export class ResourceDictionary{
     return result;
   }
 
-  resolve(contentTypeId){
+  resolveInternal(contentTypeId){
     const dictionary = this.dictionaries[contentTypeId];
     if (!dictionary){
       throw new Error(`${contentTypeId} is not a valid content type value`);
     }
     if (!Object.keys(dictionary).length){
+      return this.dictionaries.DEFAULT;
+    }
+    return dictionary;
+  }
+
+  resolve(contentTypeId){
+    const dictionary = this.dictionaries[contentTypeId];
+    if (!dictionary || !Object.keys(dictionary).length){
       return this.dictionaries.DEFAULT;
     }
     return {...this.dictionaries.DEFAULT, ...dictionary};
