@@ -1,29 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
+import {Button} from 'native-base';
 import { merge } from 'lodash';
-import {resolveProductIcon} from 'common/assets';
+import {Icon} from 'common/components';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 5,
-    paddingTop: 10
-  },
-  picture: {
-    width: 60,
-    height: 60,
-  },
-  title: {
-    fontWeight: 'bold',
-    color: '#848484',
-    fontSize: 12
-  },
-  summary: {
-    fontSize: 10
-  }
-});
 
 const onChangeProduct = ({navigationStrategy, context, product}) => {
   if (!context){
@@ -32,26 +13,35 @@ const onChangeProduct = ({navigationStrategy, context, product}) => {
   const { orderItem } = context.state;
   const {productId} = product;
   context.setState({ selectedProduct: product, orderItem: merge({}, orderItem, {productId}) });
-  if (navigationStrategy){
-    navigationStrategy.next();
-  }
 };
 
-const ProductListItem = ({context, product, navigationStrategy}) => {
+const ProductListItem = ({context, product, navigationStrategy, selectedProduct = {}, index: i}) => {
   if (!product){
     return null;
   }
-
-  return <TouchableHighlight style={{flex: 1, flexDirection: 'row', minHeight: 80, backgroundColor: 'white'}} onPress={() => onChangeProduct({context, product, navigationStrategy}) } underlayColor={'#EEEEEE'}>
-    <View style={styles.container}>
-      <Image resizeMode="contain" source={resolveProductIcon(product)}  style={styles.picture}/>
-      <View style={{flex: 1, padding: 5}}>
-        <Text style={styles.title}>{product.name}</Text>
-        <Text style={styles.summary}>{product.description}</Text>
-      </View>
-    </View>
-  </TouchableHighlight>;
+  return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+    <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context, product, navigationStrategy})}>
+      <Icon name={product.imageUrl || 'dashed'}/>
+    </Button>
+    <Text style={styles.productSelectText}>{product.name}</Text>
+  </View>;
 };
+
+const styles = {
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30,
+    fontSize: 13
+  },
+  productSelectText: {
+    width: '100%',
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
+    textAlign: 'center'
+  }
+};
+
 
 ProductListItem.propTypes = {
   product: PropTypes.object,

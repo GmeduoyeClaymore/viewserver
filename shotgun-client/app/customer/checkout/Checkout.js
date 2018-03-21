@@ -6,6 +6,7 @@ import VehicleSelect from './VehicleSelect';
 import ItemDetails from './ItemDetails';
 import OrderConfirmation from './OrderConfirmation';
 import ProductCategoryList from './ProductCategoryList';
+import FlatProductCategoryList from './FlatProductCategoryList';
 import UsersForProductMap from './UsersForProductMap';
 import ProductList from './ProductList';
 import AddressLookup from 'common/components/maps/AddressLookup';
@@ -29,6 +30,7 @@ export default class Checkout extends Component {
       <Route path={'/Customer/Checkout/DeliveryOptions'} exact render={() => <DeliveryOptions {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/VehicleSelect'} exact render={() => <VehicleSelect {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductCategoryList'} exact render={() => <ProductCategoryList {...customerProps} context={this}/>} />
+      <Route path={'/Customer/Checkout/FlatProductCategoryList'} exact render={() => <FlatProductCategoryList {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductList'} exact render={() => <ProductList {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ProductDetails'} exact render={() => <ProductDetails {...customerProps} context={this}/>} />
       <Route path={'/Customer/Checkout/ItemDetails'} exact render={() => <ItemDetails {...customerProps} context={this}/>} />
