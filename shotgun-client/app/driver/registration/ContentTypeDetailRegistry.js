@@ -6,7 +6,7 @@ import React from 'react';
 
 const detailControlRegistry = {
   [ContentTypes.DELIVERY]: DriverCapabilityDetails,
-  [ContentTypes.RUBBISH]: DriverCapabilityDetails,
+  [ContentTypes.RUBBISH]: (props) => { return (<ProductCategorySelector {...props} hideSearchBar={true}/>);},
   [ContentTypes.HIRE]: ProductCategorySelector,
   [ContentTypes.SKIP]: ProductCategorySelector
 };

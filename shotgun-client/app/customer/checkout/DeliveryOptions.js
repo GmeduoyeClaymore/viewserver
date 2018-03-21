@@ -84,7 +84,7 @@ class DeliveryOptions extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
     if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined) {
       this.setCard(nextProps.defaultCard);
     }

@@ -112,10 +112,10 @@ public class MockPaymentController implements PaymentController{
             accountParams.put("payout_schedule", payoutSchedule);
             accountParams.put("tos_acceptance", tosAcceptance);
             accountParams.put("legal_entity", legalEntity);
+            UUID uuid = UUID.randomUUID();
 
-            account = Account.create(accountParams);
-            logger.debug("Added stripe account id {} params are {}", account.getId(), ControllerUtils.toString(accountParams));
-            return account.getId();
+            logger.debug("Added stripe account id {} params are {}", uuid.toString(), ControllerUtils.toString(accountParams));
+            return uuid.toString();
         } catch (Exception e) {
             logger.error(String.format("There was a problem creating the payment account \"%s\"", ControllerUtils.toString(accountParams)), e);
             throw new RuntimeException(e);

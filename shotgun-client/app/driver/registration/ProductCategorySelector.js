@@ -135,7 +135,7 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, selectedProductCategories = [], expandedCategoryIds = [], options} = this.props;
+    const {busy, selectedProductCategories = [], expandedCategoryIds = [], options, hideSearchBar} = this.props;
     const {rowView, search} = this;
 
     const Paging = () => <Spinner />;
@@ -156,7 +156,7 @@ class ProductCategoryList extends Component{
             rowView={rowView}
             paginationWaitingView={Paging}
             emptyView={NoItems}
-            headerView={headerView}
+            headerView={hideSearchBar ? () => null : headerView}
           />
         </View>
       </Content>;

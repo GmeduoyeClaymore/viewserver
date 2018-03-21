@@ -5,6 +5,7 @@ import resolveDetailsControl from './ContentTypeDetailRegistry';
 import {Image, StyleSheet, Text, TouchableHighlight, Dimensions, View } from 'react-native';
 import {Button, Col} from 'native-base';
 import ReactNativeModal from 'react-native-modal';
+import * as ContentTypes from 'common/constants/ContentTypes';
 const {height, width} = Dimensions.get('window');
 const BORDER_RADIUS = 13;
 const BACKGROUND_COLOR = 'white';
@@ -15,6 +16,15 @@ const BUTTON_FONT_WEIGHT = 'normal';
 const BUTTON_FONT_COLOR = '#007ff9';
 const BUTTON_FONT_COLOR_DISABLED = '#d6e9fc';
 const BUTTON_FONT_SIZE = 20;
+
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+/*eslint-disable */
+resourceDictionary.
+  property('PageTitle', ({contentType}) => contentType.name).
+    delivery(() => 'What vehicle have you got?').
+    personell(() => 'What skills do you have?').
+    rubbish(() => 'Can you do commercial and household waste?');
+/*eslint-enable */
 
 const styles = {
   picture: {
@@ -157,6 +167,7 @@ export default class ContentTypeSelector extends Component{
       this._handleConfirm = this._handleConfirm.bind(this);
       this._handleCancel = this._handleCancel.bind(this);
       this.doValidate = this.doValidate.bind(this);
+      ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
     }
 
     _handleSelectContentType(){
@@ -180,6 +191,10 @@ export default class ContentTypeSelector extends Component{
       }
     }
 
+    componentWillReceiveProps(nextProps) {
+      ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
+    }
+
     _handleToggleDetailVisibility(detailVisible){
       super.setState({detailVisible});
     }
@@ -196,7 +211,7 @@ export default class ContentTypeSelector extends Component{
       const {state} = this;
       const {context} = this.props;
       const result = await this.getValidationResult();
-      if (result.error == ''){
+      if (!result || result.error == ''){
         if (context){
           let {selectedContentTypes = {}} = this.props;
           const {contentType, context} = this.props;
@@ -226,7 +241,7 @@ export default class ContentTypeSelector extends Component{
     async doValidate(){
       const result = await this.getValidationResult();
       if (result){
-        super.setState({canSubmit: result.error == ''});
+        super.setState({canSubmit: !result || result.error == ''});
       }
     }
 
@@ -237,6 +252,7 @@ export default class ContentTypeSelector extends Component{
     }
 
     render(){
+      const {resources} = this;
       const {selected, contentType = {}} = this.props;
       const {detailVisible, canSubmit, selectedContentTypes = {}} = this.state;
       const ContentTypeDetailControl = resolveDetailsControl(contentType);
@@ -256,7 +272,7 @@ export default class ContentTypeSelector extends Component{
           backdropOpacity={0.4}
         >
           <View style={[styles.contentTypeSelectorContainer]}>
-            <TitleContainer title={contentType.name}/>
+            {resources ? <TitleContainer title={resources.PageTitle(this.props)}/> : null }
             <ContentTypeDetailControl {...{contentType, ...this.props, ...stateForContentType, ...this.state.content, context: this, canSubmit}}/>
             <TouchableHighlight
               style={styles.confirmButton}
