@@ -27,16 +27,9 @@ public class DocumentChangeRecord extends Record {
 
         for (ColumnHolder columnHolder : schema.getColumnHolders()) {
             try {
-                io.viewserver.datasource.ColumnType dataType = null;
-                ColumnMetadata metadata = columnHolder.getMetadata();
-                if (metadata != null) {
-                    if (metadata.isFlagged(ColumnFlags.DATASOURCE_CALCULATION)) {
-                        continue;
-                    }
-                    dataType = metadata.getDataType();
-                }
+                ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
                 if (dataType == null) {
-                    dataType = mapToDataType(columnHolder.getType());
+                    continue;
                 }
 
                 values.put(columnHolder.getName(), getFirebaseDocumentValue(dataType, columnHolder.getName(), doc));
@@ -77,31 +70,6 @@ public class DocumentChangeRecord extends Record {
             }
             default:
                 throw new RuntimeException(String.format("Could not process column of type %s", dataType));
-        }
-    }
-
-    protected io.viewserver.datasource.ColumnType mapToDataType(io.viewserver.schema.column.ColumnType columnType) {
-        switch (columnType) {
-            case Bool:
-                return io.viewserver.datasource.ColumnType.Bool;
-            case NullableBool:
-                return io.viewserver.datasource.ColumnType.NullableBool;
-            case Byte:
-                return io.viewserver.datasource.ColumnType.Byte;
-            case Short:
-                return io.viewserver.datasource.ColumnType.Short;
-            case Int:
-                return io.viewserver.datasource.ColumnType.Int;
-            case Long:
-                return io.viewserver.datasource.ColumnType.Long;
-            case Float:
-                return io.viewserver.datasource.ColumnType.Float;
-            case Double:
-                return io.viewserver.datasource.ColumnType.Double;
-            case String:
-                return io.viewserver.datasource.ColumnType.String;
-            default:
-                throw new IllegalArgumentException(String.format("Unknown column type '%s'", columnType));
         }
     }
 }

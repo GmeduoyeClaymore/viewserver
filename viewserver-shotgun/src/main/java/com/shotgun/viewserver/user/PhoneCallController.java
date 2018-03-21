@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.TableUpdater;
+import com.shotgun.viewserver.FirebaseDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
@@ -21,10 +21,10 @@ import java.util.Date;
 @Controller(name = "phoneCallController")
 public class PhoneCallController {
     private static final Logger log = LoggerFactory.getLogger(PhoneCallController.class);
-    private TableUpdater tableUpdater;
+    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
 
-    public PhoneCallController(TableUpdater tableUpdater) {
-        this.tableUpdater = tableUpdater;
+    public PhoneCallController(FirebaseDatabaseUpdater firebaseDatabaseUpdater) {
+        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
     }
 
     @ControllerAction(path = "getCustomerVirtualNumber", isSynchronous = true)
@@ -78,7 +78,7 @@ public class PhoneCallController {
                 .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        tableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
+        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
 
         Record driverVirtualNumber = new Record()
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
@@ -87,7 +87,7 @@ public class PhoneCallController {
                 .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        tableUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
+        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
 
         return availablePhoneNumbers;
     }

@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.TableUpdater;
+import com.shotgun.viewserver.FirebaseDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
@@ -39,16 +39,16 @@ public class OrderController {
     private PricingStrategyResolver pricingStrategyResolver;
     private MessagingController messagingController;
     private KeyedTable productTable;
-    private TableUpdater tableUpdater;
+    private FirebaseDatabaseUpdater firebaseDatabaseUpdater;
     private Double labourerRate;
 
-    public OrderController(TableUpdater tableUpdater,
+    public OrderController(FirebaseDatabaseUpdater firebaseDatabaseUpdater,
                            DeliveryAddressController deliveryAddressController,
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver,
                            MessagingController messagingController) {
-        this.tableUpdater = tableUpdater;
+        this.firebaseDatabaseUpdater = firebaseDatabaseUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
@@ -97,7 +97,7 @@ public class OrderController {
         .addValue("paymentId", paymentId)
         .addValue("deliveryId", deliveryId);
 
-        tableUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         //add orderItems
         for (OrderItem orderItem : orderItems) {
@@ -151,7 +151,7 @@ public class OrderController {
                 .addValue("userId", orderUserId)
                 .addValue("rating", rating);
 
-        tableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
     @ControllerAction(path = "addDriverRating", isSynchronous = true)
@@ -167,7 +167,7 @@ public class OrderController {
                 .addValue("userId", driverId)
                 .addValue("rating", rating);
 
-        tableUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        firebaseDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
@@ -190,7 +190,7 @@ public class OrderController {
     private double calculateAdditionalLabour(OrderItem item) {
         if(item.getQuantity() > 1){
             return (item.getQuantity() - 1) * getLabourerRate();
-        }
+    }
         return 0;
     }
 

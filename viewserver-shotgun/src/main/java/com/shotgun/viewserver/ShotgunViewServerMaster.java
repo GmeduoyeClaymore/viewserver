@@ -27,37 +27,42 @@ import io.viewserver.server.ViewServerMaster;
  * Created by nick on 11/08/15.
  */
 public class ShotgunViewServerMaster extends ViewServerMaster {
+    private final String firebaseKeyPath;
     private boolean isMock;
 
     public ShotgunViewServerMaster(String name, IViewServerMasterConfiguration configuration) {
         super(name, configuration);
         this.getServerExecutionContext().getFunctionRegistry().register("containsProduct",ContainsProduct.class);
         isMock = configuration.isMock();
-        localStorageDataAdapterFactory = new FirebaseInstallingDataAdapterFactory("firebase//shotgunDelivery.json");
+        firebaseKeyPath = "firebase//shotgunDelivery.json";
+        localStorageDataAdapterFactory = new FirebaseInstallingDataAdapterFactory(firebaseKeyPath);
     }
 
     @Override
     protected void initCommandHandlerRegistry() {
         super.initCommandHandlerRegistry();
         ImageController imageController = new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"));
-        MessagingController messagingController = new MessagingController(new MessagingApiKey("AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA"), new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
+        MessagingController messagingController = new MessagingController(new MessagingApiKey("AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA"), new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
         MapsController mapsController = new MapsController(new MapsControllerKey("AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M", false));
-        NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), "c03cd396", "33151c6772f2bd52", new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
+        NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), "c03cd396", "33151c6772f2bd52", new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
 
         PaymentController paymentController = this.getPaymentController();
-        DeliveryAddressController deliveryAddressController = new DeliveryAddressController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
-        DeliveryController deliveryController = new DeliveryController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
-        OrderItemController orderItemController = new OrderItemController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), imageController);
-        VehicleController vehicleController = new VehicleController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry));
+        DeliveryAddressController deliveryAddressController = new DeliveryAddressController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
+        DeliveryController deliveryController = new DeliveryController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
+        OrderItemController orderItemController = new OrderItemController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), imageController);
+        VehicleController vehicleController = new VehicleController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
         JourneyEmulatorController journeyEmulatorController = new JourneyEmulatorController(mapsController);
-        LoginController loginController = new LoginController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), getServerCatalog());
-        UserController userController = new UserController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), loginController, imageController, nexmoController, mapsController, getServerReactor());
+        LoginController loginController = new LoginController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), getServerCatalog());
+        UserController userController = new UserController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), loginController, imageController, nexmoController, mapsController, getServerReactor());
 
 
         this.registerController(paymentController);
         this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
+        this.registerController(new DriverController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), isMock));
+        this.registerController(new CustomerController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath),paymentController, deliveryAddressController, messagingController, userController, nexmoController));
+        this.registerController(new OrderController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver()));
         this.registerController(new DriverController(dataSourceRegistry,paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), isMock));
         this.registerController(new CustomerController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry),paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(new OrderController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver(),  messagingController));
@@ -67,7 +72,7 @@ public class ShotgunViewServerMaster extends ViewServerMaster {
         this.registerController(deliveryAddressController);
         this.registerController(orderItemController);
         this.registerController(imageController);
-        this.registerController(new PhoneCallController(new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry)));
+        this.registerController(new PhoneCallController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath)));
         this.registerController(nexmoController);
         this.registerController(getVehicleDetailsController());
     }

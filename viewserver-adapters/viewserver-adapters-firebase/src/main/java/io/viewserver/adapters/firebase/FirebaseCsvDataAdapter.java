@@ -1,6 +1,7 @@
 package io.viewserver.adapters.firebase;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.WriteBatch;
 import com.google.cloud.firestore.WriteResult;
 import io.viewserver.adapters.csv.CsvRecordWrapper;
 import io.viewserver.datasource.Column;
@@ -35,13 +36,14 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
 
     @Override
     public int getRecords(String query, Consumer<IRecord> consumer) {
-        FirebaseUtils.deleteCollection(getCollection(), 1000);
+        FirebaseUtils.deleteCollection(getCollection());
         loadRecordsFromCsv();
         return super.getRecords(query, consumer);
     }
 
     protected int loadRecordsFromCsv() {
         InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
+        WriteBatch batch = getDb().batch();
         int recordsLoaded = 0;
         try {
             UTF8StreamReader reader = new UTF8StreamReader();
@@ -50,11 +52,12 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
                 CSVParser parser = CSVFormat.EXCEL.withHeader().parse(reader);
 
                 for (final CSVRecord record : parser) {
-                    recordWrapper.setRecord(record);
-                    insertCsvRecord(recordWrapper);
+                    insertCsvRecord(record, batch);
                     recordsLoaded++;
                 }
             } finally {
+                //TODO - make this async
+                batch.commit().get();
                 reader.close();
             }
             log.info(String.format("Loaded %s rows from %s", recordsLoaded, this.fileName));
@@ -65,16 +68,15 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter{
         return recordsLoaded;
     }
 
-    private void insertCsvRecord(IRecord record) {
-        String documentId = getCsvDocumentId(record);
-        Map<String, Object> docData = getDocumentData(record);
+    private void insertCsvRecord(CSVRecord record, WriteBatch batch) {
+        recordWrapper.setRecord(record);
+        String documentId = getCsvDocumentId(recordWrapper);
+        Map<String, Object> docData = getDocumentData(recordWrapper);
         try {
-            ApiFuture<WriteResult> future = getCollection().document(documentId).set(docData);
+            batch.set( getCollection().document(documentId), docData);
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
-
-        //TODO - add result listeners here
     }
 
     private String getCsvDocumentId(IRecord record){

@@ -3,6 +3,7 @@ package com.shotgun.viewserver.setup;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteBatch;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.io.Resources;
 import com.shotgun.viewserver.setup.datasource.*;
@@ -52,7 +53,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(ProductDataSource.getDataSource(firebaseKeyPath));
         dataSources.add(ContentTypeDataSource.getDataSource(firebaseKeyPath));
         dataSources.add(PhoneNumberDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(UserProductDataSource.getDataSource(firebaseKeyPath));
+        //dataSources.add(UserProductDataSource.getDataSource(firebaseKeyPath));
         return dataSources;
     }
 
@@ -91,7 +92,8 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         try{
             //clear the datasources collection
             CollectionReference collection = db.collection("datasources");
-            FirebaseUtils.deleteCollection(collection, 1000);
+            FirebaseUtils.deleteCollection(collection);
+            WriteBatch batch = db.batch();
 
             for (DataSource dataSource : dataSources) {
                 log.debug("-    {}", dataSource.getName());
@@ -101,17 +103,17 @@ public class ShotgunBootstrapper extends BootstrapperBase {
                     Map<String, Object> docData = new HashMap<>();
                     docData.put("name", dataSource.getName());
                     docData.put("json", json);
-                    ApiFuture<WriteResult> future = collection.document(dataSource.getName()).set(docData);
-                    //TODO - add result callback here
+                    batch.set(collection.document(dataSource.getName()), docData);
                 } catch (Exception e) {
                     log.error(String.format("Could not create data source '%s'", dataSource.getName()), e);
                 }
             }
-        }catch (RuntimeException e) {
+            //TODO - add result callback here
+            batch.commit().get();
+        }catch (Exception e) {
             log.error("Could not create data sources", e);
         }
     }
-
 
     private void setupReports(Firestore db) {
         log.info("Creating report definitions");
@@ -121,7 +123,8 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         try{
             //clear the datasources collection
             CollectionReference collection = db.collection("reports");
-            FirebaseUtils.deleteCollection(collection, 1000);
+            FirebaseUtils.deleteCollection(collection);
+            WriteBatch batch = db.batch();
 
             for (ReportDefinition reportDefinition : reportDefinitions.values()) {
                 log.debug("-    {}", reportDefinition.getId());
@@ -133,13 +136,14 @@ public class ShotgunBootstrapper extends BootstrapperBase {
                     docData.put("name", reportDefinition.getName());
                     docData.put("dataSource", reportDefinition.getDataSource());
                     docData.put("json", json);
-                    ApiFuture<WriteResult> future = collection.document(reportDefinition.getId()).set(docData);
-                    //TODO - add result callback here
+                    batch.set(collection.document(reportDefinition.getId()), docData);
                 } catch (Exception e) {
                     log.error(String.format("Could not create report '%s'", reportDefinition.getId()), e);
                 }
             }
-        }catch (RuntimeException e) {
+            //TODO - add result callback here
+            batch.commit().get();
+        }catch (Exception e) {
             log.error("Could not create report definitions", e);
         }
     }

@@ -51,6 +51,4 @@ public interface IDataLoader {
     void setTableKeyDefinition(TableKeyDefinition tableKeyDefinition);
 
     void setSchema(io.viewserver.schema.Schema schema);
-
-    void addOrUpdateRecord(IRecord record, boolean isSnapshot);
 }

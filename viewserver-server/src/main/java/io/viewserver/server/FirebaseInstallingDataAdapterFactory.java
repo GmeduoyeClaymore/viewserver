@@ -16,12 +16,21 @@
 
 package io.viewserver.server;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.SetOptions;
+import com.google.cloud.firestore.WriteResult;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.firebase.FirebaseDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseUtils;
 import io.viewserver.datasource.IDataLoader;
 import io.viewserver.datasource.ILocalStorageDataAdapterFactory;
+import io.viewserver.operators.table.ITableRow;
+import io.viewserver.schema.column.IRowFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Created by nick on 17/02/2015.
