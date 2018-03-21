@@ -53,7 +53,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(ProductDataSource.getDataSource(firebaseKeyPath));
         dataSources.add(ContentTypeDataSource.getDataSource(firebaseKeyPath));
         dataSources.add(PhoneNumberDataSource.getDataSource(firebaseKeyPath));
-        //dataSources.add(UserProductDataSource.getDataSource(firebaseKeyPath));
+        dataSources.add(UserProductDataSource.getDataSource(firebaseKeyPath));
         return dataSources;
     }
 

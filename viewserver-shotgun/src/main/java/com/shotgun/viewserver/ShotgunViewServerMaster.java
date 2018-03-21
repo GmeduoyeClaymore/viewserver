@@ -8,6 +8,7 @@ import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.order.PricingStrategyResolver;
+import com.shotgun.viewserver.payments.PaymentControllerImpl;
 import com.shotgun.viewserver.user.*;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
@@ -42,7 +43,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         MessagingController messagingController = new MessagingController(configuration.getMessagingApiKey(), new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
         MapsController mapsController = new MapsController(configuration.getMapsKey());
         NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), configuration.getNexmoKey(), new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
-        PaymentController paymentController = new PaymentController(configuration.getStripeKey());
+        PaymentController paymentController = new PaymentControllerImpl(configuration.getStripeKey());
         //TODO need to test live stripe payments - StripeApiKey apiKey = isMock ? new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4") : new StripeApiKey("pk_live_7zCPIyqeDeEnLvwzPeS4vXQv", "sk_live_ZZXR0KcIO0s4CswZC3eQrewL");
 
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath));
@@ -59,7 +60,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         this.registerController(userController);
         this.registerController(new DriverController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), configuration.isMock()));
         this.registerController(new CustomerController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath),paymentController, deliveryAddressController, messagingController, userController, nexmoController));
-        this.registerController(new OrderController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver()));
+        this.registerController(new OrderController(new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver(), messagingController));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
         this.registerController(messagingController);
