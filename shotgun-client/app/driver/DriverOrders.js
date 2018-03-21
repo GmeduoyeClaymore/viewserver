@@ -9,7 +9,8 @@ import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 const DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
   columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-  reportId: 'driverOrderSummary'
+  reportId: 'driverOrderSummary',
+  driverId: '@userId'
 };
 
 
