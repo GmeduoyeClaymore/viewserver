@@ -22,6 +22,7 @@ import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.table.*;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.ITask;
@@ -168,6 +169,7 @@ public class DriverController {
     @ControllerAction(path = "completeOrder", isSynchronous = true)
     public String completeOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+        IOperator orderTableProjection = ControllerUtils.getOperator(TableNames.ORDER_TABLE_PROJECTION_OUTPUT_NAME);
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         String driverId = getUserId();
         int currentOrderRow = orderTable.getRow(new TableKey(orderId));
@@ -181,11 +183,15 @@ public class DriverController {
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
         Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
+        String contentTypeName = (String)ControllerUtils.getOperatorColumnValue(orderTableProjection, "contentType_name", currentOrderRow);
+        String productName = (String)ControllerUtils.getOperatorColumnValue(orderTableProjection, "product_name", currentOrderRow);
+        String chargeDescription = String.format("%s (%s)", contentTypeName, productName);
+
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
-        paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId);
+        paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId, chargeDescription);
         return orderId;
     }
 

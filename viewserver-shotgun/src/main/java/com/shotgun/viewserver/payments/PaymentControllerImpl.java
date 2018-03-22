@@ -126,12 +126,12 @@ public class PaymentControllerImpl implements PaymentController {
     }
 
     @Override
-    @ControllerAction(path = "createCharge", isSynchronous = false)
-    public void createCharge(@ActionParam(name = "totalPrice") Double totalPrice,
-                             @ActionParam(name = "chargePercentage") int chargePercentage,
-                             @ActionParam(name = "paymentId") String paymentId,
-                             @ActionParam(name = "customerId") String customerId,
-                             @ActionParam(name = "accountId") String accountId) {
+    public void createCharge(Double totalPrice,
+                             int chargePercentage,
+                             String paymentId,
+                             String customerId,
+                             String accountId,
+                             String description) {
         try {
             //TODO is there a better way to do this without using big decimals all over the place?
             BigDecimal chargeDecimal = BigDecimal.valueOf(chargePercentage).divide(BigDecimal.valueOf(100));
@@ -145,6 +145,7 @@ public class PaymentControllerImpl implements PaymentController {
             params.put("currency", "gbp");
             params.put("customer", customerId);
             params.put("source", paymentId);
+            params.put("description", description);
             params.put("destination", destinationParams);
             Charge charge = Charge.create(params);
             logger.debug("Created stripe charge {} with amount {} with {} sent to driver", charge.getId(), totalPrice, destinationAmount);

@@ -19,7 +19,7 @@ import java.math.RoundingMode;
 import java.util.*;
 
 @Controller(name = "paymentController")
-public class MockPaymentController implements PaymentController{
+public class MockPaymentController implements PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(MockPaymentController.class);
 
     public MockPaymentController() {
@@ -75,7 +75,7 @@ public class MockPaymentController implements PaymentController{
 
             Map<String, Object> dob = new HashMap<>();
             Calendar c = Calendar.getInstance();
-            if(user.getDob() == null){
+            if (user.getDob() == null) {
                 throw new RuntimeException("No DOB specified");
             }
             c.setTime(user.getDob());
@@ -122,12 +122,12 @@ public class MockPaymentController implements PaymentController{
         }
     }
 
-    @ControllerAction(path = "createCharge", isSynchronous = false)
-    public void createCharge(@ActionParam(name = "totalPrice") Double totalPrice,
-                             @ActionParam(name = "chargePercentage") int chargePercentage,
-                             @ActionParam(name = "paymentId") String paymentId,
-                             @ActionParam(name = "customerId") String customerId,
-                             @ActionParam(name = "accountId") String accountId) {
+    public void createCharge(Double totalPrice,
+                             int chargePercentage,
+                             String paymentId,
+                             String customerId,
+                             String accountId,
+                             String description) {
         try {
             //TODO is there a better way to do this without using big decimals all over the place?
             BigDecimal chargeDecimal = BigDecimal.valueOf(chargePercentage).divide(BigDecimal.valueOf(100));
@@ -141,6 +141,7 @@ public class MockPaymentController implements PaymentController{
             params.put("currency", "gbp");
             params.put("customer", customerId);
             params.put("source", paymentId);
+            params.put("description", description);
             params.put("destination", destinationParams);
             Charge charge = Charge.create(params);
             logger.debug("Created stripe charge {} with amount {} with {} sent to driver", charge.getId(), totalPrice, destinationAmount);
@@ -188,7 +189,7 @@ public class MockPaymentController implements PaymentController{
 
     private User getUser() {
         User user = (User) ControllerContext.get("user");
-        if(user == null){
+        if (user == null) {
             throw new RuntimeException("User must be logged in to get current payment cards");
         }
         return user;
@@ -219,7 +220,7 @@ public class MockPaymentController implements PaymentController{
     private String getStripeAccountId() {
         User user = getUser();
         String stripeAccountId = user.getStripeAccountId();
-        if(stripeAccountId == null){
+        if (stripeAccountId == null) {
             throw new RuntimeException("No stripe account id specified for current user");
         }
         return stripeAccountId;
@@ -228,7 +229,7 @@ public class MockPaymentController implements PaymentController{
     private String getStripeCustomerToken() {
         User user = getUser();
         String stripeCustomerToken = user.getStripeCustomerId();
-        if(stripeCustomerToken == null){
+        if (stripeCustomerToken == null) {
             throw new RuntimeException("No stripe customerid specified for current user");
         }
         return stripeCustomerToken;
