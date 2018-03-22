@@ -21,14 +21,17 @@ export const fetchRoute = async  (client, locations) => {
 
 export const parseGooglePlacesData = (details) => {
   try {
-    const {name, place_id, geometry, address_components} = details;
+    const {name, place_id, geometry, address_components, types} = details;
     const {location} = geometry;
+    const isPostCode = types.includes('postal_code');
+    const route = address_components.find(c => c.types.includes('route'));
     const country = address_components.find(c => c.types.includes('country'));
     const city = address_components.find(c => c.types.includes('postal_town'));
     const postCode = address_components.find(c => c.types.includes('postal_code'));
+    const line1  = isPostCode ? route.long_name : name;
 
     return  {
-      line1: name,
+      line1,
       city: city !== undefined ? city.long_name : undefined,
       postCode: postCode !== undefined ? postCode.long_name : undefined,
       country: country !== undefined ? country.long_name : undefined,
