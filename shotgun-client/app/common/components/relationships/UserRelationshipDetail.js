@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import { View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
-import Swiper from 'react-native-swiper';
 import ReactNativeModal from 'react-native-modal';
 import {Spinner, Row, Button} from 'native-base';
-import {PagingListView, Icon, ErrorRegion} from 'common/components';
+import {PagingListView, Icon, ErrorRegion, Swiper} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
@@ -14,14 +13,13 @@ const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;
 const BUTTON_FONT_COLOR = '#007ff9';
 const BUTTON_FONT_SIZE = 20;
+const ELEMENT_WIDTH = width - 40;
+const ELEMENT_HEIGHT = height - 40;
 const styles = {
   userSelector: {
     backgroundColor: BACKGROUND_COLOR,
     borderRadius: BORDER_RADIUS,
-    height: height - 80,
-    width: width - 40,
     margin: 0,
-    padding: 15,
     overflow: 'hidden',
     marginBottom: 10
   },
@@ -110,7 +108,7 @@ class UserRelationshipDetail extends Component{
   }
 
   RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel}) => {
-    return <View style={{flex: 1, width: width - 60}}>
+    return <View style={{flex: 1, margin: 15}}>
       <View style={{flexDirection: 'row'}}>
         <Image resizeMode="contain" source={{url: user.imageUrl}}  style={styles.picture}/>
         <View style={{flex: 1, padding: 5}}>
@@ -168,11 +166,9 @@ class UserRelationshipDetail extends Component{
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
-      <View style={styles.userSelector}>
-        <Swiper height={height} contentContainerStyle={{width: '100%'}} width={width - 40} style={{width: width - 40, height}} scrollViewStyle={{width: width - 40, height}} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={false}>
-          {relatedUsers.map((v, i) => <RelatedUser handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
-        </Swiper>
-      </View>
+      <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} scrollViewStyle={{...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT}} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={false}>
+        {relatedUsers.map((v, i) => <RelatedUser handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
+      </Swiper>
       <TouchableHighlight
         style={styles.cancelButton}
         underlayColor="#ebebeb"

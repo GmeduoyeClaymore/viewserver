@@ -122,7 +122,7 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-  const {contentType: selectedContentType} = orderSummary;
+  const {contentType: selectedContentType} = (orderSummary || {});
   return {
     ...initialProps,
     selectedContentType,
