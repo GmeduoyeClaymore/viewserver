@@ -8,7 +8,6 @@ import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
-import Logger from 'common/Logger';
 import moment from 'moment';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';

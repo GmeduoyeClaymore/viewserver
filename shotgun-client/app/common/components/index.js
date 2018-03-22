@@ -17,4 +17,3 @@ export {Icon} from './Icon';
 export {Tabs} from './Tabs';
 export {SearchBar} from './SearchBar';
 export {OriginDestinationSummary} from './OriginDestinationSummary';
-export {Swiper} from './Swiper';

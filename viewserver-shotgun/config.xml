@@ -13,6 +13,10 @@
             <key>pk_test_BUWd5f8iUuxmbTT5MqsdOlmk</key>
             <secret>sk_test_a36Vq8WXGWEf0Jb55tUUdXD4</secret>
         </stripe>
+        <nexmo>
+            <key>c03cd396</key>
+            <secret>33151c6772f2bd52</secret>
+        </nexmo>
         <vehicleDetailsKey>87019DD5-A533-4A7C-A8A1-38BF311C1FF6</vehicleDetailsKey>
         <servers>
             <master>
