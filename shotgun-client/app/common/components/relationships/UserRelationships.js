@@ -16,7 +16,9 @@ import {Spinner} from 'native-base';
 class UserRelationships extends Component{
   constructor(props){
     super(props);
-    this.state = {};
+    this.state = {
+      showAll: true
+    };
     setStateIfIsMounted(this);
     this.UserViews = [
       {'Map': UserRelationshipMap},
@@ -119,24 +121,24 @@ class UserRelationships extends Component{
       {title ? <View>
         <Text  style={styles.title}>{title}</Text>
       </View> : null}
-      <View style={styles.container}>
+      <View style={{...styles.container, marginBottom: 10}}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
-      {typeof noRelationships != 'undefined' ? <Row style={{flex: 2}}>
-        <Text>
+      {typeof noRelationships != 'undefined' ? <Row style={{flex: 2, minHeight: 20}}>
+        <Text style={{paddingTop: 6, flex: 2}}>
           {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
+        <View style={{flex: 1, justifyContent: 'flex-end', flexDirection: 'row'}}>
+          <Text style={{marginRight: 5, paddingTop: 5}}>
+            {parentState.showAll ? 'Everyone' : 'Friends'}
+          </Text>
+          <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
+        </View>
       </Row> : null}
-      <Row style={{flex: 2}}>
-        <Text style={{marginRight: 5, paddingTop: 5}}>
-          {parentState.showAll ? 'Show Just Friends' : 'Show Everyone'}
-        </Text>
-        <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
-      </Row>
       <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
-      <View style={{flex: 14}}>
+      <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
           <UserView {...this.props} context={this} options={oldOptions} selectedUser={selectedUser}/>
         </ErrorRegion>

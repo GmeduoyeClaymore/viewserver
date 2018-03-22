@@ -22,7 +22,7 @@ export default class UserRelationshipMap extends Component{
     if (me){
       relatedUsers = [...relatedUsers, me];
     }
-    map.fitToCoordinates(relatedUsers.map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
+    map.fitToCoordinates(relatedUsers.filter(c=> c.latitude && c.longitude).map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
       edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
       animated: false,
     });
