@@ -59,5 +59,5 @@ export class ValidatingButton extends Component {
 
 ValidatingButton.propTypes = {
   validationSchema: PropTypes.object.isRequired,
-  model: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired
+  model: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };

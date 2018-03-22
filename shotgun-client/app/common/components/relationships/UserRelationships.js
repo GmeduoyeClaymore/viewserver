@@ -124,7 +124,7 @@ class UserRelationships extends Component{
       </View>
       {typeof noRelationships != 'undefined' ? <Row style={{flex: 2}}>
         <Text>
-          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? ' users' : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
       </Row> : null}
       <Row style={{flex: 2}}>
