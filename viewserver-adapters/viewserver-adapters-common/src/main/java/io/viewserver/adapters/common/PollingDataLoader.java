@@ -114,7 +114,7 @@ public class PollingDataLoader extends DataLoader {
     }
 
     @Override
-    protected void addOrUpdateRecord(IRecord record, boolean isSnapshot) {
+    public void addOrUpdateRecord(IRecord record, boolean isSnapshot) {
         deltaValueTracker.checkDeltaValue(record);
         super.addOrUpdateRecord(record, isSnapshot);
     }

@@ -23,11 +23,6 @@ import io.viewserver.network.IEndpoint;
  */
 public class TestViewServerConfiguration implements IViewServerConfiguration {
     @Override
-    public boolean isMock() {
-        return true;
-    }
-
-    @Override
     public String getBootstrapperClass() {
         return null;
     }

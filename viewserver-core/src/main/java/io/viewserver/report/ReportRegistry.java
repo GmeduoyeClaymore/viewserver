@@ -106,6 +106,7 @@ public class ReportRegistry {
         tableUpdater.setTableKeyDefinition(new TableKeyDefinition("id"));
         dataLoader.configure(tableUpdater,
                 null, null, null, null, executionContext);
+        dataLoader.setSchema(getSchema());
         dataLoader.createTable();
         dataLoader.load();
         reportTable = (KeyedTable) dataLoader.getTable();

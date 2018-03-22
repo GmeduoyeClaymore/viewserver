@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by nick on 17/09/15.
  */
 public class Record implements IRecord {
-    private final Map<String, Object> values = new HashMap<>();
+    protected final Map<String, Object> values = new HashMap<>();
 
     public static Record from(IRecord source) {
         Record record = new Record();
@@ -101,7 +101,11 @@ public class Record implements IRecord {
 
     @Override
     public int getInt(String columnName) {
-        return (int)values.get(columnName);
+        try {
+            return (int) values.get(columnName);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

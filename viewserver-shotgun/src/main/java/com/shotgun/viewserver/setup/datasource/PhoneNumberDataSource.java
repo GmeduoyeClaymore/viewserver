@@ -3,6 +3,7 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -11,15 +12,13 @@ import java.util.Arrays;
 public class PhoneNumberDataSource {
     public static final String NAME = "phoneNumber";
 
-    public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/phoneNumber.csv");
+    public static DataSource getDataSource(String firebaseKeyPath) {
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                dataAdapter,
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/phoneNumber.csv"),
                                 null
                         )
                 )

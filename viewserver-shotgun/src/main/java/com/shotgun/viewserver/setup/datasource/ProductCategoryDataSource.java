@@ -3,6 +3,7 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.GroupByNode;
 
@@ -15,10 +16,7 @@ public class
 ProductCategoryDataSource {
     public static final String NAME = "productCategory";
 
-    public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/productCategory.csv");
-
+    public static DataSource getDataSource(String firebaseKeyPath) {
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("categoryId", "categoryId", ColumnType.String),
@@ -35,7 +33,7 @@ ProductCategoryDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                dataAdapter,
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/productCategory.csv"),
                                 null
                         )
                 )

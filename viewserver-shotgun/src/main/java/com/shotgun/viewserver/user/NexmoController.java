@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.TableUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.sun.net.httpserver.HttpExchange;
@@ -30,17 +30,15 @@ public class NexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
     private Catalog systemCatalog;
-    private final String apiKey;
-    private final String apiSecret;
-    private final TableUpdater tableUpdater;
+    private NexmoControllerKey nexmoControllerKey;
+    private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, String apiKey, String apiSecret, TableUpdater tableUpdater) {
+    public NexmoController(int httpPort, Catalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
-        this.tableUpdater = tableUpdater;
+        this.nexmoControllerKey = nexmoControllerKey;
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.createHttpServer(httpPort);
     }
 
@@ -52,8 +50,8 @@ public class NexmoController {
         try {
 
             HashMap<String, String> params = new HashMap<>();
-            params.put("api_key", apiKey);
-            params.put("api_secret", apiSecret);
+            params.put("api_key", nexmoControllerKey.getKey());
+            params.put("api_secret", nexmoControllerKey.getSecret());
             params.put("number", phoneNumber);
             params.put("country", "GB");
 
@@ -158,7 +156,7 @@ public class NexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                tableUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
             }
         }
     }

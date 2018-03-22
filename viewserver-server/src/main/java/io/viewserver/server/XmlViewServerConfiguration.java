@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
  */
 public class XmlViewServerConfiguration implements IViewServerConfiguration {
     private static final Logger log = LoggerFactory.getLogger(XmlViewServerConfiguration.class);
-    public static final String VIEWSERVER_ISMOCK = "viewserver.ismock";
     public static final String VIEWSERVER_SERVERS_MASTER_BOOTSTRAPPER = "viewserver.servers.master.bootstrapper";
     public static final String VIEWSERVER_SERVERS_MASTER_ENDPOINTS_ENDPOINT = "viewserver.servers.master.endpoints.endpoint";
     public static final String VIEWSERVER_SERVERS_MASTER_DATABASE = "viewserver.servers.master.database";
@@ -40,7 +39,7 @@ public class XmlViewServerConfiguration implements IViewServerConfiguration {
     public static final String VIEWSERVER_SERVERS_SLAVES = "viewserver.servers.slaves";
     public static final String VIEWSERVER_LICENSEFILE = "viewserver.licensefile";
     public static final String VIEWSERVER_SERVERS_SLAVES_MASTER_URL = "viewserver.servers.slaves[@masterUrl]";
-    private final CompositeConfiguration configuration;
+    protected final CompositeConfiguration configuration;
 
     public XmlViewServerConfiguration(String configurationFile) {
         configuration = new CompositeConfiguration();
@@ -90,10 +89,7 @@ public class XmlViewServerConfiguration implements IViewServerConfiguration {
         return configuration.getKeys(VIEWSERVER_SERVERS_MASTER).hasNext();
     }
 
-    @Override
-    public boolean isMock() {
-        return configuration.getBoolean(VIEWSERVER_ISMOCK);
-    }
+
 
     @Override
     public int getNumberOfSlaves() {

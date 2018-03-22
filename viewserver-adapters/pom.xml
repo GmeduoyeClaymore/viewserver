@@ -32,6 +32,7 @@
         <module>viewserver-adapters-csv</module>
         <module>viewserver-adapters-jdbc</module>
         <module>viewserver-adapters-sqlserver</module>
+        <module>viewserver-adapters-firebase</module>
     </modules>
 
     <dependencyManagement>
@@ -46,6 +47,12 @@
                 <groupId>io.viewserver</groupId>
                 <artifactId>viewserver-adapters-jdbc</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.firebase</groupId>
+                <artifactId>firebase-admin</artifactId>
+                <version>5.9.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -35,7 +35,7 @@ public class LocalStorageDataSourceRegistry extends DataSourceRegistryBase<DataS
                                           ILocalStorageDataAdapterFactory localStorageDataAdapterFactory){
         super(systemCatalog, executionContext, serialiser, DataSource.class);
 
-        dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "DataSources", 10);
+        dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "datasources", 10);
     }
 
     public void loadDataSources() {

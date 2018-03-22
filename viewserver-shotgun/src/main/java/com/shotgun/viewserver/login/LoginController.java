@@ -2,7 +2,7 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.TableUpdater;
+import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.user.User;
@@ -36,11 +36,11 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-    private TableUpdater tableUpdater;
+    private IDatabaseUpdater iDatabaseUpdater;
     private ICatalog systemcatalog;
 
-    public LoginController(TableUpdater tableUpdater, ICatalog systemcatalog) {
-        this.tableUpdater = tableUpdater;
+    public LoginController(IDatabaseUpdater iDatabaseUpdater, ICatalog systemcatalog) {
+        this.iDatabaseUpdater = iDatabaseUpdater;
         this.systemcatalog = systemcatalog;
     }
 
@@ -79,12 +79,12 @@ public class LoginController {
                 )));
     }
 
-    private Observable<Integer> setUserOnline(User user, KeyedTable table) {
+    private Observable<Boolean> setUserOnline(User user, KeyedTable table) {
         Record userRecord = new Record()
                 .addValue("userId", user.getUserId())
                 .addValue("status", UserStatus.ONLINE.name());
 
-        return tableUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
+        return iDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
     }
 
     private User setupContext(Map<String,Object> userRecord, IPeerSession session) {

@@ -19,6 +19,7 @@ package io.viewserver.operators.table;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
@@ -172,6 +173,17 @@ public class KeyedTable extends Table {
         return new TableKey(keyValues.toArray());
     }
 
+    public TableKey getTableKey(IRecord record) {
+        List<Object> keyValues = new ArrayList<>();
+        List<String> keys = tableKeyDefinition.getKeys();
+        int count = keys.size();
+        for (int i = 0; i < count; i++) {
+            keyValues.add(record.getValue(keys.get(i)));
+        }
+
+        return new TableKey(keyValues.toArray());
+    }
+
     private void storeKeyForRow(TableKey tableKey, int rowId) {
         Object keyValue = tableKeyDefinition.getValue(tableKey);
         if(tableKey.size() != tableKeyDefinition.size()){
@@ -183,5 +195,9 @@ public class KeyedTable extends Table {
     private int removeKey(TableKey tableKey) {
         Object keyValue = tableKeyDefinition.getValue(tableKey);
         return keys.remove(keyValue);
+    }
+
+    public TableKeyDefinition getTableKeyDefinition() {
+        return tableKeyDefinition;
     }
 }

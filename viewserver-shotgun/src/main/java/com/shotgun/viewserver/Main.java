@@ -12,11 +12,9 @@ import java.io.IOException;
  * Created by nick on 24/02/2015.
  */
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     public static void main(String[] args) throws IOException {
-        ViewServerLauncher launcher = new ViewServerLauncher<IViewServerConfiguration>(
-                new XmlViewServerConfiguration(System.getProperty("viewserver.configurationFile", "config.xml")),
+        ViewServerLauncher launcher = new ViewServerLauncher<IShotgunViewServerConfiguration>(
+                new ShotgunViewServerConfiguration(System.getProperty("viewserver.configurationFile", "config-mock.xml")),
                 ShotgunViewServerMaster::new);
         launcher.launch(args);
     }

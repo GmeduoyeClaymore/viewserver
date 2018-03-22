@@ -4,6 +4,7 @@ package com.shotgun.viewserver.setup.datasource;
 import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
+import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.GroupByNode;
 import io.viewserver.execution.nodes.JoinNode;
@@ -16,16 +17,13 @@ import java.util.Arrays;
 public class UserDataSource {
     public static final String NAME = "user";
 
-    public static DataSource getDataSource() {
-        CsvDataAdapter dataAdapter = new CsvDataAdapter();
-        dataAdapter.setFileName("data/user.csv");
-
+    public static DataSource getDataSource(String firebaseKeyPath) {
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                dataAdapter,
+                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/user.csv"),
                                 null
                         )
                 )

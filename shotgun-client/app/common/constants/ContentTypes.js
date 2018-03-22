@@ -1,3 +1,5 @@
+import Logger from 'common/Logger';
+
 export const DELIVERY = 1;
 export const HIRE = 3;
 export const RUBBISH = 2;
@@ -56,7 +58,8 @@ export const resolveResourceFromProps = (props, resourceDictionary, caller) => {
   } else if (contentType){
     caller.resources = resourceDictionary.resolve(contentType.contentTypeId);
   } else {
-    throw new Error('Could not resolve resource dictionary as no content type was found in props');
+    Logger.warning('Could not resolve resource dictionary as no content type was found in props');
+    caller.resources = {};
   }
 };
 

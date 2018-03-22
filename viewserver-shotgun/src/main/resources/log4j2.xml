@@ -6,10 +6,12 @@
         </Console>
     </appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console" />
         </Root>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
+        <Logger name="io.grpc.netty" level="WARN"/>
+        <Logger name="io.netty" level="WARN"/>
         <!--<Logger name="com.cmm.viewserver.command.MultiCommandResult" level="trace"/>-->
     </Loggers>
 </configuration>

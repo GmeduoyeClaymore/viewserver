@@ -18,7 +18,7 @@ public class
 UserProductDataSource {
     public static final String NAME = "userProduct";
 
-    public static DataSource getDataSource() {
+    public static DataSource getDataSource(String firebaseKeyPath) {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(

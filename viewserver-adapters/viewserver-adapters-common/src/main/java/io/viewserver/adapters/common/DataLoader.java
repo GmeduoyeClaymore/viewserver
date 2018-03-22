@@ -207,7 +207,7 @@ public class DataLoader implements IDataLoader {
         PooledItem<Record> pendingRecord = getRecordPool().take();
         pendingRecord.getItem().initialiseFromRecord(record);
         pendingRecords.add(pendingRecord);
-        if (pendingRecords.size() < batchSize) {
+        if (pendingRecords.size() < batchSize && !loadDataFuture.isDone()) {
             return;
         }
 

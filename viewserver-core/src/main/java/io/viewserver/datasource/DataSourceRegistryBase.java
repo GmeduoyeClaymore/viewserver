@@ -56,7 +56,7 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
     private final CatalogHolder catalogHolder;
 
     protected DataSourceRegistryBase(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser, Class<T> clazz) {
-        super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinition());
+        super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinitions());
         this.systemCatalog = systemCatalog;
         this.executionContext = executionContext;
         this.serialiser = serialiser;
@@ -78,7 +78,7 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         return schema;
     }
 
-    protected static TableKeyDefinition getTableKeyDefinition() {
+    protected static TableKeyDefinition getTableKeyDefinitions() {
         return new TableKeyDefinition(ID_COL);
     }
 
