@@ -7,6 +7,7 @@ import {View, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
 import PrincipalService from './common/services/PrincipalService';
+
 const signOut = async (history) => {
   await PrincipalService.removeUserIdFromDevice();
   history.push('/Root');

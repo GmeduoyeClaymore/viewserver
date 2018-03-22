@@ -2,6 +2,7 @@ import React from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {ActionSheet} from 'native-base';
 import Logger from 'common/Logger';
+import PermissionsService from 'common/services/PermissionsService';
 
 export class ImageSelector{
   static options = {
@@ -14,6 +15,7 @@ export class ImageSelector{
 
   static async launchCamera(onSelect, options){
     try {
+      await PermissionsService.requestCameraPermission();
       Logger.info('Launching camera');
       const response = await ImagePicker.openCamera({...ImageSelector.options, ...options});
       onSelect(response);
@@ -25,6 +27,7 @@ export class ImageSelector{
 
   static async launchPicker(onSelect, options){
     try {
+      await PermissionsService.requestPickerPermission();
       Logger.info('Launching picker');
       const response = await ImagePicker.openPicker({...ImageSelector.options, ...options});
       onSelect(response);
@@ -46,6 +49,8 @@ export class ImageSelector{
           title
         },
         buttonIndex => {
+          buttonIndex = typeof buttonIndex == 'number' ? buttonIndex : parseInt(buttonIndex, 10);
+
           switch (buttonIndex) {
           case 0:
             ImageSelector.launchCamera(onSelect, options);

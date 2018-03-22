@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import io.viewserver.Constants;
 import io.viewserver.catalog.CatalogOutput;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.ControllerContext;
@@ -203,6 +204,11 @@ public class ControllerUtils{
         return (ITable)table;
     }
 
+    public static IOperator getOperator(String tableName){
+        IOperator operator = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
+        return operator;
+    }
+
     public static KeyedTable getKeyedTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
         if (!(table instanceof KeyedTable)) {
@@ -221,6 +227,16 @@ public class ControllerUtils{
 
     public static Object getColumnValue(ITable table, String column, int row){
         IOutput output = table.getOutput();
+        Schema schema = output.getSchema();
+        ColumnHolder col = schema.getColumnHolder(column);
+        if(col == null){
+            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
+        }
+        return ColumnHolderUtils.getValue(col, row);
+    }
+
+    public static Object getOperatorColumnValue(IOperator table, String column, int row){
+        IOutput output = table.getOutput(Constants.OUT);
         Schema schema = output.getSchema();
         ColumnHolder col = schema.getColumnHolder(column);
         if(col == null){

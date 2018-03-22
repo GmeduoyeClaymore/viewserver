@@ -3,9 +3,8 @@ import CustomDatePickerAndroid from './CustomDatePickerAndroid';
 import CustomDatePickerIOS from './CustomDatePickerIOS';
 import React, {Component} from 'react';
 import moment from 'moment';
-import {Button, Text, Right} from 'native-base';
+import {Button, Text} from 'native-base';
 import {isEqual} from 'lodash';
-import Logger from 'common/Logger';
 const IS_ANDROID = Platform.OS === 'android';
 
 export const DatePicker =  (IS_ANDROID ? CustomDatePickerAndroid : CustomDatePickerIOS);
@@ -59,7 +58,7 @@ export default class DatePickerControl extends Component{
       <DatePicker {...newProps}/>
       <View style={{marginLeft: 15, alignSelf: 'flex-end', flexDirection: 'row'}}>
         {cannedDateOptions.map( (opt) => <Button style={{paddingRight: 10, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
-          <Text style={{fontSize: 8}}>{opt.name}</Text>
+          <Text>{opt.name}</Text>
         </Button>)}
       </View>
     </View>;

@@ -38,7 +38,6 @@ public class CustomerController {
     private UserController userController;
     private NexmoController nexmoController;
 
-
     public CustomerController(IDatabaseUpdater iDatabaseUpdater,
                               PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
