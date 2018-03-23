@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {Spinner, Row, Button} from 'native-base';
+import {Spinner, Button} from 'native-base';
 import {PagingListView, Icon, ErrorRegion, Swiper} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';

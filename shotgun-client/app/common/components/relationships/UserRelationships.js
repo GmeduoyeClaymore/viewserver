@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import { Container, Button, Tab, View, Text, Row, Picker, Input, Switch} from 'native-base';
+import {Button, Tab, View, Text, Row, Switch} from 'native-base';
 import { withRouter } from 'react-router';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
@@ -11,7 +11,6 @@ import UserRelationshipList from './UserRelationshipList';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 import UserRelationshipDetail from './UserRelationshipDetail';
-import {Spinner} from 'native-base';
 
 class UserRelationships extends Component{
   constructor(props){

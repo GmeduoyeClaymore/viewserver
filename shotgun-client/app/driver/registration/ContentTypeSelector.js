@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {resolveContentTypeIconSml} from 'common/assets';
 import {Icon} from 'common/components';
-import {resolveDetailsControl, resolveDetailsClass} from './ContentTypeDetailRegistry';
+import {resolveDetailsControl} from './ContentTypeDetailRegistry';
 import {Image, View } from 'react-native';
 import {Button, Text} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -44,14 +43,11 @@ export default class ContentTypeSelector extends Component{
   }
 
   deselectContentType(){
-    const {contentType} = this.props;
-    let {selectedContentTypes = {}} = this.props;
-    const {context} = this.props;
+    const {selectedContentTypes = {}, context, contentType} = this.props;
     const content = selectedContentTypes[contentType.contentTypeId];
     if (content){
-      selectedContentTypes = {...selectedContentTypes};
       selectedContentTypes[contentType.contentTypeId] = undefined;
-      context.setState({selectedContentTypes});
+      context.setState({selectedContentTypes}, this.doValidate);
     }
   }
 
@@ -68,19 +64,15 @@ export default class ContentTypeSelector extends Component{
   }
 
   async handleConfirm(){
-    const {state} = this;
-    const {context} = this.props;
+    const {context, contentType, selectedContentTypes = {}} = this.props;
     const result = await this.getValidationResult();
     if (!result || result.error == ''){
       if (context){
-        let {selectedContentTypes = {}} = this.props;
-        const {contentType, context} = this.props;
-        selectedContentTypes = {...selectedContentTypes};
-        let selectedProductCategories = state.content.selectedProductCategories || [];
+        let selectedProductCategories = this.state.content.selectedProductCategories || [];
         if (!selectedProductCategories.find(c=> c.categoryId === contentType.productCategory.categoryId)){
           selectedProductCategories = [...selectedProductCategories, contentType.productCategory];
         }
-        selectedContentTypes[contentType.contentTypeId] = {...state.content, selectedProductCategories};
+        selectedContentTypes[contentType.contentTypeId] = {...this.state.content, selectedProductCategories};
         context.setState({selectedContentTypes});
         this.handleToggleDetailVisibility(false);
       }
@@ -90,12 +82,9 @@ export default class ContentTypeSelector extends Component{
   }
 
   async getValidationResult(){
-    const {contentType = {}} = this.props;
-    const ContentTypeDetailControl = resolveDetailsClass(contentType);
-    if (ContentTypeDetailControl.canSubmit ){
-      return await ContentTypeDetailControl.canSubmit(this.state.content);
-    }
-    return undefined;
+    const {contentType} = this.props;
+    const ContentTypeDetailControl = resolveDetailsControl(contentType);
+    return await ContentTypeDetailControl.canSubmit(this.state.content);
   }
 
   async doValidate(){
@@ -107,16 +96,15 @@ export default class ContentTypeSelector extends Component{
 
   setState(newState){
     const existingContent = this.state.content;
-    const newContent = {...existingContent, ...newState};
-    super.setState({content: newContent}, this.doValidate);
+    const content = {...existingContent, ...newState};
+    super.setState({content}, this.doValidate);
   }
 
   render(){
-    const {resources} = this;
-    const {selected, contentType = {}} = this.props;
+    const {selected, contentType} = this.props;
     const {detailVisible, canSubmit, selectedContentTypes = {}} = this.state;
     const ContentTypeDetailControl = resolveDetailsControl(contentType);
-    const stateForContentType = selectedContentTypes[contentType.contentTypeId] || {};
+    const stateForContentType = selectedContentTypes[contentType.contentTypeId];
 
     return <View>
       <Button style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
@@ -128,10 +116,10 @@ export default class ContentTypeSelector extends Component{
         
       <ReactNativeModal isVisible={detailVisible} style={styles.modal} backdropOpacity={0.4}>
         <View style={styles.contentTypeSelectorContainer}>
-          {resources ?  <Text style={styles.title}>{resources.PageTitle(this.props)}</Text> : null }
+          <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
           <ContentTypeDetailControl {...{contentType, ...this.props, ...stateForContentType, ...this.state.content, context: this, canSubmit}}/>
 
-          <Button paddedBottom fullWidth iconRight onPress={this.handleConfirm} disabled={!canSubmit}>
+          <Button padded fullWidth iconRight style={{marginBottom: 5}} onPress={this.handleConfirm} disabled={!canSubmit}>
             <Text uppercase={false}>Confirm</Text>
             <Icon next name='forward-arrow'/>
           </Button>
@@ -144,11 +132,6 @@ export default class ContentTypeSelector extends Component{
     </View>;
   }
 }
-
-ContentTypeSelector.propTypes = {
-  selected: PropTypes.bool,
-  contentType: PropTypes.object
-};
 
 const styles = {
   contentTypeButton: {
@@ -181,7 +164,7 @@ const styles = {
     overflow: 'hidden',
   },
   title: {
-    padding: 20,
+    paddingTop: 20,
     textAlign: 'center',
     color: shotgun.brandLight
   }

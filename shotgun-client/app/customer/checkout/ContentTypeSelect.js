@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
-import { Image} from 'react-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
-import {resolveContentTypeIcon} from 'common/assets';
 
 class ContentTypeSelect extends Component{
   constructor(props){

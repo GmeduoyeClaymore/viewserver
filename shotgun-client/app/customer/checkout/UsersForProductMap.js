@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted } from 'custom-redux'; 2;
-import { Container, Button, Text, Grid, Col, Row, View} from 'native-base';
+import { connect, setStateIfIsMounted } from 'custom-redux';
+import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { withRouter } from 'react-router';
 import { getDaoState } from 'common/dao';

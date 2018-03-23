@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
+import { View, Text} from 'react-native';
 import {Button} from 'native-base';
 import { merge } from 'lodash';
 import {Icon} from 'common/components';
 
 
-const onChangeProduct = ({navigationStrategy, context, product}) => {
+const onChangeProduct = ({context, product}) => {
   if (!context){
     return;
   }
