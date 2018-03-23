@@ -40,20 +40,18 @@ class OrderRequest extends Component {
             <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
           </Col>
           <Col size={30} style={styles.priceRow}>
-            <Text>{orderSummary.product.name }</Text>
+            <Text style={styles.price}>{orderSummary.product.name }</Text>
             <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
             <Text note style={styles.orderStatus}>{resources.OrderStatusResolver(orderSummary)}</Text>
           </Col>
         </Row>
         <Row size={25}>
           <Col size={70}>
-            <Row>
-              {contentType.fromTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
-              {contentType.tillTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row> : null}
-            </Row>
+            {contentType.fromTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
+            {contentType.tillTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row> : null}
           </Col>
           {noRequiredForOffload > 0 ?
-            <Col size={30} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text key='text'>{`${noRequiredForOffload} people required`}</Text>] : null}</Row></Col> : null
+            <Col size={30} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text key='text' style={{alignSelf: 'flex-start'}}>{`${noRequiredForOffload} ${noRequiredForOffload > 1 ? 'people' : 'person'}  required`}</Text>] : null}</Row></Col> : null
           }
         </Row>
       </Grid>
