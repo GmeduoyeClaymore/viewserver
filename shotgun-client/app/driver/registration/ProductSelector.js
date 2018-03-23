@@ -9,24 +9,6 @@ import {connect} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 10
-  },
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30
-  },
-  picture: {
-    height: 40,
-    width: 40,
-    marginLeft: 10
-  }
-});
-
-const headerView  = ({options: opts, search}) => <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;
-
 class ProductList extends Component{
   static validationSchema = {
     selectedProductIds: yup.array().required()
@@ -52,6 +34,8 @@ class ProductList extends Component{
     const checked = !!~selectedProductIds.indexOf(productId);
     return <CheckBox  key={productId} onPress={() => this.toggleProduct(productId)} categorySelectionCheckbox checked={checked}/>;
   }
+
+  headerView({options: opts, search}){ return <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;}
 
   rowView({item: row, selectedProductIds}){
     const {productId, name, description} = row;
@@ -87,7 +71,6 @@ class ProductList extends Component{
 
   render(){
     const {busy, selectedProductIds = []} = this.props;
-    const {rowView, search} = this;
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
@@ -96,23 +79,30 @@ class ProductList extends Component{
       <Content keyboardShouldPersistTaps="always" padded>
         <View>
           <PagingListView
-            style={styles.container}
+            style={styles.pagingListView}
             {...{selectedProductIds}}
             daoName='productDao'
             dataPath={['product', 'products']}
             pageSize={10}
-            search={search}
+            search={this.search}
             options={this.getOptions()}
-            rowView={rowView}
+            rowView={this.rowView}
             paginationWaitingView={Paging}
             emptyView={NoItems}
-            headerView={headerView}
+            headerView={this.headerView}
           />
         </View>
       </Content>
     </Container>;
   }
 }
+
+const styles = StyleSheet.create({
+  pagingListView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 10
+  }
+});
 
 const mapStateToProps = (state, nextOwnProps) => {
   return {

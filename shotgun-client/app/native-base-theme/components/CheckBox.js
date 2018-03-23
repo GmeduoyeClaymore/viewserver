@@ -48,7 +48,7 @@ export default (variables = variable) => {
       'NativeBase.IconNB': {
         lineHeight: 40,
         marginTop: variables.CheckboxIconMarginTop,
-        marginLeft: 10,
+        marginLeft: 5,
         fontSize: 40
       },
       '.Icon': {

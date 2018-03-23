@@ -161,10 +161,6 @@ export default class App extends React.Component {
 }
 
 const styles = {
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',

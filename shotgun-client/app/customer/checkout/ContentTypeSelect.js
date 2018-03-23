@@ -33,7 +33,7 @@ class ContentTypeSelect extends Component{
       <Container>
         <Content padded>
           <View style={{marginTop: 25}}>
-            <H1 style={styles.h1}>Start a new job</H1>
+            <H1 style={styles.h1}>Create a job</H1>
             <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
           </View>
           <Grid>
@@ -90,7 +90,7 @@ const styles = {
     height: 90,
     borderWidth: 0
   },
-  container: {
+  pagingListView: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center'

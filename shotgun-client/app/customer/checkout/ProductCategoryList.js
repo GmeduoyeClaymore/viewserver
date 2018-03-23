@@ -76,7 +76,7 @@ class ProductCategoryList extends Component{
       <Content padded>
         <ProductListItem product={selectedProduct}/>
         <PagingListView
-          style={styles.container}
+          style={styles.pagingListView}
           daoName='productCategoryDao'
           dataPath={['product', 'categories']}
           pageSize={10}
@@ -126,7 +126,7 @@ export const mapStateToProps = (state, initialProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  pagingListView: {
     backgroundColor: '#FFFFFF',
     marginTop: 10
   },
