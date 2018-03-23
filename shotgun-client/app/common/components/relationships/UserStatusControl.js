@@ -53,6 +53,7 @@ class UserRelationships extends Component{
             onValueChange={(status) => this.setStatus({status})}>
             <Picker.Item label="Online" value="ONLINE" />
             <Picker.Item label="Busy" value="BUSY" />
+            <Picker.Item label="Available Soon" value="AVAILABLESOON" />
             <Picker.Item label="Appear Offline" value="OFFLINE" />
           </Picker>
         </Row>

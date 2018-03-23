@@ -52,6 +52,7 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("notes"),
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
+                                                new IProjectionConfig.ProjectionColumn("quantity"),
                                                 new IProjectionConfig.ProjectionColumn("paymentId"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
                                                 new IProjectionConfig.ProjectionColumn("rating", "customerRating"),

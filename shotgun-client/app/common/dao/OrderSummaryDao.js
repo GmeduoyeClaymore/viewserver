@@ -72,6 +72,7 @@ export default class OrderSummaryDao{
       totalPrice: orderSummary.totalPrice,
       customerRating: orderSummary.customerRating,
       driverRating: orderSummary.driverRating,
+      quantity: orderSummary.quantity,
       orderItem: {
         productId: orderSummary.productId,
         notes: orderSummary.notes,

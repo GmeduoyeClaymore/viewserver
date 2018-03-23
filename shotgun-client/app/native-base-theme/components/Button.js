@@ -315,6 +315,33 @@ export default (variables = variable) => {
         color: variables.darkGreen
       }
     },
+    '.statusButtonSml': {
+      backgroundColor: variables.brandPrimary,
+      borderWidth: 1,
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      borderColor: variables.silver,
+      'NativeBase.Text': {
+        color: variables.darkGreen
+      },
+      'NativeBase.Icon': {
+        color: variables.darkGreen
+      }
+    },
+    '.statusButton': {
+      backgroundColor: variables.brandPrimary,
+      borderWidth: 1,
+      borderColor: variables.silver,
+      justifyContent: 'flex-start',
+      'NativeBase.Text': {
+        color: variables.darkGreen
+      },
+      'NativeBase.Icon': {
+        marginRight: 15,
+        color: variables.darkGreen
+      }
+    },
 
     paddingVertical: variables.buttonPadding,
     backgroundColor: variables.btnPrimaryBg,
