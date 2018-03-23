@@ -122,9 +122,6 @@ const JobSummary = ({item: orderSummary, isLast, isFirst}) => {
         </Col>
         <Col size={60}>
           {contentType.fromTime ? <Row style={{paddingRight: 10, marginBottom: 8}}><Icon paddedIcon name="delivery-time"/><Text style={{paddingTop: 3}}>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
-          {noRequiredForOffload > 0 ?
-            <Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text style={{paddingTop: 3}} key='text'>{`${noRequiredForOffload} ${noRequiredForOffload > 1 ? 'people' : 'person'} required`}</Text>] : null}</Row> : null
-          }
         </Col>
       </Row>
     </Grid>
@@ -143,7 +140,7 @@ class UserRelationshipDetail extends Component{
 
   RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
     const isSelected = selectedUser.userId === user.userId;
-    return <View style={{flex: 1, margin: 25, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
+    return <View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}} style={{maxHeight: 150, minHeight: 150}}/>
       <View  style={{flex: 4}}>
         {isSelected ? <PagingListView
