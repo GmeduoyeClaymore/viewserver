@@ -111,7 +111,7 @@ class UserRelationships extends Component{
   render(){
     const {onChangeTab, UserViews, parentState} = this;
     const {history, errors, noRelationships, me, searchText, title, selectedProduct, backAction} = this.props;
-    const {selectedUser, selectedTabIndex = 0, oldOptions, showAll} = parentState;
+    const {selectedUser, selectedUserIndex, selectedTabIndex = 0, oldOptions, showAll} = parentState;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
     if (!me){
@@ -146,7 +146,7 @@ class UserRelationships extends Component{
       <Button transparent style={styles.backButton} onPress={() => backAction ? backAction() : history.goBack()} >
         <Icon name='back-arrow'/>
       </Button>
-      <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser}/>
+      <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
     </View>;
   }
 }

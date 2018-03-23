@@ -10,7 +10,8 @@ import {connect} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
 import {RelatedUser, StarsControl, StatusButton} from './RelatedUser';
-
+import Logger from 'common/Logger';
+import {isEqual} from 'lodash';
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;
@@ -137,12 +138,14 @@ class UserRelationshipDetail extends Component{
     this.handleCancel = this.handleCancel.bind(this);
     this.RelatedUser = this.RelatedUser.bind(this);
     this.selectUserByIndex = this.selectUserByIndex.bind(this);
+    this.updateSelectedIndexForUser(this.props);
   }
 
-  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, isSelected = true}) => {
-    return <View style={{flex: 1, margin: 25}}>
-      <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}}/>
-      <View  style={{marginTop: 40, flex: 4}}>
+  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
+    const isSelected = selectedUser.userId === user.userId;
+    return <View style={{flex: 1, margin: 25, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
+      <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}} style={{maxHeight: 150, minHeight: 150}}/>
+      <View  style={{flex: 4}}>
         {isSelected ? <PagingListView
           ref={oc => {this.ordersControl = oc;}}
           daoName='orderSummaryDao'
@@ -151,10 +154,24 @@ class UserRelationshipDetail extends Component{
           rowView={JobSummary   }
           paginationWaitingView={Paging}
           emptyView={NoItems}
-        /> : null}
+        /> : <Spinner />}
       </View>
-      <StatusButton user={user}/>
+      <StatusButton user={user} style={{justifyContent: 'flex-start'}}/>
     </View>;
+  }
+
+  componentWillReceiveProps(newProps){
+    this.updateSelectedIndexForUser( newProps, this.props);
+  }
+
+  updateSelectedIndexForUser(newProps, oldProps = {}){
+    Logger.info(`Attempting to update selected index selected user is ${JSON.stringify(newProps.selectedUser)}`);
+    if (!isEqual(newProps.selectedUser, oldProps.selectedUser) && newProps.selectedUser){
+      const {relatedUsers, context} = newProps;
+      const selectedUserIndex = relatedUsers.findIndex(c=> c.userId === newProps.selectedUser.userId);
+      Logger.info(`Attempting to update selected index to ${selectedUserIndex}`);
+      context.setState({selectedUserIndex});
+    }
   }
 
   handleCancel(){
@@ -164,17 +181,19 @@ class UserRelationshipDetail extends Component{
 
   selectUserByIndex(idx){
     const {relatedUsers, context} = this.props;
-    context.setState({selectedUser: relatedUsers[idx]});
+    const selectedUser = relatedUsers[idx];
+    Logger.info(`Selected user is ${selectedUser.userId} index is ${idx} related users are ${relatedUsers.map(c=>c.userId).join(',')}`);
+    context.setState({selectedUser, selectedUserIndex: idx});
   }
 
   render(){
-    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser} = this.props;
+    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, selectedUserIndex} = this.props;
     const {RelatedUser} = this;
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
-      <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} scrollViewStyle={{...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT}} animated={false} bounces={false} showsPagination={false} loadMinimal={false} onIndexChanged={this.selectUserByIndex} index={relatedUsers.indexOf(selectedUser)} style={styles.wrapper} showsButtons={true}>
-        {relatedUsers.map((v, i) => <RelatedUser isSelected={selectedUser && v.userId === selectedUser.userId} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
+      <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} scrollViewStyle={{...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
+        {relatedUsers.map((v, i) => <RelatedUser selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
       </Swiper>
       <TouchableHighlight
         style={styles.cancelButton}

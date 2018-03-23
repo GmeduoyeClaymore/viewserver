@@ -104,7 +104,7 @@ class CustomerOrderInProgress extends Component{
                 </Col>
               </Grid>
               <ErrorRegion errors={errors}>
-                <Button fullWidth callButton onPress={onPressCallDriver}>
+                <Button fullWidth callButtonSml onPress={onPressCallDriver}>
                   <Icon name="phone" paddedIcon/>
                   <Text uppercase={false}>Call driver</Text>
                 </Button>

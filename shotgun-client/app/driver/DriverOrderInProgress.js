@@ -114,7 +114,7 @@ class DriverOrderInProgress extends Component{
                 </Row>
                 <Row style={styles.ctaRow}>
                   <Col><Button fullWidth style={styles.navigateButton} onPress={onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button></Col>
-                  <Col><Button fullWidth callButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>
+                  <Col><Button fullWidth statusButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>
                 </Row>
               </Grid>
               <ErrorRegion errors={errors}>

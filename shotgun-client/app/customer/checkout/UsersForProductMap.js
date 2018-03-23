@@ -133,7 +133,7 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
-  const {delivery, selectedContentType, selectedProduct, selectedUser} = context.state;
+  const {delivery, selectedContentType, selectedProduct, selectedUser, selectedUserIndex} = context.state;
   const {origin} = delivery;
   const disableDoneButton = origin.line1 == undefined;
 
@@ -141,6 +141,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     state,
     selectedUser,
+    selectedUserIndex,
     me: getDaoState(state, ['user'], 'userDao'),
     delivery, selectedProduct, selectedContentType, origin,  disableDoneButton
   };
