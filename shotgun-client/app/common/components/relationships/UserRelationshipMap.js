@@ -16,7 +16,8 @@ export default class UserRelationshipMap extends Component{
   
   fitMap(newProps){
     const {map} = this;
-    let {me, location} = newProps;
+    let {me} = newProps;
+    const {location} = newProps;
     me = location || me;
     let {relatedUsers} = newProps;
     if (me){
@@ -62,7 +63,7 @@ export default class UserRelationshipMap extends Component{
     return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => fitMap(this.props)}
       region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections client={client} locations={[me, selectedUser]} strokeWidth={3} /> : null}
-      {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
+      {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;
   }
 }

@@ -1,31 +1,13 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {Text, Spinner, Container, Row, Col, Content} from 'native-base';
-import {LoadingScreen, PagingListView, SearchBar} from 'common/components';
+import {LoadingScreen, PagingListView} from 'common/components';
 import {CheckBox} from 'common/components/basic';
-import {updateSubscriptionAction} from 'common/dao/DaoActions';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {connect} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 10
-  },
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30
-  },
-  picture: {
-    height: 40,
-    width: 40,
-    marginLeft: 10
-  }
-});
-
-const headerView  = ({options: opts, search}) => <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;
+import shotgun from 'native-base-theme/variables/shotgun';
 
 class ProductList extends Component{
   static validationSchema = {
@@ -40,11 +22,6 @@ class ProductList extends Component{
   constructor(props){
     super(props);
     this.rowView = this.rowView.bind(this);
-    const {dispatch} = this.props;
-    this.search = (searchText) => {
-      dispatch(updateSubscriptionAction('productDao', {searchText}));
-    };
-    this.search = this.search.bind(this);
     this.renderSelectionControl = this.renderSelectionControl.bind(this);
   }
 
@@ -56,13 +33,13 @@ class ProductList extends Component{
   rowView({item: row, selectedProductIds}){
     const {productId, name, description} = row;
     const {renderSelectionControl: SelectionControl} = this;
-    return <Row key={productId} style={{flexDirection: 'row', flex: 1, padding: 5, backgroundColor: 'white'}}>
-      <View style={{width: 50, paddingTop: 25}}>
+    return <Row key={productId} style={styles.productRow}>
+      <Col style={styles.selectionControlColumn}>
         <SelectionControl productId={productId} selectedProductIds={selectedProductIds}/>
-      </View>
-      <Col style={{padding: 10, paddingTop: 20, flex: 1}}>
-        <Text >{`${name}`}</Text>
-        <Text >{`${description}`}</Text>
+      </Col>
+      <Col>
+        <Text>{name}</Text>
+        <Text style={styles.productDescription}>{description}</Text>
       </Col>
     </Row>;
   }
@@ -79,15 +56,8 @@ class ProductList extends Component{
     context.setState({selectedProductIds});
   }
 
-
-  getOptions(){
-    const {options, contentType} = this.props;
-    return {...options, categoryId: contentType.rootProductCategory};
-  }
-
   render(){
-    const {busy, selectedProductIds = []} = this.props;
-    const {rowView, search} = this;
+    const {busy, selectedProductIds = [], options, contentType} = this.props;
 
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
@@ -96,23 +66,42 @@ class ProductList extends Component{
       <Content keyboardShouldPersistTaps="always" padded>
         <View>
           <PagingListView
-            style={styles.container}
+            style={styles.pagingListView}
             {...{selectedProductIds}}
             daoName='productDao'
             dataPath={['product', 'products']}
             pageSize={10}
-            search={search}
-            options={this.getOptions()}
-            rowView={rowView}
+            options={{...options, categoryId: contentType.rootProductCategory}}
+            rowView={this.rowView}
             paginationWaitingView={Paging}
             emptyView={NoItems}
-            headerView={headerView}
+            headerView={undefined}
           />
         </View>
       </Content>
     </Container>;
   }
 }
+
+const styles = {
+  pagingListView: {
+    backgroundColor: shotgun.brandPrimary,
+    paddingTop: 10
+  },
+  productRow: {
+    padding: 5,
+    paddingTop: 20,
+    backgroundColor: shotgun.brandPrimary
+  },
+  selectionControlColumn: {
+    width: 50,
+    paddingTop: 5,
+    marginRight: 10
+  },
+  productDescription: {
+    color: shotgun.brandLight
+  }
+};
 
 const mapStateToProps = (state, nextOwnProps) => {
   return {
@@ -123,6 +112,5 @@ const mapStateToProps = (state, nextOwnProps) => {
 };
 
 const ConnectedProductList =  connect(mapStateToProps)(ProductList);
-
 export default ConnectedProductList;
 

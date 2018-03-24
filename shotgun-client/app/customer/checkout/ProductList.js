@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, Text} from 'react-native';
-import {Spinner, Button, Container, Header, Title, Body, Left, Content, Row, Grid, Col} from 'native-base';
+import {View} from 'react-native';
+import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row, Grid, Col} from 'native-base';
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import {PagingListView, Icon, SearchBar, ValidatingButton} from 'common/components';

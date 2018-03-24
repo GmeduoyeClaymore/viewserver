@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { View, Text, Image, TouchableHighlight, Dimensions} from 'react-native';
+import { View, Text, TouchableHighlight, Dimensions} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {Spinner, Row, Button, Grid, Col, ListItem} from 'native-base';
-import {PagingListView, Icon, ErrorRegion, Swiper, OriginDestinationSummary} from 'common/components';
+import {PagingListView, Icon, Swiper} from 'common/components';
+import {Spinner, Row, Grid, Col, ListItem} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
@@ -112,7 +112,7 @@ const Paging = () => <View><Spinner /></View>;
 const NoItems = () => <View style={{flex: 1}}><Text>No items to display</Text></View>;
 
 const JobSummary = ({item: orderSummary, isLast, isFirst}) => {
-  const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
+  const {delivery, contentType} = orderSummary;
   return <ListItem key={orderSummary.orderId} style={[styles.orderRequest, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}>
     <Grid>
       <Row size={75} style={styles.locationRow}>
@@ -138,7 +138,7 @@ class UserRelationshipDetail extends Component{
     this.updateSelectedIndexForUser(this.props);
   }
 
-  RelatedUser = ({user, onPressCallUser, onPressAssignUser, navigationStrategy, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
+  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}}) => {
     const isSelected = selectedUser.userId === user.userId;
     return <View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       {

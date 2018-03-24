@@ -6,15 +6,13 @@ import React from 'react';
 
 const detailControlRegistry = {
   [ContentTypes.DELIVERY]: DriverCapabilityDetails,
-  [ContentTypes.RUBBISH]: (props) => { return (<ProductCategorySelector {...props} hideSearchBar={true}/>);},
+  [ContentTypes.RUBBISH]: ProductCategorySelector,
   [ContentTypes.HIRE]: ProductCategorySelector,
-  [ContentTypes.SKIP]: ProductCategorySelector
+  [ContentTypes.SKIP]: ProductCategorySelector,
+  [ContentTypes.PERSONELL]: ProductSelector
 };
 
 export const resolveDetailsControl = (contentType) => {
-  const control = detailControlRegistry[contentType.contentTypeId];
-  return control ? control : ProductSelector;
+  return detailControlRegistry[contentType.contentTypeId];
 };
-
-export default resolveDetailsControl;
 

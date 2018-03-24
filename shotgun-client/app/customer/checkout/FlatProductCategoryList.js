@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
@@ -10,6 +10,8 @@ import ProductListItem from './ProductListItem';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {mapStateToProps, validationSchema} from './ProductCategoryList';
+import shotgun from 'native-base-theme/variables/shotgun';
+
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -17,8 +19,6 @@ resourceDictionary.
     personell('Select Worker').
     rubbish('Commercial or domestic waste?');
 /*eslint-enable */
-
-const headerView  = ({selectedCategory}) => (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);
 
 class FlatProductCategoryList extends Component{
   static propTypes = {
@@ -50,6 +50,7 @@ class FlatProductCategoryList extends Component{
     </View>;
   }
 
+  headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
 
   navigateToCategory(category){
     const {history} = this.props;
@@ -68,7 +69,6 @@ class FlatProductCategoryList extends Component{
 
   render(){
     const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
-    const {rowView, resources} = this;
 
     if (selectedCategory.isLeaf){
       return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
@@ -84,12 +84,12 @@ class FlatProductCategoryList extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>{resources.PageTitle}</Title></Body>
+        <Body><Title>{this.resources.PageTitle}</Title></Body>
       </Header>
       <Content padded>
         <ProductListItem product={selectedProduct}/>
         <PagingListView
-          style={styles.container}
+          style={styles.pagingListView}
           selectedCategory={selectedCategory}
           elementContainer={Row}
           elementContainerStyle={{flexWrap: 'wrap'}}
@@ -98,10 +98,10 @@ class FlatProductCategoryList extends Component{
           pageSize={10}
           options={defaultOptions}
           history={history}
-          rowView={rowView}
+          rowView={this.rowView}
           paginationWaitingView={Paging}
           emptyView={NoItems}
-          headerView={headerView}
+          headerView={this.headerView}
         />
       </Content>
       <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
@@ -112,13 +112,7 @@ class FlatProductCategoryList extends Component{
   }
 }
 
-
 const styles = {
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30,
-    fontSize: 13
-  },
   productSelectText: {
     width: '100%',
     marginTop: 5,
@@ -126,16 +120,12 @@ const styles = {
     fontSize: 16,
     textAlign: 'center'
   },
-  container: {
-    backgroundColor: '#FFFFFF',
+  pagingListView: {
+    backgroundColor: shotgun.brandPrimary,
     marginTop: 10
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
   }
 };
 
 const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(FlatProductCategoryList));
-
 export default ConnectedProductCategoryList;
 

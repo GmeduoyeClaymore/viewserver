@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
-import { Image} from 'react-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
+<<<<<<< HEAD
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 const withFixedPice = (state) => {
@@ -17,6 +17,8 @@ resourceDictionary.
   property('InitialState', INITIAL_STATE).
     personell(withFixedPice(INITIAL_STATE))
 /*eslint-enable */
+=======
+>>>>>>> 3a93d3becd6bc057dcfdade0140444c998c52f80
 
 class ContentTypeSelect extends Component{
   constructor(props){
@@ -47,7 +49,7 @@ class ContentTypeSelect extends Component{
       <Container>
         <Content padded>
           <View style={{marginTop: 25}}>
-            <H1 style={styles.h1}>Start a new job</H1>
+            <H1 style={styles.h1}>Create a job</H1>
             <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
           </View>
           <Grid>
@@ -104,7 +106,7 @@ const styles = {
     height: 90,
     borderWidth: 0
   },
-  container: {
+  pagingListView: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center'

@@ -1,4 +1,4 @@
-import {invokeDaoCommand} from 'common/dao';
+import {invokeDaoCommand, getDaoCommandStatus} from 'common/dao';
 import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderDao from 'common/dao/OrderDao';
 import CustomerDao from 'customer/dao/CustomerDao';
@@ -8,8 +8,6 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
-import {getDaoCommandStatus} from 'common/dao';
-
 import ProductDao from 'common/dao/ProductDao';
 import UserDao from 'common/dao/UserDao';
 

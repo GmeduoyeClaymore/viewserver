@@ -34,16 +34,10 @@ class CheckBox extends Component {
 	  return computeProps(this.props, defaultProps);
 	}
 	render() {
-	  const variables = this.context.theme ? this.context.theme['@@shoutem.theme/themeStyle'].variables : variable;
-	  const platformStyle = variables.platformStyle;
-	  const platform = variables.platform;
-	  const rootProps = this.prepareRootProps(variables);
+	  const rootProps = this.prepareRootProps(variable);
 	  return (
 	    <TouchableOpacity ref={c => (this._root = c)} {...rootProps}>
-	      <StyledIconNB
-
-	        name={platform === 'ios' && platformStyle !== 'material' ? 'ios-checkmark-outline' : 'md-checkmark'}
-	      />
+	      <StyledIconNB name='md-checkmark'/>
 	    </TouchableOpacity>
 	  );
 	}

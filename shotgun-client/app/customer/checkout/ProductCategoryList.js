@@ -4,7 +4,7 @@ import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState, resetSubscriptionAction} from 'common/dao';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
 import {connect} from 'custom-redux';
 import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
@@ -76,7 +76,7 @@ class ProductCategoryList extends Component{
       <Content padded>
         <ProductListItem product={selectedProduct}/>
         <PagingListView
-          style={styles.container}
+          style={styles.pagingListView}
           daoName='productCategoryDao'
           dataPath={['product', 'categories']}
           pageSize={10}
@@ -126,7 +126,7 @@ export const mapStateToProps = (state, initialProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  pagingListView: {
     backgroundColor: '#FFFFFF',
     marginTop: 10
   },

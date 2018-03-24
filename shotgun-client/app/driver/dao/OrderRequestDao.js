@@ -2,16 +2,6 @@ import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubs
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
 
-export const isImplicitylChecked = (categoryObj, selectedProductCategories ) => {
-  return !!selectedProductCategories.find(c=> isDescendendantOf(categoryObj, c));
-};
-
-export const isDescendendantOf = (parent, child)=> {
-  const {path: childPath = ''} = child;
-  const {path: parentPath = ''} = parent;
-  return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
-};
-
 export default class OrderRequestDaoContext{
   static DEFAULT_POSITION = {
     latitude: 0,
@@ -41,6 +31,15 @@ export default class OrderRequestDaoContext{
     return 'orderRequestDao';
   }
 
+  isImplicitylChecked(categoryObj, selectedProductCategories) {
+    return !!selectedProductCategories.find(c=> this.isDescendendantOf(categoryObj, c));
+  }
+
+  isDescendendantOf(parent, child){
+    const {path: childPath = ''} = child;
+    const {path: parentPath = ''} = parent;
+    return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
+  }
 
   getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
     if (typeof contentType === 'undefined') {
@@ -161,7 +160,7 @@ export default class OrderRequestDaoContext{
     if (!selectedProductCategories.length){
       return undefined;
     }
-    const expressionArray = selectedProductCategories.filter(cat => !isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression);
+    const expressionArray = selectedProductCategories.filter(cat => !this.isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression);
     expressionArray.push(`contentTypeRootProductCategory == "${contentType.rootProductCategory}"`);
     return expressionArray.join(' || ');
   }
