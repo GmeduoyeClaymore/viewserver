@@ -38,7 +38,7 @@ class DriverOrderInProgress extends Component{
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, position, dispatch, busy, busyUpdating, client, errors} = this.props;
+    const {orderSummary = {status: ''}, history, position = {}, dispatch, busy, busyUpdating, client, errors} = this.props;
     const {initialPosition} = this.state;
     const {latitude, longitude} = position;
     const {delivery = {}, contentType, customerRating} = orderSummary;
@@ -76,8 +76,8 @@ class DriverOrderInProgress extends Component{
     };
 
     const region = {
-      latitude: position.latitude,
-      longitude: position.longitude,
+      latitude,
+      longitude,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };

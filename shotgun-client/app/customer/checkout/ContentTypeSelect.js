@@ -3,7 +3,6 @@ import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
-<<<<<<< HEAD
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 const withFixedPice = (state) => {
@@ -17,8 +16,6 @@ resourceDictionary.
   property('InitialState', INITIAL_STATE).
     personell(withFixedPice(INITIAL_STATE))
 /*eslint-enable */
-=======
->>>>>>> 3a93d3becd6bc057dcfdade0140444c998c52f80
 
 class ContentTypeSelect extends Component{
   constructor(props){
