@@ -138,7 +138,7 @@ class UserRelationshipDetail extends Component{
     this.updateSelectedIndexForUser(this.props);
   }
 
-  RelatedUser = ({user, onPressCallUser, onPressAssignUser,navigationStrategy, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
+  RelatedUser = ({user, onPressCallUser, onPressAssignUser, navigationStrategy, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
     const isSelected = selectedUser.userId === user.userId;
     return <View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       {
@@ -194,14 +194,17 @@ class UserRelationshipDetail extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser,navigationStrategy, selectedUserIndex} = this.props;
+    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, navigationStrategy, selectedUserIndex} = this.props;
     const {RelatedUser} = this;
+    const scrollViewStyle = {...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT};
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
-      <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} scrollViewStyle={{...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
-        {relatedUsers.map((v, i) => <RelatedUser navigationStrategy={navigationStrategy} selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
-      </Swiper>
+      <View style={{flex: 1, ...scrollViewStyle}}>
+        <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={false} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
+          {relatedUsers.map((v, i) => <RelatedUser navigationStrategy={navigationStrategy} selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
+        </Swiper>
+      </View>
       <TouchableHighlight
         style={styles.cancelButton}
         underlayColor="#ebebeb"

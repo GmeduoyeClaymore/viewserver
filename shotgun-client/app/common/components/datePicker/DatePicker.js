@@ -58,7 +58,7 @@ export default class DatePickerControl extends Component{
       <DatePicker {...newProps}/>
       <View style={{marginLeft: 15, alignSelf: 'flex-end', flexDirection: 'row'}}>
         {cannedDateOptions.map( (opt) => <Button style={{paddingRight: 10, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
-          <Text>{opt.name}</Text>
+          <Text fontSize={8}>{opt.name}</Text>
         </Button>)}
       </View>
     </View>;

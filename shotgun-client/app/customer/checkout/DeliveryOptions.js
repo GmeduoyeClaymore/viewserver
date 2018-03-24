@@ -4,7 +4,6 @@ import { connect } from 'custom-redux';
 import {CheckBox} from 'common/components/basic';
 import { Picker, TextInput } from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
-import { merge } from 'lodash';
 import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
@@ -35,6 +34,13 @@ const TwoWorkingDayOption = {
   resolver: ({from}) => (moment(from) || moment()).startOf('day').add(1, 'days').add(9, 'hours').add(8, 'hours').toDate()
 };
 
+
+const formatPrice = (price) => {
+  if (!price || price === 'undefined'){
+    return undefined;
+  }
+  return `£${(price / 100).toFixed(2)}`;
+};
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -64,8 +70,11 @@ class DeliveryOptions extends Component {
     super(props);
     this.onChangeValue = this.onChangeValue.bind(this);
     this.setRequireHelp = this.setRequireHelp.bind(this);
+    this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
+    this.setFormattedPriceValue = this.setFormattedPriceValue.bind(this);
     this.setCard = this.setCard.bind(this);
     this.toggleFixedPrice = this.toggleFixedPrice.bind(this);
+    this.onFixedPriceValueChanged = this.onFixedPriceValueChanged.bind(this);
     this.state = {
       requireHelp: false,
       from_isDatePickerVisible: false,
@@ -111,26 +120,51 @@ class DeliveryOptions extends Component {
   onChangeValue(field, value) {
     const { context } = this.props;
     const { delivery } = context.state;
-    context.setState({ delivery: merge({}, delivery, { [field]: value }) });
+    context.setState({ delivery: {...delivery, ...{ [field]: value}}});
   }
 
 
   toggleFixedPrice(){
     const { context } = this.props;
     const { delivery } = context.state;
-    const {fixedPrice} = delivery;
-    this.onChangeValue('fixedPrice', !fixedPrice);
+    const {isFixedPrice, fixedPriceValue} = delivery;
+    context.setState({ delivery: {...delivery, ...{ isFixedPrice: !isFixedPrice, fixedPriceValue: isFixedPrice ? undefined : fixedPriceValue  } }});
   }
 
   onChangeDate(field, value) {
     this.onChangeValue(field, value);
     this.toggleDatePicker(field, false);
+    this.loadEstimatedPrice();
+  }
+
+  async loadEstimatedPrice(){
+    const { context, client} = this.props;
+    const {orderItem, delivery} = context.state;
+    if (delivery.from && delivery.till){
+      const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], delivery}).timeoutWithError(10000, 'Unable to load total price after 10 seconds');
+      if (price){
+        const formattedPrice = formatPrice(price);
+        this.setState({price, formattedPrice});
+      }
+    }
   }
 
   onChangeNoItems(quantity){
     const { context } = this.props;
     const { orderItem } = context.state;
-    context.setState({ orderItem: merge({}, orderItem, {quantity}) });
+    context.setState({ orderItem: {...orderItem, quantity}});
+  }
+
+  setFormattedPriceValue(){
+    const { context} = this.props;
+    const { delivery} = context.state;
+    const {price } = this.state;
+    const formattedPrice = formatPrice(delivery.fixedPriceValue || price);
+    this.setState({formattedPrice});
+  }
+
+  onFixedPriceValueChanged(t){
+    this.onChangeValue('fixedPriceValue', t);
   }
 
   render() {
@@ -138,7 +172,7 @@ class DeliveryOptions extends Component {
     const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
     const { delivery, payment, orderItem, selectedContentType} = context.state;
     const { quantity: noRequiredForOffload } = orderItem;
-    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
+    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard, formattedPrice } = this.state;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
@@ -157,6 +191,10 @@ class DeliveryOptions extends Component {
     if (selectedContentType.tillTime){
       validationSchema.till = yup.date().required();
     }
+
+    const fixedPriceValidationSchema = {
+      fixedPriceValue: yup.number().required()
+    };
     
 
     return busy ?
@@ -182,10 +220,12 @@ class DeliveryOptions extends Component {
                 <CheckBox  onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
                 <TextInput
                   disabled={!delivery.isFixedPrice}
-                  style={{...styles.input}}
-                  value={delivery.fixedPriceValue}
+                  editable={delivery.isFixedPrice}
+                  style={styles.input}
+                  value={formattedPrice}
                   placeholder="Enter Fixed Price"
-                  onChangeText={(t) => this.onChangeValue('fixedPriceValue', t)}
+                  onBlur={this.setFormattedPriceValue}
+                  onChangeText={this.onFixedPriceValueChanged}
                 />
               </Row></ListItem> : null}
           { !delivery.isFixedPrice && selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
@@ -246,7 +286,7 @@ class DeliveryOptions extends Component {
             </Grid>
           </ListItem> : null}
         </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={delivery}>
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} validationSchema={delivery.isFixedPrice ? yup.object(fixedPriceValidationSchema) : yup.object(validationSchema)} validateOnMount={true} model={delivery}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow' />
         </ValidatingButton>

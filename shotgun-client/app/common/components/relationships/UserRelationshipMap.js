@@ -22,10 +22,13 @@ export default class UserRelationshipMap extends Component{
     if (me){
       relatedUsers = [...relatedUsers, me];
     }
-    map.fitToCoordinates(relatedUsers.filter(c=> c.latitude && c.longitude).map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
-      edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
-      animated: false,
-    });
+    const filteredUsers = relatedUsers.filter(c=> c.latitude && c.longitude);
+    if (filteredUsers.length){
+      map.fitToCoordinates(filteredUsers.map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
+        edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
+        animated: false,
+      });
+    }
   }
 
   componentDidMount(){
@@ -40,7 +43,7 @@ export default class UserRelationshipMap extends Component{
       this.fitMap(newProps);
     }
   }
-    
+
   render(){
     const {selectedUser, relatedUsers = [], context, client, geoLocation} = this.props;
     let {me} = this.props;
