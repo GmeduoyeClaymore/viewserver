@@ -16,7 +16,8 @@ class UserRelationships extends Component{
   constructor(props){
     super(props);
     this.state = {
-      showAll: true
+      showAll: true,
+      selectedUserIndex: -1
     };
     setStateIfIsMounted(this);
     this.UserViews = [
@@ -76,6 +77,9 @@ class UserRelationships extends Component{
 
   setSelectedUser(selectedUser){
     this.setState({selectedUser});
+    if (selectedUser){
+      this.detail.wrappedInstance.show();
+    }
   }
 
   onChangeTab(selectedTabIndex){
@@ -145,7 +149,7 @@ class UserRelationships extends Component{
       <Button transparent style={styles.backButton} onPress={() => backAction ? backAction() : history.goBack()} >
         <Icon name='back-arrow'/>
       </Button>
-      <UserRelationshipDetail {...this.props} context={this} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
+      <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} context={this} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
     </View>;
   }
 }

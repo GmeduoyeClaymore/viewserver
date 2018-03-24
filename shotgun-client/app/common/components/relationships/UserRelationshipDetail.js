@@ -135,7 +135,11 @@ class UserRelationshipDetail extends Component{
     this.handleCancel = this.handleCancel.bind(this);
     this.RelatedUser = this.RelatedUser.bind(this);
     this.selectUserByIndex = this.selectUserByIndex.bind(this);
+    this.show = this.show.bind(this);
     this.updateSelectedIndexForUser(this.props);
+    this.state = {
+      isVisible: false
+    };
   }
 
   RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}}) => {
@@ -183,25 +187,31 @@ class UserRelationshipDetail extends Component{
 
   handleCancel(){
     const {context} = this. props;
-    context.setState({selectedUser: undefined});
+    this.setState({isVisible: false});
+    context.setState({selectedUser: undefined, selectedUserIndex: -1});
+  }
+
+  show(){
+    this.setState({isVisible: true});
   }
 
   selectUserByIndex(idx){
     const {relatedUsers, context} = this.props;
     const selectedUser = relatedUsers[idx];
-    Logger.info(`Selected user is ${selectedUser.userId} index is ${idx} related users are ${relatedUsers.map(c=>c.userId).join(',')}`);
+    Logger.info(`Selected user is ${selectedUser ? selectedUser.userId : 'undefined'} index is ${idx} related users are ${relatedUsers.map(c=>c.userId).join(',')}`);
     context.setState({selectedUser, selectedUserIndex: idx});
   }
 
   render(){
     const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, navigationStrategy, selectedUserIndex} = this.props;
     const {RelatedUser} = this;
+    const {isVisible} = this.state;
     const scrollViewStyle = {...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT};
     return <ReactNativeModal
-      isVisible={!!selectedUser}
+      isVisible={isVisible}
       backdropOpacity={0.4}>
       <View style={{flex: 1, ...scrollViewStyle}}>
-        <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={false} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
+        <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
           {relatedUsers.map((v, i) => <RelatedUser navigationStrategy={navigationStrategy} selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
         </Swiper>
       </View>
@@ -233,7 +243,7 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, true, true
 )(UserRelationshipDetail);
 
 

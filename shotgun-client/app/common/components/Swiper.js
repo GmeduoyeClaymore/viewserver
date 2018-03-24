@@ -196,7 +196,13 @@ export class Swiper extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (!nextProps.autoplay && this.autoplayTimer) clearTimeout(this.autoplayTimer);
-    this.setState(this.initState(nextProps, this.props.index !== nextProps.index));
+    const shouldUpdateIndex = this.props.index !== nextProps.index;
+    this.setState(this.initState(nextProps, shouldUpdateIndex), () => {
+      if (shouldUpdateIndex && Platform.OS === 'android'){
+        console.log(`Selection Setting page on android device to ${nextProps.index}`);
+        this.scrollView.setPage(nextProps.index);
+      }
+    });
   }
 
   componentDidMount () {
@@ -231,7 +237,7 @@ export class Swiper extends Component {
     } else {
       initState.index = initState.total > 1 ? Math.min(props.index, initState.total - 1) : 0;
     }
-   
+    
 
     // Default: horizontal
     const { width, height } = Dimensions.get('window');
@@ -264,6 +270,7 @@ export class Swiper extends Component {
       ...this.internals,
       isScrolling: false
     };
+
     return initState;
   }
 

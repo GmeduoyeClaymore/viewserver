@@ -383,7 +383,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         // TODO: correctly handle client-to-server sessions
                         if (peerSession instanceof ServerToClientSession) {
                             log.debug("DISABLED FOR DEV!! Session {} timed out!", peerSession.getConnectionId());
-                            //peerSession.fireDisconnection();
+                            peerSession.fireDisconnection();
                         }
                     }
                     continue;
