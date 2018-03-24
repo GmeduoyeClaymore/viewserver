@@ -114,6 +114,8 @@ export default class OrderRequestDaoContext{
         till: orderRequest.till,
         distance: orderRequest.distance,
         duration: orderRequest.duration,
+        isFixedPrice: orderSummary.isFixedPrice,
+        fixedPriceValue: orderSummary.fixedPriceValue,
         noRequiredForOffload: orderRequest.noRequiredForOffload,
         deliveryId: orderRequest.deliveryId,
         origin: {

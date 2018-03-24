@@ -40,7 +40,7 @@ class OrderRequest extends Component {
             <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
           </Col>
           <Col size={30} style={styles.priceRow}>
-            <Text style={styles.price}>{orderSummary.product.name }</Text>
+            <Text style={{...styles.price, marginBottom: 5}}>{orderSummary.product.name }</Text>
             <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
             <Text note style={styles.orderStatus}>{resources.OrderStatusResolver(orderSummary)}</Text>
           </Col>

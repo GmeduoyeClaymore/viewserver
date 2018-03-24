@@ -65,6 +65,8 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("notes"),
                                                 new IProjectionConfig.ProjectionColumn("imageUrl"),
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
+                                                new IProjectionConfig.ProjectionColumn("isFixedPrice"),
+                                                new IProjectionConfig.ProjectionColumn("fixedPriceValue"),
                                                 new IProjectionConfig.ProjectionColumn("noRequiredForOffload"),
                                                 new IProjectionConfig.ProjectionColumn("status"),
                                                 new IProjectionConfig.ProjectionColumn("created"),

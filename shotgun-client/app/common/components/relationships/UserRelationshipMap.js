@@ -40,7 +40,7 @@ export default class UserRelationshipMap extends Component{
       this.fitMap(newProps);
     }
   }
-  
+    
   render(){
     const {selectedUser, relatedUsers = [], context, client, geoLocation} = this.props;
     let {me} = this.props;

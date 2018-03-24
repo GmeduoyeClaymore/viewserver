@@ -99,6 +99,8 @@ export default class OrderSummaryDao{
         from: orderSummary.from,
         till: orderSummary.till,
         distance: orderSummary.distance,
+        isFixedPrice: orderSummary.isFixedPrice,
+        fixedPriceValue: orderSummary.fixedPriceValue,
         duration: orderSummary.duration,
         noRequiredForOffload: orderSummary.noRequiredForOffload,
         deliveryId: orderSummary.deliveryId,

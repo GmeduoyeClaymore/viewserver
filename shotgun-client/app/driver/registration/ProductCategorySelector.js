@@ -75,7 +75,7 @@ class ProductCategoryList extends Component{
   renderSelectionControl = ({categoryObj, selectedProductCategories = []}) => {
     const checked = this.isChecked(categoryObj);
     const implicitylChecked = isImplicitylChecked(categoryObj, selectedProductCategories);
-    return <CheckBox  key={categoryObj.categoryId} onPress={() => this.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitylChecked}/>;
+    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => this.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitylChecked}/>;
   }
 
   isChecked(categoryObj){

@@ -24,6 +24,8 @@ export const INITIAL_STATE = {
     noRequiredForOffload: 0,
     deliveryId: undefined,
     distance: undefined,
+    isFixedPrice: false,
+    fixedPriceValue: undefined,
     duration: undefined,
     origin: {
       flatNumber: undefined,

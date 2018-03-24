@@ -132,6 +132,9 @@ public class OrderController {
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
     public Double calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
+        if(delivery.isFixedPrice()){
+            return Double.valueOf(delivery.getFixedPriceValue());
+        }
         Double result = new Double(0);
         for(OrderItem orderItem : orderItems){
             result += calculatePrice(orderItem,delivery);

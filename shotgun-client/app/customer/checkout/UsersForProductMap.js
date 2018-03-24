@@ -64,10 +64,10 @@ class UsersForProductMap extends Component{
   }
 
   assignDeliveryToUser(user){
-    const {delivery: oldDelivery, context, history}  = this.props;
+    const {delivery: oldDelivery, context, navigationStrategy}  = this.props;
     const delivery = {...oldDelivery};
     delivery.driverId = user.userId;
-    context.setState({delivery, deliveryUser: user}, () => history.push('/Customer/Checkout/UsersForProductMap'));
+    context.setState({delivery, deliveryUser: user}, () => navigationStrategy.next());
   }
 
 
@@ -87,7 +87,7 @@ class UsersForProductMap extends Component{
       <Grid>
         <Row size={89} style={{marginTop: 15}}>
           <ErrorRegion errors={errors}>
-            <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+            <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           </ErrorRegion>
         </Row>
         <Row size={9} style={styles.inputRow}>

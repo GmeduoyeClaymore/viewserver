@@ -82,9 +82,9 @@ const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, 
     <Text>{text}</Text>
   </Button>;
 const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps)(ButtonElementFactory(tartgetStatus, text) );
-const DisconnectButton = StatusButtonElement('UNKNOWN', 'Disconnect');
-const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept');
-const IgnoreButton = StatusButtonElement('UNKNOWN', 'Ignore');
+const DisconnectButton = StatusButtonElement('UNKNOWN', 'Un-Friend');
+const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept Request');
+const IgnoreButton = StatusButtonElement('UNKNOWN', 'Ignore Request');
 const CancelButton = StatusButtonElement('UNKNOWN', 'Cancel Request');
 const RequestButton = StatusButtonElement('REQUESTED', 'Add as friend');
 
@@ -110,15 +110,7 @@ export const StarsControl = ({rating, style, ...rest}) => <View {...rest} style=
 
 export const RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, style = {}}) => {
   return <View style={{...style, flex: 1}}>
-    {
-      onPressAssignUser ? <Button style={{flex: 1, marginBottom: 15, minHeight: 40, justifyContent: 'flex-start'}} fullWidth statusButton onPress={() => {
-        onPressAssignUser(user);
-        handleCancel();
-      }}>
-        <Icon name="dashed" paddedIcon/>
-        <Text uppercase={false}>Assign Job To User</Text>
-      </Button> : null
-    }
+    
     <View style={{flexDirection: 'row', minHeight: 80, flex: 10}}>
       <Image resizeMode="contain" source={{url: user.imageUrl}}  style={{...styles.picture, borderColor: getStatusColor(user.status), borderWidth: 2}}/>
       <View style={{flex: 3, padding: 5}}>

@@ -4,7 +4,19 @@ import { Image} from 'react-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
-import {resolveContentTypeIcon} from 'common/assets';
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+const withFixedPice = (state) => {
+  const delivery = {...state.delivery, isFixedPrice: true};
+  return {...state, delivery};
+};
+
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+/*eslint-disable */
+resourceDictionary.
+  property('InitialState', INITIAL_STATE).
+    personell(withFixedPice(INITIAL_STATE))
+/*eslint-enable */
 
 class ContentTypeSelect extends Component{
   constructor(props){
@@ -15,8 +27,10 @@ class ContentTypeSelect extends Component{
 
   selectContentType(selectedContentType){
     const {context} = this.props;
-    const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
-    context.setState({...INITIAL_STATE, selectedContentType, orderItem});
+    const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
+    const initialState = resources.InitialState;
+    const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
+    context.setState({...initialState, selectedContentType, orderItem});
   }
 
   startOrder(){

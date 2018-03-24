@@ -30,6 +30,7 @@ export class UserRelationshipList extends Component{
     return <PagingListView
       daoName='userRelationshipDao'
       dataPath={['users']}
+      elementContainerStyle={{borderWidth: 0.5, borderColor: '#edeaea'}}
       context={context}
       onPressCallUser={onPressCallUser}
       options={ options}

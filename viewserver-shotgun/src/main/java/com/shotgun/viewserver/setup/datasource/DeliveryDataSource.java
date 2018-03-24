@@ -36,7 +36,9 @@ DeliveryDataSource {
                                         new Column("from", "from", ColumnType.DateTime),
                                         new Column("till", "till", ColumnType.DateTime),
                                         new Column("distance", "distance", ColumnType.Int),
-                                        new Column("duration", "duration", ColumnType.Int)
+                                        new Column("duration", "duration", ColumnType.Int),
+                                        new Column("fixedPriceValue", "fixedPriceValue", ColumnType.Int),
+                                        new Column("isFixedPrice", "isFixedPrice", ColumnType.Bool)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )

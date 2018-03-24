@@ -138,22 +138,32 @@ class UserRelationshipDetail extends Component{
     this.updateSelectedIndexForUser(this.props);
   }
 
-  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
+  RelatedUser = ({user, onPressCallUser, onPressAssignUser,navigationStrategy, errors, handleCancel, selectedUserIndex, selectedUser = {}}) => {
     const isSelected = selectedUser.userId === user.userId;
     return <View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
-      <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}} style={{maxHeight: 150, minHeight: 150}}/>
-      <View  style={{flex: 4}}>
+      {
+        onPressAssignUser ? <Button style={{marginBottom: 15, minHeight: 40, justifyContent: 'flex-start'}} fullWidth statusButton onPress={() => {
+          onPressAssignUser(user);
+          handleCancel();
+        }}>
+          <Icon name="dashed" paddedIcon/>
+          <Text uppercase={false}>Assign Job To User</Text>
+        </Button> : null
+      }
+      <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}} style={{maxHeight: 120, minHeight: 120}}/>
+      <View  style={{flex: 4, paddingLeft: 10, paddingRight: 10}}>
         {isSelected ? <PagingListView
           ref={oc => {this.ordersControl = oc;}}
           daoName='orderSummaryDao'
           dataPath={['orders']}
+          elementContainerStyle={{borderWidth: 0.5, borderColor: '#edeaea', padding: 5}}
           options={{driverId: user.userId, reportId: 'driverOrderSummary'}}
           rowView={JobSummary   }
           paginationWaitingView={Paging}
           emptyView={NoItems}
         /> : <Spinner />}
       </View>
-      <StatusButton user={user} style={{justifyContent: 'flex-start'}}/>
+      <StatusButton user={user} style={{justifyContent: 'flex-start', marginLeft: 10, marginRight: 10}}/>
     </View>;
   }
 
@@ -184,13 +194,13 @@ class UserRelationshipDetail extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, selectedUserIndex} = this.props;
+    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser,navigationStrategy, selectedUserIndex} = this.props;
     const {RelatedUser} = this;
     return <ReactNativeModal
       isVisible={!!selectedUser}
       backdropOpacity={0.4}>
       <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} scrollViewStyle={{...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
-        {relatedUsers.map((v, i) => <RelatedUser selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
+        {relatedUsers.map((v, i) => <RelatedUser navigationStrategy={navigationStrategy} selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
       </Swiper>
       <TouchableHighlight
         style={styles.cancelButton}

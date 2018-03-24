@@ -41,7 +41,6 @@ export default (variables = variable) => {
     borderWidth: variables.CheckboxBorderWidth,
     paddingLeft: variables.CheckboxPaddingLeft - 1,
     paddingBottom: variables.CheckboxPaddingBottom,
-    left: 10,
     '.categorySelectionCheckbox': {
       width: 40,
       height: 40,

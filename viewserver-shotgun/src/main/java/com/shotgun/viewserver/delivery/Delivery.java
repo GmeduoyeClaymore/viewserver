@@ -16,11 +16,15 @@ public class Delivery {
     private DeliveryAddress origin;
     private DeliveryAddress destination;
     private int numRequiredForOffload;
+    private boolean fixedPrice;
+    private int fixedPriceValue;
 
     public Delivery() {
         origin = new DeliveryAddress();
         destination = new DeliveryAddress();
     }
+
+
 
     public Date getFrom() {
         return from;
@@ -100,5 +104,21 @@ public class Delivery {
 
     public void setNumRequiredForOffload(int numRequiredForOffload) {
         this.numRequiredForOffload = numRequiredForOffload;
+    }
+
+    public boolean isFixedPrice() {
+        return fixedPrice;
+    }
+
+    public void setFixedPrice(boolean fixedPrice) {
+        this.fixedPrice = fixedPrice;
+    }
+
+    public int getFixedPriceValue() {
+        return fixedPriceValue;
+    }
+
+    public void setFixedPriceValue(int fixedPriceValue) {
+        this.fixedPriceValue = fixedPriceValue;
     }
 }

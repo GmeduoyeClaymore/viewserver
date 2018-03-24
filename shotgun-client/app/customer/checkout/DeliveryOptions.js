@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'custom-redux';
-import { Picker } from 'react-native';
-import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, CheckBox } from 'native-base';
+import {CheckBox} from 'common/components/basic';
+import { Picker, TextInput } from 'react-native';
+import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
 import { merge } from 'lodash';
 import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
@@ -12,6 +13,7 @@ import moment from 'moment';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {getPaymentCardsIfNotAlreadySucceeded} from 'customer/actions/CustomerActions';
+
 
 const TommorowDateOption = {
   name: 'Tmrw',
@@ -49,6 +51,8 @@ resourceDictionary.
   property('JobEndCaption', 'Set a return time').
     delivery('Set a return time').
     personell('Job End Date').
+  property('AllowFixedPrice', false).
+    personell(true).
   property('CannedStartDateOptions', undefined).
     personell([ASAPWorkingDateOption, TommorowDateOption]).
     property('CannedEndDateOptions', undefined).
@@ -61,6 +65,7 @@ class DeliveryOptions extends Component {
     this.onChangeValue = this.onChangeValue.bind(this);
     this.setRequireHelp = this.setRequireHelp.bind(this);
     this.setCard = this.setCard.bind(this);
+    this.toggleFixedPrice = this.toggleFixedPrice.bind(this);
     this.state = {
       requireHelp: false,
       from_isDatePickerVisible: false,
@@ -107,6 +112,14 @@ class DeliveryOptions extends Component {
     const { context } = this.props;
     const { delivery } = context.state;
     context.setState({ delivery: merge({}, delivery, { [field]: value }) });
+  }
+
+
+  toggleFixedPrice(){
+    const { context } = this.props;
+    const { delivery } = context.state;
+    const {fixedPrice} = delivery;
+    this.onChangeValue('fixedPrice', !fixedPrice);
   }
 
   onChangeDate(field, value) {
@@ -159,9 +172,23 @@ class DeliveryOptions extends Component {
         <Content>
           <ErrorRegion errors={errors}/>
           <ListItem padded>
-            <OriginDestinationSummary contentType={selectedContentType} delivery={delivery}/>
+            <Row>
+              <OriginDestinationSummary contentType={selectedContentType} delivery={delivery}/>
+            </Row>
           </ListItem>
-          {selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
+          {resources.AllowFixedPrice ?
+            <ListItem padded>
+              <Row style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <CheckBox  onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
+                <TextInput
+                  disabled={!delivery.isFixedPrice}
+                  style={{...styles.input}}
+                  value={delivery.fixedPriceValue}
+                  placeholder="Enter Fixed Price"
+                  onChangeText={(t) => this.onChangeValue('fixedPriceValue', t)}
+                />
+              </Row></ListItem> : null}
+          { !delivery.isFixedPrice && selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
             <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}  isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => {
@@ -171,7 +198,7 @@ class DeliveryOptions extends Component {
               }
             }} {...datePickerOptions} />
           </ListItem> : null}
-          {selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
+          {!delivery.isFixedPrice && selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
             <DatePicker ref={ tillInput => { this.tillInput = tillInput;}}cannedDateOptions={resources.CannedEndDateOptions} from={delivery.from} asapDateResolver={resources.AsapEndDateResolver} isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
@@ -246,7 +273,16 @@ const styles = {
     marginBottom: 25,
     fontSize: 16,
     textAlign: 'center'
-  }
+  },
+  input: {
+    paddingHorizontal: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
+    padding: 10,
+    width: 225,
+    borderWidth: 0.5,
+    borderColor: '#edeaea'
+  },
 };
 
 const mapStateToProps = (state, initialProps) => {

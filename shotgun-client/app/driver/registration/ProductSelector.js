@@ -50,7 +50,7 @@ class ProductList extends Component{
 
   renderSelectionControl = ({productId, selectedProductIds}) => {
     const checked = !!~selectedProductIds.indexOf(productId);
-    return <CheckBox  key={productId} onPress={() => this.toggleProduct(productId)} categorySelectionCheckbox checked={checked}/>;
+    return <CheckBox style={{left: 10}}  key={productId} onPress={() => this.toggleProduct(productId)} categorySelectionCheckbox checked={checked}/>;
   }
 
   rowView({item: row, selectedProductIds}){
