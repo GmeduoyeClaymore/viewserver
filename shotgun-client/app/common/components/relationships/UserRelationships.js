@@ -158,7 +158,7 @@ const styles = {
   backButton: {
     position: 'absolute',
     left: 0,
-    top: 15
+    top: 10
   },
   title: {
     fontWeight: 'bold',
