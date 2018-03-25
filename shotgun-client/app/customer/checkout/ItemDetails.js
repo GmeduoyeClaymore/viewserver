@@ -11,15 +11,15 @@ const { width } = Dimensions.get('window');
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
-  property('PageTitle', () => 'Photo of Your Item').
-    personell(() => 'Photo of Job').
-    rubbish(() => 'Photo of Rubbish').
-  property('PageCaption', () => 'Add a photo of your item').
+  property('PageTitle', 'Photo of Your Item').
+    personell('Photo of Job').
+    rubbish('Photo of Rubbish').
+  property('PageCaption', 'Add a photo of your item').
     personell('Add a photo of Job').
-    rubbish(() => 'Add a photo of your rubbish').
-  property('InputPlaceholder', () => 'Add a description of the item').
+    rubbish('Add a photo of your rubbish').
+  property('InputPlaceholder', 'Add a description of the item').
     personell('Add a description of your job').
-    rubbish(() => 'Add a description of your rubbish')
+    rubbish('Add a description of your rubbish')
     /*eslint-disable */
 
 
