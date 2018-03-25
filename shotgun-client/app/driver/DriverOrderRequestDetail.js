@@ -23,7 +23,7 @@ class DriverOrderRequestDetail extends Component{
   }
 
   render() {
-    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
@@ -59,12 +59,14 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
+  const {delivery} = (orderSummary || {});
   const errors = getOperationErrors(state, [
     { driverDao: 'acceptOrderRequest'},
     { orderSummaryDao: 'resetSubscription'}
   ]);
   return {
     ...initialProps,
+    delivery,
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}, {driverDao: 'updateOrderPrice'}]),

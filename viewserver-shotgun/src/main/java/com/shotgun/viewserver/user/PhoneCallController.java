@@ -5,6 +5,7 @@ import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
@@ -52,7 +53,7 @@ public class PhoneCallController {
     }
 
     @ControllerAction(path = "getVirtualNumber", isSynchronous = true)
-    public String getVirtualNumber(String userId) {
+    public String getVirtualNumber(@ActionParam(name = "userId")String userId) {
         KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
 
         String customerId = (String) ControllerContext.get("userId");

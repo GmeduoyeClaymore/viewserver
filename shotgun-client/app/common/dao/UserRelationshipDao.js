@@ -1,7 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
-
+import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 
 export default class UserRelationshipDaoContext{
   static DEFAULT_POSITION = {

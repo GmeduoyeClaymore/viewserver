@@ -6,10 +6,25 @@ import moment from 'moment';
 import {Icon, OriginDestinationSummary} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('PageTitle', () => 'Item Details').
+    personell('Job Description').
+    rubbish(() => 'Rubbish Details')
+    /*eslint-disable */
 
 class OrderSummary extends Component{
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
+    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    this.renderItemDetails = this.renderItemDetails.bind(this);
+  }
+
+  componentWillReceiveProps(newProps){
+    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
   }
 
   renderMap(){
@@ -25,10 +40,11 @@ class OrderSummary extends Component{
 
   renderItemDetails(){
     const {orderItem} = this.props;
+    const {resources} = this;
     orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
     return <ListItem padded style={{borderBottomWidth: 0}}>
       <Grid>
-        <Row><Text style={styles.itemDetailsTitle}>Item Details</Text></Row>
+        <Row><Text style={styles.itemDetailsTitle}>{resources.PageTitle()}</Text></Row>
         <Row><Text>{orderItem.notes}</Text></Row>
         {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: orderItem.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
       </Grid>

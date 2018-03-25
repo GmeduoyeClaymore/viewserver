@@ -63,10 +63,6 @@ export default class DriverDao{
     await this.client.invokeJSONCommand('driverController', 'acceptOrder', {orderId});
   }
 
-  async updateOrderPrice({orderId, price}) {
-    await this.client.invokeJSONCommand('driverController', 'updateOrderPrice', {orderId, price});
-  }
-
   async startOrderRequest({orderId}){
     await this.client.invokeJSONCommand('driverController', 'startOrder', {orderId});
   }
