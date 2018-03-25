@@ -22,6 +22,7 @@ class ProductCategoryList extends Component {
   constructor(props) {
     super(props);
     this.rowView = this.rowView.bind(this);
+    this.renderSelectionControl = this.renderSelectionControl.bind(this);
   }
 
   isImplicitlyChecked(categoryObj, selectedProductCategories) {
@@ -32,10 +33,10 @@ class ProductCategoryList extends Component {
     return child.path.includes(parent.path + '>') && child.path.length > parent.path.length;
   }
 
-  renderSelectionControl = ({categoryObj, selectedProductCategories = []}) => {
-    const checked = this.isChecked(categoryObj);
-    const implicitylChecked = isImplicitylChecked(categoryObj, selectedProductCategories);
-    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => this.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitylChecked}/>;
+  renderSelectionControl = ({categoryObj, selectedProductCategories = [], context}) => {
+    const checked = context.isChecked(categoryObj);
+    const implicitylChecked = context.isImplicitlyChecked(categoryObj, selectedProductCategories);
+    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => context.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitylChecked}/>;
   }
 
   isChecked(categoryObj) {
@@ -50,7 +51,7 @@ class ProductCategoryList extends Component {
 
     return <Row key={categoryId} style={styles.categoryRow}>
       <View style={{width: 50, paddingTop: 10}}>
-        <SelectionControl categoryObj={row} selectedProductCategories={selectedProductCategories}/>
+        <SelectionControl categoryObj={row} selectedProductCategories={selectedProductCategories} context={this}/>
       </View>
       <Text style={styles.categoryText}>{category}</Text>
     </Row>;

@@ -122,7 +122,7 @@ class UserRelationships extends Component{
     }
     return <View style={{ flex: 1, padding: 15}}>
       {title ? <View>
-        <Text  style={styles.title}>{title}</Text>
+        <Text  style={styles.title}>{title   || 'Nearby Users'}</Text>
       </View> : null}
       <View style={{...styles.container, marginBottom: 10}}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
@@ -158,7 +158,7 @@ const styles = {
   backButton: {
     position: 'absolute',
     left: 0,
-    top: 0
+    top: 15
   },
   title: {
     fontWeight: 'bold',
