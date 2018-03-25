@@ -32,11 +32,11 @@ const DriverSettings = ({history, user}) => {
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
       </Right>
     </Header>
-    <Row style={{height: 65, paddingLeft: 10}}>
-      <UserStatusControl/>
-    </Row>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
+          <UserStatusControl/>
+        </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>

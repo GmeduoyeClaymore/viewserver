@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import { Container, Row, Picker, Input} from 'native-base';
+import { Row, Picker, Input, View} from 'native-base';
 import { withRouter } from 'react-router';
 import {ErrorRegion, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, getDaoSize, getOperationError } from 'common/dao';
@@ -44,23 +44,24 @@ class UserRelationships extends Component{
       return <LoadingScreen text="Loading.."/>;
     }
     return <ErrorRegion errors={errors}>
-      <Container style={{ flex: 1, padding: 15}}>
+      <View style={{ flex: 1, padding: 15}}>
         <Row style={{flex: 1}}>
           <Picker
+            itemStyle={{paddingTop: 10, paddingBottom: 10, paddingLeft: 10}}
             iosHeader="Select one"
             mode="dropdown"
             selectedValue={me.status}
             onValueChange={(status) => this.setStatus({status})}>
-            <Picker.Item label="Online" value="ONLINE" />
-            <Picker.Item label="Busy" value="BUSY" />
-            <Picker.Item label="Available Soon" value="AVAILABLESOON" />
-            <Picker.Item label="Appear Offline" value="OFFLINE" />
+            <Picker.Item padded color="#008000" label="Online" value="ONLINE" />
+            <Picker.Item padded color="#FFA500" label="Busy" value="BUSY" />
+            <Picker.Item padded color="#0000ff" label="Available Soon" value="AVAILABLESOON" />
+            <Picker.Item padded color="#ff0000" label="Appear Offline" value="OFFLINE" />
           </Picker>
         </Row>
         <Row style={{flex: 1}}>
           <Input value={state.statusMessage} placeholder="What are you up to ?" placeholderTextColor={shotgun.silver} onChangeText={value => this.updateStatusMessage(value)} onBlur={() => this.setStatus({statusMessage: state.statusMessage})}/>
         </Row>
-      </Container>
+      </View>
     </ErrorRegion>;
   }
 }
