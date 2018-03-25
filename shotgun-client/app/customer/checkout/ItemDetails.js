@@ -12,7 +12,7 @@ const { width } = Dimensions.get('window');
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Photo of Your Item').
-    personell('Photo of Job').
+    personell(() => 'Photo of Job').
     rubbish(() => 'Photo of Rubbish').
   property('PageCaption', () => 'Add a photo of your item').
     personell('Add a photo of Job').

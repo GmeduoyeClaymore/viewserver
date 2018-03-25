@@ -41,7 +41,8 @@ export const INITIAL_STATE = {
     contactNo: '07733362799',
     type: 'driver',
     password: 'password',
-    dob: '1982-02-03'
+    dob: '1982-02-03',
+    range: 10
   },
   
   address: {

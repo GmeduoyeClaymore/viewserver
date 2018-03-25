@@ -12,7 +12,7 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Item Details').
-    personell('Job Description').
+    personell(() => 'Job Description').
     rubbish(() => 'Rubbish Details')
     /*eslint-disable */
 

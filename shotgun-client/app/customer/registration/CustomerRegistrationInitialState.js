@@ -27,6 +27,7 @@ export const INITIAL_STATE = {
     contactNo: '07733362799',
     type: 'customer',
     password: 'test',
+    range: 10
   },
   deliveryAddress: {
     line1: '129 Drakefield Road',

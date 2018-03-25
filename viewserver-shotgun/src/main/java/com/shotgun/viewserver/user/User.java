@@ -30,6 +30,7 @@ public class User{
     private String status;
     private String statusMessage;
     private boolean online;
+    private int range;
 
 
     public User() {
@@ -221,4 +222,11 @@ public class User{
     }
 
 
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
 }

@@ -27,11 +27,18 @@ class LandingCommon extends Component {
   render() {
     const {busy, user, history, errors} = this.props;
 
-    if (busy || !user){
+    if (busy){
       return <LoadingScreen text="Logging You In"/>;
     }
     if (errors){
       return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Unable to find your user details. Please sign out and log back in {errors}</Text>
+        <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
+      </View>;
+    }
+
+    if (!user){
+      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <LoadingScreen text="Waiting for user .. If this takes a while try logging out then in again"/>;
         <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
       </View>;
     }

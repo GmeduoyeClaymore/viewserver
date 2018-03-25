@@ -83,6 +83,7 @@ public class UserController {
                 .addValue("contactNo", nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"))
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
+                .addValue("range", user.getRange())
                 .addValue("stripeCustomerId", user.getStripeCustomerId())
                 .addValue("stripeDefaultSourceId", user.getStripeDefaultSourceId())
                 .addValue("stripeAccountId", user.getStripeAccountId())
