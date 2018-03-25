@@ -57,6 +57,9 @@ public class NexmoController {
 
             String response = ControllerUtils.execute("POST", NUMBER_INSIGHT_URI, params);
             HashMap<String, Object> map = ControllerUtils.mapDefault(response);
+            if(map.get("status") != null && !map.get("status").equals(0)){
+                throw new RuntimeException("Problem with nexmo request status:" + map.get("status") + " - message:" + map.get("status_message"));
+            }
             return map;
         } catch (Exception ex) {
             log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);

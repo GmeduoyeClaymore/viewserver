@@ -15,6 +15,10 @@
             <key>pk_test_BUWd5f8iUuxmbTT5MqsdOlmk</key>
             <secret>sk_test_a36Vq8WXGWEf0Jb55tUUdXD4</secret>
         </stripe>
+        <nexmo>
+            <key>c03cd396</key>
+            <secret>33151c6772f2bd52</secret>
+        </nexmo>
         <vehicleDetailsKey>87019DD5-A533-4A7C-A8A1-38BF311C1FF6</vehicleDetailsKey>
         <!--Sandbox code which only allows registrations containing an A <vehicleDetailsKey>881fc904-6ddf-4a48-91ad-7248677ffd1c</vehicleDetailsKey>-->
         <servers>
