@@ -64,7 +64,11 @@ public class CustomerController {
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
         user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
 
-        user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
+        String international_format_number = (String) nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number");
+        if(international_format_number == null){
+            throw new RuntimeException("Unable to format user contact number " + user.getContactNo() + " is it valid?");
+        }
+        user.setContactNo(international_format_number);
 
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId", userId);
