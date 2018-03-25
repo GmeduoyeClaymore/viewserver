@@ -197,10 +197,12 @@ export class Swiper extends Component {
   componentWillReceiveProps (nextProps) {
     if (!nextProps.autoplay && this.autoplayTimer) clearTimeout(this.autoplayTimer);
     const shouldUpdateIndex = this.props.index !== nextProps.index;
+    const {scrollView} = this;
     this.setState(this.initState(nextProps, shouldUpdateIndex), () => {
       if (shouldUpdateIndex && Platform.OS === 'android'){
-        console.log(`Selection Setting page on android device to ${nextProps.index}`);
-        this.scrollView.setPage(nextProps.index);
+        console.log(`SWIPER - Setting page to  ${nextProps.index}`);
+        scrollView.setPage(nextProps.index);
+        console.log(`SWIPER - Set page to  ${nextProps.index}`);
       }
     });
   }

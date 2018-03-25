@@ -21,10 +21,14 @@ import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashMap;
+
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 
 @Controller(name = "customerController")
@@ -77,6 +81,33 @@ public class CustomerController {
 
         rejectDriver(orderId);
         return orderId;
+    }
+
+    @ControllerAction(path = "updateOrderPrice", isSynchronous = true)
+    public String updateOrderPrice(@ActionParam(name = "orderId")String orderId,@ActionParam(name = "price")Double price){
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+        String currentStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
+        String userId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
+
+        if(!userId.equals(getUserId())){
+            throw new RuntimeException("You can only update the price of your own order");
+        }
+        Date now = new Date();
+
+        IRecord orderRecord = new Record()
+                .addValue("orderId", orderId)
+                .addValue("totalPrice", price)
+                .addValue("lastModified", now);
+
+        if(currentStatus != OrderStatuses.PLACED.name() && currentStatus != OrderStatuses.ACCEPTED.name() ){
+            throw new RuntimeException("Price can only be updated if the order has not yet been started");
+        }
+
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        return orderId;
+
     }
 
     @ControllerAction(path = "rejectDriver", isSynchronous = true)
@@ -133,4 +164,6 @@ public class CustomerController {
                 return String.format("shotgun://DriverOrderDetail/%s", orderId);
         }
     }
+
+
 }

@@ -34,6 +34,10 @@ export const registerCustomer = (customer, deliveryAddress, paymentCard, continu
   return invokeDaoCommand('customerDao', 'registerCustomer', {customer, deliveryAddress, paymentCard}, continueWith);
 };
 
+export const updateOrderPrice = (orderId, price, continueWith) => {
+  return invokeDaoCommand('customerDao', 'updateOrderPrice', {orderId, price}, continueWith);
+};
+
 export const updateCustomer = (customer, continueWith) => {
   return invokeDaoCommand('customerDao', 'updateCustomer', {customer}, continueWith);
 };

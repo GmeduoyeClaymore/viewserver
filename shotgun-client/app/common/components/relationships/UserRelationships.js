@@ -127,7 +127,7 @@ class UserRelationships extends Component{
       <View style={{...styles.container, marginBottom: 10}}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
-      {typeof noRelationships != 'undefined' ? <Row style={{flex: 2, minHeight: 20}}>
+      {typeof noRelationships != 'undefined' ? <Row style={{height: 30}}>
         <Text style={{paddingTop: 6, flex: 2}}>
           {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
@@ -135,7 +135,7 @@ class UserRelationships extends Component{
           <Text style={{marginRight: 5, paddingTop: 5}}>
             {parentState.showAll ? 'Everyone' : 'Friends'}
           </Text>
-          <Switch onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
+          <Switch style={{height: 30}} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
         </View>
       </Row> : null}
       <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>

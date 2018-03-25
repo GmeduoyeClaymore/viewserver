@@ -132,7 +132,7 @@ public class OrderController {
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
     public Double calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        if(delivery.isFixedPrice()){
+        if(delivery.getIsFixedPrice()){
             return Double.valueOf(delivery.getFixedPriceValue());
         }
         Double result = new Double(0);
@@ -174,6 +174,9 @@ public class OrderController {
     }
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
+        if(delivery.getIsFixedPrice()){
+            return Double.valueOf(delivery.getFixedPriceValue());
+        }
         PriceStrategy strategy = getPriceStrategy(orderItem);
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining

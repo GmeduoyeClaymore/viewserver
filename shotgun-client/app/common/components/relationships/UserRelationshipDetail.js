@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { View, Text, TouchableHighlight, Dimensions} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {PagingListView, Icon, Swiper} from 'common/components';
-import {Spinner, Row, Grid, Col, ListItem} from 'native-base';
+import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';

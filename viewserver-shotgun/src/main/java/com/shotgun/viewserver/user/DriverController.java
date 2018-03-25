@@ -29,6 +29,10 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 
 @Controller(name = "driverController")
 public class DriverController {
@@ -146,6 +150,8 @@ public class DriverController {
         return orderId;
     }
 
+
+
     @ControllerAction(path = "startOrder", isSynchronous = true)
     public String startOrder(@ActionParam(name = "orderId")String orderId){
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
@@ -214,13 +220,6 @@ public class DriverController {
         return orderId;
     }
 
-    private String getUserId() {
-        String driverId = (String) ControllerContext.get("userId");
-        if(driverId == null){
-            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
-        }
-        return driverId;
-    }
 
     private void notifyStatusChanged(String orderId, String driverId, String orderUserId, String status) {
         try {

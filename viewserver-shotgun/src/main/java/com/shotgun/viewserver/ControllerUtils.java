@@ -195,6 +195,13 @@ public class ControllerUtils{
         return response.toString();
     }
 
+    public static String getUserId() {
+        String driverId = (String) ControllerContext.get("userId");
+        if(driverId == null){
+            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
+        }
+        return driverId;
+    }
     public static ITable getTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
         if (!(table instanceof ITable)) {

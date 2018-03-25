@@ -55,10 +55,10 @@ export default class DatePickerControl extends Component{
     const {date} = state;
     const newProps = {...props, date};
     return <View style={{flex: 1}}>
-      <DatePicker {...newProps}/>
+      <DatePicker {...newProps} style={{marginRight: 15}}/>
       <View style={{marginLeft: 15, alignSelf: 'flex-end', flexDirection: 'row'}}>
-        {cannedDateOptions.map( (opt) => <Button style={{paddingRight: 10, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
-          <Text fontSize={8}>{opt.name}</Text>
+        {cannedDateOptions.map( (opt) => <Button style={{marginLeft: 5, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
+          <Text style={{fontSize: 8}}>{opt.name}</Text>
         </Button>)}
       </View>
     </View>;

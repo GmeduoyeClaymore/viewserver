@@ -31,7 +31,7 @@ public class DeliveryController {
                 .addValue("deliveryId", delivery.getDeliveryId())
                 .addValue("lastModified", now)
                 .addValue("distance", delivery.getDistance())
-                .addValue("isFixedPrice", delivery.isFixedPrice())
+                .addValue("isFixedPrice", delivery.getIsFixedPrice())
                 .addValue("fixedPriceValue", delivery.getFixedPriceValue())
                 .addValue("duration", delivery.getDuration())
                 .addValue("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId())

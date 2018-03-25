@@ -8,11 +8,11 @@ export class PriceSummary extends Component{
   }
 
   render() {
-    const {orderStatus, isDriver, price} = this.props;
+    const {orderStatus, isDriver, price, isFixedPrice} = this.props;
 
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
-    const getCustomerHeading = () => isComplete ? 'You were charged' : 'You will be charged (estimated)';
-    const getDriverHeading = () => isComplete ? 'You were paid' : 'You will be paid (estimated)';
+    const getCustomerHeading = () => isComplete ? 'You were charged' : `You will be charged ${!isFixedPrice ? '(estimated)' : ''}`;
+    const getDriverHeading = () => isComplete ? 'You were paid' : `You will be paid ${!isFixedPrice ? '(estimated)' : ''}`;
 
     return <Grid>
       <Row style={styles.row}><Text style={styles.heading}>{isDriver ? getDriverHeading() : getCustomerHeading()}</Text></Row>

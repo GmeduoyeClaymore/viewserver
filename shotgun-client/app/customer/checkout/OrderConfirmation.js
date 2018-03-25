@@ -66,7 +66,7 @@ class OrderConfirmation extends Component{
         <Body><Title>{resources.PageTitle({product: selectedProduct})}</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={OrderStatuses.PLACED} isDriver={false} price={price}/>
+        <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isDriver={false} price={price}/>
         <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
         <ErrorRegion errors={errors}>
           <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>{resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>

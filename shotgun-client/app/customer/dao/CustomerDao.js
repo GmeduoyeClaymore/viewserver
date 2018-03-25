@@ -19,6 +19,7 @@ export default class CustomerDao{
     this.checkout = this.checkout.bind(this);
     this.rateDriver = this.rateDriver.bind(this);
     this.callDriver = this.callDriver.bind(this);
+    this.updateOrderPrice = this.updateOrderPrice.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -50,6 +51,11 @@ export default class CustomerDao{
     const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: customer});
     Logger.info(`Customer ${customerId} updated`);
     return customerId;
+  }
+
+
+  async updateOrderPrice({orderId, price}) {
+    await this.client.invokeJSONCommand('customerController', 'updateOrderPrice', {orderId, price});
   }
 
   async loginCustomer({email, password}){

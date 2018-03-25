@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'custom-redux';
-import {CheckBox} from 'common/components/basic';
+import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
 import { Picker, TextInput } from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
 import { withRouter } from 'react-router';
@@ -35,12 +35,6 @@ const TwoWorkingDayOption = {
 };
 
 
-const formatPrice = (price) => {
-  if (!price || price === 'undefined'){
-    return undefined;
-  }
-  return `£${(price / 100).toFixed(2)}`;
-};
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -71,10 +65,11 @@ class DeliveryOptions extends Component {
     this.onChangeValue = this.onChangeValue.bind(this);
     this.setRequireHelp = this.setRequireHelp.bind(this);
     this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
-    this.setFormattedPriceValue = this.setFormattedPriceValue.bind(this);
+
     this.setCard = this.setCard.bind(this);
     this.toggleFixedPrice = this.toggleFixedPrice.bind(this);
     this.onFixedPriceValueChanged = this.onFixedPriceValueChanged.bind(this);
+
     this.state = {
       requireHelp: false,
       from_isDatePickerVisible: false,
@@ -86,7 +81,7 @@ class DeliveryOptions extends Component {
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {getPaymentCardsIfNotAlreadyGot} = this.props;
     if (getPaymentCardsIfNotAlreadyGot){
       getPaymentCardsIfNotAlreadyGot();
@@ -94,6 +89,7 @@ class DeliveryOptions extends Component {
     if (this.props.defaultCard !== undefined) {
       this.setCard(this.props.defaultCard);
     }
+    await this.loadEstimatedPrice();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -117,10 +113,14 @@ class DeliveryOptions extends Component {
     this.onChangeNoItems(0);
   }
 
-  onChangeValue(field, value) {
+  onChangeValue(field, value, continueWith) {
     const { context } = this.props;
     const { delivery } = context.state;
-    context.setState({ delivery: {...delivery, ...{ [field]: value}}});
+    context.setState({ delivery: {...delivery, ...{ [field]: value}}}, continueWith);
+  }
+
+  onFixedPriceValueChanged(price) {
+    this.onChangeValue('fixedPriceValue', price );
   }
 
 
@@ -132,9 +132,8 @@ class DeliveryOptions extends Component {
   }
 
   onChangeDate(field, value) {
-    this.onChangeValue(field, value);
+    this.onChangeValue(field, value, () => this.loadEstimatedPrice());
     this.toggleDatePicker(field, false);
-    this.loadEstimatedPrice();
   }
 
   async loadEstimatedPrice(){
@@ -143,8 +142,7 @@ class DeliveryOptions extends Component {
     if (delivery.from && delivery.till){
       const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], delivery}).timeoutWithError(10000, 'Unable to load total price after 10 seconds');
       if (price){
-        const formattedPrice = formatPrice(price);
-        this.setState({price, formattedPrice});
+        this.setState({price});
       }
     }
   }
@@ -152,19 +150,7 @@ class DeliveryOptions extends Component {
   onChangeNoItems(quantity){
     const { context } = this.props;
     const { orderItem } = context.state;
-    context.setState({ orderItem: {...orderItem, quantity}});
-  }
-
-  setFormattedPriceValue(){
-    const { context} = this.props;
-    const { delivery} = context.state;
-    const {price } = this.state;
-    const formattedPrice = formatPrice(delivery.fixedPriceValue || price);
-    this.setState({formattedPrice});
-  }
-
-  onFixedPriceValueChanged(t){
-    this.onChangeValue('fixedPriceValue', t);
+    context.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
   }
 
   render() {
@@ -172,7 +158,7 @@ class DeliveryOptions extends Component {
     const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
     const { delivery, payment, orderItem, selectedContentType} = context.state;
     const { quantity: noRequiredForOffload } = orderItem;
-    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard, formattedPrice } = this.state;
+    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard, price } = this.state;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
@@ -218,15 +204,12 @@ class DeliveryOptions extends Component {
             <ListItem padded>
               <Row style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
                 <CheckBox  onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
-                <TextInput
-                  disabled={!delivery.isFixedPrice}
-                  editable={delivery.isFixedPrice}
+                {delivery.isFixedPrice ? <CurrencyInput
                   style={styles.input}
-                  value={formattedPrice}
+                  initialPrice={delivery.fixedPriceValue}
                   placeholder="Enter Fixed Price"
-                  onBlur={this.setFormattedPriceValue}
-                  onChangeText={this.onFixedPriceValueChanged}
-                />
+                  onValueChanged={this.onFixedPriceValueChanged}
+                /> : <Text style={{fontSize: 18, fontWeight: 'bold'}}>{formatPrice(price / 100)}</Text>}
               </Row></ListItem> : null}
           { !delivery.isFixedPrice && selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />

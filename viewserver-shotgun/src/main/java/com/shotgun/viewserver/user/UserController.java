@@ -28,6 +28,8 @@ import rx.Observable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 
 @Controller(name = "userController")
 public class UserController {
@@ -236,14 +238,6 @@ public class UserController {
         }
         HashMap<String,Object> result = (HashMap<String,Object>)ev.getEventData();
         return userId.equals(result.get("userId"));
-    }
-
-    private String getUserId() {
-        String userId = (String) ControllerContext.get("userId");
-        if (userId == null) {
-            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
-        }
-        return userId;
     }
 
 }

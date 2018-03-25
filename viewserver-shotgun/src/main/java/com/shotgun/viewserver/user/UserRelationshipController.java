@@ -11,6 +11,8 @@ import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 @Controller(name = "userRelationshipController")
 public class UserRelationshipController {
     private static final Logger log = LoggerFactory.getLogger(UserRelationshipController.class);
@@ -69,15 +71,6 @@ public class UserRelationshipController {
             log.error("There was a problem updating user relationship type", e);
             throw new RuntimeException(e);
         }
-    }
-
-
-    private String getUserId() {
-        String userId = (String) ControllerContext.get("userId");
-        if (userId == null) {
-            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
-        }
-        return userId;
     }
 
 }

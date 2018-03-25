@@ -5,7 +5,7 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {withRouter} from 'react-router';
 import {OrderSummary, PriceSummary, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
-import {acceptOrderRequest} from 'driver/actions/DriverActions';
+import {acceptOrderRequest, updateOrderPrice} from 'driver/actions/DriverActions';
 
 class DriverOrderRequestDetail extends Component{
   constructor(props) {
@@ -40,7 +40,7 @@ class DriverOrderRequestDetail extends Component{
       </Header>
       <Content>
         <ErrorRegion errors={errors}/>
-        <PriceSummary orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
+        <PriceSummary isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
         <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></SpinnerButton>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} product={orderSummary.product} client={client} contentType={orderSummary.contentType}/>
       </Content>
@@ -67,7 +67,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     orderId,
     errors,
-    busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}]),
+    busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}, {driverDao: 'updateOrderPrice'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };

@@ -11,6 +11,8 @@ import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 @Controller(name = "orderItemController")
 public class OrderItemController {
 
@@ -53,11 +55,5 @@ public class OrderItemController {
         return orderItem.getOrderItemId();
     }
 
-    private String getUserId() {
-        String driverId = (String) ControllerContext.get("userId");
-        if(driverId == null){
-            throw new RuntimeException("Cannot find user id in controller context. Either you aren't logged in or you're doing this on a strange thread");
-        }
-        return driverId;
-    }
+
 }
