@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Col} from 'native-base';
-import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton} from 'common/components';
+import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion} from 'common/components';
 import  {CurrencyInput} from 'common/components/basic';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {cancelOrder, rejectDriver, updateOrderPrice} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -75,7 +75,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch} = this.props;
+    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors} = this.props;
     const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
@@ -104,7 +104,7 @@ class CustomerOrderDetail extends Component{
         <Body><Title>{resources.PageTitle(orderSummary)}</Title></Body>
       </Header>
       <Content>
-        
+        <ErrorRegion errors={errors}/>
         <PricingControl readonly={busyUpdating} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
         {showCancelButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> : null}
         {hasDriver && !isComplete ? <Grid style={styles.driverDetailView}>
@@ -159,10 +159,12 @@ const mapStateToProps = (state, initialProps) => {
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const {contentType: selectedContentType} = (orderSummary || {});
+  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}])
   return {
     ...initialProps,
     selectedContentType,
     orderId,
+    errors,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
