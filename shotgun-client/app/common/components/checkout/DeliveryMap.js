@@ -88,7 +88,6 @@ class DeliveryMap extends Component{
 
   doAddressLookup(addressLabel, onAddressSelected){
     const {history, match} = this.props;
-    throw new Error(match.path);
     history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
   }
 

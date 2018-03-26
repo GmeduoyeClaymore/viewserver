@@ -19,8 +19,7 @@ class VehicleSelect extends Component {
   }
 
   render() {
-    const {navigationStrategy, vehicles, context, busy} = this.props;
-    const {orderItem, selectedProduct} = context.state;
+    const {navigationStrategy, vehicles, context, busy, orderItem, selectedProduct} = this.props;
 
     const onSelectVehicle = (selectedProduct) => {
       context.setState({orderItem: {...orderItem, productId: selectedProduct.productId}, selectedProduct});
@@ -40,10 +39,10 @@ class VehicleSelect extends Component {
           <Row style={{flexWrap: 'wrap'}}>
             {vehicles.map((v, i) => {
               return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-                <Button style={{height: 'auto'}} large active={orderItem.productId == v.productId} onPress={() => onSelectVehicle(v)}>
+                <Button style={{height: 'auto'}} large active={selectedProduct.productId == v.productId} onPress={() => onSelectVehicle(v)}>
                   <Icon name={v.imageUrl || 'dashed'}/>
                 </Button>
-                <Text style={styles.vehicleSelectText}>{v.name}</Text>
+                <Text style={styles.vehicleSelectText}>{`${selectedProduct.productId} == ${v.productId}`}</Text>
               </View>;
             })}
           </Row>
@@ -79,11 +78,18 @@ const styles = {
 };
 
 //TODO -add error state
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  busy: isAnyOperationPending(state, [{ productDao: 'updateSubscription'}]),
-  vehicles: getDaoState(state, ['product', 'products'], 'productDao')
-});
+const mapStateToProps = (state, initialProps) => {
+  const {context} = initialProps;
+  const {state: contextState} = context;
+  const {orderItem, selectedProduct} = contextState;
+  return {
+    ...initialProps,
+    orderItem,
+    selectedProduct,
+    busy: isAnyOperationPending(state, [{ productDao: 'updateSubscription'}]),
+    vehicles: getDaoState(state, ['product', 'products'], 'productDao')
+  };
+};
 
 export default connect(
   mapStateToProps

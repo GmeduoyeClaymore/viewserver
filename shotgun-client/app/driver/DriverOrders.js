@@ -35,7 +35,7 @@ class DriverOrders  extends Component{
     const RowView = ({item: orderSummary, isLast, isFirst}) => {
       const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
       const next = isOnRoute ? '/Driver/DriverOrderInProgress' : '/Driver/DriverOrderDetail';
-      return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+      return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
     };
 
     const onChangeTab = (newIsCompleted) => {

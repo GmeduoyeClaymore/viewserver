@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import {Button, Tab, View, Text, Row, Switch} from 'native-base';
+import {Button, Tab, View, Text, Row, Switch, Header, Left, Body, Title} from 'native-base';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -120,9 +120,14 @@ class UserRelationships extends Component{
       return <LoadingScreen text="Loading.."/>;
     }
     return <View style={{ flex: 1, padding: 15}}>
-      {title ? <View>
-        <Text  style={styles.title}>{title   || 'Nearby Users'}</Text>
-      </View> : null}
+      {title ?  <Header withButton>
+        <Left>
+          <Button onPress={() => backAction ? backAction() : history.goBack()}>
+            <Icon name='back-arrow'/>
+          </Button>
+        </Left>
+        <Body><Title>{title || 'Nearby Users'}</Title></Body>
+      </Header> : null}
       <View style={{...styles.container, marginBottom: 10}}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
@@ -145,9 +150,6 @@ class UserRelationships extends Component{
           <UserView {...this.props} context={this} options={oldOptions} selectedUser={selectedUser}/>
         </ErrorRegion>
       </View>
-      <Button transparent style={styles.backButton} onPress={() => backAction ? backAction() : history.goBack()} >
-        <Icon name='back-arrow'/>
-      </Button>
       <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} context={this} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
     </View>;
   }

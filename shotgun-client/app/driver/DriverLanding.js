@@ -7,6 +7,7 @@ import DriverOrderRequests from './DriverOrderRequests';
 import DriverOrderRequestDetail from './DriverOrderRequestDetail';
 import DriverOrderInProgress from './DriverOrderInProgress';
 import DriverSettings from './Settings/DriverSettings';
+import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
@@ -27,6 +28,7 @@ class DriverLanding extends Component {
 
   componentDidMount(){
     this.loadData(this.props);
+    this.attemptPaymentCards(this.props);
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
   }
 
@@ -39,11 +41,25 @@ class DriverLanding extends Component {
       const {dispatch, client, userId, user} = newProps;
       if (user){
         dispatch(driverServicesRegistrationAction(client, userId));
+        dispatch(customerServicesRegistrationAction(client));
         dispatch(getCurrentPosition());
         dispatch(watchPosition());
         dispatch(getBankAccount());
         this.hasLoadedData = true;
       }
+    }
+  }
+
+
+  componentWillReceiveProps(props){
+    this.attemptPaymentCards(props);
+  }
+
+  attemptPaymentCards(props){
+    const {dispatch, user} = props;
+    if (!this.paymentCardsRequested && user){
+      dispatch(getPaymentCards());
+      this.paymentCardsRequested = true;
     }
   }
 
@@ -63,7 +79,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrders'} exact render={ordersRoot}/>
-          <Route path={'/OrdersRoot'} exact render={ordersRoot}/>
+          <Route path={'/Driver/Orders'} exact render={ordersRoot}/>
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
@@ -71,7 +87,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
           <Redirect to={'/Driver/Checkout'}/>
         </Switch>
-        <DriverMenuBar/>
+        <DriverMenuBar {...this.props}/>
       </Container>;
   }
 }
@@ -80,7 +96,8 @@ const mapStateToProps = (state, nextOwnProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
   return {
     ...nextOwnProps,
-    busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
+    contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
+    busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
     user
   };
 };

@@ -36,8 +36,7 @@ class ItemDetails extends Component{
   }
 
   onChangeValue(field, value){
-    const {context} = this.props;
-    const {orderItem = {}} = context.state;
+    const {orderItem={},context} = this.props;
     context.setState({orderItem: {...orderItem, [field]: value}});
   }
 
@@ -52,8 +51,7 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {context, navigationStrategy} = this.props;
-    const {orderItem} = context.state;
+    const {context, navigationStrategy, orderItem} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
@@ -122,8 +120,9 @@ const mapStateToProps = (state, initialProps) => {
 
   const {context} = initialProps;
   const {state: contextState} = context;
-  const {selectedContentType, selectedProduct} = contextState;
+  const {selectedContentType, selectedProduct, orderItem} = contextState;
   return {
+    orderItem,
     ...initialProps,
     selectedContentType
   };

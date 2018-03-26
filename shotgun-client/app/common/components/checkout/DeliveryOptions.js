@@ -147,8 +147,7 @@ class DeliveryOptions extends Component {
   }
 
   onChangeNoItems(quantity){
-    const { context } = this.props;
-    const { orderItem } = context.state;
+    const { context, orderItem } = this.props;
     context.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
   }
 
@@ -313,11 +312,13 @@ const mapStateToProps = (state, initialProps) => {
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
   const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
   const {context} = initialProps;
-  const {selectedContentType} = context.state;
+  const {state: contextState} = context;
+  const {selectedContentType} = contextState;
   const getPaymentCardsIfNotAlreadyGot = () =>{
     dispatch(getPaymentCardsIfNotAlreadySucceeded());
   };
   return {
+    ...contextState,
     getPaymentCardsIfNotAlreadyGot,
     ...initialProps,
     selectedContentType,

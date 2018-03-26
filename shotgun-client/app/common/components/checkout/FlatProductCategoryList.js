@@ -4,12 +4,10 @@ import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {Redirect} from 'react-router-native';
-import ProductListItem from './ProductListItem';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {mapStateToProps, validationSchema} from './ProductCategoryList';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
@@ -20,18 +18,21 @@ resourceDictionary.
 /*eslint-enable */
 
 class FlatProductCategoryList extends Component{
-  static propTypes = {
-    product: PropTypes.object,
-    dispatch: PropTypes.func,
-    screenProps: PropTypes.object,
-    navigation: PropTypes.object
-  };
-
   constructor(props){
     super(props);
-    this.navigateToCategory = this.navigateToCategory.bind(this);
+    this.setCategory = this.setCategory.bind(this);
     this.rowView = this.rowView.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+
+    this.state = {
+      selectedCategory: props.selectedCategory || {},
+      parentSelectedCategory: props.parentSelectedCategory || {}
+    };
+  }
+
+  componentWillMount(){
+    const {parentSelectedCategory, context} = this.props;
+    context.setState({parentSelectedCategory});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,7 +43,7 @@ class FlatProductCategoryList extends Component{
     const {categoryId, category, imageUrl} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.navigateToCategory(row)}>
+      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.setCategory(row)}>
         <Icon name={imageUrl || 'dashed'}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
@@ -51,42 +52,39 @@ class FlatProductCategoryList extends Component{
 
   headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
 
-  navigateToCategory(category){
-    const {history, match} = this.props;
-    if (category.isLeaf) {
-      history.push(`${match.path}/ProductList`, {category});
+  navigateToCategory(){
+    const {navigationStrategy, context} = this.props;
+    const {selectedCategory} = this.state;
+
+    if (selectedCategory.isLeaf) {
+      context.setState({selectedCategory});
+      navigationStrategy.next();
     } else {
-      this.goToCategory(category);
+      context.setState({parentSelectedCategory: selectedCategory});
+      this.setState({parentSelectedCategory: selectedCategory, selectedCategory: undefined});
     }
   }
 
-  goToCategory(selectedCategory){
-    const {context} = this.props;
-    const {selectedCategory: parentSelectedCategory} = context.state;
-    context.setState({selectedCategory, parentSelectedCategory});
+  setCategory(selectedCategory){
+    this.setState({selectedCategory});
   }
 
   render(){
-    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, match, rootProductCategory, defaultOptions} = this.props;
-
-    if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: `${match.path}/ProductList`, state: {category: selectedCategory}}}/>;
-    }
-
+    const {busy, navigationStrategy, history, rootProductCategory, defaultOptions} = this.props;
+    const {selectedCategory, parentSelectedCategory} = this.state;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
+          <Button onPress={() => rootProductCategory.categoryId === parentSelectedCategory.categoryId ?  navigationStrategy.prev() : this.navigateToCategory()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
         <Body><Title>{this.resources.PageTitle}</Title></Body>
       </Header>
       <Content padded>
-        <ProductListItem product={selectedProduct}/>
         <PagingListView
           style={styles.pagingListView}
           selectedCategory={selectedCategory}
@@ -103,13 +101,46 @@ class FlatProductCategoryList extends Component{
           headerView={this.headerView}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedCategory}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </Container>;
   }
 }
+
+FlatProductCategoryList.propTypes = {
+  product: PropTypes.object,
+  dispatch: PropTypes.func,
+  screenProps: PropTypes.object,
+  navigation: PropTypes.object
+};
+
+const validationSchema = {
+  categoryId: yup.string().required(),
+};
+
+const mapStateToProps = (state, initialProps) => {
+  const {context} = initialProps;
+  const {selectedContentType, selectedCategory} = context.state;
+  const {productCategory: rootProductCategory} = selectedContentType;
+
+  const defaultOptions = {
+    ...getDaoOptions(state, 'productCategoryDao'),
+    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
+  };
+
+  return {
+    ...getNavigationProps(initialProps),
+    rootProductCategory,
+    selectedContentType,
+    defaultOptions,
+    categories: getDaoState(state, ['product', 'categories'], 'productCategoryDao'),
+    busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
+    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']),
+    ...initialProps
+  };
+};
 
 const styles = {
   productSelectText: {

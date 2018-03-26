@@ -12,7 +12,7 @@ const onChangeProduct = ({context, product}) => {
   }
   const { orderItem } = context.state;
   const {productId} = product;
-  context.setState({ selectedProduct: product, orderItem: merge({}, orderItem, {productId}) });
+  context.setState({ selectedProduct: product, orderItem: {...orderItem, productId}});
 };
 
 const ProductListItem = ({context, product, navigationStrategy, selectedProduct = {}, index: i}) => {

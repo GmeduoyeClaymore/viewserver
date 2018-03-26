@@ -14,6 +14,7 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import ContentTypeNavigationStrategy from './ContentTypeNavigationStrategy';
 import { withRouter } from 'react-router';
+import {connect} from 'custom-redux';
 
 class Checkout extends Component {
   constructor(props){
@@ -45,4 +46,16 @@ class Checkout extends Component {
   }
 }
 
-export default withRouter(Checkout);
+const mapStateToProps = (state, initialProps) => {
+  const {history: parentHistory, match: parentMatch} = initialProps;
+
+  return {
+    ...initialProps,
+    parentHistory,
+    parentMatch
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(withRouter(Checkout));

@@ -12,7 +12,7 @@ const DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
 
 const Paging = () => <Spinner />;
 const NoItems = () => <Text empty>No jobs available</Text>;
-const RowView = ({ item: orderSummary, isLast, isFirst }) => <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next='/Driver/DriverOrderRequestDetail' />;
+const RowView = ({ item: orderSummary, isLast, isFirst, history }) => <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next='/Driver/DriverOrderRequestDetail' />;
 
 class DriverOrderRequests extends Component{
   constructor(props){
@@ -37,7 +37,7 @@ class DriverOrderRequests extends Component{
   }
 
   render(){
-    const { selectedContentTypeIndex, busy, selectedContentTypes,  defaultOptions} = this.props;
+    const { selectedContentTypeIndex, busy, selectedContentTypes,  defaultOptions, history} = this.props;
     if (busy) {
       return <LoadingScreen text="Loading Map" />;
     }
@@ -55,6 +55,7 @@ class DriverOrderRequests extends Component{
         <PagingListView
           ref={c=> {this.pagingListView = c;}}
           daoName='orderRequestDao'
+          history={history}
           dataPath={['driver', 'orders']}
           rowView={RowView}
           options={defaultOptions}

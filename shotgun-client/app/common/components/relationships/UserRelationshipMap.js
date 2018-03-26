@@ -12,20 +12,28 @@ export default class UserRelationshipMap extends Component{
   constructor(props){
     super(props);
     this.fitMap = this.fitMap.bind(this);
+    this.getLocations = this.getLocations.bind(this);
   }
   
-  fitMap(newProps){
+  fitMap(newProps, flagMapReady){
+    if (!flagMapReady && !this.isMapReady){
+      return;
+    }
+    if (flagMapReady){
+      this.isMapReady = flagMapReady;
+    }
     const {map} = this;
     let {me} = newProps;
+
     const {location} = newProps;
     me = location || me;
     let {relatedUsers} = newProps;
     if (me){
       relatedUsers = [...relatedUsers, me];
     }
-    const filteredUsers = relatedUsers.filter(c=> c.latitude && c.longitude);
+    const filteredUsers = relatedUsers.filter(c=> c.latitude != undefined && c.longitude != undefined ).map(c => {return {latitude: c.latitude, longitude: c.longitude};});
     if (filteredUsers.length){
-      map.fitToCoordinates(filteredUsers.map(c => { return {latitude: c.latitude, longitude: c.longitude};}), {
+      map.fitToCoordinates(filteredUsers, {
         edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
         animated: false,
       });
@@ -45,11 +53,25 @@ export default class UserRelationshipMap extends Component{
     }
   }
 
+  getLocations(){
+    const {me, selectedUser} = this.props;
+    const result = [];
+    if (me && me.latitude && me.longitude){
+      const {latitude, longitude} = me;
+      result.push({latitude, longitude});
+    }
+    if (selectedUser && selectedUser.latitude && selectedUser.longitude){
+      const {latitude, longitude} = selectedUser;
+      result.push({latitude, longitude});
+    }
+    return result;
+  }
+
   render(){
     const {selectedUser, relatedUsers = [], context, client, geoLocation} = this.props;
     let {me} = this.props;
     me = geoLocation && geoLocation.latitude ? geoLocation : me;
-    const {fitMap} = this;
+    const {fitMap, getLocations} = this;
     const {setSelectedUser} = context;
     const {latitude, longitude} = me;
     
@@ -59,10 +81,10 @@ export default class UserRelationshipMap extends Component{
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };
+
   
-    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => fitMap(this.props)}
-      region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-      {selectedUser && me ? <MapViewDirections client={client} locations={[me, selectedUser]} strokeWidth={3} /> : null}
+    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => {fitMap(this.props, true);}} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+      {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}
       {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;
   }

@@ -9,7 +9,7 @@ export default class ContentTypeNavigationStrategy{
     }
     this.pathIndex = -1;
     this.contentTypePaths = {};
-    this.contentTypePaths[ContentTypes.DELIVERY] = ['VehicleSelect', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
+    this.contentTypePaths[ContentTypes.DELIVERY] = ['ProductList', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
     this.contentTypePaths[ContentTypes.RUBBISH] = ['FlatProductCategoryList', 'ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
     this.contentTypePaths[ContentTypes.SKIP] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
     this.contentTypePaths[ContentTypes.PERSONELL] = ['ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
