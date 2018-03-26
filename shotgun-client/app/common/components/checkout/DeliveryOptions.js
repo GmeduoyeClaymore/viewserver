@@ -201,7 +201,7 @@ class DeliveryOptions extends Component {
           {resources.AllowFixedPrice ?
             <ListItem padded>
               <Row style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
-                <CheckBox  onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
+                <CheckBox onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
                 {delivery.isFixedPrice ? <CurrencyInput
                   style={styles.input}
                   initialPrice={delivery.fixedPriceValue}
@@ -233,8 +233,8 @@ class DeliveryOptions extends Component {
           
           {selectedContentType.noPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
-              <CheckBox checked={requireHelp} onPress={() => this.setRequireHelp(!requireHelp)} />
-              <Text style={{ paddingLeft: 10 }}>{resources.NoPeopleCaption}</Text>
+              <CheckBox checked={requireHelp} categorySelectionCheckbox onPress={() => this.setRequireHelp(!requireHelp)} />
+              <Text>{resources.NoPeopleCaption}</Text>
             </ListItem> : null}
 
           {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
