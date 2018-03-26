@@ -38,8 +38,8 @@ export default class App extends React.Component {
     };
     registerTokenListener();
     //this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.20:6060/');
-    this.client = new Client('ws://192.168.0.37:6060/');
+    this.client = new Client('ws://192.168.0.20:6060/');
+    //this.client = new Client('ws://192.168.0.37:6060/');
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
     this.setUserId = this.setUserId.bind(this);

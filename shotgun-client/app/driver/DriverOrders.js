@@ -12,6 +12,12 @@ const DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
   driverId: '@userId'
 };
 
+const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+  reportId: 'customerOrderSummary',
+  userId: '@userId'
+};
+
 
 class DriverOrders  extends Component{
   constructor(props){
@@ -26,11 +32,11 @@ class DriverOrders  extends Component{
   }
 
   render() {
-    const {history, isCompleted, defaultOptions} = this.props;
+    const {history, isCustomer, defaultOptions} = this.props;
     const {location} = history;
 
     const Paging = () => <Spinner />;
-    const NoItems = () => <Text empty>{isCompleted ? 'You have no completed jobs' : 'You have no live jobs'}</Text>;
+    const NoItems = () => <Text empty>{isCustomer ? 'You have no Customer jobs' : 'You have no live jobs'}</Text>;
 
     const RowView = ({item: orderSummary, isLast, isFirst}) => {
       const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
@@ -38,9 +44,9 @@ class DriverOrders  extends Component{
       return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
     };
 
-    const onChangeTab = (newIsCompleted) => {
-      if (isCompleted !== newIsCompleted) {
-        history.replace(location.pathname, {isCompleted: newIsCompleted});
+    const onChangeTab = (newIsCustomer) => {
+      if (isCustomer !== newIsCustomer) {
+        history.replace(location.pathname, {isCustomer: newIsCustomer});
       }
     };
 
@@ -48,9 +54,9 @@ class DriverOrders  extends Component{
       <Header hasTabs>
         <Body><Title>My Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={isCompleted ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
-        <Tab heading="Live Jobs"/>
-        <Tab heading="Complete"/>
+      <Tabs initialPage={isCustomer ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i == 1)}>
+        <Tab heading="Todo"/>
+        <Tab heading="Posted"/>
       </Tabs>
       <View style={{flex: 1}}>
         <PagingListView
@@ -73,11 +79,11 @@ class DriverOrders  extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
-  const {isCompleted = false} = navigationProps;
+  const {isCustomer = false} = navigationProps;
   const {dispatch} = initialProps;
   const defaultOptions = {
-    ...DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS,
-    isCompleted
+    ...(isCustomer ? CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS),
+    isCompleted: true
   };
 
   const resetOrders = () => {
@@ -88,7 +94,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     resetOrders,
     defaultOptions,
-    isCompleted,
+    isCustomer,
     vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
     position: getDaoState(state, ['position'], 'userDao')
   };

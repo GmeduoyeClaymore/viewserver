@@ -20,7 +20,7 @@
         <vehicleDetailsKey>87019DD5-A533-4A7C-A8A1-38BF311C1FF6</vehicleDetailsKey>
         <servers>
             <master>
-               `
+
                 <bootstrapper>com.shotgun.viewserver.setup.ShotgunBootstrapper</bootstrapper>
                 <endpoints>
                     <endpoint>tcp://0.0.0.0:18000</endpoint>

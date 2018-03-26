@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Image} from 'react-native';
-import {Button, Text} from 'native-base';
+import {Button, Text, Col, Row} from 'native-base';
 import {Icon, ErrorRegion, AverageRating} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
@@ -100,15 +100,19 @@ export const RelatedUser = ({user, onPressCallUser, errors, style = {}}) => {
 
     <View style={{flexDirection: 'row', minHeight: 80, flex: 10}}>
       <Image resizeMode="contain" source={{url: user.imageUrl}}  style={{...styles.picture, borderColor: getStatusColor(user.status), borderWidth: 2}}/>
-      <View style={{flex: 3, padding: 5}}>
-        <View style={{flexDirection: 'column'}}>
-          <Text style={{...styles.title, marginLeft: 1}}>{user.firstName + ' ' + user.lastName}</Text>
-          {user.status ? <Text style={styles.summary}>{' (' + user.status + ')'}</Text> : null}
-        </View>
-        {user.statusMessage ? <Text style={{...styles.summary, marginLeft: 3}}>{user.statusMessage}</Text> : null}
-        <Text style={{...styles.summary, marginLeft: 3}}>{ `${Math.round(user.distance)}km away`}</Text>
-        <AverageRating rating={user.ratingAvg}/>
-      </View>
+      <Row style={{flex: 3, padding: 5}}>
+        <Col size={60}>
+          <View style={{flexDirection: 'column'}}>
+            <Text style={{...styles.title, marginLeft: 1}}>{user.firstName + ' ' + user.lastName}</Text>
+            {user.status ? <Text style={styles.summary}>{' (' + user.status + ')'}</Text> : null}
+          </View>
+          {user.statusMessage ? <Text style={{...styles.summary, marginLeft: 3}}>{user.statusMessage}</Text> : null}
+          <Text style={{...styles.summary, marginLeft: 3}}>{ `${Math.round(user.distance)}km away`}</Text>
+        </Col>
+        <Col size={30}>
+          <AverageRating rating={user.ratingAvg}/>
+        </Col>
+      </Row>
       <Button style={{marginBottom: 10, marginLeft: 6, marginTop: 10, justifyContent: 'flex-start'}}  fullWidth statusButtonSml onPress={() => onPressCallUser(user)}>
         <Icon name="phone" paddedIcon style={{marginLeft: 22, marginTop: 0}}/>
       </Button>
