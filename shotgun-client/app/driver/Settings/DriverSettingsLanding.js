@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle, Col, Row, View} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
@@ -24,12 +24,18 @@ const DriverSettings = ({history, user}) => {
         </Button>
       </Left>
       <Body style={{width: '100%'}}>
-        <Title>{user.firstName} {user.lastName}</Title>
-        <Subtitle><AverageRating rating={user.ratingAvg}/></Subtitle>
+        <Row style={{width: '100%'}}>
+          <Col size={200}>
+            <Title>{user.firstName} {user.lastName}</Title>
+          </Col>
+          <Col  size={30}>
+            <View style={{flexDirection: 'column', justifyContent: 'center'}}><AverageRating rating={user.ratingAvg}/></View>
+          </Col>
+          <Col  size={30}>
+            {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
+          </Col>
+        </Row>
       </Body>
-      <Right>
-        {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
-      </Right>
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
@@ -39,6 +45,10 @@ const DriverSettings = ({history, user}) => {
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
+        </ListItem>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/DriverOrders', {isCompleted: true})}>
+          <Text style={styles.text}>Completed Jobs</Text>
+          <Icon style={{paddingRight: 10}} name='two-people'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateBankAccountDetails')}>
           <Text style={styles.text}>Bank Details</Text>

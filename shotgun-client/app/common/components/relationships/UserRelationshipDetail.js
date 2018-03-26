@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View, Text, TouchableHighlight, Dimensions} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {PagingListView, Icon, Swiper} from 'common/components';
+import {PagingListView, Icon, Swiper, AverageRating} from 'common/components';
 import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
@@ -115,15 +115,15 @@ const JobSummary = ({item: orderSummary, isLast, isFirst}) => {
   const {delivery, contentType} = orderSummary;
   return <ListItem key={orderSummary.orderId} style={[styles.orderRequest, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}>
     <Grid>
-      <Row size={75} style={styles.locationRow}>
-        <Col size={60}>
+      <Col size={60}>
+        <Row style={{width: '100%'}}>
           <Text style={{marginBottom: 8}}>{orderSummary.product.name }</Text>
-          <StarsControl style={{}} rating={orderSummary.customerRating}/>
-        </Col>
-        <Col size={60}>
-          {contentType.fromTime ? <Row style={{paddingRight: 10, marginBottom: 8}}><Icon paddedIcon name="delivery-time"/><Text style={{paddingTop: 3}}>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
-        </Col>
-      </Row>
+        </Row>
+        {contentType.fromTime ? <Row style={{paddingRight: 10, marginBottom: 8}}><Icon paddedIcon name="delivery-time"/><Text style={{paddingTop: 3}}>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
+      </Col>
+      <Col size={60}>
+        <AverageRating rating={orderSummary.customerRating} text="No Rating"/>
+      </Col>
     </Grid>
   </ListItem>;
 };
@@ -161,7 +161,7 @@ class UserRelationshipDetail extends Component{
           daoName='orderSummaryDao'
           dataPath={['orders']}
           elementContainerStyle={{borderWidth: 0.5, borderColor: '#edeaea', padding: 5}}
-          options={{driverId: user.userId, reportId: 'driverOrderSummary'}}
+          options={{driverId: user.userId, reportId: 'driverOrderSummary', isCompleted: true}}
           rowView={JobSummary   }
           paginationWaitingView={Paging}
           emptyView={NoItems}
