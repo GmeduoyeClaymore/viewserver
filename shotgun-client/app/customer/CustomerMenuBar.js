@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
-import {withRouter} from 'react-router';
 import {Icon} from 'common/components';
 
 const CustomerMenuBar = ({history, match, isReady}) => {
@@ -19,5 +18,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(CustomerMenuBar));
+export default connect(mapStateToProps)(CustomerMenuBar);
 

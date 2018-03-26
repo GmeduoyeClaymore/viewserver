@@ -1,17 +1,16 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {PagingListView, Tabs, OrderRequest} from 'common/components';
-import { withRouter } from 'react-router';
 import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
 import {isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 const Paging = () => <Spinner />;
 const NoItems = () => <Text empty>No orders to display</Text>;
-const RowView = ({item: orderSummary, isLast, isFirst}) => {
+const RowView = ({item: orderSummary, isLast, isFirst, history}) => {
   const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
   const next = isOnRoute ? '/Customer/CustomerOrderInProgress' : '/Customer/CustomerOrderDetail';
-  return <OrderRequest orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+  return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
 };
 
 const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
@@ -42,7 +41,7 @@ class CustomerOrders extends Component{
 
 
   render(){
-    const {isCompleted, defaultOptions} = this.props;
+    const {isCompleted, defaultOptions, history} = this.props;
     const {onChangeTab} = this;
   
     return <Container>
@@ -58,6 +57,7 @@ class CustomerOrders extends Component{
           ref={ c => {this.pagingListView = c;}}
           daoName='orderSummaryDao'
           dataPath={['orders']}
+          history={history}
           rowView={RowView}
           options={defaultOptions}
           paginationWaitingView={Paging}
@@ -90,6 +90,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(CustomerOrders));
+)(CustomerOrders);

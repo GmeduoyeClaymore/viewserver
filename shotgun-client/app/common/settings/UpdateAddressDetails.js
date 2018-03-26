@@ -5,7 +5,6 @@ import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/compo
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
-import { withRouter } from 'react-router';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';
 
 class HomeAddressDetails  extends Component{
@@ -142,6 +141,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(HomeAddressDetails));
+)(HomeAddressDetails);

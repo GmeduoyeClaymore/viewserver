@@ -3,7 +3,6 @@ import {connect} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';
-import { withRouter } from 'react-router';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 const { width } = Dimensions.get('window');
@@ -37,8 +36,7 @@ class ItemDetails extends Component{
   }
 
   onChangeValue(field, value){
-    const {context} = this.props;
-    const {orderItem = {}} = context.state;
+    const {orderItem={},context} = this.props;
     context.setState({orderItem: {...orderItem, [field]: value}});
   }
 
@@ -53,8 +51,7 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {context, navigationStrategy} = this.props;
-    const {orderItem} = context.state;
+    const {context, navigationStrategy, orderItem} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
@@ -123,11 +120,12 @@ const mapStateToProps = (state, initialProps) => {
 
   const {context} = initialProps;
   const {state: contextState} = context;
-  const {selectedContentType, selectedProduct} = contextState;
+  const {selectedContentType, selectedProduct, orderItem} = contextState;
   return {
+    orderItem,
     ...initialProps,
     selectedContentType
   };
 };
 
-export default withRouter(connect(mapStateToProps)(ItemDetails));
+export default connect(mapStateToProps)(ItemDetails);

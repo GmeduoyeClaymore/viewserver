@@ -15,6 +15,7 @@ import {INITIAL_STATE} from './DriverRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
+import { withRouter } from 'react-router';
 
 class DriverRegistration extends Component {
   constructor() {
@@ -50,5 +51,5 @@ const mapStateToProps = (state, nextOwnProps) => ({
   ...nextOwnProps
 });
 
-export default connect(mapStateToProps)(DriverRegistration);
+export default withRouter(connect(mapStateToProps)(DriverRegistration));
 

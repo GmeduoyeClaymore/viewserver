@@ -55,6 +55,7 @@ export class CurrencyInput extends Component{
   render(){
     const {formattedPrice} = this.state;
     return <TextInput
+      keyboardType='phone-pad'
       {...this.props}
       value={formattedPrice}
       onFocus={this.clearFormattedPriceValue}

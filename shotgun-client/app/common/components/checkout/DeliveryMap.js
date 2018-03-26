@@ -6,7 +6,6 @@ import {ErrorRegion, Icon} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import ProductMarker from 'common/components/maps/ProductMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import { withRouter } from 'react-router';
 import { getDaoState, updateSubscriptionAction } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
@@ -78,8 +77,8 @@ class DeliveryMap extends Component{
   }
 
   setLocation(address, addressKey){
-    const {delivery, history, context} = this.props;
-    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push('/Customer/Checkout/DeliveryMap'));
+    const {delivery, history, context, match} = this.props;
+    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/DeliveryMap`));
   }
 
   setDurationAndDistance({distance, duration}){
@@ -88,8 +87,8 @@ class DeliveryMap extends Component{
   }
 
   doAddressLookup(addressLabel, onAddressSelected){
-    const {history} = this.props;
-    history.push('/Customer/Checkout/AddressLookup', {addressLabel, onAddressSelected});
+    const {history, match} = this.props;
+    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
   }
 
   fitMap(){
@@ -188,8 +187,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DeliveryMap));
+)(DeliveryMap);
 
 

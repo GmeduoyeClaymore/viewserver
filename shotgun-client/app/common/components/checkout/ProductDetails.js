@@ -5,14 +5,14 @@ import ProductActionBar from './ProductActionBar';
 import ActionButton from '../../common/components/ActionButton';
 import backIcon from '../../common/assets/back.png';
 
-const ProductDetails = ({history, context}) => {
+const ProductDetails = ({history, context, match}) => {
   const { product } = context.state.params;
   if (product) {
     return (
       <View style={styles.container}>
         <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
         <View style={styles.header}>
-          <ActionButton buttonText={null} icon={backIcon} action={() => history.push('/Customer/Checkout/ProductList')}/>
+          <ActionButton buttonText={null} icon={backIcon} action={() => history.push(`${match.path}/ProductList`)}/>
           <Text style={styles.bigText}>{product.name}</Text>
         </View>
         <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>

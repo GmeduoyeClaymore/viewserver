@@ -1,3 +1,4 @@
+import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.maps.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,13 @@ public class MapsControllerTest {
         HashMap<String, Object> geometry = (HashMap<String, Object>) x.get("geometry");
         HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
         System.out.println(location);
+    }
+
+    @Test
+    public void canGetAddressFromLocation(){
+        String postcode = "E59QR";
+        List<DeliveryAddress> address = sut.getAddressesFromLatLong(sut.getLocationFromPostcode(postcode));
+        System.out.println(address);
     }
 
     @Test

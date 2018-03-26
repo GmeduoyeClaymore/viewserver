@@ -31,8 +31,8 @@ class OrderConfirmation extends Component{
   }
 
   purchase(){
-    const {dispatch, history, orderItem, payment, delivery, selectedProduct} = this.props;
-    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push('/Customer/CustomerOrders')));
+    const {dispatch, history, orderItem, payment, delivery, selectedProduct, parentMatch} = this.props;
+    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push(`${parentMatch.path}/Orders`)));
   }
 
   async componentDidMount(){

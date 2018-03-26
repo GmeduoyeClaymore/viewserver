@@ -1,11 +1,11 @@
 import React from 'react';
 import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
-import { withRouter } from 'react-router';
 import {Icon} from 'common/components';
 
-const DriverMenuBar = ({history}) => {
+const DriverMenuBar = ({history, match}) => {
   return <Footer>
+    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/Checkout`)}><Icon name='star'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push('/Driver/DriverOrderRequests')}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push('/Driver/DriverOrders')}><Icon name='jobs'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push('/Driver/UserRelationships')}><Icon name='two-people'/></Button></FooterTab>
@@ -13,5 +13,5 @@ const DriverMenuBar = ({history}) => {
   </Footer>;
 };
 
-export default withRouter(connect()(DriverMenuBar));
+export default connect()(DriverMenuBar);
 

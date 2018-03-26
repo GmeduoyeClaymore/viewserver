@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {setLocale} from 'yup/lib/customLocale';
 import CustomerMenuBar from './CustomerMenuBar';
-import Checkout from './checkout/Checkout';
+import Checkout from 'common/components/checkout/Checkout';
 import CustomerOrders from './CustomerOrders';
 import CustomerOrderDetail from './CustomerOrderDetail';
 import CustomerOrderInProgress from './CustomerOrderInProgress';
@@ -17,6 +17,7 @@ import {getCurrentPosition} from 'common/actions/CommonActions';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
+import { withRouter } from 'react-router';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -59,12 +60,13 @@ class CustomerLanding extends Component {
 
   render() {
     const {busy, client} = this.props;
-
+    const ordersRoot = () => <CustomerOrders client={client} {...this.props}/>;
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>
           <Route path={'/Customer/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
-          <Route path={'/Customer/CustomerOrders'} exact render={() => <CustomerOrders client={client} {...this.props}/>}/>
+          <Route path={'/Customer/CustomerOrders'} exact render={ordersRoot}/>
+          <Route path={'/Customer/Orders'} exact render={ordersRoot}/>
           <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
@@ -83,6 +85,6 @@ const mapStateToProps = (state, nextOwnProps) => ({
   ...nextOwnProps
 });
 
-export default connect(mapStateToProps)(CustomerLanding);
+export default withRouter(connect(mapStateToProps)(CustomerLanding));
 
 

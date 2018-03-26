@@ -33,7 +33,7 @@ public class FirebaseConnectionFactory{
 
             connection = FirestoreClient.getFirestore();
         }catch(Exception ex){
-            throw new RuntimeException("Could not open a connection to the firebase database");
+            throw new RuntimeException("Could not open a connection to the firebase database", ex);
         }
     }
 

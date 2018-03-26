@@ -8,6 +8,7 @@ import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
+import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.maps.MapsController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -139,14 +140,14 @@ public class UserController {
     @ControllerAction(path = "setLocationFromPostcode", isSynchronous = false)
     public ListenableFuture setLocationFromPostcode(@ActionParam(name = "postcode") String postcode) {
         String userId = getUserId();
-        HashMap<String, Object> result = mapsController.getLocationFromPostcode(postcode);
+        LatLng result = mapsController.getLocationFromPostcode(postcode);
 
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("latitude", result.get("lat"))
-                .addValue("longitude", result.get("lng"));
+                .addValue("latitude", result.getLatitude())
+                .addValue("longitude", result.getLongitude());
 
-        SettableFuture<HashMap<String, Object>> future = SettableFuture.create();
+        SettableFuture<LatLng> future = SettableFuture.create();
         KeyedTable table = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         reactor.scheduleTask(new ITask() {
             @Override

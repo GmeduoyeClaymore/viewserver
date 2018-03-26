@@ -4,7 +4,6 @@ import { connect } from 'custom-redux';
 import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
 import { Picker, TextInput } from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
-import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
@@ -148,8 +147,7 @@ class DeliveryOptions extends Component {
   }
 
   onChangeNoItems(quantity){
-    const { context } = this.props;
-    const { orderItem } = context.state;
+    const { context, orderItem } = this.props;
     context.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
   }
 
@@ -314,11 +312,13 @@ const mapStateToProps = (state, initialProps) => {
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
   const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
   const {context} = initialProps;
-  const {selectedContentType} = context.state;
+  const {state: contextState} = context;
+  const {selectedContentType} = contextState;
   const getPaymentCardsIfNotAlreadyGot = () =>{
     dispatch(getPaymentCardsIfNotAlreadySucceeded());
   };
   return {
+    ...contextState,
     getPaymentCardsIfNotAlreadyGot,
     ...initialProps,
     selectedContentType,
@@ -332,8 +332,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DeliveryOptions));
+)(DeliveryOptions);
 
 

@@ -14,6 +14,7 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', 'Select Product').
     personell('Select Worker').
+    delivery('Select which size van').
     rubbish('Commercial or domestic waste?');
 /*eslint-enable */
 

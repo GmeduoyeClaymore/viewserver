@@ -27,4 +27,16 @@ public class LatLng{
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    public String toQueryString(String key){
+        return String.format("latlng=%s,%s&key=%s",latitude,longitude,key);
+    }
+
+    @Override
+    public String toString() {
+        return "LatLng{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }

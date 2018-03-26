@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
-import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
 import {connect} from 'custom-redux';
@@ -31,9 +30,9 @@ class ProductCategoryList extends Component{
 
 
   navigateToCategory(category){
-    const {history} = this.props;
+    const {history, match} = this.props;
     if (category.isLeaf) {
-      history.push('/Customer/Checkout/ProductList', {category});
+      history.push(`${match.path}/ProductList`, {category});
     } else {
       this.goToCategory(category);
     }
@@ -50,7 +49,7 @@ class ProductCategoryList extends Component{
     const {rowView} = this;
 
     if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
+      return <Redirect push={true} to={{pathname: `${match.path}/ProductList`, state: {category: selectedCategory}}}/>;
     }
 
     const Paging = () => <Spinner />;
@@ -117,27 +116,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-/*const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {selectedContentType, selectedCategory} = context.state;
-  const {productCategory: rootProductCategory} = selectedContentType;
-
-  const defaultOptions = {
-    ...getDaoOptions(state, 'productCategoryDao'),
-    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
-  };
-
-  return {
-    ...getNavigationProps(initialProps),
-    rootProductCategory,
-    selectedContentType,
-    defaultOptions,
-    categories: getDaoState(state, ['product', 'categories'], 'productCategoryDao'),
-    busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
-    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']),
-    ...initialProps
-  };
-};*/
 
 ProductCategoryList.propTypes = {
   product: PropTypes.object,
@@ -157,6 +135,7 @@ const styles = {
   }
 };
 
-const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
+const ConnectedProductCategoryList =  connect(mapStateToProps)(ProductCategoryList);
+
 export default ConnectedProductCategoryList;
 

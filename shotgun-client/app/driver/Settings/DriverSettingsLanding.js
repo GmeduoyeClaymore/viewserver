@@ -3,7 +3,6 @@ import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, B
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
-import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon, AverageRating} from 'common/components';
 import UserStatusControl from 'common/components/relationships/UserStatusControl';
@@ -84,8 +83,8 @@ const mapStateToProps = (state, initialProps) => ({
   user: getDaoState(state, ['user'], 'userDao'),
 });
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DriverSettings));
+)(DriverSettings);
 
 

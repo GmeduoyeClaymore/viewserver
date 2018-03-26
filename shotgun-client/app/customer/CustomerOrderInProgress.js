@@ -7,7 +7,6 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getOperatio
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {withRouter} from 'react-router';
 import {LoadingScreen, RatingAction, ErrorRegion, Icon} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import locationImg from 'common/assets/location.png';
@@ -162,7 +161,7 @@ const mapStateToProps = (state, initialProps) => {
 
 mapStateToProps.dependsOnOwnProps = true;
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(CustomerOrderInProgress));
+)(CustomerOrderInProgress);
 
