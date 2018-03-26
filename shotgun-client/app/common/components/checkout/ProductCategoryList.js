@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
-import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
 import {connect} from 'custom-redux';
@@ -143,7 +142,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
+const ConnectedProductCategoryList =  connect(mapStateToProps)(ProductCategoryList);
 
 export default ConnectedProductCategoryList;
 

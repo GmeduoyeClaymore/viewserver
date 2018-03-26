@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
-import { withRouter } from 'react-router';
 import {Icon} from 'common/components';
 
 const DriverMenuBar = ({history, match}) => {
@@ -14,5 +13,5 @@ const DriverMenuBar = ({history, match}) => {
   </Footer>;
 };
 
-export default withRouter(connect()(DriverMenuBar));
+export default connect()(DriverMenuBar);
 

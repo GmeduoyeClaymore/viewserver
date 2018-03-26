@@ -3,7 +3,6 @@ import {connect} from 'custom-redux';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
-import {withRouter} from 'react-router';
 import {OrderSummary, PriceSummary, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {acceptOrderRequest, updateOrderPrice} from 'driver/actions/DriverActions';
 
@@ -75,7 +74,7 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DriverOrderRequestDetail));
+)(DriverOrderRequestDetail);
 

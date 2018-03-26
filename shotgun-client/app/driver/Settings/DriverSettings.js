@@ -6,8 +6,8 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {updateDriver} from 'driver/actions/DriverActions';
 import UpdateVehicleDetails from './UpdateVehicleDetails';
 import ConfigureServices from './ConfigureServices';
-
-export default DriverSettings = (props) => {
+import { withRouter } from 'react-router';
+const DriverSettings = (props) => {
   return <Switch>
     <Route path={'/Driver/Settings/DriverSettingsLanding'} exact component={DriverSettingsLanding}/>
     <Route path={'/Driver/Settings/UpdateUserDetails'} exact render={() => <UpdateUserDetails onUpdate={(user) => updateDriver(user, () => props.history.push('/Driver/Settings/DriverSettings'))}/>} />
@@ -17,3 +17,5 @@ export default DriverSettings = (props) => {
     <Redirect to={'/Driver/Settings/DriverSettingsLanding'}/>
   </Switch>;
 };
+
+export default withRouter(DriverSettings);

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
-import { withRouter } from 'react-router';
 import {OrderStatuses, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary} from 'common/components';
@@ -119,5 +118,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const OrderRequestWithRouter = withRouter(connect(mapStateToProps)(OrderRequest));
-export {OrderRequestWithRouter as OrderRequest};
+const ConnectedOrderRequest = connect(mapStateToProps)(OrderRequest);
+export {ConnectedOrderRequest as OrderRequest};

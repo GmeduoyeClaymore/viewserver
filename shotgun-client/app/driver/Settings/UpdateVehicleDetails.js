@@ -3,7 +3,6 @@ import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {updateVehicle} from 'driver/actions/DriverActions';
 import Logger from 'common/Logger';
@@ -124,4 +123,4 @@ const mapStateToProps = (state, nextOwnProps) => ({
   vehicle: getDaoState(state, ['vehicle'], 'vehicleDao')
 });
 
-export default withRouter(connect(mapStateToProps)(UpdateVehicleDetails));
+export default connect(mapStateToProps)(UpdateVehicleDetails);

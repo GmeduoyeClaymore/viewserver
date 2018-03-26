@@ -3,7 +3,6 @@ import {Linking} from 'react-native';
 import {Text} from 'native-base';
 import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {withRouter} from 'react-router';
 
 class TermsAgreement extends Component {
   constructor() {
@@ -32,5 +31,5 @@ const styles = {
   }
 };
 
-const ConnectedTermsAgreement = withRouter(connect()(TermsAgreement));
+const ConnectedTermsAgreement = connect()(TermsAgreement);
 export {ConnectedTermsAgreement as TermsAgreement};

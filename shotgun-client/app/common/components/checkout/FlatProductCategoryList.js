@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
-import { withRouter } from 'react-router';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {connect} from 'custom-redux';
 import {Redirect} from 'react-router-native';
@@ -126,6 +125,6 @@ const styles = {
   }
 };
 
-const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(FlatProductCategoryList));
+const ConnectedProductCategoryList =  connect(mapStateToProps)(FlatProductCategoryList);
 export default ConnectedProductCategoryList;
 

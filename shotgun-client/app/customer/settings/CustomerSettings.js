@@ -6,8 +6,9 @@ import UpdateAddressDetails from 'common/settings/UpdateAddressDetails';
 import UpdatePaymentCardDetails from './UpdatePaymentCardDetails';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {updateCustomer} from 'customer/actions/CustomerActions';
+import { withRouter } from 'react-router';
 
-export default CustomerSettings = (props) => {
+const CustomerSettings = (props) => {
   return <Switch>
     <Route path={'/Customer/Settings/CustomerSettingsLanding'} exact component={CustomerSettingsLanding}/>
     <Route path={'/Customer/Settings/UpdateUserDetails'} exact render={() => <UpdateUserDetails onUpdate={(user) => updateCustomer(user, () => props.history.push('/Customer/Settings/CustomerSettings'))}/>} />
@@ -17,3 +18,5 @@ export default CustomerSettings = (props) => {
     <Redirect to={'/Customer/Settings/CustomerSettingsLanding'}/>
   </Switch>;
 };
+
+export default withRouter(CustomerSettings);

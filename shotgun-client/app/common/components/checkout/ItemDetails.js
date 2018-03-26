@@ -3,7 +3,6 @@ import {connect} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';
-import { withRouter } from 'react-router';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 const { width } = Dimensions.get('window');
@@ -130,4 +129,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(ItemDetails));
+export default connect(mapStateToProps)(ItemDetails);

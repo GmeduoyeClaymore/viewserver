@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Button, Container, Header, Text, Title, Body, Left, Grid, Row, Content, View} from 'native-base';
 import {getDaoState, isAnyOperationPending, updateSubscriptionAction} from 'common/dao';
-import {withRouter} from 'react-router';
 import yup from 'yup';
 import {LoadingScreen, ValidatingButton, Icon} from 'common/components';
 
@@ -86,8 +85,8 @@ const mapStateToProps = (state, initialProps) => ({
   vehicles: getDaoState(state, ['product', 'products'], 'productDao')
 });
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(VehicleSelect));
+)(VehicleSelect);
 
 

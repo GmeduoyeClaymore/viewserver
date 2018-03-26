@@ -17,6 +17,7 @@ import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import Checkout from 'common/components/checkout/Checkout';
+import { withRouter } from 'react-router';
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -84,6 +85,6 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-export default connect(mapStateToProps)(DriverLanding);
+export default withRouter(connect(mapStateToProps)(DriverLanding));
 
 

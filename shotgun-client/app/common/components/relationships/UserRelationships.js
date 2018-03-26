@@ -1,7 +1,6 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
 import {Button, Tab, View, Text, Row, Switch} from 'native-base';
-import { withRouter } from 'react-router';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -206,8 +205,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(UserRelationships));
+)(UserRelationships);
 
 

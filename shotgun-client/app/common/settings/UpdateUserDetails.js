@@ -4,7 +4,6 @@ import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion, ImageSelector} from 'common/components';
 import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
-import {withRouter} from 'react-router';
 import {Image} from 'react-native';
 
 class UpdateUserDetails extends Component{
@@ -158,6 +157,6 @@ const mapStateToProps = (state, initialProps) => ({
   busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}])
 });
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(UpdateUserDetails));
+)(UpdateUserDetails);

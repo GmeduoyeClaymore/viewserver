@@ -6,7 +6,6 @@ import {ErrorRegion, Icon} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import ProductMarker from 'common/components/maps/ProductMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import { withRouter } from 'react-router';
 import { getDaoState, updateSubscriptionAction } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
@@ -189,8 +188,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DeliveryMap));
+)(DeliveryMap);
 
 

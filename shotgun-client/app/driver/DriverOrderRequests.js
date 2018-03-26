@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'custom-redux';
 import { PagingListView, LoadingScreen, OrderRequest, Tabs } from 'common/components';
-import { withRouter } from 'react-router';
 import { View, Text, Container, Spinner, Header, Body, Title, Tab } from 'native-base';
 import { getDaoState, isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -109,6 +108,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DriverOrderRequests));
+)(DriverOrderRequests);

@@ -2,7 +2,6 @@ import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
-import { withRouter } from 'react-router';
 import { getDaoState } from 'common/dao';
 import {TextInput} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -149,8 +148,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(UsersForProductMap));
+)(UsersForProductMap);
 
 

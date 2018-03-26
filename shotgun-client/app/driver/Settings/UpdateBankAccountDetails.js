@@ -3,7 +3,6 @@ import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {withRouter} from 'react-router';
 import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
 import {setBankAccount} from 'driver/actions/DriverActions';
 
@@ -112,4 +111,4 @@ const mapStateToProps = (state, nextOwnProps) => ({
 });
 
 
-export default withRouter(connect(mapStateToProps)(UpdateBankAccountDetails));
+export default connect(mapStateToProps)(UpdateBankAccountDetails);

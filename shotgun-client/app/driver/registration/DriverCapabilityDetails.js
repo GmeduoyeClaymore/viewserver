@@ -4,7 +4,6 @@ import {Text, Content, Item, Label, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {withRouter} from 'react-router';
 import {isAnyLoading, getLoadingErrors, getOperationError } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ValidationService from 'common/services/ValidationService';
@@ -171,4 +170,4 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 
-export default withRouter(connect(mapStateToProps)(DeliveryDetails));
+export default connect(mapStateToProps)(DeliveryDetails);

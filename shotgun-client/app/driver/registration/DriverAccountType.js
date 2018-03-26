@@ -4,7 +4,6 @@ import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, 
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {withRouter} from 'react-router';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
@@ -107,4 +106,4 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 
-export default withRouter(connect(mapStateToProps)(DriverAccountType));
+export default connect(mapStateToProps)(DriverAccountType);

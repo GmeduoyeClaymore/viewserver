@@ -85,6 +85,6 @@ const mapStateToProps = (state, nextOwnProps) => ({
   ...nextOwnProps
 });
 
-export default connect(mapStateToProps)(CustomerLanding);
+export default withRouter(connect(mapStateToProps)(CustomerLanding));
 
 

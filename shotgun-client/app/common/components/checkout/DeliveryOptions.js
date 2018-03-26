@@ -4,7 +4,6 @@ import { connect } from 'custom-redux';
 import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
 import { Picker, TextInput } from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
-import { withRouter } from 'react-router';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
@@ -332,8 +331,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps
-)(DeliveryOptions));
+)(DeliveryOptions);
 
 

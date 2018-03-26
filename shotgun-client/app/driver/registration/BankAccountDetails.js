@@ -3,7 +3,6 @@ import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, 
 import yup from 'yup';
 import {ValidatingButton, ValidatingInput, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {withRouter} from 'react-router';
 
 const BankAccountDetails = ({context, history}) => {
   const {bankAccount} = context.state;
@@ -53,4 +52,4 @@ const validationSchema = {
   sortCode: yup.string().required() // BREAKS IN IOS .matches(/^\d{2}-?\d{2}-?\d{2}$/)
 };
 
-export default withRouter(connect()(BankAccountDetails));
+export default connect()(BankAccountDetails);

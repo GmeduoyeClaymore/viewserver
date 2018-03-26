@@ -9,8 +9,9 @@ import {unregisterAllDaos, registerNakedDao} from 'common/actions/CommonActions'
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';
+import { withRouter } from 'react-router';
 
-export default class CustomerRegistration extends Component {
+class CustomerRegistration extends Component {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
@@ -34,3 +35,4 @@ export default class CustomerRegistration extends Component {
     </Switch>;
   }
 }
+export default withRouter(CustomerRegistration);
