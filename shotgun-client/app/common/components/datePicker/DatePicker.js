@@ -55,12 +55,33 @@ export default class DatePickerControl extends Component{
     const {date} = state;
     const newProps = {...props, date};
     return <View style={{flex: 1}}>
-      <DatePicker {...newProps} style={{marginRight: 15}}/>
-      <View style={{marginLeft: 15, alignSelf: 'flex-end', flexDirection: 'row'}}>
-        {cannedDateOptions.map( (opt) => <Button style={{marginLeft: 5, width: 70}}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
-          <Text style={{fontSize: 8}}>{opt.name}</Text>
+      <DatePicker {...newProps} style={styles.datePicker}/>
+      <View style={styles.datePickerView}>
+        {cannedDateOptions.map( (opt) => <Button style={styles.button}  key={opt.name} onPress={() => this.setCannedDateOption(opt)} >
+          <Text adjustsFontSizeToFit={true} style={styles.buttonText}>{opt.name}</Text>
         </Button>)}
       </View>
     </View>;
   }
 }
+
+const styles = {
+  datePicker: {
+    marginRight: 15
+  },
+  datePickerView: {
+    marginLeft: 15,
+    alignSelf: 'flex-end',
+    flexDirection: 'row'
+  },
+  button: {
+    marginLeft: 5,
+    justifyContent: 'center',
+    width: 70
+  },
+  buttonText: {
+    fontSize: 10,
+    textAlign: 'center',
+    alignSelf: 'center'
+  }
+};
