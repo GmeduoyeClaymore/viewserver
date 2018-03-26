@@ -84,7 +84,7 @@ const styles = {
 
 
 const validationSchema = {
-  selectedContentTypes: yup.array().required()
+  selectedContentTypes: yup.array().min(0).required()
 };
 
 const mapStateToProps = (state, initialProps) => {

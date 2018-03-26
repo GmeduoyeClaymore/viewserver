@@ -46,8 +46,8 @@ export default class ContentTypeSelector extends Component{
     const {selectedContentTypes = {}, context, contentType} = this.props;
     const content = selectedContentTypes[contentType.contentTypeId];
     if (content){
-      selectedContentTypes[contentType.contentTypeId] = undefined;
-      context.setState({selectedContentTypes}, this.doValidate);
+      delete selectedContentTypes[contentType.contentTypeId];
+      context.setState({selectedContentTypes});
     }
   }
 
@@ -68,12 +68,10 @@ export default class ContentTypeSelector extends Component{
     const result = await this.getValidationResult();
     if (!result || result.error == ''){
       if (context){
-        let selectedProductCategories = this.state.content.selectedProductCategories || [];
-        if (!selectedProductCategories.find(c=> c.categoryId === contentType.productCategory.categoryId)){
-          selectedProductCategories = [...selectedProductCategories, contentType.productCategory];
-        }
+        const selectedProductCategories = this.state.content.selectedProductCategories || [];
         selectedContentTypes[contentType.contentTypeId] = {...this.state.content, selectedProductCategories};
         context.setState({selectedContentTypes});
+
         this.handleToggleDetailVisibility(false);
       }
     } else {
