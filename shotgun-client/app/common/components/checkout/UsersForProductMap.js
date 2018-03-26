@@ -78,7 +78,7 @@ class UsersForProductMap extends Component{
 
   render(){
     const {getLocationTextInput, assignDeliveryToUser} = this;
-    const {origin, selectedProduct, errors, disableDoneButton, navigationStrategy, context} = this.props;
+    const {origin, selectedProduct = {}, errors, disableDoneButton, navigationStrategy, context} = this.props;
     const {state} = context;
     const {deliveryUser} = state;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
@@ -86,7 +86,7 @@ class UsersForProductMap extends Component{
     return <Container>
       <Grid>
         <Row size={89}>
-          <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+          <UserRelationships context={context} {...context.state} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
         <Row size={9} style={styles.inputRow}>
