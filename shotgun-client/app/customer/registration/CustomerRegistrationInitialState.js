@@ -1,4 +1,3 @@
-/*
 export const INITIAL_STATE = {
   user: {
     firstName: undefined,
@@ -17,8 +16,8 @@ export const INITIAL_STATE = {
     isDefault: true
   }
 };
-*/
 
+/*
 export const INITIAL_STATE = {
   user: {
     firstName: 'Paul',
@@ -41,4 +40,5 @@ export const INITIAL_STATE = {
     isDefault: true
   }
 };
+*/
 

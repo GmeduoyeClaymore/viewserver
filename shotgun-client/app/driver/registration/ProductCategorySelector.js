@@ -35,8 +35,8 @@ class ProductCategoryList extends Component {
 
   renderSelectionControl = ({categoryObj, selectedProductCategories = [], context}) => {
     const checked = context.isChecked(categoryObj);
-    const implicitylChecked = context.isImplicitlyChecked(categoryObj, selectedProductCategories);
-    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => context.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitylChecked}/>;
+    const implicitlyChecked = context.isImplicitlyChecked(categoryObj, selectedProductCategories);
+    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => context.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitlyChecked}/>;
   }
 
   isChecked(categoryObj) {
@@ -50,7 +50,7 @@ class ProductCategoryList extends Component {
     const {renderSelectionControl: SelectionControl} = this;
 
     return <Row key={categoryId} style={styles.categoryRow}>
-      <View style={{width: 50, paddingTop: 10}}>
+      <View style={styles.categoryView}>
         <SelectionControl categoryObj={row} selectedProductCategories={selectedProductCategories} context={this}/>
       </View>
       <Text style={styles.categoryText}>{category}</Text>
@@ -128,6 +128,10 @@ const styles = {
   categoryRow: {
     padding: 5,
     backgroundColor: shotgun.brandPrimary
+  },
+  categoryView: {
+    width: 50,
+    paddingTop: 10
   },
   categoryText: {
     padding: 10,
