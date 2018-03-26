@@ -119,30 +119,30 @@ class UserRelationships extends Component{
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <View style={{ flex: 1, padding: 15}}>
-      {title ?  <Header withButton>
-        <Left>
+    return <View style={{ flex: 1}}>
+      <Header withButton={title != undefined}>
+        {title ? <Left>
           <Button onPress={() => backAction ? backAction() : history.goBack()}>
             <Icon name='back-arrow'/>
           </Button>
-        </Left>
+        </Left> : null}
         <Body><Title>{title || 'Nearby Users'}</Title></Body>
-      </Header> : null}
-      <View style={{...styles.container, marginBottom: 10}}>
+      </Header>
+      <View style={styles.switchView}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
       </View>
       {typeof noRelationships != 'undefined' ? <Row style={{height: 30}}>
         <Text style={{paddingTop: 6, flex: 2}}>
-          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + 'miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + ' miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
-        <View style={{flex: 1, justifyContent: 'flex-end', flexDirection: 'row'}}>
+        <View style={styles.friendsView}>
           <Text style={{marginRight: 5, paddingTop: 5}}>
             {parentState.showAll ? 'Everyone' : 'Friends'}
           </Text>
-          <Switch style={{height: 30}} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
+          <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
         </View>
       </Row> : null}
-      <Tabs  style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
+      <Tabs style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
       <View style={{flex: 24}}>
@@ -156,30 +156,25 @@ class UserRelationships extends Component{
 }
 
 const styles = {
-  backButton: {
-    position: 'absolute',
-    left: 0,
-    top: 10
-  },
-  title: {
-    fontWeight: 'bold',
-    color: '#848484',
-    fontSize: 18,
-    marginTop: 30
-  },
   locationTextPlaceholder: {
     color: shotgun.silver
   },
   inputRow: {
     padding: shotgun.contentPadding
   },
-  container: {
+  switch: {
+    height: 30
+  },
+  friendsView: {
     flex: 1,
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
+  },
+  switchView: {
+    paddingLeft: 20,
+    paddingRight: 20,
     marginTop: 10,
-    marginLeft: 0,
-    marginRight: 10,
-    alignItems: 'stretch',
-    justifyContent: 'center',
+    marginBottom: 10
   },
 };
 
