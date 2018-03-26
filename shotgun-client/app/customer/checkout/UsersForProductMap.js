@@ -45,11 +45,11 @@ class UsersForProductMap extends Component{
   }
 
   getLocationTextInput(address, addressKey, placeholder){
-    style = address.line1 ? {} : styles.locationTextPlaceholder;
+    style = address && address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
     const {onChangeText, setLocation, doAddressLookup} = this;
     return  <Row>
-      {address.line1 !== undefined ? <Col size={30}>
+      {address && address.line1 !== undefined ? <Col size={30}>
         <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
       <Col size={70}>
@@ -135,7 +135,7 @@ const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
   const {delivery, selectedContentType, selectedProduct, selectedUser, selectedUserIndex} = context.state;
   const {origin} = delivery;
-  const disableDoneButton = origin.line1 == undefined;
+  const disableDoneButton = !origin || origin.line1 == undefined;
 
   return {
     ...initialProps,

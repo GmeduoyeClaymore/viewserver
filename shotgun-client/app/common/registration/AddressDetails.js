@@ -19,7 +19,7 @@ export default AddressDetails  = ({context, match, history, next}) => {
     history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected });
   };
 
-  const getLocationText = (location, placeholder) => {
+  const getLocationText = (location = {}, placeholder) => {
     const style = location.line1 ? {} : styles.locationTextPlaceholder;
     const text = location.line1 ? location.line1 : placeholder;
     return <Text style={[styles.line1Text, style]} onPress={() => doAddressLookup(placeholder)}>{text}</Text>;

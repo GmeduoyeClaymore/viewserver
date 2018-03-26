@@ -16,7 +16,7 @@ export default class MapViewStatic extends Component {
   }
 
   async componentDidMount() {
-    const {client, origin, destination} = this.props;
+    const {client, origin = {}, destination = {}} = this.props;
     const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
 
     if (showDirections){
@@ -27,7 +27,7 @@ export default class MapViewStatic extends Component {
 
   render(){
     const rootUrl = 'https://maps.googleapis.com/maps/api/staticmap';
-    const { origin, destination} = this.props;
+    const { origin, destination = {}} = this.props;
     let { width, height} = this.props;
     const scale = 2;
     const zoom = destination.line1 == undefined ? '&zoom=14' : '';
@@ -39,7 +39,7 @@ export default class MapViewStatic extends Component {
       return `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-origin-small.png')}|${origin.latitude},${origin.longitude}`;
     };
 
-    const getDestinationMarker = (destination) => {
+    const getDestinationMarker = (destination = {}) => {
       return destination.line1 !== undefined ? `&markers=icon:${encodeURI('https://s3.eu-west-2.amazonaws.com/shotgunassets/pin-destination-small.png')}|${destination.latitude},${destination.longitude}` : '';
     };
 

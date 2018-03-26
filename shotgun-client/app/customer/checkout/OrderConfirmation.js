@@ -6,6 +6,7 @@ import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError, hasAnyOptionChanged} from 'common/dao';
 import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {calculateTotalPrice} from './CheckoutUtils';
 
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -47,7 +48,7 @@ class OrderConfirmation extends Component{
 
   async loadEstimatedPrice(){
     const {client, orderItem, payment, delivery} = this.props;
-    const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], payment, delivery}).timeoutWithError(10000, 'Unable to load total price after 10 seconds');
+    const  price = await calculateTotalPrice({client, delivery, orderItem});
     this.setState({price});
   }
 

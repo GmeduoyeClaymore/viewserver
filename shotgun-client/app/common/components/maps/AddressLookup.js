@@ -110,14 +110,14 @@ class AddressLookup extends Component {
       </ListItem>;
     };
 
-    const address = (address, i) => <ListItem paddedTopBottom key={i} onPress={() => onAddressSelected(address)}>
+    const address = (address = {}, i) => <ListItem paddedTopBottom key={i} onPress={() => onAddressSelected(address)}>
       <View>
         <Text style={styles.addressText}>{addressToText(address)}</Text>
         <Text style={styles.smallText}>{address.city}</Text>
       </View>
     </ListItem>;
 
-    const homeAddressItem = (address, i) => <ListItem paddedTopBottom first key={i} onPress={() => onAddressSelected(address)}>
+    const homeAddressItem = (address = {}, i) => <ListItem paddedTopBottom first key={i} onPress={() => onAddressSelected(address)}>
       <View>
         <Text style={styles.addressText}>Home</Text>
         <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>

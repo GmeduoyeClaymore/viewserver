@@ -12,6 +12,7 @@ import moment from 'moment';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {getPaymentCardsIfNotAlreadySucceeded} from 'customer/actions/CustomerActions';
+import {calculateTotalPrice} from './CheckoutUtils';
 
 
 const TommorowDateOption = {
@@ -123,7 +124,6 @@ class DeliveryOptions extends Component {
     this.onChangeValue('fixedPriceValue', price );
   }
 
-
   toggleFixedPrice(){
     const { context } = this.props;
     const { delivery } = context.state;
@@ -140,7 +140,7 @@ class DeliveryOptions extends Component {
     const { context, client} = this.props;
     const {orderItem, delivery} = context.state;
     if (delivery.from && delivery.till){
-      const  price = await client.invokeJSONCommand('orderController', 'calculateTotalPrice', {orderItems: [orderItem], delivery}).timeoutWithError(10000, 'Unable to load total price after 10 seconds');
+      const  price = await calculateTotalPrice({client, delivery, orderItem});
       if (price){
         this.setState({price});
       }

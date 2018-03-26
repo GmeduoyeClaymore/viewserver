@@ -13,7 +13,7 @@ export class OriginDestinationSummary extends Component{
 
   render(){
     const {contentType, delivery} = this.props;
-    const {origin, destination, distance, duration} = delivery;
+    const {origin, destination = {}, distance, duration} = delivery;
 
     const formatDuration = () => {
       const momentDuration = moment.duration(duration, 'seconds');

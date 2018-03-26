@@ -51,7 +51,7 @@ export default class App extends React.Component {
   async componentDidMount() {
     await ProtoLoader.loadAll();
     await this.client.connect(true);
-  } 
+  }
 
   async handleConnectionStatusChanged(isReady){
     Logger.info(`Connection status changed to :\"${isReady}\"`);
