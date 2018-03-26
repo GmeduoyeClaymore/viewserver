@@ -39,9 +39,9 @@ class ProductCategoryList extends Component{
 
 
   navigateToCategory(category){
-    const {history} = this.props;
+    const {history, match} = this.props;
     if (category.isLeaf) {
-      history.push('/Customer/Checkout/ProductList', {category});
+      history.push(`${match.path}/ProductList`, {category});
     } else {
       this.goToCategory(category);
     }
@@ -58,7 +58,7 @@ class ProductCategoryList extends Component{
     const {rowView} = this;
 
     if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
+      return <Redirect push={true} to={{pathname: `${match.path}/ProductList`, state: {category: selectedCategory}}}/>;
     }
 
     const Paging = () => <Spinner />;

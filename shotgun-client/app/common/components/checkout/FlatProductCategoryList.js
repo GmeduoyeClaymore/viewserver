@@ -53,9 +53,9 @@ class FlatProductCategoryList extends Component{
   headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
 
   navigateToCategory(category){
-    const {history} = this.props;
+    const {history, match} = this.props;
     if (category.isLeaf) {
-      history.push('/Customer/Checkout/ProductList', {category});
+      history.push(`${match.path}/ProductList`, {category});
     } else {
       this.goToCategory(category);
     }
@@ -68,10 +68,10 @@ class FlatProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
+    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, match, rootProductCategory, defaultOptions} = this.props;
 
     if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: '/Customer/Checkout/ProductList', state: {category: selectedCategory}}}/>;
+      return <Redirect push={true} to={{pathname: `${match.path}/ProductList`, state: {category: selectedCategory}}}/>;
     }
 
     const Paging = () => <Spinner />;

@@ -1,8 +1,9 @@
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 export default class ContentTypeNavigationStrategy{
-  constructor(history){
+  constructor(history, path){
     this.history = history;
+    this.path = path;
     if (!this.history){
       throw new Error('History must be set');
     }
@@ -57,10 +58,10 @@ export default class ContentTypeNavigationStrategy{
     }
    
     if (newIndex == -1){
-      this.history.push('/Customer/Checkout/ProductSelect');
+      this.history.push(`${this.path}/ProductSelect`);
     } else {
       const nextPath = paths[newIndex];
-      this.history.push(`/Customer/Checkout/${nextPath}`, payload);
+      this.history.push(`${this.path}/${nextPath}`, payload);
     }
     this.pathIndex = newIndex;
   }

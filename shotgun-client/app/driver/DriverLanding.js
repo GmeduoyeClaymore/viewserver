@@ -16,6 +16,7 @@ import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
+import Checkout from 'common/components/checkout/Checkout';
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -52,19 +53,22 @@ class DriverLanding extends Component {
 
   render() {
     const {busy, client} = this.props;
+    const ordersRoot = () => <DriverOrders client={client} {...this.props}/>;
 
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
         <Switch>
+          <Route path={'/Driver/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrders'} exact render={() => <DriverOrders client={client} {...this.props}/>}/>
+          <Route path={'/Driver/DriverOrders'} exact render={ordersRoot}/>
+          <Route path={'/OrdersRoot'} exact render={ordersRoot}/>
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
           <Route path={'/Driver/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
-          <Redirect to={'/Driver/DriverOrderRequests'}/>
+          <Redirect to={'/Driver/Checkout'}/>
         </Switch>
         <DriverMenuBar/>
       </Container>;

@@ -78,8 +78,8 @@ class DeliveryMap extends Component{
   }
 
   setLocation(address, addressKey){
-    const {delivery, history, context} = this.props;
-    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push('/Customer/Checkout/DeliveryMap'));
+    const {delivery, history, context, match} = this.props;
+    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/DeliveryMap`));
   }
 
   setDurationAndDistance({distance, duration}){
@@ -88,8 +88,9 @@ class DeliveryMap extends Component{
   }
 
   doAddressLookup(addressLabel, onAddressSelected){
-    const {history} = this.props;
-    history.push('/Customer/Checkout/AddressLookup', {addressLabel, onAddressSelected});
+    const {history, match} = this.props;
+    throw new Error(match.path);
+    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
   }
 
   fitMap(){

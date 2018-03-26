@@ -1,6 +1,8 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.delivery.Delivery;
+import com.shotgun.viewserver.delivery.DeliveryAddress;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ public class MapsController {
 
     String NEARBY_URL_DEFAULT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
     String NEARBY_URL_REVERSE_GEOCODING = "https://maps.googleapis.com/maps/api/geocode/json";
+    String REVERSE_GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
     String PLACE_URL = "https://maps.googleapis.com/maps/api/place/details/json";
     String DIRECTION_URL = "https://maps.googleapis.com/maps/api/directions/json";
@@ -39,6 +42,40 @@ public class MapsController {
         return getResponse(request, ControllerUtils.execute("GET", PLACE_URL, request.toQueryString(controllerKey.getKey())), true);
     }
 
+    @ControllerAction(path = "getAddressesFromLatLong", isSynchronous = false)
+    public List<DeliveryAddress> getAddressesFromLatLong(LatLng request){
+        HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", REVERSE_GEOCODING_URL, request.toQueryString(controllerKey.getKey())), true);
+        List resultsInJSON = (List) get.get("results");
+        List<DeliveryAddress> results = new ArrayList<>();
+        for(Object result : resultsInJSON ){
+            DeliveryAddress deliveryAddress = getDeliveryAddress((HashMap<String, Object>) result);
+            if(deliveryAddress!=null) {
+                results.add(deliveryAddress);
+            }
+        }
+        return results;
+    }
+
+    private DeliveryAddress getDeliveryAddress( HashMap<String, Object> firstResult) {
+        String formattedAddress = (String) firstResult.get("formatted_address");
+        List types = (List) firstResult.get("types");
+        if(types.contains("political")){
+            return null;
+        }
+        List addressComponents = (List) firstResult.get("address_components");
+        if(addressComponents ==null){
+            throw new RuntimeException(String.format("Unable to find address componets for result"));
+        }
+        DeliveryAddress result = new DeliveryAddress();
+        result.setLine1(formattedAddress);
+        result.setGooglePlaceId((String)firstResult.get("place_id"));
+        HashMap<String, Object> geometry = (HashMap<String, Object>) firstResult.get("geometry");
+        HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
+        result.setLatitude((Double) location.get("lat"));
+        result.setLongitude((Double) location.get("lng"));
+        return result;
+    }
+
     @ControllerAction(path = "mapDirectionRequest", isSynchronous = false)
     public HashMap<String,Object> mapDirectionRequest(DirectionRequest request){
         HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", DIRECTION_URL, request.toQueryString(controllerKey.getKey())),false);
@@ -49,7 +86,7 @@ public class MapsController {
         return get;
     }
     @ControllerAction(path = "getLocationFromPostcode", isSynchronous = false)
-    public HashMap<String,Object> getLocationFromPostcode(String postcode){
+    public LatLng getLocationFromPostcode(String postcode){
         HashMap<String, Object> x = this.makeAutoCompleteRequest(new MapRequest(postcode, "en"));
         List result = (List) x.get("predictions");
 
@@ -70,7 +107,8 @@ public class MapsController {
             throw new RuntimeException(String.format("unable to find result for place for postcode \"%s\"", postcode));
         }
         HashMap<String, Object> geometry = (HashMap<String, Object>) x.get("geometry");
-        return(HashMap<String, Object>) geometry.get("location");
+        HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
+        return new LatLng((Double)location.get("lat"),(Double)location.get("lng"));
     }
 
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)

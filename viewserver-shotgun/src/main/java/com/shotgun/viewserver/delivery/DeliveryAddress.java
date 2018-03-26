@@ -126,4 +126,23 @@ public class DeliveryAddress{
     public void setCreated(Date created) {
         this.created = created;
     }
+
+    @Override
+    public String toString() {
+        return "DeliveryAddress{" +
+                "deliveryAddressId='" + deliveryAddressId + '\'' +
+                ", isDefault=" + isDefault +
+                ", flatNumber='" + flatNumber + '\'' +
+                ", userId='" + userId + '\'' +
+                ", line1='" + line1 + '\'' +
+                ", line2='" + line2 + '\'' +
+                ", city='" + city + '\'' +
+                ", postCode='" + postCode + '\'' +
+                ", country='" + country + '\'' +
+                ", googlePlaceId='" + googlePlaceId + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", created=" + created +
+                '}';
+    }
 }

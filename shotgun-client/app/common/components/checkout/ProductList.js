@@ -61,13 +61,13 @@ class ProductList extends Component{
 
   render(){
     const {rowView, search, props, resources} = this;
-    const {context, defaultOptions, history, navigationStrategy, selectedProduct} = props;
+    const {context, defaultOptions, history, navigationStrategy, selectedProduct, match} = props;
     return  <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => {
             const {parentSelectedCategory} = context.state;
-            context.setState({selectedCategory: parentSelectedCategory}, () => history.replace('/Customer/Checkout/ProductCategoryList'));
+            context.setState({selectedCategory: parentSelectedCategory}, () => history.replace(`${match.path}/ProductCategoryList`));
           }}>
             <Icon name='back-arrow'/>
           </Button>

@@ -12,6 +12,54 @@ import {addressToText} from 'common/utils';
 
 const MAX_RECENT_ADDRESSES = 10;
 
+const SuggestedPlace = ({result, onSuggestedPlaceSelected}) => {
+  return <ListItem paddedTopBottom onPress={() => onSuggestedPlaceSelected(result)}>
+    <View>
+      <Text style={styles.addressText}>{result.structured_formatting.main_text}</Text>
+      <Text style={styles.smallText}>{result.structured_formatting.secondary_text}</Text>
+    </View>
+  </ListItem>;
+};
+
+const Address = ({address = {}, onAddressSelected}) => <ListItem paddedTopBottom onPress={() => onAddressSelected(address)}>
+  <View>
+    <Text style={styles.addressText}>{addressToText(address)}</Text>
+    <Text style={styles.smallText}>{address.city}</Text>
+  </View>
+</ListItem>;
+
+const HomeAddressItem = ({address = {}, onAddressSelected}) => <ListItem paddedTopBottom first onPress={() => onAddressSelected(address)}>
+  <View>
+    <Text style={styles.addressText}>Home</Text>
+    <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
+  </View>
+</ListItem>;
+
+const CurrentLocation = ({onCurrentLocation}) => <ListItem paddedTopBottom first onPress={() => onCurrentLocation()}>
+  <View>
+    <Text style={styles.addressText}>Current Location</Text>
+  </View>
+</ListItem>;
+
+
+const getOrderedAddresses = (addreses) => {
+  if (!addreses) {
+    return addreses;
+  }
+  let result = [...addreses];
+  result = result.filter(ad => !ad.isDefault);
+  result.sort((e1, e2) => moment(e1.created).isBefore(moment(e2.created)));
+  result = result.slice(0, MAX_RECENT_ADDRESSES);
+  return result;
+};
+
+const getHomeAddress = (addreses) => {
+  if (!addreses) {
+    return addreses;
+  }
+  return addreses.find(ad => ad.isDefault) || addreses[0];
+};
+
 class AddressLookup extends Component {
   static propTypes = {
     client: PropTypes.object,
@@ -28,101 +76,76 @@ class AddressLookup extends Component {
       errors: undefined
     };
     setStateIfIsMounted(this);
+    this.searchAutoCompleteSuggestions = debounce(this.searchAutoCompleteSuggestions.bind(this), 50);
+    this.onSuggestedPlaceSelected = this.onSuggestedPlaceSelected.bind(this);
+    this.onAddressChanged = this.onAddressChanged.bind(this);
+    this.reverseGeoCodeSearch = this.reverseGeoCodeSearch.bind(this);
   }
 
-  compare(m1, m2) {
-    if (m1.isAfter(m2)) {
-      return 1;
+  async searchAutoCompleteSuggestions(value){
+    const {client} = this.props;
+    try {
+      this.setState({ busy: true });
+      const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
+        input: value,
+        language: 'en'
+      });
+
+      const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('political'));
+
+      this.setState({
+        suggestedPlaces: filteredPredictions,
+        reverseLookedUpAddresses: [],
+        busy: false
+      });
+    } catch (error) {
+      this.setState({ error });
     }
-    if (m2.isAfter(m1)) {
-      return -1;
-    }
-    return 0;
   }
 
-  getOrderedAddresses(addreses) {
-    if (!addreses) {
-      return addreses;
+  async reverseGeoCodeSearch(){
+    const {client, user} = this.props;
+    const {latitude, longitude} = user;
+    try {
+      this.setState({ busy: true });
+      const reverseLookedUpAddresses = await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
+        latitude, longitude
+      });
+
+      this.setState({
+        reverseLookedUpAddresses,
+        suggestedPlaces: undefined,
+        busy: false
+      });
+    } catch (error) {
+      this.setState({ error });
     }
-    let result = [...addreses];
-    result = result.filter(ad => !ad.isDefault);
-    result.sort((e1, e2) => moment(e1.created).isBefore(moment(e2.created)));
-    result = result.slice(0, MAX_RECENT_ADDRESSES);
-    return result;
   }
 
+  onAddressChanged(value){
+    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
+  }
 
-  getHomeAddress(addreses) {
-    if (!addreses) {
-      return addreses;
+  async onSuggestedPlaceSelected(rowData){
+    try {
+      const {client, onAddressSelected} = this.props;
+      const res = await client.invokeJSONCommand('mapsController', 'mapPlaceRequest', {
+        placeid: rowData.place_id,
+        language: 'en'
+      }).timeoutWithError(5000, 'Place request timed out');
+
+      onAddressSelected(parseGooglePlacesData(res.result));
+    } catch (error) {
+      this.setState({ error });
     }
-    return addreses.find(ad => ad.isDefault) || addreses[0];
   }
 
   render() {
-    const { addressSearchText, suggestedPlaces, errors } = this.state;
-    const { deliveryAddresses = [], addressLabel, client, history, onAddressSelected} = this.props;
-    const orderedAddresses = this.getOrderedAddresses(deliveryAddresses);
-    const homeAddress = this.getHomeAddress(deliveryAddresses);
-
-    const searchAutoCompleteSuggestions = debounce(async (value) => {
-      try {
-        this.setState({ busy: true });
-        const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
-          input: value,
-          language: 'en'
-        });
-
-        const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('political'));
-
-        this.setState({
-          suggestedPlaces: filteredPredictions,
-          busy: false
-        });
-      } catch (error) {
-        this.setState({ error });
-      }
-    });
-
-    const onAddressChanged = (value) => {
-      this.setState({ addressSearchText: value }, () => searchAutoCompleteSuggestions(value));
-    };
-
-    const onSuggestedPlaceSelected = async (rowData) => {
-      try {
-        const res = await client.invokeJSONCommand('mapsController', 'mapPlaceRequest', {
-          placeid: rowData.place_id,
-          language: 'en'
-        }).timeoutWithError(5000, 'Place request timed out');
-
-        onAddressSelected(parseGooglePlacesData(res.result));
-      } catch (error) {
-        this.setState({ error });
-      }
-    };
-
-    const renderSuggestedPlace = (result, i) => {
-      return <ListItem paddedTopBottom key={i} onPress={() => onSuggestedPlaceSelected(result)}>
-        <View>
-          <Text style={styles.addressText}>{result.structured_formatting.main_text}</Text>
-          <Text style={styles.smallText}>{result.structured_formatting.secondary_text}</Text>
-        </View>
-      </ListItem>;
-    };
-
-    const address = (address = {}, i) => <ListItem paddedTopBottom key={i} onPress={() => onAddressSelected(address)}>
-      <View>
-        <Text style={styles.addressText}>{addressToText(address)}</Text>
-        <Text style={styles.smallText}>{address.city}</Text>
-      </View>
-    </ListItem>;
-
-    const homeAddressItem = (address = {}, i) => <ListItem paddedTopBottom first key={i} onPress={() => onAddressSelected(address)}>
-      <View>
-        <Text style={styles.addressText}>Home</Text>
-        <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
-      </View>
-    </ListItem>;
+    const { addressSearchText, suggestedPlaces = [], errors, reverseLookedUpAddresses = []} = this.state;
+    const { deliveryAddresses = [], addressLabel, history, onAddressSelected, me} = this.props;
+    const orderedAddresses = getOrderedAddresses(deliveryAddresses);
+    const homeAddress = getHomeAddress(deliveryAddresses);
+    const {onSuggestedPlaceSelected, onAddressChanged} = this;
 
     return (
       <Container>
@@ -143,17 +166,25 @@ class AddressLookup extends Component {
               </ErrorRegion>
             </Row>
             <Row size={80}>
-              {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
+              {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 && reverseLookedUpAddresses.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
+                {me ? <CurrentLocation onCurrentLocation={this.reverseGeoCodeSearch}/> : null}
                 <Text style={styles.smallText}>Recent Addresses</Text>
                 <List>
-                  {homeAddress ? homeAddressItem(homeAddress, 0) : null}
-                  {orderedAddresses.map(address)}
+                  {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
+                  {orderedAddresses.map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
                 </List>
               </Container> : null}
 
               {suggestedPlaces.length > 0 ? <Container paddedLeft>
                 <Text style={styles.smallText}>Results</Text>
-                <List>{suggestedPlaces.map((r, i) => renderSuggestedPlace(r, i))}</List>
+                <List>{suggestedPlaces.map((r, i) => <SuggestedPlace key={i} result={r} onSuggestedPlaceSelected={onSuggestedPlaceSelected}/>)}</List>
+              </Container> : null}
+
+              {reverseLookedUpAddresses.length > 0 ? <Container paddedLeft>
+                <Text style={styles.smallText}>Results</Text>
+                <List>
+                  {reverseLookedUpAddresses.map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
+                </List>
               </Container> : null}
             </Row>
           </Grid>
@@ -187,6 +218,7 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
+  me: getDaoState(state, ['user'], 'userDao'),
   ...getNavigationProps(initialProps),
   ...getDaoState(state, ['customer'], 'deliveryAddressDao'),
 });

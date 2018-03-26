@@ -9,14 +9,15 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/utils';
 import UserRelationships from 'common/components/relationships/UserRelationships';
-const getAddressForlocation = (location) => {
+const getAddressForlocation = async (client, location) => {
   if (!location || !location.latitude || !location.longitude){
     return undefined;
   }
-  return {
-    line1: 'LOCATION_PLACEHOLDER_ADDRESS' + JSON.stringify(location),
-    ...location
-  };
+  const {latitude, longitude} = location;
+  const results =  await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
+    latitude, longitude
+  });
+  return results[0];
 };
 
 
@@ -32,10 +33,11 @@ class UsersForProductMap extends Component{
     setStateIfIsMounted(this);
   }
 
-  componentDidMount(){
-    const {me = {}, context, delivery} = this.props;
+  async componentDidMount(){
+    const {me = {}, context, delivery, client} = this.props;
     const {latitude, longitude} = me;
-    context.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : getAddressForlocation({longitude, latitude})}});
+    
+    context.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : await getAddressForlocation(client, {longitude, latitude})}});
   }
 
   async onChangeText(location, field, value){
@@ -59,8 +61,8 @@ class UsersForProductMap extends Component{
   }
 
   setLocation(address, addressKey){
-    const {delivery, history, context} = this.props;
-    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push('/Customer/Checkout/UsersForProductMap'));
+    const {delivery, history, context, match} = this.props;
+    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/UsersForProductMap`));
   }
 
   assignDeliveryToUser(user){
@@ -73,7 +75,7 @@ class UsersForProductMap extends Component{
 
   doAddressLookup(addressLabel, onAddressSelected){
     const {history} = this.props;
-    history.push('/Customer/Checkout/AddressLookup', {addressLabel, onAddressSelected});
+    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
   }
 
   render(){
