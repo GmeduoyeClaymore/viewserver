@@ -19,7 +19,6 @@ const getAddressForlocation = (location) => {
   };
 };
 
-
 class UsersForProductMap extends Component{
   constructor(props){
     super(props);
@@ -83,16 +82,15 @@ class UsersForProductMap extends Component{
     const {deliveryUser} = state;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
 
-    return <Container >
+    return <Container>
       <Grid>
-        <Row size={89} style={{marginTop: 15}}>
-          <ErrorRegion errors={errors}>
-            <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
-          </ErrorRegion>
+        <Row size={89}>
+          <UserRelationships context={context} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+          <ErrorRegion errors={errors} />
         </Row>
         <Row size={9} style={styles.inputRow}>
           <Col>
-            <Row style={{backgroundColor: 'white', padding: 15}}>
+            <Row>
               <Icon name="pin" paddedIcon originPin />
               {getLocationTextInput(origin, 'origin', 'Enter job location')}
             </Row>
