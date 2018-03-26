@@ -29,6 +29,13 @@ export default class PermissionsService {
     });
   }
 
+  static async requestPhoneCallPermission(){
+    await PermissionsService.requestPermission(PermissionsAndroid.PERMISSIONS.CALL_PHONE, {
+      title: 'Shotgun Phone Permission',
+      message: 'Used to allow you to call other users from Shotgun'
+    });
+  }
+
   static async requestPermission(permission, popup){
     if (!IS_ANDROID){
       return;

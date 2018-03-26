@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
-import {Button, Tab, View, Text, Row, Switch, Header, Left, Body, Title, Container} from 'native-base';
+import {Button, Tab, View, Text, Row, Switch, Header, Left, Body, Title} from 'native-base';
 import { withRouter } from 'react-router';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
@@ -51,7 +51,7 @@ class UserRelationships extends Component{
       selectedProduct,
       position: geoLocation,
       showUnrelated: showAll,
-      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
+      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'ratingAvg', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
   }
 

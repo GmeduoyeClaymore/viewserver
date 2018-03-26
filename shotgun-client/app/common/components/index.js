@@ -17,4 +17,5 @@ export {Swiper} from './Swiper';
 export {Icon} from './Icon';
 export {Tabs} from './Tabs';
 export {SearchBar} from './SearchBar';
+export {AverageRating} from './AverageRating';
 export {OriginDestinationSummary} from './OriginDestinationSummary';

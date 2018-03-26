@@ -1,11 +1,11 @@
 import React from 'react';
-import {Row, Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
 import {withRouter} from 'react-router';
 import PrincipalService from 'common/services/PrincipalService';
-import {Icon} from 'common/components';
+import {Icon, AverageRating} from 'common/components';
 import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
@@ -26,7 +26,7 @@ const DriverSettings = ({history, user}) => {
       </Left>
       <Body style={{width: '100%'}}>
         <Title>{user.firstName} {user.lastName}</Title>
-        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg.toFixed(1)}</Subtitle> : null}
+        <Subtitle><AverageRating rating={user.ratingAvg}/></Subtitle>
       </Body>
       <Right>
         {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
