@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, Image} from 'react-native';
-import ReactNativeModal from 'react-native-modal';
-import { Row, Button, Col} from 'native-base';
-import {Icon, ErrorRegion} from 'common/components';
+import {View, Image} from 'react-native';
+import {Button, Text} from 'native-base';
+import {Icon, ErrorRegion, AverageRating} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import { isOperationPending } from 'common/dao';
@@ -55,14 +54,6 @@ const getStatusColor = (status) => {
   return 'red';
 };
 
-const sortRating = (rating, defaultVal = 0) => {
-  if (!rating || rating < 0){
-    return defaultVal;
-  }
-  return Math.round(rating);
-};
-
-
 const mapButtonStateToProps = (state, props) => {
   const {dispatch} = props;
   const busy = isOperationPending(state, 'userRelationshipDao', 'updateRelationship');
@@ -104,13 +95,9 @@ export const StatusButton = ({user, style}) => {
   return 'Unknown ' + user.relationshipStatus;
 };
 
-
-export const StarsControl = ({rating, style, ...rest}) => <View {...rest} style={{...style, ...styles.view}}>{[...Array(sortRating(rating))].map((e, i) => <Icon name='star' key={i} style={styles.starFilled}/>)}{[...Array(sortRating(5 - Math.round(sortRating(rating))))].map((e, i) => <Icon name='star' key={i} style={styles.starEmpty}/>)}</View>;
-
-
-export const RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, style = {}}) => {
+export const RelatedUser = ({user, onPressCallUser, errors, style = {}}) => {
   return <View style={{...style, flex: 1}}>
-    
+
     <View style={{flexDirection: 'row', minHeight: 80, flex: 10}}>
       <Image resizeMode="contain" source={{url: user.imageUrl}}  style={{...styles.picture, borderColor: getStatusColor(user.status), borderWidth: 2}}/>
       <View style={{flex: 3, padding: 5}}>
@@ -120,7 +107,7 @@ export const RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, h
         </View>
         {user.statusMessage ? <Text style={{...styles.summary, marginLeft: 3}}>{user.statusMessage}</Text> : null}
         <Text style={{...styles.summary, marginLeft: 3}}>{ `${Math.round(user.distance)}km away`}</Text>
-        <StarsControl style={{}}rating={user.rating}/>
+        <AverageRating rating={user.ratingAvg}/>
       </View>
       <Button style={{marginBottom: 10, marginLeft: 6, marginTop: 10, justifyContent: 'flex-start'}}  fullWidth statusButtonSml onPress={() => onPressCallUser(user)}>
         <Icon name="phone" paddedIcon style={{marginLeft: 22, marginTop: 0}}/>
