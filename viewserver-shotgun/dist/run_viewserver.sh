@@ -1,1 +1,1 @@
-nohup java -jar -Xmx4G -Xms4G -XX:StringTableSize=1000003 viewsserver-shotgun-0.8.0-SNAPSHOT-jar-with-dependencies.jar $1 > run_output.log &
+nohup java -jar  -Xmx4G -Xms4G -XX:StringTableSize=1000003 -Dviewserver.configurationFile=config.xml viewsserver-shotgun-0.8.0-SNAPSHOT-jar-with-dependencies.jar $1 > run_output.log &

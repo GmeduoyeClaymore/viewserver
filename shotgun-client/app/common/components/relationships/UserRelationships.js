@@ -50,7 +50,7 @@ class UserRelationships extends Component{
       selectedProduct,
       position: geoLocation,
       showUnrelated: showAll,
-      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'rating', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
+      columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'ratingAvg', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
   }
 
