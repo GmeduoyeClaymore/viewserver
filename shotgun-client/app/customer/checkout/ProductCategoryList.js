@@ -9,17 +9,9 @@ import {connect} from 'custom-redux';
 import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
-
 import {resolveProductCategoryIcon} from 'common/assets';
 
 class ProductCategoryList extends Component{
-  static propTypes = {
-    product: PropTypes.object,
-    dispatch: PropTypes.func,
-    screenProps: PropTypes.object,
-    navigation: PropTypes.object
-  };
-
   constructor(props){
     super(props);
     this.navigateToCategory = this.navigateToCategory.bind(this);
@@ -96,11 +88,11 @@ class ProductCategoryList extends Component{
   }
 }
 
-export const validationSchema = {
+const validationSchema = {
   productId: yup.string().required(),
 };
 
-export const mapStateToProps = (state, initialProps) => {
+const mapStateToProps = (state, initialProps) => {
   const {context} = initialProps;
   const {selectedContentType, selectedProduct, selectedCategory} = context.state;
   const {productCategory: rootProductCategory} = selectedContentType;
@@ -125,25 +117,46 @@ export const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const styles = StyleSheet.create({
+/*const mapStateToProps = (state, initialProps) => {
+  const {context} = initialProps;
+  const {selectedContentType, selectedCategory} = context.state;
+  const {productCategory: rootProductCategory} = selectedContentType;
+
+  const defaultOptions = {
+    ...getDaoOptions(state, 'productCategoryDao'),
+    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
+  };
+
+  return {
+    ...getNavigationProps(initialProps),
+    rootProductCategory,
+    selectedContentType,
+    defaultOptions,
+    categories: getDaoState(state, ['product', 'categories'], 'productCategoryDao'),
+    busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
+    errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']),
+    ...initialProps
+  };
+};*/
+
+ProductCategoryList.propTypes = {
+  product: PropTypes.object,
+  dispatch: PropTypes.func,
+  screenProps: PropTypes.object,
+  navigation: PropTypes.object
+};
+
+const styles = {
   pagingListView: {
     backgroundColor: '#FFFFFF',
     marginTop: 10
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-  },
-  subTitle: {
-    marginTop: 25,
-    marginBottom: 30
   },
   picture: {
     height: 50,
     width: 50
   }
-});
+};
 
 const ConnectedProductCategoryList =  withRouter(connect(mapStateToProps)(ProductCategoryList));
-
 export default ConnectedProductCategoryList;
 

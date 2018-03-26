@@ -35,8 +35,9 @@ class ContentTypeSelect extends Component{
   startOrder(){
     const {context, navigationStrategy} = this.props;
     const {selectedContentType} = context.state;
+    context.setState({selectedCategory: selectedContentType.productCategory});
     navigationStrategy.init(selectedContentType.contentTypeId);
-    navigationStrategy.next();
+    navigationStrategy.next({parentSelectedCategory: selectedContentType.productCategory});
   }
 
   render(){
@@ -79,9 +80,8 @@ const validationSchema = {
 
 const styles = {
   subTitle: {
-    marginTop: 25,
-    marginBottom: 30,
-    fontSize: 13
+    marginTop: 10,
+    marginBottom: 20,
   },
   contentTypeSelectText: {
     width: '100%',
@@ -92,21 +92,7 @@ const styles = {
   },
   h1: {
     justifyContent: 'center',
-    marginBottom: 30
-  },
-  wrapper: {
-    height: 600,
-    justifyContent: 'center'
-  },
-  picture: {
-    width: 90,
-    height: 90,
-    borderWidth: 0
-  },
-  pagingListView: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center'
+    marginBottom: 10
   }
 };
 
