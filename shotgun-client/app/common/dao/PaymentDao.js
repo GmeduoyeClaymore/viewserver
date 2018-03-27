@@ -72,3 +72,7 @@ export default class PaymentDao{
   }
 }
 
+PaymentDao.prototype.toJSON = function () {
+  return { name: this.name };
+};
+

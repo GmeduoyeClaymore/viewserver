@@ -3,16 +3,15 @@ import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {withExternalState} from 'custom-redux';
 
-export default AddressDetails  = ({context, match, history, next}) => {
-  const {deliveryAddress = {}} = context.state;
-
+const AddressDetails  = ({deliveryAddress = {}, match, history, next, setState, dispatch}) => {
   const onAddressSelected = (address) => {
-    context.setState({deliveryAddress: address}, () => history.push(`${match.path}/AddressDetails`));
+    setState({deliveryAddress: address}, () => history.push(`${match.path}/AddressDetails`), dispatch);
   };
 
   const onChangeText = async (field, value) => {
-    context.setState({deliveryAddress: {...deliveryAddress, [field]: value}});
+    setState({deliveryAddress: {...deliveryAddress, [field]: value}}, dispatch);
   };
 
   const doAddressLookup = (addressLabel) => {
@@ -76,6 +75,10 @@ export default AddressDetails  = ({context, match, history, next}) => {
     </ValidatingButton>
   </Container>;
 };
+
+AddressDetails.stateKey = 'checkout';
+
+export default withExternalState()(AddressDetails);
 
 const validationSchema = {
   flatNumber: yup.string().max(30),

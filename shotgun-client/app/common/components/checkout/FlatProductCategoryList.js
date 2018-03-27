@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -31,8 +31,8 @@ class FlatProductCategoryList extends Component{
   }
 
   componentWillMount(){
-    const {parentSelectedCategory, context} = this.props;
-    context.setState({parentSelectedCategory});
+    const {parentSelectedCategory} = this.props;
+    this.setState({parentSelectedCategory});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,7 +43,7 @@ class FlatProductCategoryList extends Component{
     const {categoryId, category, imageUrl} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.setCategory(row)}>
+      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.navigateToCategory(row)}>
         <Icon name={imageUrl || 'dashed'}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
@@ -52,16 +52,13 @@ class FlatProductCategoryList extends Component{
 
   headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
 
-  navigateToCategory(){
-    const {navigationStrategy, context} = this.props;
-    const {selectedCategory} = this.state;
+  navigateToCategory(selectedCategory){
+    const {navigationStrategy, selectedCategory: parentSelectedCategory} = this.props;
 
     if (selectedCategory.isLeaf) {
-      context.setState({selectedCategory});
-      navigationStrategy.next();
+      this.setState({selectedCategory}, navigationStrategy.next);
     } else {
-      context.setState({parentSelectedCategory: selectedCategory});
-      this.setState({parentSelectedCategory: selectedCategory, selectedCategory: undefined});
+      this.setState({parentSelectedCategory, selectedCategory: undefined});
     }
   }
 
@@ -70,8 +67,7 @@ class FlatProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, navigationStrategy, history, rootProductCategory, defaultOptions} = this.props;
-    const {selectedCategory, parentSelectedCategory} = this.state;
+    const {busy, navigationStrategy, history, rootProductCategory, defaultOptions, selectedCategory, parentSelectedCategory} = this.props;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
@@ -121,8 +117,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {selectedContentType, selectedCategory} = context.state;
+  const {selectedContentType, selectedCategory} = initialProps;
   const {productCategory: rootProductCategory} = selectedContentType;
 
   const defaultOptions = {
@@ -156,6 +151,6 @@ const styles = {
   }
 };
 
-const ConnectedProductCategoryList =  connect(mapStateToProps)(FlatProductCategoryList);
+const ConnectedProductCategoryList =  withExternalState(mapStateToProps)(FlatProductCategoryList);
 export default ConnectedProductCategoryList;
 

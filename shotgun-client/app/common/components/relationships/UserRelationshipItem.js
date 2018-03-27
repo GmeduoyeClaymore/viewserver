@@ -3,15 +3,15 @@ import { View, TouchableHighlight } from 'react-native';
 import {RelatedUser} from './RelatedUser';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-const UserRelationshipItem = ({context, user, selectedUser = {}, onPressAssignUser, onPressCallUser}) => {
+const UserRelationshipItem = ({setSelectedUser, user, selectedUser = {}, onPressAssignUser, onPressCallUser}) => {
   if (!user){
     return null;
   }
   const isSelected = user.userId === selectedUser.userId;
 
-  return <TouchableHighlight style={styles.button} onPress={() => context.setSelectedUser(user) }>
+  return <TouchableHighlight style={styles.button} onPress={() => setSelectedUser(user) }>
     <View style={isSelected ? containerSelected : styles.view}>
-      <RelatedUser {...{context, user, selectedUser, onPressAssignUser, onPressCallUser}}/>
+      <RelatedUser {...{user, selectedUser, onPressAssignUser, onPressCallUser}}/>
     </View>
   </TouchableHighlight>;
 };

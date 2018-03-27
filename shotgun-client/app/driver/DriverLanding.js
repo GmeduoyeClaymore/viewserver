@@ -85,7 +85,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
           <Route path={'/Driver/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
-          <Redirect to={'/Driver/Checkout'}/>
+          <Redirect to={'/Driver/DriverOrderRequests'}/>
         </Switch>
         <DriverMenuBar {...this.props}/>
       </Container>;
@@ -94,8 +94,10 @@ class DriverLanding extends Component {
 
 const mapStateToProps = (state, nextOwnProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
+  const {match: parentMatch} = nextOwnProps;
   return {
     ...nextOwnProps,
+    parentMatch,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
     busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
     user

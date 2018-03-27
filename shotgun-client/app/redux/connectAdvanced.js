@@ -89,7 +89,7 @@ export const connectAdvanced = (
     invariant(
       typeof WrappedComponent == 'function',
       'You must pass a component to the function returned by ' +
-      `connect. Instead received ${JSON.stringify(WrappedComponent)}`
+      `connect. Instead received ${WrappedComponent.name}`
     );
 
     const wrappedComponentName = WrappedComponent.displayName

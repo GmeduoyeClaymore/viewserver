@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import UserDetails from 'common/registration/UserDetails';
 import DriverAccountType from './DriverAccountType';
 import DriverLogin from './DriverLogin';
@@ -18,9 +18,10 @@ import ProductDao from 'common/dao/ProductDao';
 import { withRouter } from 'react-router';
 
 class DriverRegistration extends Component {
+  static InitialState = INITIAL_STATE;
+  static stateKey = 'driverRegistration';
   constructor() {
     super();
-    this.state = INITIAL_STATE;
   }
 
   componentDidMount(){
@@ -34,22 +35,27 @@ class DriverRegistration extends Component {
   }
 
   render() {
+    const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
     return <Switch>
-      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact render={() => <DriverRegistrationLanding {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/Login'} exact render={() => <DriverLogin {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="/Driver/Registration/AddressDetails"/>} />
-      <Route path={'/Driver/Registration/AddressDetails'} exact render={() => <AddressDetails {...this.props} context={this} next="/Driver/Registration/BankAccountDetails"/>} />
-      <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...this.props}/>} />
-      <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...this.props} context={this}/>} />
-      <Route path={'/Driver/Registration/DriverAccountType'} exact render={() => <DriverAccountType {...this.props} context={this}/>} />
-      <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
+      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact render={() => <DriverRegistrationLanding {...driverRegistrationProps}/>} />
+      <Route path={'/Driver/Registration/Login'} exact render={() => <DriverLogin {...driverRegistrationProps}/>} />
+      <Route path={'/Driver/Registration/UserDetails'} exact render={() => <UserDetails {...driverRegistrationProps} next="/Driver/Registration/AddressDetails"/>} />
+      <Route path={'/Driver/Registration/AddressDetails'} exact render={() => <AddressDetails {...driverRegistrationProps} next="/Driver/Registration/BankAccountDetails"/>} />
+      <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...driverRegistrationProps}/>} />
+      <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...driverRegistrationProps}/>} />
+      <Route path={'/Driver/Registration/DriverAccountType'} exact render={() => <DriverAccountType {...driverRegistrationProps}/>} />
+      <Redirect to={'/Driver/Registration/DriverAccountType'}/>
     </Switch>;
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  ...nextOwnProps
-});
+const mapStateToProps = (state, nextOwnProps) => {
+  const {match: parentMatch} = nextOwnProps;
+  return {
+    parentMatch,
+    ...nextOwnProps
+  };
+};
 
-export default withRouter(connect(mapStateToProps)(DriverRegistration));
+export default withRouter(withExternalState(mapStateToProps)(DriverRegistration));
 

@@ -38,6 +38,7 @@ export default class UserRelationshipMap extends Component{
         animated: false,
       });
     }
+    this.mapRangeSet = true;
   }
 
   componentDidMount(){
@@ -48,7 +49,7 @@ export default class UserRelationshipMap extends Component{
 
   componentWillReceiveProps(newProps){
     const {relatedUsers} = newProps;
-    if (!isEqual(relatedUsers, this.props.relatedUsers)){
+    if (!isEqual(relatedUsers, this.props.relatedUsers) || !this.mapRangeSet){
       this.fitMap(newProps);
     }
   }
@@ -68,11 +69,10 @@ export default class UserRelationshipMap extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers = [], context, client, geoLocation} = this.props;
+    const {selectedUser, relatedUsers = [], setSelectedUser, client, geoLocation} = this.props;
     let {me} = this.props;
     me = geoLocation && geoLocation.latitude ? geoLocation : me;
     const {fitMap, getLocations} = this;
-    const {setSelectedUser} = context;
     const {latitude, longitude} = me;
     
     const initialRegion = {

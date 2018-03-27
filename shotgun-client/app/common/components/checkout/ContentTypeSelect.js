@@ -4,6 +4,7 @@ import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {withExternalState} from 'custom-redux';
 
 const withFixedPice = (state) => {
   const delivery = {...state.delivery, isFixedPrice: true};
@@ -25,24 +26,21 @@ class ContentTypeSelect extends Component{
   }
 
   selectContentType(selectedContentType){
-    const {context} = this.props;
     const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
     const initialState = resources.InitialState;
     const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
-    context.setState({...initialState, selectedContentType, orderItem});
+    this.setState({...initialState, selectedContentType, orderItem});
   }
 
   startOrder(){
-    const {context, navigationStrategy} = this.props;
-    const {selectedContentType} = context.state;
-    context.setState({selectedCategory: selectedContentType.productCategory});
+    const {navigationStrategy, selectedContentType} = this.props;
+    this.setState({selectedCategory: selectedContentType.productCategory});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next({parentSelectedCategory: selectedContentType.productCategory});
   }
 
   render(){
-    const {contentTypes = [], context = {}} = this.props;
-    const {selectedContentType} = context.state;
+    const {contentTypes = [], selectedContentType = {}} = this.props;
     return (
       <Container>
         <Content padded>
@@ -96,4 +94,4 @@ const styles = {
   }
 };
 
-export default ContentTypeSelect;
+export default withExternalState()(ContentTypeSelect);

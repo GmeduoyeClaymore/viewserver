@@ -8,6 +8,7 @@ export default class OrdersDao{
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.createOrder = this.createOrder.bind(this);
+    this.updateSubscription = this.updateSubscription.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -33,4 +34,8 @@ export default class OrdersDao{
     return orderId;
   }
 }
+
+OrdersDao.prototype.toJSON = function () {
+  return { name: this.name };
+};
 

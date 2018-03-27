@@ -72,7 +72,7 @@ class DriverOrderRequests extends Component{
 const mapStateToProps = (state, initialProps) => {
   const {dispatch} = initialProps;
   const user = getDaoState(state, ['user'], 'userDao');
-  const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
+  const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao') || [];
   const navigationProps = getNavigationProps(initialProps) || [];
  
   const selectedContentTypeOptions = JSON.parse(user.selectedContentTypes);

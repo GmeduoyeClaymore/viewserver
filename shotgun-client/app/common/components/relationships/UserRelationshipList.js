@@ -26,12 +26,12 @@ export class UserRelationshipList extends Component{
   
   render(){
     const {rowView, props, search} = this;
-    const {selectedUser, context, options, onPressCallUser} = props;
+    const {selectedUser, options, onPressCallUser, setSelectedUser} = props;
     return <PagingListView
       daoName='userRelationshipDao'
       dataPath={['users']}
       elementContainerStyle={{borderWidth: 0.5, borderColor: '#edeaea'}}
-      context={context}
+      setSelectedUser={setSelectedUser}
       onPressCallUser={onPressCallUser}
       options={ options}
       rowView={rowView}

@@ -33,7 +33,6 @@ class ConfigureServices extends Component{
 
   render(){
     const {history, contentTypes = [], errors, busy} = this.props;
-    const context = this;
     const {state} = this;
     const {selectedContentTypes = {}} = state;
     return <Container>
@@ -55,7 +54,7 @@ class ConfigureServices extends Component{
                   <Row style={{flexWrap: 'wrap'}}>
                     {contentTypes.map((contentType, i) =>
                       <View key={i} style={{width: '50%', padding: 10}}>
-                        <ContentTypeSelector {...{...this.props, ...state, context, contentType, selected: !!selectedContentTypes[contentType.contentTypeId]}}/></View>)}
+                        <ContentTypeSelector {...{...this.props, ...state, contentType, selected: !!selectedContentTypes[contentType.contentTypeId]}}/></View>)}
                   </Row>
                 </Grid>
               </View>
@@ -95,8 +94,10 @@ const validationSchema = {
   selectedContentTypes: yup.array().required()
 };
 
+
+
 const mapStateToProps = (state, initialProps) => {
-  const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
+  const contentTypes = getDaoState(state, ['contentTypes'], '`contentTypeDao`');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
   const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
   const busy = isAnyOperationPending(state, [{ driverDao: 'registerDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);

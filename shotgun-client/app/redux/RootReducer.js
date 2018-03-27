@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux-seamless-immutable';
-import {UPDATE_STATE, UPDATE_COMMAND_STATUS, UPDATE_OPTIONS} from 'common/dao/ActionConstants';
+import {UPDATE_STATE, UPDATE_COMMAND_STATUS, UPDATE_OPTIONS, UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
 
 const dao = (state = {}, action) => {
   if (action.type && (action.type.startsWith(UPDATE_STATE('')) || action.type.startsWith(UPDATE_OPTIONS('')) || action.type.startsWith(UPDATE_COMMAND_STATUS('')))){
@@ -8,4 +8,19 @@ const dao = (state = {}, action) => {
   return state;
 };
 
-export default rootReducer = combineReducers({dao});
+const component = (state = {}, action) => {
+  if (action.type && (action.type.startsWith(UPDATE_COMPONENT_STATE('')))){
+    const path = action.path || [];
+    let stateToModify = state.getIn(path);
+    stateToModify = stateToModify ? stateToModify.merge(action.data) : action.data;
+    const result = state.setIn(path, stateToModify);
+    if (action.continueWith){
+      setTimeout(() => action.continueWith(state));
+    }
+    return result;
+  }
+ 
+  return state;
+};
+
+export default rootReducer = combineReducers({dao, component});

@@ -3,12 +3,12 @@ import {View} from 'react-native';
 import {Text, Content, Item, Label, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import {isAnyLoading, getLoadingErrors, getOperationError } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ValidationService from 'common/services/ValidationService';
 
-class DeliveryDetails extends Component{
+class DriverCapabilityDetails extends Component{
   constructor(props){
     super(props);
     this.onChangeText = this.onChangeText.bind(this);
@@ -24,23 +24,20 @@ class DeliveryDetails extends Component{
     dimensions: yup.object().required()
   };
 
-  static async canSubmit(state){
-    const {vehicle} = state;
-    return await ValidationService.validate(vehicle, yup.object(DeliveryDetails.validationSchema));
-  }
+
   
   onChangeText(field, value){
-    const {context, vehicle = {}} = this.props;
-    context.setState({vehicle: {...vehicle, [field]: value}});
+    const {vehicle = {}} = this.props;
+    this.setState({vehicle: {...vehicle, [field]: value}});
   }
 
   async requestVehicleDetails(){
-    const {context, client, vehicle} = this.props;
+    const {client, vehicle} = this.props;
     try {
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
-      context.setState({vehicle: vehicleDetails, errors: '', selectedProductIds: vehicleDetails.selectedProductIds});
+      this.setState({vehicle: vehicleDetails, errors: '', selectedProductIds: vehicleDetails.selectedProductIds});
     } catch (error){
-      context.setState({vehicle: {registrationNumber: vehicle.registrationNumber}, errors: error});
+      this.setState({vehicle: {registrationNumber: vehicle.registrationNumber}, errors: error});
     }
   }
 
@@ -49,22 +46,22 @@ class DeliveryDetails extends Component{
   }
 
   render(){
-    const {dimensions, errors, vehicle, context} = this.props;
+    const {dimensions, errors, vehicle} = this.props;
     const {numAvailableForOffload} = vehicle;
     const peopleVisible = numAvailableForOffload > 0;
-    const combinedErrors = `${errors}\n${context.errors}`;
+    const combinedErrors = `${errors}`;
 
     return <Content keyboardShouldPersistTaps="always" padded>
       <View>
         <Row>
           <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
             <Label>Vehicle registration</Label>
-            <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={DeliveryDetails.validationSchema.registrationNumber} maxLength={10}/>
+            <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} maxLength={10}/>
           </Item>
         </Row>
         <Row>
           <Col>
-            <ValidatingButton fullWidth onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={DeliveryDetails.validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
+            <ValidatingButton fullWidth onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
           </Col>
         </Row>
         {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
@@ -150,14 +147,13 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context = {}, vehicle = {}, selectedContentTypes, user, bankAccount, address, errors} = initialProps;
+  const {vehicle = {}, selectedContentTypes, user, bankAccount, address, errors} = initialProps;
   const {dimensions} = vehicle;
   const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
   const busy = isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']);
   return {
     ...initialProps,
-    context,
     vehicle,
     user,
     bankAccount,
@@ -169,5 +165,10 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
+const  canSubmit = async (state) => {
+  const {vehicle} = state;
+  return await ValidationService.validate(vehicle, yup.object(DriverCapabilityDetails.validationSchema));
+};
 
-export default connect(mapStateToProps)(DeliveryDetails);
+export const ConnectedDriverCapabilityDetails =  withExternalState(mapStateToProps)(DriverCapabilityDetails);
+export default {control: ConnectedDriverCapabilityDetails, validator: canSubmit};

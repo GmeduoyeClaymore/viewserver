@@ -88,3 +88,7 @@ export default class CustomerDao{
   }
 }
 
+CustomerDao.prototype.toJSON = function () {
+  return { name: this.name };
+};
+

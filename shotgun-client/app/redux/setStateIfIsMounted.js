@@ -26,10 +26,10 @@ export const setStateIfIsMounted = (component) => {
   };
 
 
-  component.setState = (partialState, continuewWith) => {
+  component.setState = (partialState, continueWith) => {
     if (component.isMountedComponentMounted){
       if (setState){
-        setState(partialState, continuewWith);
+        setState(partialState, continueWith);
       }
     }
   };

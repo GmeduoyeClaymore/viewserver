@@ -78,12 +78,16 @@ class CustomerLanding extends Component {
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  busy: isAnyLoading(state, ['paymentDao', 'userDao', 'contentTypeDao']),
-  contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
-  user: getDaoState(state, ['user'], 'userDao'),
-  ...nextOwnProps
-});
+const mapStateToProps = (state, nextOwnProps) => {
+  const {match: parentMatch} = nextOwnProps;
+  return {
+    parentMatch,
+    busy: isAnyLoading(state, ['paymentDao', 'userDao', 'contentTypeDao']),
+    contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
+    user: getDaoState(state, ['user'], 'userDao'),
+    ...nextOwnProps
+  };
+};
 
 export default withRouter(connect(mapStateToProps)(CustomerLanding));
 

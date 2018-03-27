@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'custom-redux';
 import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
 import { Picker, TextInput } from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
@@ -12,6 +11,7 @@ import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {getPaymentCardsIfNotAlreadySucceeded} from 'customer/actions/CustomerActions';
 import {calculateTotalPrice} from './CheckoutUtils';
+import {withExternalState} from 'custom-redux';
 
 
 const TommorowDateOption = {
@@ -60,6 +60,7 @@ resourceDictionary.
 /*eslint-enable */
 
 class DeliveryOptions extends Component {
+
   constructor(props) {
     super(props);
     this.onChangeValue = this.onChangeValue.bind(this);
@@ -100,23 +101,22 @@ class DeliveryOptions extends Component {
   }
 
   setCard(selectedCard) {
-    this.props.context.setState({ payment: { paymentId: selectedCard.id } });
-    this.setState({ selectedCard });
+    this.setState({ payment: { paymentId: selectedCard.id } });
+    super.setState({ selectedCard });
   }
 
   toggleDatePicker(pickerName, isDatePickerVisible) {
-    this.setState({[pickerName + '_isDatePickerVisible']: isDatePickerVisible});
+    super.setState({[pickerName + '_isDatePickerVisible']: isDatePickerVisible});
   }
 
   setRequireHelp(requireHelp) {
-    this.setState({ requireHelp });
+    super.setState({ requireHelp });
     this.onChangeNoItems(0);
   }
 
   onChangeValue(field, value, continueWith) {
-    const { context } = this.props;
-    const { delivery } = context.state;
-    context.setState({ delivery: {...delivery, ...{ [field]: value}}}, continueWith);
+    const { delivery} = this.props;
+    this.setState({ delivery: {...delivery, ...{ [field]: value}}}, continueWith);
   }
 
   onFixedPriceValueChanged(price) {
@@ -124,10 +124,9 @@ class DeliveryOptions extends Component {
   }
 
   toggleFixedPrice(){
-    const { context } = this.props;
-    const { delivery } = context.state;
+    const { delivery } = this.props;
     const {isFixedPrice, fixedPriceValue} = delivery;
-    context.setState({ delivery: {...delivery, ...{ isFixedPrice: !isFixedPrice, fixedPriceValue: isFixedPrice ? undefined : fixedPriceValue  } }});
+    this.setState({ delivery: {...delivery, ...{ isFixedPrice: !isFixedPrice, fixedPriceValue: isFixedPrice ? undefined : fixedPriceValue  } }});
   }
 
   onChangeDate(field, value) {
@@ -136,8 +135,7 @@ class DeliveryOptions extends Component {
   }
 
   async loadEstimatedPrice(){
-    const { context, client} = this.props;
-    const {orderItem, delivery} = context.state;
+    const { client, orderItem, delivery} = this.props;
     if (delivery.from && delivery.till){
       const  price = await calculateTotalPrice({client, delivery, orderItem});
       if (price){
@@ -147,14 +145,13 @@ class DeliveryOptions extends Component {
   }
 
   onChangeNoItems(quantity){
-    const { context, orderItem } = this.props;
-    context.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
+    const { orderItem } = this.props;
+    this.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
   }
 
   render() {
     const {resources, tillInput} = this;
-    const { context, busy, paymentCards, errors, navigationStrategy} = this.props;
-    const { delivery, payment, orderItem, selectedContentType} = context.state;
+    const { busy, paymentCards, errors, navigationStrategy, delivery, payment, orderItem, selectedContentType} = this.props;
     const { quantity: noRequiredForOffload } = orderItem;
     const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard, price } = this.state;
 
@@ -311,17 +308,12 @@ const mapStateToProps = (state, initialProps) => {
   const {dispatch} = initialProps;
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
   const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
-  const {context} = initialProps;
-  const {state: contextState} = context;
-  const {selectedContentType} = contextState;
   const getPaymentCardsIfNotAlreadyGot = () =>{
     dispatch(getPaymentCardsIfNotAlreadySucceeded());
   };
   return {
-    ...contextState,
     getPaymentCardsIfNotAlreadyGot,
     ...initialProps,
-    selectedContentType,
     ...getNavigationProps(initialProps),
     busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
@@ -332,8 +324,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(DeliveryOptions);
+export default withExternalState(mapStateToProps)(DeliveryOptions);
 
 

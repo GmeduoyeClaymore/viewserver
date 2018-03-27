@@ -6,6 +6,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
+import {withExternalState} from 'custom-redux';
 
 const datePickerOptions = {
   datePickerModeAndroid: 'spinner',
@@ -15,16 +16,13 @@ const datePickerOptions = {
   maximumDate: moment().add(1, 'years').toDate()
 };
 
-export default class UserDetails  extends Component{
+class UserDetails  extends Component{
   constructor(props){
     super(props);
     this.toggleDatePicker = this.toggleDatePicker.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.onSelectImage = this.onSelectImage.bind(this);
     this.showPicker = this.showPicker.bind(this);
-    this.state = {
-      dobIsDatePickerVisible: false
-    };
     this.pickerOptions = {
       cropping: true,
       cropperCircleOverlay: true,
@@ -35,9 +33,8 @@ export default class UserDetails  extends Component{
   }
 
   onChangeText(field, value){
-    const {context} = this.props;
-    const {user} = context.state;
-    context.setState({user: {...user, [field]: value}});
+    const {user} = this.props;
+    this.setState({user: {...user, [field]: value}});
   }
 
   onChangeDob(dob){
@@ -59,9 +56,7 @@ export default class UserDetails  extends Component{
 
   render(){
     const {onChangeText} = this;
-    const {context, history, next} = this.props;
-    const {dobIsDatePickerVisible} = this.state;
-    const {user} = context.state;
+    const {history, next, user, dobIsDatePickerVisible} = this.props;
     const isDriver = user.type === 'driver';
 
 
@@ -196,3 +191,5 @@ const drivervalidationSchema = {
   // CANT ADD IMAGE IN IOS simulator. Should this be mandatory ???? imageData: yup.string().required(),
   dob: yup.date().required()
 };
+
+export default withExternalState()(UserDetails);

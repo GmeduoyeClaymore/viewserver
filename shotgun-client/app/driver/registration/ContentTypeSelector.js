@@ -7,6 +7,7 @@ import {Button, Text} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ReactNativeModal from 'react-native-modal';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {withExternalState} from 'custom-redux';
 
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
@@ -17,14 +18,13 @@ resourceDictionary.
     rubbish(() => 'Can you do commercial and household waste?');
 /*eslint-enable */
 
-export default class ContentTypeSelector extends Component{
+class ContentTypeSelector extends Component{
   constructor(props){
     super(props);
     this.state = {
       detailVisible: false,
       canSubmit: false,
-      showErrors: false,
-      content: {}
+      showErrors: false
     };
     this.handleSelectContentType = this.handleSelectContentType.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
@@ -43,16 +43,17 @@ export default class ContentTypeSelector extends Component{
   }
 
   deselectContentType(){
-    const {selectedContentTypes = {}, context, contentType} = this.props;
-    const content = selectedContentTypes[contentType.contentTypeId];
+    const {unsavedSelectedContentTypes = {}, contentType} = this.props;
+    const content = unsavedSelectedContentTypes[contentType.contentTypeId];
     if (content){
-      delete selectedContentTypes[contentType.contentTypeId];
-      context.setState({selectedContentTypes});
+      delete unsavedSelectedContentTypes[contentType.contentTypeId];
+      this.setState({unsavedSelectedContentTypes});
     }
   }
 
   componentWillReceiveProps(nextProps) {
     ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
+    this.doValidate();
   }
 
   handleToggleDetailVisibility(detailVisible){
@@ -64,25 +65,36 @@ export default class ContentTypeSelector extends Component{
   }
 
   async handleConfirm(){
-    const {context, contentType, selectedContentTypes = {}} = this.props;
+    const {contentType, selectedContentTypes = {}, unsavedSelectedContentTypes = []} = this.props;
     const result = await this.getValidationResult();
     if (!result || result.error == ''){
-      if (context){
-        const selectedProductCategories = this.state.content.selectedProductCategories || [];
-        selectedContentTypes[contentType.contentTypeId] = {...this.state.content, selectedProductCategories};
-        context.setState({selectedContentTypes});
-
-        this.handleToggleDetailVisibility(false);
-      }
+      const selectedProductCategories = unsavedSelectedContentTypes;
+      selectedContentTypes[contentType.contentTypeId] = {...this.state.content, selectedProductCategories};
+      this.setState({selectedContentTypes});
+      this.handleToggleDetailVisibility(false);
     } else {
-      context.setState({showErrors: true});
+      super.setState({showErrors: true});
     }
   }
 
   async getValidationResult(){
-    const {contentType} = this.props;
+    const {contentType, unsavedSelectedContentTypes = {}} = this.props;
+    if (!contentType){
+      return undefined;
+    }
+    const contentForContentType = unsavedSelectedContentTypes[contentType.contentTypeId];
+    if (!contentForContentType){
+      return undefined;
+    }
     const ContentTypeDetailControl = resolveDetailsControl(contentType);
-    return await ContentTypeDetailControl.canSubmit(this.state.content);
+    if (!ContentTypeDetailControl){
+      return undefined;
+    }
+    const canSubmitFunc = ContentTypeDetailControl.validator;
+    if (!canSubmitFunc){
+      throw new Error('Unable to find canSubmit validation func for component type ' + ContentTypeDetailControl.control.name);
+    }
+    return await canSubmitFunc(contentForContentType);
   }
 
   async doValidate(){
@@ -92,17 +104,12 @@ export default class ContentTypeSelector extends Component{
     }
   }
 
-  setState(newState){
-    const existingContent = this.state.content;
-    const content = {...existingContent, ...newState};
-    super.setState({content}, this.doValidate);
-  }
-
   render(){
     const {selected, contentType} = this.props;
     const {detailVisible, canSubmit, selectedContentTypes = {}} = this.state;
-    const ContentTypeDetailControl = resolveDetailsControl(contentType);
+    const ContentTypeDetailControl = resolveDetailsControl(contentType).control;
     const stateForContentType = selectedContentTypes[contentType.contentTypeId];
+    const {stateKey, ...rest} = this.props;
 
     return <View>
       <Button style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
@@ -115,7 +122,7 @@ export default class ContentTypeSelector extends Component{
       <ReactNativeModal isVisible={detailVisible} style={styles.modal} backdropOpacity={0.4}>
         <View style={styles.contentTypeSelectorContainer}>
           <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
-          <ContentTypeDetailControl {...{contentType, ...this.props, ...stateForContentType, ...this.state.content, context: this, canSubmit}}/>
+          <ContentTypeDetailControl stateKey={'ContentTypeState' + contentType.contentTypeId} {...rest} stateForContentType={stateForContentType}/>
 
           <Button padded fullWidth iconRight style={{marginBottom: 5}} onPress={this.handleConfirm} disabled={!canSubmit}>
             <Text uppercase={false}>Confirm</Text>
@@ -130,6 +137,28 @@ export default class ContentTypeSelector extends Component{
     </View>;
   }
 }
+
+const mapStateToProps = (state, nextOwnProps) => {
+  const unsavedSelectedContentTypes = {};
+  const {contentTypes = []} = nextOwnProps;
+  contentTypes.forEach(
+    type => {
+      const contentTypeState = state.getIn(['component', 'ContentTypeState' +  type.contentTypeId]);
+      if (contentTypeState){
+        unsavedSelectedContentTypes[type.contentTypeId] = contentTypeState;
+      }
+    }
+  );
+
+  const {match: parentMatch} = nextOwnProps;
+  return {
+    parentMatch,
+    unsavedSelectedContentTypes,
+    ...nextOwnProps
+  };
+};
+
+export default withExternalState(mapStateToProps)(ContentTypeSelector);
 
 const styles = {
   contentTypeButton: {

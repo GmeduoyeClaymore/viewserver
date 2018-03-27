@@ -2,13 +2,11 @@ import React from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, Col, Item, Label} from 'native-base';
 import yup from 'yup';
 import {ValidatingButton, ValidatingInput, Icon} from 'common/components';
-import {connect} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 
-const BankAccountDetails = ({context, history}) => {
-  const {bankAccount} = context.state;
-
+const BankAccountDetails = ({bankAccount, history, setState, dispatch}) => {
   const onChangeText = async (field, value) => {
-    context.setState({bankAccount: {...bankAccount, [field]: value}});
+    setState({bankAccount: {...bankAccount, [field]: value}}, undefined, dispatch);
   };
 
   return <Container>
@@ -52,4 +50,4 @@ const validationSchema = {
   sortCode: yup.string().required() // BREAKS IN IOS .matches(/^\d{2}-?\d{2}-?\d{2}$/)
 };
 
-export default connect()(BankAccountDetails);
+export default withExternalState()(BankAccountDetails);

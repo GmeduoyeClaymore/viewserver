@@ -4,7 +4,7 @@ import {View, StyleSheet, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
-import {connect} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {Redirect} from 'react-router-native';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
@@ -39,9 +39,8 @@ class ProductCategoryList extends Component{
   }
 
   goToCategory(selectedCategory){
-    const {context} = this.props;
-    const {selectedCategory: parentSelectedCategory} = context.state;
-    context.setState({selectedCategory, parentSelectedCategory});
+    const {selectedCategory: parentSelectedCategory} = this.props;
+    this.setState({selectedCategory, parentSelectedCategory});
   }
 
   render(){
@@ -92,8 +91,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {selectedContentType, selectedProduct, selectedCategory} = context.state;
+  const {selectedContentType, selectedProduct, selectedCategory} = initialProps;
   const {productCategory: rootProductCategory} = selectedContentType;
   const categories = getDaoState(state, ['product', 'categories'], 'productCategoryDao');
 
@@ -135,7 +133,7 @@ const styles = {
   }
 };
 
-const ConnectedProductCategoryList =  connect(mapStateToProps)(ProductCategoryList);
+const ConnectedProductCategoryList =  withExternalState(mapStateToProps)(ProductCategoryList);
 
 export default ConnectedProductCategoryList;
 

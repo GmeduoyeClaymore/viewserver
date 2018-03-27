@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
@@ -25,8 +25,7 @@ class DriverAccountType extends Component{
 
 
   render(){
-    const {history, contentTypes = [], selectedContentTypes = {}, errors, busy, context} = this.props;
-    const {state} = this;
+    const {history, contentTypes = [], selectedContentTypes = {}, errors, busy} = this.props;
     return <Container>
       <Header withButton>
         <Left>
@@ -46,7 +45,7 @@ class DriverAccountType extends Component{
                   <Row style={{flexWrap: 'wrap'}}>
                     {contentTypes.map((contentType, i) =>
                       <View key={i} style={{width: '50%', padding: 10}}>
-                        <ContentTypeSelector {...{...this.props, ...state, context, contentType, selected: !!selectedContentTypes[contentType.contentTypeId]}}/></View>)}
+                        <ContentTypeSelector {...{...this.props, contentType, selected: !!selectedContentTypes[contentType.contentTypeId]}}/></View>)}
                   </Row>
                 </Grid>
               </View>
@@ -87,8 +86,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context = {}} = initialProps;
-  const {errors = [], selectedContentTypes} = context.state;
+  const {errors = [], selectedContentTypes} = initialProps;
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
   const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
@@ -96,8 +94,6 @@ const mapStateToProps = (state, initialProps) => {
 
   return {
     ...initialProps,
-    context,
-    ...context.state,
     selectedContentTypes,
     contentTypes,
     busy,
@@ -106,4 +102,4 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 
-export default connect(mapStateToProps)(DriverAccountType);
+export default withExternalState(mapStateToProps)(DriverAccountType);

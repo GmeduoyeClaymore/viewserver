@@ -22,9 +22,9 @@ export class ValidatingButton extends Component {
     this.isMountedComponentMounted  = false;
   }
 
-  setState(partialState, continuewWith){
+  setState(partialState, continueWith){
     if (this.isMountedComponentMounted){
-      super.setState(partialState, continuewWith);
+      super.setState(partialState, continueWith);
     }
   }
 

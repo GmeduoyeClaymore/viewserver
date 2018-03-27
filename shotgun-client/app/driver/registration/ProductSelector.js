@@ -4,7 +4,7 @@ import {Text, Spinner, Container, Row, Col, Content} from 'native-base';
 import {LoadingScreen, PagingListView} from 'common/components';
 import {CheckBox} from 'common/components/basic';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -13,11 +13,6 @@ class ProductList extends Component{
   static validationSchema = {
     selectedProductIds: yup.array().required()
   };
-
-  static async canSubmit(state){
-    const {selectedProductIds} = state;
-    return await ValidationService.validate({selectedProductIds}, yup.object(ProductList.validationSchema));
-  }
 
   constructor(props){
     super(props);
@@ -45,7 +40,6 @@ class ProductList extends Component{
   }
 
   toggleProduct(productId){
-    const {context} = this.props;
     let {selectedProductIds = []} = this.props;
     const index = selectedProductIds.indexOf(productId);
     if (!!~index){
@@ -53,7 +47,7 @@ class ProductList extends Component{
     } else {
       selectedProductIds = [...selectedProductIds, productId];
     }
-    context.setState({selectedProductIds});
+    this.setState({selectedProductIds});
   }
 
   render(){
@@ -111,6 +105,11 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-const ConnectedProductList =  connect(mapStateToProps)(ProductList);
-export default ConnectedProductList;
 
+const  canSubmit = async (state) => {
+  const {selectedProductIds} = state;
+  return await ValidationService.validate({selectedProductIds}, yup.object(ProductList.validationSchema));
+};
+
+const ConnectedProductList =  withExternalState(mapStateToProps)(ProductList);
+export default {control: ConnectedProductList, validator: canSubmit};

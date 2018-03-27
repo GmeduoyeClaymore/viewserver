@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted } from 'custom-redux';
+import { connect, setStateIfIsMounted, withExternalState} from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
@@ -8,6 +8,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/utils';
 import UserRelationships from 'common/components/relationships/UserRelationships';
+
 const getAddressForlocation = async (client, location) => {
   if (!location || !location.latitude || !location.longitude){
     return undefined;
@@ -28,20 +29,19 @@ class UsersForProductMap extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.assignDeliveryToUser = this.assignDeliveryToUser.bind(this);
     this.state = {};
-    setStateIfIsMounted(this);
   }
 
   async componentDidMount(){
-    const {me = {}, context, delivery, client} = this.props;
+    const {me = {}, delivery, client} = this.props;
     const {latitude, longitude} = me;
     
-    context.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : await getAddressForlocation(client, {longitude, latitude})}});
+    this.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : await getAddressForlocation(client, {longitude, latitude})}});
   }
 
   async onChangeText(location, field, value){
-    const {delivery, context} = this.props;
+    const {delivery} = this.props;
     newLocation = {...delivery[location], [field]: value};
-    context.setState({delivery: {...delivery, [location]: newLocation}});
+    this.setState({delivery: {...delivery, [location]: newLocation}});
   }
 
   getLocationTextInput(address, addressKey, placeholder){
@@ -59,34 +59,32 @@ class UsersForProductMap extends Component{
   }
 
   setLocation(address, addressKey){
-    const {delivery, history, context, match} = this.props;
-    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/UsersForProductMap`));
+    const {delivery, history, match} = this.props;
+    this.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/UsersForProductMap`));
   }
 
   assignDeliveryToUser(user){
-    const {delivery: oldDelivery, context, navigationStrategy}  = this.props;
+    const {delivery: oldDelivery, navigationStrategy}  = this.props;
     const delivery = {...oldDelivery};
     delivery.driverId = user.userId;
-    context.setState({delivery, deliveryUser: user}, () => navigationStrategy.next());
+    this.setState({delivery, deliveryUser: user}, () => navigationStrategy.next());
   }
 
 
   doAddressLookup(addressLabel, onAddressSelected){
-    const {history} = this.props;
+    const {history, match} = this.props;
     history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
   }
 
   render(){
     const {getLocationTextInput, assignDeliveryToUser} = this;
-    const {origin, selectedProduct = {}, errors, disableDoneButton, navigationStrategy, context} = this.props;
-    const {state} = context;
-    const {deliveryUser} = state;
+    const {origin, selectedProduct = {}, errors, disableDoneButton, navigationStrategy, deliveryUser, client} = this.props;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
 
     return <Container>
       <Grid>
         <Row size={89}>
-          <UserRelationships context={context} {...context.state} title={title} backAction={navigationStrategy.prev} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+          <UserRelationships title={title} backAction={navigationStrategy.prev} client={client} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
         <Row size={9} style={styles.inputRow}>
@@ -131,14 +129,12 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {delivery, selectedContentType, selectedProduct, selectedUser, selectedUserIndex} = context.state;
+  const {delivery, selectedContentType, selectedProduct, selectedUser, selectedUserIndex} = initialProps;
   const {origin} = delivery;
   const disableDoneButton = !origin || origin.line1 == undefined;
 
   return {
     ...initialProps,
-    state,
     selectedUser,
     selectedUserIndex,
     me: getDaoState(state, ['user'], 'userDao'),
@@ -146,8 +142,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(UsersForProductMap);
+export default withExternalState(mapStateToProps)(UsersForProductMap);
 
 

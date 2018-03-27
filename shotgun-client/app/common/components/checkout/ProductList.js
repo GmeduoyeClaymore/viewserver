@@ -5,7 +5,7 @@ import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Ro
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import {PagingListView, Icon, SearchBar, ValidatingButton} from 'common/components';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -35,6 +35,7 @@ class ProductList extends Component{
     super(props);
 
     this.search = this.search.bind(this);
+    this.setState = this.setState.bind(this);
     this.goBack = this.goBack.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
   }
@@ -56,9 +57,8 @@ class ProductList extends Component{
   }
 
   goBack(){
-    const {context, navigationStrategy} = this.props;
-    const {selectedCategory, parentSelectedCategory} = context.state;
-    context.setState({selectedCategory: parentSelectedCategory}, () => navigationStrategy.prev({selectedCategory, parentSelectedCategory}));
+    const {navigationStrategy, selectedCategory, parentSelectedCategory} = this.props;
+    this.setState({selectedCategory: parentSelectedCategory}, () => navigationStrategy.prev({selectedCategory, parentSelectedCategory}));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,7 +66,7 @@ class ProductList extends Component{
   }
 
   render(){
-    const {context, defaultOptions, navigationStrategy, selectedProduct} = this.props;
+    const {defaultOptions, navigationStrategy, selectedProduct, stateKey} = this.props;
     return  <Container>
       <Header withButton>
         <Left>
@@ -89,10 +89,11 @@ class ProductList extends Component{
             elementContainer={Row}
             elementContainerStyle={{flexWrap: 'wrap'}}
             options={defaultOptions}
-            context={context}
+            stateKey={stateKey}
             navigationStrategy={navigationStrategy}
             rowView={this.rowView}
             search={this.search}
+            setState={this.setState}
             paginationWaitingView={Paging}
             emptyView={NoItems}
             headerView={this.headerView}
@@ -119,8 +120,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context, dispatch} = initialProps;
-  const {selectedContentType, selectedProduct, selectedCategory} = context.state;
+  const {dispatch, selectedContentType, selectedProduct, selectedCategory} = initialProps;
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {
@@ -141,5 +141,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const ConnectedProductList =  connect(mapStateToProps)(ProductList);
+const ConnectedProductList =  withExternalState(mapStateToProps)(ProductList);
 export default ConnectedProductList;

@@ -12,12 +12,14 @@ import yup from 'yup';
 import {TextInput} from 'react-native';
 import {isEqual} from 'lodash';
 import {addressToText} from 'common/utils';
+import {withExternalState} from 'custom-redux';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class DeliveryMap extends Component{
+  stateKey = 'checkout';
   constructor(props){
     super(props);
     this.doAddressLookup = this.doAddressLookup.bind(this);
@@ -26,8 +28,6 @@ class DeliveryMap extends Component{
     this.getLocationText = this.getLocationText.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.fitMap = this.fitMap.bind(this);
-    this.state = {};
-    setStateIfIsMounted(this);
   }
 
   componentDidMount(){
@@ -49,7 +49,7 @@ class DeliveryMap extends Component{
     };
   }
   componentWillReceiveProps(newProps){
-    const {oldOptions} = this.state;
+    const {oldOptions} = newProps;
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsersForProduct(newOptions);
@@ -57,9 +57,9 @@ class DeliveryMap extends Component{
   }
 
   async onChangeText(location, field, value){
-    const {delivery, context} = this.props;
+    const {delivery} = this.props;
     newLocation = {...delivery[location], [field]: value};
-    context.setState({delivery: {...delivery, [location]: newLocation}});
+    this.setState({delivery: {...delivery, [location]: newLocation}});
   }
 
   getLocationText(address, addressKey, placeholder){
@@ -77,13 +77,13 @@ class DeliveryMap extends Component{
   }
 
   setLocation(address, addressKey){
-    const {delivery, history, context, match} = this.props;
-    context.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/DeliveryMap`));
+    const {delivery, history, match} = this.props;
+    this.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/DeliveryMap`));
   }
 
   setDurationAndDistance({distance, duration}){
-    const {delivery, context} = this.props;
-    context.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
+    const {delivery} = this.props;
+    this.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
   }
 
   doAddressLookup(addressLabel, onAddressSelected){
@@ -170,8 +170,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {delivery, selectedContentType, selectedProduct} = context.state;
+  const {delivery, selectedContentType, selectedProduct} = initialProps;
   const {destination, origin} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
@@ -187,8 +186,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(DeliveryMap);
+export default withExternalState(mapStateToProps)(DeliveryMap);
 
 

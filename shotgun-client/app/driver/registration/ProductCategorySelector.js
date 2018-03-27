@@ -4,7 +4,7 @@ import {Text, Spinner, Row, Content} from 'native-base';
 import {LoadingScreen, PagingListView} from 'common/components';
 import {CheckBox} from 'common/components/basic';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -14,10 +14,7 @@ class ProductCategoryList extends Component {
     selectedProductCategories: yup.array().required()
   };
 
-  static async canSubmit(state) {
-    const {selectedProductCategories} = state;
-    return await ValidationService.validate({selectedProductCategories}, yup.object(ProductCategoryList.validationSchema));
-  }
+  
 
   constructor(props) {
     super(props);
@@ -58,7 +55,6 @@ class ProductCategoryList extends Component {
   }
 
   toggleCategory(categoryObj) {
-    const {context} = this.props;
     let {selectedProductCategories = []} = this.props;
     const index = selectedProductCategories.findIndex(c => c.categoryId === categoryObj.categoryId);
     if (!!~index || this.isImplicitlyChecked(categoryObj, selectedProductCategories)) {
@@ -67,11 +63,10 @@ class ProductCategoryList extends Component {
     } else {
       selectedProductCategories = [...selectedProductCategories, categoryObj];
     }
-    context.setState({selectedProductCategories});
+    this.setState({selectedProductCategories});
   }
 
   expandCategory(categoryId) {
-    const {context} = this.props;
     let {expandedCategoryIds = []} = this.props;
     const index = expandedCategoryIds.indexOf(categoryId);
     if (!!~index) {
@@ -79,7 +74,7 @@ class ProductCategoryList extends Component {
     } else {
       expandedCategoryIds = [...expandedCategoryIds, categoryId];
     }
-    context.setState({expandedCategoryIds});
+    this.setState({expandedCategoryIds});
   }
 
   getOptions() {
@@ -147,6 +142,11 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-const ConnectedProductCategoryList = connect(mapStateToProps)(ProductCategoryList);
-export default ConnectedProductCategoryList;
+const  canSubmit = async (state) => {
+  const {selectedProductCategories} = state;
+  return await ValidationService.validate({selectedProductCategories}, yup.object(ProductCategoryList.validationSchema));
+};
+
+const ConnectedProductCategoryList = withExternalState(mapStateToProps)(ProductCategoryList);
+export default {control: ConnectedProductCategoryList, validator: canSubmit};
 

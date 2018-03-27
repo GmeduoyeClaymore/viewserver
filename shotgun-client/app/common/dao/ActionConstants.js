@@ -19,3 +19,4 @@ export const UPDATE_STATE = (dao) => `UPDATE_STATE_${getOr(dao)}`;
 export const UPDATE_OPTIONS = (dao) => `UPDATE_OPTIONS_${getOr(dao)}`;
 export const INVOKE_DAO_COMMAND = (dao, name) => `INVOKE_COMMAND_${getOr(dao, name ? '_' : '')}${getOr(name)}`;
 export const UPDATE_COMMAND_STATUS = (dao, command) => `UPDATE_COMMAND_STATUS_${getOr(dao, command ? '_' : '')}${getOr(command)}`;
+export const UPDATE_COMPONENT_STATE = (stateKey) => `UPDATE_COMPONENT_STATE_${getOr(stateKey)}`;

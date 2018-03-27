@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError, hasAnyOptionChanged} from 'common/dao';
 import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {calculateTotalPrice} from './CheckoutUtils';
+
 
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -24,7 +25,6 @@ resourceDictionary.
 class OrderConfirmation extends Component{
   constructor(props){
     super(props);
-    this.state = {};
     this.purchase = this.purchase.bind(this);
     this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
@@ -54,8 +54,7 @@ class OrderConfirmation extends Component{
 
   render(){
     const {resources} = this;
-    const {client, navigationStrategy, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType} = this.props;
-    const {price} = this.state;
+    const {client, navigationStrategy, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price} = this.props;
 
     return <Container>
       <Header withButton>
@@ -84,8 +83,7 @@ OrderConfirmation.PropTypes = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {delivery, payment, orderItem, selectedProduct, selectedContentType, deliveryUser} = context.state;
+  const {delivery, payment, orderItem, selectedProduct, selectedContentType, deliveryUser} = initialProps;
 
   return {
     ...initialProps,
@@ -100,7 +98,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(OrderConfirmation);
+export default withExternalState(mapStateToProps)(OrderConfirmation);
 

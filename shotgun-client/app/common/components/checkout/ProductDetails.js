@@ -4,9 +4,10 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import ProductActionBar from './ProductActionBar';
 import ActionButton from '../../common/components/ActionButton';
 import backIcon from '../../common/assets/back.png';
+import {withExternalState} from 'custom-redux';
 
-const ProductDetails = ({history, context, match}) => {
-  const { product } = context.state.params;
+const ProductDetails = ({history, match, params}) => {
+  const { product } = params;
   if (product) {
     return (
       <View style={styles.container}>
@@ -23,6 +24,8 @@ const ProductDetails = ({history, context, match}) => {
   return null;
 };
 
+ProductDetails.stateKey = 'checkout';
+
 ProductDetails.PropTypes = {
   customerService: PropTypes.object,
   product: PropTypes.object
@@ -30,7 +33,7 @@ ProductDetails.PropTypes = {
 
 ProductDetails.navigationOptions = {header: null};
 
-export default ProductDetails;
+export default withExternalState()(ProductDetails);
 
 const styles = StyleSheet.create({
   container: {

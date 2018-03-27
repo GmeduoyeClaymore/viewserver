@@ -3,7 +3,7 @@ import {Text, Content, Header, Left, Body, Container, Button, Title} from 'nativ
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
 import {ErrorRegion, TermsAgreement, Icon, SpinnerButton} from 'common/components';
-import {connect} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class PaymentCardDetails extends Component {
@@ -13,25 +13,25 @@ class PaymentCardDetails extends Component {
     this.state = {
       valid: false
     };
+    this.onCardDetailsChange = this.onCardDetailsChange.bind(this);
+  }
+
+  onCardDetailsChange(details){
+    if (details.valid == true){
+      const {number, expiry, cvc} = details.values;
+      const expiryTokens = expiry.split('/');
+      this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
+    } else {
+      this.setState({valid: details.valid});
+    }
   }
 
   render(){
-    const {history, busy, errors, context, dispatch} = this.props;
-    const {valid} = this.state;
-
-    const onCardDetailsChange = (details) => {
-      if (details.valid == true){
-        const {number, expiry, cvc} = details.values;
-        const expiryTokens = expiry.split('/');
-        this.setState({valid: details.valid, paymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
-      } else {
-        this.setState({valid: details.valid});
-      }
-    };
+    const {onCardDetailsChange} = this;
+    const {history, busy, errors, user, deliveryAddress, dispatch, valid, paymentCard} = this.props;
 
     const register = async() => {
-      const {user, deliveryAddress} = context.state;
-      dispatch(registerCustomer(user, deliveryAddress, this.state.paymentCard, () => history.push('/Root')));
+      dispatch(registerCustomer(user, deliveryAddress, paymentCard, () => history.push('/Root')));
     };
 
     return <Container>
@@ -63,4 +63,4 @@ const mapStateToProps = (state, initialProps) => ({
   busy: isAnyOperationPending(state, [{ customerDao: 'registerCustomer'}])
 });
 
-export default connect(mapStateToProps)(PaymentCardDetails);
+export default withExternalState(mapStateToProps)(PaymentCardDetails);

@@ -162,3 +162,7 @@ export default class Dao {
   }
 }
 
+Dao.prototype.toJSON = function () {
+  return { name: this.name };
+};
+

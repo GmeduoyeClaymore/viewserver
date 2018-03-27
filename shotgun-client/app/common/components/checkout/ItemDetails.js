@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';
@@ -36,8 +36,8 @@ class ItemDetails extends Component{
   }
 
   onChangeValue(field, value){
-    const {orderItem={},context} = this.props;
-    context.setState({orderItem: {...orderItem, [field]: value}});
+    const {orderItem={}} = this.props;
+    this.setState({orderItem: {...orderItem, [field]: value}});
   }
 
   onSelectImage(response){
@@ -51,7 +51,7 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {context, navigationStrategy, orderItem} = this.props;
+    const {navigationStrategy, orderItem} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
@@ -117,15 +117,9 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-
-  const {context} = initialProps;
-  const {state: contextState} = context;
-  const {selectedContentType, selectedProduct, orderItem} = contextState;
   return {
-    orderItem,
     ...initialProps,
-    selectedContentType
   };
 };
 
-export default connect(mapStateToProps)(ItemDetails);
+export default withExternalState(mapStateToProps)(ItemDetails);

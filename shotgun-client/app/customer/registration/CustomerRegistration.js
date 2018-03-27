@@ -10,11 +10,13 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';
 import { withRouter } from 'react-router';
+import { withExternalState } from 'custom-redux';
 
 class CustomerRegistration extends Component {
+  static InitialState = INITIAL_STATE;
+  static stateKey = 'customerRegistration';
   constructor(props) {
     super(props);
-    this.state = INITIAL_STATE;
   }
 
   componentDidMount(){
@@ -24,15 +26,26 @@ class CustomerRegistration extends Component {
   }
 
   render() {
+    const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey};
     return <Switch>
-      <Route path={'/Customer/Registration/CustomerRegistrationLanding'} exact render={() => <CustomerRegistrationLanding {...this.props} context={this}/>} />
-      <Route path={'/Customer/Registration/Login'} exact render={() => <CustomerLogin {...this.props} context={this}/>} />
-      <Route path={'/Customer/Registration/UserDetails'} exact render={() => <UserDetails {...this.props} context={this} next="/Customer/Registration/AddressDetails"/>} />
-      <Route path={'/Customer/Registration/AddressDetails'} exact render={() => <AddressDetails {...this.props} context={this} next="/Customer/Registration/PaymentCardDetails"/>} />
-      <Route path={'/Customer/Registration/AddressLookup'} exact render={() => <AddressLookup {...this.props}/>} />
-      <Route path={'/Customer/Registration/PaymentCardDetails'} exact render={() => <PaymentCardDetails {...this.props} context={this}/>} />
+      <Route path={'/Customer/Registration/CustomerRegistrationLanding'} exact render={() => <CustomerRegistrationLanding {...registrationProps}/>} />
+      <Route path={'/Customer/Registration/Login'} exact render={() => <CustomerLogin {...registrationProps}/>} />
+      <Route path={'/Customer/Registration/UserDetails'} exact render={() => <UserDetails {...registrationProps} next="/Customer/Registration/AddressDetails"/>} />
+      <Route path={'/Customer/Registration/AddressDetails'} exact render={() => <AddressDetails {...registrationProps} next="/Customer/Registration/PaymentCardDetails"/>} />
+      <Route path={'/Customer/Registration/AddressLookup'} exact render={() => <AddressLookup {...registrationProps}/>} />
+      <Route path={'/Customer/Registration/PaymentCardDetails'} exact render={() => <PaymentCardDetails {...registrationProps}/>} />
       <Redirect to={'/Customer/Registration/CustomerRegistrationLanding'}/>
     </Switch>;
   }
 }
-export default withRouter(CustomerRegistration);
+
+const mapStateToProps = (state, nextOwnProps) => {
+  const {match: parentMatch} = nextOwnProps;
+  return {
+    parentMatch,
+    ...nextOwnProps
+  };
+};
+
+
+export default withRouter(withExternalState(mapStateToProps)(CustomerRegistration));

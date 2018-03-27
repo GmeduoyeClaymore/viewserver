@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import {Button, Container, Header, Text, Title, Body, Left, Grid, Row, Content, View} from 'native-base';
 import {getDaoState, isAnyOperationPending, updateSubscriptionAction} from 'common/dao';
 import yup from 'yup';
@@ -19,10 +19,10 @@ class VehicleSelect extends Component {
   }
 
   render() {
-    const {navigationStrategy, vehicles, context, busy, orderItem, selectedProduct} = this.props;
+    const {navigationStrategy, vehicles, busy, orderItem, selectedProduct} = this.props;
 
     const onSelectVehicle = (selectedProduct) => {
-      context.setState({orderItem: {...orderItem, productId: selectedProduct.productId}, selectedProduct});
+      this.setState({orderItem: {...orderItem, productId: selectedProduct.productId}, selectedProduct});
     };
 
     return busy ? <LoadingScreen text="Loading Vehicles"/> : <Container>
@@ -79,9 +79,7 @@ const styles = {
 
 //TODO -add error state
 const mapStateToProps = (state, initialProps) => {
-  const {context} = initialProps;
-  const {state: contextState} = context;
-  const {orderItem, selectedProduct} = contextState;
+  const {orderItem, selectedProduct} = initialProps;
   return {
     ...initialProps,
     orderItem,
@@ -91,8 +89,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(VehicleSelect);
+export default withExternalState(mapStateToProps)(VehicleSelect);
 
 

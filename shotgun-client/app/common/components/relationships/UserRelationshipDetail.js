@@ -6,10 +6,10 @@ import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
-import {connect} from 'custom-redux';
+import {connect, withExternalState} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
-import {RelatedUser, StarsControl, StatusButton} from './RelatedUser';
+import {RelatedUser, StatusButton} from './RelatedUser';
 import Logger from 'common/Logger';
 import {isEqual} from 'lodash';
 const {height, width} = Dimensions.get('window');
@@ -136,10 +136,10 @@ class UserRelationshipDetail extends Component{
     this.RelatedUser = this.RelatedUser.bind(this);
     this.selectUserByIndex = this.selectUserByIndex.bind(this);
     this.show = this.show.bind(this);
-    this.updateSelectedIndexForUser(this.props);
     this.state = {
       isVisible: false
     };
+    this.updateSelectedIndexForUser(this.props);
   }
 
   RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}}) => {
@@ -178,28 +178,27 @@ class UserRelationshipDetail extends Component{
   updateSelectedIndexForUser(newProps, oldProps = {}){
     Logger.info(`Attempting to update selected index selected user is ${JSON.stringify(newProps.selectedUser)}`);
     if (!isEqual(newProps.selectedUser, oldProps.selectedUser) && newProps.selectedUser){
-      const {relatedUsers, context} = newProps;
+      const {relatedUsers} = newProps;
       const selectedUserIndex = relatedUsers.findIndex(c=> c.userId === newProps.selectedUser.userId);
       Logger.info(`Attempting to update selected index to ${selectedUserIndex}`);
-      context.setState({selectedUserIndex});
+      this.setState({selectedUserIndex});
     }
   }
 
   handleCancel(){
-    const {context} = this. props;
-    this.setState({isVisible: false});
-    context.setState({selectedUser: undefined, selectedUserIndex: -1});
+    super.setState({isVisible: false});
+    this.setState({selectedUser: undefined, selectedUserIndex: -1});
   }
 
   show(){
-    this.setState({isVisible: true});
+    super.setState({isVisible: true});
   }
 
   selectUserByIndex(idx){
-    const {relatedUsers, context} = this.props;
+    const {relatedUsers} = this.props;
     const selectedUser = relatedUsers[idx];
     Logger.info(`Selected user is ${selectedUser ? selectedUser.userId : 'undefined'} index is ${idx} related users are ${relatedUsers.map(c=>c.userId).join(',')}`);
-    context.setState({selectedUser, selectedUserIndex: idx});
+    this.setState({selectedUser, selectedUserIndex: idx});
   }
 
   render(){
@@ -242,8 +241,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps, true, true
-)(UserRelationshipDetail);
+export default withExternalState(mapStateToProps)(UserRelationshipDetail);
 
 

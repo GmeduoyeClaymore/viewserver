@@ -10,6 +10,7 @@ import UserRelationshipList from './UserRelationshipList';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 import UserRelationshipDetail from './UserRelationshipDetail';
+import {withExternalState} from 'custom-redux';
 
 class UserRelationships extends Component{
   constructor(props){
@@ -24,7 +25,6 @@ class UserRelationships extends Component{
       {'List': UserRelationshipList},
     ];
     this.getOptionsFromProps = this.getOptionsFromProps.bind(this);
-    this.setState = this.setState.bind(this);
     this.onChangeTab = this.onChangeTab.bind(this);
     this.setSelectedUser = this.setSelectedUser.bind(this);
     this.updateDistance = this.updateDistance.bind(this);
@@ -43,8 +43,7 @@ class UserRelationships extends Component{
   }
 
   getOptionsFromProps(props){
-    const {selectedProduct, geoLocation} = props;
-    const {showAll} = this.parentState;
+    const {selectedProduct, geoLocation, showAll} = props;
     return {
       reportId: selectedProduct ? 'usersForProduct' : 'userRelationships',
       selectedProduct,
@@ -56,20 +55,20 @@ class UserRelationships extends Component{
 
   updateSubscription(){
     const newOptions = this.getOptionsFromProps(this.props);
-    const {oldOptions} = this.parentState;
+    const {oldOptions} = this.props;
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsers(newOptions);
     }
   }
 
   componentWillReceiveProps(newProps){
-    const {oldOptions} = this.parentState;
+    const {oldOptions, distance} = newProps;
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsers(newOptions);
     }
     const {me} = newProps;
-    if (me && me.range  !== this.parentState.distance){
+    if (me && me.range  !== distance){
       this.setState({distance: me.range});
     }
   }
@@ -94,26 +93,9 @@ class UserRelationships extends Component{
     setRange(distance);
   }
 
-  setState(newState, continueWith){
-    const {context} = this.props;
-    if (context){
-      return context.setState(newState, continueWith);
-    }
-    super.setState(newState, continueWith);
-  }
-
-  get parentState(){
-    const {context} = this.props;
-    if (context){
-      return context.state;
-    }
-    return this.state;
-  }
-
   render(){
-    const {onChangeTab, UserViews, parentState} = this;
-    const {history, errors, noRelationships, me, searchText, title, selectedProduct, backAction} = this.props;
-    const {selectedUser, selectedUserIndex, selectedTabIndex = 0, oldOptions, showAll} = parentState;
+    const {onChangeTab, UserViews} = this;
+    const {selectedUser, selectedUserIndex, selectedTabIndex = 0, oldOptions, showAll, history, errors, noRelationships, me, searchText, title, selectedProduct, backAction, distance} = this.props;
     const UserViewRecord = UserViews[selectedTabIndex];
     const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
     if (!me){
@@ -129,17 +111,17 @@ class UserRelationships extends Component{
         <Body><Title>{title || 'Nearby Users'}</Title></Body>
       </Header>
       <View style={styles.switchView}>
-        {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={parentState.distance} onSlidingComplete={this.setRange}/> : null}
+        {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={distance} onSlidingComplete={this.setRange}/> : null}
       </View>
       {typeof noRelationships != 'undefined' ? <Row style={{height: 30}}>
         <Text style={{paddingTop: 6, flex: 2}}>
-          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + parentState.distance + ' miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
+          {noRelationships + ' ' + (selectedProduct ? selectedProduct.name : '') + (showAll ? (selectedProduct ? 's' : ' users') : ' friends') + ' in ' + distance + ' miles ' + (searchText ? 'with name \"' + searchText + '\"' : '') }
         </Text>
         <View style={styles.friendsView}>
           <Text style={{marginRight: 5, paddingTop: 5}}>
-            {parentState.showAll ? 'Everyone' : 'Friends'}
+            {showAll ? 'Everyone' : 'Friends'}
           </Text>
-          <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ parentState.showAll }/>
+          <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ showAll }/>
         </View>
       </Row> : null}
       <Tabs style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
@@ -147,10 +129,10 @@ class UserRelationships extends Component{
       </Tabs>
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
-          <UserView {...this.props} context={this} options={oldOptions} selectedUser={selectedUser}/>
+          <UserView {...this.props} options={oldOptions} selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}/>
         </ErrorRegion>
       </View>
-      <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} context={this} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
+      <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
     </View>;
   }
 }
@@ -202,8 +184,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps
-)(UserRelationships);
+export default withExternalState(mapStateToProps)(UserRelationships);
 
 

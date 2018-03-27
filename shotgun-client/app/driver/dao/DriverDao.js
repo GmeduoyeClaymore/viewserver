@@ -85,3 +85,7 @@ export default class DriverDao{
   }
 }
 
+DriverDao.prototype.toJSON = function () {
+  return { name: this.name };
+};
+

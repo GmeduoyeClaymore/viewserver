@@ -15,6 +15,7 @@ class MapViewDirections extends Component {
       duration: null,
     };
     setStateIfIsMounted(this);
+    this.fetchAndRenderRoute = this.fetchAndRenderRoute.bind(this);
   }
 
   componentDidMount() {
@@ -35,14 +36,17 @@ class MapViewDirections extends Component {
 	  }, cb);
 	};
 
-	fetchAndRenderRoute = () => {
+	fetchAndRenderRoute(){
 	  const {
 	    onReady,
 	    onError,
 	    client,
 	    locations
 	  } = this.props;
-
+    
+	  if (!client){
+	    throw new Error('Client must be defined');
+	  }
 
 	  fetchRoute(client, locations)
 	    .then(result => {
@@ -54,7 +58,7 @@ class MapViewDirections extends Component {
 	      Logger.warning('MapViewDirections Error', errorMessage);
 	      onError && onError(errorMessage);
 	    });
-	};
+	}
 
 	render() {
 	  if (!this.state.coordinates) {

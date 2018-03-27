@@ -2,30 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text} from 'react-native';
 import {Button} from 'native-base';
-import { merge } from 'lodash';
 import {Icon} from 'common/components';
+import {withExternalState} from 'custom-redux';
 
 
-const onChangeProduct = ({context, product}) => {
-  if (!context){
-    return;
-  }
-  const { orderItem } = context.state;
+const onChangeProduct = ({orderItem, product, setState}) => {
   const {productId} = product;
-  context.setState({ selectedProduct: product, orderItem: {...orderItem, productId}});
+  setState({ selectedProduct: product, orderItem: {...orderItem, productId}});
 };
 
-const ProductListItem = ({context, product, navigationStrategy, selectedProduct = {}, index: i}) => {
+const ProductListItem = ({product, navigationStrategy, setState, selectedProduct = {}, index: i}) => {
   if (!product){
     return null;
   }
   return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-    <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context, product, navigationStrategy})}>
+    <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context: this, product, navigationStrategy, setState})}>
       <Icon name={product.imageUrl || 'dashed'}/>
     </Button>
     <Text style={styles.productSelectText}>{product.name}</Text>
   </View>;
 };
+
+ProductListItem.stateKey = 'checkout';
 
 const styles = {
   subTitle: {
@@ -48,6 +46,6 @@ ProductListItem.propTypes = {
   navigationStrategy: PropTypes.object
 };
 
-export default ProductListItem;
+export default withExternalState()(ProductListItem);
 
 
