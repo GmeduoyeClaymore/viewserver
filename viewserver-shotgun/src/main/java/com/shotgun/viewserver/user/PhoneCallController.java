@@ -76,7 +76,7 @@ public class PhoneCallController {
                 .addValue("phoneNumber", availablePhoneNumbers.get(0))
                 .addValue("userPhoneNumber", customerNumber)
                 .addValue("orderId", orderId)
-                .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
+                .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
@@ -85,7 +85,7 @@ public class PhoneCallController {
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
                 .addValue("userPhoneNumber", driverNumber)
                 .addValue("orderId", orderId)
-                .addValue("status", PhoneNumberStatuses.ASSIGNED.name())
+                .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
@@ -99,7 +99,7 @@ public class PhoneCallController {
 
         while (rows.moveNext()) {
             String orderId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "orderId", rows.getRowId());
-            String status = (String) ControllerUtils.getColumnValue(phoneNumberTable, "status", rows.getRowId());
+            String status = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumberStatus", rows.getRowId());
             long assignedTime = (long) ControllerUtils.getColumnValue(phoneNumberTable, "assignedTime", rows.getRowId());
             long now = new Date().getTime();
             long assignedAgoMillis = now - assignedTime;

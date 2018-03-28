@@ -175,7 +175,7 @@ public class UserController {
                 .addValue("statusMessage", statusMessage);
 
         if(status != null){
-            userRecord.addValue("status", status.name());
+            userRecord.addValue("userStatus", status.name());
 
         }
 

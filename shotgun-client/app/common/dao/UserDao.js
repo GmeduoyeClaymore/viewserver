@@ -43,9 +43,16 @@ export default class UserDaoContext{
 
   mapDomainEvent(dataSink){
     return {
-      user: dataSink.rows[0],
+      user: this.mapUser(dataSink.rows[0]),
       position: this.position
     };
+  }
+
+  mapUser(user){
+    if (!user){
+      return user;
+    }
+    return {...user, status: user.userStatus};
   }
 
   createSubscriptionStrategy(_, dataSink){

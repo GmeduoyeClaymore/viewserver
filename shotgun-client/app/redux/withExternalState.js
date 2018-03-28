@@ -7,6 +7,7 @@ import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
 import memoize from './memoize';
 import isEqual from './is-equal';
 
+
 Function.prototype.wrap = function wrap(otherFunction) {
   const f = this;
   return function () {

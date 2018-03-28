@@ -27,7 +27,7 @@ public class PhoneNumberDataSource {
                                         new Column("phoneNumber", "phoneNumber", ColumnType.String),
                                         new Column("orderId", "orderId", ColumnType.String),
                                         new Column("userPhoneNumber", "userPhoneNumber", ColumnType.String),
-                                        new Column("status", "status", ColumnType.String),
+                                        new Column("phoneNumberStatus", "phoneNumberStatus", ColumnType.String),
                                         new Column("assignedTime", "assignedTime", ColumnType.DateTime)
                                 ))
                                 .withKeyColumns("phoneNumber")

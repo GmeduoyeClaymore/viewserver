@@ -8,7 +8,7 @@ const DriverMenuBar = ({history, match}) => {
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/Checkout`)}><Icon name='star'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/DriverOrderRequests`)}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/DriverOrders`)}><Icon name='jobs'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/UserRelationships`)}><Icon name='two-people'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.push(`${match.path}/UserRelationships`)}><Icon style={{marginLeft: 10, marginRight: 10}} name='two-people'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.push(`${match.path}/Settings`)}><Icon name='one-person'/></Button></FooterTab>
   </Footer>;
 };

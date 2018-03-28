@@ -3,7 +3,7 @@ import MapView from 'react-native-maps';
 import UserMarker from 'common/components/maps/UserMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {isEqual} from 'lodash';
+import {isEqual, debounce} from 'lodash';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -11,7 +11,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 export default class UserRelationshipMap extends Component{
   constructor(props){
     super(props);
-    this.fitMap = this.fitMap.bind(this);
+    this.fitMap = debounce(this.fitMap.bind(this), 50);
     this.getLocations = this.getLocations.bind(this);
   }
   

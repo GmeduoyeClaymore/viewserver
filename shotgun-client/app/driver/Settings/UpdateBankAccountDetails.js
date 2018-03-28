@@ -19,7 +19,7 @@ class UpdateBankAccountDetails extends Component {
   }
 
   render(){
-    const {currentBankAccount, history, dispatch, busy, errors} = this.props;
+    const {currentBankAccount = {}, history, dispatch, busy, errors} = this.props;
     const {bankAccount} = this.state;
 
     const onChangeText = async (field, value) => {

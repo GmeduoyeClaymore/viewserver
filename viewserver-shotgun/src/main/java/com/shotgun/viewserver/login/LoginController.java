@@ -82,7 +82,7 @@ public class LoginController {
     private Observable<Boolean> setUserOnline(User user, KeyedTable table) {
         Record userRecord = new Record()
                 .addValue("userId", user.getUserId())
-                .addValue("status", UserStatus.ONLINE.name());
+                .addValue("userStatus", UserStatus.ONLINE.name());
 
         return iDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
     }

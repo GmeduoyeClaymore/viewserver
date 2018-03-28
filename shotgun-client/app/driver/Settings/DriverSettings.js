@@ -11,10 +11,10 @@ const DriverSettings = (props) => {
   const driverSettingsProps = {...props, stateKey: 'driverSettings'};
   return <Switch>
     <Route path={'/Driver/Settings/DriverSettingsLanding'} exact component={DriverSettingsLanding}/>
-    <Route path={'/Driver/Settings/UpdateUserDetails'} exact render={() => <UpdateUserDetails onUpdate={(user) => updateDriver(user, () => props.history.push('/Driver/Settings/DriverSettings'))}/>} />
-    <Route path={'/Driver/Settings/UpdateBankAccountDetails'} exact component={UpdateBankAccountDetails}/>
+    <Route path={'/Driver/Settings/UpdateUserDetails'} exact render={() => <UpdateUserDetails {...driverSettingsProps} onUpdate={(user) => updateDriver(user, () => props.history.push('/Driver/Settings/DriverSettings'))}/>} />
+    <Route path={'/Driver/Settings/UpdateBankAccountDetails'} exact render={() => <UpdateBankAccountDetails {...driverSettingsProps}/>}/>
     <Route path={'/Driver/Settings/UpdateVehicleDetails'} exact render={() => <UpdateVehicleDetails {...driverSettingsProps}/>}/>
-    <Route path={'/Driver/Settings/ConfigureServices'} exact render={() => <ConfigureServices {...driverSettingsProps}/>}/>
+    <Route path={'/Driver/Settings/ConfigureServices'} exact render={() => <ConfigureServices stateKey="configureServices" {...driverSettingsProps}/>}/>
     <Redirect to={'/Driver/Settings/DriverSettingsLanding'}/>
   </Switch>;
 };

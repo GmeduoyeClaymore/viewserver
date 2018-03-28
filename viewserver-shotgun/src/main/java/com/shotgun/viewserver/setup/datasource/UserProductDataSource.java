@@ -26,7 +26,7 @@ UserProductDataSource {
                                 .withMode(IProjectionConfig.ProjectionMode.Projection)
                                 .withProjectionColumns(Arrays.asList(
                                         new IProjectionConfig.ProjectionColumn("type", "userType"),
-                                        new IProjectionConfig.ProjectionColumn("status", "userStatus"))
+                                        new IProjectionConfig.ProjectionColumn("userStatus", "userStatus"))
                                 )
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME)),
                         new JoinNode("productJoin")
