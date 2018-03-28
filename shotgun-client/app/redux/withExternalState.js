@@ -1,11 +1,9 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import NonReactStatics from 'hoist-non-react-statics';
 import {connect} from './connect';
 import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
 import memoize from './memoize';
-import isEqual from './is-equal';
 
 
 Function.prototype.wrap = function wrap(otherFunction) {
@@ -82,11 +80,16 @@ const wrapperFactory = (Component, mapGlobalStateToProps) => class ComponentWrap
     this.displayName = 'withExternalState(' + displayKey + ')';
     this.WrappedComponent = Component;
     this.createSetState = createSetState(this.stateKey).bind(this);
+    this.resetComponentState = this.resetComponentState.bind(this);
   }
 
   componentWillMount(){
+    this.resetComponentState();
+  }
+
+  resetComponentState(continueWith){
     if (Component.InitialState){
-      this.createSetState(Component.InitialState);
+      this.createSetState(Component.InitialState, continueWith);
     }
   }
 
@@ -97,8 +100,8 @@ const wrapperFactory = (Component, mapGlobalStateToProps) => class ComponentWrap
   }
 
   render(){
-    const {Component, newProps, props} = this;
-    return <Component ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props}}/>;
+    const {Component, newProps, props, resetComponentState} = this;
+    return <Component ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
   }
 };
 

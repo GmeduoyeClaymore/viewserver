@@ -25,11 +25,17 @@ class ContentTypeSelect extends Component{
     this.selectContentType = this.selectContentType.bind(this);
   }
 
+  componentDidMount(){
+    const {resetParentComponentState} = this.props;
+    resetParentComponentState();
+  }
+
   selectContentType(selectedContentType){
     const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
     const initialState = resources.InitialState;
     const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
-    this.setState({...initialState, selectedContentType, orderItem});
+    const {resetParentComponentState} = this.props;
+    resetParentComponentState(() => this.setState({...initialState, selectedContentType, orderItem}));
   }
 
   startOrder(){

@@ -4,6 +4,7 @@ import UserMarker from 'common/components/maps/UserMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual, debounce} from 'lodash';
+import Logger from 'common/Logger';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -15,30 +16,28 @@ export default class UserRelationshipMap extends Component{
     this.getLocations = this.getLocations.bind(this);
   }
   
-  fitMap(newProps, flagMapReady){
-    if (!flagMapReady && !this.isMapReady){
-      return;
-    }
-    if (flagMapReady){
-      this.isMapReady = flagMapReady;
-    }
-    const {map} = this;
-    let {me} = newProps;
+  fitMap(newProps){
+    try {
+      const {map} = this;
+      let {me} = newProps;
 
-    const {location} = newProps;
-    me = location || me;
-    let {relatedUsers} = newProps;
-    if (me){
-      relatedUsers = [...relatedUsers, me];
+      const {location} = newProps;
+      me = location || me;
+      let {relatedUsers} = newProps;
+      if (me){
+        relatedUsers = [...relatedUsers, me];
+      }
+      const filteredUsers = relatedUsers.filter(c=> c.latitude != undefined && c.longitude != undefined ).map(c => {return {latitude: c.latitude, longitude: c.longitude};});
+      Logger.info(`Calling fit map for ${filteredUsers.length} users`);
+      if (filteredUsers.length){
+        map.fitToCoordinates(filteredUsers, {
+          edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
+          animated: false,
+        });
+      }
+    } catch (error){
+      Logger.info('Encountered error in fit map ' + error);
     }
-    const filteredUsers = relatedUsers.filter(c=> c.latitude != undefined && c.longitude != undefined ).map(c => {return {latitude: c.latitude, longitude: c.longitude};});
-    if (filteredUsers.length){
-      map.fitToCoordinates(filteredUsers, {
-        edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
-        animated: false,
-      });
-    }
-    this.mapRangeSet = true;
   }
 
   componentDidMount(){
@@ -83,7 +82,9 @@ export default class UserRelationshipMap extends Component{
     };
 
   
-    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => {fitMap(this.props, true);}} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => {
+      fitMap(this.props);
+    }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}
       {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;

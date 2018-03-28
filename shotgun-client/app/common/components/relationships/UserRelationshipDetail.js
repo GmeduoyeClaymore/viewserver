@@ -187,7 +187,6 @@ class UserRelationshipDetail extends Component{
 
   handleCancel(){
     super.setState({isVisible: false});
-    this.setState({selectedUser: undefined, selectedUserIndex: -1});
   }
 
   show(){

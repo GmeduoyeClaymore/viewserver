@@ -27,7 +27,8 @@ class Checkout extends Component {
 
   render() {
     const {navigationStrategy} = this;
-    const customerProps = {navigationStrategy, ...this.props, stateKey: Checkout.stateKey};
+    const {resetComponentState: resetParentComponentState} = this.props;
+    const customerProps = {navigationStrategy, ...this.props, stateKey: Checkout.stateKey, resetParentComponentState};
     const {match = {}} = this.props;
     return <Switch>
       <Route path={`${match.path}/ContentTypeSelect`} exact render={() => <ContentTypeSelect {...customerProps}/>} />

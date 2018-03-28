@@ -19,6 +19,7 @@ export const INITIAL_STATE = {
     rootProductCategory: undefined,
     pricingStrategy: undefined
   },
+  deliveryUser: undefined,
   delivery: {
     from: undefined,
     noRequiredForOffload: 0,
