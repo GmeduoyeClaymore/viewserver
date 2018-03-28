@@ -590,7 +590,6 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             final int addCount = adds.size();
             if (addCount > 0) {
                 EWAHCompressedBitmap index = indices.get(value);
-                //final int[] addsArray = getAdds(addCount);
                 final int[] addsArray = adds.toArray();
                 int[] sortedAdds = RadixSort.sort2(addsArray, addCount);
                 if (index != null) {
@@ -602,18 +601,6 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             }
             return true;
         }
-
-       // This seems to be adding an extra entry to some arrays and causing 0 to be added to indices to which is shouldn't belong
-        /*private int[] getAdds(int size) {
-            if (this.adds == null || this.adds.length < size) {
-                int adjustedSize = Integer.highestOneBit(size);
-                if (adjustedSize != size) {
-                    adjustedSize <<= 1;
-                }
-                this.adds = new int[adjustedSize];
-            }
-            return this.adds;
-        }*/
 
         private boolean applyRemoves(int value, TIntArrayList removes) {
             if (removes.size() > 0) {
@@ -649,38 +636,6 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 default: {
                     throw new RuntimeException("Invalid column type for index");
                 }
-            }
-        }
-    }
-
-    private class IndexValueHolder {
-        private EWAHCompressedBitmap index;
-        private final TIntArrayList rowsToSet = new TIntArrayList();
-        private TIntArrayList rowsToClear;
-
-        public void markRowForSetting(int row) {
-            rowsToSet.add(row);
-        }
-
-        public void markRowForClearing(int row) {
-            if (rowsToClear == null) {
-                rowsToClear = new TIntArrayList();
-            }
-            rowsToClear.add(row);
-        }
-
-        public void update() {
-            if (!rowsToSet.isEmpty()) {
-                EWAHCompressedBitmap toSet = EWAHCompressedBitmap.bitmapOf(rowsToSet.toArray());
-                if (rowsToClear != null && !rowsToClear.isEmpty()) {
-                    EWAHCompressedBitmap toClear = EWAHCompressedBitmap.bitmapOf(rowsToClear.toArray());
-                    index = index.or(toSet).andNot(toClear);
-                } else {
-                    index = index.or(toSet);
-                }
-            } else if (rowsToClear != null && !rowsToClear.isEmpty()) {
-                EWAHCompressedBitmap toClear = EWAHCompressedBitmap.bitmapOf(rowsToClear.toArray());
-                index = index.andNot(toClear);
             }
         }
     }

@@ -6,7 +6,7 @@ import {View, Spinner} from 'native-base';
 import {Text} from 'react-native';
 import {connect} from 'custom-redux';
 import {callUser} from 'common/actions/CommonActions';
-import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import PhoneCallService from 'common/services/PhoneCallService';
 
 const Paging = () => <View><Spinner /></View>;
 const headerView  = ({options: opts = {}, search}) => <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>;
@@ -49,7 +49,7 @@ const mapStateToProps = (state, initialProps) => {
   const onPressCallUser = async (user) => {
     const {userId, relationshipStatus} = user;
     if (relationshipStatus === 'ACCEPTED'){
-      RNImmediatePhoneCall.immediatePhoneCall(`+${user.contactNo}`);
+      PhoneCallService.call(user.contactNo);
     } else {
       dispatch(callUser({userId}));
     }

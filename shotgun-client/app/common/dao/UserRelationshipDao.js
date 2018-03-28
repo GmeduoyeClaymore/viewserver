@@ -1,8 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
-import PermissionsService from 'common/services/PermissionsService';
-import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import PhoneCallService from 'common/services/PhoneCallService';
 
 export default class UserRelationshipDaoContext{
   static DEFAULT_POSITION = {
@@ -104,9 +103,8 @@ export default class UserRelationshipDaoContext{
     };
 
     dao.callUser = async ({userId}) => {
-      await PermissionsService.requestPhoneCallPermission();
       const virtualContactNo = await this.client.invokeJSONCommand('phoneCallController', 'getVirtualNumber', userId);
-      RNImmediatePhoneCall.immediatePhoneCall(`+${virtualContactNo}`);
+      PhoneCallService.call(virtualContactNo);
     };
   }
 }

@@ -1,7 +1,7 @@
 import Logger from 'common/Logger';
 import PrincipalService from 'common/services/PrincipalService';
 import Rx from 'rxjs/Rx';
-import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import PhoneCallService from 'common/services/PhoneCallService';
 
 export default class CustomerDao{
   constructor(client, orderDao) {
@@ -75,7 +75,7 @@ export default class CustomerDao{
 
   async callDriver({orderId}){
     const driverPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getDriverVirtualNumber', orderId);
-    RNImmediatePhoneCall.immediatePhoneCall(`+${driverPhoneNumber}`);
+    PhoneCallService.call(driverPhoneNumber);
   }
  
   async checkout({orderItem, payment, product, delivery}){
