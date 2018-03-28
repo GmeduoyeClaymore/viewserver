@@ -151,9 +151,9 @@ class DeliveryOptions extends Component {
 
   render() {
     const {resources, tillInput} = this;
-    const { busy, paymentCards, errors, navigationStrategy, delivery, payment, orderItem, selectedContentType} = this.props;
+    const { busy, paymentCards, errors, navigationStrategy, delivery, payment, orderItem, selectedContentType, price} = this.props;
     const { quantity: noRequiredForOffload } = orderItem;
-    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard, price } = this.state;
+    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',

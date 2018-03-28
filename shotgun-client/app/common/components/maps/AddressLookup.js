@@ -36,7 +36,7 @@ const HomeAddressItem = ({address = {}, onAddressSelected}) => <ListItem paddedT
 </ListItem>;
 
 const CurrentLocation = ({onCurrentLocation}) => <ListItem paddedTopBottom first onPress={() => onCurrentLocation()}>
-  <Row style={{marginLeft: 25}}>
+  <Row style={{marginLeft: 25}} size={10}>
     <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
     <Text style={styles.addressText}>Current Location</Text>
   </Row>
@@ -166,8 +166,8 @@ class AddressLookup extends Component {
                 <Input placeholder={addressLabel} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
               </ErrorRegion>
             </Row>
+            {me ? <CurrentLocation onCurrentLocation={this.reverseGeoCodeSearch}/> : null}
             <Row size={80}>
-              {me ? <CurrentLocation onCurrentLocation={this.reverseGeoCodeSearch}/> : null}
               {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 && reverseLookedUpAddresses.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
                 <Text style={styles.smallText}>Recent Addresses</Text>
                 <List>
@@ -181,8 +181,8 @@ class AddressLookup extends Component {
                 <List>{suggestedPlaces.map((r, i) => <SuggestedPlace key={i} result={r} onSuggestedPlaceSelected={onSuggestedPlaceSelected}/>)}</List>
               </Container> : null}
 
-              {reverseLookedUpAddresses.length > 0 ? <Container paddedLeft>
-                <Text style={styles.smallText}>Results</Text>
+              {reverseLookedUpAddresses.length > 0 ? <Container paddedLeft style={{paddingTop: 15}}>
+                <Text style={styles.smallText}>Places close to current location</Text>
                 <List>
                   {reverseLookedUpAddresses.map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
                 </List>
