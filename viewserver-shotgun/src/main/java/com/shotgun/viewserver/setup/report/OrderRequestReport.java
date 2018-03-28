@@ -74,6 +74,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("till"),
                                                 new IProjectionConfig.ProjectionColumn("distance"),
                                                 new IProjectionConfig.ProjectionColumn("duration"),
+                                                new IProjectionConfig.ProjectionColumn("userId", "customerUserId"),
                                                 new IProjectionConfig.ProjectionColumn("currentDistance"),
                                                 new IProjectionConfig.ProjectionColumn("origin_flatNumber", "originFlatNumber"),
                                                 new IProjectionConfig.ProjectionColumn("origin_line1", "originLine1"),

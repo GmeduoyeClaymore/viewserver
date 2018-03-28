@@ -8,16 +8,16 @@ public class OrderItem{
     private String imageUrl;
     private String imageData;
     private int quantity;
-    private int contentTypeId;
+    private Integer contentTypeId;
 
     public OrderItem() {
     }
 
-    public int getContentTypeId() {
+    public Integer getContentTypeId() {
         return contentTypeId;
     }
 
-    public void setContentTypeId(int contentTypeId) {
+    public void setContentTypeId(Integer contentTypeId) {
         this.contentTypeId = contentTypeId;
     }
 

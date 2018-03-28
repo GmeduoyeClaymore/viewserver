@@ -42,7 +42,12 @@ class DriverOrders  extends Component{
 
     const RowView = ({item: orderSummary, isLast, isFirst}) => {
       const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
-      const next = isOnRoute ? '/Driver/DriverOrderInProgress' : '/Driver/DriverOrderDetail';
+      let next;
+      if (isCustomer){
+        next = isOnRoute ? '/Driver/CustomerOrderInProgress' : '/Driver/CustomerOrderDetail';
+      } else {
+        next = isOnRoute ? '/Driver/DriverOrderInProgress' : '/Driver/DriverOrderDetail';
+      }
       return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
     };
 

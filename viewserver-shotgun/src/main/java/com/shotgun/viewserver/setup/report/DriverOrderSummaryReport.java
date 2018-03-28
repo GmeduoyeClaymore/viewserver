@@ -57,6 +57,7 @@ public class DriverOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("deliveryId"),
                                                 new IProjectionConfig.ProjectionColumn("isFixedPrice"),
                                                 new IProjectionConfig.ProjectionColumn("fixedPriceValue"),
+                                                new IProjectionConfig.ProjectionColumn("userId", "customerUserId"),
                                                 new IProjectionConfig.ProjectionColumn("rating", "customerRating"),
                                                 new IProjectionConfig.ProjectionColumn("ratingAvg", "customerRatingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("firstName", "customerFirstName"),

@@ -64,6 +64,7 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("deliveryId"),
                                         new IProjectionConfig.ProjectionColumn("isFixedPrice"),
                                         new IProjectionConfig.ProjectionColumn("fixedPriceValue"),
+                                        new IProjectionConfig.ProjectionColumn("userId", "customerUserId"),
                                         new IProjectionConfig.ProjectionColumn("rating", "driverRating"),
                                         new IProjectionConfig.ProjectionColumn("registrationNumber", "registrationNumber"),
                                         new IProjectionConfig.ProjectionColumn("colour", "vehicleColour"),

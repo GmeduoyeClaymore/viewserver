@@ -23,7 +23,7 @@ class DriverOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating} = this.props;
+    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me} = this.props;
     const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
@@ -51,10 +51,8 @@ class DriverOrderDetail extends Component{
         <RatingSummary orderSummary={orderSummary} isDriver={true}/>
         {!isComplete ?
           <View>
-            {isStarted ?
-              <Button fullWidth padded style={styles.startButton} onPress={navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button> :
-              <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={onStartPress}><Text uppercase={false}>Start this job</Text></SpinnerButton>
-            }
+            {me.userId != orderSummary.customerUserId ? <Button fullWidth padded style={styles.startButton} onPress={navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button> : null}
+            {me.userId != orderSummary.customerUserId ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={onStartPress}><Text uppercase={false}>Start this job</Text></SpinnerButton> : null}
             <SpinnerButton busy={busyUpdating} fullWidth padded cancelButton onPress={onCancelPress}><Text uppercase={false}>Cancel this job</Text></SpinnerButton>
           </View> : null
         }
@@ -80,6 +78,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     orderId,
+    me: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'startOrderRequest'}, { driverDao: 'cancelOrderRequest'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || !orderSummary,
     orderSummary

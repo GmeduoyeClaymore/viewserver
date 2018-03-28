@@ -68,6 +68,13 @@ public class OrderController {
                               @ActionParam(name = "delivery")Delivery delivery,
                               @ActionParam(name = "orderItems")OrderItem[] orderItems){
 
+
+        for(OrderItem item : orderItems){
+            if(item.getContentTypeId() == null){
+                throw new RuntimeException("All order items must have a content type");
+            }
+        }
+
         String customerId = (String) ControllerContext.get("userId");
         if(customerId == null){
             throw new RuntimeException("User id must be set in the controller context before this method is called");

@@ -38,7 +38,7 @@ class LandingCommon extends Component {
 
     if (!user){
       return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <LoadingScreen text="Waiting for user .. If this takes a while try logging out then in again"/>;
+        <LoadingScreen text="Waiting for user .. If this takes a while try logging out then in again"/>
         <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
       </View>;
     }

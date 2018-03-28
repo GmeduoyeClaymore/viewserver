@@ -18,6 +18,8 @@ import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import Checkout from 'common/components/checkout/Checkout';
+import CustomerOrderDetail from 'customer/CustomerOrderDetail';
+import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
 import { withRouter } from 'react-router';
 
 class DriverLanding extends Component {
@@ -79,6 +81,8 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrders'} exact render={ordersRoot}/>
+          <Route path={'/Driver/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
+          <Route path={'/Driver/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
           <Route path={'/Driver/Orders'} exact render={ordersRoot}/>
           <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
           <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
