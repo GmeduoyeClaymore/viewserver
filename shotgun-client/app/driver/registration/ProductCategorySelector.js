@@ -13,7 +13,6 @@ class ProductCategoryList extends Component {
   static validationSchema = {
     selectedProductCategories: yup.array().required()
   };
-
   
 
   constructor(props) {

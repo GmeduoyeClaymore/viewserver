@@ -18,9 +18,9 @@ class DriverAccountType extends Component{
 
   async register(){
     const {user, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
-    user.selectedContentTypes = JSON.stringify(selectedContentTypes);
+    const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
     const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : {};
-    dispatch(registerDriver(user, vehicle, address, bankAccount, () => history.push('/Root')));
+    dispatch(registerDriver(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
 

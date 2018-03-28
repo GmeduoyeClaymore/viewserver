@@ -36,9 +36,10 @@ const HomeAddressItem = ({address = {}, onAddressSelected}) => <ListItem paddedT
 </ListItem>;
 
 const CurrentLocation = ({onCurrentLocation}) => <ListItem paddedTopBottom first onPress={() => onCurrentLocation()}>
-  <View>
+  <Row style={{marginLeft: 25}}>
+    <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
     <Text style={styles.addressText}>Current Location</Text>
-  </View>
+  </Row>
 </ListItem>;
 
 
@@ -166,8 +167,8 @@ class AddressLookup extends Component {
               </ErrorRegion>
             </Row>
             <Row size={80}>
+              {me ? <CurrentLocation onCurrentLocation={this.reverseGeoCodeSearch}/> : null}
               {deliveryAddresses && deliveryAddresses.length && suggestedPlaces.length == 0 && reverseLookedUpAddresses.length == 0 ? <Container paddedLeft style={styles.resultsContainer}>
-                {me ? <CurrentLocation onCurrentLocation={this.reverseGeoCodeSearch}/> : null}
                 <Text style={styles.smallText}>Recent Addresses</Text>
                 <List>
                   {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}

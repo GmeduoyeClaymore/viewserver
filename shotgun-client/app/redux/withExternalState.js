@@ -27,9 +27,12 @@ const customAssign = (target) =>  {
 
 const _extends = Object.assign || customAssign;
 
+const getPath = (stateKey) => {
+  return stateKey.split('.');
+};
 
 const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToProps) => (state, initialProps) => {
-  let myState = state.getIn(['component', stateKey]  || {});
+  let myState = state.getIn(['component', ...getPath(stateKey)]  || {});
   if (propsToMap.length){
     const resultingState = {};
     propsToMap.forEach(
@@ -51,7 +54,7 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
 };
 
 const setState = (stateKey, partialState, continueWith) => {
-  return {type: UPDATE_COMPONENT_STATE(stateKey), path: [stateKey], data: partialState, continueWith};
+  return {type: UPDATE_COMPONENT_STATE(stateKey), path: getPath(stateKey), data: partialState, continueWith};
 };
 
 const createSetState = (stateKey) => {
