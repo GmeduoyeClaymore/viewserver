@@ -22,7 +22,7 @@ class DriverOrderRequestDetail extends Component{
   }
 
   render() {
-    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery, me} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
@@ -40,7 +40,7 @@ class DriverOrderRequestDetail extends Component{
       <Content>
         <ErrorRegion errors={errors}/>
         <PriceSummary isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={true} price={orderSummary.totalPrice}/>
-        <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></SpinnerButton>
+        {me.userId != orderSummary.customerUserId ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={onAcceptPress}><Text uppercase={false}>Accept this job</Text></SpinnerButton> : null }
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} product={orderSummary.product} client={client} contentType={orderSummary.contentType}/>
       </Content>
     </Container>;
@@ -68,6 +68,7 @@ const mapStateToProps = (state, initialProps) => {
     delivery,
     orderId,
     errors,
+    me: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}, {driverDao: 'updateOrderPrice'}]),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
