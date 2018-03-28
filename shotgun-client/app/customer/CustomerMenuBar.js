@@ -7,7 +7,7 @@ const CustomerMenuBar = ({history, match, isReady}) => {
   return <Footer>
     <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/Checkout`)}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/CustomerOrders`)}><Icon name='jobs'/></Button></FooterTab>
-    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/UserRelationships`)}><Icon name='two-people'/></Button></FooterTab>
+    <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/UserRelationships`)}><Icon style={{marginLeft: 10, marginRight: 10}} name='two-people'/></Button></FooterTab>
     <FooterTab><Button disabled={!isReady} transparent onPress={() => history.push(`${match.path}/Settings/CustomerSettings`)}><Icon name='one-person'/></Button></FooterTab>
   </Footer>;
 };

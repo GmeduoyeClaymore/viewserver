@@ -10,6 +10,7 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
 import {isEqual} from 'lodash';
 import Logger from 'common/Logger';
+import Immutable from 'seamless-immutable';
 
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
@@ -45,15 +46,12 @@ class ContentTypeSelector extends Component{
   }
 
   deselectContentType(blockPersist){
-    const {unsavedSelectedContentTypes = {}, contentType} = this.props;
-    const content = unsavedSelectedContentTypes[contentType.contentTypeId];
-    if (content){
-      const rest = unsavedSelectedContentTypes.without([contentType.contentTypeId]);
-      if (blockPersist){
-        this.setState({unsavedSelectedContentTypes: rest});
-      } else {
-        this.setState({unsavedSelectedContentTypes: rest, selectedContentTypes: rest});
-      }
+    const {unsavedSelectedContentTypes = Immutable(this.props.selectedContentTypes || {}), contentType} = this.props;
+    const rest = unsavedSelectedContentTypes.without([contentType.contentTypeId]);
+    if (blockPersist){
+      this.setState({unsavedSelectedContentTypes: rest});
+    } else {
+      this.setState({unsavedSelectedContentTypes: rest, selectedContentTypes: rest});
     }
   }
 
@@ -66,6 +64,10 @@ class ContentTypeSelector extends Component{
 
   handleToggleDetailVisibility(detailVisible){
     this.doValidate(this.props);
+    const {selectedContentTypes} = this.props;
+    if (detailVisible){
+      this.setState({unsavedSelectedContentTypes: selectedContentTypes});
+    }
     super.setState({detailVisible});
   }
 
@@ -78,7 +80,7 @@ class ContentTypeSelector extends Component{
     const {unsavedSelectedContentTypes = {}} = this.props;
     const result = await this.getValidationResult(this.props);
     if (!result || result.error == ''){
-      this.setState({selectedContentTypes: unsavedSelectedContentTypes});
+      this.setState({selectedContentTypes: unsavedSelectedContentTypes, unsavedSelectedContentTypes: undefined});
       this.handleToggleDetailVisibility(false);
     } else {
       super.setState({showErrors: true});

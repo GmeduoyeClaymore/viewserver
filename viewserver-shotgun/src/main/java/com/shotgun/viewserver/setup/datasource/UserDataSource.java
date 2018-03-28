@@ -51,7 +51,7 @@ public class UserDataSource {
                                         new Column("range", "range", ColumnType.Int),
                                         new Column("imageUrl", "imageUrl", ColumnType.String),
                                         new Column("online", "online", ColumnType.Bool),
-                                        new Column("status", "status", ColumnType.String),
+                                        new Column("userStatus", "userStatus", ColumnType.String),
                                         new Column("statusMessage", "statusMessage", ColumnType.String)
                                 ))
                                 .withKeyColumns("userId")

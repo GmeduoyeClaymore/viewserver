@@ -75,7 +75,10 @@ export default class UserRelationshipDaoContext{
   }
 
   mapUser(user){
-    return user;
+    if (!user){
+      return user;
+    }
+    return {...user, status: user.userStatus};
   }
 
   createSubscriptionStrategy(options, dataSink){

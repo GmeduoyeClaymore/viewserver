@@ -276,9 +276,12 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             count = outputs.size();
             for (int i = 0; i < count; i++) {
                 Output output = (Output) outputs.get(i);
-                if (queryMatches(output, row, false, null)) {
+                StringBuilder sb = new StringBuilder();
+                if (queryMatches(output, row, false, sb)) {
                     output.handleAdd(getOutputRow(output, row));
+                    log.info("!!! Matched a row on add " + sb);
                 }
+
             }
 
             addedRows.add(row);
@@ -303,13 +306,15 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             count = outputs.size();
             for (int j = 0; j < count; j++) {
                 Output output = (Output) outputs.get(j);
-                if (queryMatches(output, row, false, null)) {
+                StringBuilder sb = new StringBuilder();
+                if (queryMatches(output, row, false, sb)) {
                     outputRow = getOutputRow(output, row);
                     if (output.isRowActive(outputRow)) {
                         output.handleUpdate(outputRow);
                     } else {
                         output.handleAdd(outputRow);
                     }
+                    log.info("!!! Matched a row on update " + sb);
                 } else if ((outputRow = output.rows.index(row)) != -1) {
                     output.handleRemove(outputRow);
                     output.markRowForRemoval(row);

@@ -39,7 +39,7 @@ class DriverOrderRequests extends Component{
   render(){
     const { selectedContentTypeIndex, busy, selectedContentTypes,  defaultOptions, history} = this.props;
     if (busy) {
-      return <LoadingScreen text="Loading Map" />;
+      return <LoadingScreen text="Loading jobs..." />;
     }
   
     const {onChangeTab} = this;
@@ -104,7 +104,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentType,
     selectedContentTypeIndex,
     isDelivery: navigationProps.isDelivery !== undefined ? navigationProps.isDelivery : true,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']),
+    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !selectedContentType,
     user
   };
 };

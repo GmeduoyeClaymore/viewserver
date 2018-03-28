@@ -34,7 +34,7 @@ public class UserRelationshipController {
                     .addValue("fromUserId", fromUserId)
                     .addValue("toUserId", toUserId)
                     .addValue("type", type.name())
-                    .addValue("status", UserRelationshipStatus.REQUESTED.name());
+                    .addValue("relationshipStatus", UserRelationshipStatus.REQUESTED.name());
 
             iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
             return value;
@@ -50,7 +50,7 @@ public class UserRelationshipController {
         try {
             Record relationshipRecord = new Record()
                     .addValue("relationshipId", relationshipId)
-                    .addValue("status", status.name());
+                    .addValue("relationshipStatus", status.name());
 
             iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
         } catch (Exception e) {

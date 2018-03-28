@@ -151,7 +151,7 @@ public class NexmoController {
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
             if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
                 log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
-                Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("status", status);
+                Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("phoneNumberStatus", status);
                 if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
                     status.equals(PhoneNumberStatuses.REJECTED.name()) ||
                     status.equals(PhoneNumberStatuses.CANCELLED.name())) {

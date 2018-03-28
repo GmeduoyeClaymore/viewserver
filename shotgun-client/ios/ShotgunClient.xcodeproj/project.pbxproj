@@ -56,6 +56,7 @@
 		6D540ACF202A1E6600D406DB /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540ACD202A1E6600D406DB /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6D540B5C202B779900D406DB /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6D540B5A202B779900D406DB /* HockeySDKResources.bundle */; };
 		6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540B5B202B779900D406DB /* HockeySDK.framework */; };
+		6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
@@ -464,6 +465,7 @@
 		6D540ACD202A1E6600D406DB /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D540B5A202B779900D406DB /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		6D540B5B202B779900D406DB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
+		6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = PPP_001.mobileprovision; path = ../../../../Downloads/PPP_001.mobileprovision; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -847,6 +849,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */,
 				6D428922204EC49A00290784 /* RCTRestart.xcodeproj */,
 				6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */,
 				6D540ACD202A1E6600D406DB /* QBImagePicker.framework */,
@@ -1011,6 +1014,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 3DYD5U82S8;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1471,6 +1475,7 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */,
 				20FF5D7290284F0A80CFBDD6 /* Entypo.ttf in Resources */,
+				6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */,
 				D05E1F04D2A44C2891E45C54 /* EvilIcons.ttf in Resources */,
 				EAFF47D6560C4393ACD02E64 /* FontAwesome.ttf in Resources */,
 				55813A86D6C34186BDE2BE83 /* Foundation.ttf in Resources */,
@@ -1882,6 +1887,7 @@
 			baseConfigurationReference = 9748DF0FE1F116ACB65A0632 /* Pods-ShotgunClient.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
@@ -1902,6 +1908,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1911,6 +1919,8 @@
 			baseConfigurationReference = 1BB90B387A975FC449EE9CA2 /* Pods-ShotgunClient.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1930,6 +1940,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
