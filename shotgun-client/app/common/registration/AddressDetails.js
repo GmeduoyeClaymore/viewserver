@@ -7,7 +7,7 @@ import {withExternalState} from 'custom-redux';
 
 const AddressDetails  = ({deliveryAddress = {}, match, history, next, setState, dispatch}) => {
   const onAddressSelected = (address) => {
-    setState({deliveryAddress: address}, () => history.push(`${match.path}/AddressDetails`), dispatch);
+    setState({deliveryAddress: address}, () => history.goBack(), dispatch);
   };
 
   const onChangeText = async (field, value) => {
@@ -27,7 +27,7 @@ const AddressDetails  = ({deliveryAddress = {}, match, history, next, setState, 
   return <Container>
     <Header withButton>
       <Left>
-        <Button onPress={() => history.push(`${match.path}/UserDetails`)}>
+        <Button onPress={() => history.goBack()}>
           <Icon name='back-arrow'/>
         </Button>
       </Left>
