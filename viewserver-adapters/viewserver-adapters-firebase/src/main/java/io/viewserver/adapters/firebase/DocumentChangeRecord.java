@@ -27,11 +27,13 @@ public class DocumentChangeRecord extends Record {
 
         for (ColumnHolder columnHolder : schema.getColumnHolders()) {
             ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
-            if (dataType == null) {
+            String columnName = columnHolder.getName();
+
+            if (dataType == null || !doc.contains(columnName)) {
                 continue;
             }
 
-            values.put(columnHolder.getName(), getFirebaseDocumentValue(dataType, columnHolder.getName(), doc));
+            values.put(columnName, getFirebaseDocumentValue(dataType, columnName, doc));
         }
     }
 

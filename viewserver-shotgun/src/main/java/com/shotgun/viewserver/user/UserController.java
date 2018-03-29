@@ -77,8 +77,10 @@ public class UserController {
         Record userRecord = new Record()
                 .addValue("userId", user.getUserId())
                 .addValue("lastModified", now)
+                .addValue("created", user.getCreated())
                 .addValue("firstName", user.getFirstName())
                 .addValue("lastName", user.getLastName())
+                .addValue("dob", user.getDob())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
                 .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
                 .addValue("contactNo", nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"))
@@ -88,7 +90,8 @@ public class UserController {
                 .addValue("stripeCustomerId", user.getStripeCustomerId())
                 .addValue("stripeDefaultSourceId", user.getStripeDefaultSourceId())
                 .addValue("stripeAccountId", user.getStripeAccountId())
-                .addValue("imageUrl", user.getImageUrl());
+                .addValue("imageUrl", user.getImageUrl())
+                .addValue("chargePercentage", user.getChargePercentage());
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
         return user.getUserId();

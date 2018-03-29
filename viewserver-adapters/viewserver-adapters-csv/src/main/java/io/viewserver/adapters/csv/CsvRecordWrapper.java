@@ -234,12 +234,12 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
                 String day = matcher.group(1);
                 boolean isNegative = matcher.group(2).equals("-");
                 int dayValue = dayStringToInt(day);
-                int dayOffset = dayValue == 0 ? 0 : Days.daysBetween(startDate, startDate.withDayOfWeek(dayValue)).getDays();
+             //   int dayOffset = dayValue == 0 ? 0 : Days.daysBetween(startDate, startDate.withDayOfWeek(dayValue)).getDays();
 
-                long millisToAdd = dayOffset * 24 * 60 * 60 * 1000;
-                long delta = Long.parseLong(matcher.group(3)) - millisToAdd;
+              //  long millisToAdd = dayOffset * 24 * 60 * 60 * 1000;
+                int delta = Integer.parseInt(matcher.group(3));
 
-                return startTime.plus(delta * (isNegative ? -1 : 1)).toDate();
+                return startTime.plusDays(delta * (isNegative ? -1 : 1)).toDate();
             }
 
             return value.equals("") ? null : dateTimeFormat.get().parse(value);

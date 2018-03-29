@@ -37,8 +37,8 @@ export default class App extends React.Component {
       isConnected: false,
     };
     registerTokenListener();
-    this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.20:6060/');
+    //this.client = new Client('ws://shotgun.ltd:6060/');
+    this.client = new Client('ws://localhost:6060/');
     //this.client = new Client('ws://192.168.0.37:6060/');
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
@@ -137,7 +137,7 @@ export default class App extends React.Component {
             <NativeRouter>
               <AndroidBackButton>
                 <StyleProvider style={getTheme(shotgun)}>
-                  <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+                  <View style={{flex: 1, backgroundColor: shotgun.brandPrimary}}>
                     <Switch>
                       <Route path="/Root" component={App}/>
                       <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>

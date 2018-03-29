@@ -115,7 +115,7 @@ public class LoginController {
         IRowSequence rows = (output.getAllRows());
 
         while(rows.moveNext()){
-            String email = (String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
+            String email = ((String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId())).toLowerCase();
             if(email != null && email.equals(loginEmail)){
                 return rows.getRowId();
             }

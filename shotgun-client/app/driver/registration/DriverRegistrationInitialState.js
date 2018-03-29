@@ -33,8 +33,7 @@ export const INITIAL_STATE = {
   }
 };
 
-/*
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
@@ -70,6 +69,5 @@ export const INITIAL_STATE = {
       weight: undefined
     }
   }
-};
-*/
+};*/
 

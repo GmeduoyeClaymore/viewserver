@@ -31,7 +31,7 @@ public class UserDataSource {
                                 .withColumns(Arrays.asList(
                                         new Column("userId", "userId", ColumnType.String),
                                         new Column("created", "created", ColumnType.DateTime),
-                                        new Column("dob", "dob", ColumnType.DateTime),
+                                        new Column("dob", "dob", ColumnType.Date),
                                         new Column("lastModified", "lastModified", ColumnType.DateTime),
                                         new Column("firstName", "firstName", ColumnType.String),
                                         new Column("lastName", "lastName", ColumnType.String),
@@ -40,7 +40,6 @@ public class UserDataSource {
                                         new Column("selectedContentTypes", "selectedContentTypes", ColumnType.String),
                                         new Column("email", "email", ColumnType.String),
                                         new Column("type", "type", ColumnType.String),
-                                        new Column("contentTypes", "contentTypes", ColumnType.String),
                                         new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
                                         new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
                                         new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
