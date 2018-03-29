@@ -134,7 +134,7 @@ class ContentTypeSelector extends Component{
       <ReactNativeModal isVisible={detailVisible} style={styles.modal} backdropOpacity={0.4}>
         <View style={styles.contentTypeSelectorContainer}>
           <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
-          <ContentTypeDetailControl stateKey={`${this.props.stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
+          <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
 
           <Button padded fullWidth iconRight style={{marginBottom: 5}} onPress={this.handleConfirm} disabled={!canSubmit}>
             <Text uppercase={false}>Confirm</Text>

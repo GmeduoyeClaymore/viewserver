@@ -52,7 +52,7 @@ class PaymentCardDetails extends Component {
           <Icon next name='forward-arrow'/>
         </SpinnerButton>
       </ErrorRegion>
-      <TermsAgreement/>
+      <TermsAgreement history={history}/>
     </Container>;
   }
 }
