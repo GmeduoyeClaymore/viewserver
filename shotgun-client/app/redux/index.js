@@ -4,3 +4,5 @@ export {isEqual} from './is-equal';
 export {memoize} from './is-equal';
 export {setStateIfIsMounted} from './setStateIfIsMounted';
 export {withExternalState} from './withExternalState';
+export {ReduxRouter} from './router/ReduxRouter';
+export {Route} from './router/Route';

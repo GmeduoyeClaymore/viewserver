@@ -13,9 +13,8 @@ import AddressLookup from 'common/components/maps/AddressLookup';
 import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import ContentTypeNavigationStrategy from './ContentTypeNavigationStrategy';
-import { withRouter } from 'react-router';
 import {withExternalState} from 'custom-redux';
-
+import AddPropsToRoute from 'common/AddPropsToRoute';
 class Checkout extends Component {
   static InitialState = INITIAL_STATE;
   static stateKey = 'customerCheckout';
@@ -31,21 +30,21 @@ class Checkout extends Component {
     const customerProps = {navigationStrategy, ...this.props, stateKey: Checkout.stateKey, resetParentComponentState};
     const {match = {}} = this.props;
     return <Switch>
-      <Route path={`${match.path}/ContentTypeSelect`} exact render={() => <ContentTypeSelect {...customerProps}/>} />
-      <Route path={`${match.path}/DeliveryMap`} exact render={() => <DeliveryMap {...customerProps}/>} />
-      <Route path={`${match.path}/DeliveryOptions`} exact render={() => <DeliveryOptions {...customerProps}/>} />
-      <Route path={`${match.path}/VehicleSelect`} exact render={() => <VehicleSelect {...customerProps}/>} />
-      <Route path={`${match.path}/ProductCategoryList`} exact render={() => <ProductCategoryList {...customerProps}/>} />
-      <Route path={`${match.path}/FlatProductCategoryList`} exact render={() => <FlatProductCategoryList {...customerProps}/>} />
-      <Route path={`${match.path}/ProductList`} exact render={() => <ProductList {...customerProps}/>} />
-      <Route path={`${match.path}/ProductDetails`} exact render={() => <ProductDetails {...customerProps}/>} />
-      <Route path={`${match.path}/ItemDetails`} exact render={() => <ItemDetails {...customerProps}/>} />
-      <Route path={`${match.path}/AddressLookup`} exact render={() => <AddressLookup {...customerProps}/>} />
-      <Route path={`${match.path}/OrderConfirmation`} exact render={() => <OrderConfirmation {...customerProps}/>} />
-      <Route path={`${match.path}/UsersForProductMap`} exact render={() => <UsersForProductMap {...customerProps}/>} />
+      <Route path={`${match.path}/ContentTypeSelect`} exact component={AddPropsToRoute(ContentTypeSelect, customerProps)} />
+      <Route path={`${match.path}/DeliveryMap`} exact component={AddPropsToRoute(DeliveryMap, customerProps)} />
+      <Route path={`${match.path}/DeliveryOptions`} exact component={AddPropsToRoute(DeliveryOptions, customerProps)} />
+      <Route path={`${match.path}/VehicleSelect`} exact component={AddPropsToRoute(VehicleSelect, customerProps)} />
+      <Route path={`${match.path}/ProductCategoryList`} exact component={AddPropsToRoute(ProductCategoryList, customerProps)} />
+      <Route path={`${match.path}/FlatProductCategoryList`} exact component={AddPropsToRoute(FlatProductCategoryList, customerProps)} />
+      <Route path={`${match.path}/ProductList`} exact component={AddPropsToRoute(ProductList, customerProps)} />
+      <Route path={`${match.path}/ProductDetails`} exact component={AddPropsToRoute(ProductDetails, customerProps)} />
+      <Route path={`${match.path}/ItemDetails`} exact component={AddPropsToRoute(ItemDetails, customerProps)} />
+      <Route path={`${match.path}/AddressLookup`} exact component={AddPropsToRoute(AddressLookup, customerProps)} />
+      <Route path={`${match.path}/OrderConfirmation`} exact component={AddPropsToRoute(OrderConfirmation, customerProps)} />
+      <Route path={`${match.path}/UsersForProductMap`} exact component={AddPropsToRoute(UsersForProductMap, customerProps)} />
       <Redirect to={`${match.path}/ContentTypeSelect`}/>
     </Switch>;
   }
 }
 
-export default withRouter(withExternalState()(Checkout));
+export default withExternalState()(Checkout);

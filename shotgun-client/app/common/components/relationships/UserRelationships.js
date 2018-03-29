@@ -170,7 +170,6 @@ const mapStateToProps = (state, initialProps) => {
   const updateRelationshipError = getOperationError(state, 'userRelationshipDao', 'updateRelationship') || '';
   const updateRelationshipSubscriptionError = getOperationError(state, 'userRelationshipDao', 'updateSubscription') || '';
 
-
   return {
     ...initialProps,
     searchText,

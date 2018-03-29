@@ -20,15 +20,18 @@ import UserRelationships from 'common/components/relationships/UserRelationships
 import Checkout from 'common/components/checkout/Checkout';
 import CustomerOrderDetail from 'customer/CustomerOrderDetail';
 import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
-import { withRouter } from 'react-router';
+import AddPropsToRoute from 'common/AddPropsToRoute';
+import Logger from 'common/Logger';
 
 class DriverLanding extends Component {
   constructor(props) {
     super(props);
+    Logger.info('Creating a new instance of driver landing');
     this.hasLoadedData = false;
   }
 
   componentDidMount(){
+    Logger.info('Mounting driver landing');
     this.loadData(this.props);
     this.attemptPaymentCards(this.props);
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
@@ -71,24 +74,22 @@ class DriverLanding extends Component {
   }
 
   render() {
-    const {busy, client} = this.props;
-    const ordersRoot = () => <DriverOrders client={client} {...this.props}/>;
-
+    const {busy} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
         <Switch>
-          <Route path={'/Driver/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrderRequests'} exact render={() => <DriverOrderRequests client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrderRequestDetail'} exact render={() => <DriverOrderRequestDetail client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrders'} exact render={ordersRoot}/>
-          <Route path={'/Driver/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
-          <Route path={'/Driver/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={'/Driver/Orders'} exact render={ordersRoot}/>
-          <Route path={'/Driver/DriverOrderDetail'} exact render={() => <DriverOrderDetail client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={'/Driver/DriverOrderInProgress'} exact render={() => <DriverOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={'/Driver/Settings'} render={() => <DriverSettings client={client} {...this.props}/>}/>
-          <Route path={'/Driver/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
+          <Route path={'/Driver/Checkout'} component={AddPropsToRoute(Checkout, this.props)}/>
+          <Route path={'/Driver/DriverOrderRequests'} exact component={AddPropsToRoute(DriverOrderRequests, this.props)}/>
+          <Route path={'/Driver/DriverOrderRequestDetail'} exact component={AddPropsToRoute(DriverOrderRequestDetail, this.props)}/>
+          <Route path={'/Driver/DriverOrders'} exact component={AddPropsToRoute(DriverOrders, this.props)}/>
+          <Route path={'/Driver/CustomerOrderDetail'} exact component={AddPropsToRoute(CustomerOrderDetail, this.props)}/>
+          <Route path={'/Driver/CustomerOrderInProgress'} exact component={AddPropsToRoute(CustomerOrderInProgress, this.props)}/>
+          <Route path={'/Driver/Orders'} exact component={AddPropsToRoute(DriverOrders, this.props)}/>
+          <Route path={'/Driver/DriverOrderDetail'} exact component={AddPropsToRoute(DriverOrderDetail, this.props)}/>
+          <Route path={'/Driver/DriverOrderInProgress'} exact component={AddPropsToRoute(DriverOrderInProgress, this.props)}/>
+          <Route path={'/Driver/DriverOrderInProgress'} exact component={AddPropsToRoute(DriverOrderInProgress, this.props)}/>
+          <Route path={'/Driver/Settings'} component={AddPropsToRoute(DriverSettings, this.props)}/>
+          <Route path={'/Driver/UserRelationships'} component={AddPropsToRoute(UserRelationships, this.props)}/>
           <Redirect to={'/Driver/DriverOrderRequests'}/>
         </Switch>
         <DriverMenuBar {...this.props}/>
@@ -108,6 +109,6 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(DriverLanding));
+export default connect(mapStateToProps)(DriverLanding);
 
 

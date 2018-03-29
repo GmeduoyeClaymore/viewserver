@@ -39,7 +39,7 @@ export default class Network {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(buffer);
     } else {
-      Logger.error('Web socket is not open! (state=' + this.socket.readyState + ')');
+      Logger.info('Web socket is not open! (state=' + this.socket.readyState + ')');
     }
   }
 

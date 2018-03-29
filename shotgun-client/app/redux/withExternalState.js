@@ -31,7 +31,8 @@ const getPath = (stateKey) => {
 };
 
 const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToProps) => (state, initialProps) => {
-  let myState = state.getIn(['component', ...getPath(stateKey)]  || {});
+  const myStateGetter = (stateObj) => stateObj.getIn(['component', ...getPath(stateKey)]  || {});
+  let myState = myStateGetter(state);
   if (propsToMap.length){
     const resultingState = {};
     propsToMap.forEach(
@@ -45,11 +46,12 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
   }
 
   const result =  {
+    myStateGetter,
     ...initialProps,
     ...myState
   };
 
-  return globalMapStateToProps ? globalMapStateToProps(state, result) : result;
+  return globalMapStateToProps ? globalMapStateToProps(state, result, myState) : result;
 };
 
 const setState = (stateKey, partialState, continueWith) => {
@@ -67,50 +69,56 @@ const createSetState = (stateKey) => {
  * A public higher-order component to access the imperative API
  */
 
-const wrapperFactory = (Component, mapGlobalStateToProps) => class ComponentWrapper extends React.Component{
-  constructor(props){
-    super(props);
-    const {stateKey = (Component.stateKey || Component.name), propsToMap} = props;
-    this.stateKey = stateKey;
-    this.newProps =  _extends({}, createNewProps(Component, {...props, stateKey}));
-    const isStatelessComponent = !!Component.prototype.render;
-    const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsToMap, mapGlobalStateToProps);
-    this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
-    const displayKey = (Component.displayName || Component.name);
-    this.displayName = 'withExternalState(' + displayKey + ')';
-    this.WrappedComponent = Component;
-    this.createSetState = createSetState(this.stateKey).bind(this);
-    this.resetComponentState = this.resetComponentState.bind(this);
-  }
-
-  componentWillMount(){
-    this.resetComponentState();
-  }
-
-  resetComponentState(continueWith){
-    if (Component.InitialState){
-      this.createSetState(Component.InitialState, continueWith);
+const wrapperFactory = (Component, mapGlobalStateToProps) => {
+  let hasInitialized = false;
+  return class ComponentWrapper extends React.Component{
+    constructor(props){
+      super(props);
+      const {stateKey = (Component.stateKey || Component.name), propsToMap} = props;
+      this.stateKey = stateKey;
+      this.newProps =  _extends({}, createNewProps(Component, {...props, stateKey}));
+      const isStatelessComponent = !!Component.prototype.render;
+      const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsToMap, mapGlobalStateToProps);
+      this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
+      const displayKey = (Component.displayName || Component.name);
+      this.displayName = 'withExternalState(' + displayKey + ')';
+      this.WrappedComponent = Component;
+      this.createSetState = createSetState(this.stateKey).bind(this);
+      this.resetComponentState = this.resetComponentState.bind(this);
     }
-  }
 
-  get wrappedInstance(){
-    if (this.inner){
-      return this.inner.wrappedInstance;
+    componentWillMount(){
+      if (!hasInitialized){
+        this.resetComponentState();
+        hasInitialized = true;
+      }
     }
-  }
 
-  render(){
-    const {Component, newProps, props, resetComponentState} = this;
-    return <Component ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
-  }
+    resetComponentState(continueWith){
+      if (Component.InitialState){
+        this.createSetState(Component.InitialState, continueWith);
+      }
+    }
+
+    get wrappedInstance(){
+      if (this.inner){
+        return this.inner.wrappedInstance;
+      }
+    }
+
+    render(){
+      const {Component, newProps, props, resetComponentState} = this;
+      return <Component ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
+    }
+  };
 };
 
-const createNewProps = memoize((Component, originalProps) => {
+const createNewProps = (Component, originalProps) => {
   const {stateKey} = originalProps;
   const newSetState = createSetState(stateKey);
   Component.prototype.setState =  newSetState;
   return {...originalProps, setState: newSetState, Component};
-});
+};
 
 export const withExternalState = (mapGlobalStateToProps) => (Component) => {
   return wrapperFactory(Component, mapGlobalStateToProps);

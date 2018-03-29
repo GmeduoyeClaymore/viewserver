@@ -17,7 +17,7 @@ import {getCurrentPosition} from 'common/actions/CommonActions';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
-import { withRouter } from 'react-router';
+import AddPropsToRoute from 'common/AddPropsToRoute';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -60,17 +60,17 @@ class CustomerLanding extends Component {
 
   render() {
     const {busy, client} = this.props;
-    const ordersRoot = () => <CustomerOrders client={client} {...this.props}/>;
+    const completeProps = {client, ...this.props};
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <Switch>
-          <Route path={'/Customer/Checkout'} render={() => <Checkout client={client} {...this.props}/>}/>
-          <Route path={'/Customer/CustomerOrders'} exact render={ordersRoot}/>
-          <Route path={'/Customer/Orders'} exact render={ordersRoot}/>
-          <Route path={'/Customer/CustomerOrderDetail'} exact render={() => <CustomerOrderDetail client={client} {...this.props}/>}/>
-          <Route path={'/Customer/CustomerOrderInProgress'} exact render={() => <CustomerOrderInProgress client={client} {...this.props}/>}/>
-          <Route path={'/Customer/Settings'} render={() => <CustomerSettings client={client} {...this.props}/>}/>
-          <Route path={'/Customer/UserRelationships'} render={() => <UserRelationships client={client} {...this.props}/>}/>
+          <Route path={'/Customer/Checkout'} component={AddPropsToRoute(Checkout, completeProps)}/>
+          <Route path={'/Customer/CustomerOrders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
+          <Route path={'/Customer/Orders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
+          <Route path={'/Customer/CustomerOrderDetail'} exact component={AddPropsToRoute(CustomerOrderDetail, completeProps)}/>
+          <Route path={'/Customer/CustomerOrderInProgress'} exact component={AddPropsToRoute(CustomerOrderInProgress, completeProps)}/>
+          <Route path={'/Customer/Settings'} component={AddPropsToRoute(CustomerSettings, completeProps)}/>
+          <Route path={'/Customer/UserRelationships'} component={AddPropsToRoute(UserRelationships, completeProps)}/>
           <Redirect to={'/Customer/Checkout'}/>
         </Switch>
         <CustomerMenuBar {...this.props}/>
@@ -89,6 +89,6 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(CustomerLanding));
+export default connect(mapStateToProps)(CustomerLanding);
 
 

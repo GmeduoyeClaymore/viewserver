@@ -6,17 +6,18 @@ import {Route, Redirect, Switch} from 'react-router-native';
 import {updateDriver} from 'driver/actions/DriverActions';
 import UpdateVehicleDetails from './UpdateVehicleDetails';
 import ConfigureServices from './ConfigureServices';
-import { withRouter } from 'react-router';
+import AddPropsToRoute from 'common/AddPropsToRoute';
 const DriverSettings = (props) => {
   const driverSettingsProps = {...props, stateKey: 'driverSettings'};
+  const onUpdate = (user) => updateDriver(user, () => props.history.push('/Driver/Settings/DriverSettings'));
   return <Switch>
     <Route path={'/Driver/Settings/DriverSettingsLanding'} exact component={DriverSettingsLanding}/>
-    <Route path={'/Driver/Settings/UpdateUserDetails'} exact render={() => <UpdateUserDetails {...driverSettingsProps} onUpdate={(user) => updateDriver(user, () => props.history.push('/Driver/Settings/DriverSettings'))}/>} />
-    <Route path={'/Driver/Settings/UpdateBankAccountDetails'} exact render={() => <UpdateBankAccountDetails {...driverSettingsProps}/>}/>
-    <Route path={'/Driver/Settings/UpdateVehicleDetails'} exact render={() => <UpdateVehicleDetails {...driverSettingsProps}/>}/>
-    <Route path={'/Driver/Settings/ConfigureServices'} exact render={() => <ConfigureServices stateKey="configureServices" {...driverSettingsProps}/>}/>
+    <Route path={'/Driver/Settings/UpdateUserDetails'} exact component={AddPropsToRoute(UpdateUserDetails, {...driverSettingsProps, onUpdate})}/>
+    <Route path={'/Driver/Settings/UpdateBankAccountDetails'} exact component={AddPropsToRoute(UpdateBankAccountDetails, driverSettingsProps)}/>
+    <Route path={'/Driver/Settings/UpdateVehicleDetails'} exact component={AddPropsToRoute(UpdateVehicleDetails, driverSettingsProps)}/>
+    <Route path={'/Driver/Settings/ConfigureServices'} exact component={AddPropsToRoute(ConfigureServices, {...driverSettingsProps, stateKey: 'configureServices'  })}/>
     <Redirect to={'/Driver/Settings/DriverSettingsLanding'}/>
   </Switch>;
 };
 
-export default withRouter(DriverSettings);
+export default DriverSettings;

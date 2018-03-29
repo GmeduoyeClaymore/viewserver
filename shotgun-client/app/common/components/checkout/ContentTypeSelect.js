@@ -23,13 +23,9 @@ class ContentTypeSelect extends Component{
     super(props);
     this.startOrder = this.startOrder.bind(this);
     this.selectContentType = this.selectContentType.bind(this);
+    this.actuallyStartOrder = this.actuallyStartOrder.bind(this);
   }
-
-  componentDidMount(){
-    const {resetParentComponentState} = this.props;
-    resetParentComponentState();
-  }
-
+  
   selectContentType(selectedContentType){
     const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
     const initialState = resources.InitialState;
@@ -39,8 +35,13 @@ class ContentTypeSelect extends Component{
   }
 
   startOrder(){
+    const {resetParentComponentState} = this.props;
     const {navigationStrategy, selectedContentType} = this.props;
-    this.setState({selectedCategory: selectedContentType.productCategory});
+    resetParentComponentState(() => this.actuallyStartOrder(navigationStrategy, selectedContentType));
+  }
+
+  actuallyStartOrder(navigationStrategy, selectedContentType){
+    this.setState({selectedCategory: selectedContentType.productCategory, selectedContentType});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next({parentSelectedCategory: selectedContentType.productCategory});
   }

@@ -37,7 +37,7 @@ export default class Dao {
 
   handleConnectionStatus(status){
     if (status && this.subscribed){
-      Logger.info('Handling reconnection logic');
+      Logger.info('Handling reconnection logic - ' + this.name);
       this.updateSubscription(this.options, true);
     }
   }
@@ -156,7 +156,7 @@ export default class Dao {
       Logger.info(`!!!!!Waiting for snapshot complete!!!! ${this.daoContext.name}`);
       return result;
     } catch (error){
-      Logger.warning(error);
+      Logger.warning(`!!!!!Error in subscription update !!!! ${error} ${this.daoContext.name}`);
       return Promise.reject(error);
     }
   }

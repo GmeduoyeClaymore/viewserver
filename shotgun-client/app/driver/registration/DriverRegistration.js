@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState, Route, ReduxRouter} from 'custom-redux';
 import UserDetails from 'common/registration/UserDetails';
 import DriverAccountType from './DriverAccountType';
 import DriverLogin from './DriverLogin';
@@ -10,12 +10,11 @@ import AddressLookup from 'common/components/maps/AddressLookup';
 import {unregisterAllDaos, registerNakedDao, register} from 'common/actions/CommonActions';
 import DriverDao from 'driver/dao/DriverDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
-import {Route, Redirect, Switch} from 'react-router-native';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
-import { withRouter } from 'react-router';
+import AddPropsToRoute from 'common/AddPropsToRoute';
 
 class DriverRegistration extends Component {
   static InitialState = INITIAL_STATE;
@@ -36,16 +35,15 @@ class DriverRegistration extends Component {
 
   render() {
     const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
-    return <Switch>
-      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact render={() => <DriverRegistrationLanding {...driverRegistrationProps}/>} />
-      <Route path={'/Driver/Registration/Login'} exact render={() => <DriverLogin {...driverRegistrationProps}/>} />
-      <Route path={'/Driver/Registration/UserDetails'} exact render={() => <UserDetails {...driverRegistrationProps} next="/Driver/Registration/AddressDetails"/>} />
-      <Route path={'/Driver/Registration/AddressDetails'} exact render={() => <AddressDetails {...driverRegistrationProps} next="/Driver/Registration/BankAccountDetails"/>} />
-      <Route path={'/Driver/Registration/AddressLookup'} exact render={() => <AddressLookup {...driverRegistrationProps}/>} />
-      <Route path={'/Driver/Registration/BankAccountDetails'} exact render={() => <BankAccountDetails {...driverRegistrationProps}/>} />
-      <Route path={'/Driver/Registration/DriverAccountType'} exact render={() => <DriverAccountType {...driverRegistrationProps}/>} />
-      <Redirect to={'/Driver/Registration/DriverRegistrationLanding'}/>
-    </Switch>;
+    return <ReduxRouter {...driverRegistrationProps} defaultRoute='/Driver/Registration/DriverRegistrationLanding'>
+      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact component={AddPropsToRoute(DriverRegistrationLanding, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/Login'} exact component={AddPropsToRoute(DriverLogin, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/UserDetails'} exact component={AddPropsToRoute(UserDetails, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/AddressDetails'} exact component={AddPropsToRoute(AddressDetails, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/AddressLookup'} exact component={AddPropsToRoute(AddressLookup, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/BankAccountDetails'} exact component={AddPropsToRoute(BankAccountDetails, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/DriverAccountType'} exact component={AddPropsToRoute(DriverAccountType, driverRegistrationProps)}/>
+    </ReduxRouter>;
   }
 }
 
@@ -57,5 +55,5 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-export default withRouter(withExternalState(mapStateToProps)(DriverRegistration));
+export default withExternalState(mapStateToProps)(DriverRegistration);
 

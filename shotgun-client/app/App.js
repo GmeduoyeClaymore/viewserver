@@ -15,17 +15,44 @@ import DriverRegistration from './driver/registration/DriverRegistration';
 import TermsAndConditions from 'common/registration/TermsAndConditions';
 import CustomerLanding from './customer/CustomerLanding';
 import DriverLanding from './driver/DriverLanding';
-import {NativeRouter, Route, Redirect, Switch, AndroidBackButton} from 'react-router-native';
+import {AndroidBackButton} from 'react-router-native';
 import {LoadingScreen} from 'common/components';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
 import {registerTokenListener} from 'common/Listeners';
+import AddPropsToRoute from 'common/AddPropsToRoute';
+import {ReduxRouter, Route} from 'custom-redux';
 
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
+
+
+class TestComponent extends React.Component{
+  constructor(props){
+    super(props);
+  }
+
+  componentWillMount(){
+    this.log('Component mounting');
+  }
+
+  render(){
+    this.log('Component rendering');
+    return <Text>Test Component</Text>;
+  }
+
+  componentWillUnmount(){
+    this.log('Component unmounting');
+  }
+
+  log(message){
+    Logger.info('TestComponent-' + message);
+  }
+}
+
 
 export default class App extends React.Component {
   static INITIAL_ROOT_NAME = 'LandingCommon';
@@ -37,14 +64,13 @@ export default class App extends React.Component {
       isConnected: false,
     };
     registerTokenListener();
-    this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.20:6060/');
-    //this.client = new Client('ws://192.168.0.37:6060/');
+    //this.client = new Client('ws://shotgun.ltd:6060/');
+    this.client = new Client('ws://192.168.0.20:6060/');
+    //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
     this.setUserId = this.setUserId.bind(this);
     this.initMessaging = this.initMessaging.bind(this);
-    this.setInitialRoot = this.setInitialRoot.bind(this);
     this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
     this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
   }
@@ -60,7 +86,6 @@ export default class App extends React.Component {
       try {
         await this.setUserId();
         await this.initMessaging();
-        this.setInitialRoot();
         this.setState({isReady, isConnected: isReady, hasBeenReady: true});
       } catch (error){
         this.setState({isReady: true, isConnected: false});
@@ -103,14 +128,6 @@ export default class App extends React.Component {
     await PrincipalService.removeUserIdFromDevice();
   }
 
-  setInitialRoot(){
-    if (this.userId == undefined){
-      App.INITIAL_ROOT_NAME = '/RegistrationCommon';
-    } else {
-      App.INITIAL_ROOT_NAME = '/LandingCommon';
-      Logger.info(`Loading with customer id ${this.userId}`);
-    }
-  }
 
   render() {
     const {isReady, hasBeenReady} = this.state;
@@ -119,40 +136,28 @@ export default class App extends React.Component {
     }
 
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
+    const completeProps = {...globalProps, ...this.props};
+    const RegistrationCommonPage = AddPropsToRoute(RegistrationCommon, completeProps);
+    const LandingCommonPage = AddPropsToRoute(TestComponent, completeProps);
 
     return <Container style={{flexDirection: 'column', flex: 1}}>
-      <ReactNativeModal
-        isVisible={!isReady}
-        backdropOpacity={0.4}>
-        <View style={styles.modalContainer}>
-          <View style={styles.innerContainer}>
-            <Spinner/>
-            <Text>Awaiting Connection ....</Text>
-          </View>
-        </View>
-      </ReactNativeModal>
       <Container style={{flex: 1}}>
         <Provider store={store}>
           <Root>
-            <NativeRouter>
-              <AndroidBackButton>
-                <StyleProvider style={getTheme(shotgun)}>
-                  <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-                    <Switch>
-                      <Route path="/Root" component={App}/>
-                      <Route path="/RegistrationCommon" exact render={(props) => <RegistrationCommon {...globalProps} {...props}/>}/>
-                      <Route path="/LandingCommon" exact render={(props) => <LandingCommon {...globalProps} {...props}/>}/>
-                      <Route path="/Customer/Registration" render={(props) => <CustomerRegistration {...globalProps} {...props}/>}/>
-                      <Route path="/Driver/Registration" render={(props) => <DriverRegistration {...globalProps} {...props}/>}/>
-                      <Route path="/Customer" render={(props) => <CustomerLanding {...globalProps} {...props}/>}/>
-                      <Route path="/Driver" render={(props) => <DriverLanding {...globalProps} {...props}/>}/>
-                      <Route path="/TermsAndConditions" render={(props) => <TermsAndConditions {...globalProps} {...props}/>}/>
-                      <Redirect to={App.INITIAL_ROOT_NAME}/>
-                    </Switch>
-                  </View>
-                </StyleProvider>
-              </AndroidBackButton>
-            </NativeRouter>
+            <StyleProvider style={getTheme(shotgun)}>
+              <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+                <ReduxRouter>
+                  <Route path="/" component={this.userId ? RegistrationCommonPage : LandingCommonPage}/>
+                  <Route path="/RegistrationCommon" exact component={RegistrationCommonPage}/>
+                  <Route path="/LandingCommon" exact component={LandingCommonPage}/>
+                  <Route path="/Customer/Registration" component={AddPropsToRoute(CustomerRegistration, completeProps)}/>
+                  <Route path="/Driver/Registration" component={AddPropsToRoute(DriverRegistration, completeProps)}/>
+                  <Route path="/Customer" component={AddPropsToRoute(CustomerLanding, completeProps)}/>
+                  <Route path="/Driver" component={AddPropsToRoute(DriverLanding, completeProps)}/>
+                  <Route path="/TermsAndConditions" component={AddPropsToRoute(TermsAndConditions, completeProps)}/>
+                </ReduxRouter>
+              </View>
+            </StyleProvider>
           </Root>
         </Provider>
       </Container>

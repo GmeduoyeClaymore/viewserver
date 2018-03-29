@@ -6,11 +6,10 @@ import AddressDetails from 'common/registration/AddressDetails';
 import CustomerLogin from 'customer/registration/CustomerLogin';
 import CustomerDao from 'customer/dao/CustomerDao';
 import {unregisterAllDaos, registerNakedDao} from 'common/actions/CommonActions';
-import {Route, Redirect, Switch} from 'react-router-native';
+import {Route, ReduxRouter, withExternalState} from 'custom-redux';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';
-import { withRouter } from 'react-router';
-import { withExternalState } from 'custom-redux';
+import AddPropsToRoute from 'common/AddPropsToRoute';
 
 class CustomerRegistration extends Component {
   static InitialState = INITIAL_STATE;
@@ -26,26 +25,27 @@ class CustomerRegistration extends Component {
   }
 
   render() {
+    const basePath = 'Customer';
     const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey};
-    return <Switch>
-      <Route path={'/Customer/Registration/CustomerRegistrationLanding'} exact render={() => <CustomerRegistrationLanding {...registrationProps}/>} />
-      <Route path={'/Customer/Registration/Login'} exact render={() => <CustomerLogin {...registrationProps}/>} />
-      <Route path={'/Customer/Registration/UserDetails'} exact render={() => <UserDetails {...registrationProps} next="/Customer/Registration/AddressDetails"/>} />
-      <Route path={'/Customer/Registration/AddressDetails'} exact render={() => <AddressDetails {...registrationProps} next="/Customer/Registration/PaymentCardDetails"/>} />
-      <Route path={'/Customer/Registration/AddressLookup'} exact render={() => <AddressLookup {...registrationProps}/>} />
-      <Route path={'/Customer/Registration/PaymentCardDetails'} exact render={() => <PaymentCardDetails {...registrationProps}/>} />
-      <Redirect to={'/Customer/Registration/CustomerRegistrationLanding'}/>
-    </Switch>;
+    return <ReduxRouter>
+      <Route path={`${basePath}/Login`} exact component={AddPropsToRoute(CustomerLogin, registrationProps)}/>
+      <Route path={`${basePath}/UserDetails`} exact component={AddPropsToRoute(UserDetails, {...registrationProps, next: `${basePath}/AddressDetails`})}/>
+      <Route path={`${basePath}/AddressDetails`} exact component={AddPropsToRoute(AddressDetails, {...registrationProps, next: `${basePath}/PaymentCardDetails`})}/>
+      <Route path={`${basePath}/AddressLookup`} exact component={AddPropsToRoute(AddressLookup, registrationProps)}/>
+      <Route path={`${basePath}/PaymentCardDetails`} exact component={AddPropsToRoute(PaymentCardDetails, registrationProps)}/>
+      <Route path={`${basePath}`} exact component={AddPropsToRoute(CustomerRegistrationLanding, registrationProps)}/>
+    </ReduxRouter>;
   }
 }
 
 const mapStateToProps = (state, nextOwnProps) => {
-  const {match: parentMatch} = nextOwnProps;
+  const {match: parentMatch, history: parentHistory, ...rest} = nextOwnProps;
   return {
     parentMatch,
-    ...nextOwnProps
+    parentHistory,
+    ...rest
   };
 };
 
 
-export default withRouter(withExternalState(mapStateToProps)(CustomerRegistration));
+export default withExternalState(mapStateToProps)(CustomerRegistration);
