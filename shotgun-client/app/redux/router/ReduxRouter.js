@@ -101,29 +101,28 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
   const {navigationStack} = navigationContainer;
   const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
   const previousFinalNavItem = previousNavItems[previousNavItems.length - 1];
-  const {navigationPointer = 0} = navigationContainer;
-  const newNavPointer = isReplace ? navigationPointer : navigationPointer + 1;
   const itemsNotNeedingTransition = [...previousNavItems.slice(0, previousNavItems.length - 1)];
-  const addition = {...navAction, isAdd: true, isReverse, index: newNavPointer};
+  const addition = {isReverse, ...navAction, isAdd: true};
   let newNavigationStack;
-  if (!matchPath(previousFinalNavItem.pathname, navAction)){
-    const remove = {...previousFinalNavItem, isRemove: true, isReverse, index: newNavPointer};
-    newNavigationStack = [...itemsNotNeedingTransition, remove, addition ];
+  if (isReplace){
+    newNavigationStack = [...itemsNotNeedingTransition, {...addition, index: itemsNotNeedingTransition.length + 1} ];
   } else {
-    newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, addition ];
+    if (!navAction.pathname.includes(previousFinalNavItem.pathname)){
+      const remove = {isReverse, ...previousFinalNavItem, isRemove: true};
+      newNavigationStack = [...itemsNotNeedingTransition, remove, addition ];
+    } else {
+      newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, {addition, index: itemsNotNeedingTransition.length + 2}  ];
+    }
   }
- 
   const croppedStack = newNavigationStack.slice(-MaxStackLength);
-  const newNavigation = navigationContainer.setIn(['navigationPointer'], newNavPointer - newNavigationStack.length - MaxStackLength);
-  return newNavigation.setIn(['navigationStack'], croppedStack);
+  return navigationContainer.setIn(['navigationStack'], croppedStack);
 };
 
 const goBackTranslation = (navigationContainer) => {
-  let {navigationPointer, navigationStack} = navigationContainer;
-  navigationPointer = navigationPointer == 0 ? 0 : navigationPointer - 1;
+  const {navigationStack} = navigationContainer;
   const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
-  const previousFinalNavItem = previousNavItems[navigationPointer];
-  return moveNavigation(false, true)(navigationContainer, previousFinalNavItem);
+  const previousFinalNavItem = previousNavItems[previousNavItems.length - 2] || previousNavItems[previousNavItems.length - 1];
+  return moveNavigation(true, true)(navigationContainer, previousFinalNavItem);
 };
 
 const resetTranslation = (navigationContainer) => {
@@ -177,7 +176,6 @@ const mapStateToProps = (state, props) => {
   const nextThunk = navigateFactory(myStateGetter, moveNavigation(false), setState, DEFAULT_NAVIGATION);
   const clearTransitionsThunk = (continueWith) => navigateFactory(myStateGetter, resetTranslation, setState, undefined, continueWith);
   const clearTransitions =  (continueWith) => dispatch(clearTransitionsThunk(continueWith)());
-
   return {
     ...props,
     navigationContainer,

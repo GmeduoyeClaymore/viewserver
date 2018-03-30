@@ -64,7 +64,7 @@ export default class ContentTypeNavigationStrategy{
       if (increment){
         this.history.push(`${this.path}/${nextPath}`, payload);
       } else {
-        this.history.replace(`${this.path}/${nextPath}`, payload);
+        this.history.replace({pathname: `${this.path}/${nextPath}`, isReverse: true}, payload);
       }
     }
     this.pathIndex = newIndex;

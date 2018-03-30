@@ -112,8 +112,8 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
           if (match){
             Logger.info(`Matched ${JSON.stringify(rt)} to path ${el.pathname}`);
             foundKeys.push(rt.key);
-            const {isAdd, isRemove, index, transition} = match.isExact ? el : {};
-            result.push({...removeDeltas(rt), match, index, isAdd, isRemove, transition});
+            const {isAdd, isRemove, index, transition, isReverse} = match.isExact ? el : {};
+            result.push({...removeDeltas(rt), match, index, isAdd, isReverse, isRemove, transition});
           }
         }
       );
