@@ -6,3 +6,4 @@ export {setStateIfIsMounted} from './setStateIfIsMounted';
 export {withExternalState} from './withExternalState';
 export {ReduxRouter} from './router/ReduxRouter';
 export {Route} from './router/Route';
+export {Redirect} from './router/Redirect';

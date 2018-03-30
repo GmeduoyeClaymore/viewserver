@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, Redirect} from 'custom-redux';
 import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
-import {Redirect} from 'react-router-native';
 import {View, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
@@ -44,9 +43,9 @@ class LandingCommon extends Component {
     }
     switch (user.type){
     case 'driver':
-      return <Redirect to="/Driver/Landing"/>;
+      return <Redirect to="/Driver/Landing" history={history}/>;
     case 'customer':
-      return <Redirect to="/Customer/Landing"/>;
+      return <Redirect to="/Customer/Landing"  history={history}/>;
     default:
       throw new Error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
     }

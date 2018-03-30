@@ -130,7 +130,7 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
   };
 
   return next => action => {
-    const handlerName = Object.keys(_handlers).find(h => action.type.startsWith(h));
+    const handlerName = Object.keys(_handlers).find(h => action.type && action.type.startsWith(h));
     if (handlerName){
       const handler = _handlers[handlerName];
       handler(action);

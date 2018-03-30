@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, ReduxRouter, Route} from 'custom-redux';
 import {setLocale} from 'yup/lib/customLocale';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from 'common/components/checkout/Checkout';
@@ -10,7 +10,6 @@ import {customerServicesRegistrationAction, getPaymentCards} from 'customer/acti
 import {watchPosition} from 'driver/actions/DriverActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
-import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {getCurrentPosition} from 'common/actions/CommonActions';
@@ -18,6 +17,12 @@ import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import AddPropsToRoute from 'common/AddPropsToRoute';
+import shotgun from 'native-base-theme/variables/shotgun';
+import {Dimensions} from 'react-native';
+const { height, width } = Dimensions.get('window');
+
+const contentHeight = height - shotgun.footerHeight;
+const contentWidth = width;
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -60,10 +65,10 @@ class CustomerLanding extends Component {
 
   render() {
     const {busy, client} = this.props;
-    const completeProps = {client, ...this.props};
+    const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth };
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
-        <Switch>
+        <ReduxRouter height={contentHeight} width={contentWidth} defaultRoute='/Customer/Checkout'>
           <Route path={'/Customer/Checkout'} component={AddPropsToRoute(Checkout, completeProps)}/>
           <Route path={'/Customer/CustomerOrders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
           <Route path={'/Customer/Orders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
@@ -71,8 +76,7 @@ class CustomerLanding extends Component {
           <Route path={'/Customer/CustomerOrderInProgress'} exact component={AddPropsToRoute(CustomerOrderInProgress, completeProps)}/>
           <Route path={'/Customer/Settings'} component={AddPropsToRoute(CustomerSettings, completeProps)}/>
           <Route path={'/Customer/UserRelationships'} component={AddPropsToRoute(UserRelationships, completeProps)}/>
-          <Redirect to={'/Customer/Checkout'}/>
-        </Switch>
+        </ReduxRouter>
         <CustomerMenuBar {...this.props}/>
       </Container>;
   }

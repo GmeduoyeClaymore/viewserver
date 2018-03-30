@@ -25,7 +25,8 @@ class CustomerRegistration extends Component {
   }
 
   render() {
-    const basePath = 'Customer';
+    const {parentMatch: match} = this.props;
+    const basePath = match.path;
     const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey};
     return <ReduxRouter>
       <Route path={`${basePath}/Login`} exact component={AddPropsToRoute(CustomerLogin, registrationProps)}/>

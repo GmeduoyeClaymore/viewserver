@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet, TextInput} from 'react-native';
-import ActionButton from '../../common/components/ActionButton.js';
+import {SpinnerButton} from 'common/components';
 import icon from '../../common/assets/basket-fill.png';
 import {AddToCart} from './CustomerActions';
 
@@ -46,7 +46,7 @@ export default class ProductActionBar extends Component {
             value = {itemCount + ''}
             maxLength = {10}  //setting limit of input
           />
-          {!busy ? <ActionButton buttonText="Add To Basket" icon={icon} action={this.addToCart}/> : null}
+          {!busy ? <SpinnerButton buttonText="Add To Basket" icon={icon} onPress={this.addToCart}/> : null}
         </View>
       );
     }

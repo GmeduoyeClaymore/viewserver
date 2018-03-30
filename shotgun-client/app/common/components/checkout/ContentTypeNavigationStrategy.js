@@ -37,7 +37,7 @@ export default class ContentTypeNavigationStrategy{
     if (!paths){
       throw new Error('Unable to find paths for content type ' + this.contentType);
     }
-    this.goToIndex(paths, payload, this.pathIndex + 1);
+    this.goToIndex(paths, payload, this.pathIndex + 1, true);
   }
 
   prev(payload){
@@ -49,19 +49,23 @@ export default class ContentTypeNavigationStrategy{
       throw new Error('Unable to find paths for content type ' + this.contentType);
     }
 
-    this.goToIndex(paths, payload, this.pathIndex - 1);
+    this.goToIndex(paths, payload, this.pathIndex - 1, false);
   }
 
-  goToIndex(paths, payload, newIndex){
+  goToIndex(paths, payload, newIndex, increment){
     if (newIndex >= paths.length){
       throw new Error(`Unable to find path index ${newIndex} for content type ${contentType}`);
     }
    
     if (newIndex == -1){
-      this.history.push(`${this.path}/ProductSelect`);
+      this.history.replace(`${this.path}/ProductSelect`);
     } else {
       const nextPath = paths[newIndex];
-      this.history.push(`${this.path}/${nextPath}`, payload);
+      if (increment){
+        this.history.push(`${this.path}/${nextPath}`, payload);
+      } else {
+        this.history.replace(`${this.path}/${nextPath}`, payload);
+      }
     }
     this.pathIndex = newIndex;
   }

@@ -120,7 +120,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {dispatch, selectedContentType, selectedProduct, selectedCategory} = initialProps;
+  const {dispatch, selectedContentType, selectedProduct, selectedCategory = {}} = initialProps;
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {

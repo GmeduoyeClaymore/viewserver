@@ -1,152 +1,191 @@
-import React, {Children, Component, isValidElement, cloneElement} from 'react';
-import { createAnimatableComponent, View, Text } from 'react-native-animatable';
-import {ScrollView, Dimensions} from 'react-native';
+import React, {Component, cloneElement} from 'react';
+import { createAnimatableComponent, View } from 'react-native-animatable';
+import {Dimensions, TouchableWithoutFeedback} from 'react-native';
 import { withExternalState } from '../withExternalState';
-import TransitionFactory from './TransitionFactory';
+import TransitionManager from './TransitionManager';
+import Immutable from 'seamless-immutable';
+import matchPath from './matchPath';
+import * as RouteUtils from './routeUtils';
+import Logger from 'common/Logger';
 
 
-const AnimatableContainer = createAnimatableComponent(ScrollView);
+const AnimatableContainer = View;
+const AnimatableTouchableWithFeedback = createAnimatableComponent(TouchableWithoutFeedback);
 
 const DefaultNavigationStack = [{
-  pathname: '/'
+  pathname: '/',
+  isAdd: true
 }];
 
 const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 
-const getKeyFromElement = (element, index) => {
-  const { path} = element.props;
-  return path ? path.replace('//', '_') : element.component ? `${element.component.name}_${index}` : `component_${index}`;
-};
-
 class ReduxRouterClass extends Component{
   constructor(props){
     super(props);
-    this.transitionFactory = new TransitionFactory();
+    this.transitionManager = new TransitionManager();
+    this.performTransition = this.performTransition.bind(this);
+    this.handleRef = this.handleRef.bind(this);
   }
 
-  shouldComponentUpdate(newProps, newState){
+  shouldComponentUpdate(newProps){
     const {children, navigationContainer} = newProps;
-    const {routes} = newState;
     if (children != this.props.children){
       return true;
     }
+
     if (navigationContainer != this.props.navigationContainer){
       return true;
     }
-    if (routes != this.state.routes){
+
+    if (!this.pendingRouteTransition && this.transitionManager.doAnyOfMyRoutesNeedToTransition(navigationContainer)){
+      this.pendingRouteTransition = true;
       return true;
     }
     return false;
   }
 
-  componentWillMount(){
-    if (this.props.children){
-      this.registerChildrenAsReduxRoutes(this.props.children);
+  async componentDidUpdate(){
+    this.performTransition();
+  }
+
+  async performTransition(){
+    const {navigationContainer, defaultRoute, history, performTransitions} = this.props;
+    if ( this.pendingRouteTransition ){
+      return;
     }
-  }
 
-  componentWillReceiveProps(newProps){
-    const {children} = newProps;
-    if (children != this.props.children){
-      this.registerChildrenAsReduxRoutes(children);
-    }
-  }
-
-  registerChildrenAsReduxRoutes(children){
-    const routes = [];
-    let index = 0;
-    Children.forEach(children, (element) => {
-      if (!isValidElement(element)) return;
-      const { path, exact, strict, sensitive} = element.props;
-      routes.push({ path, exact, strict, sensitive, key: getKeyFromElement(element, index) });
-      index++;
-    });
-    super.setState({routes});
-  }
-
-  componentDidUpdate(){
-    const {navigationContainer} = this.props;
-    this.transitionFactory.performTransition(navigationContainer);
+    performTransitions(this);
   }
 
   createComponent(routeDelta, additionalProps = {}){
-    const {children, ...rest} = this.props;
-    const childForRoute = children.find((c, idx)=> getKeyFromElement(c, idx) == routeDelta.key);
+    const {children, navigationContainer, ...rest} = this.props;
+    const childForRoute = children.find((c, idx)=> RouteUtils.getKeyFromElement(c, idx) == routeDelta.key);
     if (!childForRoute){
-      throw new Error(`Unable to find child for route ${routeDelta.key}`);
+      throw new Error(`Unable to find child for route for ${JSON.stringify(routeDelta)}`);
     }
-    return cloneElement(childForRoute, { ...routeDelta, ...rest, ...childForRoute.props, ...additionalProps});
+    const {match} = routeDelta;
+    return cloneElement(childForRoute, { route: routeDelta, match, ...rest, ...childForRoute.props, ...additionalProps});
   }
   
 
-  handleRef(routeDelta, ref){
-    this.transitionFactory.initialize(routeDelta, ref);
+  handleRef(route, ref){
+    this.transitionManager.initialize(route, ref);
   }
 
   render() {
-    const {width = deviceWidth, height  = deviceHeight, navigationContainer} = this.props;
-    const  {routes} = this.state;
-    const routeDeltas = this.transitionFactory.getOrderedRoutes(routes, navigationContainer );
-    return <AnimatableContainer style={{flex: 1, height, width}}  contentContainerStyle={{flex: 1, height, width}}>
-      {routeDeltas.map(
+    const {width = deviceWidth, height  = deviceHeight, navigationContainer, defaultRoute, children} = this.props;
+    const routesToRender = this.transitionManager.getOrderedRoutesFromChildren(children, navigationContainer, false, RouteUtils.parseRoute(defaultRoute));
+    return <AnimatableContainer style={{flex: 1, height, width}}>
+      {routesToRender.map(
         (rt, idx) => {
-          return this.createComponent(rt, {key: idx, style: {height, width}, ref: ref => {this.handleRef(rt, ref);}});
+          return <AnimatableTouchableWithFeedback
+            useNativeDriver={true}
+            style={{ position: 'absolute',
+              display: 'none',
+              left: 0,
+              zIndex: rt.index,
+              top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.key} ref={ref =>  {this.handleRef(rt, ref);}}>
+            <View style={{ position: 'absolute',
+              left: 0,
+              zIndex: rt.index,
+              backgroundColor: 'white',
+              top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}}>
+              {this.createComponent(rt, {style: {height, width}})}
+            </View>
+          </AnimatableTouchableWithFeedback>;
         }
       )}
     </AnimatableContainer>;
   }
 }
 
-const nextTranslation = (navigationContainer, navAction) => {
+
+const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navAction) => {
+  Logger.info(`Navigating to ${JSON.stringify(navAction)}`);
   const {navigationStack} = navigationContainer;
-  const newNavigationStack = [...navigationStack, {...navAction}];
+  const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
+  const previousFinalNavItem = previousNavItems[previousNavItems.length - 1];
   const {navigationPointer = 0} = navigationContainer;
-  return navigationContainer.setIn({navigationPointer: navigationPointer + 1, newNavigationStack});
+  const newNavPointer = isReplace ? navigationPointer : navigationPointer + 1;
+  const itemsNotNeedingTransition = [...previousNavItems.slice(0, previousNavItems.length - 1)];
+  const addition = {...navAction, isAdd: true, isReverse, index: newNavPointer};
+  let newNavigationStack;
+  if (!matchPath(previousFinalNavItem.pathname, navAction)){
+    const remove = {...previousFinalNavItem, isRemove: true, isReverse, index: newNavPointer};
+    newNavigationStack = [...itemsNotNeedingTransition, remove, addition ];
+  } else {
+    newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, addition ];
+  }
+ 
+  const newNavigation = navigationContainer.setIn(['navigationPointer'], newNavPointer);
+  return newNavigation.setIn(['navigationStack'], newNavigationStack);
 };
 
 const goBackTranslation = (navigationContainer) => {
-  const {navigationStack} = navigationContainer;
-  const newNavigationStack = [...navigationStack.slice(navigationStack.length - 1)];
-  const {navigationPointer = 0} = navigationContainer;
-  return navigationContainer.setIn({navigationPointer: navigationPointer - 1, newNavigationStack});
+  let {navigationPointer, navigationStack} = navigationContainer;
+  navigationPointer = navigationPointer == 0 ? 0 : navigationPointer - 1;
+  const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
+  const previousFinalNavItem = previousNavItems[navigationPointer];
+  return moveNavigation(false, true)(navigationContainer, previousFinalNavItem);
 };
 
-const replaceTranslation = (navigationContainer, navAction) => {
+const resetTranslation = (navigationContainer) => {
   const {navigationStack} = navigationContainer;
-  const newNavigationStack = [...navigationStack.slice(navigationStack.length - 1), {...navAction}];
-  const {navigationPointer = 0} = navigationContainer;
-  return navigationContainer.setIn({navigationPointer: navigationPointer + 1, newNavigationStack});
+  const newNavigationStack = navigationStack.map(RouteUtils.removeDeltas);
+  return navigationContainer.setIn(['navigationStack'], newNavigationStack);
 };
 
-const navigateFactory = (myStateGetter, navigationContainerTranslation, setState, DefaultNavigation) => (action) =>  async (dispatch, getState) => {
+const navigateFactory = (myStateGetter, navigationContainerTranslation, setState, DefaultNavigation, continueWith) => (action) =>  async (dispatch, getState) => {
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer = DefaultNavigation} = componentState;
-  const newnavigationContainer =  navigationContainerTranslation(navigationContainer, action);
-  setState({navigationContainer: newnavigationContainer}, undefined, dispatch);
+  const newnavigationContainer =  navigationContainerTranslation(navigationContainer, RouteUtils.parseAction(action));
+  setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
 };
 
 const createDefaultNavigation = (props) => {
   const navigationStack = props.defaultNavigation || DefaultNavigationStack;
-  return {
+  return Immutable({
     navigationStack,
-    navigationPointer: 0
-  };
+    navigationPointer: 1
+  });
+};
+
+
+const performTransitionsThunkFactory = (context, myStateGetter, clearTransitions) => async (dispatch, getState) => {
+  const componentState = myStateGetter(getState()) || {};
+  const {navigationContainer} = componentState;
+  if (!navigationContainer){
+    return;
+  }
+  const hasTransitioned = await context.transitionManager.performTransition(navigationContainer);
+  if (hasTransitioned && !context.pendingClear){
+    context.pendingClear = true;
+    clearTransitions(() => {
+      context.pendingClear = false;
+      context.pendingRouteTransition = false;
+      context.transitionManager.completeTransition();
+    });
+  }
+  dispatch({ type: 'TRANSITIONS_PERFORMED'});
 };
 
 const mapStateToProps = (state, props) => {
   const DEFAULT_NAVIGATION = createDefaultNavigation(props);
   const {myStateGetter, dispatch, navigationContainer = DEFAULT_NAVIGATION, setState} = props;
-  const replace = navigateFactory(myStateGetter, replaceTranslation, setState, DEFAULT_NAVIGATION);
-  const goBack = navigateFactory(myStateGetter, goBackTranslation, setState, DEFAULT_NAVIGATION);
-  const next = navigateFactory(myStateGetter, nextTranslation, setState, DEFAULT_NAVIGATION);
+  const replaceThunk = navigateFactory(myStateGetter, moveNavigation(true), setState, DEFAULT_NAVIGATION);
+  const goBackThunk = navigateFactory(myStateGetter, goBackTranslation, setState, DEFAULT_NAVIGATION);
+  const nextThunk = navigateFactory(myStateGetter, moveNavigation(false), setState, DEFAULT_NAVIGATION);
+  const clearTransitionsThunk = (continueWith) => navigateFactory(myStateGetter, resetTranslation, setState, undefined, continueWith);
+  const clearTransitions =  (continueWith) => dispatch(clearTransitionsThunk(continueWith)());
 
   return {
     ...props,
     navigationContainer,
+    performTransitions: context => dispatch(performTransitionsThunkFactory(context, myStateGetter, clearTransitions)),
     history: {
-      replace: action => dispatch(replace(action)),
-      goBack: action => dispatch(goBack(action)),
-      push: action => dispatch(next(action)),
+      replace: action => dispatch(replaceThunk(action)),
+      goBack: action => dispatch(goBackThunk(action)),
+      push: action => dispatch(nextThunk(action))
     }
   };
 };

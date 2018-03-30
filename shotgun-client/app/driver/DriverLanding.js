@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
+import {connect, Route, ReduxRouter} from 'custom-redux';
 import DriverMenuBar from './DriverMenuBar';
 import DriverOrders from './DriverOrders';
 import DriverOrderDetail from './DriverOrderDetail';
@@ -11,7 +11,6 @@ import {customerServicesRegistrationAction, getPaymentCards} from 'customer/acti
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
-import {Route, Redirect, Switch} from 'react-router-native';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
@@ -22,6 +21,13 @@ import CustomerOrderDetail from 'customer/CustomerOrderDetail';
 import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
 import AddPropsToRoute from 'common/AddPropsToRoute';
 import Logger from 'common/Logger';
+import shotgun from 'native-base-theme/variables/shotgun';
+import {Dimensions} from 'react-native';
+const { height, width } = Dimensions.get('window');
+
+const contentHeight = height - shotgun.footerHeight;
+const contentWidth = width;
+
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -77,7 +83,7 @@ class DriverLanding extends Component {
     const {busy} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
-        <Switch>
+        <ReduxRouter height={contentHeight} width={contentWidth}  defaultRoute="/Driver/DriverOrderRequests">
           <Route path={'/Driver/Checkout'} component={AddPropsToRoute(Checkout, this.props)}/>
           <Route path={'/Driver/DriverOrderRequests'} exact component={AddPropsToRoute(DriverOrderRequests, this.props)}/>
           <Route path={'/Driver/DriverOrderRequestDetail'} exact component={AddPropsToRoute(DriverOrderRequestDetail, this.props)}/>
@@ -90,8 +96,7 @@ class DriverLanding extends Component {
           <Route path={'/Driver/DriverOrderInProgress'} exact component={AddPropsToRoute(DriverOrderInProgress, this.props)}/>
           <Route path={'/Driver/Settings'} component={AddPropsToRoute(DriverSettings, this.props)}/>
           <Route path={'/Driver/UserRelationships'} component={AddPropsToRoute(UserRelationships, this.props)}/>
-          <Redirect to={'/Driver/DriverOrderRequests'}/>
-        </Switch>
+        </ReduxRouter>
         <DriverMenuBar {...this.props}/>
       </Container>;
   }

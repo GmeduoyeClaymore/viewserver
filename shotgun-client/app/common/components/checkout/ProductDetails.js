@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import ProductActionBar from './ProductActionBar';
-import ActionButton from '../../common/components/ActionButton';
+import {SpinnerButton} from 'common/components';
 import backIcon from '../../common/assets/back.png';
 import {withExternalState} from 'custom-redux';
 
@@ -13,7 +13,7 @@ const ProductDetails = ({history, match, params}) => {
       <View style={styles.container}>
         <Image source={{uri: 'https://media.istockphoto.com/vectors/minimalistic-solid-line-colored-builder-icon-vector-id495391344?k=6&m=495391344&s=612x612&w=0&h=SFsgxOa-pdm9NTbc3NVj-foksXnqyPW3LhNjJtQLras='}} style={styles.picture} />
         <View style={styles.header}>
-          <ActionButton buttonText={null} icon={backIcon} action={() => history.push(`${match.path}/ProductList`)}/>
+          <SpinnerButton buttonText={null} icon={backIcon} onPress={() => history.push(`${match.path}/ProductList`)}/>
           <Text style={styles.bigText}>{product.name}</Text>
         </View>
         <Text style={[styles.mediumText, styles.lightText]}>{product.description}</Text>

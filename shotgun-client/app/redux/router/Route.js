@@ -26,15 +26,10 @@ export class Route extends PureComponent{
     }
 
     render() {
-      const {children, component, render} = this.props;
-      const {history} = this.props;
-
-      const location = this.props.location;
-      const props = { location, history };
-
+      const {children, component, render, ...rest} = this.props;
       return component ? // component prop gets first priority, only called if there's a match
-      React.createElement(component, props) : render ? // render prop is next, only called if there's a match
-      render(props)  : children ? // children come last, always called
+      React.createElement(component, rest) : render ? // render prop is next, only called if there's a match
+      render(rest)  : children ? // children come last, always called
       typeof children === 'function' ? children(props) : !isEmptyChildren(children) ? Children.only(children) : null : null;
     }
 }
