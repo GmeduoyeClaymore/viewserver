@@ -2,7 +2,7 @@ import React, {Component}  from 'react';
 import { connect, setStateIfIsMounted } from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
-import {ErrorRegion, Icon} from 'common/components';
+import {ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import ProductMarker from 'common/components/maps/ProductMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
@@ -104,7 +104,7 @@ class DeliveryMap extends Component{
 
   render(){
     const {fitMap, setDurationAndDistance, getLocationText} = this;
-    const {destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct} = this.props;
+    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct} = this.props;
     const {latitude, longitude} = me;
   
     const initialRegion = {
@@ -118,13 +118,13 @@ class DeliveryMap extends Component{
       <Grid>
         <Row size={85}>
           <ErrorRegion errors={errors}>
-            <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
+            {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
               showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
               {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
               {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
-            </MapView>
+            </MapView>}
           </ErrorRegion>
           <Button transparent style={styles.backButton} onPress={() => navigationStrategy.prev()} >
             <Icon name='back-arrow'/>

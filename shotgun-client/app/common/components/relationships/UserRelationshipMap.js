@@ -5,6 +5,7 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual, debounce} from 'lodash';
 import Logger from 'common/Logger';
+import {LoadingScreen} from 'common/components';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -69,7 +70,7 @@ export default class UserRelationshipMap extends Component{
 
   render(){
     const {selectedUser, relatedUsers = [], setSelectedUser, client, geoLocation} = this.props;
-    let {me} = this.props;
+    let {me, isTransitioning} = this.props;
     me = geoLocation && geoLocation.latitude ? geoLocation : me;
     const {fitMap, getLocations} = this;
     const {latitude, longitude} = me;
@@ -82,7 +83,7 @@ export default class UserRelationshipMap extends Component{
     };
 
   
-    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => {
+    return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={() => {
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}

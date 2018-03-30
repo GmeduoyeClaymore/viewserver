@@ -64,18 +64,18 @@ class CustomerLanding extends Component {
   }
 
   render() {
-    const {busy, client} = this.props;
+    const {busy, client, path} = this.props;
     const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth };
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
-        <ReduxRouter height={contentHeight} width={contentWidth} defaultRoute='/Customer/Checkout'>
-          <Route path={'/Customer/Checkout'} component={AddPropsToRoute(Checkout, completeProps)}/>
-          <Route path={'/Customer/CustomerOrders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
-          <Route path={'/Customer/Orders'} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
-          <Route path={'/Customer/CustomerOrderDetail'} exact component={AddPropsToRoute(CustomerOrderDetail, completeProps)}/>
-          <Route path={'/Customer/CustomerOrderInProgress'} exact component={AddPropsToRoute(CustomerOrderInProgress, completeProps)}/>
-          <Route path={'/Customer/Settings'} component={AddPropsToRoute(CustomerSettings, completeProps)}/>
-          <Route path={'/Customer/UserRelationships'} component={AddPropsToRoute(UserRelationships, completeProps)}/>
+        <ReduxRouter height={contentHeight} width={contentWidth} defaultRoute={`${path}/Checkout`}>
+          <Route path={`${path}/Checkout`} component={AddPropsToRoute(Checkout, completeProps)}/>
+          <Route path={`${path}/CustomerOrders`} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
+          <Route path={`${path}/Orders`} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
+          <Route path={`${path}/CustomerOrderDetail`} exact component={AddPropsToRoute(CustomerOrderDetail, completeProps)}/>
+          <Route path={`${path}/CustomerOrderInProgress`} exact component={AddPropsToRoute(CustomerOrderInProgress, completeProps)}/>
+          <Route path={`${path}/Settings`} component={AddPropsToRoute(CustomerSettings, completeProps)}/>
+          <Route path={`${path}/UserRelationships`} component={AddPropsToRoute(UserRelationships, completeProps)}/>
         </ReduxRouter>
         <CustomerMenuBar {...this.props}/>
       </Container>;

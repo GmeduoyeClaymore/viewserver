@@ -115,13 +115,17 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
 };
   
 
-export const parseAction = action => {
+export const parseAction = (action, state) => {
   if (typeof action === 'string'){
     return {
-      pathname: action
+      pathname: action,
+      state
     };
   }
-  return action;
+  return {
+    ...action,
+    state
+  };
 };
   
 export const parseRoute = route => {

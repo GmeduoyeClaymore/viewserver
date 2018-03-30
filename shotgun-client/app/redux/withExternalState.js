@@ -87,6 +87,12 @@ const wrapperFactory = (Component, mapGlobalStateToProps) => {
       this.resetComponentState = this.resetComponentState.bind(this);
     }
 
+    shouldComponentUpdate(){
+      const {path, history = {}} = this.props;
+      const {location} = history;
+      return !location || path.includes(location.pathname);
+    }
+
     componentWillMount(){
       if (!hasInitialized){
         this.resetComponentState();

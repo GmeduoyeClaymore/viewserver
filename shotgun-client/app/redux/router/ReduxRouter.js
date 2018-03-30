@@ -64,7 +64,9 @@ class ReduxRouterClass extends Component{
       throw new Error(`Unable to find child for route for ${JSON.stringify(routeDelta)}`);
     }
     const {match} = routeDelta;
-    return cloneElement(childForRoute, { route: routeDelta, match, ...rest, ...childForRoute.props, ...additionalProps});
+    const completeProps = { route: routeDelta, match, ...rest, ...childForRoute.props, ...additionalProps};
+    const { component: ComponentForRoute} = childForRoute.props;
+    return <ComponentForRoute {...completeProps} />;
   }
   
 
@@ -135,10 +137,10 @@ const resetTranslation = (navigationContainer) => {
   return navigationContainer.setIn(['navigationStack'], newNavigationStack);
 };
 
-const navigateFactory = (myStateGetter, navigationContainerTranslation, setState, DefaultNavigation, continueWith) => (action) =>  async (dispatch, getState) => {
+const navigateFactory = (myStateGetter, navigationContainerTranslation, setState, DefaultNavigation, continueWith) => (action, state) =>  async (dispatch, getState) => {
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer = DefaultNavigation} = componentState;
-  const newnavigationContainer =  navigationContainerTranslation(navigationContainer, RouteUtils.parseAction(action));
+  const newnavigationContainer =  navigationContainerTranslation(navigationContainer, RouteUtils.parseAction(action, state));
   setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
 };
 
@@ -151,12 +153,14 @@ const createDefaultNavigation = (props) => {
 };
 
 
-const performTransitionsThunkFactory = (context, myStateGetter, clearTransitions) => async (dispatch, getState) => {
+const performTransitionsThunkFactory = (context, myStateGetter, setState, clearTransitions) => async (dispatch, getState) => {
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer} = componentState;
-  if (!navigationContainer){
+  if (!navigationContainer || ! context.transitionManager.doAnyOfMyRoutesNeedToTransition(navigationContainer)){
     return;
   }
+  setState({isTransitioning: true}, undefined, dispatch);
+
   const hasTransitioned = await context.transitionManager.performTransition(navigationContainer);
   if (hasTransitioned && !context.pendingClear){
     context.pendingClear = true;
@@ -164,6 +168,7 @@ const performTransitionsThunkFactory = (context, myStateGetter, clearTransitions
       context.pendingClear = false;
       context.pendingRouteTransition = false;
       context.transitionManager.completeTransition();
+      setState({isTransitioning: false}, undefined, dispatch);
     });
   }
   dispatch({ type: 'TRANSITIONS_PERFORMED'});
@@ -181,11 +186,12 @@ const mapStateToProps = (state, props) => {
   return {
     ...props,
     navigationContainer,
-    performTransitions: context => dispatch(performTransitionsThunkFactory(context, myStateGetter, clearTransitions)),
+    performTransitions: context => dispatch(performTransitionsThunkFactory(context, myStateGetter, setState,  clearTransitions)),
     history: {
-      replace: action => dispatch(replaceThunk(action)),
+      location: navigationContainer.navigationStack[navigationContainer.navigationStack.length - 1],
+      replace: (path, navState) => dispatch(replaceThunk(path, navState)),
       goBack: action => dispatch(goBackThunk(action)),
-      push: action => dispatch(nextThunk(action))
+      push: (path, navState) => dispatch(nextThunk(path, navState))
     }
   };
 };
