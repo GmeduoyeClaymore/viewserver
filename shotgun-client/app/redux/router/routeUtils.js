@@ -2,6 +2,17 @@ import React, {Children, isValidElement} from 'react';
 import matchPath from './matchPath';
 import Logger from 'common/Logger';
 
+import invariant  from 'invariant';
+
+export const ensureComponentIsNative = (component) =>  {
+  invariant(
+    component && typeof component.setNativeProps === 'function',
+    'Touchable child must either be native or forward setNativeProps to a ' +
+    'native component' + component.setNativeProps
+  );
+};
+
+
 const TransitionStrategies = {
   left: (route) => {
     if (route.isAdd){

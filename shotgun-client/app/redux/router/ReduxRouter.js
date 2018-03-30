@@ -1,6 +1,6 @@
-import React, {Component, cloneElement} from 'react';
-import { createAnimatableComponent, View } from 'react-native-animatable';
-import {Dimensions, TouchableWithoutFeedback} from 'react-native';
+import React, {Component} from 'react';
+import { View } from 'react-native-animatable';
+import {Dimensions} from 'react-native';
 import { withExternalState } from '../withExternalState';
 import TransitionManager from './TransitionManager';
 import Immutable from 'seamless-immutable';
@@ -9,8 +9,7 @@ import * as RouteUtils from './routeUtils';
 import Logger from 'common/Logger';
 
 
-const AnimatableContainer = View;
-const AnimatableTouchableWithFeedback = createAnimatableComponent(TouchableWithoutFeedback);
+const MaxStackLength = 2;
 
 const DefaultNavigationStack = [{
   pathname: '/',
@@ -77,27 +76,22 @@ class ReduxRouterClass extends Component{
   render() {
     const {width = deviceWidth, height  = deviceHeight, navigationContainer, defaultRoute, children} = this.props;
     const routesToRender = this.transitionManager.getOrderedRoutesFromChildren(children, navigationContainer, false, RouteUtils.parseRoute(defaultRoute));
-    return <AnimatableContainer style={{flex: 1, height, width}}>
+    return <View style={{flex: 1, height, width}}>
       {routesToRender.map(
         (rt, idx) => {
-          return <AnimatableTouchableWithFeedback
+          return <View
             useNativeDriver={true}
             style={{ position: 'absolute',
-              display: 'none',
+              height, width,
+              backgroundColor: 'white',
               left: 0,
               zIndex: rt.index,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.key} ref={ref =>  {this.handleRef(rt, ref);}}>
-            <View style={{ position: 'absolute',
-              left: 0,
-              zIndex: rt.index,
-              backgroundColor: 'white',
-              top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}}>
-              {this.createComponent(rt, {style: {height, width}})}
-            </View>
-          </AnimatableTouchableWithFeedback>;
+            {this.createComponent(rt, {style: {height, width}})}
+          </View>;
         }
       )}
-    </AnimatableContainer>;
+    </View>;
   }
 }
 
@@ -119,8 +113,9 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
     newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, addition ];
   }
  
-  const newNavigation = navigationContainer.setIn(['navigationPointer'], newNavPointer);
-  return newNavigation.setIn(['navigationStack'], newNavigationStack);
+  const croppedStack = newNavigationStack.slice(-MaxStackLength);
+  const newNavigation = navigationContainer.setIn(['navigationPointer'], newNavPointer - newNavigationStack.length - MaxStackLength);
+  return newNavigation.setIn(['navigationStack'], croppedStack);
 };
 
 const goBackTranslation = (navigationContainer) => {

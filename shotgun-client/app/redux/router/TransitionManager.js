@@ -12,6 +12,10 @@ export default class TransitionManager{
   }
   
   initialize(route, componentRef){
+    if (componentRef === null){
+      return;
+    }
+    RouteUtils.ensureComponentIsNative(componentRef);
     this.initializedRouteElementReferences[route.key] =  {componentRef, route: RouteUtils.removeDeltas(route)};
   }
   
@@ -42,8 +46,17 @@ export default class TransitionManager{
   async transition(componentRef, route){
     const animationType = RouteUtils.getAnimationType(route);
     if (animationType){
-      //componentRef.setNativeProps(this.getInitialStyleForRoute(route.index));
+      componentRef.setNativeProps({
+        style: {
+          zIndex: 1,
+        },
+      });
       await componentRef.animate(animationType, RouteUtils.getDuration(route));
+      componentRef.setNativeProps({
+        style: {
+          zIndex: 0,
+        },
+      });
     }
   }
  
