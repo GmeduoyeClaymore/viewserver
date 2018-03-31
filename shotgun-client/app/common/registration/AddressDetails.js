@@ -24,7 +24,7 @@ const AddressDetails  = ({deliveryAddress = {}, match, history, next, setState, 
   return <Container>
     <Header withButton>
       <Left>
-        <Button onPress={() => history.push(`${match.path}/UserDetails`)}>
+        <Button onPress={() => history.goBack()}>
           <Icon name='back-arrow'/>
         </Button>
       </Left>

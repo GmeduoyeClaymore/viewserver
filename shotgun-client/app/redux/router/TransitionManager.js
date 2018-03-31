@@ -56,7 +56,8 @@ export default class TransitionManager{
         const {componentRef} = this.initializedRouteElementReferences[route.key];
         const {beforeNavigateTo} = lifeCycles[route.key];
         const {beforeNavigateTo: beforeNavigateToFromComponentRef} = componentRef;
-        const transitionPromise = combine(beforeNavigateTo ? beforeNavigateTo(props) : undefined, beforeNavigateToFromComponentRef ? beforeNavigateToFromComponentRef(props) : undefined, this.transition(componentRef, route));
+        const {beforeNavigateTo: beforeNavigateToFromComponentRefWrapped} = componentRef.wrappedInstance || {};
+        const transitionPromise = combine(beforeNavigateTo ? beforeNavigateTo(props) : undefined, beforeNavigateToFromComponentRef ? beforeNavigateToFromComponentRef(props) : undefined,  beforeNavigateToFromComponentRefWrapped ? beforeNavigateToFromComponentRefWrapped(props) : undefined, this.transition(componentRef, route));
         keysToTransition.push(route.key);
         transitionPromises.push(transitionPromise);
       }

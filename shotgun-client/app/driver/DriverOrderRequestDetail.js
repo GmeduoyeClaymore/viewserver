@@ -11,7 +11,7 @@ class DriverOrderRequestDetail extends Component{
     super(props);
   }
 
-  beforeNavigateTo(){
+  componentWillMount(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('orderSummaryDao', {
@@ -76,6 +76,6 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, true, true
 )(DriverOrderRequestDetail);
 

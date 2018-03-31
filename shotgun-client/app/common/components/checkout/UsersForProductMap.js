@@ -24,7 +24,6 @@ class UsersForProductMap extends Component{
   constructor(props){
     super(props);
     this.doAddressLookup = this.doAddressLookup.bind(this);
-    this.setLocation = this.setLocation.bind(this);
     this.getLocationTextInput = this.getLocationTextInput.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.assignDeliveryToUser = this.assignDeliveryToUser.bind(this);

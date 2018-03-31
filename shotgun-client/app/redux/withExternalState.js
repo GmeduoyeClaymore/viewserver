@@ -55,10 +55,10 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
 };
 
 const setState = (stateKey, partialState, continueWith) => {
-  return setStateWithPath(stateKey, partialState, [], continueWith);
+  return setStateWithPathFunc(stateKey, partialState, [], continueWith);
 };
 
-const setStateWithPath = (stateKey, partialState, path, continueWith) => {
+const setStateWithPathFunc = (stateKey, partialState, path, continueWith) => {
   return {type: UPDATE_COMPONENT_STATE(stateKey), path: [...getPath(stateKey), ...path], data: partialState, continueWith};
 };
 
@@ -72,7 +72,7 @@ const createSetState = (stateKey) => {
 const createSetStateWithPath = (stateKey) => {
   return function(partialState, path, continueWith, dispatchArgument){
     const {dispatch = dispatchArgument} = (this.props || {});
-    dispatch(setStateWithPath(stateKey, partialState, path, continueWith));
+    dispatch(setStateWithPathFunc(stateKey, partialState, path, continueWith));
   };
 };
 

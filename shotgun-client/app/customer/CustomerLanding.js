@@ -67,14 +67,14 @@ class CustomerLanding extends Component {
     const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth };
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
-        <ReduxRouter {...completeProps} defaultRoute={`${path}/Checkout`}>
+        <ReduxRouter {...completeProps} defaultRoute={`${path}/CustomerOrders`}>
           <Route path={`${path}/Checkout`} component={Checkout}/>
           <Route path={`${path}/CustomerOrders`} exact component={CustomerOrders}/>
           <Route path={`${path}/Orders`} exact component={CustomerOrders}/>
           <Route path={`${path}/CustomerOrderDetail`} exact component={CustomerOrderDetail}/>
           <Route path={`${path}/CustomerOrderInProgress`} exact component={CustomerOrderInProgress}/>
-          <Route path={`${path}/Settings`} component={CustomerSettings}/>
-          <Route path={`${path}/UserRelationships`} component={UserRelationships} persistent={true}/>
+          <Route path={`${path}/Settings`} parentPath={path} component={CustomerSettings}/>
+          <Route path={`${path}/UserRelationships`} component={UserRelationships}/>
         </ReduxRouter>
         <CustomerMenuBar {...this.props}/>
       </Container>;

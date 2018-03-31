@@ -9,7 +9,7 @@ import {Linking} from 'react-native';
 
 const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const CustomerSettings = ({history, user}) => {
+const CustomerSettings = ({history, user, parentPath}) => {
   const signOut = async () => {
     await PrincipalService.removeUserIdFromDevice();
     history.push('/Root');
@@ -29,15 +29,15 @@ const CustomerSettings = ({history, user}) => {
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdateUserDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdateAddressDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateAddressDetails`)}>
           <Text style={styles.text}>Home address</Text>
           <Icon style={styles.icon} name='address'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Customer/Settings/UpdatePaymentCardDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdatePaymentCardDetails`)}>
           <Text style={styles.text}>Payment cards</Text>
           <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>

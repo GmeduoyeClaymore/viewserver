@@ -66,7 +66,7 @@ class DriverOrders  extends Component{
     
     if (isCustomer !== newIsCustomer) {
       const newPath = location.pathname.endsWith('Posted') ? `${path}/Accepted` : `${path}/Posted`;
-      history.replace({pathname: newPath, transition: 'zoom'}, {isCustomer: newIsCustomer, isCompleted});
+      history.replace({pathname: newPath}, {isCustomer: newIsCustomer, isCompleted});
     }
   }
 

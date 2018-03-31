@@ -55,7 +55,7 @@ class FlatProductCategoryList extends Component{
   navigateToCategory(selectedCategory){
     const {navigationStrategy, selectedCategory: parentSelectedCategory} = this.props;
 
-    if (selectedCategory.isLeaf) {
+    if (selectedCategory && selectedCategory.isLeaf) {
       this.setState({selectedCategory}, navigationStrategy.next);
     } else {
       this.setState({parentSelectedCategory, selectedCategory: undefined});

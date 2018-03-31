@@ -15,13 +15,13 @@ class CustomerSettings extends React.Component {
   }
   render(){
     const {props} = this;
-    const {height, width} = props;
-    return <ReduxRouter height={height} width={width} defaultRoute='/Customer/Settings/CustomerSettingsLanding'>
-      <Route path={'/Customer/Settings/CustomerSettingsLanding'} exact component={CustomerSettingsLanding}/>
-      <Route path={'/Customer/Settings/UpdateUserDetails'} onUpdate={this.onUpdate} exact component={UpdateUserDetails} />
-      <Route path={'/Customer/Settings/UpdateAddressDetails'} next={'/Customer/Settings/HomeAddressDetails'} exact component={UpdateAddressDetails}/>
-      <Route path={'/Customer/Settings/UpdatePaymentCardDetails'} exact component={UpdatePaymentCardDetails}/>
-      <Route path={'/Customer/Settings/AddressLookup'} exact component={AddressLookup} />
+    const {height, width, path} = props;
+    return <ReduxRouter height={height} width={width} defaultRoute={`${path}/CustomerSettingsLanding`}>
+      <Route path={`${path}/CustomerSettingsLanding`} parentPath={path} exact component={CustomerSettingsLanding}/>
+      <Route path={`${path}/UpdateUserDetails`} onUpdate={this.onUpdate} exact component={UpdateUserDetails} />
+      <Route path={`${path}/UpdateAddressDetails`} next={`${path}/HomeAddressDetails`} exact component={UpdateAddressDetails}/>
+      <Route path={`${path}/UpdatePaymentCardDetails`} exact component={UpdatePaymentCardDetails}/>
+      <Route path={`${path}/AddressLookup`} exact component={AddressLookup} />
     </ReduxRouter>;
   }
 }
