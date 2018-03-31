@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
-import {ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {ValidatingButton, ErrorRegion, Icon, TermsAgreement} from 'common/components';
+import {withExternalState} from 'custom-redux';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
@@ -59,6 +59,7 @@ class DriverAccountType extends Component{
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </ErrorRegion>
+      <TermsAgreement history={history}/>
     </Container>;
   }
 }

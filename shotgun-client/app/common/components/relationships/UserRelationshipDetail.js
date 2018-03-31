@@ -5,7 +5,7 @@ import {PagingListView, Icon, Swiper, AverageRating} from 'common/components';
 import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
-import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
+import PhoneCallService from 'common/services/PhoneCallService';
 import {connect, withExternalState} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
@@ -228,7 +228,7 @@ const mapStateToProps = (state, initialProps) => {
   const onPressCallUser = async (user) => {
     const {userId, relationshipStatus} = user;
     if (relationshipStatus === 'ACCEPTED'){
-      RNImmediatePhoneCall.immediatePhoneCall(`+${user.contactNo}`);
+      PhoneCallService.call(user.contactNo);
     } else {
       dispatch(callUser({userId}));
     }

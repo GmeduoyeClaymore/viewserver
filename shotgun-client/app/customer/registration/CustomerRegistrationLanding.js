@@ -1,8 +1,12 @@
 import React from 'react';
 import {Text, Button, Container, Grid, Col, Row} from 'native-base';
+import {Icon} from 'common/components';
 
 export default CustomerRegistrationLanding = ({history}) => {
   return <Container padded>
+    <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
+      <Icon name='back-arrow'/>
+    </Button>
     <Grid>
       <Row size={50}>
         <Col>
@@ -22,5 +26,10 @@ export default CustomerRegistrationLanding = ({history}) => {
 const styles = {
   signInButton: {
     marginBottom: 15
+  },
+  backButton: {
+    position: 'absolute',
+    left: 0,
+    top: 0
   }
 };

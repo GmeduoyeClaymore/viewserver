@@ -109,7 +109,6 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
         ArrayList<String> configStrings = new ArrayList<>();
 
         for (IndexOperator.QueryHolder queryHolder : queryHolders) {
-            System.out.println("Query holder toString: " + queryHolder.toString());
             configStrings.add(queryHolder.toString());
         }
 

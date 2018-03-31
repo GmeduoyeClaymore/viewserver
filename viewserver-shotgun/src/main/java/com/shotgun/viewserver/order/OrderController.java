@@ -187,7 +187,7 @@ public class OrderController {
         PriceStrategy strategy = getPriceStrategy(orderItem);
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining
-            case JOURNEY_TIME:
+            case JOURNEY_DISTANCE:
                 return (calculatePricePerDistance(delivery)) + product.getPrice() + (calculateAdditionalLabour(orderItem) / 18 /* labourers cost is a day rate 9hrs we want to see what that costs for 30 mins */);
             case FIXED:
                 return getQuantity(orderItem) * product.getPrice();
