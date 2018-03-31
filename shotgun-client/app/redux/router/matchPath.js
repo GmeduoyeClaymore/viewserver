@@ -28,30 +28,14 @@ const compilePath = (pattern, options) => {
  */
 const matchPath = function matchPath(pathname, options) {
   if (typeof options === 'string') options = { path: options };
-
-  const {path = '/', exact = false, strict = false, sensitive = false} = options;
-
-  const _compilePath = compilePath(path, { end: exact, strict, sensitive });
-  const {re, keys} = _compilePath;
-  const match = re.exec(pathname);
-
-  if (!match) return null;
-
-  const url = match[0];
-  const values = match.slice(1);
-
-  const isExact = pathname === url;
-
-  if (exact && !isExact) return null;
-
+  const isExact = pathname === options.path;
+  const match = pathname.startsWith(options.path) || isExact;
+  if (!match){
+    return;
+  }
   return {
-    path, // the path pattern used to match
-    url: path === '/' && url === '' ? '/' : url, // the matched portion of the URL
-    isExact, // whether or not we matched exactly
-    params: keys.reduce((memo, key, index) => {
-      memo[key.name] = values[index];
-      return memo;
-    }, {})
+    match,
+    isExact
   };
 };
 

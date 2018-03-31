@@ -2,6 +2,18 @@ import Logger from 'common/Logger';
 
 import * as RouteUtils from './routeUtils';
 
+
+const combine = async (promise1, promise2) => {
+  const result = [];
+  if (promise1){
+    result.push(await promise1);
+  }
+  if (promise2){
+    result.push(await promise2);
+  }
+  return result;
+};
+
 export default class TransitionManager{
   constructor(){
     this.initializedRouteElementReferences = {};
@@ -18,24 +30,35 @@ export default class TransitionManager{
     RouteUtils.ensureComponentIsNative(componentRef);
     this.initializedRouteElementReferences[route.key] =  {componentRef, route: RouteUtils.removeDeltas(route)};
   }
+
+  destroy(routeKey){
+    const componentRouteRef = this.initializedRouteElementReferences[routeKey];
+    if (componentRouteRef){
+      const {oneOffDestruction} = componentRouteRef;
+      if (oneOffDestruction){
+        oneOffDestruction();
+      }
+      delete this.initializedRouteElementReferences[routeKey];
+    }
+  }
   
   doAnyOfMyRoutesNeedToTransition(navigationContainer){
-    return !this.isMidTransition && !!RouteUtils.getOrderedRoutes(Object.values(this.initializedRouteElementReferences).map(c => c.route), navigationContainer, true).length;
+    return RouteUtils.getOrderedRoutes(Object.values(this.initializedRouteElementReferences).map(c => c.route), navigationContainer, true);
   }
 
-  async performTransition(navigationContainer, defaultRoute){
-    if (this.isMidTransition){
-      Logger.info('Not transitioning mid transition');
-    }
-    const routes = RouteUtils.getOrderedRoutes(this.getInitializedRouteReferences(), navigationContainer, true, defaultRoute);
+  async performTransition(routes, navigationContainer, {lifeCycles, props}){
     this.isMidTransition = true;
     const transitionPromises = [];
     const keysToTransition = [];
+    
     routes.filter(rt=> RouteUtils.getAnimationType(rt)).forEach(
       (route) => {
         const {componentRef} = this.initializedRouteElementReferences[route.key];
+        const {beforeNavigateTo} = lifeCycles[route.key];
+        const {beforeNavigateTo: beforeNavigateToFromComponentRef} = componentRef;
+        const transitionPromise = combine(beforeNavigateTo ? beforeNavigateTo(props) : undefined, beforeNavigateToFromComponentRef ? beforeNavigateToFromComponentRef(props) : undefined, this.transition(componentRef, route));
         keysToTransition.push(route.key);
-        transitionPromises.push(this.transition(componentRef, route));
+        transitionPromises.push(transitionPromise);
       }
     );
     Logger.info(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and routes are ${JSON.stringify(routes)}`);

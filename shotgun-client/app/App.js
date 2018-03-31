@@ -21,7 +21,6 @@ import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
 import {registerTokenListener} from 'common/Listeners';
-import AddPropsToRoute from 'common/AddPropsToRoute';
 import {ReduxRouter, Route} from 'custom-redux';
 
 const store = configureStore();
@@ -136,8 +135,6 @@ export default class App extends React.Component {
 
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isReady};
     const completeProps = {...globalProps, ...this.props};
-    const RegistrationCommonPage = AddPropsToRoute(RegistrationCommon, completeProps);
-    const LandingCommonPage = AddPropsToRoute(LandingCommon, completeProps);
 
     return <Container style={{flexDirection: 'column', flex: 1}}>
       <Container style={{flex: 1}}>
@@ -145,15 +142,14 @@ export default class App extends React.Component {
           <Root>
             <StyleProvider style={getTheme(shotgun)}>
               <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-                <ReduxRouter defaultRoute="/Root">
-                  <Route path="/Root" component={this.userId ? LandingCommonPage : RegistrationCommonPage }/>
-                  <Route path="/RegistrationCommon" exact component={RegistrationCommonPage}/>
-                  <Route path="/LandingCommon" exact component={LandingCommonPage}/>
-                  <Route path="/Customer/Registration" component={AddPropsToRoute(CustomerRegistration, completeProps)}/>
-                  <Route path="/Driver/Registration" component={AddPropsToRoute(DriverRegistration, completeProps)}/>
-                  <Route path="/Customer/Landing" component={AddPropsToRoute(CustomerLanding, completeProps)}/>
-                  <Route path="/Driver/Landing" component={AddPropsToRoute(DriverLanding, completeProps)}/>
-                  <Route path="/TermsAndConditions" component={AddPropsToRoute(TermsAndConditions, completeProps)}/>
+                <ReduxRouter defaultRoute={this.userId  ? '/LandingCommon' : '/RegistrationCommon' } {...completeProps}>
+                  <Route path="/RegistrationCommon" exact component={RegistrationCommon}/>
+                  <Route path="/LandingCommon" exact component={LandingCommon}/>
+                  <Route path="/Customer/Registration" component={CustomerRegistration}/>
+                  <Route path="/Driver/Registration" component={DriverRegistration}/>
+                  <Route path="/Customer/Landing" component={CustomerLanding}/>
+                  <Route path="/Driver/Landing" component={DriverLanding}/>
+                  <Route path="/TermsAndConditions" component={TermsAndConditions}/>
                 </ReduxRouter>
               </View>
             </StyleProvider>

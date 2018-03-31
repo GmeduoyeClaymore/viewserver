@@ -23,7 +23,6 @@ class DeliveryMap extends Component{
   constructor(props){
     super(props);
     this.doAddressLookup = this.doAddressLookup.bind(this);
-    this.setLocation = this.setLocation.bind(this);
     this.setDurationAndDistance = this.setDurationAndDistance.bind(this);
     this.getLocationText = this.getLocationText.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
@@ -31,6 +30,10 @@ class DeliveryMap extends Component{
   }
 
   componentDidMount(){
+    const {isInBackground} = this.props;
+    if (isInBackground){
+      return;
+    }
     this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
   }
 
@@ -49,7 +52,10 @@ class DeliveryMap extends Component{
     };
   }
   componentWillReceiveProps(newProps){
-    const {oldOptions} = newProps;
+    const {oldOptions, isInBackground} = newProps;
+    if (isInBackground){
+      return;
+    }
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsersForProduct(newOptions);
@@ -65,20 +71,15 @@ class DeliveryMap extends Component{
   getLocationText(address, addressKey, placeholder){
     style = address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
-    const {onChangeText, setLocation, doAddressLookup} = this;
+    const {onChangeText} = this;
     return  <Row>
       {address.line1 !== undefined ? <Col size={30}>
         <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
       <Col size={70}>
-        <Text style={style} onPress={() => doAddressLookup(placeholder, a => setLocation(a, addressKey))}>{text}</Text>
+        <Text style={style} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{text}</Text>
       </Col>
     </Row>;
-  }
-
-  setLocation(address, addressKey){
-    const {delivery, history, match} = this.props;
-    this.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/DeliveryMap`));
   }
 
   setDurationAndDistance({distance, duration}){
@@ -86,9 +87,9 @@ class DeliveryMap extends Component{
     this.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
   }
 
-  doAddressLookup(addressLabel, onAddressSelected){
-    const {history, match} = this.props;
-    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
+  doAddressLookup(addressLabel, addressKey){
+    const {history, parentPath} = this.props;
+    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
   }
 
   fitMap(){
@@ -104,7 +105,7 @@ class DeliveryMap extends Component{
 
   render(){
     const {fitMap, setDurationAndDistance, getLocationText} = this;
-    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct} = this.props;
+    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct, isInBackground} = this.props;
     const {latitude, longitude} = me;
   
     const initialRegion = {
@@ -170,7 +171,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {delivery, selectedContentType, selectedProduct} = initialProps;
+  const {delivery, selectedContentType, selectedProduct, isInBackground} = initialProps;
   const {destination, origin} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;

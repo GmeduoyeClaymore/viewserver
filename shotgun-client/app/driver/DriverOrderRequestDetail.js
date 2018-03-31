@@ -4,14 +4,14 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {OrderSummary, PriceSummary, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
-import {acceptOrderRequest, updateOrderPrice} from 'driver/actions/DriverActions';
+import {acceptOrderRequest} from 'driver/actions/DriverActions';
 
 class DriverOrderRequestDetail extends Component{
   constructor(props) {
     super(props);
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('orderSummaryDao', {

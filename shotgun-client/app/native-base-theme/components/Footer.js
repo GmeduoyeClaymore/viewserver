@@ -86,7 +86,8 @@ export default (variables = variable) => {
     paddingBottom: variables.footerPaddingBottom,
     elevation: 0,
     left: 0,
-    right: 0
+    right: 0,
+    zIndex: 2
   };
   return footerTheme;
 };

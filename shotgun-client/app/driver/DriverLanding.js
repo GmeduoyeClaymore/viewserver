@@ -10,7 +10,7 @@ import DriverSettings from './Settings/DriverSettings';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
-import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
+import {isAnyLoading, isAnyOperationPending, getDaoState, isAnyUnregistered} from 'common/dao';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
@@ -19,7 +19,6 @@ import UserRelationships from 'common/components/relationships/UserRelationships
 import Checkout from 'common/components/checkout/Checkout';
 import CustomerOrderDetail from 'customer/CustomerOrderDetail';
 import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
-import AddPropsToRoute from 'common/AddPropsToRoute';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Dimensions} from 'react-native';
@@ -29,73 +28,80 @@ const contentHeight = height - shotgun.footerHeight;
 const contentWidth = width;
 
 
+class TestComponent extends React.Component{
+  constructor(props){
+    super(props);
+  }
+
+  componentWillMount(){
+    this.log('Component mounting');
+  }
+
+  render(){
+    this.log('Component rendering');
+    return <Text>Test Component</Text>;
+  }
+
+  componentWillUnmount(){
+    this.log('Component unmounting');
+  }
+
+  log(message){
+    Logger.info('TestComponent-' + message);
+  }
+}
+
 class DriverLanding extends Component {
   constructor(props) {
     super(props);
     Logger.info('Creating a new instance of driver landing');
-    this.hasLoadedData = false;
   }
 
-  componentDidMount(){
+  static oneOffInitialization(props){
     Logger.info('Mounting driver landing');
-    this.loadData(this.props);
-    this.attemptPaymentCards(this.props);
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
+    DriverLanding.loadData(props);
+    DriverLanding.attemptPaymentCards(props);
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(props.history, 'Driver', actionUri));
   }
 
-  componentWillReceiveProps(newProps){
-    this.loadData(newProps);
-  }
-
-  loadData(newProps){
-    if (!this.hasLoadedData ){
-      const {dispatch, client, userId, user} = newProps;
-      if (user){
-        dispatch(driverServicesRegistrationAction(client, userId));
-        dispatch(customerServicesRegistrationAction(client));
-        dispatch(getCurrentPosition());
-        dispatch(watchPosition());
-        dispatch(getBankAccount());
-        this.hasLoadedData = true;
-      }
-    }
-  }
-
-
-  componentWillReceiveProps(props){
-    this.attemptPaymentCards(props);
-  }
-
-  attemptPaymentCards(props){
-    const {dispatch, user} = props;
-    if (!this.paymentCardsRequested && user){
-      dispatch(getPaymentCards());
-      this.paymentCardsRequested = true;
-    }
-  }
-
-  componentWillUnmount() {
-    const {dispatch} = this.props;
+  static oneOffDestruction(props) {
+    const {dispatch} = props;
     dispatch(stopWatchingPosition());
   }
 
+  static loadData(newProps){
+    const {dispatch, client, userId, user} = newProps;
+    if (user){
+      throw new Error('You shouldnt be on this page without a user specified how did this happen');
+    }
+    dispatch(driverServicesRegistrationAction(client, userId));
+    dispatch(customerServicesRegistrationAction(client));
+    dispatch(getCurrentPosition());
+    dispatch(watchPosition());
+    dispatch(getBankAccount());
+  }
+
+  static attemptPaymentCards(props){
+    const {dispatch} = props;
+    dispatch(getPaymentCards());
+  }
+
   render() {
-    const {busy} = this.props;
+    const {busy, path} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
-        <ReduxRouter height={contentHeight} width={contentWidth}  defaultRoute="/Driver/DriverOrderRequests">
-          <Route path={'/Driver/Checkout'} component={AddPropsToRoute(Checkout, this.props)}/>
-          <Route path={'/Driver/DriverOrderRequests'} exact component={AddPropsToRoute(DriverOrderRequests, this.props)}/>
-          <Route path={'/Driver/DriverOrderRequestDetail'} exact component={AddPropsToRoute(DriverOrderRequestDetail, this.props)}/>
-          <Route path={'/Driver/DriverOrders'} exact component={AddPropsToRoute(DriverOrders, this.props)}/>
-          <Route path={'/Driver/CustomerOrderDetail'} exact component={AddPropsToRoute(CustomerOrderDetail, this.props)}/>
-          <Route path={'/Driver/CustomerOrderInProgress'} exact component={AddPropsToRoute(CustomerOrderInProgress, this.props)}/>
-          <Route path={'/Driver/Orders'} exact component={AddPropsToRoute(DriverOrders, this.props)}/>
-          <Route path={'/Driver/DriverOrderDetail'} exact component={AddPropsToRoute(DriverOrderDetail, this.props)}/>
-          <Route path={'/Driver/DriverOrderInProgress'} exact component={AddPropsToRoute(DriverOrderInProgress, this.props)}/>
-          <Route path={'/Driver/DriverOrderInProgress'} exact component={AddPropsToRoute(DriverOrderInProgress, this.props)}/>
-          <Route path={'/Driver/Settings'} component={AddPropsToRoute(DriverSettings, this.props)}/>
-          <Route path={'/Driver/UserRelationships'} component={AddPropsToRoute(UserRelationships, this.props)}/>
+        <ReduxRouter  {...this.props}  height={contentHeight} width={contentWidth}  defaultRoute={`${path}/DriverOrderRequests`}>
+          <Route path={`${path}/Checkout`} component={Checkout}/>
+          <Route path={`${path}/DriverOrderRequests`} exact component={DriverOrderRequests}/>
+          <Route path={`${path}/DriverOrderRequestDetail`} exact component={DriverOrderRequestDetail}/>
+          <Route path={`${path}/DriverOrders`} exact component={DriverOrders}/>
+          <Route path={`${path}/CustomerOrderDetail`} exact component={CustomerOrderDetail}/>
+          <Route path={`${path}/CustomerOrderInProgress`} exact component={CustomerOrderInProgress}/>
+          <Route path={`${path}/Orders`} exact component={DriverOrders}/>
+          <Route path={`${path}/DriverOrderDetail`} exact component={DriverOrderDetail}/>
+          <Route path={`${path}/DriverOrderInProgress`} exact component={DriverOrderInProgress}/>
+          <Route path={`${path}/Settings`} component={DriverSettings}/>
+          <Route path={`${path}/UserRelationships`} component={UserRelationships}/>
         </ReduxRouter>
         <DriverMenuBar {...this.props}/>
       </Container>;
@@ -109,6 +115,8 @@ const mapStateToProps = (state, nextOwnProps) => {
     ...nextOwnProps,
     parentMatch,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
+    paymentDaoReady: !!getDaoState(state, 'paymentDao'),
+    awaitingDaos: isAnyUnregistered(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
     busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
     user
   };

@@ -56,23 +56,10 @@ export default class UserRelationshipDaoContext{
 
   mapDomainEvent(dataSink){
     return {
-      users: this.orderRows(dataSink.rows).map(r => this.mapUser(r))
+      users: dataSink.rows
     };
   }
 
-  orderRows(rows){ /* work around until the sort operator is fixed */
-    const result = [...rows];
-    result.sort((r1, r2) => {
-      if (r1.userId < r2.userId){
-        return -1;
-      }
-      if (r1.userId > r2.userId){
-        return 1;
-      }
-      return 0;
-    });
-    return result;
-  }
 
   mapUser(user){
     if (!user){

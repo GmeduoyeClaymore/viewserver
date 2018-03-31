@@ -6,16 +6,13 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {withExternalState} from 'custom-redux';
 
 const AddressDetails  = ({deliveryAddress = {}, match, history, next, setState, dispatch}) => {
-  const onAddressSelected = (address) => {
-    setState({deliveryAddress: address}, () => history.push(`${match.path}/AddressDetails`), dispatch);
-  };
-
   const onChangeText = async (field, value) => {
     setState({deliveryAddress: {...deliveryAddress, [field]: value}}, dispatch);
   };
 
   const doAddressLookup = (addressLabel) => {
-    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected });
+    const {parentPath} = this.props;
+    history.push(`${parentPath}/AddressLookup`, {addressPath: ['deliveryAddress'], addressLabel});
   };
 
   const getLocationText = (location = {}, placeholder) => {

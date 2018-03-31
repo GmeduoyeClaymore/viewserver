@@ -14,7 +14,6 @@ import {INITIAL_STATE} from './DriverRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
-import AddPropsToRoute from 'common/AddPropsToRoute';
 
 class DriverRegistration extends Component {
   static InitialState = INITIAL_STATE;
@@ -36,13 +35,13 @@ class DriverRegistration extends Component {
   render() {
     const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
     return <ReduxRouter {...driverRegistrationProps} defaultRoute='/Driver/Registration/DriverRegistrationLanding'>
-      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact component={AddPropsToRoute(DriverRegistrationLanding, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/Login'} exact component={AddPropsToRoute(DriverLogin, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/UserDetails'} exact component={AddPropsToRoute(UserDetails, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/AddressDetails'} exact component={AddPropsToRoute(AddressDetails, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/AddressLookup'} exact component={AddPropsToRoute(AddressLookup, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/BankAccountDetails'} exact component={AddPropsToRoute(BankAccountDetails, driverRegistrationProps)}/>
-      <Route path={'/Driver/Registration/DriverAccountType'} exact component={AddPropsToRoute(DriverAccountType, driverRegistrationProps)}/>
+      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact component={DriverRegistrationLanding}/>
+      <Route path={'/Driver/Registration/Login'} exact component={DriverLogin}/>
+      <Route path={'/Driver/Registration/UserDetails'} exact component={UserDetails}/>
+      <Route path={'/Driver/Registration/AddressDetails'} exact component={AddressDetails}/>
+      <Route path={'/Driver/Registration/AddressLookup'} exact component={AddressLookup}/>
+      <Route path={'/Driver/Registration/BankAccountDetails'} exact component={BankAccountDetails}/>
+      <Route path={'/Driver/Registration/DriverAccountType'} exact component={DriverAccountType}/>
     </ReduxRouter>;
   }
 }

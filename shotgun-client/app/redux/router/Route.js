@@ -1,5 +1,5 @@
 'use strict';
-import React, {Children, PureComponent} from 'react';
+import React, {Children, Component} from 'react';
 import PropTypes from 'prop-types';
 
 const isEmptyChildren = (children) => {
@@ -8,7 +8,7 @@ const isEmptyChildren = (children) => {
 /**
  * The public API for matching a single path and rendering.
  */
-export class Route extends PureComponent{
+export class Route extends Component{
     static propTypes = {
       computedMatch: PropTypes.object, // private, from <Switch>
       path: PropTypes.string,
@@ -20,6 +20,24 @@ export class Route extends PureComponent{
       children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
       location: PropTypes.object
     };
+
+    oneOffInitialization(){
+      const {props} = this;
+      const {component} = props;
+      component.oneOffInitialization(props);
+    }
+
+    oneOffDestruction(){
+      const {props} = this;
+      const {component} = props;
+      component.oneOffDestruction(props);
+    }
+
+    beforeNavigateTo(){
+      const {props} = this;
+      const {component} = props;
+      component.beforeNavigateTo(props);
+    }
 
     constructor(props){
       super(props);

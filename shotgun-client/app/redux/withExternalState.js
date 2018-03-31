@@ -55,7 +55,11 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
 };
 
 const setState = (stateKey, partialState, continueWith) => {
-  return {type: UPDATE_COMPONENT_STATE(stateKey), path: getPath(stateKey), data: partialState, continueWith};
+  return setStateWithPath(stateKey, partialState, [], continueWith);
+};
+
+const setStateWithPath = (stateKey, partialState, path, continueWith) => {
+  return {type: UPDATE_COMPONENT_STATE(stateKey), path: [...getPath(stateKey), ...path], data: partialState, continueWith};
 };
 
 const createSetState = (stateKey) => {
@@ -65,20 +69,27 @@ const createSetState = (stateKey) => {
   };
 };
 
+const createSetStateWithPath = (stateKey) => {
+  return function(partialState, path, continueWith, dispatchArgument){
+    const {dispatch = dispatchArgument} = (this.props || {});
+    dispatch(setStateWithPath(stateKey, partialState, path, continueWith));
+  };
+};
+
 /**
  * A public higher-order component to access the imperative API
  */
 
-const wrapperFactory = (Component, mapGlobalStateToProps) => {
+const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride) => {
   let hasInitialized = false;
   return class ComponentWrapper extends React.Component{
     constructor(props){
       super(props);
       const {stateKey = (Component.stateKey || Component.name), propsToMap} = props;
-      this.stateKey = stateKey;
-      this.newProps =  _extends({}, createNewProps(Component, {...props, stateKey}));
+      this.stateKey = superStateKeyOverride || stateKey;
+      this.newProps =  _extends({}, createNewProps(Component, this.stateKey, {...props}));
       const isStatelessComponent = !!Component.prototype.render;
-      const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsToMap, mapGlobalStateToProps);
+      const componentAndGlobalMapStateToProps = mapComponentStateToProps(this.stateKey, propsToMap, mapGlobalStateToProps);
       this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
       const displayKey = (Component.displayName || Component.name);
       this.displayName = 'withExternalState(' + displayKey + ')';
@@ -90,7 +101,7 @@ const wrapperFactory = (Component, mapGlobalStateToProps) => {
     shouldComponentUpdate(){
       const {path, history = {}} = this.props;
       const {location} = history;
-      return !location || path.includes(location.pathname);
+      return !location || !path || location.pathname.includes(path);
     }
 
     componentWillMount(){
@@ -114,20 +125,21 @@ const wrapperFactory = (Component, mapGlobalStateToProps) => {
 
     render(){
       const {Component, newProps, props, resetComponentState} = this;
-      return <Component ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
+      return <Component key={newProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
     }
   };
 };
 
-const createNewProps = (Component, originalProps) => {
-  const {stateKey} = originalProps;
+const createNewProps = (Component, stateKey, originalProps) => {
+  const {setState: _1, setStateWithPath: _2, ...rest} = originalProps;
   const newSetState = createSetState(stateKey);
+  const setStateWithPath = createSetStateWithPath(stateKey);
   Component.prototype.setState =  newSetState;
-  return {...originalProps, setState: newSetState, Component};
+  return {...rest, setState: newSetState, setStateWithPath, Component};
 };
 
-export const withExternalState = (mapGlobalStateToProps) => (Component) => {
-  return wrapperFactory(Component, mapGlobalStateToProps);
+export const withExternalState = (mapGlobalStateToProps, superStateKeyOverride) => (Component) => {
+  return wrapperFactory(Component, mapGlobalStateToProps, superStateKeyOverride);
 };
 
 export default withExternalState;

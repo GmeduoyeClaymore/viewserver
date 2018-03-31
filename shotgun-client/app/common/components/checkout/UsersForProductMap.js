@@ -47,20 +47,15 @@ class UsersForProductMap extends Component{
   getLocationTextInput(address, addressKey, placeholder){
     style = address && address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
-    const {onChangeText, setLocation, doAddressLookup} = this;
+    const {onChangeText, doAddressLookup} = this;
     return  <Row>
       {address && address.line1 !== undefined ? <Col size={30}>
         <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
       <Col size={70}>
-        <Text style={style} onPress={() => doAddressLookup(placeholder, a => setLocation(a, addressKey))}>{text}</Text>
+        <Text style={style} onPress={() => doAddressLookup(placeholder, addressKey)}>{text}</Text>
       </Col>
     </Row>;
-  }
-
-  setLocation(address, addressKey){
-    const {delivery, history, match} = this.props;
-    this.setState({delivery: {...delivery, [addressKey]: address }}, () => history.push(`${match.path}/UsersForProductMap`));
   }
 
   assignDeliveryToUser(user){
@@ -71,10 +66,11 @@ class UsersForProductMap extends Component{
   }
 
 
-  doAddressLookup(addressLabel, onAddressSelected){
-    const {history, match} = this.props;
-    history.push(`${match.path}/AddressLookup`, {addressLabel, onAddressSelected});
+  doAddressLookup(addressLabel, addressKey){
+    const {history, parentPath} = this.props;
+    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
   }
+
 
   render(){
     const {getLocationTextInput, assignDeliveryToUser} = this;

@@ -70,6 +70,10 @@ export const isAnyLoading = (state, daoNames) => {
   return daoNames.some( dao => getDao(state, dao) == undefined) || daoNames.some( nm => isLoading(state, nm));
 };
 
+export const isAnyUnregistered = (state, daoNames) => {
+  return daoNames.some( dao => getDao(state, dao) == undefined);
+};
+
 export const getNavigationProps = (props) => {
   return (props && props.location && props.location.state ? props.location.state : {});
 };

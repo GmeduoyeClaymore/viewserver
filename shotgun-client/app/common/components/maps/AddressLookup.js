@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect, setStateIfIsMounted } from 'custom-redux';
+import { withExternalState, setStateIfIsMounted } from 'custom-redux';
 import moment from 'moment';
 import { Text, Button, Header, Left, Body, Container, Title, Input, Grid, Row, List, ListItem, View, Content} from 'native-base';
 import { getDaoState, getNavigationProps } from 'common/dao';
@@ -76,17 +76,17 @@ class AddressLookup extends Component {
       suggestedPlaces: [],
       errors: undefined
     };
-    setStateIfIsMounted(this);
     this.searchAutoCompleteSuggestions = debounce(this.searchAutoCompleteSuggestions.bind(this), 50);
     this.onSuggestedPlaceSelected = this.onSuggestedPlaceSelected.bind(this);
     this.onAddressChanged = this.onAddressChanged.bind(this);
     this.reverseGeoCodeSearch = this.reverseGeoCodeSearch.bind(this);
+    this.onAddressSelected = this.onAddressSelected.bind(this);
   }
 
   async searchAutoCompleteSuggestions(value){
     const {client} = this.props;
     try {
-      this.setState({ busy: true });
+      super.setState({ busy: true });
       const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
         input: value,
         language: 'en'
@@ -94,13 +94,13 @@ class AddressLookup extends Component {
 
       const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('political'));
 
-      this.setState({
+      super.setState({
         suggestedPlaces: filteredPredictions,
         reverseLookedUpAddresses: [],
         busy: false
       });
     } catch (error) {
-      this.setState({ error });
+      super.setState({ error });
     }
   }
 
@@ -108,28 +108,37 @@ class AddressLookup extends Component {
     const {client, user} = this.props;
     const {latitude, longitude} = user;
     try {
-      this.setState({ busy: true });
+      super.setState({ busy: true });
       const reverseLookedUpAddresses = await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
         latitude, longitude
       });
 
-      this.setState({
+      super.setState({
         reverseLookedUpAddresses,
         suggestedPlaces: undefined,
         busy: false
       });
     } catch (error) {
-      this.setState({ error });
+      super.setState({ error });
     }
   }
 
   onAddressChanged(value){
-    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
+    super.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
+  }
+
+  onAddressSelected(value){
+    const {addressPath, setStateWithPath, history, dispatch} = this.props;
+    if (!addressPath){
+      throw new Error('This control needs an address path');
+    }
+    setStateWithPath(value, addressPath, history.goBack, dispatch);
   }
 
   async onSuggestedPlaceSelected(rowData){
     try {
-      const {client, onAddressSelected} = this.props;
+      const {client} = this.props;
+      const {onAddressSelected} = this;
       const res = await client.invokeJSONCommand('mapsController', 'mapPlaceRequest', {
         placeid: rowData.place_id,
         language: 'en'
@@ -137,16 +146,16 @@ class AddressLookup extends Component {
 
       onAddressSelected(parseGooglePlacesData(res.result));
     } catch (error) {
-      this.setState({ error });
+      super.setState({ error });
     }
   }
 
   render() {
     const { addressSearchText, suggestedPlaces = [], errors, reverseLookedUpAddresses = []} = this.state;
-    const { deliveryAddresses = [], addressLabel, history, onAddressSelected, me} = this.props;
+    const { deliveryAddresses = [], addressLabel, history, me} = this.props;
     const orderedAddresses = getOrderedAddresses(deliveryAddresses);
     const homeAddress = getHomeAddress(deliveryAddresses);
-    const {onSuggestedPlaceSelected, onAddressChanged} = this;
+    const {onSuggestedPlaceSelected, onAddressChanged, onAddressSelected} = this;
 
     return (
       <Container>
@@ -224,4 +233,4 @@ const mapStateToProps = (state, initialProps) => ({
   ...getDaoState(state, ['customer'], 'deliveryAddressDao'),
 });
 
-export default connect(mapStateToProps)(AddressLookup);
+export default withExternalState(mapStateToProps)(AddressLookup);

@@ -1,52 +1,52 @@
 import * as ContentTypes from 'common/constants/ContentTypes';
 
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+/*eslint-disable */
+resourceDictionary.
+  property('NavigationPath').
+    personell(['ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
+    rubbish(['FlatProductCategoryList', 'ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
+    skip(['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation']).
+    delivery(['ProductList', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
+    hire(['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation']);
+
+
 export default class ContentTypeNavigationStrategy{
-  constructor(history, path){
+  constructor(history, path, defaultPath){
     this.history = history;
+    this.defaultPath = defaultPath;
     this.path = path;
     if (!this.history){
       throw new Error('History must be set');
     }
+    if (!this.defaultPath){
+      throw new Error('defaultPath must be set');
+    }
     this.pathIndex = -1;
-    this.contentTypePaths = {};
-    this.contentTypePaths[ContentTypes.DELIVERY] = ['ProductList', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.RUBBISH] = ['FlatProductCategoryList', 'ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.SKIP] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.PERSONELL] = ['ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation'];
-    this.contentTypePaths[ContentTypes.HIRE] = ['ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation'];
     this.init = this.init.bind(this);
     this.next = this.next.bind(this);
     this.prev = this.prev.bind(this);
     this.goToIndex = this.goToIndex.bind(this);
   }
 
-
-  init(contentType){
-    this.contentType = contentType;
+  init(contentTypeId){
+    this.contentTypeId = contentTypeId;
+    this.paths = resourceDictionary.resolveInternal(contentTypeId).NavigationPath;
     this.pathIndex = -1;
-    if (!this.contentType){
-      throw new Error('Content type must be set');
-    }
   }
 
   next(payload){
-    if (!this.contentType){
-      throw new Error('Content type must be set');
-    }
-    const paths = this.contentTypePaths[this.contentType];
+    const {paths} = this;
     if (!paths){
-      throw new Error('Unable to find paths for content type ' + this.contentType);
+      throw new Error('Unable to find paths ensure strategy has been initialized');
     }
     this.goToIndex(paths, payload, this.pathIndex + 1, true);
   }
 
   prev(payload){
-    if (!this.contentType){
-      throw new Error('Content type must be set');
-    }
-    const paths = this.contentTypePaths[this.contentType];
+    const {paths} = this;
     if (!paths){
-      throw new Error('Unable to find paths for content type ' + this.contentType);
+      throw new Error('Unable to find paths ensure strategy has been initialized');
     }
 
     this.goToIndex(paths, payload, this.pathIndex - 1, false);
@@ -54,11 +54,11 @@ export default class ContentTypeNavigationStrategy{
 
   goToIndex(paths, payload, newIndex, increment){
     if (newIndex >= paths.length){
-      throw new Error(`Unable to find path index ${newIndex} for content type ${contentType}`);
+      throw new Error(`Unable to find path index ${newIndex} for content type ${this.contentTypeId}`);
     }
    
     if (newIndex == -1){
-      this.history.replace(`${this.path}/ProductSelect`);
+      this.history.replace(`${this.path}/${this.defaultPath}`);
     } else {
       const nextPath = paths[newIndex];
       if (increment){

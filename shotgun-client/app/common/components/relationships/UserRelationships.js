@@ -56,7 +56,7 @@ class UserRelationships extends Component{
   updateSubscription(){
     const newOptions = this.getOptionsFromProps(this.props);
     const {oldOptions} = this.props;
-    if (!isEqual(newOptions, oldOptions)){
+    if (!isEqual(newOptions, oldOptions, true)){
       this.subscribeToUsers(newOptions);
     }
   }
@@ -64,7 +64,7 @@ class UserRelationships extends Component{
   componentWillReceiveProps(newProps){
     const {oldOptions, distance} = newProps;
     const newOptions = this.getOptionsFromProps(newProps);
-    if (!isEqual(newOptions, oldOptions)){
+    if (!isEqual(newOptions, oldOptions, true)){
       this.subscribeToUsers(newOptions);
     }
     const {me} = newProps;

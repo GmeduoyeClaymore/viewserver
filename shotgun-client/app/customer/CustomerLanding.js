@@ -16,7 +16,6 @@ import {getCurrentPosition} from 'common/actions/CommonActions';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
-import AddPropsToRoute from 'common/AddPropsToRoute';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Dimensions} from 'react-native';
 const { height, width } = Dimensions.get('window');
@@ -68,14 +67,14 @@ class CustomerLanding extends Component {
     const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth };
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
-        <ReduxRouter height={contentHeight} width={contentWidth} defaultRoute={`${path}/Checkout`}>
-          <Route path={`${path}/Checkout`} component={AddPropsToRoute(Checkout, completeProps)}/>
-          <Route path={`${path}/CustomerOrders`} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
-          <Route path={`${path}/Orders`} exact component={AddPropsToRoute(CustomerOrders, completeProps)}/>
-          <Route path={`${path}/CustomerOrderDetail`} exact component={AddPropsToRoute(CustomerOrderDetail, completeProps)}/>
-          <Route path={`${path}/CustomerOrderInProgress`} exact component={AddPropsToRoute(CustomerOrderInProgress, completeProps)}/>
-          <Route path={`${path}/Settings`} component={AddPropsToRoute(CustomerSettings, completeProps)}/>
-          <Route path={`${path}/UserRelationships`} component={AddPropsToRoute(UserRelationships, completeProps)}/>
+        <ReduxRouter {...completeProps} defaultRoute={`${path}/Checkout`}>
+          <Route path={`${path}/Checkout`} component={Checkout}/>
+          <Route path={`${path}/CustomerOrders`} exact component={CustomerOrders}/>
+          <Route path={`${path}/Orders`} exact component={CustomerOrders}/>
+          <Route path={`${path}/CustomerOrderDetail`} exact component={CustomerOrderDetail}/>
+          <Route path={`${path}/CustomerOrderInProgress`} exact component={CustomerOrderInProgress}/>
+          <Route path={`${path}/Settings`} component={CustomerSettings}/>
+          <Route path={`${path}/UserRelationships`} component={UserRelationships} persistent={true}/>
         </ReduxRouter>
         <CustomerMenuBar {...this.props}/>
       </Container>;

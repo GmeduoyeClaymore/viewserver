@@ -29,6 +29,22 @@ const TransitionStrategies = {
     if (route.isRemove){
       return route.isReverse ? 'slideOutUp' : 'slideOutDown';
     }
+  },
+  flip: (route) => {
+    if (route.isAdd){
+      return route.isReverse ? 'flipInX' : 'flipInY';
+    }
+    if (route.isRemove){
+      return route.isReverse ? 'flipOutY' : 'flipOutX';
+    }
+  },
+  zoom: (route) => {
+    if (route.isAdd){
+      return route.isReverse ? 'zoomInLeft' : 'zoomInRight';
+    }
+    if (route.isRemove){
+      return route.isReverse ? 'zoomOutRight' : 'zoomOutLeft';
+    }
   }
 };
 
@@ -51,12 +67,16 @@ export const checkForOverlap = (routes) => {
   const overlappingRoutes = [];
   routes.forEach(
     rt => {
-      routes.forEach(
-        rt2 => {
-          if (rt != rt2 && matchPath(rt.pathname, rt2)){
-            overlappingRoutes.push(`Routes ${rt} and ${rt2} appear to overlap and they must not`);
-          }
-        });
+      if (!rt.path){
+        overlappingRoutes.push(`Route ${JSON.stringify(rt)} must have a path specified`);
+      } else {
+        routes.forEach(
+          rt2 => {
+            if (rt != rt2 && matchPath(rt.path, rt2)){
+              overlappingRoutes.push(`Routes ${JSON.stringify(rt)} and ${JSON.stringify(rt2)} appear to overlap and they must not`);
+            }
+          });
+      }
     }
   );
   if (overlappingRoutes.length){
@@ -65,8 +85,8 @@ export const checkForOverlap = (routes) => {
 };
   
 export const parseElementIntoRoute = (element) => {
-  const { path, exact, strict, sensitive} = element.props;
-  return { path, exact, strict, sensitive, key: getKeyFromElement(element)};
+  const { path, exact, strict, sensitive, persistent} = element.props;
+  return { path, exact, strict, sensitive, persistent, key: getKeyFromElement(element)};
 };
 
 export const removeDeltas = (navItem) => {
@@ -82,6 +102,24 @@ export const getRoutesForChildren = (children) => {
     result.push(route);
   });
   checkForOverlap(result);
+  return result;
+};
+
+export const getLifeCycleForChildren = (children) => {
+  const result = {};
+  Children.forEach(children, (element) => {
+    if (!isValidElement(element)) return;
+    const {component, path} = element.props;
+    if (!component){
+      throw new Error(`Element "${element.props.path}" does not have a component`);
+    }
+    result[path] = {
+      path,
+      oneOffInitialization: component.oneOffInitialization,
+      oneOffDestruction: component.oneOffDestruction,
+      beforeNavigateTo: component.beforeNavigateTo
+    };
+  });
   return result;
 };
   
@@ -101,6 +139,7 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
   const result = [];
   const {navigationStack = []} = navigationContainer;
   const foundKeys = [];
+  let foundVisibleRoot = false;
   navigationStack.filter(rt => !filterForTransitions || rt.isAdd || rt.isRemove).forEach(
     el => {
       routes.forEach(
@@ -113,14 +152,20 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
             Logger.info(`Matched ${JSON.stringify(rt)} to path ${el.pathname}`);
             foundKeys.push(rt.key);
             const {isAdd, isRemove, index, transition, isReverse} = match.isExact ? el : {};
-            result.push({...removeDeltas(rt), match, index, isAdd, isReverse, isRemove, transition});
+            foundVisibleRoot = true;
+            result.push({...removeDeltas(rt), match, index, isAdd, isReverse, isRemove, transition, persistent: false});
+          } else if (rt.persistent){
+            Logger.info(`Loading persistent route ${JSON.stringify(rt)} to path ${el.pathname}`);
+            foundKeys.push(rt.key);
+            result.unshift({...removeDeltas(rt), match, index: -1, persistent: true});
           }
         }
       );
     }
   );
-  if (!result.length && defaultRoute){
-    return [defaultRoute];
+  if (!foundVisibleRoot && defaultRoute){
+    const navigationStackLocation = navigationStack[navigationStack.length - 1];
+    return [{...defaultRoute, pathname: navigationStackLocation.pathname}]; // Change default routes path so it has the url of the referring page
   }
   return result;
 };

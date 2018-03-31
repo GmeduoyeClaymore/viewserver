@@ -41,7 +41,10 @@ class ContentTypeSelect extends Component{
   }
 
   actuallyStartOrder(navigationStrategy, selectedContentType){
-    this.setState({selectedCategory: selectedContentType.productCategory, selectedContentType});
+    const resources = resourceDictionary.resolve(selectedContentType.contentTypeId); /* This is fuckery will clean this up soon */
+    const initialState = resources.InitialState;
+    const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
+    this.setState({selectedCategory: selectedContentType.productCategory, selectedContentType, orderItem});
     navigationStrategy.init(selectedContentType.contentTypeId);
     navigationStrategy.next({parentSelectedCategory: selectedContentType.productCategory});
   }
