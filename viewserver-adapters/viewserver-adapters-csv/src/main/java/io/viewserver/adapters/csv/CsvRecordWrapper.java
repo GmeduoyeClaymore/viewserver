@@ -25,6 +25,8 @@ import org.apache.commons.csv.CSVRecord;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     private final DateTime startDate;
     private static String dateFormatStr = "dd/MM/yyyy";
     private static String dateTimeFormatStr = "dd/MM/yyyy HH:mm";
+    private static final Logger log = LoggerFactory.getLogger(CsvRecordWrapper.class);
 
     protected static final ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal() {
         @Override
@@ -244,7 +247,8 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
 
             return value.equals("") ? null : dateTimeFormat.get().parse(value);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            log.error("Problem parsing date",e);
+            return new Date();
         }
     }
 

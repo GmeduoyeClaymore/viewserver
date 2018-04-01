@@ -1,16 +1,13 @@
 import Logger from 'common/Logger';
-
+import React from 'react';
 import * as RouteUtils from './routeUtils';
 
 
-const combine = async (promise1, promise2) => {
+const combine = async (promises, props) => {
   const result = [];
-  if (promise1){
-    result.push(await promise1);
-  }
-  if (promise2){
-    result.push(await promise2);
-  }
+  promises.filter(c => c).forEach(
+    pr => result.push(pr(props))
+  );
   return result;
 };
 
@@ -55,9 +52,10 @@ export default class TransitionManager{
       (route) => {
         const {componentRef} = this.initializedRouteElementReferences[route.key];
         const {beforeNavigateTo} = lifeCycles[route.key];
-        const {beforeNavigateTo: beforeNavigateToFromComponentRef} = componentRef;
-        const {beforeNavigateTo: beforeNavigateToFromComponentRefWrapped} = componentRef.wrappedInstance || {};
-        const transitionPromise = combine(beforeNavigateTo ? beforeNavigateTo(props) : undefined, beforeNavigateToFromComponentRef ? beforeNavigateToFromComponentRef(props) : undefined,  beforeNavigateToFromComponentRefWrapped ? beforeNavigateToFromComponentRefWrapped(props) : undefined, this.transition(componentRef, route));
+        const transitionPromise = combine([
+          beforeNavigateTo,
+          () => this.transition(componentRef, route)
+        ], props);
         keysToTransition.push(route.key);
         transitionPromises.push(transitionPromise);
       }

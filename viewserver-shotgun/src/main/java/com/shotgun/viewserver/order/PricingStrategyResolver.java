@@ -63,7 +63,11 @@ public class PricingStrategyResolver {
     }
 
     private PriceStrategy getValue(String pricingStrategy) {
-        return NameToPricingStrategyMap.get(pricingStrategy);
+        PriceStrategy priceStrategy = NameToPricingStrategyMap.get(pricingStrategy);
+        if(priceStrategy == null){
+            throw new RuntimeException("Unable to find pricing strategy for string " + pricingStrategy);
+        }
+        return priceStrategy;
     }
 
     private KeyedTable getProductTable(){
@@ -82,10 +86,13 @@ public class PricingStrategyResolver {
 
     public PriceStrategy resolve(String productId){
         String categoryId = getCategoryForProduct(productId);
-        if(categoryToStrategyCacheMap.containsKey(categoryId)){
+        if(categoryToStrategyCacheMap.containsKey(categoryId) && categoryToStrategyCacheMap.get(categoryId) != null){
             return categoryToStrategyCacheMap.get(categoryId);
         }
         PriceStrategy strategyForCategoryRoot = getStrategyForCategoryRoot(categoryId);
+        if(strategyForCategoryRoot == null){
+            throw new RuntimeException("Unable to find pricing strategy for product id " + productId  + " category " + categoryId);
+        }
         categoryToStrategyCacheMap.put(categoryId,strategyForCategoryRoot);
         return strategyForCategoryRoot;
    }

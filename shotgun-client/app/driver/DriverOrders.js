@@ -21,7 +21,7 @@ const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
 };
 
 const Paging = () => <Spinner />;
-const NoItems = () => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs todo'}</Text>;
+const NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs todo'}</Text>;
 
 const RowView = ({item: orderSummary, isLast, isFirst, history, isCustomer, parentPath}) => {
   const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
@@ -46,6 +46,7 @@ const OrderListings =  ({history, parentPath, isCustomer, isCompleted}) => <View
     rowView={RowView}
     history={history}
     parentPath={parentPath}
+    isCustomer={isCustomer}
     options={getOptions(isCustomer, isCompleted)}
     paginationWaitingView={Paging}
     emptyView={NoItems}

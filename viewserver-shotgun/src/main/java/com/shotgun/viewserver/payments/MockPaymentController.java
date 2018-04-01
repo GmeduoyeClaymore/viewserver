@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.shotgun.viewserver.ControllerUtils.getUser;
+
 @Controller(name = "paymentController")
 public class MockPaymentController implements PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(MockPaymentController.class);
@@ -187,13 +189,6 @@ public class MockPaymentController implements PaymentController {
         }
     }
 
-    private User getUser() {
-        User user = (User) ControllerContext.get("user");
-        if (user == null) {
-            throw new RuntimeException("User must be logged in to get current payment cards");
-        }
-        return user;
-    }
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
     public void deletePaymentCard(@ActionParam(name = "cardId") String cardId) {

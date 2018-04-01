@@ -70,7 +70,9 @@ export default class App extends React.Component {
     this.setUserId = this.setUserId.bind(this);
     this.initMessaging = this.initMessaging.bind(this);
     this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
+    this.handleUserLoggedIn = this.handleUserLoggedIn.bind(this);
     this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
+    this.client.loggedInObservable.subscribe(this.handleUserLoggedIn);
   }
 
   async componentDidMount() {
@@ -78,19 +80,25 @@ export default class App extends React.Component {
     await this.client.connect(true);
   }
 
-  async handleConnectionStatusChanged(isReady){
+  async handleConnectionStatusChanged(isReady, userId){
     Logger.info(`Connection status changed to :\"${isReady}\"`);
-    if (isReady){
+    if (isReady && !this.userId){
       try {
-        await this.setUserId();
+        await this.setUserId(userId);
         await this.initMessaging();
         this.setState({isReady, isConnected: isReady, hasBeenReady: true});
       } catch (error){
         this.setState({isReady: true, isConnected: false});
       }
     } else {
+      this.userId = undefined;
       this.setState({ isReady, isConnected: isReady});
     }
+  }
+
+  handleUserLoggedIn(userId){
+    this.userId = userId;
+    this.setState({userId});
   }
 
   async initMessaging(){
@@ -119,7 +127,7 @@ export default class App extends React.Component {
       //TODO this is really unsafe really we should be saving credentials in the client not just the userID
       await this.client.loginUserById(userId);
     }
-    Logger.info(`!!! Got user id ${this.userId} from device`);
+    Logger.info(`!!! Logged in as ${this.userId} from device`);
   }
 
   async signOut(){
@@ -144,6 +152,7 @@ export default class App extends React.Component {
               <View style={{flex: 1, backgroundColor: '#ffffff'}}>
                 <ReduxRouter defaultRoute={this.userId  ? '/LandingCommon' : '/RegistrationCommon' } {...completeProps}>
                   <Route path="/RegistrationCommon" exact component={RegistrationCommon}/>
+                  <Route path="/Root" exact component={LandingCommon}/>
                   <Route path="/LandingCommon" exact component={LandingCommon}/>
                   <Route path="/Customer/Registration" component={CustomerRegistration}/>
                   <Route path="/Driver/Registration" component={DriverRegistration}/>

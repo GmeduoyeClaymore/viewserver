@@ -143,12 +143,12 @@ export default class Client {
 
   async loginUserById(userId){
     await this.invokeJSONCommand('loginController', 'setUserId', userId);
-    this.loggedInSubject.next(true);
+    this.loggedInSubject.next(userId);
   }
 
   async login(email, password){
     const customerId = await this.invokeJSONCommand('loginController', 'login', {email, password});
-    this.loggedInSubject.next(true);
+    this.loggedInSubject.next(customerId);
     return customerId;
   }
 

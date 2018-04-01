@@ -17,9 +17,9 @@ class ConfigureServices extends Component{
   }
 
   async register(){
-    const {user, selectedContentTypes, dispatch, history} = this.props;
+    const {user, selectedContentTypes, dispatch, history, parentPath} = this.props;
     const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
-    dispatch(updateDriver(persistedUser, () => history.push('/Driver/Settings')));
+    dispatch(updateDriver(persistedUser, () => history.push(`${parentPath}/DriverSettingsLanding`)));
   }
 
   render(){

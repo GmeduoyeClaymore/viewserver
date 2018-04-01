@@ -4,6 +4,7 @@ import NonReactStatics from 'hoist-non-react-statics';
 import {connect} from './connect';
 import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
 import memoize from './memoize';
+import Logger from 'common/Logger';
 
 
 Function.prototype.wrap = function wrap(otherFunction) {
@@ -55,10 +56,10 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
 };
 
 const setState = (stateKey, partialState, continueWith) => {
-  return setStateWithPathFunc(stateKey, partialState, [], continueWith);
+  return setStateWithPath(stateKey, partialState, [], continueWith);
 };
 
-const setStateWithPathFunc = (stateKey, partialState, path, continueWith) => {
+const setStateWithPath = (stateKey, partialState, path, continueWith) => {
   return {type: UPDATE_COMPONENT_STATE(stateKey), path: [...getPath(stateKey), ...path], data: partialState, continueWith};
 };
 
@@ -72,7 +73,7 @@ const createSetState = (stateKey) => {
 const createSetStateWithPath = (stateKey) => {
   return function(partialState, path, continueWith, dispatchArgument){
     const {dispatch = dispatchArgument} = (this.props || {});
-    dispatch(setStateWithPathFunc(stateKey, partialState, path, continueWith));
+    dispatch(setStateWithPath(stateKey, partialState, path, continueWith));
   };
 };
 
@@ -81,10 +82,12 @@ const createSetStateWithPath = (stateKey) => {
  */
 
 const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride) => {
+  Logger.info('WEXT - Creating ' + Component.name);
   let hasInitialized = false;
-  return class ComponentWrapper extends React.Component{
+  const result = class ComponentWrapper extends React.Component{
     constructor(props){
       super(props);
+      Logger.info('WEXT - Instantiating ' + Component.name);
       const {stateKey = (Component.stateKey || Component.name), propsToMap} = props;
       this.stateKey = superStateKeyOverride || stateKey;
       this.newProps =  _extends({}, createNewProps(Component, this.stateKey, {...props}));
@@ -128,6 +131,7 @@ const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride)
       return <Component key={newProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
     }
   };
+  return NonReactStatics(result, Component);
 };
 
 const createNewProps = (Component, stateKey, originalProps) => {

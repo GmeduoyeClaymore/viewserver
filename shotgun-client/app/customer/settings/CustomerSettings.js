@@ -9,19 +9,21 @@ import {updateCustomer} from 'customer/actions/CustomerActions';
 
 
 class CustomerSettings extends React.Component {
+  static stateKey = 'CustomerSettings';
   constructor(props){
     super(props);
-    this.onUpdate = (user) => updateCustomer(user, () => props.history.push('/Customer/Settings/CustomerSettings'));
+    const {path} = props;
+    this.onUpdate = (user) => updateCustomer(user, () => props.history.replace(`${path}/CustomerSettingsLanding`));
   }
   render(){
     const {props} = this;
     const {height, width, path} = props;
-    return <ReduxRouter height={height} width={width} defaultRoute={`${path}/CustomerSettingsLanding`}>
-      <Route path={`${path}/CustomerSettingsLanding`} parentPath={path} exact component={CustomerSettingsLanding}/>
-      <Route path={`${path}/UpdateUserDetails`} onUpdate={this.onUpdate} exact component={UpdateUserDetails} />
-      <Route path={`${path}/UpdateAddressDetails`} next={`${path}/HomeAddressDetails`} exact component={UpdateAddressDetails}/>
-      <Route path={`${path}/UpdatePaymentCardDetails`} exact component={UpdatePaymentCardDetails}/>
-      <Route path={`${path}/AddressLookup`} exact component={AddressLookup} />
+    return <ReduxRouter {...props} height={height} width={width} defaultRoute={`${path}/CustomerSettingsLanding`}>
+      <Route stateKey={CustomerSettings.stateKey} path={`${path}/CustomerSettingsLanding`} parentPath={path} exact component={CustomerSettingsLanding}/>
+      <Route stateKey={CustomerSettings.stateKey} path={`${path}/UpdateUserDetails`} onUpdate={this.onUpdate} exact component={UpdateUserDetails} />
+      <Route stateKey={CustomerSettings.stateKey} path={`${path}/UpdateAddressDetails`} next={`${path}/CustomerSettingsLanding`} exact component={UpdateAddressDetails}/>
+      <Route stateKey={CustomerSettings.stateKey} path={`${path}/UpdatePaymentCardDetails`} exact component={UpdatePaymentCardDetails}/>
+      <Route stateKey={CustomerSettings.stateKey} path={`${path}/AddressLookup`} exact component={AddressLookup} />
     </ReduxRouter>;
   }
 }

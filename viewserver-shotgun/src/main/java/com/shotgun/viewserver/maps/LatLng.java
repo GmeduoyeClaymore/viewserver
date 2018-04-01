@@ -29,7 +29,7 @@ public class LatLng{
     }
 
     public String toQueryString(String key){
-        return String.format("latlng=%s,%s&key=%s",latitude,longitude,key);
+        return String.format("result_type=street_address&latlng=%s,%s&key=%s",latitude,longitude,key);
     }
 
     @Override

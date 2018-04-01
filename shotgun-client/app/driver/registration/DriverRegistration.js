@@ -34,14 +34,15 @@ class DriverRegistration extends Component {
 
   render() {
     const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
-    return <ReduxRouter {...driverRegistrationProps} defaultRoute='/Driver/Registration/DriverRegistrationLanding'>
-      <Route path={'/Driver/Registration/DriverRegistrationLanding'} exact component={DriverRegistrationLanding}/>
-      <Route path={'/Driver/Registration/Login'} exact component={DriverLogin}/>
-      <Route path={'/Driver/Registration/UserDetails'} exact component={UserDetails}/>
-      <Route path={'/Driver/Registration/AddressDetails'} exact component={AddressDetails}/>
-      <Route path={'/Driver/Registration/AddressLookup'} exact component={AddressLookup}/>
-      <Route path={'/Driver/Registration/BankAccountDetails'} exact component={BankAccountDetails}/>
-      <Route path={'/Driver/Registration/DriverAccountType'} exact component={DriverAccountType}/>
+    const {path} = this.props;
+    return <ReduxRouter {...driverRegistrationProps} defaultRoute={`${path}/DriverRegistrationLanding`}>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/DriverRegistrationLanding`} exact component={DriverRegistrationLanding}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/Login`} exact component={DriverLogin}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/UserDetails`} next={`${path}/AddressDetails`} exact component={UserDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/AddressDetails`} next={`${path}/BankAccountDetails`} exact component={AddressDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/AddressLookup`} exact component={AddressLookup}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/BankAccountDetails`} exact component={BankAccountDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} path={`${path}/DriverAccountType`} exact component={DriverAccountType}/>
     </ReduxRouter>;
   }
 }

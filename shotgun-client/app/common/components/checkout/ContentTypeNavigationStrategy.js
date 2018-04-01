@@ -1,5 +1,5 @@
 import * as ContentTypes from 'common/constants/ContentTypes';
-
+import Logger from 'common/Logger';
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
 resourceDictionary.
@@ -54,7 +54,8 @@ export default class ContentTypeNavigationStrategy{
 
   goToIndex(paths, payload, newIndex, increment){
     if (newIndex >= paths.length){
-      throw new Error(`Unable to find path index ${newIndex} for content type ${this.contentTypeId}`);
+      Logger.warning(`Unable to find path index ${newIndex} for content type ${this.contentTypeId}`);
+      return;
     }
    
     if (newIndex == -1){

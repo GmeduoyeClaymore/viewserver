@@ -185,6 +185,9 @@ public class OrderController {
             return Double.valueOf(delivery.getFixedPriceValue());
         }
         PriceStrategy strategy = getPriceStrategy(orderItem);
+        if(strategy == null){
+            throw  new RuntimeException(String.format("Unable to get pricing strategy for order item %s. There is some convuluted method of doing this maybe it could be simplified",orderItem));
+        }
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){//TODO this will need some refining
             case JOURNEY_DISTANCE:

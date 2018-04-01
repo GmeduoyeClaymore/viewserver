@@ -23,6 +23,8 @@ class UserDetails  extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.onSelectImage = this.onSelectImage.bind(this);
     this.showPicker = this.showPicker.bind(this);
+    this.state = {
+    };
     this.pickerOptions = {
       cropping: true,
       cropperCircleOverlay: true,
@@ -43,7 +45,7 @@ class UserDetails  extends Component{
   }
 
   toggleDatePicker(dobIsDatePickerVisible){
-    this.setState({dobIsDatePickerVisible});
+    super.setState({dobIsDatePickerVisible});
   }
 
   onSelectImage(response){
@@ -56,7 +58,8 @@ class UserDetails  extends Component{
 
   render(){
     const {onChangeText} = this;
-    const {history, next, user, dobIsDatePickerVisible} = this.props;
+    const {history, next, user} = this.props;
+    const {dobIsDatePickerVisible} = this.state;
     const isDriver = user.type === 'driver';
 
 

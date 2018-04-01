@@ -31,7 +31,7 @@ class CustomerOrderInProgress extends Component{
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, busy, client, dispatch, errors} = this.props;
+    const {orderSummary = {status: ''}, history, busy, client, dispatch, errors, parentPath} = this.props;
     const {delivery = {}, contentType} = orderSummary;
     const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
     const {origin = {}, destination = {}} = delivery;
@@ -64,7 +64,7 @@ class CustomerOrderInProgress extends Component{
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
-          <Button transparent style={styles.backButton} onPress={() => history.push('/Customer/CustomerOrders')}>
+          <Button transparent style={styles.backButton} onPress={() => history.push(`${parentPath}/CustomerOrders`)}>
             <Icon name='back-arrow'/>
           </Button>
         </Row>

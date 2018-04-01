@@ -11,7 +11,7 @@ import {ErrorRegion} from 'common/components';
 import { memoize } from '../memoize';
 import { isEqual } from '../is-equal';
 
-const MaxStackLength = 2;
+const MaxStackLength = 20;
 
 const DefaultNavigationStack = [{
   pathname: '/',
@@ -90,8 +90,8 @@ class ReduxRouterClass extends Component{
   }
 
   shouldComponentUpdate(newProps){
-    const {children, navigationContainer} = newProps;
-    if (children != this.props.children){
+    const {children = [], navigationContainer} = newProps;
+    if (children.length != this.props.children.length){
       return true;
     }
 
@@ -163,13 +163,13 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
   const addition = {isReverse, ...navAction, isAdd: true};
   let newNavigationStack;
   if (isReplace){
-    newNavigationStack = [...itemsNotNeedingTransition, {...addition, index: itemsNotNeedingTransition.length + 1} ];
+    newNavigationStack = [...itemsNotNeedingTransition, {...addition} ];
   } else {
     if (!navAction.pathname.includes(previousFinalNavItem.pathname)){
       const remove = {isReverse, ...previousFinalNavItem, isRemove: true};
       newNavigationStack = [...itemsNotNeedingTransition, remove, addition ];
     } else {
-      newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, {...addition, index: itemsNotNeedingTransition.length + 2}  ];
+      newNavigationStack = [...itemsNotNeedingTransition, previousFinalNavItem, {...addition}  ];
     }
   }
   const croppedStack = newNavigationStack.slice(-MaxStackLength);
@@ -179,8 +179,16 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
 const goBackTranslation = (navigationContainer) => {
   const {navigationStack} = navigationContainer;
   const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
-  const previousFinalNavItem = previousNavItems[previousNavItems.length - 2] || previousNavItems[previousNavItems.length - 1];
-  return moveNavigation(true, true)(navigationContainer, previousFinalNavItem);
+  //Remove the current end of stack
+  const remainingItems = [...previousNavItems.slice(0, previousNavItems.length - 1)];
+  //Get new head of stack
+  const newHeadOfStack = remainingItems[remainingItems.length - 1];
+  const itemsNotNeedingTransition =  [...remainingItems.slice(0, remainingItems.length - 1)];
+  //Set transition params on new head of stack
+  const addition = {isReverse: true, ...newHeadOfStack, isAdd: true};
+  const newNavigationStack = [...itemsNotNeedingTransition, {...addition}  ];
+  const croppedStack = newNavigationStack.slice(-MaxStackLength);
+  return navigationContainer.setIn(['navigationStack'], croppedStack);
 };
 
 const resetTranslation = (navigationContainer) => {
@@ -199,29 +207,25 @@ const navigateFactory = (myStateGetter, navigationContainerTranslation, setState
 const createDefaultNavigation = (props) => {
   const navigationStack = props.defaultNavigation || DefaultNavigationStack;
   return Immutable({
-    navigationStack,
-    navigationPointer: 1
+    navigationStack
   });
 };
 
 const performTransitionsThunkFactory = (context, myStateGetter, setState, clearTransitions) => async (dispatch, getState) => {
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer} = componentState;
-  
 
   const routes = context.transitionManager.doAnyOfMyRoutesNeedToTransition(navigationContainer);
   const nonPersistentRoutes = routes.filter(rt => !rt.persistent);
   if (!navigationContainer || !nonPersistentRoutes || !nonPersistentRoutes.length ){
     return;
   }
-  //setState({isTransitioning: true}, undefined, dispatch);
 
   const hasTransitioned = await context.transitionManager.performTransition(routes, navigationContainer, context);
   if (hasTransitioned){
     clearTransitions(() => {
       Logger.info('Now clearing transitions');
       context.transitionManager.completeTransition();
-    //setState({isTransitioning: false}, undefined, dispatch);
     });
     dispatch({ type: 'TRANSITIONS_PERFORMED'});
   }
@@ -247,7 +251,6 @@ const mapStateToProps = (state, props) => {
   const {myStateGetter, dispatch, navigationContainer = DEFAULT_NAVIGATION, setState} = props;
   const clearTransitionsThunk = (continueWith) => navigateFactory(myStateGetter, resetTranslation, setState, undefined, continueWith);
   const clearTransitions =  (continueWith) => dispatch(clearTransitionsThunk(continueWith)());
- 
   const history =  historyFactory({myStateGetter, dispatch, navigationContainer, setState, DefaultNavigation: DEFAULT_NAVIGATION});
   const {location} = history;
   return {

@@ -43,6 +43,7 @@ export default class CustomerDao{
     const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
     Logger.info(`Customer ${customerId} registered`);
     await PrincipalService.setUserIdOnDevice(customerId);
+    this.client.loginUserById(customerId);
     return customerId;
   }
 

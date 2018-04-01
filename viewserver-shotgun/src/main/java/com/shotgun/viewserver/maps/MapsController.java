@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.shotgun.viewserver.ControllerUtils.getUser;
+
 
 @Controller(name = "mapsController")
 public class MapsController {
@@ -48,7 +50,7 @@ public class MapsController {
         List resultsInJSON = (List) get.get("results");
         List<DeliveryAddress> results = new ArrayList<>();
         for(Object result : resultsInJSON ){
-            DeliveryAddress deliveryAddress = getDeliveryAddress((HashMap<String, Object>) result);
+            DeliveryAddress deliveryAddress = DeliveryAddressParser.fromReverseGeoSearchResult((HashMap<String, Object>) result);
             if(deliveryAddress!=null) {
                 results.add(deliveryAddress);
             }
@@ -56,25 +58,7 @@ public class MapsController {
         return results;
     }
 
-    private DeliveryAddress getDeliveryAddress( HashMap<String, Object> firstResult) {
-        String formattedAddress = (String) firstResult.get("formatted_address");
-        List types = (List) firstResult.get("types");
-        if(types.contains("political")){
-            return null;
-        }
-        List addressComponents = (List) firstResult.get("address_components");
-        if(addressComponents ==null){
-            throw new RuntimeException(String.format("Unable to find address componets for result"));
-        }
-        DeliveryAddress result = new DeliveryAddress();
-        result.setLine1(formattedAddress);
-        result.setGooglePlaceId((String)firstResult.get("place_id"));
-        HashMap<String, Object> geometry = (HashMap<String, Object>) firstResult.get("geometry");
-        HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
-        result.setLatitude((Double) location.get("lat"));
-        result.setLongitude((Double) location.get("lng"));
-        return result;
-    }
+
 
     @ControllerAction(path = "mapDirectionRequest", isSynchronous = false)
     public HashMap<String,Object> mapDirectionRequest(DirectionRequest request){

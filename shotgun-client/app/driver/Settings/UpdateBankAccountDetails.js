@@ -19,7 +19,7 @@ class UpdateBankAccountDetails extends Component {
   }
 
   render(){
-    const {currentBankAccount = {}, history, dispatch, busy, errors} = this.props;
+    const {currentBankAccount = {}, history, dispatch, busy, errors, parentPath} = this.props;
     const {bankAccount} = this.state;
 
     const onChangeText = async (field, value) => {
@@ -27,7 +27,7 @@ class UpdateBankAccountDetails extends Component {
     };
 
     const onSetBankAccount = async () => {
-      dispatch(setBankAccount(bankAccount, () => history.push('/Driver/Settings')));
+      dispatch(setBankAccount(bankAccount, () => history.push(`${parentPath}/DriverSettingsLanding`)));
     };
 
     return <Container>

@@ -29,7 +29,7 @@ public class PlaceRequest {
     }
 
     public String toQueryString(String key){
-        return String.format("key=%s&placeid=%s&language=%s",key,this.placeid,this.language);
+        return String.format("key=%s&placeid=%s&result_type=street_address&language=%s",key,this.placeid,this.language);
     }
 
 }

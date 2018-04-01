@@ -90,7 +90,7 @@ class DriverLanding extends Component {
     const {busy, path} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
-        <ReduxRouter  {...this.props}  height={contentHeight} width={contentWidth}  defaultRoute={`${path}/DriverOrderRequests`}>
+        <ReduxRouter  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={`${path}/DriverOrderRequests`} ordersPath={`${path}/DriverOrders/Posted`}>
           <Route path={`${path}/Checkout`} component={Checkout}/>
           <Route path={`${path}/DriverOrderRequests`} exact component={DriverOrderRequests}/>
           <Route path={`${path}/DriverOrderRequestDetail`} exact component={DriverOrderRequestDetail}/>

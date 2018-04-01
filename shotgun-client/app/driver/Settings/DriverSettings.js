@@ -9,12 +9,13 @@ import ConfigureServices from './ConfigureServices';
 class  DriverSettings extends Component{
   constructor(props){
     super(props);
-    this.onUpdate = (user) => updateDriver(user, () => props.history.push(`${path}/DriverSettings`));
+    const {path} = props;
+    this.onUpdate = (user) => updateDriver(user, () => props.history.push(`${path}/DriverSettingsLanding`));
   }
   render(){
     const {path, height, width} = this.props;
     const driverSettingsProps = {...this.props, stateKey: 'driverSettings'};
-    return <ReduxRouter defaultRoute={`${path}/DriverSettingsLanding`} height={height} width={width} {...driverSettingsProps}>
+    return <ReduxRouter path={path} defaultRoute={`${path}/DriverSettingsLanding`} height={height} width={width} {...driverSettingsProps}>
       <Route path={`${path}/DriverSettingsLanding`} exact component={DriverSettingsLanding}/>
       <Route path={`${path}/UpdateUserDetails`} onUpdate={this.onUpdate} exact component={UpdateUserDetails}/>
       <Route path={`${path}/UpdateBankAccountDetails`} exact component={UpdateBankAccountDetails}/>
@@ -22,6 +23,6 @@ class  DriverSettings extends Component{
       <Route path={`${path}/ConfigureServices`} exact stateKey={'configureServices'} component={ConfigureServices}/>
     </ReduxRouter>;
   }
-};
+}
 
 export default DriverSettings;

@@ -9,7 +9,7 @@ import {Linking} from 'react-native';
 
 const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const CustomerSettings = ({history, user, parentPath}) => {
+const CustomerSettings = ({history, user = {}, parentPath}) => {
   const signOut = async () => {
     await PrincipalService.removeUserIdFromDevice();
     history.push('/Root');

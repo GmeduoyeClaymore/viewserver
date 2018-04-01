@@ -3,6 +3,7 @@ package com.shotgun.viewserver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shotgun.viewserver.user.User;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import io.viewserver.Constants;
@@ -202,6 +203,16 @@ public class ControllerUtils{
         }
         return driverId;
     }
+
+
+    public static  User getUser() {
+        User user = (User) ControllerContext.get("user");
+        if (user == null) {
+            throw new RuntimeException("User must be logged in to get current payment cards");
+        }
+        return user;
+    }
+
     public static ITable getTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
         if (!(table instanceof ITable)) {

@@ -4,6 +4,8 @@ import Logger from 'common/Logger';
 
 import invariant  from 'invariant';
 
+const MaxStackLength = 2;
+
 export const ensureComponentIsNative = (component) =>  {
   invariant(
     component && typeof component.setNativeProps === 'function',
@@ -140,7 +142,8 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
   const {navigationStack = []} = navigationContainer;
   const foundKeys = [];
   let foundVisibleRoot = false;
-  navigationStack.filter(rt => !filterForTransitions || rt.isAdd || rt.isRemove).forEach(
+  const croppedStack = navigationStack.slice(-MaxStackLength);
+  croppedStack.filter(rt => !filterForTransitions || rt.isAdd || rt.isRemove).forEach(
     el => {
       routes.forEach(
         rt => {
@@ -164,7 +167,7 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
     }
   );
   if (!foundVisibleRoot && defaultRoute){
-    const navigationStackLocation = navigationStack[navigationStack.length - 1];
+    const navigationStackLocation = croppedStack[croppedStack.length - 1];
     return [{...defaultRoute, pathname: navigationStackLocation.pathname}]; // Change default routes path so it has the url of the referring page
   }
   return result;

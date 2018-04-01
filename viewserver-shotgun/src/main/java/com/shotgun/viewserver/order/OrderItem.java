@@ -76,4 +76,18 @@ public class OrderItem{
     public void setImageData(String imageData) {
         this.imageData = imageData;
     }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" +
+                "orderItemId='" + orderItemId + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", productId='" + productId + '\'' +
+                ", notes='" + notes + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", imageData='" + imageData + '\'' +
+                ", quantity=" + quantity +
+                ", contentTypeId=" + contentTypeId +
+                '}';
+    }
 }

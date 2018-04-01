@@ -75,7 +75,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors} = this.props;
+    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath} = this.props;
     const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
@@ -87,11 +87,11 @@ class CustomerOrderDetail extends Component{
     const {PricingControl} = resources;
 
     const onCancelOrder = () => {
-      dispatch(cancelOrder(orderSummary.orderId, () => history.push('/Customer/CustomerOrders')));
+      dispatch(cancelOrder(orderSummary.orderId, () => history.push(`${parentPath}/CustomerOrders`)));
     };
 
     const onRejectDriver = () => {
-      dispatch(rejectDriver(orderSummary.orderId, () => history.push('/Customer/CustomerOrders')));
+      dispatch(rejectDriver(orderSummary.orderId, () => history.push(`${parentPath}/CustomerOrders`)));
     };
 
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
@@ -117,7 +117,7 @@ class CustomerOrderDetail extends Component{
           </Col>
         </Grid> : null}
         {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
-        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push('/Customer/CustomerOrderInProgress', {orderId: orderSummary.orderId})}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
+        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push(`${parentPath}/CustomerOrderInProgress`, {orderId: orderSummary.orderId})}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
         <RatingSummary orderSummary={orderSummary} isDriver={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>

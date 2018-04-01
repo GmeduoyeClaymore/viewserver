@@ -10,7 +10,7 @@ import UserStatusControl from 'common/components/relationships/UserStatusControl
 
 const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const DriverSettings = ({history, user}) => {
+const DriverSettings = ({history, user, parentPath, ordersPath}) => {
   const signOut = async () => {
     await PrincipalService.removeUserIdFromDevice();
     history.push('/Root');
@@ -39,26 +39,26 @@ const DriverSettings = ({history, user}) => {
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <UserStatusControl/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateUserDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/DriverOrders', {isCompleted: true})}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(ordersPath, {isCompleted: true})}>
           <Text style={styles.text}>Completed Jobs</Text>
           <Icon style={{paddingRight: 10}} name='two-people'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateBankAccountDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateBankAccountDetails`)}>
           <Text style={styles.text}>Bank Details</Text>
           <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/UpdateVehicleDetails')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateVehicleDetails`)}>
           <Text style={styles.text}>Vehicle Details</Text>
           <Icon style={styles.icon} name='drive'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push('/Driver/Settings/ConfigureServices')}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/ConfigureServices`)}>
           <Text style={styles.text}>Configure Services</Text>
           <Icon style={styles.icon} name='dashed'/>
         </ListItem>

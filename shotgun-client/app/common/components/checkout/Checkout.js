@@ -32,7 +32,7 @@ class Checkout extends Component {
     const {navigationStrategy} = this;
     const {resetComponentState: resetParentComponentState} = this.props;
     const customerProps = {navigationStrategy, ...this.props, stateKey: Checkout.stateKey, resetParentComponentState};
-    const {stateKey: _1, setState: _2, setStateWithPat: _3, ...rest} = customerProps;
+    const {stateKey: _1, setState: _2, setStateWithPat: _3, parentPath, ...rest} = customerProps;
     const {path} = this.props;
     return <ReduxRouter {...rest} defaultRoute={`${path}/ContentTypeSelect`}>
       <Route stateKey={Checkout.stateKey} path={`${path}/ContentTypeSelect`} exact component={ContentTypeSelect} />

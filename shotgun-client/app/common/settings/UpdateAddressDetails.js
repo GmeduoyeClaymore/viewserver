@@ -3,37 +3,36 @@ import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {connect} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';
+import { withExternalState } from 'custom-redux';
 
 class HomeAddressDetails  extends Component{
   constructor(props) {
     super(props);
+  }
 
-    this.state = {
-      deliveryAddress: {...props.deliveryAddress}
-    };
+  beforeNavigateTo(){
+    this.setState({unSavedDeliveryAddress: undefined});
   }
 
   render() {
-    const {history, busy, errors, dispatch, next, match} = this.props;
-    const {deliveryAddress} = this.state;
-
-    const onAddressSelected = (address) => {
-      history.push(match.path, {selectedAddress: {...address, isDefault: true}});
-    };
+    const {history, busy, errors, dispatch, next, parentPath, unSavedDeliveryAddress} = this.props;
 
     const onChangeText = async (field, value) => {
-      this.setState({deliveryAddress: {...deliveryAddress, [field]: value}});
+      this.setState({unSavedDeliveryAddress: {...unSavedDeliveryAddress, [field]: value}});
     };
 
     const doAddressLookup = (addressLabel) => {
-      history.push('/Customer/Settings/AddressLookup', {addressLabel, onAddressSelected});
+      history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['unSavedDeliveryAddress']});
     };
 
     const onUpdateAddress = () => {
-      dispatch(updateDeliveryAddress(deliveryAddress, () =>  history.push(next)));
+      dispatch(updateDeliveryAddress({...unSavedDeliveryAddress, isDefault: true},
+        () =>  {
+          history.push(next);
+        }
+      ));
     };
 
     const getLocationText = (location = {}, placeholder) => {
@@ -51,13 +50,13 @@ class HomeAddressDetails  extends Component{
         </Left>
         <Body><Title>Update Home Address</Title></Body>
       </Header>
-      <Content keyboardShouldPersistTaps="always">
+      {unSavedDeliveryAddress ? <Content keyboardShouldPersistTaps="always">
         <Grid>
           <Row>
             <Col>
               <Item stackedLabel>
                 <Label>Street Address</Label>
-                {getLocationText(deliveryAddress, 'Search for your home address')}
+                {getLocationText(unSavedDeliveryAddress, 'Search for your home address')}
               </Item>
             </Col>
           </Row>
@@ -65,8 +64,8 @@ class HomeAddressDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>Flat number/Business Name</Label>
-                <ValidatingInput bold placeholder="Optional" value={deliveryAddress.flatNumber}
-                  validateOnMount={deliveryAddress.flatNumber !== undefined}
+                <ValidatingInput bold placeholder="Optional" value={unSavedDeliveryAddress.flatNumber}
+                  validateOnMount={unSavedDeliveryAddress.flatNumber !== undefined}
                   onChangeText={(value) => onChangeText('flatNumber', value)}
                   validationSchema={validationSchema.flatNumber} maxLength={30}/>
               </Item>
@@ -76,8 +75,8 @@ class HomeAddressDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>City</Label>
-                <ValidatingInput bold placeholder="Cityville" value={deliveryAddress.city}
-                  validateOnMount={deliveryAddress.city !== undefined}
+                <ValidatingInput bold placeholder="Cityville" value={unSavedDeliveryAddress.city}
+                  validateOnMount={unSavedDeliveryAddress.city !== undefined}
                   onChangeText={(value) => onChangeText('city', value)}
                   validationSchema={validationSchema.city} maxLength={30}/>
               </Item>
@@ -87,19 +86,19 @@ class HomeAddressDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>Postcode</Label>
-                <ValidatingInput bold placeholder="PC12 ABC" value={deliveryAddress.postCode}
-                  validateOnMount={deliveryAddress.postCode !== undefined}
+                <ValidatingInput bold placeholder="PC12 ABC" value={unSavedDeliveryAddress.postCode}
+                  validateOnMount={unSavedDeliveryAddress.postCode !== undefined}
                   onChangeText={(value) => onChangeText('postCode', value)}
                   validationSchema={validationSchema.postCode} maxLength={30}/>
               </Item>
             </Col>
           </Row>
         </Grid>
-      </Content>
+      </Content> : null}
       <ErrorRegion errors={errors}>
         <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
           onPress={onUpdateAddress} validationSchema={yup.object(validationSchema)}
-          model={deliveryAddress}>
+          model={unSavedDeliveryAddress}>
           <Text uppercase={false}>Update Address</Text>
         </ValidatingButton>
       </ErrorRegion>
@@ -108,7 +107,6 @@ class HomeAddressDetails  extends Component{
 }
 
 const validationSchema = {
-  flatNumber: yup.string().max(30),
   line1: yup.string().required().max(30),
   city: yup.string().required().max(30),
   postCode: yup.string()
@@ -130,17 +128,17 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
-  const selectedAddress = initialProps.location && initialProps.location.state ? initialProps.location.state.selectedAddress : undefined;
-  const deliveryAddress = selectedAddress !== undefined ? selectedAddress : (deliveryAddresses !== undefined ? deliveryAddresses.find(ad => ad.isDefault) : {});
+  let {unSavedDeliveryAddress} = initialProps;
+  unSavedDeliveryAddress = unSavedDeliveryAddress !== undefined ? unSavedDeliveryAddress : (deliveryAddresses !== undefined ? deliveryAddresses.find(ad => ad.isDefault) : {});
 
   return {
     ...initialProps,
-    deliveryAddress,
+    unSavedDeliveryAddress,
     errors: getOperationError(state, 'deliveryAddressDao', 'addOrUpdateDeliveryAddress'),
     busy: isAnyOperationPending(state, [{deliveryAddressDao: 'addOrUpdateDeliveryAddress'}])
   };
 };
 
-export default connect(
+export default withExternalState(
   mapStateToProps
 )(HomeAddressDetails);

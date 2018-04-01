@@ -84,15 +84,17 @@ class AddressLookup extends Component {
   }
 
   async searchAutoCompleteSuggestions(value){
-    const {client} = this.props;
+    const {client, me = {}} = this.props;
     try {
       super.setState({ busy: true });
       const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
+        lat: me.latitude,
+        lng: me.longitude,
         input: value,
         language: 'en'
       });
 
-      const filteredPredictions = responseJSON.predictions.filter(p => !p.types.includes('political'));
+      const filteredPredictions = responseJSON.predictions;
 
       super.setState({
         suggestedPlaces: filteredPredictions,
@@ -105,8 +107,8 @@ class AddressLookup extends Component {
   }
 
   async reverseGeoCodeSearch(){
-    const {client, user} = this.props;
-    const {latitude, longitude} = user;
+    const {client, me} = this.props;
+    const {latitude, longitude} = me;
     try {
       super.setState({ busy: true });
       const reverseLookedUpAddresses = await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {

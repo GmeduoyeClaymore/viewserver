@@ -17,7 +17,7 @@ class UpdateVehicleDetails extends Component {
   }
 
   render() {
-    const {dispatch, history, busy, client, errors} = this.props;
+    const {dispatch, history, busy, client, errors, parentPath} = this.props;
     const {vehicle} = this.state;
     const {dimensions} = vehicle;
 
@@ -26,7 +26,7 @@ class UpdateVehicleDetails extends Component {
     };
 
     const onUpdateVehicle = async() => {
-      dispatch(updateVehicle(vehicle, () => history.push('/Driver/Settings')));
+      dispatch(updateVehicle(vehicle, () => history.push(`${parentPath}/DriverSettingsLanding`)));
     };
 
     const requestUpdateVehicleDetails = async () => {
