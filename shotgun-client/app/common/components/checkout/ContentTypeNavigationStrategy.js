@@ -59,11 +59,11 @@ export default class ContentTypeNavigationStrategy{
     }
    
     if (newIndex == -1){
-      this.history.replace(`${this.path}/${this.defaultPath}`);
+      this.history.replace({pathname: `${this.path}/${this.defaultPath}`, isReverse: true});
     } else {
       const nextPath = paths[newIndex];
       if (increment){
-        this.history.push(`${this.path}/${nextPath}`, payload);
+        this.history.replace(`${this.path}/${nextPath}`, payload);
       } else {
         this.history.replace({pathname: `${this.path}/${nextPath}`, isReverse: true}, payload);
       }

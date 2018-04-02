@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {PagingListView, OrderRequest, Tabs} from 'common/components';
-import {View, Text, Container, Spinner, Header, Body, Title, Tab} from 'native-base';
-import {getDaoState, getNavigationProps, resetSubscriptionAction} from 'common/dao';
+import {PagingListView, OrderRequest, Tabs, Icon} from 'common/components';
+import {View, Text, Container, Spinner, Header, Body, Title, Tab, Left, Button} from 'native-base';
+import {getDaoState, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {connect,ReduxRouter, Route} from 'custom-redux';
+import {connect, ReduxRouter, Route} from 'custom-redux';
 
 const DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
   columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
@@ -23,13 +23,13 @@ const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
 const Paging = () => <Spinner />;
 const NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs todo'}</Text>;
 
-const RowView = ({item: orderSummary, isLast, isFirst, history, isCustomer, parentPath}) => {
+const RowView = ({item: orderSummary, isLast, isFirst, history, isCustomer, ordersRoot}) => {
   const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
   let next;
   if (isCustomer){
-    next = isOnRoute ? `${parentPath}/CustomerOrderInProgress` : `${parentPath}/CustomerOrderDetail`;
+    next = isOnRoute ? `${ordersRoot}/CustomerOrderInProgress` : `${ordersRoot}/CustomerOrderDetail`;
   } else {
-    next = isOnRoute ? `${parentPath}/DriverOrderInProgress` : `${parentPath}/DriverOrderDetail`;
+    next = isOnRoute ? `${ordersRoot}/DriverOrderInProgress` : `${ordersRoot}/DriverOrderDetail`;
   }
   return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
 };
@@ -39,13 +39,13 @@ const getOptions =  (isCustomer, isCompleted) => ({
   isCompleted
 });
 
-const OrderListings =  ({history, parentPath, isCustomer, isCompleted}) => <View style={{flex: 1}}>
+const OrderListings =  ({history, ordersRoot, isCustomer, isCompleted}) => <View style={{flex: 1}}>
   <PagingListView
     daoName='orderSummaryDao'
     dataPath={['orders']}
     rowView={RowView}
     history={history}
-    parentPath={parentPath}
+    ordersRoot={ordersRoot}
     isCustomer={isCustomer}
     options={getOptions(isCustomer, isCompleted)}
     paginationWaitingView={Paging}
@@ -72,16 +72,21 @@ class DriverOrders  extends Component{
   }
 
   render() {
-    const {history, isCustomer, defaultOptions, isCompleted, parentPath, path, height} = this.props;
+    const {history, isCustomer, defaultOptions, isCompleted, canGoBack, parentPath, path, height, ordersRoot} = this.props;
     return <Container>
       <Header hasTabs>
+        {canGoBack ? <Left>
+          <Button>
+            <Icon name='back-arrow' onPress={() => history.goBack()} />
+          </Button>
+        </Left> : null }
         <Body><Title>{'My Jobs' + (isCompleted ? ' (Completed)' : '')}</Title></Body>
       </Header>
       <Tabs initialPage={history.location.pathname.endsWith('Posted') ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => this.onChangeTab(i == 1)}>
         <Tab heading={'Accepted'}/>
         <Tab heading={'Posted'}/>
       </Tabs>
-      <ReduxRouter height={height - 150} defaultRoute={`${path}/Accepted`} {...{history, isCustomer, defaultOptions, isCompleted, parentPath, path} } >
+      <ReduxRouter height={height - 150} defaultRoute={`${path}/Accepted`} {...{history, isCustomer, defaultOptions, isCompleted, parentPath, ordersRoot, path} } >
         <Route path={`${path}/Accepted`} component={OrderListings} isCustomer={false}/>
         <Route path={`${path}/Posted`} component={OrderListings}  isCustomer={true}/>
       </ReduxRouter>

@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted } from 'custom-redux';
+import { withExternalState, ReduxRouter, Route } from 'custom-redux';
 import {Button, Tab, View, Text, Row, Switch, Header, Left, Body, Title} from 'native-base';
 import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
@@ -10,7 +10,6 @@ import UserRelationshipList from './UserRelationshipList';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 import UserRelationshipDetail from './UserRelationshipDetail';
-import {withExternalState} from 'custom-redux';
 
 class UserRelationships extends Component{
   constructor(props){
@@ -19,7 +18,6 @@ class UserRelationships extends Component{
       showAll: true,
       selectedUserIndex: -1
     };
-    setStateIfIsMounted(this);
     this.UserViews = [
       {'Map': UserRelationshipMap},
       {'List': UserRelationshipList},
@@ -30,6 +28,8 @@ class UserRelationships extends Component{
     this.updateDistance = this.updateDistance.bind(this);
     this.setRange = this.setRange.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
+    this.getSelectedTabIndex = this.getSelectedTabIndex.bind(this);
+    this.subscribeToUsers = this.subscribeToUsers.bind(this);
   }
 
   componentDidMount(){
@@ -39,7 +39,7 @@ class UserRelationships extends Component{
   async subscribeToUsers(options){
     const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('userRelationshipDao', options));
-    this.setState({oldOptions: options});
+    this.oldOptions = options;
   }
 
   getOptionsFromProps(props){
@@ -55,14 +55,15 @@ class UserRelationships extends Component{
 
   updateSubscription(){
     const newOptions = this.getOptionsFromProps(this.props);
-    const {oldOptions} = this.props;
+    const {oldOptions} = this;
     if (!isEqual(newOptions, oldOptions, true)){
       this.subscribeToUsers(newOptions);
     }
   }
 
   componentWillReceiveProps(newProps){
-    const {oldOptions, distance} = newProps;
+    const {distance} = newProps;
+    const {oldOptions} = this;
     const newOptions = this.getOptionsFromProps(newProps);
     if (!isEqual(newOptions, oldOptions, true)){
       this.subscribeToUsers(newOptions);
@@ -81,7 +82,17 @@ class UserRelationships extends Component{
   }
 
   onChangeTab(selectedTabIndex){
-    this.setState({selectedTabIndex});
+    const {history, path} = this.props;
+    const viewElement = this.UserViews[selectedTabIndex];
+    history.replace(`${path}/RelationshipView/${Object.keys(viewElement)[0]}X`);
+  }
+
+  getSelectedTabIndex(){
+    const {history} = this.props;
+    const currentPath = history.location.pathname;
+    const viewKey = currentPath.lastIndexOf(currentPath.lastIndexOf('/'), currentPath.length - 1);
+    const selectedIndex = this.UserViews.findIndex(c => Object.keys(c)[0] === viewKey);
+    return !!~selectedIndex ? selectedIndex : 0;
   }
 
   async updateDistance(distance){
@@ -95,21 +106,11 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, UserViews} = this;
-    const {selectedUser, selectedUserIndex, selectedTabIndex = 0, oldOptions, showAll, history, errors, noRelationships, me, searchText, title, selectedProduct, backAction, distance} = this.props;
-    const UserViewRecord = UserViews[selectedTabIndex];
-    const UserView = UserViewRecord[Object.keys(UserViewRecord)[0]];
+    const {selectedUser, selectedUserIndex, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width} = this.props;
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <View style={{ flex: 1}}>
-      <Header withButton={title != undefined}>
-        {title ? <Left>
-          <Button onPress={() => backAction ? backAction() : history.goBack()}>
-            <Icon name='back-arrow'/>
-          </Button>
-        </Left> : null}
-        <Body><Title>{title || 'Nearby Users'}</Title></Body>
-      </Header>
+    return <View style={{ flex: 1, padding: 10, width}}>
       <View style={styles.switchView}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={distance} onSlidingComplete={this.setRange}/> : null}
       </View>
@@ -124,12 +125,14 @@ class UserRelationships extends Component{
           <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ showAll }/>
         </View>
       </Row> : null}
-      <Tabs style={{flex: 1}} initialPage={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
+      <Tabs style={{flex: 1}} initialPage={this.getSelectedTabIndex()} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
-          <UserView {...this.props} options={oldOptions} selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}/>
+          <ReduxRouter defaultRoute={`${path}/RelationshipView/${Object.keys(UserViews[0])[0]}X`} {...this.props} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${path}/RelationshipView/${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
+          </ReduxRouter>
         </ErrorRegion>
       </View>
       <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
@@ -137,6 +140,26 @@ class UserRelationships extends Component{
   }
 }
 
+class UserRelationshipsStandaloneClass extends Component{
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    const {history} = this.props;
+    return <View style={{ flex: 1}}>
+      <Header>
+        <Left>
+          <Button onPress={() => history.goBack()}>
+            <Icon name='back-arrow'/>
+          </Button>
+        </Left>
+        <Body><Title>{'Nearby Users'}</Title></Body>
+      </Header>
+      <UserRelationships {...this.props}/>
+    </View>;
+  }
+}
 const styles = {
   locationTextPlaceholder: {
     color: shotgun.silver
@@ -153,10 +176,6 @@ const styles = {
     flexDirection: 'row'
   },
   switchView: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginTop: 10,
-    marginBottom: 10
   },
 };
 
@@ -183,6 +202,8 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withExternalState(mapStateToProps)(UserRelationships);
+export const UserRelationshipsStandalone =  withExternalState(mapStateToProps)(UserRelationshipsStandaloneClass);
+export const UserRelationshipsControl =  withExternalState(mapStateToProps)(UserRelationships);
+export default UserRelationshipsStandalone;
 
 

@@ -155,7 +155,7 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
             Logger.info(`Matched ${JSON.stringify(rt)} to path ${el.pathname}`);
             foundKeys.push(rt.key);
             const {isAdd, isRemove, index, transition, isReverse} = match.isExact ? el : {};
-            foundVisibleRoot = true;
+            foundVisibleRoot = !isRemove;
             result.push({...removeDeltas(rt), match, index, isAdd, isReverse, isRemove, transition, persistent: false});
           } else if (rt.persistent){
             Logger.info(`Loading persistent route ${JSON.stringify(rt)} to path ${el.pathname}`);

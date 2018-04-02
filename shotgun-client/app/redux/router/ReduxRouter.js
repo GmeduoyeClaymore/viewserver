@@ -179,13 +179,14 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
 const goBackTranslation = (navigationContainer) => {
   const {navigationStack} = navigationContainer;
   const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
+  const oldHeadOfStack = previousNavItems[previousNavItems.length - 1] || {};
   //Remove the current end of stack
   const remainingItems = [...previousNavItems.slice(0, previousNavItems.length - 1)];
   //Get new head of stack
   const newHeadOfStack = remainingItems[remainingItems.length - 1];
   const itemsNotNeedingTransition =  [...remainingItems.slice(0, remainingItems.length - 1)];
   //Set transition params on new head of stack
-  const addition = {isReverse: true, ...newHeadOfStack, isAdd: true};
+  const addition = {isReverse: true, ...newHeadOfStack, isAdd: true, transition: oldHeadOfStack.transition};
   const newNavigationStack = [...itemsNotNeedingTransition, {...addition}  ];
   const croppedStack = newNavigationStack.slice(-MaxStackLength);
   return navigationContainer.setIn(['navigationStack'], croppedStack);
@@ -201,7 +202,9 @@ const navigateFactory = (myStateGetter, navigationContainerTranslation, setState
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer = DefaultNavigation} = componentState;
   const newnavigationContainer =  navigationContainerTranslation(navigationContainer, RouteUtils.parseAction(action, state));
-  setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
+  if (newnavigationContainer){
+    setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
+  }
 };
 
 const createDefaultNavigation = (props) => {

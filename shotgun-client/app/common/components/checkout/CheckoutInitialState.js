@@ -1,5 +1,6 @@
 export const INITIAL_STATE = {
   totalPrice: undefined,
+  price: undefined,
   selectedProduct: undefined,
   showAll: true,
   orderItem: {

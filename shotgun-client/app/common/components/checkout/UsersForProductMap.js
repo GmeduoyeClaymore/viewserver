@@ -1,13 +1,17 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted, withExternalState} from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row} from 'native-base';
+import {withExternalState} from 'custom-redux';
+import { Container, Button, Text, Grid, Col, Row, View, Header, Title, Body, Left, Content} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
-import {TextInput} from 'react-native';
+import {TextInput, Dimensions} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/utils';
-import UserRelationships from 'common/components/relationships/UserRelationships';
+import {UserRelationshipsControl} from 'common/components/relationships/UserRelationships';
+const { height, width } = Dimensions.get('window');
+
+const contentHeight = height - shotgun.footerHeight;
+const contentWidth = width - 20;
 
 const getAddressForlocation = async (client, location) => {
   if (!location || !location.latitude || !location.longitude){
@@ -75,22 +79,23 @@ class UsersForProductMap extends Component{
     const {getLocationTextInput, assignDeliveryToUser} = this;
     const {origin, selectedProduct = {}, errors, disableDoneButton, navigationStrategy, deliveryUser, client} = this.props;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
-
     return <Container>
-      <Grid>
-        <Row size={89}>
-          <UserRelationships title={title} backAction={navigationStrategy.prev} client={client} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
-          <ErrorRegion errors={errors} />
-        </Row>
-        <Row size={9} style={styles.inputRow}>
-          <Col>
-            <Row>
-              <Icon name="pin" paddedIcon originPin />
-              {getLocationTextInput(origin, 'origin', 'Enter job location')}
-            </Row>
-          </Col>
-        </Row>
-      </Grid>
+      <Header withButton>
+        <Left>
+          <Button onPress={() => navigationStrategy.prev()}>
+            <Icon name='back-arrow'/>
+          </Button>
+        </Left>
+        <Body><Title>{title}</Title></Body>
+      </Header>
+      <Row style={{paddingLeft: 10}}>
+        <Icon name="pin" paddedIcon originPin />
+        {getLocationTextInput(origin, 'origin', 'Enter job location')}
+      </Row>
+      <Row size={25}>
+        <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+        <ErrorRegion errors={errors} />
+      </Row>
       <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='forward-arrow' next/>

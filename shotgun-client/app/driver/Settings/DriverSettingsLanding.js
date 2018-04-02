@@ -46,7 +46,7 @@ const DriverSettings = ({history, user, parentPath, ordersPath}) => {
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push(ordersPath, {isCompleted: true})}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(ordersPath, {isCompleted: true, canGoBack: true})}>
           <Text style={styles.text}>Completed Jobs</Text>
           <Icon style={{paddingRight: 10}} name='two-people'/>
         </ListItem>

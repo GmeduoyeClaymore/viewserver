@@ -128,7 +128,8 @@ const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride)
 
     render(){
       const {Component, newProps, props, resetComponentState} = this;
-      return <Component key={newProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...{...newProps, ...props, resetComponentState}}/>;
+      const  propsForChild = {...{...newProps, ...props, resetComponentState}};
+      return <Component key={newProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...propsForChild}/>;
     }
   };
   return NonReactStatics(result, Component);
