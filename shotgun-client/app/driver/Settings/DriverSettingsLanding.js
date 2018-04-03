@@ -17,12 +17,7 @@ const DriverSettings = ({history, user, parentPath, ordersPath}) => {
   };
 
   return <Container>
-    <Header withButton>
-      <Left>
-        <Button onPress={() => history.goBack()}>
-          <Icon name='back-arrow'/>
-        </Button>
-      </Left>
+    <Header>
       <Body style={{width: '100%'}}>
         <Row style={{width: '100%'}}>
           <Col size={200}>

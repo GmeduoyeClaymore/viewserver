@@ -73,7 +73,7 @@ class CustomerOrders extends Component{
         <Tab heading="Live Jobs"/>
         <Tab heading="Complete"/>
       </Tabs>
-      <ReduxRouter history={history} parentPath={parentPath}  height={height - 150}  defaultRoute={`${path}/Live`}>
+      <ReduxRouter  name="CustomerOrdersRouter"  history={history} parentPath={parentPath}  height={height - 150}  defaultRoute={`${path}/Live`}>
         <Route path={`${path}/Live`} parentPath={parentPath}  isCompleted={false} component={OrderItems}/>
         <Route path={`${path}/Complete`} parentPath={parentPath}  isCompleted={true} component={OrderItems}/>
       </ReduxRouter>

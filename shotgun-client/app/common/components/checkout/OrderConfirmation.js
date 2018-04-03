@@ -32,7 +32,7 @@ class OrderConfirmation extends Component{
 
   purchase(){
     const {dispatch, history, orderItem, payment, delivery, selectedProduct, ordersPath} = this.props;
-    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.push(`${ordersPath}`, {isCustomer: true})));
+    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.replace(`${ordersPath}`, {isCustomer: true})));
   }
 
   async componentDidMount(){

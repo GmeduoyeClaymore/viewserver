@@ -11,6 +11,8 @@ import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import Slider from 'react-native-slider';
 import UserRelationshipDetail from './UserRelationshipDetail';
 
+const SubViewPath = 'RelationshipView/';
+
 class UserRelationships extends Component{
   constructor(props){
     super(props);
@@ -84,13 +86,17 @@ class UserRelationships extends Component{
   onChangeTab(selectedTabIndex){
     const {history, path} = this.props;
     const viewElement = this.UserViews[selectedTabIndex];
-    history.replace(`${path}/RelationshipView/${Object.keys(viewElement)[0]}X`);
+    history.replace(`${path}/${SubViewPath}${Object.keys(viewElement)[0]}X`);
   }
 
   getSelectedTabIndex(){
     const {history} = this.props;
     const currentPath = history.location.pathname;
-    const viewKey = currentPath.lastIndexOf(currentPath.lastIndexOf('/'), currentPath.length - 1);
+    const indexOf =  currentPath.lastIndexOf(SubViewPath);
+    if (!~indexOf){
+      return 0;
+    }
+    const viewKey = currentPath.substring(indexOf + SubViewPath.length, currentPath.length - 1);
     const selectedIndex = this.UserViews.findIndex(c => Object.keys(c)[0] === viewKey);
     return !!~selectedIndex ? selectedIndex : 0;
   }
@@ -106,11 +112,11 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, UserViews} = this;
-    const {selectedUser, selectedUserIndex, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width} = this.props;
+    const {selectedUser, selectedUserIndex, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width, height} = this.props;
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <View style={{ flex: 1, padding: 10, width}}>
+    return <View style={{ flex: 1, padding: 10, maxWidth: width, maxHeight: height}}>
       <View style={styles.switchView}>
         {me ? <Slider step={1} minimumValue={0} maximumValue={50} value={distance} onSlidingComplete={this.setRange}/> : null}
       </View>
@@ -125,13 +131,13 @@ class UserRelationships extends Component{
           <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ showAll }/>
         </View>
       </Row> : null}
-      <Tabs style={{flex: 1}} initialPage={this.getSelectedTabIndex()} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
+      <Tabs style={{flex: 1, width}} page={this.getSelectedTabIndex()} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
-          <ReduxRouter defaultRoute={`${path}/RelationshipView/${Object.keys(UserViews[0])[0]}X`} {...this.props} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
-            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${path}/RelationshipView/${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
+          <ReduxRouter  name="UserRelationshipRouter" defaultRoute={`${path}/${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${path}/${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
           </ReduxRouter>
         </ErrorRegion>
       </View>
@@ -139,45 +145,6 @@ class UserRelationships extends Component{
     </View>;
   }
 }
-
-class UserRelationshipsStandaloneClass extends Component{
-  constructor(props){
-    super(props);
-  }
-
-  render(){
-    const {history} = this.props;
-    return <View style={{ flex: 1}}>
-      <Header>
-        <Left>
-          <Button onPress={() => history.goBack()}>
-            <Icon name='back-arrow'/>
-          </Button>
-        </Left>
-        <Body><Title>{'Nearby Users'}</Title></Body>
-      </Header>
-      <UserRelationships {...this.props}/>
-    </View>;
-  }
-}
-const styles = {
-  locationTextPlaceholder: {
-    color: shotgun.silver
-  },
-  inputRow: {
-    padding: shotgun.contentPadding
-  },
-  switch: {
-    height: 30
-  },
-  friendsView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    flexDirection: 'row'
-  },
-  switchView: {
-  },
-};
 
 const mapStateToProps = (state, initialProps) => {
   const {dispatch} = initialProps;
@@ -202,8 +169,39 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export const UserRelationshipsStandalone =  withExternalState(mapStateToProps)(UserRelationshipsStandaloneClass);
 export const UserRelationshipsControl =  withExternalState(mapStateToProps)(UserRelationships);
+export class UserRelationshipsStandalone extends Component{
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    return <View style={{ flex: 1}}>
+      <Header>
+        <Body><Title>{'Nearby Users'}</Title></Body>
+      </Header>
+      <UserRelationshipsControl {...this.props}/>
+    </View>;
+  }
+}
+const styles = {
+  locationTextPlaceholder: {
+    color: shotgun.silver
+  },
+  inputRow: {
+    padding: shotgun.contentPadding
+  },
+  switch: {
+    height: 30
+  },
+  friendsView: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
+  },
+  switchView: {
+  },
+};
 export default UserRelationshipsStandalone;
 
 

@@ -25,7 +25,7 @@ import {Dimensions} from 'react-native';
 const { height, width } = Dimensions.get('window');
 
 const contentHeight = height - shotgun.footerHeight;
-const contentWidth = width;
+const contentWidth = width - 20;
 
 
 class TestComponent extends React.Component{
@@ -90,7 +90,7 @@ class DriverLanding extends Component {
     const {busy, path} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
-        <ReduxRouter  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={`${path}/DriverOrderRequests`} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
+        <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={`${path}/Checkout`} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
           <Route path={`${path}/Checkout`} component={Checkout}/>
           <Route path={`${path}/DriverOrderRequests`} exact component={DriverOrderRequests}/>
           <Route path={`${path}/DriverOrderRequestDetail`} exact component={DriverOrderRequestDetail}/>

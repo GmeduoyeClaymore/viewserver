@@ -21,7 +21,7 @@ const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
   };
 };
 
-export const connect = (mapStateToProps = (_, props) => props, ignorefuncs = true, withRef = false) => (component) => connectAdvanced(
+export const connect = (mapStateToProps = (_, props) => props, ignorefuncs = true, withRef = true) => (component) => connectAdvanced(
   selectorFactory(ignorefuncs, mapStateToProps), {withRef}
 )(component);
 

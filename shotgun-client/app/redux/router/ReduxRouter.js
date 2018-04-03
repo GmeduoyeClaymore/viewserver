@@ -24,7 +24,7 @@ const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 class ReduxRouterClass extends Component{
   constructor(props){
     super(props);
-    this.transitionManager = new TransitionManager();
+    this.transitionManager = new TransitionManager(props.name);
     this.performTransition = this.performTransition.bind(this);
     this.handleRef = this.handleRef.bind(this);
     this.processChildren = this.processChildren.bind(this);
@@ -32,10 +32,17 @@ class ReduxRouterClass extends Component{
     this.state = {
       initializationErrors: []
     };
+    this.transitionManager.setDefaultRoute(this.props.defaultRoute);
   }
 
   componentDidMount(){
-    this.processChildren(this.props.children);
+    if (!this.childrenProcessed){
+      this.transitionManager.log('Processing children');
+      this.processChildren(this.props.children);
+    }
+    this.transitionManager.log('Performing transition');
+    this.performTransition();
+    this.transitionManager.log('Finished Performing transition');
   }
 
   componentWillUnmount(){
@@ -44,6 +51,7 @@ class ReduxRouterClass extends Component{
 
 
   componentWillReceiveProps(newProps){
+    this.transitionManager.setDefaultRoute(newProps.defaultRoute);
     if (this.props.children != newProps.children){
       this.processChildren(newProps.children);
     }
@@ -89,24 +97,29 @@ class ReduxRouterClass extends Component{
     }
   }
 
-  shouldComponentUpdate(newProps){
-    const {children = [], navigationContainer} = newProps;
-    if (children.length != this.props.children.length){
-      return true;
-    }
 
+  async componentDidUpdate(oldProps){
+    this.transitionManager.log('Component did update');
+    const {children = [], navigationContainer} = oldProps;
+    let mayNeedToTransition = false;
+    if (children != this.props.children){
+      this.transitionManager.log('Children have changed');
+      mayNeedToTransition =  true;
+    }
     if (navigationContainer != this.props.navigationContainer){
-      return true;
+      this.transitionManager.log('Navigation has changed');
+      mayNeedToTransition =  true;
     }
-
-    return false;
-  }
-
-  async componentDidUpdate(){
-    if (!this.childrenProcessed){
-      this.processChildren(this.props.children);
+    if (mayNeedToTransition){
+      if (!this.childrenProcessed){
+        this.transitionManager.log('Processing children');
+        this.processChildren(this.props.children);
+      }
+      this.transitionManager.log('Performing transition');
+      this.performTransition();
+    } else {
+      this.transitionManager.log('Not Performing transition');
     }
-    this.performTransition();
   }
 
   async performTransition(){
@@ -117,12 +130,15 @@ class ReduxRouterClass extends Component{
     this.transitionManager.initialize(route, ref);
   }
 
+  handleActualComponentRef(route, actualComponentRef){
+    this.transitionManager.initializeActualComponent(route, actualComponentRef);
+  }
+
   render() {
     const {width = deviceWidth, height  = deviceHeight, navigationContainer, history, path: parentPath} = this.props;
     const {initializationErrors} = this.state;
-    const {stateKey: _, children, defaultRoute, setStateWithPath, setState, ...reduxRouterPropertiesToPassToEachRoute} = this.props;
-    const defaultRootObj = RouteUtils.parseRoute(defaultRoute);
-    const routesToRender = this.transitionManager.getOrderedRoutesFromChildren(children, navigationContainer, false, defaultRootObj);
+    const {stateKey: _, children, defaultRoute, setStateWithPath, setState, name, ...reduxRouterPropertiesToPassToEachRoute} = this.props;
+    const routesToRender = this.transitionManager.getOrderedRoutesFromChildren(children, navigationContainer, false);
     return <View style={{flex: 1, height, width}}>
       <ErrorRegion errors={initializationErrors.join('\n')}/>
       {routesToRender.map(
@@ -142,7 +158,7 @@ class ReduxRouterClass extends Component{
               backgroundColor: 'white',
               left: 0,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.key} ref={ref => {this.handleRef(rt, ref);}}>
-            <ComponentForRoute key={rt.path} {...completeProps}/>
+            <ComponentForRoute ref={ref => {this.handleActualComponentRef(rt, ref);}} key={rt.path} {...completeProps}/>
           </View>;
         }
       )}
@@ -178,6 +194,9 @@ const moveNavigation  = (isReplace, isReverse) => (navigationContainer, navActio
 
 const goBackTranslation = (navigationContainer) => {
   const {navigationStack} = navigationContainer;
+  if (navigationStack.length == 1){
+    return;
+  }
   const previousNavItems = navigationStack.map(RouteUtils.removeDeltas);
   const oldHeadOfStack = previousNavItems[previousNavItems.length - 1] || {};
   //Remove the current end of stack
@@ -190,6 +209,12 @@ const goBackTranslation = (navigationContainer) => {
   const newNavigationStack = [...itemsNotNeedingTransition, {...addition}  ];
   const croppedStack = newNavigationStack.slice(-MaxStackLength);
   return navigationContainer.setIn(['navigationStack'], croppedStack);
+};
+
+const justTranslation = (navigationContainer, navAction) => {
+  const addition = {isAdd: true, ...navAction};
+  const newNavigationStack = [addition];
+  return navigationContainer.setIn(['navigationStack'], newNavigationStack);
 };
 
 const resetTranslation = (navigationContainer) => {
@@ -207,6 +232,7 @@ const navigateFactory = (myStateGetter, navigationContainerTranslation, setState
   }
 };
 
+
 const createDefaultNavigation = (props) => {
   const navigationStack = props.defaultNavigation || DefaultNavigationStack;
   return Immutable({
@@ -218,7 +244,7 @@ const performTransitionsThunkFactory = (context, myStateGetter, setState, clearT
   const componentState = myStateGetter(getState()) || {};
   const {navigationContainer} = componentState;
 
-  const routes = context.transitionManager.doAnyOfMyRoutesNeedToTransition(navigationContainer);
+  const routes = context.transitionManager.getRoutesNeedingTransition(navigationContainer);
   const nonPersistentRoutes = routes.filter(rt => !rt.persistent);
   if (!navigationContainer || !nonPersistentRoutes || !nonPersistentRoutes.length ){
     return;
@@ -238,12 +264,14 @@ const historyFactory = memoize(
   ({myStateGetter, dispatch, navigationContainer, setState, DefaultNavigation}) => {
     const replaceThunk = navigateFactory(myStateGetter, moveNavigation(true), setState, DefaultNavigation);
     const goBackThunk = navigateFactory(myStateGetter, goBackTranslation, setState, DefaultNavigation);
+    const justThunk = navigateFactory(myStateGetter, justTranslation, setState, DefaultNavigation);
     const nextThunk = navigateFactory(myStateGetter, moveNavigation(false), setState, DefaultNavigation);
     const location = navigationContainer.navigationStack[navigationContainer.navigationStack.length - 1];
     return {
       location,
       replace: (path, navState) => dispatch(replaceThunk(path, navState)),
       goBack: action => dispatch(goBackThunk(action)),
+      just: action => dispatch(justThunk(action)),
       push: (path, navState) => dispatch(nextThunk(path, navState))
     };
   }, (arg1, arg2) => isEqual(arg1, arg2, true, true)

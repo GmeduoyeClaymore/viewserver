@@ -60,6 +60,10 @@ class DeliveryMap extends Component{
     if (!isEqual(newOptions, oldOptions)){
       this.subscribeToUsersForProduct(newOptions);
     }
+    const {destination, origin} = this.props;
+    if (destination != newProps.destination || origin != newProps.origin){
+      this.fitMap();
+    }
   }
 
   async onChangeText(location, field, value){
@@ -85,6 +89,7 @@ class DeliveryMap extends Component{
   setDurationAndDistance({distance, duration}){
     const {delivery} = this.props;
     this.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
+    this.fitMap();
   }
 
   doAddressLookup(addressLabel, addressKey){
@@ -172,11 +177,11 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const {delivery, selectedContentType, selectedProduct, isInBackground} = initialProps;
-  const {destination, origin} = delivery;
+  const {destination, origin, distance, duration} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;
   const supportsOrigin = selectedContentType.origin;
-  const disableDoneButton = origin.line1 == undefined || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
+  const disableDoneButton = origin.line1 == undefined || !distance || !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   return {
     ...initialProps,

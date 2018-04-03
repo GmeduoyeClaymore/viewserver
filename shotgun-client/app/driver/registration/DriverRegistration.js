@@ -35,7 +35,7 @@ class DriverRegistration extends Component {
   render() {
     const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
     const {path} = this.props;
-    return <ReduxRouter {...driverRegistrationProps} defaultRoute={`${path}/DriverRegistrationLanding`}>
+    return <ReduxRouter  name="DriverRegistrationRouter" {...driverRegistrationProps} defaultRoute={`${path}/DriverRegistrationLanding`}>
       <Route stateKey={DriverRegistration.stateKey} path={`${path}/DriverRegistrationLanding`} exact component={DriverRegistrationLanding}/>
       <Route stateKey={DriverRegistration.stateKey} path={`${path}/Login`} exact component={DriverLogin}/>
       <Route stateKey={DriverRegistration.stateKey} path={`${path}/UserDetails`} next={`${path}/AddressDetails`} exact component={UserDetails}/>

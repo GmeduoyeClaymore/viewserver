@@ -61,20 +61,16 @@ class DriverOrders  extends Component{
     this.onChangeTab = this.onChangeTab.bind(this);
   }
 
-  onChangeTab (newIsCustomer){
-    const {history, isCustomer, isCompleted, path} = this.props;
-    const {location} = history;
-    
-    if (isCustomer !== newIsCustomer) {
-      const newPath = location.pathname.endsWith('Posted') ? `${path}/Accepted` : `${path}/Posted`;
-      history.replace({pathname: newPath}, {isCustomer: newIsCustomer, isCompleted});
-    }
+  onChangeTab (isCustomer){
+    const {history, isCompleted, path, canGoBack} = this.props;
+    const newPath = isCustomer ? `${path}/Posted` : `${path}/Accepted`;
+    history.replace({pathname: newPath}, {isCompleted, canGoBack});
   }
 
   render() {
     const {history, isCustomer, defaultOptions, isCompleted, canGoBack, parentPath, path, height, ordersRoot} = this.props;
     return <Container>
-      <Header hasTabs>
+      <Header hasTabs  withButton={canGoBack}>
         {canGoBack ? <Left>
           <Button>
             <Icon name='back-arrow' onPress={() => history.goBack()} />
@@ -82,13 +78,13 @@ class DriverOrders  extends Component{
         </Left> : null }
         <Body><Title>{'My Jobs' + (isCompleted ? ' (Completed)' : '')}</Title></Body>
       </Header>
-      <Tabs initialPage={history.location.pathname.endsWith('Posted') ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => this.onChangeTab(i == 1)}>
+      <Tabs initialPage={isCustomer ? 1 : 0}  page={isCustomer ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => this.onChangeTab(i == 1)}>
         <Tab heading={'Accepted'}/>
         <Tab heading={'Posted'}/>
       </Tabs>
-      <ReduxRouter height={height - 150} defaultRoute={`${path}/Accepted`} {...{history, isCustomer, defaultOptions, isCompleted, parentPath, ordersRoot, path} } >
-        <Route path={`${path}/Accepted`} component={OrderListings} isCustomer={false}/>
-        <Route path={`${path}/Posted`} component={OrderListings}  isCustomer={true}/>
+      <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={`${path}/Accepted`} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+        <Route path={`${path}/Accepted`} component={OrderListings}/>
+        <Route path={`${path}/Posted`} component={OrderListings}/>
       </ReduxRouter>
     </Container>;
   }
@@ -96,8 +92,12 @@ class DriverOrders  extends Component{
 
 const mapStateToProps = (state, initialProps) => {
   const navigationProps = getNavigationProps(initialProps);
+  const {history, path} = initialProps;
+  const {location} = history;
+  const {pathname} = location;
 
   return {
+    isCustomer: pathname.endsWith(`${path}/Posted`),
     ...initialProps,
     ...navigationProps,
     vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),

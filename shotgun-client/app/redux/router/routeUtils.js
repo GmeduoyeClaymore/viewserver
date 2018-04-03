@@ -167,8 +167,8 @@ export const getOrderedRoutes = (routes, navigationContainer = {}, filterForTran
     }
   );
   if (!foundVisibleRoot && defaultRoute){
-    const navigationStackLocation = croppedStack[croppedStack.length - 1];
-    return [{...defaultRoute, pathname: navigationStackLocation.pathname}]; // Change default routes path so it has the url of the referring page
+    const navigationStackLocation = croppedStack[croppedStack.length - 1] || {};
+    return [{...defaultRoute, isAdd: true}]; // Change default routes path so it has the url of the referring page
   }
   return result;
 };

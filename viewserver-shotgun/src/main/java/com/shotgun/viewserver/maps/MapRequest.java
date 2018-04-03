@@ -54,7 +54,7 @@ public class MapRequest {
     }
 
     public String toQueryString(String key){
-        return "input="+ URLEncoder.encode(this.getInput())+"&types=address&key="+key+"&language="+this.getLanguage()+"&components=country%3Auk&" + LocationBiasParams.toQueryString(lat,lng);
+        return "input="+ URLEncoder.encode(this.getInput())+"&key="+key+"&language="+this.getLanguage()+"&components=country%3Auk&" + LocationBiasParams.toQueryString(lat,lng);
     }
 }
 
