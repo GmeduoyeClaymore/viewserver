@@ -32,9 +32,6 @@ export const updateVehicle = (vehicle, continueWith) => {
   return invokeDaoCommand('vehicleDao', 'addOrUpdateVehicle', {vehicle}, continueWith);
 };
 
-export const loginDriver = (email, password, continueWith) => {
-  return invokeDaoCommand('driverDao', 'loginDriver', {email, password}, continueWith);
-};
 
 export const acceptOrderRequest = (orderId, continueWith) => {
   return invokeDaoCommand('driverDao', 'acceptOrderRequest', {orderId}, continueWith);

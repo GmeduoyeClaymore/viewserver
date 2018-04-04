@@ -1,6 +1,8 @@
 import {getAllDaos, invokeDaoCommand, unregisterDao, registerDao, updateSubscriptionAction, updateOptionsAction} from 'common/dao';
 import Dao from 'common/dao/DaoBase';
 import UserDao from 'common/dao/UserDao';
+import LoginDao from 'common/dao/LoginDao';
+import Logger from 'common/Logger';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 
@@ -25,7 +27,9 @@ export const registerNakedDao = (dispatch, dao, options, continueWith) => {
 export const unregisterAllDaos = () => {
   return async (dispatch, getState) => {
     const daos = Object.keys(getAllDaos(getState()).asMutable());
-    daos.forEach(async dao => await dispatch(unregisterDao(dao)));
+    const daosToRemove = daos.filter(daoName => daoName !== 'loginDao');
+    daosToRemove.forEach(async dao => await dispatch(unregisterDao(dao)));
+    Logger.info(`Unregistering ${daosToRemove.join(',')}`);
     return;
   };
 };
@@ -50,6 +54,14 @@ export const updateRelationship = (options, continueWith) => {
   return invokeDaoCommand('userRelationshipDao', 'updateRelationship', options, continueWith);
 };
 
+export const loginUserByUsernameAndPassword = (options, continueWith) => {
+  return invokeDaoCommand('loginDao', 'loginUserByUsernameAndPassword', options, continueWith);
+};
+
+export const logOut = (continueWith) => {
+  return invokeDaoCommand('loginDao', 'logOut', undefined, continueWith);
+};
+
 export const callUser = (userId, continueWith) => {
   return invokeDaoCommand('userRelationshipDao', 'callUser', {userId}, continueWith);
 };
@@ -59,5 +71,11 @@ export const commonServicesRegistrationAction = (client) => {
     register(dispatch, new UserDao(client));
     register(dispatch, new ContentTypeDao(client));
     register(dispatch, new ProductCategoryDao(client));
+  };
+};
+
+export const loginServicesRegistrationAction = (client) => {
+  return (dispatch) => {
+    registerNakedDao(dispatch, new LoginDao(client));
   };
 };

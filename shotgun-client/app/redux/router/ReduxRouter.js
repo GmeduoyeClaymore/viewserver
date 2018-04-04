@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import { View } from 'react-native-animatable';
-import {Dimensions} from 'react-native';
+import {Dimensions, BackHandler} from 'react-native';
 import { withExternalState } from '../withExternalState';
-
 import Logger from 'common/Logger';
 import {ErrorRegion} from 'common/components';
 import { memoize } from '../memoize';
@@ -12,6 +11,7 @@ import TransitionManager from './utils/TransitionManager';
 import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
 import invariant  from 'invariant';
+import {Text} from 'native-base';
 
 const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 
@@ -25,12 +25,26 @@ class ReduxRouterClass extends Component{
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
   }
 
+
   componentDidMount(){
+    if (this.props.name === 'AppRouter'){
+      BackHandler.addEventListener('hardwareBackPress', this.handleBack);
+    }
     this.performTransition(undefined, this.props);
   }
 
   componentWillUnmount(){
+    if (this.props.name === 'AppRouter'){
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBack);
+    }
     Logger.info("Throwing redux router away as for some reason we don't think we need it anymore ");
+  }
+
+
+  handleBack(){
+    const { history } = this.props;
+    history.goBack();
+    return true;
   }
 
   async componentDidUpdate(oldProps){
@@ -68,11 +82,11 @@ class ReduxRouterClass extends Component{
     const {width = deviceWidth, height  = deviceHeight, history, path: parentPath, style = {}} = this.props;
     const navContainerTranslator  = NavigationContainerTranslator.fromProps(this.props);
     const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name'] );
-    const routesToRender = navContainerTranslator.getRoutesToRender(this.getPathFromElement);
+    const routesToRender = navContainerTranslator.getRoutesToRender();
 
     return <View style={{flex: 1, ...style, height, width}}>
       <ErrorRegion/>
-      {routesToRender.map(
+      {routesToRender.length ? routesToRender.map(
         (rt) => {
           const {componentProps} = rt;
           const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement} = componentProps;
@@ -90,10 +104,10 @@ class ReduxRouterClass extends Component{
               backgroundColor: 'white',
               left: 0,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.path} ref={ref => {this.handleRef(rt, ref);}}>
-            <ComponentForRoute ref={ref => {this.handleActualComponentRef(rt, ref);}} key={rt.path} {...completeProps}/>
+            <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined} key={rt.path} {...completeProps}/>
           </View>;
         }
-      )}
+      ) : <Text>{`No routes found to match the path ${history.location.pathname} routes are ${navContainerTranslator.printAllRoutes}`}</Text>}
     </View>;
   }
 }

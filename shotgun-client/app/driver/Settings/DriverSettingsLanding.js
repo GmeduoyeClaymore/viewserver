@@ -3,18 +3,19 @@ import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, B
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
-import PrincipalService from 'common/services/PrincipalService';
 import {Icon, AverageRating} from 'common/components';
+import {logOut, unregisterAllDaos} from 'common/actions/CommonActions';
 import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const DriverSettings = ({history, user, parentPath, ordersPath}) => {
+const DriverSettings = ({history, client, user, parentPath, ordersPath}) => {
   const signOut = async () => {
-    await PrincipalService.removeUserIdFromDevice();
-    history.push('/Root');
+    dispatch(logOut(() => history.push('/')));
+    dispatch(unregisterAllDaos());
   };
+
 
   return <Container>
     <Header>
@@ -89,7 +90,7 @@ const mapStateToProps = (state, initialProps) => ({
 });
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, true, false
 )(DriverSettings);
 
 

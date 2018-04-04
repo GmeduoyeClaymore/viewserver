@@ -14,7 +14,6 @@ export default class CustomerDao{
     this.registerCustomer = this.registerCustomer.bind(this);
     this.rejectDriver = this.rejectDriver.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
-    this.loginCustomer = this.loginCustomer.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
     this.checkout = this.checkout.bind(this);
     this.rateDriver = this.rateDriver.bind(this);
@@ -57,13 +56,6 @@ export default class CustomerDao{
 
   async updateOrderPrice({orderId, price}) {
     await this.client.invokeJSONCommand('customerController', 'updateOrderPrice', {orderId, price});
-  }
-
-  async loginCustomer({email, password}){
-    const customerId = await this.client.login(email, password);
-    Logger.info(`Customer ${customerId} logged in`);
-    await PrincipalService.setUserIdOnDevice(customerId);
-    return customerId;
   }
 
   async cancelOrder({orderId}){

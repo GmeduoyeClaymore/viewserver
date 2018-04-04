@@ -51,6 +51,6 @@ const styles = {
   }
 };
 
-const ConnectedRatingAction = connect()(RatingAction);
+const ConnectedRatingAction = connect(undefined, true, false)(RatingAction);
 export {ConnectedRatingAction as RatingAction};
 

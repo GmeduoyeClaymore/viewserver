@@ -1,6 +1,5 @@
 import Logger from 'common/Logger';
 import Rx from 'rxjs/Rx';
-import * as crx from 'common/rx';
 import {page} from 'common/dao/DaoExtensions';
 import {isEqual} from 'lodash';
 import RxDataSink from '../../common/dataSinks/RxDataSink';
@@ -24,19 +23,21 @@ export default class Dao {
     this.updateSubscription = this.updateSubscription.bind(this);
     this.resetSubscription = this.resetSubscription.bind(this);
     this.resetData = this.resetData.bind(this);
+    this.onRegister = this.onRegister.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
     this.forceNexUpdate = false;
-
-    this.crx = crx;//force this to load
-    if (!this.daoContext.client){
-      Logger.warning('Unable to link up reconnect event as cannot find client in DAO context');
-    } else {
-      this.daoContext.client.loggedInObservable.subscribe(this.handleConnectionStatus);
-    }
   }
 
-  handleConnectionStatus(status){
-    if (status && this.subscribed){
+  onRegister(daoCollection){
+    if (!daoCollection.loginDao){
+      Logger.warning('Unable to link up reconnect event as cannot find loginDao in DAO context');
+      return;
+    }
+    daoCollection.loginDao.observable.subscribe(this.handleConnectionStatus);
+  }
+
+  handleConnectionStatus({isLoggedIn, isConnected}){
+    if (isLoggedIn && isConnected && this.subscribed){
       Logger.info('Handling reconnection logic - ' + this.name);
       this.updateSubscription(this.options, true);
     }

@@ -49,6 +49,8 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       unRegisterDao({name});
     }
     DAOS[name] = dao;
+
+   
     
     if (dao.observable){
       let daoEventFunc = c => {
@@ -84,6 +86,9 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       DAO_SNAPSHOT_COMPLETE_SUBSCRIPTIONS[name] = snapshotCompleteSub;
     }
 
+    if (dao.onRegister){
+      dao.onRegister(DAOS);
+    }
 
     return getState();
   };

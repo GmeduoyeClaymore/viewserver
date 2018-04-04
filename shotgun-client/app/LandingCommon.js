@@ -1,16 +1,12 @@
 import React, {Component} from 'react';
 import {connect, Redirect} from 'custom-redux';
-import {unregisterAllDaos, commonServicesRegistrationAction} from 'common/actions/CommonActions';
+import {commonServicesRegistrationAction, logOut, unregisterAllDaos} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
 import {View, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
-import PrincipalService from './common/services/PrincipalService';
 
-const signOut = async (history) => {
-  await PrincipalService.removeUserIdFromDevice();
-  history.push('/Root');
-};
+
 class LandingCommon extends Component {
   constructor(props) {
     super(props);
@@ -18,13 +14,17 @@ class LandingCommon extends Component {
 
   beforeNavigateTo() {
     const {dispatch, client} = this.props;
-    dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client));
     PermissionsService.requestLocationPermission();
   }
 
   render() {
-    const {busy, user, history, errors} = this.props;
+    const {busy, user, history, dispatch, errors} = this.props;
+
+    const signOut = async () => {
+      dispatch(logOut(() => history.push('/')));
+      dispatch(unregisterAllDaos());
+    };
 
     if (busy){
       return <LoadingScreen text="Logging You In"/>;

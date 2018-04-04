@@ -25,7 +25,7 @@ import {Dimensions} from 'react-native';
 const { height, width } = Dimensions.get('window');
 
 const contentHeight = height - shotgun.footerHeight;
-const contentWidth = width - 20;
+const contentWidth = width;
 
 class DriverLanding extends Component {
   constructor(props) {

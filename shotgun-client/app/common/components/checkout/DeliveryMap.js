@@ -76,14 +76,15 @@ class DeliveryMap extends Component{
     style = address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
     const {onChangeText} = this;
-    return  <Row>
-      {address.line1 !== undefined ? <Col size={30}>
-        <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
-      </Col> : null}
-      <Col size={70}>
-        <Text style={style} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{text}</Text>
-      </Col>
-    </Row>;
+    return  <Row  style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
+      <Icon name="pin" paddedIcon originPin /><Row>
+        {address.line1 !== undefined ? <Col size={30}>
+          <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
+        </Col> : null}
+        <Col size={70}>
+          <Text style={style} >{text}</Text>
+        </Col>
+      </Row></Row>;
   }
 
   setDurationAndDistance({distance, duration}){
@@ -136,18 +137,8 @@ class DeliveryMap extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Row>
-        <Row size={15} style={styles.inputRow}>
-          <Col>
-            {supportsOrigin ? <Row>
-              <Icon name="pin" paddedIcon originPin />
-              {getLocationText(origin, 'origin', 'Enter pick-up location')}
-            </Row> : null}
-            {supportsDestination ? <Row>
-              <Icon name="pin" paddedIcon />
-              {getLocationText(destination, 'destination', 'Enter drop-off location')}
-            </Row> : null}
-          </Col>
-        </Row>
+        {supportsOrigin ? getLocationText(origin, 'origin', 'Enter pick-up location') : null}
+        {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
       </Grid>
       <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>

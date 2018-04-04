@@ -31,5 +31,5 @@ const styles = {
   }
 };
 
-const ConnectedTermsAgreement = connect()(TermsAgreement);
+const ConnectedTermsAgreement = connect( undefined, true, false)(TermsAgreement);
 export {ConnectedTermsAgreement as TermsAgreement};

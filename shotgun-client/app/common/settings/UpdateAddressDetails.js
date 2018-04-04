@@ -12,9 +12,6 @@ class HomeAddressDetails  extends Component{
     super(props);
   }
 
-  beforeNavigateTo(){
-    this.setState({unSavedDeliveryAddress: undefined});
-  }
 
   render() {
     const {history, busy, errors, dispatch, next, parentPath, unSavedDeliveryAddress} = this.props;
@@ -31,6 +28,7 @@ class HomeAddressDetails  extends Component{
       dispatch(updateDeliveryAddress({...unSavedDeliveryAddress, isDefault: true},
         () =>  {
           history.push(next);
+          this.setState({unSavedDeliveryAddress: undefined});
         }
       ));
     };

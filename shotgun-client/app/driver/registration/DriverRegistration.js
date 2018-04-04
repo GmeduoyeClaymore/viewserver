@@ -24,7 +24,6 @@ class DriverRegistration extends Component {
 
   componentDidMount(){
     const {dispatch, client} = this.props;
-    dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new DriverDao(client));
     register(dispatch, new ContentTypeDao(client));
     register(dispatch, new ProductCategoryDao(client));

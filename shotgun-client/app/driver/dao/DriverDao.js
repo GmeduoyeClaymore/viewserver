@@ -37,25 +37,10 @@ export default class DriverDao{
     return;
   }
 
-  async registerDriver({driver, vehicle, address, bankAccount}){
-    Logger.info(`Registering driver ${driver.email}`);
-    const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
-    Logger.info(`Driver ${driverId} registered`);
-    await PrincipalService.setUserIdOnDevice(driverId);
-    return driverId;
-  }
-
   async updateDriver({driver}){
     Logger.info(`Updating driver ${driver.email}`);
     const driverId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: driver});
     Logger.info(`Driver ${driverId} updated`);
-    return driverId;
-  }
-
-  async loginDriver({email, password}){
-    const driverId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});
-    Logger.info(`Driver ${driverId} logged in`);
-    await PrincipalService.setUserIdOnDevice(driverId);
     return driverId;
   }
 

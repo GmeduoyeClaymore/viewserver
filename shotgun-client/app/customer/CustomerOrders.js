@@ -53,10 +53,9 @@ class CustomerOrders extends Component{
     }
   }
 
-  onChangeTab(){
+  onChangeTab(index){
     const {history, path} = this.props;
-    const {location} = history;
-    const newPath = location.pathname.endsWith('Complete') ?   'Live' : 'Complete';
+    const newPath = !index ?   `${path}/Live` : `${path}/Complete`;
     history.replace({pathname: newPath});
   }
 
@@ -69,11 +68,11 @@ class CustomerOrders extends Component{
       <Header hasTabs>
         <Body><Title>My Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={history.location.pathname.endsWith('Complete')  ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab()}>
+      <Tabs initialPage={history.location.pathname.endsWith('Complete')  ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i)}>
         <Tab heading="Live Jobs"/>
         <Tab heading="Complete"/>
       </Tabs>
-      <ReduxRouter  name="CustomerOrdersRouter"  history={history} parentPath={parentPath}  height={height - 150} path={path} defaultRoute={'Live'}>
+      <ReduxRouter  name="CustomerOrdersRouter" path={path} history={history} parentPath={parentPath}  height={height - 150} path={path} defaultRoute={'Live'}>
         <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={OrderItems}/>
         <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={OrderItems}/>
       </ReduxRouter>

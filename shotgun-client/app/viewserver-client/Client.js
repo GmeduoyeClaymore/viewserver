@@ -15,7 +15,6 @@ export default class Client {
     this.url = url;
     this.protocol = protocol;
     this.network = new Network(this.url);
-    this.loggedInSubject = new Rx.Subject();
   }
 
   static setCurrent(client){
@@ -26,16 +25,12 @@ export default class Client {
     return this.network.connection;
   }
 
-  get loggedInObservable(){
-    return this.loggedInSubject;
-  }
-
   connect(autoReconnect){
     return this.network.connect(autoReconnect);
   }
 
   get connected(){
-    return this.network.connected();
+    return this.network.connected;
   }
 
   authenticate (type, tokens, eventhandlers) {
@@ -139,18 +134,6 @@ export default class Client {
     const tableEditCommand = ProtoLoader.Dto.TableEditCommandDto.create({tableName, tableEvent, operation: 2 /* EDIT */});
     return this.sendCommand('tableEdit', tableEditCommand, false, eventHandlers);
   };
-
-
-  async loginUserById(userId){
-    await this.invokeJSONCommand('loginController', 'setUserId', userId);
-    this.loggedInSubject.next(userId);
-  }
-
-  async login(email, password){
-    const customerId = await this.invokeJSONCommand('loginController', 'login', {email, password});
-    this.loggedInSubject.next(customerId);
-    return customerId;
-  }
 
   invokeJSONCommand = function (controllerName, action, payload) {
     const commandExecutedPromise = new GenericJSONCommandPromise();

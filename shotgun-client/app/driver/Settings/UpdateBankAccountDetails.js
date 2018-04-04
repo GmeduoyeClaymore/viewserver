@@ -111,4 +111,4 @@ const mapStateToProps = (state, nextOwnProps) => ({
 });
 
 
-export default connect(mapStateToProps)(UpdateBankAccountDetails);
+export default connect(mapStateToProps, true, false)(UpdateBankAccountDetails);

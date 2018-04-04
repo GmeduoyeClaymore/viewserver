@@ -19,7 +19,6 @@ class CustomerRegistration extends Component {
 
   componentDidMount(){
     const {dispatch, client} = this.props;
-    dispatch(unregisterAllDaos());
     registerNakedDao(dispatch, new CustomerDao(client));
   }
 

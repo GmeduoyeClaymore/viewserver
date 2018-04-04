@@ -4,15 +4,16 @@ import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
+import {logOut, unregisterAllDaos} from 'common/actions/CommonActions';
 import {Linking} from 'react-native';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const CustomerSettings = ({history, user = {}, parentPath}) => {
+const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
   const signOut = async () => {
-    await PrincipalService.removeUserIdFromDevice();
-    history.push('/Root');
+    dispatch(logOut(() => history.push('/')));
+    dispatch(unregisterAllDaos());
   };
 
   return <Container>
@@ -67,7 +68,7 @@ const mapStateToProps = (state, initialProps) => ({
 });
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, true, false
 )(CustomerSettings);
 
 

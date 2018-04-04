@@ -13,10 +13,12 @@ import Logger from 'common/Logger';
 
 const MAX_RECENT_ADDRESSES = 10;
 
+
 class AddressLookup extends Component {
   static propTypes = {
     client: PropTypes.object,
-    addressLabel: PropTypes.string.isRequired
+    addressLabel: PropTypes.string.isRequired,
+    addressPath: PropTypes.array.isRequired,
   };
 
   constructor(props) {
@@ -24,6 +26,7 @@ class AddressLookup extends Component {
     this.onAddressSelected = this.onAddressSelected.bind(this);
     this.searchAutoCompleteSuggestions = this.searchAutoCompleteSuggestions.bind(this);
     this.onAddressChanged = this.onAddressChanged.bind(this);
+    this.goToTabName = this.goToTabName.bind(this);
     this.state = {
       busy: false,
       addressSearchText: undefined,
@@ -39,16 +42,13 @@ class AddressLookup extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    const {selectedTab} = newProps;
-    this.goToTabName(selectedTab);
+    this.goToTabName(newProps.selectedTab, newProps);
   }
 
-  goToTabName(tabName){
-    const {history, path} = this.props;
-    if (this.props.selectedTab  != tabName){
-      if (!history.location.pathname.endsWith(tabName)){
-        history.replace(`${path}/${tabName}`);
-      }
+  goToTabName(name, propOverride){
+    const {history, path, addressLabel, addressPath} = propOverride || this.props;
+    if (!history.location.pathname.endsWith(name)){
+      history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}});
     }
   }
 
@@ -98,7 +98,7 @@ class AddressLookup extends Component {
   }
 
   render() {
-    const { deliveryAddresses = [], addressLabel, homeAddress, history, height, width, path, selectedTabIndex, client, tabs, me, addressSearchText, suggestedPlaces = [], errors, hasLookedUpAddresses, busy} = this.props;
+    const { deliveryAddresses = [], addressLabel, homeAddress, history, height, width, path, selectedTabIndex, client, tabs, me, addressSearchText, suggestedPlaces = [], errors, hasLookedUpAddresses, busy, addressPath} = this.props;
     const {onAddressChanged, onAddressSelected} = this;
     return (
       <Container>
@@ -112,16 +112,16 @@ class AddressLookup extends Component {
         </Header>
         <Content keyboardShouldPersistTaps="always">
           {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
-          <Row size={10} style={styles.searchContainer}>
+          <Row size={10} style={{...styles.searchContainer, paddingTop: 10, paddingBottom: 10}}>
             <ErrorRegion errors={errors}>
               <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-              <Input placeholder={addressLabel} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
+              <Input placeholder={addressLabel} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
-          {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => history.replace(`${path}/${tabs[i]}`)}>
+          {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => this.goToTabName(tabs[i])}>
             {tabs.map(tab =>  <Tab key={tab} heading={tab}/>)}
           </Tabs> : null}
-          {tabs.length ? <ReduxRouter style={{padding: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={`${tabs[0]}`}  >
+          {tabs.length ? <ReduxRouter style={{padding: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
             <Route path={'Recent'} component={RecentAddresses} {...{deliveryAddresses}}/>
             <Route path={'Suggested'} component={SuggestedAddresses} {...{hasLookedUpAddresses, suggestedPlaces, addressSearchText, busy} }/>
             <Route path={'Nearby Places'} component={ReverseGeoAddresses} />
@@ -134,10 +134,13 @@ class AddressLookup extends Component {
 
 
 const HomeAddressItem = ({address = {}, onAddressSelected}) =>
-  <View onPress={() => onAddressSelected(address)}>
-    <Text style={styles.addressText}>Home</Text>
-    <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
-  </View>;
+  <Row style={{paddingLeft: 23}} onPress={() => onAddressSelected(address)}>
+    <Icon name="location" paddedIcon originPin style={{ alignSelf: 'flex-start', marginTop: 6 }} />
+    <View >
+      <Text style={{...styles.addressText, paddingBottom: 6}}>Home</Text>
+      <Text style={styles.smallText}>{`${address.line1}, ${address.postCode}`}</Text>
+    </View>
+  </Row>;
 
 
 class RecentAddresses extends Component{
@@ -148,6 +151,7 @@ class RecentAddresses extends Component{
   render(){
     const {deliveryAddresses, onAddressSelected} = this.props;
     return deliveryAddresses && deliveryAddresses.length ? <View paddedLeft style={styles.resultsContainer}>
+      <Text style={styles.smallText}>Recent addresses you have used</Text>
       <List>
         {getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
       </List>
@@ -263,10 +267,15 @@ class ReverseGeoAddresses extends Component{
 }
 
 const styles = {
+  input: {
+  },
   title: {
     fontSize: 20,
   },
   searchContainer: {
+    paddingHorizontal: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
     paddingLeft: shotgun.contentPadding
   },
   resultsContainer: {
@@ -304,11 +313,11 @@ const getHomeAddress = (addreses) => {
 
 const getTabs = ({deliveryAddresses = [], suggestedPlaces = [], myLocation, hasLookedUpAddresses}) => {
   const result = [];
-  if (deliveryAddresses.length){
-    result.push('Recent');
-  }
   if (suggestedPlaces.length || hasLookedUpAddresses){
     result.push('Suggested');
+  }
+  if (deliveryAddresses.length){
+    result.push('Recent');
   }
   if (myLocation){
     result.push('Nearby Places');

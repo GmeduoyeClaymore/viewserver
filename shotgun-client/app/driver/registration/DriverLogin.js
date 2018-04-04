@@ -3,7 +3,7 @@ import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Lab
 import yup from 'yup';
 import {ValidatingButton, ValidatingInput, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {loginDriver} from 'driver/actions/DriverActions';
+import {loginUserByUsernameAndPassword} from 'common/actions/CommonActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class DriverLogin extends Component {
@@ -25,7 +25,7 @@ class DriverLogin extends Component {
     };
 
     const login = async() => {
-      dispatch(loginDriver(email, password, () => history.push('/Root')));
+      dispatch(loginUserByUsernameAndPassword({email, password}, () => history.replace('/Root')));
     };
 
     return <Container>
@@ -81,8 +81,8 @@ const validationSchema = {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  errors: getOperationError(state, 'driverDao', 'loginDriver'),
-  busy: isAnyOperationPending(state, [{ driverDao: 'loginDriver'}])
+  errors: getOperationError(state, 'loginDao', 'loginUserByUsernameAndPassword'),
+  busy: isAnyOperationPending(state, [{ loginDao: 'loginUserByUsernameAndPassword'}])
 });
 
 export default connect(mapStateToProps)(DriverLogin);

@@ -3,7 +3,7 @@ import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Lab
 import yup from 'yup';
 import {ErrorRegion, ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {loginCustomer} from 'customer/actions/CustomerActions';
+import {loginUserByUsernameAndPassword} from 'common/actions/CommonActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class CustomerLogin extends Component {
@@ -25,7 +25,7 @@ class CustomerLogin extends Component {
     };
 
     const login = async() => {
-      dispatch(loginCustomer(email, password, () => history.push('/Customer/Landing')));
+      dispatch(loginUserByUsernameAndPassword({email, password}, () => history.push('/Root')));
     };
 
     return <Container>
@@ -80,8 +80,8 @@ const validationSchema = {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  errors: getOperationError(state, 'customerDao', 'loginCustomer'),
-  busy: isAnyOperationPending(state, [{ customerDao: 'loginCustomer'}])
+  errors: getOperationError(state, 'loginDao', 'loginUserByUsernameAndPassword'),
+  busy: isAnyOperationPending(state, [{ customerDao: 'loginUserByUsernameAndPassword'}])
 });
 
 export default connect(mapStateToProps)(CustomerLogin);

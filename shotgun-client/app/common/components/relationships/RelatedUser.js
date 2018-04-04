@@ -72,7 +72,7 @@ const ButtonElementFactory  = (tartgetStatus, text) => ({updateRelationshipCmd, 
     <Icon name="dashed" paddedIcon/>
     <Text>{text}</Text>
   </Button>;
-const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps)(ButtonElementFactory(tartgetStatus, text) );
+const StatusButtonElement = (tartgetStatus, text) => connect(mapButtonStateToProps, true, false)(ButtonElementFactory(tartgetStatus, text) );
 const DisconnectButton = StatusButtonElement('UNKNOWN', 'Un-Friend');
 const AcceptButton = StatusButtonElement('ACCEPTED', 'Accept Request');
 const IgnoreButton = StatusButtonElement('UNKNOWN', 'Ignore Request');
