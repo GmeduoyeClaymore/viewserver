@@ -9,7 +9,7 @@ import FlatProductCategoryList from './FlatProductCategoryList';
 import UsersForProductMap from './UsersForProductMap';
 import ProductList from './ProductList';
 import AddressLookup from 'common/components/maps/AddressLookup';
-import {Route, ReduxRouter, withExternalState} from 'custom-redux';
+import {Route, ReduxRouter, withExternalState, removeProperties} from 'custom-redux';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import ContentTypeNavigationStrategy from './ContentTypeNavigationStrategy';
 import Logger from 'common/Logger';
@@ -32,19 +32,19 @@ class Checkout extends Component {
     const {navigationStrategy} = this;
     const {resetComponentState: resetParentComponentState} = this.props;
     const customerProps = {navigationStrategy, ...this.props, stateKey: Checkout.stateKey, resetParentComponentState};
-    const {stateKey: _1, setState: _2, setStateWithPat: _3, parentPath, ...rest} = customerProps;
+    const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'parentPath']);
     const {path} = this.props;
-    return <ReduxRouter  name="CheckoutRouter"  {...rest} defaultRoute={`${path}/AddressLookup`}>
-      <Route stateKey={Checkout.stateKey} path={`${path}/ContentTypeSelect`} exact component={ContentTypeSelect} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/DeliveryMap`} exact component={DeliveryMap}/>
-      <Route stateKey={Checkout.stateKey} path={`${path}/AddressLookup`} exact component={AddressLookup} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/DeliveryOptions`} exact component={DeliveryOptions} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/ProductCategoryList`} exact component={ProductCategoryList} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/FlatProductCategoryList`} exact component={FlatProductCategoryList} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/ProductList`} exact component={ProductList} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/ItemDetails`} exact component={ItemDetails} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/OrderConfirmation`} exact component={OrderConfirmation} />
-      <Route stateKey={Checkout.stateKey} path={`${path}/UsersForProductMap`} exact component={UsersForProductMap} />
+    return <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
+      <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} />
+      <Route stateKey={Checkout.stateKey} path={'DeliveryMap'} exact component={DeliveryMap}/>
+      <Route stateKey={Checkout.stateKey} path={'AddressLookup'} exact component={AddressLookup} />
+      <Route stateKey={Checkout.stateKey} path={'DeliveryOptions'} exact component={DeliveryOptions} />
+      <Route stateKey={Checkout.stateKey} path={'ProductCategoryList'} exact component={ProductCategoryList} />
+      <Route stateKey={Checkout.stateKey} path={'FlatProductCategoryList'} exact component={FlatProductCategoryList} />
+      <Route stateKey={Checkout.stateKey} path={'ProductList'} exact component={ProductList} />
+      <Route stateKey={Checkout.stateKey} path={'ItemDetails'} exact component={ItemDetails} />
+      <Route stateKey={Checkout.stateKey} path={'OrderConfirmation'} exact component={OrderConfirmation} />
+      <Route stateKey={Checkout.stateKey} path={'UsersForProductMap'} exact component={UsersForProductMap} />
     </ReduxRouter>;
   }
 }

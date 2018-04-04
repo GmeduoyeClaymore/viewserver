@@ -21,24 +21,6 @@ export class Route extends Component{
       location: PropTypes.object
     };
 
-    oneOffInitialization(){
-      const {props} = this;
-      const {component} = props;
-      component.oneOffInitialization(props);
-    }
-
-    oneOffDestruction(){
-      const {props} = this;
-      const {component} = props;
-      component.oneOffDestruction(props);
-    }
-
-    beforeNavigateTo(){
-      const {props} = this;
-      const {component} = props;
-      component.beforeNavigateTo(props);
-    }
-
     constructor(props){
       super(props);
     }

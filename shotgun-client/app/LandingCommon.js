@@ -16,8 +16,8 @@ class LandingCommon extends Component {
     super(props);
   }
 
-  static oneOffInitialization(props) {
-    const {dispatch, client} = props;
+  beforeNavigateTo() {
+    const {dispatch, client} = this.props;
     dispatch(unregisterAllDaos());
     dispatch(commonServicesRegistrationAction(client));
     PermissionsService.requestLocationPermission();

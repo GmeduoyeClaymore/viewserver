@@ -22,7 +22,7 @@ class AddressLookup extends Component {
   constructor(props) {
     super(props);
     this.onAddressSelected = this.onAddressSelected.bind(this);
-    this.searchAutoCompleteSuggestions = debounce(this.searchAutoCompleteSuggestions.bind(this), 50);
+    this.searchAutoCompleteSuggestions = this.searchAutoCompleteSuggestions.bind(this);
     this.onAddressChanged = this.onAddressChanged.bind(this);
     this.state = {
       busy: false,
@@ -34,46 +34,62 @@ class AddressLookup extends Component {
   }
 
   onAddressChanged(value){
+    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
+    this.goToTabName('Suggested');
+  }
+
+  componentWillReceiveProps(newProps){
+    const {selectedTab} = newProps;
+    this.goToTabName(selectedTab);
+  }
+
+  goToTabName(tabName){
     const {history, path} = this.props;
-    if (!history.location.pathname.endsWith('Suggested')){
-      history.replace(`${path}/Suggested`);
+    if (this.props.selectedTab  != tabName){
+      if (!history.location.pathname.endsWith(tabName)){
+        history.replace(`${path}/${tabName}`);
+      }
     }
-    super.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
   }
 
   async searchAutoCompleteSuggestions(value){
     const {client, me = {}} = this.props;
     try {
+      if (this.pendingAutoCompletePromise){
+        this.pendingAutoCompletePromise.cancel();
+      }
       if (!value){
-        super.setState({
-          suggestedPlaces: [],
+        Logger.info(`Clearing results for empty search term ${value}`);
+        this.setState({
+          suggestedPlaces: undefined,
           hasLookedUpAddresses: false,
           busy: false
         });
         return;
       }
-      super.setState({ busy: true });
-      const responseJSON = await client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
+      this.setState({ busy: true, hasLookedUpAddresses: true});
+      this.pendingAutoCompletePromise =  client.invokeJSONCommand('mapsController', 'makeAutoCompleteRequest', {
         lat: me.latitude,
         lng: me.longitude,
         input: value,
         language: 'en'
       });
+      const responseJSON = await this.pendingAutoCompletePromise;
 
       const filteredPredictions = responseJSON.predictions;
 
-      Logger.info(`Got ${filteredPredictions.length} results...`);
-      super.setState({
-        suggestedPlaces: filteredPredictions,
+      Logger.info(`Got ${filteredPredictions.length} results... for search term ${value}`);
+      this.setState({
+        suggestedPlaces: [...filteredPredictions],
         hasLookedUpAddresses: true,
         busy: false
       });
     } catch (error) {
-      super.setState({ error });
+      this.setState({ error });
     }
   }
 
-  onAddressSelected(value){
+  async onAddressSelected(value){
     const {addressPath, setStateWithPath, history, dispatch} = this.props;
     if (!addressPath){
       throw new Error('This control needs an address path');
@@ -82,14 +98,8 @@ class AddressLookup extends Component {
   }
 
   render() {
-    const { deliveryAddresses = [], addressLabel, history, height, path, client, me} = this.props;
-    const homeAddress = getHomeAddress(deliveryAddresses);
-    const {onAddressSelected, onAddressChanged} = this;
-    const { addressSearchText, suggestedPlaces = [], errors, hasLookedUpAddresses, busy} = this.state;
-    
-    const tabs = getTabs({deliveryAddresses, suggestedPlaces, hasLookedUpAddresses, myLocation: me});
-    let selectedTabIndex = tabs.findIndex(tb => history.location.pathname.endsWith(tb));
-    selectedTabIndex = !!~selectedTabIndex ? selectedTabIndex : 0;
+    const { deliveryAddresses = [], addressLabel, homeAddress, history, height, width, path, selectedTabIndex, client, tabs, me, addressSearchText, suggestedPlaces = [], errors, hasLookedUpAddresses, busy} = this.props;
+    const {onAddressChanged, onAddressSelected} = this;
     return (
       <Container>
         <Header withButton>
@@ -111,10 +121,10 @@ class AddressLookup extends Component {
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => history.replace(`${path}/${tabs[i]}`)}>
             {tabs.map(tab =>  <Tab key={tab} heading={tab}/>)}
           </Tabs> : null}
-          {tabs.length ? <ReduxRouter name="AddressLookupRouter"  height={height - 150} defaultRoute={`${path}/${tabs[0]}`} {...{history, onAddressSelected, deliveryAddresses, client, myLocation: me} } >
-            <Route path={`${path}/Recent`} component={RecentAddresses}/>
-            <Route path={`${path}/Suggested`} suggestedPlaces={suggestedPlaces} busy={busy} hasLookedUpAddresses={hasLookedUpAddresses} component={SuggestedAddresses}/>
-            <Route path={`${path}/Nearby Places`} component={connect()(ReverseGeoAddresses)}/>
+          {tabs.length ? <ReduxRouter style={{padding: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={`${tabs[0]}`}  >
+            <Route path={'Recent'} component={RecentAddresses} {...{deliveryAddresses}}/>
+            <Route path={'Suggested'} component={SuggestedAddresses} {...{hasLookedUpAddresses, suggestedPlaces, addressSearchText, busy} }/>
+            <Route path={'Nearby Places'} component={ReverseGeoAddresses} />
           </ReduxRouter> : null}
         </Content>
       </Container>
@@ -157,6 +167,9 @@ class SuggestedAddresses extends Component{
   constructor(props){
     super(props);
     this.onSuggestedPlaceSelected = this.onSuggestedPlaceSelected.bind(this);
+    this.state = {
+      errors: undefined
+    };
   }
 
   async onSuggestedPlaceSelected(rowData){
@@ -167,7 +180,7 @@ class SuggestedAddresses extends Component{
         language: 'en'
       }).timeoutWithError(5000, 'Place request timed out');
 
-      onAddressSelected(parseGooglePlacesData(res.result));
+      await onAddressSelected(parseGooglePlacesData(res.result));
     } catch (error) {
       super.setState({ error });
     }
@@ -175,14 +188,15 @@ class SuggestedAddresses extends Component{
 
   render(){
     const {onSuggestedPlaceSelected} = this;
-    const {suggestedPlaces, hasLookedUpAddresses, busy} = this.props;
+    const {suggestedPlaces, hasLookedUpAddresses, busy, addressSearchText} = this.props;
+    const {errors} = this.state;
     if (busy){
-      return <LoadingScreen text="Looking up results..."/>;
+      return <LoadingScreen text={`Looking up results for ${addressSearchText}...`}/>;
     }
-    return hasLookedUpAddresses ? <View padded>
-      <Text style={styles.smallText}>{suggestedPlaces.length ? null : 'No Results Found'}</Text>
+    return hasLookedUpAddresses ? <ErrorRegion errors={errors}><View  paddedLeft style={{paddingTop: 15}}>
+      <Text style={styles.smallText}>{suggestedPlaces.length ? `${suggestedPlaces.length > 1 ? 'Addresses' : 'Address'} matching "${addressSearchText}"` : `No Results Found matching "${addressSearchText}"`}</Text>
       <List>{suggestedPlaces.map((r, i) => <SuggestedPlace key={i} result={r} onSuggestedPlaceSelected={onSuggestedPlaceSelected}/>)}</List>
-    </View> : null;
+    </View></ErrorRegion>  : null;
   }
 }
 
@@ -235,7 +249,10 @@ class ReverseGeoAddresses extends Component{
 
   render(){
     const {onAddressSelected} = this.props;
-    const {reverseLookedUpAddresses = []} = this.state;
+    const {reverseLookedUpAddresses = [], busy} = this.state;
+    if (busy){
+      return <LoadingScreen text={'Looking for places close to you...'}/>;
+    }
     return reverseLookedUpAddresses.length > 0 ? <View paddedLeft style={{paddingTop: 15}}>
       <Text style={styles.smallText}>Places close to current location</Text>
       <List>
@@ -299,12 +316,26 @@ const getTabs = ({deliveryAddresses = [], suggestedPlaces = [], myLocation, hasL
   return result;
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  me: getDaoState(state, ['user'], 'userDao'),
-  ...getNavigationProps(initialProps),
-  ...getDaoState(state, ['customer'], 'deliveryAddressDao'),
-});
+const mapStateToProps = (state, initialProps) => {
+  const { history, suggestedPlaces = [], hasLookedUpAddresses} = initialProps;
+  const me = getDaoState(state, ['user'], 'userDao');
+  const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
+  const homeAddress = getHomeAddress(deliveryAddresses);
+  
+  const tabs = getTabs({deliveryAddresses, suggestedPlaces, hasLookedUpAddresses, myLocation: me});
+  let selectedTabIndex = tabs.findIndex(tb => history.location.pathname.endsWith(tb));
+  selectedTabIndex = !!~selectedTabIndex ? selectedTabIndex : 0;
+  return {
+    homeAddress,
+    selectedTabIndex,
+    selectedTab: tabs[selectedTabIndex],
+    tabs,
+    ...initialProps,
+    me,
+    ...getNavigationProps(initialProps),
+    deliveryAddresses
+  };
+};
 
 
 export default withExternalState(mapStateToProps)(AddressLookup);

@@ -136,8 +136,8 @@ class UserRelationships extends Component{
       </Tabs>
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
-          <ReduxRouter  name="UserRelationshipRouter" defaultRoute={`${path}/${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
-            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${path}/${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
+          <ReduxRouter  name="UserRelationshipRouter"  defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props} path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
           </ReduxRouter>
         </ErrorRegion>
       </View>

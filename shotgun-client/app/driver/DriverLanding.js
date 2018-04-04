@@ -27,41 +27,17 @@ const { height, width } = Dimensions.get('window');
 const contentHeight = height - shotgun.footerHeight;
 const contentWidth = width - 20;
 
-
-class TestComponent extends React.Component{
-  constructor(props){
-    super(props);
-  }
-
-  componentWillMount(){
-    this.log('Component mounting');
-  }
-
-  render(){
-    this.log('Component rendering');
-    return <Text>Test Component</Text>;
-  }
-
-  componentWillUnmount(){
-    this.log('Component unmounting');
-  }
-
-  log(message){
-    Logger.info('TestComponent-' + message);
-  }
-}
-
 class DriverLanding extends Component {
   constructor(props) {
     super(props);
     Logger.info('Creating a new instance of driver landing');
   }
 
-  static oneOffInitialization(props){
+  beforeNavigateTo(){
     Logger.info('Mounting driver landing');
-    DriverLanding.loadData(props);
-    DriverLanding.attemptPaymentCards(props);
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(props.history, 'Driver', actionUri));
+    DriverLanding.loadData(this.props);
+    DriverLanding.attemptPaymentCards(this.props);
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
   }
 
   static oneOffDestruction(props) {
@@ -71,7 +47,7 @@ class DriverLanding extends Component {
 
   static loadData(newProps){
     const {dispatch, client, userId, user} = newProps;
-    if (user){
+    if (!user){
       throw new Error('You shouldnt be on this page without a user specified how did this happen');
     }
     dispatch(driverServicesRegistrationAction(client, userId));
@@ -90,18 +66,18 @@ class DriverLanding extends Component {
     const {busy, path} = this.props;
     return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
       <Container>
-        <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={`${path}/Checkout`} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
-          <Route path={`${path}/Checkout`} component={Checkout}/>
-          <Route path={`${path}/DriverOrderRequests`} exact component={DriverOrderRequests}/>
-          <Route path={`${path}/DriverOrderRequestDetail`} exact component={DriverOrderRequestDetail}/>
-          <Route path={`${path}/DriverOrders`} exact component={DriverOrders}/>
-          <Route path={`${path}/CustomerOrderDetail`} exact component={CustomerOrderDetail}/>
-          <Route path={`${path}/CustomerOrderInProgress`} exact component={CustomerOrderInProgress}/>
-          <Route path={`${path}/Orders`} exact component={DriverOrders}/>
-          <Route path={`${path}/DriverOrderDetail`} exact component={DriverOrderDetail}/>
-          <Route path={`${path}/DriverOrderInProgress`} exact component={DriverOrderInProgress}/>
-          <Route path={`${path}/Settings`} component={DriverSettings}/>
-          <Route path={`${path}/UserRelationships`} component={UserRelationships}/>
+        <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={'Checkout'} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
+          <Route path={'Checkout'} component={Checkout}/>
+          <Route path={'DriverOrderRequests'} exact component={DriverOrderRequests}/>
+          <Route path={'DriverOrderRequestDetail'} exact component={DriverOrderRequestDetail}/>
+          <Route path={'DriverOrders'} exact component={DriverOrders}/>
+          <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+          <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
+          <Route path={'Orders'} exact component={DriverOrders}/>
+          <Route path={'DriverOrderDetail'} exact component={DriverOrderDetail}/>
+          <Route path={'DriverOrderInProgress'} exact component={DriverOrderInProgress}/>
+          <Route path={'Settings'} component={DriverSettings}/>
+          <Route path={'UserRelationships'} component={UserRelationships}/>
         </ReduxRouter>
         <DriverMenuBar {...this.props}/>
       </Container>;

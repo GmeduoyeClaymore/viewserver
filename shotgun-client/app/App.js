@@ -62,8 +62,8 @@ export default class App extends React.Component {
       isConnected: false,
     };
     registerTokenListener();
-    //this.client = new Client('ws://shotgun.ltd:6060/');
-    this.client = new Client('ws://192.168.0.20:6060/');
+    this.client = new Client('ws://shotgun.ltd:6060/');
+    //this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
     this.onChangeToken = this.onChangeToken.bind(this);
@@ -150,15 +150,15 @@ export default class App extends React.Component {
           <Root>
             <StyleProvider style={getTheme(shotgun)}>
               <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-                <ReduxRouter name="AppRouter" defaultRoute={this.userId  ? '/LandingCommon' : '/RegistrationCommon' } {...completeProps}>
-                  <Route path="/RegistrationCommon" exact component={RegistrationCommon}/>
-                  <Route path="/Root" exact component={LandingCommon}/>
-                  <Route path="/LandingCommon" exact component={LandingCommon}/>
-                  <Route path="/Customer/Registration" component={CustomerRegistration}/>
-                  <Route path="/Driver/Registration" component={DriverRegistration}/>
-                  <Route path="/Customer/Landing" component={CustomerLanding}/>
-                  <Route path="/Driver/Landing" component={DriverLanding}/>
-                  <Route path="/TermsAndConditions" component={TermsAndConditions}/>
+                <ReduxRouter path="/" name="AppRouter" defaultRoute={this.userId  ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
+                  <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
+                  <Route path="Root" exact component={LandingCommon}/>
+                  <Route path="LandingCommon" exact component={LandingCommon}/>
+                  <Route path="Customer/Registration" component={CustomerRegistration}/>
+                  <Route path="Driver/Registration" component={DriverRegistration}/>
+                  <Route path="Customer/Landing" component={CustomerLanding}/>
+                  <Route path="Driver/Landing" component={DriverLanding}/>
+                  <Route path="TermsAndConditions" component={TermsAndConditions}/>
                 </ReduxRouter>
               </View>
             </StyleProvider>

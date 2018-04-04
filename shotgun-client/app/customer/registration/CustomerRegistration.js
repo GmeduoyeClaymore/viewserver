@@ -26,13 +26,13 @@ class CustomerRegistration extends Component {
   render() {
     const {path} = this.props;
     const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey};
-    return <ReduxRouter  name="CustomerRegistrationRouter" {...registrationProps} defaultRoute={`${path}/RegistrationLanding`}>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/Login`} exact component={CustomerLogin}/>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/UserDetails`} exact component={UserDetails} next={`${path}/AddressDetails`}/>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/AddressDetails`} exact component={AddressDetails} next={`${path}/PaymentCardDetails`}/>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/AddressLookup`} exact component={AddressLookup}/>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/PaymentCardDetails`} exact component={PaymentCardDetails}/>
-      <Route stateKey={CustomerRegistration.stateKey} path={`${path}/RegistrationLanding`} exact component={CustomerRegistrationLanding}/>
+    return <ReduxRouter  name="CustomerRegistrationRouter" {...registrationProps} defaultRoute={'RegistrationLanding'}>
+      <Route stateKey={CustomerRegistration.stateKey} path={'Login'} exact component={CustomerLogin}/>
+      <Route stateKey={CustomerRegistration.stateKey} path={'UserDetails'} exact component={UserDetails} next={'AddressDetails'}/>
+      <Route stateKey={CustomerRegistration.stateKey} path={'AddressDetails'} exact component={AddressDetails} next={'PaymentCardDetails'}/>
+      <Route stateKey={CustomerRegistration.stateKey} path={'AddressLookup'} exact component={AddressLookup}/>
+      <Route stateKey={CustomerRegistration.stateKey} path={'PaymentCardDetails'} exact component={PaymentCardDetails}/>
+      <Route stateKey={CustomerRegistration.stateKey} path={'RegistrationLanding'} exact component={CustomerRegistrationLanding}/>
     </ReduxRouter>;
   }
 }

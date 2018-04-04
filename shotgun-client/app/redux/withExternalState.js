@@ -5,6 +5,8 @@ import {connect} from './connect';
 import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
 import memoize from './memoize';
 import Logger from 'common/Logger';
+import removeProperties from './removeProperties';
+import invariant  from 'invariant';
 
 
 Function.prototype.wrap = function wrap(otherFunction) {
@@ -31,12 +33,12 @@ const getPath = (stateKey) => {
   return stateKey.split('.');
 };
 
-const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToProps) => (state, initialProps) => {
+const mapComponentStateToProps = (stateKey, propsFromStateToPassIntoComponent = [], globalMapStateToProps) => (state, initialProps) => {
   const myStateGetter = (stateObj) => stateObj.getIn(['component', ...getPath(stateKey)]  || {});
   let myState = myStateGetter(state);
-  if (propsToMap.length){
+  if (propsFromStateToPassIntoComponent.length){
     const resultingState = {};
-    propsToMap.forEach(
+    propsFromStateToPassIntoComponent.forEach(
       pr => {
         if (myState[pr] != undefined){
           resultingState[pr] = myState[pr];
@@ -48,6 +50,7 @@ const mapComponentStateToProps = (stateKey, propsToMap = [], globalMapStateToPro
 
   const result =  {
     myStateGetter,
+    setState: createSetState(stateKey),
     ...initialProps,
     ...myState
   };
@@ -65,6 +68,7 @@ const setStateWithPath = (stateKey, partialState, path, continueWith) => {
 
 const createSetState = (stateKey) => {
   return function(partialState, continueWith, dispatchArgument){
+    invariant((this.props || dispatchArgument), "You're probably trying to use withExternalState on a stateless component. This means we cannot get dispatch from the props so either pass it in as the third argument to set state or make the component stateful");
     const {dispatch = dispatchArgument} = (this.props || {});
     dispatch(setState(stateKey, partialState, continueWith));
   };
@@ -72,6 +76,7 @@ const createSetState = (stateKey) => {
 
 const createSetStateWithPath = (stateKey) => {
   return function(partialState, path, continueWith, dispatchArgument){
+    invariant((this.props || dispatchArgument), "You're probably trying to use withExternalState on a stateless component. This means we cannot get dispatch from the props so either pass it in as the third argument to set state or make the component stateful");
     const {dispatch = dispatchArgument} = (this.props || {});
     dispatch(setStateWithPath(stateKey, partialState, path, continueWith));
   };
@@ -81,30 +86,43 @@ const createSetStateWithPath = (stateKey) => {
  * A public higher-order component to access the imperative API
  */
 
+
+const removeUnwantedProperties = (props) => (
+  removeProperties(props, ['stateKey', 'setState', 'setStateWithPath', 'propsFromStateToPassIntoComponent'])
+);
+
 const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride) => {
   Logger.info('WEXT - Creating ' + Component.name);
   let hasInitialized = false;
+
+  const changeSetStateImplementationAndReturnNewProps = props => {
+    let {stateKey = (Component.stateKey || Component.name)} = props;
+    stateKey = superStateKeyOverride || stateKey;
+    const newSetState = createSetState(stateKey);
+    const setStateWithPath = createSetStateWithPath(stateKey);
+    Component.prototype.setState =  newSetState;
+    return {setState: newSetState, setStateWithPath, Component, stateKey};
+  };
+
   const result = class ComponentWrapper extends React.Component{
     constructor(props){
       super(props);
+      this.stateSpecificProps = changeSetStateImplementationAndReturnNewProps(this.props);
       Logger.info('WEXT - Instantiating ' + Component.name);
-      const {stateKey = (Component.stateKey || Component.name), propsToMap} = props;
-      this.stateKey = superStateKeyOverride || stateKey;
-      this.newProps =  _extends({}, createNewProps(Component, this.stateKey, {...props}));
-      const isStatelessComponent = !!Component.prototype.render;
-      const componentAndGlobalMapStateToProps = mapComponentStateToProps(this.stateKey, propsToMap, mapGlobalStateToProps);
-      this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
-      const displayKey = (Component.displayName || Component.name);
-      this.displayName = 'withExternalState(' + displayKey + ')';
-      this.WrappedComponent = Component;
-      this.createSetState = createSetState(this.stateKey).bind(this);
-      this.resetComponentState = this.resetComponentState.bind(this);
-    }
 
-    shouldComponentUpdate(){
-      const {path, history = {}} = this.props;
-      const {location} = history;
-      return !location || !path || location.pathname.includes(path);
+      const {propsFromStateToPassIntoComponent} = this.props;
+      const {stateKey} = this.stateSpecificProps;
+
+      const isStatelessComponent = !!Component.prototype.render;
+
+      const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsFromStateToPassIntoComponent, mapGlobalStateToProps);
+      this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
+
+
+      const displayKey = (Component.displayName || Component.name);
+      this.displayName = `withExternalState(${displayKey}_${stateKey}')`;
+      this.createSetState = createSetState(stateKey).bind(this);
+      this.resetComponentState = this.resetComponentState.bind(this);
     }
 
     componentWillMount(){
@@ -127,21 +145,14 @@ const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride)
     }
 
     render(){
-      const {Component, newProps, props, resetComponentState} = this;
-      const  propsForChild = {...{...newProps, ...props, resetComponentState}};
-      return <Component key={newProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...propsForChild}/>;
+      const {Component, props, resetComponentState, stateSpecificProps} = this;
+      const  propsForChild = {...removeUnwantedProperties(props), ...stateSpecificProps, resetComponentState};
+      return <Component key={stateSpecificProps.stateKey} ref={cmp => {this.inner = cmp;}} style={{flex: 1}} {...propsForChild}/>;
     }
   };
   return NonReactStatics(result, Component);
 };
 
-const createNewProps = (Component, stateKey, originalProps) => {
-  const {setState: _1, setStateWithPath: _2, ...rest} = originalProps;
-  const newSetState = createSetState(stateKey);
-  const setStateWithPath = createSetStateWithPath(stateKey);
-  Component.prototype.setState =  newSetState;
-  return {...rest, setState: newSetState, setStateWithPath, Component};
-};
 
 export const withExternalState = (mapGlobalStateToProps, superStateKeyOverride) => (Component) => {
   return wrapperFactory(Component, mapGlobalStateToProps, superStateKeyOverride);

@@ -168,8 +168,27 @@ export default class Client {
       action,
       path: controllerName,
     });
-    this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
-    return commandExecutedPromise.promise;
+    const result = {};
+    const _this = this;
+    const innerPromise = new Promise((resolve, reject) => {
+      const resultObservable = Rx.Observable.fromPromise(commandExecutedPromise.promise);
+      resultSubscription = resultObservable.subscribe(
+        ev => {
+          Logger.info(`Resolved!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(ev)}`);
+          resolve(ev);
+        },
+        err => reject(err)
+      );
+      result.cancel = () => {
+        Logger.info(`Cancelling!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+        resultSubscription.unsubscribe();
+      };
+      _this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
+    });
+    const {then} = innerPromise;
+    result.then = then.bind(innerPromise);
+    result.timeoutWithError = innerPromise.timeoutWithError;
+    return result;
   };
 
   sendCommand = function (commandName, commandDto, continuous, eventHandlers) {
