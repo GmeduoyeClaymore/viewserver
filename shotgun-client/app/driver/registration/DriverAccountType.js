@@ -8,7 +8,7 @@ import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, get
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {registerAndLoginDriver} from 'common/actions/CommonActions';
+import {registerAndLoginDriver} from 'driver/actions/DriverActions';
 
 class DriverAccountType extends Component{
   constructor(props){

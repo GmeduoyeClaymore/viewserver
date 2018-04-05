@@ -41,7 +41,7 @@ class CustomerLanding extends Component {
     super(props);
   }
 
-  async componentDidMount() {
+  beforeNavigateTo() {
     const {dispatch, client, history} = this.props;
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, 'Customer', actionUri));
     dispatch(customerServicesRegistrationAction(client));

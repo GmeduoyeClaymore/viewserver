@@ -16,7 +16,7 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
     dispatch(unregisterAllDaos());
   };
 
-  return <Container>
+  return user ? <Container>
     <Header withButton>
       <Left>
         <Button onPress={() => history.goBack()}>
@@ -49,7 +49,7 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
       </List>
     </Content>
     <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
-  </Container>;
+  </Container> : null;
 };
 
 const styles = {

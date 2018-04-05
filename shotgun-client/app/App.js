@@ -56,7 +56,10 @@ class App extends React.Component {
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isConnected, isLoggedIn};
     const completeProps = {...globalProps, ...this.props};
     if (isLoggedIn === undefined || busy){
-      return <LoadingScreen text={'Loading application'}/>;
+      if (!isConnected){
+        return <LoadingScreen text={'Awaiting connection ..'}/>;
+      }
+      return <LoadingScreen text={'Awaiting login ..'}/>;
     }
     return   <Container style={{flexDirection: 'column', flex: 1}}>
       <ReactNativeModal

@@ -1,5 +1,4 @@
 import Logger from 'common/Logger';
-import PrincipalService from 'common/services/PrincipalService';
 import Rx from 'rxjs/Rx';
 import PhoneCallService from 'common/services/PhoneCallService';
 
@@ -10,8 +9,6 @@ export default class CustomerDao{
     this.name = 'customerDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
-    this.updateSubscription = this.updateSubscription.bind(this);
-    this.registerCustomer = this.registerCustomer.bind(this);
     this.rejectDriver = this.rejectDriver.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
@@ -19,31 +16,6 @@ export default class CustomerDao{
     this.rateDriver = this.rateDriver.bind(this);
     this.callDriver = this.callDriver.bind(this);
     this.updateOrderPrice = this.updateOrderPrice.bind(this);
-    this.subject.next();
-    this.options = {};
-  }
-
-  get observable(){
-    return this.subject;
-  }
-
-  get optionsObservable(){
-    return this.optionsSubject;
-  }
-
-  async updateSubscription(options){
-    this.options = {...this.options, ...options};
-    this.subject.next();
-    return;
-  }
-
-  async registerCustomer({customer, deliveryAddress, paymentCard}){
-    Logger.info(`Registering customer ${customer.email}`);
-    const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
-    Logger.info(`Customer ${customerId} registered`);
-    await PrincipalService.setUserIdOnDevice(customerId);
-    this.client.loginUserById(customerId);
-    return customerId;
   }
 
   async updateCustomer({customer}){
@@ -52,7 +24,6 @@ export default class CustomerDao{
     Logger.info(`Customer ${customerId} updated`);
     return customerId;
   }
-
 
   async updateOrderPrice({orderId, price}) {
     await this.client.invokeJSONCommand('customerController', 'updateOrderPrice', {orderId, price});

@@ -40,8 +40,6 @@
     "react-native-swiper": "^1.5.13",
     "react-native-vector-icons": "^4.5.0",
     "react-redux": "5.0.6",
-    "react-router": "4.2.0",
-    "react-router-native": "4.2.0",
     "redux": "3.7.2",
     "redux-seamless-immutable": "0.3.2",
     "redux-thunk": "2.2.0",

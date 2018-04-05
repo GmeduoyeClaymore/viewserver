@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
-import {PagingListView, Tabs, OrderRequest} from 'common/components';
+import {PagingListView, Tabs, OrderRequest, LoadingScreen} from 'common/components';
 import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
-import {isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
+import {isAnyLoading, getNavigationProps, resetSubscriptionAction, getDao} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 const Paging = () => <Spinner />;
@@ -46,13 +46,6 @@ class CustomerOrders extends Component{
     this.onChangeTab = this.onChangeTab.bind(this);
   }
 
-  componentWillMount(){
-    const {resetOrders} = this.props;
-    if (resetOrders){
-      resetOrders();
-    }
-  }
-
   onChangeTab(index){
     const {history, path} = this.props;
     const newPath = !index ?   `${path}/Live` : `${path}/Complete`;
@@ -61,7 +54,7 @@ class CustomerOrders extends Component{
 
 
   render(){
-    const {isCompleted, history, path, height, parentPath} = this.props;
+    const {history, path, height, parentPath, isOrdersDaoRegistered} = this.props;
     const {onChangeTab} = this;
   
     return <Container>
@@ -72,10 +65,10 @@ class CustomerOrders extends Component{
         <Tab heading="Live Jobs"/>
         <Tab heading="Complete"/>
       </Tabs>
-      <ReduxRouter  name="CustomerOrdersRouter" path={path} history={history} parentPath={parentPath}  height={height - 150} path={path} defaultRoute={'Live'}>
+      {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - 150} path={path} defaultRoute={'Live'}>
         <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={OrderItems}/>
         <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={OrderItems}/>
-      </ReduxRouter>
+      </ReduxRouter> : <LoadingScreen text="Waiting for order data.."/>}
     </Container>;
   }
 }
@@ -92,6 +85,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     resetOrders,
     isCompleted,
+    isOrdersDaoRegistered: !!getDao(state, 'orderSummaryDao'),
     busy: isAnyLoading(state, ['orderSummaryDao']),
   };
 };

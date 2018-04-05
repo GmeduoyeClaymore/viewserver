@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {connect, Route, ReduxRouter} from 'custom-redux';
+import ReactNativeModal from 'react-native-modal';
+import {View, Dimensions} from 'react-native';
+import {Container, Text, Spinner} from 'native-base';
 import DriverMenuBar from './DriverMenuBar';
 import DriverOrders from './DriverOrders';
 import DriverOrderDetail from './DriverOrderDetail';
@@ -11,7 +14,6 @@ import {customerServicesRegistrationAction, getPaymentCards} from 'customer/acti
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending, getDaoState, isAnyUnregistered, getLoadingMessage} from 'common/dao';
-import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
@@ -21,7 +23,6 @@ import CustomerOrderDetail from 'customer/CustomerOrderDetail';
 import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Dimensions} from 'react-native';
 const { height, width } = Dimensions.get('window');
 
 const contentHeight = height - shotgun.footerHeight;
@@ -64,23 +65,32 @@ class DriverLanding extends Component {
 
   render() {
     const {busy, path, loadingMessage} = this.props;
-    return busy ? <LoadingScreen text={`Loading Driver Landing Screen\n${loadingMessage} `}/> :
-      <Container>
-        <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={'Checkout'} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
-          <Route path={'Checkout'} component={Checkout}/>
-          <Route path={'DriverOrderRequests'} exact component={DriverOrderRequests}/>
-          <Route path={'DriverOrderRequestDetail'} exact component={DriverOrderRequestDetail}/>
-          <Route path={'DriverOrders'} exact component={DriverOrders}/>
-          <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-          <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
-          <Route path={'Orders'} exact component={DriverOrders}/>
-          <Route path={'DriverOrderDetail'} exact component={DriverOrderDetail}/>
-          <Route path={'DriverOrderInProgress'} exact component={DriverOrderInProgress}/>
-          <Route path={'Settings'} component={DriverSettings}/>
-          <Route path={'UserRelationships'} component={UserRelationships}/>
-        </ReduxRouter>
-        <DriverMenuBar {...this.props}/>
-      </Container>;
+    return  <Container>
+      <ReactNativeModal
+        isVisible={busy}
+        backdropOpacity={0.4}>
+        <View style={styles.modalContainer}>
+          <View style={styles.innerContainer}>
+            <Spinner/>
+            <Text>{`Loading Driver Landing Screen\n${loadingMessage} `}</Text>
+          </View>
+        </View>
+      </ReactNativeModal>
+      <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={'Checkout'} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
+        <Route path={'Checkout'} component={Checkout}/>
+        <Route path={'DriverOrderRequests'} exact component={DriverOrderRequests}/>
+        <Route path={'DriverOrderRequestDetail'} exact component={DriverOrderRequestDetail}/>
+        <Route path={'DriverOrders'} exact component={DriverOrders}/>
+        <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
+        <Route path={'Orders'} exact component={DriverOrders}/>
+        <Route path={'DriverOrderDetail'} exact component={DriverOrderDetail}/>
+        <Route path={'DriverOrderInProgress'} exact component={DriverOrderInProgress}/>
+        <Route path={'Settings'} component={DriverSettings}/>
+        <Route path={'UserRelationships'} component={UserRelationships}/>
+      </ReduxRouter>
+      <DriverMenuBar {...this.props}/>
+    </Container>;
   }
 }
 
@@ -94,10 +104,22 @@ const mapStateToProps = (state, nextOwnProps) => {
     paymentDaoReady: !!getDaoState(state, 'paymentDao'),
     awaitingDaos: isAnyUnregistered(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
     busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
-    loadingMessage: getLoadingMessage(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
+    loadingMessage: getLoadingMessage(state, [{ 'userDao': 'Loading user data' }, {'driverDao': 'Loading driver data' }, {'vehicleDao': 'Loading vehicle data'}, {'paymentDao': 'Loading payment data'}, {'contentTypeDao': 'Loading content type data'}]),
     user
   };
 };
+
+
+const styles = {
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    alignItems: 'center',
+  },
+};
+
 
 export default connect(mapStateToProps)(DriverLanding);
 

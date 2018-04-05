@@ -22,9 +22,8 @@ export default class LoginDao{
     this.loginByUserId = this.loginByUserId.bind(this);
     this.loginUserByUsernameAndPassword = this.loginUserByUsernameAndPassword.bind(this);
     this.registerAndLoginDriver = this.registerAndLoginDriver.bind(this);
+    this.registerAndLoginCustomer = this.registerAndLoginCustomer.bind(this);
     this.connectClientIfNotConnected = this.connectClientIfNotConnected.bind(this);
-
-    this.updateSubscription = this.updateSubscription.bind(this);
     this.doLoginStuff = this.doLoginStuff.bind(this);
     this.logOut = this.logOut.bind(this);
     this.initMessaging = this.initMessaging.bind(this);
@@ -38,11 +37,9 @@ export default class LoginDao{
     const userid = await PrincipalService.getUserIdFromDevice();
     if (userid){
       await this.loginByUserId(userid);
+    } else {
+      this.updateState({isLoggedIn: false});
     }
-  }
-
-  async updateSubscription(){
-    this.subject.next(this.state);
   }
 
   get observable(){
@@ -75,8 +72,16 @@ export default class LoginDao{
     Logger.info(`Registering driver ${driver.email}`);
     const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
     Logger.info(`Driver ${driverId} registered`);
-    await loginByUserId(driverId);
+    await this.loginByUserId(driverId);
     return driverId;
+  }
+
+  async registerAndLoginCustomer({customer, deliveryAddress, paymentCard}){
+    Logger.info(`Registering customer ${customer.email}`);
+    const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
+    Logger.info(`Customer ${customerId} registered`);
+    await this.loginByUserId(customerId);
+    return customerId;
   }
 
   async connectClientIfNotConnected(){
@@ -86,8 +91,24 @@ export default class LoginDao{
     this.client.connected;
   }
 
-  handleConnectionStatusChanged(isConnected){
-    this.updateState({isConnected});
+  async handleConnectionStatusChanged(isConnected){
+    if (isConnected){
+      const userId = await PrincipalService.getUserIdFromDevice();
+      if (userId){
+        try {
+          await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
+          await this.doLoginStuff(userId);
+          this.updateState({isConnected: true, isLoggedIn: true});
+        } catch (error){
+          Logger.error('Problem re logging you in ' + error );
+          this.updateState({isConnected: true, isLoggedIn: false});
+        }
+      } else {
+        this.updateState({isConnected: true, isLoggedIn: false});
+      }
+    } else {
+      this.updateState({isConnected: false, isLoggedIn: false});
+    }
   }
 
   async doLoginStuff(userId){

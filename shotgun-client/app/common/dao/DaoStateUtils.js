@@ -74,19 +74,27 @@ export const getLoadingMessage = (state, daoNames) => {
   return daoNames.map( nm => getDaoStatusMessage(nm, state)).join('\n');
 };
 
-const getDaoStatusMessage = (nm, state) => {
-  const base = nm;
+const getDaoStatusMessage = (statusPair, state) => {
+  let nm;
+  let message;
+  if (typeof statusPair === 'string'){
+    nm = statusPair;
+    messaage = statusPair;
+  } else {
+    nm = Object.keys(statusPair)[0];
+    messaage = statusPair[nm];
+  }
   if (getDao(state, nm) == undefined){
-    return `${base} (unregistered)`;
+    return `${messaage} (unregistered)`;
   }
   if (isLoading(state, nm) == undefined){
-    return `${base} (loading)`;
+    return `${messaage} (loading)`;
   }
   const err = getLoadingError(state, nm);
   if (err){
-    return `${base} (error) - ${err}`;
+    return `${messaage} (error) - ${err}`;
   }
-  return `${base} (success) `;
+  return `${messaage} (success) `;
 };
 
 

@@ -59,8 +59,8 @@ class PaymentCardDetails extends Component {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  errors: getOperationError(state, 'customerDao', 'registerCustomer'),
-  busy: isAnyOperationPending(state, [{ customerDao: 'registerCustomer'}])
+  errors: getOperationError(state, 'loginDao', 'registerAndLoginCustomer'),
+  busy: isAnyOperationPending(state, [{ loginDao: 'registerAndLoginCustomer'}])
 });
 
 export default withExternalState(mapStateToProps)(PaymentCardDetails);

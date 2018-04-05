@@ -10,14 +10,14 @@ import UserStatusControl from 'common/components/relationships/UserStatusControl
 
 const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const DriverSettings = ({history, client, user, parentPath, ordersPath}) => {
+const DriverSettings = ({history, dispatch, user, parentPath, ordersPath}) => {
   const signOut = async () => {
     dispatch(logOut(() => history.push('/')));
     dispatch(unregisterAllDaos());
   };
 
 
-  return <Container>
+  return user ? <Container>
     <Header>
       <Body style={{width: '100%'}}>
         <Row style={{width: '100%'}}>
@@ -65,7 +65,7 @@ const DriverSettings = ({history, client, user, parentPath, ordersPath}) => {
       </List>
     </Content>
     <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
-  </Container>;
+  </Container> : null;
 };
 
 const styles = {
