@@ -74,14 +74,7 @@ class ReduxRouterClass extends Component{
     Logger.info(`${this.props.name} - rendering`);
     const {width = deviceWidth, height  = deviceHeight, history, navigationContainerTranslator, path: parentPath, style = {}} = this.props;
     const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
-    let routesToRender = navigationContainerTranslator.getRoutesToRender();
-    const pendingRouteTransition = navigationContainerTranslator.pendingDefaultRouteTransition;
-    if (pendingRouteTransition){
-      const transitionElementToRender = navigationContainerTranslator.getRouteFromScope(pendingRouteTransition);
-      if (transitionElementToRender && !~routesToRender.findIndex(rt => rt.path === transitionElementToRender.path)){
-        routesToRender = [...routesToRender,  transitionElementToRender];
-      }
-    }
+    const routesToRender = navigationContainerTranslator.getRoutesToRender();
 
     const result =  <View style={{flex: 1, ...style, height, width}}>
       <ErrorRegion/>

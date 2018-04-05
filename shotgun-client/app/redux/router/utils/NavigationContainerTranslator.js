@@ -40,17 +40,10 @@ export default class NavigationContainerTranslator{
   get pendingDefaultRouteTransition(){
     const match = matchPath(this.location.pathname, this.routerPath);
     if (match && match.isExact){
-      return {...this.location, ...removeProperties(this.defaultRoute, ['state']), navContainerOverride: this.tempNavContainerPendingDefaultRouteTransition};
-    }
-  }
-
-  get tempNavContainerPendingDefaultRouteTransition(){
-    const match = matchPath(this.location.pathname, this.routerPath);
-    if (match && match.isExact){
       const existingStack = this.navContainer.navigationStack;
-      const previousStackHead = this.navContainer[this.navContainer.navPointer];
-      const newStack = [...existingStack.slice(0, existingStack.length - 1), {...previousStackHead, ...removeProperties(this.defaultRoute, ['state'])}];
-      return this.navContainer.setIn(['navigationStack'], newStack);
+      const newHead = {...this.location, ...removeProperties(this.defaultRoute, ['state'])};
+      const newStack = [...existingStack.slice(0, existingStack.length - 1), newHead];
+      return {...newHead, navContainerOverride: this.navContainer.setIn(['navigationStack'], newStack)};
     }
   }
 
@@ -143,7 +136,7 @@ export default class NavigationContainerTranslator{
     if (this.routesToRender){
       return this.routesToRender;
     }
-    const result = [];
+    let result = [];
     const {navigationStack = [], navPointer} = this.navContainer;
     const foundKeys = [];
     let croppedStack = navigationStack.slice(0, navPointer + 1);
@@ -155,6 +148,13 @@ export default class NavigationContainerTranslator{
         result.push(routeFromScope);
       }
     });
+    const pendingRouteTransition = this.pendingDefaultRouteTransition;
+    if (pendingRouteTransition){
+      const transitionElementToRender = this.getRouteFromScope(pendingRouteTransition);
+      if (transitionElementToRender && !~result.findIndex(rt => rt.path === transitionElementToRender.path)){
+        result = [...result,  transitionElementToRender];
+      }
+    }
     this.routesToRender = result;
     return result;
   }
