@@ -23,6 +23,7 @@ class ReduxRouterClass extends Component{
     this.performTransition = this.performTransition.bind(this);
     this.handleRef = this.handleRef.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
+    this.doesMatch = memoize((loc, path) => matchPath(loc, path));
   }
 
 
@@ -86,7 +87,7 @@ class ReduxRouterClass extends Component{
         (rt) => {
           const {componentProps} = rt;
           const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement} = componentProps;
-          const match = matchPath(history.location.pathname, rt.path);
+          const match = this.doesMatch(history.location.pathname, rt.path);
           let  completeProps = { ...reduxRouterPropertiesToPassToEachRoute, parentPath};
           completeProps = { ...completeProps, route: rt, path: rt.path};
           completeProps = { ...completeProps, ...otherPropsDeclaredOnRouteElement};

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect, ReduxRouter, Route} from 'custom-redux';
+import {connect, ReduxRouter, Route, memoize} from 'custom-redux';
 import { PagingListView, LoadingScreen, OrderRequest, Tabs } from 'common/components';
 import { View, Text, Container, Spinner, Header, Body, Title, Tab } from 'native-base';
 import { getDaoState, isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
@@ -74,7 +74,7 @@ class DriverOrderRequests extends Component{
 }
 
 
-const getSelectedContentTypeFromLocation = (history, selectedContentTypes) => {
+const getSelectedContentTypeFromLocation = memoize((history, selectedContentTypes) => {
   const {location} = history;
   if (!selectedContentTypes){
     return 0;
@@ -83,16 +83,23 @@ const getSelectedContentTypeFromLocation = (history, selectedContentTypes) => {
     return 0;
   }
   return selectedContentTypes.find(element => { location.pathname.includes(`/ContentTypeId${element.contentTypeId}X`);});
-};
+});
+
+const getSelectedContentTypesFromUser = memoize((user, availableContentTypes) => {
+  const selectedContentTypeOptions = JSON.parse(user.selectedContentTypes);
+  const selectedContentTypeIds = selectedContentTypeOptions ? Object.keys(selectedContentTypeOptions).filter(c => !!selectedContentTypeOptions[c]).map( key => parseInt(key, 10)) : [];
+  return {
+    selectedContentTypes: availableContentTypes.filter(ct => !!~selectedContentTypeIds.indexOf(ct.contentTypeId)),
+    selectedContentTypeOptions
+  };
+});
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao') || [];
   const navigationProps = getNavigationProps(initialProps) || [];
   const {history} = initialProps;
-  const selectedContentTypeOptions = JSON.parse(user.selectedContentTypes);
-  const selectedContentTypeIds = selectedContentTypeOptions ? Object.keys(selectedContentTypeOptions).filter(c => !!selectedContentTypeOptions[c]).map( key => parseInt(key, 10)) : [];
-  const selectedContentTypes = contentTypes.filter(ct => !!~selectedContentTypeIds.indexOf(ct.contentTypeId));
+  const {selectedContentTypes, selectedContentTypeOptions} = getSelectedContentTypesFromUser(user, contentTypes);
   const selectedContentType = getSelectedContentTypeFromLocation(history, selectedContentTypes) || selectedContentTypes[0] || {};
   const {contentTypeId} = selectedContentType;
   const contentTypeOptions = contentTypeId ? selectedContentTypeOptions[contentTypeId] : {};
