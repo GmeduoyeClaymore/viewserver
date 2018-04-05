@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { View } from 'react-native-animatable';
 import {Dimensions, BackHandler} from 'react-native';
-import { withExternalState } from '../withExternalState';
+import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
-import {ErrorRegion} from 'common/components';
+import {ErrorRegion, LoadingScreen} from 'common/components';
 import { memoize } from '../memoize';
 import removeProperties from '../removeProperties';
 import NavigationContainerTranslator from './utils/NavigationContainerTranslator';
@@ -52,18 +52,9 @@ class ReduxRouterClass extends Component{
     this.performTransition(oldProps, this.props);
   }
 
-  shouldComponentUpdate(newProps){
-    const newNavigationContainerTranslator = NavigationContainerTranslator.fromProps(newProps);
-    if (newNavigationContainerTranslator.defaultPathTranslation){
-      newProps.history.replace(newNavigationContainerTranslator.defaultPathTranslation);
-      return false;
-    }
-    return true;
-  }
-
-  async performTransition(oldProps, newProps){
-    const newNavigationContainerTranslator = NavigationContainerTranslator.fromProps(newProps);
-    const oldNavigationContainerTranslator = NavigationContainerTranslator.fromProps(oldProps);
+  async performTransition(oldProps = {}, newProps){
+    const newNavigationContainerTranslator = newProps.navigationContainerTranslator;
+    const oldNavigationContainerTranslator = oldProps.navigationContainerTranslator;
     const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator);
     if (diff){
       this.transitionManager.performTransition(diff);
@@ -79,10 +70,15 @@ class ReduxRouterClass extends Component{
   }
 
   render() {
-    const {width = deviceWidth, height  = deviceHeight, history, path: parentPath, style = {}} = this.props;
-    const navContainerTranslator  = NavigationContainerTranslator.fromProps(this.props);
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name'] );
-    const routesToRender = navContainerTranslator.getRoutesToRender();
+    Logger.info(`${this.props.name} - rendering`);
+    const {width = deviceWidth, height  = deviceHeight, history, customLoadingText, navigationContainerTranslator, path: parentPath, style = {}} = this.props;
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
+    const routesToRender = navigationContainerTranslator.getRoutesToRender();
+
+    if (navigationContainerTranslator.pendingDefaultRouteTransition){
+      setTimeout(() => history.replace(navigationContainerTranslator.pendingDefaultRouteTransition));
+      return <LoadingScreen text={customLoadingText || `Forwarding to ${navigationContainerTranslator.pendingDefaultRouteTransition.pathname}`}/>;
+    }
 
     return <View style={{flex: 1, ...style, height, width}}>
       <ErrorRegion/>
@@ -107,7 +103,7 @@ class ReduxRouterClass extends Component{
             <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined} key={rt.path} {...completeProps}/>
           </View>;
         }
-      ) : <Text>{`No routes found to match the path ${history.location.pathname} routes are ${navContainerTranslator.printAllRoutes}`}</Text>}
+      ) : <Text>{`No routes found to match the path ${history.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`}</Text>}
     </View>;
   }
 }
@@ -119,37 +115,69 @@ const navigateFactory = (getNewContainer, setState, dispatch) => (action, state)
   }
 };
 
-const historyFactory = memoize(
-  (navigationContainer, setState, dispatch) => {
-    invariant(setState, 'Set state must be defined');
 
-    const replace = navigateFactory((action) => navigationContainer.replace(action), setState, dispatch);
-    const goBack = navigateFactory((action) => navigationContainer.goBack(action), setState, dispatch);
-    const just = navigateFactory((action) => navigationContainer.just(action), setState, dispatch);
-    const push = navigateFactory((action) => navigationContainer.next(action), setState, dispatch);
-    const location = navigationContainer.location;
-    return {
-      location,
-      replace,
-      goBack,
-      just,
-      push
-    };
+const CompareArgruments = (arg1, arg2, idx) => {
+  if (idx === 3){
+    if (arg1 && arg2){
+      return arg1.length == arg2.length;
+    }
+    return arg1 === arg2;
   }
-);
+  return arg1 === arg2;
+};
 
-const mapStateToProps = (state, props) => {
-  const {setState, dispatch} = props;
-  const navigationContainer = NavigationContainerTranslator.fromProps(props);
-  const history =  historyFactory(navigationContainer, setState, dispatch);
-  const {location} = history;
-  return {
-    ...props,
-    location,
-    history
+
+const mapStateToProps = () => {
+  const memoizedFactory = memoize((navigationContainer, path, defaultRoute, children, name) => {
+    const routesInScope = RouteUtils.getRoutesForChildren(children, path);
+    try {
+      return new NavigationContainerTranslator(navigationContainer || NavigationContainerTranslator.createDefaultNavigation(path, defaultRoute), path, defaultRoute, routesInScope);
+    } catch (error){
+      throw new Error('Issue initing nav container translator for ' + name + ' - ' + error);
+    }
+  }, CompareArgruments);
+  
+  const fromProps = (props)=> {
+    if (!props){
+      return;
+    }
+    const {navigationContainer, path, defaultRoute, children, name} = props;
+    return memoizedFactory(navigationContainer, path, defaultRoute, children, name);
+  };
+
+  const historyFactory = memoize(
+    (navigationContainer, setState, dispatch) => {
+      invariant(setState, 'Set state must be defined');
+  
+      const replace = navigateFactory((action) => navigationContainer.replace(action), setState, dispatch);
+      const goBack = navigateFactory((action) => navigationContainer.goBack(action), setState, dispatch);
+      const just = navigateFactory((action) => navigationContainer.just(action), setState, dispatch);
+      const push = navigateFactory((action) => navigationContainer.next(action), setState, dispatch);
+      const location = navigationContainer.location;
+      return {
+        location,
+        replace,
+        goBack,
+        just,
+        push
+      };
+    }
+  );
+
+  return (state, props) => {
+    const {setState, dispatch} = props;
+    const navigationContainerTranslator = fromProps(props);
+    const history =  historyFactory(navigationContainerTranslator, setState, dispatch);
+    const {location} = history;
+    return {
+      navigationContainerTranslator,
+      ...props,
+      location,
+      history
+    };
   };
 };
 
-export const ReduxRouter = withExternalState(mapStateToProps, 'ReduxNavigation')(ReduxRouterClass);
+export const ReduxRouter = withExternalStateFactory(mapStateToProps, 'ReduxNavigation')(ReduxRouterClass);
 
 export default ReduxRouter;

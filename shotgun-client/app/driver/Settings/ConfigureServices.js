@@ -87,8 +87,8 @@ const validationSchema = {
 const mapStateToProps = (state, initialProps) => {
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
-  const busy = isAnyOperationPending(state, [{ driverDao: 'registerDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);
+  const registrationErrors = getOperationError(state, 'driverDao', 'updateDriver') || [];
+  const busy = isAnyOperationPending(state, [{ driverDao: 'updateDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);
   const user =  getDaoState(state, ['user'], 'userDao');
   const selectedContentTypes = Immutable(JSON.parse(user.selectedContentTypes));
   return {

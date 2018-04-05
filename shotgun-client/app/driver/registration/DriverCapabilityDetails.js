@@ -149,9 +149,9 @@ const styles = {
 const mapStateToProps = (state, initialProps) => {
   const {vehicle = {}, selectedContentTypes, user, bankAccount, address, errors} = initialProps;
   const {dimensions} = vehicle;
-  const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
+  const registrationErrors = getOperationError(state, 'loginDao', 'registerAndLoginDriver') || [];
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy = isAnyLoading(state, ['userDao', 'vehicleDao', 'driverDao']);
+  const busy = isAnyLoading(state, ['userDao', 'vehicleDao', 'loginDao']);
   return {
     ...initialProps,
     vehicle,

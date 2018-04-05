@@ -87,7 +87,7 @@ class DriverOrders  extends Component{
         <Tab heading={'Accepted'}/>
         <Tab heading={'Posted'}/>
       </Tabs>
-      <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+      <ReduxRouter customLoadingText="Loading orders..." name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
         <Route path={'Accepted'} component={OrderListings}/>
         <Route path={'Posted'} component={OrderListings}/>
       </ReduxRouter>

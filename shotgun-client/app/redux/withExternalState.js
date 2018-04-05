@@ -91,7 +91,24 @@ const removeUnwantedProperties = (props) => (
   removeProperties(props, ['stateKey', 'setState', 'setStateWithPath', 'propsFromStateToPassIntoComponent'])
 );
 
-const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride) => {
+const createEither = ({
+  props,
+  mapGlobalStateToProps,
+  mapGlobalStateToPropsFactory
+}) => {
+  if (mapGlobalStateToProps){
+    return mapGlobalStateToProps;
+  }
+  if (mapGlobalStateToPropsFactory){
+    return mapGlobalStateToPropsFactory(props);
+  }
+};
+
+const wrapperFactory = (Component, {
+  superStateKeyOverride,
+  mapGlobalStateToProps,
+  mapGlobalStateToPropsFactory
+}) => {
   Logger.info('WEXT - Creating ' + Component.name);
   let hasInitialized = false;
 
@@ -108,14 +125,16 @@ const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride)
     constructor(props){
       super(props);
       this.stateSpecificProps = changeSetStateImplementationAndReturnNewProps(this.props);
-      Logger.info('WEXT - Instantiating ' + Component.name);
+      Logger.info('WEXTXX - Instantiating ' + Component.name);
 
       const {propsFromStateToPassIntoComponent} = this.props;
       const {stateKey} = this.stateSpecificProps;
 
       const isStatelessComponent = !!Component.prototype.render;
 
-      const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsFromStateToPassIntoComponent, mapGlobalStateToProps);
+      const componentAndGlobalMapStateToProps = mapComponentStateToProps(stateKey, propsFromStateToPassIntoComponent, createEither({
+        mapGlobalStateToProps, mapGlobalStateToPropsFactory, props
+      }));
       this.Component =  connect(componentAndGlobalMapStateToProps, true, isStatelessComponent)(Component);
 
 
@@ -155,7 +174,15 @@ const wrapperFactory = (Component, mapGlobalStateToProps, superStateKeyOverride)
 
 
 export const withExternalState = (mapGlobalStateToProps, superStateKeyOverride) => (Component) => {
-  return wrapperFactory(Component, mapGlobalStateToProps, superStateKeyOverride);
+  return wrapperFactory(Component, {
+    superStateKeyOverride,
+    mapGlobalStateToProps});
+};
+
+export const withExternalStateFactory = (mapGlobalStateToPropsFactory, superStateKeyOverride) => (Component) => {
+  return wrapperFactory(Component, {
+    superStateKeyOverride,
+    mapGlobalStateToPropsFactory});
 };
 
 export default withExternalState;

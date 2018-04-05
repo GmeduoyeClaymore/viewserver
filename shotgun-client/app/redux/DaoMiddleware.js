@@ -49,7 +49,6 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       unRegisterDao({name});
     }
     DAOS[name] = dao;
-
    
     
     if (dao.observable){

@@ -37,8 +37,9 @@ export default class NavigationContainerTranslator{
     return  this.navContainer.navigationStack[navPointer];
   }
 
-  get defaultPathTranslation(){
-    if (this.location.pathname == this.routerPath){
+  get pendingDefaultRouteTransition(){
+    const match = matchPath(this.location.pathname, this.routerPath);
+    if (match && match.isExact){
       return {...this.location, ...removeProperties(this.defaultRoute, ['state'])};
     }
   }
@@ -152,23 +153,6 @@ export default class NavigationContainerTranslator{
     this.routesToRender = result;
     return result;
   }
-
-  static fromProps(props){
-    if (!props){
-      return;
-    }
-    const {navigationContainer, path, defaultRoute, children, name} = props;
-    return NavigationContainerTranslator.memoizedFactory(navigationContainer, path, defaultRoute, children, name);
-  }
-
-  static memoizedFactory = memoize((navigationContainer, path, defaultRoute, children, name) => {
-    const routesInScope = RouteUtils.getRoutesForChildren(children, path);
-    try {
-      return new NavigationContainerTranslator(navigationContainer || NavigationContainerTranslator.createDefaultNavigation(path, defaultRoute), path, defaultRoute, routesInScope);
-    } catch (error){
-      throw new Error('Issue initing nav container translator for ' + name + ' - ' + error);
-    }
-  })
 
 
   static createDefaultNavigation(routerPath, defaultRoute){

@@ -10,9 +10,7 @@ export default class DriverDao{
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.updateSubscription = this.updateSubscription.bind(this);
-    this.registerDriver = this.registerDriver.bind(this);
     this.updateDriver = this.updateDriver.bind(this);
-    this.loginDriver = this.loginDriver.bind(this);
     this.acceptOrderRequest = this.acceptOrderRequest.bind(this);
     this.startOrderRequest = this.startOrderRequest.bind(this);
     this.cancelOrderRequest = this.cancelOrderRequest.bind(this);

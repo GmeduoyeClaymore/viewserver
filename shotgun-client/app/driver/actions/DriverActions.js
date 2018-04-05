@@ -19,10 +19,6 @@ export const driverServicesRegistrationAction = (client, continueWith) => {
     registerNakedDao(dispatch, new DriverDao(client), continueWith);
   };
 };
-  
-export const registerDriver = (driver, vehicle, address, bankAccount, continueWith) => {
-  return invokeDaoCommand('driverDao', 'registerDriver', {driver, vehicle, address, bankAccount}, continueWith);
-};
 
 export const updateDriver = (driver, continueWith) => {
   return invokeDaoCommand('driverDao', 'updateDriver', {driver}, continueWith);

@@ -8,7 +8,7 @@ import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, get
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {registerDriver} from 'driver/actions/DriverActions';
+import {registerAndLoginDriver} from 'common/actions/CommonActions';
 
 class DriverAccountType extends Component{
   constructor(props){
@@ -20,7 +20,7 @@ class DriverAccountType extends Component{
     const {user, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
     const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
     const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : {};
-    dispatch(registerDriver(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
+    dispatch(registerAndLoginDriver(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
   }
 
 
@@ -90,8 +90,8 @@ const mapStateToProps = (state, initialProps) => {
   const {errors = [], selectedContentTypes} = initialProps;
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const registrationErrors = getOperationError(state, 'driverDao', 'registerDriver') || [];
-  const busy = isAnyOperationPending(state, [{ driverDao: 'registerDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);
+  const registrationErrors = getOperationError(state, 'loginDao', 'registerAndLoginDriver') || [];
+  const busy = isAnyOperationPending(state, [{ loginDao: 'registerAndLoginDriver'}]) ||  isAnyLoading(state, ['contentTypeDao', 'driverDao']);
 
   return {
     ...initialProps,
