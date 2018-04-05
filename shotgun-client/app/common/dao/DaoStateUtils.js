@@ -70,6 +70,26 @@ export const isAnyLoading = (state, daoNames) => {
   return daoNames.some( dao => getDao(state, dao) == undefined) || daoNames.some( nm => isLoading(state, nm));
 };
 
+export const getLoadingMessage = (state, daoNames) => {
+  return daoNames.map( nm => getDaoStatusMessage(nm, state)).join('\n');
+};
+
+const getDaoStatusMessage = (nm, state) => {
+  const base = nm;
+  if (getDao(state, nm) == undefined){
+    return `${base} (unregistered)`;
+  }
+  if (isLoading(state, nm) == undefined){
+    return `${base} (loading)`;
+  }
+  const err = getLoadingError(state, nm);
+  if (err){
+    return `${base} (error) - ${err}`;
+  }
+  return `${base} (success) `;
+};
+
+
 export const isAnyUnregistered = (state, daoNames) => {
   return daoNames.some( dao => getDao(state, dao) == undefined);
 };

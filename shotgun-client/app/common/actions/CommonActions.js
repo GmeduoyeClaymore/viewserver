@@ -20,7 +20,6 @@ export const register = (dispatch, daoContext, options, continueWith) => {
 
 export const registerNakedDao = (dispatch, dao, options, continueWith) => {
   dispatch(registerDao(dao));
-  dispatch(updateSubscriptionAction(dao.name, options, continueWith));
   return dao;
 };
 

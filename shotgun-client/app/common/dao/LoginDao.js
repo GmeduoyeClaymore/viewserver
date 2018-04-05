@@ -11,9 +11,10 @@ export default class LoginDao{
     this.optionsSubject = new Rx.Subject();
     this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
     this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
+  
     this.subject.next();
     this.state = {
-      isLoggedIn: false,
+      isLoggedIn: undefined,
       isConnected: this.client.connected
     };
     this.crx = crx;// force rx extensions to load
@@ -22,6 +23,7 @@ export default class LoginDao{
     this.loginUserByUsernameAndPassword = this.loginUserByUsernameAndPassword.bind(this);
     this.registerAndLoginDriver = this.registerAndLoginDriver.bind(this);
     this.connectClientIfNotConnected = this.connectClientIfNotConnected.bind(this);
+
     this.updateSubscription = this.updateSubscription.bind(this);
     this.doLoginStuff = this.doLoginStuff.bind(this);
     this.logOut = this.logOut.bind(this);
@@ -35,7 +37,7 @@ export default class LoginDao{
     await this.connectClientIfNotConnected();
     const userid = await PrincipalService.getUserIdFromDevice();
     if (userid){
-      this.loginByUserId(userid);
+      await this.loginByUserId(userid);
     }
   }
 
@@ -81,6 +83,7 @@ export default class LoginDao{
     if (!this.client.connected){
       await this.client.connect(true);
     }
+    this.client.connected;
   }
 
   handleConnectionStatusChanged(isConnected){

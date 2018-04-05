@@ -24,6 +24,7 @@ const matchPath = function matchPath(pathname, options) {
   }
   return {
     match,
+    matchPath: pathname,
     isExact
   };
 };

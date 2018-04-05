@@ -20,6 +20,7 @@ import {registerTokenListener} from 'common/Listeners';
 import {ReduxRouter, Route, connect} from 'custom-redux';
 import {loginServicesRegistrationAction} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
+import {LoadingScreen} from 'common/components';
 
 const store = configureStore();
 if (UIManager.setLayoutAnimationEnabledExperimental){
@@ -50,9 +51,13 @@ class App extends React.Component {
   }
   
   render() {
-    const {isConnected, isLoggedIn} = this.props;
+    const {loginState, busy} = this.props;
+    const {isConnected, isLoggedIn} = (loginState || {});
     const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isConnected, isLoggedIn};
     const completeProps = {...globalProps, ...this.props};
+    if (isLoggedIn === undefined || busy){
+      return <LoadingScreen text={'Loading application'}/>;
+    }
     return   <Container style={{flexDirection: 'column', flex: 1}}>
       <ReactNativeModal
         isVisible={!isConnected}
@@ -89,7 +94,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return {
     busy: isAnyLoading(state, ['loginDao']),
-    ...getDaoState(state, [], 'loginDao'),
+    loginState: getDaoState(state, [], 'loginDao'),
     errors: getLoadingError(state, 'loginDao')
   };
 };

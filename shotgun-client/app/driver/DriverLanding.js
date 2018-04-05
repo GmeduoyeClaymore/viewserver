@@ -10,7 +10,7 @@ import DriverSettings from './Settings/DriverSettings';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
-import {isAnyLoading, isAnyOperationPending, getDaoState, isAnyUnregistered} from 'common/dao';
+import {isAnyLoading, isAnyOperationPending, getDaoState, isAnyUnregistered, getLoadingMessage} from 'common/dao';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
@@ -63,8 +63,8 @@ class DriverLanding extends Component {
   }
 
   render() {
-    const {busy, path} = this.props;
-    return busy ? <LoadingScreen text="Loading Driver Landing Screen"/> :
+    const {busy, path, loadingMessage} = this.props;
+    return busy ? <LoadingScreen text={`Loading Driver Landing Screen\n${loadingMessage} `}/> :
       <Container>
         <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={'Checkout'} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
           <Route path={'Checkout'} component={Checkout}/>
@@ -94,6 +94,7 @@ const mapStateToProps = (state, nextOwnProps) => {
     paymentDaoReady: !!getDaoState(state, 'paymentDao'),
     awaitingDaos: isAnyUnregistered(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
     busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
+    loadingMessage: getLoadingMessage(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
     user
   };
 };

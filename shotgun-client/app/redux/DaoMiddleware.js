@@ -89,6 +89,8 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
       dao.onRegister(DAOS);
     }
 
+    dispatch({type: UPDATE_STATE(name), path: [name, 'data'], data: undefined});
+
     return getState();
   };
 

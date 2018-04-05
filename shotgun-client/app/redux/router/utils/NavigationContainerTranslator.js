@@ -40,9 +40,20 @@ export default class NavigationContainerTranslator{
   get pendingDefaultRouteTransition(){
     const match = matchPath(this.location.pathname, this.routerPath);
     if (match && match.isExact){
-      return {...this.location, ...removeProperties(this.defaultRoute, ['state'])};
+      return {...this.location, ...removeProperties(this.defaultRoute, ['state']), navContainerOverride: this.tempNavContainerPendingDefaultRouteTransition};
     }
   }
+
+  get tempNavContainerPendingDefaultRouteTransition(){
+    const match = matchPath(this.location.pathname, this.routerPath);
+    if (match && match.isExact){
+      const existingStack = this.navContainer.navigationStack;
+      const previousStackHead = this.navContainer[this.navContainer.navPointer];
+      const newStack = [...existingStack.slice(0, existingStack.length - 1), {...previousStackHead, ...removeProperties(this.defaultRoute, ['state'])}];
+      return this.navContainer.setIn(['navigationStack'], newStack);
+    }
+  }
+
   get head(){
     let result = this.location;
     result =  result.pathname == this.routerPath ? this.defaultRoute : result;
@@ -120,43 +131,37 @@ export default class NavigationContainerTranslator{
     }
   })
 
+  getRouteFromScope(el){
+    const {routesInScope} = this;
+    return routesInScope.map(rt => {
+      const match = matchPath(el.pathname, rt);
+      return {...rt, match, navContainerOverride: el.navContainerOverride};
+    }).filter(rt => rt.match)[0];
+  }
+
   getRoutesToRender(){
     if (this.routesToRender){
       return this.routesToRender;
     }
     const result = [];
     const {navigationStack = [], navPointer} = this.navContainer;
-    const {routesInScope} = this;
     const foundKeys = [];
     let croppedStack = navigationStack.slice(0, navPointer + 1);
     croppedStack = croppedStack.slice(-MaxStackLength);
-    croppedStack.forEach(
-      el => {
-        routesInScope.forEach(
-          rt => {
-            if (!!~foundKeys.indexOf(rt.path)){
-              return;
-            }
-            const match = matchPath(el.pathname, rt);
-            if (match){
-              foundKeys.push(rt.path);
-              result.push(rt);
-            } else if (rt.persistent){
-              Logger.info(`Loading persistent route ${JSON.stringify(rt)} to path ${el.pathname}`);
-              foundKeys.push(rt.path);
-              result.unshift({...removeDeltas(rt), match, index: -1, persistent: true});
-            }
-          }
-        );
+    croppedStack.forEach(el => {
+      const routeFromScope = this.getRouteFromScope(el);
+      if (routeFromScope && !~foundKeys.indexOf(routeFromScope.path)){
+        foundKeys.push(routeFromScope.path);
+        result.push(routeFromScope);
       }
-    );
+    });
     this.routesToRender = result;
     return result;
   }
 
 
-  static createDefaultNavigation(routerPath, defaultRoute){
-    const navigationStack = defaultRoute ? [RouteUtils.parseRoute(routerPath, defaultRoute)] : DefaultNavigationStack;
+  static createDefaultNavigation(){
+    const navigationStack = DefaultNavigationStack;
     return Immutable({
       navPointer: 0,
       navigationStack

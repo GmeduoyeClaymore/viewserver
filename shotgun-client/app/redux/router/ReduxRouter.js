@@ -3,7 +3,7 @@ import { View } from 'react-native-animatable';
 import {Dimensions, BackHandler} from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
-import {ErrorRegion, LoadingScreen} from 'common/components';
+import {ErrorRegion} from 'common/components';
 import { memoize } from '../memoize';
 import removeProperties from '../removeProperties';
 import NavigationContainerTranslator from './utils/NavigationContainerTranslator';
@@ -72,27 +72,28 @@ class ReduxRouterClass extends Component{
 
   render() {
     Logger.info(`${this.props.name} - rendering`);
-    const {width = deviceWidth, height  = deviceHeight, history, customLoadingText, navigationContainerTranslator, path: parentPath, style = {}} = this.props;
+    const {width = deviceWidth, height  = deviceHeight, history, navigationContainerTranslator, path: parentPath, style = {}} = this.props;
     const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
-    const routesToRender = navigationContainerTranslator.getRoutesToRender();
-
-    if (navigationContainerTranslator.pendingDefaultRouteTransition){
-      setTimeout(() => history.replace(navigationContainerTranslator.pendingDefaultRouteTransition));
-      return <LoadingScreen text={customLoadingText || `Forwarding to ${navigationContainerTranslator.pendingDefaultRouteTransition.pathname}`}/>;
+    let routesToRender = navigationContainerTranslator.getRoutesToRender();
+    const pendingRouteTransition = navigationContainerTranslator.pendingDefaultRouteTransition;
+    if (pendingRouteTransition){
+      const transitionElementToRender = navigationContainerTranslator.getRouteFromScope(pendingRouteTransition);
+      if (transitionElementToRender && !~routesToRender.findIndex(rt => rt.path === transitionElementToRender.path)){
+        routesToRender = [...routesToRender,  transitionElementToRender];
+      }
     }
 
-    return <View style={{flex: 1, ...style, height, width}}>
+    const result =  <View style={{flex: 1, ...style, height, width}}>
       <ErrorRegion/>
       {routesToRender.length ? routesToRender.map(
         (rt) => {
-          const {componentProps} = rt;
+          const {componentProps, match, navContainerOverride} = rt;
           const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement} = componentProps;
-          const match = this.doesMatch(history.location.pathname, rt.path);
           let  completeProps = { ...reduxRouterPropertiesToPassToEachRoute, parentPath};
           completeProps = { ...completeProps, route: rt, path: rt.path};
           completeProps = { ...completeProps, ...otherPropsDeclaredOnRouteElement};
           completeProps = { ...completeProps, height, width};
-          completeProps = { ...completeProps, match};
+          completeProps = { ...completeProps, match, navContainerOverride};
           return <View
             useNativeDriver={true}
             style={{ position: 'absolute',
@@ -101,11 +102,17 @@ class ReduxRouterClass extends Component{
               backgroundColor: 'white',
               left: 0,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.path} ref={ref => {this.handleRef(rt, ref);}}>
-            <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined} key={rt.path} {...completeProps}/>
+            <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined}  {...completeProps}/>
           </View>;
         }
       ) : <Text>{`No routes found to match the path ${history.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`}</Text>}
     </View>;
+
+    if (!routesToRender.length){
+      Logger.info(`No routes found to match the path ${history.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
+    }
+
+    return result;
   }
 }
 
@@ -132,7 +139,7 @@ const mapStateToProps = () => {
   const memoizedFactory = memoize((navigationContainer, path, defaultRoute, children, name) => {
     const routesInScope = RouteUtils.getRoutesForChildren(children, path);
     try {
-      return new NavigationContainerTranslator(navigationContainer || NavigationContainerTranslator.createDefaultNavigation(path, defaultRoute), path, defaultRoute, routesInScope);
+      return new NavigationContainerTranslator(navigationContainer || NavigationContainerTranslator.createDefaultNavigation(path), path, defaultRoute, routesInScope);
     } catch (error){
       throw new Error('Issue initing nav container translator for ' + name + ' - ' + error);
     }
@@ -142,8 +149,8 @@ const mapStateToProps = () => {
     if (!props){
       return;
     }
-    const {navigationContainer, path, defaultRoute, children, name} = props;
-    return memoizedFactory(navigationContainer, path, defaultRoute, children, name);
+    const {navigationContainer, path, defaultRoute, children, name, navContainerOverride} = props;
+    return memoizedFactory(navContainerOverride || navigationContainer, path, defaultRoute, children, name);
   };
 
   const historyFactory = memoize(
