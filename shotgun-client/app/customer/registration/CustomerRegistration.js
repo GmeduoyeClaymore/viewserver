@@ -5,7 +5,7 @@ import PaymentCardDetails from './PaymentCardDetails';
 import AddressDetails from 'common/registration/AddressDetails';
 import CustomerLogin from 'customer/registration/CustomerLogin';
 import CustomerDao from 'customer/dao/CustomerDao';
-import {unregisterAllDaos, registerNakedDao} from 'common/actions/CommonActions';
+import {registerNakedDao} from 'common/actions/CommonActions';
 import {Route, ReduxRouter, withExternalState} from 'custom-redux';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';

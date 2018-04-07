@@ -4,7 +4,7 @@ import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
-import {logOut, unregisterAllDaos} from 'common/actions/CommonActions';
+import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import {Linking} from 'react-native';
 //import DeviceInfo from 'react-native-device-info';
 
@@ -13,7 +13,7 @@ const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplication
 const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
   const signOut = async () => {
     dispatch(logOut(() => history.push('/')));
-    dispatch(unregisterAllDaos());
+    dispatch(unregisterAllDaosAndResetComponentState());
   };
 
   return user ? <Container>

@@ -4,7 +4,7 @@ import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
 import {Icon, AverageRating} from 'common/components';
-import {logOut, unregisterAllDaos} from 'common/actions/CommonActions';
+import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
@@ -13,7 +13,7 @@ const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationNa
 const DriverSettings = ({history, dispatch, user, parentPath, ordersPath}) => {
   const signOut = async () => {
     dispatch(logOut(() => history.push('/')));
-    dispatch(unregisterAllDaos());
+    dispatch(unregisterAllDaosAndResetComponentState());
   };
 
 

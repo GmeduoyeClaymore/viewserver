@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect, Redirect} from 'custom-redux';
-import {commonServicesRegistrationAction, logOut, unregisterAllDaos} from 'common/actions/CommonActions';
+import {commonServicesRegistrationAction, logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
 import {View, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
@@ -23,7 +23,7 @@ class LandingCommon extends Component {
 
     const signOut = async () => {
       dispatch(logOut(() => history.push('/')));
-      dispatch(unregisterAllDaos());
+      dispatch(unregisterAllDaosAndResetComponentState());
     };
 
     if (busy){

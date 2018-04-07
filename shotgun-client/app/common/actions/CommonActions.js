@@ -5,6 +5,7 @@ import LoginDao from 'common/dao/LoginDao';
 import Logger from 'common/Logger';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
+import {RESET_ALL_COMPONENT_STATE} from 'common/dao/ActionConstants';
 
 export const register = (dispatch, daoContext, options, continueWith) => {
   const dao = new Dao(daoContext);
@@ -30,6 +31,13 @@ export const unregisterAllDaos = () => {
     daosToRemove.forEach(async dao => await dispatch(unregisterDao(dao)));
     Logger.info(`Unregistering ${daosToRemove.join(',')}`);
     return;
+  };
+};
+
+export const unregisterAllDaosAndResetComponentState = () => {
+  return async (dispatch) => {
+    dispatch(unregisterAllDaos());
+    dispatch({type: RESET_ALL_COMPONENT_STATE});
   };
 };
 

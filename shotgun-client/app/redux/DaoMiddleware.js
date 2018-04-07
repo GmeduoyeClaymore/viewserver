@@ -119,7 +119,8 @@ export default DaoMiddleware = ({ getState, dispatch }) => {
     const dao = DAOS[action.daoName];
     Logger.debug(`Invoking command ${action.type}`);
     if (!dao){
-      throw new Error(`Unable to find DAO named ${action.daoName}`);
+      Logger.warning(`Unable to find DAO named ${action.daoName} so cannot invole ${JSON.stringify(action)}`);
+      return;
     }
     const method = dao[action.method];
     if (!method){

@@ -7,7 +7,7 @@ import BankAccountDetails from './BankAccountDetails';
 import DriverRegistrationLanding from './DriverRegistrationLanding';
 import AddressDetails from 'common/registration/AddressDetails';
 import AddressLookup from 'common/components/maps/AddressLookup';
-import {unregisterAllDaos, registerNakedDao, register} from 'common/actions/CommonActions';
+import {registerNakedDao, register} from 'common/actions/CommonActions';
 import DriverDao from 'driver/dao/DriverDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
 import {INITIAL_STATE} from './DriverRegistrationInitialState';

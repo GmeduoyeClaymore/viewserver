@@ -96,14 +96,14 @@ class DriverLanding extends Component {
 
 const mapStateToProps = (state, nextOwnProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
-  const {match: parentMatch} = nextOwnProps;
+  const {match: parentMatch, isLoggedIn} = nextOwnProps;
   return {
     ...nextOwnProps,
     parentMatch,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
     paymentDaoReady: !!getDaoState(state, 'paymentDao'),
     awaitingDaos: isAnyUnregistered(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']),
-    busy: isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
+    busy: isLoggedIn && isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
     loadingMessage: getLoadingMessage(state, [{ 'userDao': 'Loading user data' }, {'driverDao': 'Loading driver data' }, {'vehicleDao': 'Loading vehicle data'}, {'paymentDao': 'Loading payment data'}, {'contentTypeDao': 'Loading content type data'}]),
     user
   };
