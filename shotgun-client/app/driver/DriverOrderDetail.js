@@ -12,7 +12,7 @@ class DriverOrderDetail extends Component{
     super(props);
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('orderSummaryDao', {
@@ -23,7 +23,7 @@ class DriverOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me} = this.props;
+    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me, busyMessage} = this.props;
     const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
@@ -37,7 +37,7 @@ class DriverOrderDetail extends Component{
       dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
     };
 
-    return busy ? <LoadingScreen text="Loading Order"/> : <Container>
+    return busy ? <LoadingScreen text={busyMessage}/> : <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => history.goBack()}>
@@ -74,13 +74,14 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-
+  const pendingResetSubscription = isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,
     orderId,
     me: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'startOrderRequest'}, { driverDao: 'cancelOrderRequest'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || !orderSummary,
+    busy: pendingResetSubscription || !orderSummary,
+    busyMessage: pendingResetSubscription ? 'Subscribing to order...' : !orderSummary ? 'Waiting for order...' : undefined,
     orderSummary
   };
 };

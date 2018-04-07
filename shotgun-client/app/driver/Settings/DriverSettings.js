@@ -6,6 +6,7 @@ import {Route, ReduxRouter} from 'custom-redux';
 import {updateDriver} from 'driver/actions/DriverActions';
 import UpdateVehicleDetails from './UpdateVehicleDetails';
 import ConfigureServices from './ConfigureServices';
+import DriverOrders from 'driver/DriverOrders';
 class  DriverSettings extends Component{
   constructor(props){
     super(props);
@@ -21,6 +22,7 @@ class  DriverSettings extends Component{
       <Route path={'UpdateBankAccountDetails'} exact component={UpdateBankAccountDetails}/>
       <Route path={'UpdateVehicleDetails'} exact component={UpdateVehicleDetails}/>
       <Route path={'ConfigureServices'} exact stateKey={'configureServices'} component={ConfigureServices}/>
+      <Route path={'DriverOrders'} exact component={DriverOrders} canGoBack={true} isCompleted={true}/>
     </ReduxRouter>;
   }
 }

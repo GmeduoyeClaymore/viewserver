@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import { View } from 'react-native-animatable';
-import {Dimensions, BackHandler} from 'react-native';
+import {Dimensions, BackHandler, View as BasicView} from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
-import {ErrorRegion} from 'common/components';
+import {ErrorRegion, LoadingScreen} from 'common/components';
 import { memoize } from '../memoize';
 import removeProperties from '../removeProperties';
 import NavigationContainerTranslator from './utils/NavigationContainerTranslator';
+import NavigationTransformation from './utils/NavigationTransformation';
 import TransitionManager from './utils/TransitionManager';
 import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
@@ -19,14 +20,13 @@ class ReduxRouterClass extends Component{
   constructor(props){
     super(props);
     invariant(props.path, 'All routers must have a path');
-    this.transitionManager = new TransitionManager(props.name);
+    this.transitionManager = new TransitionManager(props.name, this.forceUpdate.bind(this));
     this.performTransition = this.performTransition.bind(this);
     this.handleRef = this.handleRef.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
     this.doesMatch = memoize((loc, path) => matchPath(loc, path));
   }
-
-
+  
   componentDidMount(){
     if (this.props.name === 'AppRouter'){
       BackHandler.addEventListener('hardwareBackPress', this.handleBack);
@@ -41,9 +41,9 @@ class ReduxRouterClass extends Component{
     Logger.info("Throwing redux router away as for some reason we don't think we need it anymore ");
   }
 
-
   handleBack(){
-    const { history } = this.props;
+    const { historyOverrideFactory } = this.props;
+    const history = historyOverrideFactory();
     history.goBack();
     return true;
   }
@@ -56,14 +56,18 @@ class ReduxRouterClass extends Component{
   async performTransition(oldProps = {}, newProps){
     const newNavigationContainerTranslator = newProps.navigationContainerTranslator;
     const oldNavigationContainerTranslator = oldProps.navigationContainerTranslator;
-    const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator);
+    const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator, newNavigationContainerTranslator.defaultRoute, newNavigationContainerTranslator.routerPath);
     if (diff){
-      this.transitionManager.performTransition(diff);
+      this.transitionManager.performTransition(diff, newNavigationContainerTranslator.defaultRoute.pathname, newNavigationContainerTranslator.routerPath);
     }
   }
 
   handleRef(route, ref){
     this.transitionManager.initialize(route, ref);
+  }
+
+  isRemoved(route){
+    this.transitionManager.isRemoved(route);
   }
 
   handleActualComponentRef(route, actualComponentRef){
@@ -72,61 +76,54 @@ class ReduxRouterClass extends Component{
 
   render() {
     Logger.info(`${this.props.name} - rendering`);
-    const {width = deviceWidth, height  = deviceHeight, history, navigationContainerTranslator, path: parentPath, style = {}} = this.props;
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
+    const {width = deviceWidth, height  = deviceHeight, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground} = this.props;
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
-
-    const result =  <View style={{flex: 1, ...style, height, width}}>
-      <ErrorRegion/>
+    if (routesToRender.length){
+      Logger.info(`${this.props.name} - visible routes are - ${JSON.stringify(routesToRender)}`);
+    }
+    const result =  <BasicView style={{flex: 1, ...style, height, width, position: 'relative'}}>
       {routesToRender.length ? routesToRender.map(
         (rt) => {
           const {componentProps, match, navContainerOverride} = rt;
           const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement} = componentProps;
+          const history = historyOverrideFactory(navContainerOverride);
+          const {location} = history;
+          const isInBackground = !matchPath(location.pathname, rt.path);
           let  completeProps = { ...reduxRouterPropertiesToPassToEachRoute, parentPath};
-          completeProps = { ...completeProps, route: rt, path: rt.path};
+          completeProps = { ...completeProps, route: rt, path: rt.path, isInBackground};
           completeProps = { ...completeProps, ...otherPropsDeclaredOnRouteElement};
-          completeProps = { ...completeProps, height, width};
-          completeProps = { ...completeProps, match, navContainerOverride};
-          return <View
+          completeProps = { ...completeProps, height, width, isInBackground};
+          completeProps = { ...completeProps, match, navContainerOverride, history, location};
+          return this.isRemoved(rt) ? null : <View
             useNativeDriver={true}
             style={{ position: 'absolute',
               ...style,
               height, width,
-              backgroundColor: 'white',
               left: 0,
+              backgroundColor: 'white',
+              zIndex: rt.index,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.path} ref={ref => {this.handleRef(rt, ref);}}>
             <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined}  {...completeProps}/>
           </View>;
         }
-      ) : <Text>{`No routes found to match the path ${history.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`}</Text>}
-    </View>;
+      ) : <LoadingScreen text="Navigating ..."/>}
+    </BasicView>;
 
     if (!routesToRender.length){
-      Logger.info(`No routes found to match the path ${history.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
+      Logger.info(`${isInBackground} - No routes found to match the path ${navigationContainerTranslator.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
     }
 
     return result;
   }
 }
 
-const navigateFactory = (getNewContainer, setState, dispatch) => (action, state) => {
+const navigateFactory = (getNewContainer, setState, dispatch) => (action, state, continueWith) => {
   const newnavigationContainer =  getNewContainer(RouteUtils.parseAction(action, state));
   if (newnavigationContainer){
-    setState({navigationContainer: newnavigationContainer}, undefined, dispatch);
+    setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
   }
 };
-
-
-const CompareArgruments = (arg1, arg2, idx) => {
-  if (idx === 3){
-    if (arg1 && arg2){
-      return arg1.length == arg2.length;
-    }
-    return arg1 === arg2;
-  }
-  return arg1 === arg2;
-};
-
 
 const mapStateToProps = () => {
   const memoizedFactory = memoize((navigationContainer, path, defaultRoute, children, name) => {
@@ -136,7 +133,7 @@ const mapStateToProps = () => {
     } catch (error){
       throw new Error('Issue initing nav container translator for ' + name + ' - ' + error);
     }
-  }, CompareArgruments);
+  });
   
   const fromProps = (props)=> {
     if (!props){
@@ -146,15 +143,16 @@ const mapStateToProps = () => {
     return memoizedFactory(navContainerOverride || navigationContainer, path, defaultRoute, children, name);
   };
 
-  const historyFactory = memoize(
-    (navigationContainer, setState, dispatch) => {
+  const memoizedHistoryFactory = memoize(
+    (navigationContextOverride, navigationContainer, setState, dispatch) => {
       invariant(setState, 'Set state must be defined');
-  
-      const replace = navigateFactory((action) => navigationContainer.replace(action), setState, dispatch);
-      const goBack = navigateFactory((action) => navigationContainer.goBack(action), setState, dispatch);
-      const just = navigateFactory((action) => navigationContainer.just(action), setState, dispatch);
-      const push = navigateFactory((action) => navigationContainer.next(action), setState, dispatch);
-      const location = navigationContainer.location;
+      const navContainerOverride = navigationContextOverride && navigationContextOverride.version >= navigationContainer.version ? navigationContextOverride : navigationContainer;
+      const tranformation = new NavigationTransformation(navContainerOverride);
+      const replace = navigateFactory((action) => tranformation.replace(action), setState, dispatch);
+      const goBack = navigateFactory((action) => tranformation.goBack(action), setState, dispatch);
+      const just = navigateFactory((action) => tranformation.just(action), setState, dispatch);
+      const push = navigateFactory((action) => tranformation.next(action), setState, dispatch);
+      const location = tranformation.location;
       return {
         location,
         replace,
@@ -168,13 +166,14 @@ const mapStateToProps = () => {
   return (state, props) => {
     const {setState, dispatch} = props;
     const navigationContainerTranslator = fromProps(props);
-    const history =  historyFactory(navigationContainerTranslator, setState, dispatch);
-    const {location} = history;
+    const historyFactory =  navigationContextOverride => memoizedHistoryFactory(navigationContextOverride, navigationContainerTranslator.navContainer, setState, dispatch);
+    const {location} = navigationContainerTranslator;
+    
     return {
       navigationContainerTranslator,
       ...props,
+      historyOverrideFactory: historyFactory,
       location,
-      history
     };
   };
 };

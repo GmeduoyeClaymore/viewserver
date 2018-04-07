@@ -53,10 +53,10 @@ class FlatProductCategoryList extends Component{
   headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
 
   navigateToCategory(selectedCategory){
-    const {navigationStrategy, selectedCategory: parentSelectedCategory} = this.props;
+    const {next, selectedCategory: parentSelectedCategory, history} = this.props;
 
     if (selectedCategory && selectedCategory.isLeaf) {
-      this.setState({selectedCategory}, navigationStrategy.next);
+      this.setState({selectedCategory}, () =>  history.push(next));
     } else {
       this.setState({parentSelectedCategory, selectedCategory: undefined});
     }
@@ -67,14 +67,14 @@ class FlatProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, navigationStrategy, history, rootProductCategory, defaultOptions, selectedCategory, parentSelectedCategory} = this.props;
+    const {busy, history, rootProductCategory, defaultOptions, selectedCategory, parentSelectedCategory} = this.props;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => rootProductCategory.categoryId === parentSelectedCategory.categoryId ?  navigationStrategy.prev() : this.navigateToCategory()}>
+          <Button onPress={() => rootProductCategory.categoryId === parentSelectedCategory.categoryId ?  history.goBack() : this.navigateToCategory()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>

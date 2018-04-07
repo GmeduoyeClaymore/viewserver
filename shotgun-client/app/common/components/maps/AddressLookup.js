@@ -37,8 +37,7 @@ class AddressLookup extends Component {
   }
 
   onAddressChanged(value){
-    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
-    this.goToTabName('Suggested');
+    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value, () => this.goToTabName('Suggested')));
   }
 
   componentWillReceiveProps(newProps){
@@ -46,13 +45,16 @@ class AddressLookup extends Component {
   }
 
   goToTabName(name, propOverride){
-    const {history, path, addressLabel, addressPath} = propOverride || this.props;
+    const {history, path, addressLabel, addressPath, isInBackground} = propOverride || this.props;
+    if (isInBackground){
+      return;
+    }
     if (!history.location.pathname.endsWith(name)){
       history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}});
     }
   }
 
-  async searchAutoCompleteSuggestions(value){
+  async searchAutoCompleteSuggestions(value, continueWith){
     const {client, me = {}} = this.props;
     try {
       if (this.pendingAutoCompletePromise){
@@ -83,7 +85,7 @@ class AddressLookup extends Component {
         suggestedPlaces: [...filteredPredictions],
         hasLookedUpAddresses: true,
         busy: false
-      });
+      }, continueWith);
     } catch (error) {
       this.setState({ error });
     }
@@ -326,7 +328,11 @@ const getTabs = ({deliveryAddresses = [], suggestedPlaces = [], myLocation, hasL
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const { history, suggestedPlaces = [], hasLookedUpAddresses} = initialProps;
+  const { history, suggestedPlaces = [], hasLookedUpAddresses, isInBackground} = initialProps;
+
+  if (isInBackground){
+    return;
+  }
   const me = getDaoState(state, ['user'], 'userDao');
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
   const homeAddress = getHomeAddress(deliveryAddresses);

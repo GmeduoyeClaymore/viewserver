@@ -5,12 +5,13 @@ import Logger from 'common/Logger';
 import invariant from 'invariant';
 import { memoize } from '../../memoize';
 import removeProperties from '../../removeProperties';
-import { isEqual } from '../../is-equal';
+import NavigationTransformation from './NavigationTransformation';
 const DefaultNavigationStack = [{
   pathname: '/'
 }];
 
 const MaxStackLength = 2;
+
 
 export default class NavigationContainerTranslator{
   constructor(navContainer, routerPath, defaultRoute, routesInScope){
@@ -22,113 +23,85 @@ export default class NavigationContainerTranslator{
     this.routerPath = routerPath;
     this.defaultRoute = RouteUtils.parseRoute(routerPath, defaultRoute);
     this.routesInScope = routesInScope;
+    this.tranformation = new NavigationTransformation(this.navContainer);
+  }
 
-    this.goBack = this.goBack.bind(this);
-    this.next = this.next.bind(this);
-    this.replace = this.replace.bind(this);
+  get location(){
+    return  this.tranformation.location;
+  }
+  
+  get navigationStack(){
+    return  this.tranformation.navigationStack;
+  }
+
+  get navPointer(){
+    return  this.tranformation.navPointer;
+  }
+
+  get version(){
+    return  this.tranformation.version;
   }
 
   get printAllRoutes(){
     return JSON.stringify(this.routesInScope);
   }
-    
-  get location(){
-    const navPointer = this.navContainer.navPointer;
-    return  this.navContainer.navigationStack[navPointer];
-  }
 
   get pendingDefaultRouteTransition(){
     const match = matchPath(this.location.pathname, this.routerPath);
     if (match && match.isExact){
-      const existingStack = this.navContainer.navigationStack;
+      const newStack = [...this.navigationStack];
       const newHead = {...this.location, ...removeProperties(this.defaultRoute, ['state'])};
-      const newStack = [...existingStack.slice(0, existingStack.length - 1), newHead];
+      newStack[this.navContainer.navPointer] = newHead;
       return {...newHead, navContainerOverride: this.navContainer.setIn(['navigationStack'], newStack)};
     }
   }
 
-  get head(){
+  get routeThatShouldBeRendered(){
     let result = this.location;
     result =  result.pathname == this.routerPath ? this.defaultRoute : result;
-    if (!!~this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path))){
-      return result;
+    const index = this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path));
+    if (!!~index){
+      const route = this.routesInScope[index];
+      return {...route, pathname: route.path};
     }
   }
-
-  get version(){
-    return this.navContainer.version;
-  }
   
-  goBack(){
-    const previousStackHead = this.navContainer[this.navContainer.navPointer];
-    let newNavPointer = this.navContainer.navPointer - 1;
-    newNavPointer = !!~newNavPointer ? newNavPointer : 0;
-    const existingStack = this.navContainer.navigationStack;
-    const newStack = [...existingStack.slice(0, newNavPointer + 1)];
-    const newStackHead = newStack.pop();
-    return this.incrementVersionCounter().setIn(['navPointer'], newNavPointer ).setIn(['navigationStack'], [...newStack, {...newStackHead, isReverse: true, transition: previousStackHead ?  previousStackHead.transition : undefined}]);
-  }
-  
-  next(action){
-    const newNavPointer = this.navContainer.navPointer + 1;
-    const previousStackHead = this.navContainer[this.navContainer.navPointer];
-    if (isEqual(action, previousStackHead, true)){
-      Logger.info(`Action has already been added to the stack ${JSON.stringify(action)} ignoring next`);
-      return this.navContainer;
-    }
-    const existingStack = this.navContainer.navigationStack;
-    const newStack = [...existingStack, action];
-    return this.incrementVersionCounter().setIn(['navPointer'], newNavPointer).setIn(['navigationStack'], newStack);
-  }
-
-  just(action){
-    const newStack = [action];
-    return this.incrementVersionCounter().setIn(['navPointer'], 0).setIn(['navigationStack'], newStack);
-  }
-  
-  replace(action){
-    const existingStack = this.navContainer.navigationStack;
-    const previousStackHead = this.navContainer[this.navContainer.navPointer];
-    if (isEqual(action, previousStackHead, true)){
-      Logger.info(`Action has already been added to the stack ${JSON.stringify(action)} ignoring replace`);
-      return this.navContainer;
-    }
-    const newStack = [...existingStack.slice(0, existingStack.length - 1), action];
-    return this.incrementVersionCounter().setIn(['navigationStack'], newStack);
-  }
-
-  incrementVersionCounter(){
-    const existingVersion = this.navContainer.version || 0;
-    return this.navContainer.setIn(['version'], existingVersion + 1);
-  }
-  
-  static diff = memoize((prevContainer, nextContainer) => {
+  static diff = memoize((prevContainer = {}, nextContainer = {}) => {
     if (!prevContainer && !nextContainer){
       return;
     }
-    if (!prevContainer || !nextContainer){
-      if (prevContainer && prevContainer.head){
-        return [{...prevContainer.head, isRemove: true}];
-      } else if (nextContainer  && nextContainer.head ){
-        return [{...nextContainer.head, isAdd: true}];
+    const isReverse = prevContainer.navPointer > nextContainer.navPointer;
+    let result;
+    if (!prevContainer.routeThatShouldBeRendered || !nextContainer.routeThatShouldBeRendered){
+      if (prevContainer.routeThatShouldBeRendered){
+        result = [{...prevContainer.routeThatShouldBeRendered, isRemove: true}];
+      } else if (nextContainer.routeThatShouldBeRendered ){
+        result = [{...nextContainer.routeThatShouldBeRendered, isAdd: true}];
       }
     } else {
-      if (prevContainer.head && nextContainer.head){
-        if (nextContainer.head.pathname !== prevContainer.head.pathname){
-          if (matchPath(nextContainer.head.pathname, prevContainer.head.pathname)){
-            return [{...nextContainer.head, isAdd: true}];
+      if (prevContainer.routeThatShouldBeRendered && nextContainer.routeThatShouldBeRendered){
+        if (nextContainer.routeThatShouldBeRendered.pathname !== prevContainer.routeThatShouldBeRendered.pathname){
+          if (matchPath(nextContainer.routeThatShouldBeRendered.pathname, prevContainer.routeThatShouldBeRendered.pathname)){
+            result = [{...nextContainer.routeThatShouldBeRendered, isAdd: true}];
+          } else {
+            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true}, {...prevContainer.routeThatShouldBeRendered, isRemove: true}];
           }
-          return [{...nextContainer.head, isAdd: true}, {...prevContainer.head, isRemove: true}];
         }
       }
     }
+    if (isReverse && result){
+      result.forEach(c => {
+        c.isReverse = isReverse;
+      });
+    }
+    return result;
   })
 
-  getRouteFromScope(el){
+  getRouteFromScope(el, isCurrentLocation){
     const {routesInScope} = this;
     return routesInScope.map(rt => {
       const match = matchPath(el.pathname, rt);
-      return {...rt, match, navContainerOverride: el.navContainerOverride};
+      return {...rt, match, navContainerOverride: el.navContainerOverride, index: isCurrentLocation ? 1  : 0};
     }).filter(rt => rt.match)[0];
   }
 
@@ -137,12 +110,11 @@ export default class NavigationContainerTranslator{
       return this.routesToRender;
     }
     let result = [];
-    const {navigationStack = [], navPointer} = this.navContainer;
+    const {navigationStack = []} = this.navContainer;
     const foundKeys = [];
-    let croppedStack = navigationStack.slice(0, navPointer + 1);
-    croppedStack = croppedStack.slice(-MaxStackLength);
-    croppedStack.forEach(el => {
-      const routeFromScope = this.getRouteFromScope(el);
+    const croppedStack = navigationStack.slice(-MaxStackLength);
+    croppedStack.forEach((el, idx) => {
+      const routeFromScope = this.getRouteFromScope(el, el == this.location);
       if (routeFromScope && !~foundKeys.indexOf(routeFromScope.path)){
         foundKeys.push(routeFromScope.path);
         result.push(routeFromScope);
@@ -164,7 +136,8 @@ export default class NavigationContainerTranslator{
     const navigationStack = DefaultNavigationStack;
     return Immutable({
       navPointer: 0,
-      navigationStack
+      navigationStack,
+      version: 0
     });
   }
 }

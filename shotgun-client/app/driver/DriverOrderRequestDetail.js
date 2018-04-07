@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
-
+import Logger from 'common/Logger';
 import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
 import {OrderSummary, PriceSummary, ErrorRegion, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {acceptOrderRequest} from 'driver/actions/DriverActions';
@@ -11,24 +11,14 @@ class DriverOrderRequestDetail extends Component{
     super(props);
   }
 
-  componentWillMount(){
-    const {dispatch, orderId, orderSummary} = this.props;
-    if (orderSummary == undefined) {
-      dispatch(resetSubscriptionAction('orderSummaryDao', {
-        orderId,
-        reportId: 'driverOrderSummary'
-      }, true));
-    }
-  }
-
   render() {
-    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery, me} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery, me, busyMessage} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
     };
 
-    return busy ? <LoadingScreen text="Loading Order"/> : <Container>
+    return busy ? <LoadingScreen text={busyMessage}/> : <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => history.goBack()}>
@@ -56,13 +46,18 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
+  if (!orderId){
+    Logger.info('Order id must be specified');
+    return;
+  }
+  const orderSummaries = getDaoState(state, ['driver', 'orders'], 'orderRequestDao') || [];
   const orderSummary = orderSummaries.find(o => o.orderId == orderId);
   const {delivery} = (orderSummary || {});
   const errors = getOperationErrors(state, [
     { driverDao: 'acceptOrderRequest'},
-    { orderSummaryDao: 'resetSubscription'}
+    { orderRequestDao: 'resetSubscription'}
   ]);
+  const pendingResetSubscription = isAnyOperationPending(state, [{ orderRequestDao: 'resetSubscription'}]);
   return {
     ...initialProps,
     delivery,
@@ -70,7 +65,8 @@ const mapStateToProps = (state, initialProps) => {
     errors,
     me: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}, {driverDao: 'updateOrderPrice'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
+    busyMessage: pendingResetSubscription ? 'Subscribing to order...' : !orderSummary ? 'Waiting for order...' : undefined,
+    busy: pendingResetSubscription || orderSummary == undefined,
     orderSummary
   };
 };

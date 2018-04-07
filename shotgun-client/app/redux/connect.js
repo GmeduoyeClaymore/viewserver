@@ -13,7 +13,7 @@ const selectorFactory = (ignorefuncs, selector) => (dispatch) => {
     const propsFromSelector = selector(nextState, {...nextOwnProps, dispatch});
     const propsForComparison = propsFromSelector;
     
-    if (!isEqual(previousPropsForComparison, propsForComparison, false, ignorefuncs)) {
+    if (propsForComparison && !isEqual(previousPropsForComparison, propsForComparison, false, ignorefuncs)) {
       previousPropsForComparison = propsForComparison;
       previousProps = {...propsForComparison, dispatch};
     }

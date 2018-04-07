@@ -201,7 +201,7 @@ class UserRelationshipDetail extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, navigationStrategy, selectedUserIndex} = this.props;
+    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, selectedUserIndex} = this.props;
     const {RelatedUser} = this;
     const {isVisible} = this.state;
     const scrollViewStyle = {...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT};
@@ -210,7 +210,7 @@ class UserRelationshipDetail extends Component{
       backdropOpacity={0.4}>
       <View style={{flex: 1, ...scrollViewStyle}}>
         <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
-          {relatedUsers.map((v, i) => <RelatedUser navigationStrategy={navigationStrategy} selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
+          {relatedUsers.map((v, i) => <RelatedUser selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
         </Swiper>
       </View>
       <TouchableHighlight

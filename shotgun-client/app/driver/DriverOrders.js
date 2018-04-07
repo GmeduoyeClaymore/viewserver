@@ -67,7 +67,10 @@ class DriverOrders  extends Component{
   }
 
   onChangeTab (isCustomer){
-    const {history, isCompleted, path, canGoBack} = this.props;
+    const {history, isCompleted, path, canGoBack, isInBackground} = this.props;
+    if (isInBackground){
+      return;
+    }
     const newPath = isCustomer ? `${path}/Posted` : `${path}/Accepted`;
     history.replace({pathname: newPath}, {isCompleted, canGoBack});
   }
@@ -87,7 +90,7 @@ class DriverOrders  extends Component{
         <Tab heading={'Accepted'}/>
         <Tab heading={'Posted'}/>
       </Tabs>
-      <ReduxRouter customLoadingText="Loading orders..." name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+      <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
         <Route path={'Accepted'} component={OrderListings}/>
         <Route path={'Posted'} component={OrderListings}/>
       </ReduxRouter>

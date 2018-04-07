@@ -111,7 +111,7 @@ class DeliveryMap extends Component{
 
   render(){
     const {fitMap, setDurationAndDistance, getLocationText} = this;
-    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, navigationStrategy, errors, selectedProduct, usersWithProduct, isInBackground} = this.props;
+    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
     const {latitude, longitude} = me;
   
     const initialRegion = {
@@ -133,14 +133,14 @@ class DeliveryMap extends Component{
               {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
             </MapView>}
           </ErrorRegion>
-          <Button transparent style={styles.backButton} onPress={() => navigationStrategy.prev()} >
+          <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
             <Icon name='back-arrow'/>
           </Button>
         </Row>
         {supportsOrigin ? getLocationText(origin, 'origin', 'Enter pick-up location') : null}
         {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
       </Grid>
-      <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
+      <Button fullWidth paddedBottom iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>

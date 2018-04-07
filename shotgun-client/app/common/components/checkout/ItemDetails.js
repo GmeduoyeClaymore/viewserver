@@ -51,14 +51,14 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {navigationStrategy, orderItem} = this.props;
+    const {next, orderItem, history} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
       <Container>
         <Header withButton>
           <Left>
-            <Button onPress={() => navigationStrategy.prev()}>
+            <Button onPress={() => history.goBack()}>
               <Icon name='back-arrow'/>
             </Button>
           </Left>
@@ -82,7 +82,7 @@ class ItemDetails extends Component{
           </Button> : null}
           <ValidatingInput style={styles.detailsInput} value={orderItem.notes} multiline={true} placeholder={resources.InputPlaceholder} onChangeText={(value) => onChangeValue('notes', value)} validateOnMount={true} validationSchema={validationSchema.notes} maxLength={200}/>
         </Content>
-        <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  navigationStrategy.next()} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
+        <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>

@@ -62,10 +62,10 @@ class UsersForProductMap extends Component{
   }
 
   assignDeliveryToUser(user){
-    const {delivery: oldDelivery, navigationStrategy}  = this.props;
+    const {delivery: oldDelivery, next, history}  = this.props;
     const delivery = {...oldDelivery};
     delivery.driverId = user.userId;
-    this.setState({delivery, deliveryUser: user}, () => navigationStrategy.next());
+    this.setState({delivery, deliveryUser: user}, () => history.push(next));
   }
 
 
@@ -77,12 +77,12 @@ class UsersForProductMap extends Component{
 
   render(){
     const {getLocationTextInput, assignDeliveryToUser} = this;
-    const {origin, selectedProduct = {}, errors, disableDoneButton, navigationStrategy, deliveryUser, client} = this.props;
+    const {origin, selectedProduct = {}, errors, disableDoneButton, next, deliveryUser, client, history} = this.props;
     const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
     return <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => navigationStrategy.prev()}>
+          <Button onPress={() => history.goBack()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -93,10 +93,10 @@ class UsersForProductMap extends Component{
         {getLocationTextInput(origin, 'origin', 'Enter job location')}
       </Row>
       <Row size={25}>
-        <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} navigationStrategy={navigationStrategy} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+        <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
         <ErrorRegion errors={errors} />
       </Row>
-      <Button fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} disabled={disableDoneButton}>
+      <Button fullWidth paddedBottom iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>

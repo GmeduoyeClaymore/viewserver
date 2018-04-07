@@ -151,7 +151,7 @@ class DeliveryOptions extends Component {
 
   render() {
     const {resources, tillInput} = this;
-    const { busy, paymentCards, errors, navigationStrategy, delivery, payment, orderItem, selectedContentType, price} = this.props;
+    const { busy, paymentCards, errors, next, delivery, payment, orderItem, selectedContentType, price, history} = this.props;
     const { quantity: noRequiredForOffload } = orderItem;
     const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
@@ -182,7 +182,7 @@ class DeliveryOptions extends Component {
       <LoadingScreen text="Loading Customer Cards" /> : <Container>
         <Header withButton>
           <Left>
-            <Button onPress={() => navigationStrategy.prev()}>
+            <Button onPress={() => history.goBack()}>
               <Icon name='back-arrow'/>
             </Button>
           </Left>
@@ -264,7 +264,7 @@ class DeliveryOptions extends Component {
             </Grid>
           </ListItem> : null}
         </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()} validationSchema={delivery.isFixedPrice ? yup.object(fixedPriceValidationSchema) : yup.object(validationSchema)} validateOnMount={true} model={delivery}>
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)} validationSchema={delivery.isFixedPrice ? yup.object(fixedPriceValidationSchema) : yup.object(validationSchema)} validateOnMount={true} model={delivery}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow' />
         </ValidatingButton>

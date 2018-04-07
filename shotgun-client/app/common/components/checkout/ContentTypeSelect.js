@@ -23,7 +23,6 @@ class ContentTypeSelect extends Component{
     super(props);
     this.startOrder = this.startOrder.bind(this);
     this.selectContentType = this.selectContentType.bind(this);
-    this.actuallyStartOrder = this.actuallyStartOrder.bind(this);
   }
   
   selectContentType(selectedContentType){
@@ -31,22 +30,12 @@ class ContentTypeSelect extends Component{
     const initialState = resources.InitialState;
     const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
     const {resetParentComponentState} = this.props;
-    resetParentComponentState(() => this.setState({...initialState, selectedContentType, orderItem}));
+    resetParentComponentState(() => this.setState({...initialState, selectedContentType, orderItem, selectedCategory: selectedContentType.productCategory}));
   }
 
   startOrder(){
-    const {resetParentComponentState} = this.props;
-    const {navigationStrategy, selectedContentType} = this.props;
-    resetParentComponentState(() => this.actuallyStartOrder(navigationStrategy, selectedContentType));
-  }
-
-  actuallyStartOrder(navigationStrategy, selectedContentType){
-    const resources = resourceDictionary.resolve(selectedContentType.contentTypeId); /* This is fuckery will clean this up soon */
-    const initialState = resources.InitialState;
-    const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
-    this.setState({selectedCategory: selectedContentType.productCategory, selectedContentType, orderItem});
-    navigationStrategy.init(selectedContentType.contentTypeId);
-    navigationStrategy.next({parentSelectedCategory: selectedContentType.productCategory});
+    const {history, next} = this.props;
+    history.push(next);
   }
 
   render(){

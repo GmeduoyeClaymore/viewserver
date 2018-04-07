@@ -18,6 +18,7 @@ export const customerServicesRegistrationAction = (client, continueWith) => {
     registerNakedDao(dispatch, new PaymentDao(client));
     register(dispatch, new DeliveryAddressDao(client));
     register(dispatch, new OrderSummaryDao(client));
+    register(dispatch, new OrderSummaryDao(client, undefined, 'singleOrderSummaryDao'));
     register(dispatch, new ContentTypeDao(client));
     register(dispatch, new ProductDao(client));
     register(dispatch, new ProductCategoryDao(client));

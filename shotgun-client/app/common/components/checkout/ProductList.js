@@ -57,8 +57,8 @@ class ProductList extends Component{
   }
 
   goBack(){
-    const {navigationStrategy, selectedCategory, parentSelectedCategory} = this.props;
-    this.setState({selectedCategory: parentSelectedCategory}, () => navigationStrategy.prev({selectedCategory, parentSelectedCategory}));
+    const {next, selectedCategory, parentSelectedCategory, history} = this.props;
+    this.setState({selectedCategory: parentSelectedCategory}, () => history.goBack(undefined, {selectedCategory, parentSelectedCategory}));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,7 +66,7 @@ class ProductList extends Component{
   }
 
   render(){
-    const {defaultOptions, navigationStrategy, selectedProduct, stateKey} = this.props;
+    const {defaultOptions, next, selectedProduct, stateKey, history} = this.props;
     return  <Container>
       <Header withButton>
         <Left>
@@ -90,7 +90,8 @@ class ProductList extends Component{
             elementContainerStyle={{flexWrap: 'wrap'}}
             options={defaultOptions}
             stateKey={stateKey}
-            navigationStrategy={navigationStrategy}
+            next={next}
+            history={history}
             rowView={this.rowView}
             search={this.search}
             setState={this.setState}
@@ -100,7 +101,7 @@ class ProductList extends Component{
           />
         </Grid>
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => navigationStrategy.next()}
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)}
         validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>

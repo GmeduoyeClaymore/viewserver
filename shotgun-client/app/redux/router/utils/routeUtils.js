@@ -52,12 +52,12 @@ export const getInitialStyleForRoute = (route) => {
 };
   
 export const getAnimationType = (route) => {
-  const strategy = TransitionStrategies[route.transition] || TransitionStrategies.left;
+  const strategy = TransitionStrategies.left;
   return strategy(route);
 };
   
 export const getDuration = (route) => {
-  return 100;
+  return 1000;
 };
 
 export const checkForOverlap = (routes) => {
@@ -125,12 +125,14 @@ export const parseRoute = (routerPath, route, state) => {
   if (typeof route === 'string'){
     return {
       pathname: combinePaths(routerPath, route),
-      state
+      state,
+      transition: 'left'
     };
   }
   invariant(route.pathname, 'route.pathname is required');
   return {
     ...route,
+    transition: route.transition || 'left',
     pathname: combinePaths(routerPath, route.pathname),
     state: state == undefined ? route.state : state
   };

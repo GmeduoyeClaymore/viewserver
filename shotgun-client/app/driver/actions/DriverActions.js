@@ -14,6 +14,7 @@ export const driverServicesRegistrationAction = (client, continueWith) => {
     register(dispatch, new VehicleDao(client));
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client));
+    register(dispatch, new OrderSummaryDao(client, undefined, 'singleOrderSummaryDao'));
     register(dispatch, new UserRelationshipDao(client));
     registerNakedDao(dispatch, new PaymentDao(client));
     registerNakedDao(dispatch, new DriverDao(client), continueWith);

@@ -29,9 +29,11 @@ export class Redirect extends Component{
   }
 
   perform() {
-    const {history, push, to} = this.props;
+    const {history, push, just, to} = this.props;
     if (push) {
       history.push(to);
+    } else if (just) {
+      history.just(to);
     } else {
       history.replace(to);
     }

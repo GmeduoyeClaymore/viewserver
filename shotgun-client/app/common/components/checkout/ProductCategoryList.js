@@ -43,7 +43,7 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, navigationStrategy, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
+    const {busy, next, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
     const {rowView} = this;
 
     if (selectedCategory.isLeaf){
@@ -56,7 +56,7 @@ class ProductCategoryList extends Component{
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  navigationStrategy.prev() : this.goToCategory(rootProductCategory)}>
+          <Button onPress={() => rootProductCategory.categoryId === selectedCategory.categoryId ?  history.goBack() : this.goToCategory(rootProductCategory)}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -77,7 +77,7 @@ class ProductCategoryList extends Component{
           headerView={() => null}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  navigationStrategy.next()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() =>  history.push(next)} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>

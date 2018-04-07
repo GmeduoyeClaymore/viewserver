@@ -11,10 +11,11 @@ export default class OrderSummaryDao{
     filterMode: 2,
   };
 
-  constructor(client, options = {}) {
+  constructor(client, options = {}, name = 'orderSummaryDao') {
     this.client = client;
     this.options = {...OrderSummaryDao.OPTIONS, ...options};
     this.subscribeOnCreate = false;
+    this._name = name;
   }
 
   get defaultOptions(){
@@ -22,7 +23,7 @@ export default class OrderSummaryDao{
   }
 
   get name(){
-    return 'orderSummaryDao';
+    return  this._name;
   }
 
   getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts, userId}){

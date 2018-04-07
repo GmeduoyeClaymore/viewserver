@@ -43,9 +43,9 @@ class LandingCommon extends Component {
     }
     switch (user.type){
     case 'driver':
-      return <Redirect to="/Driver/Landing" history={history}/>;
+      return <Redirect to="/Driver/Landing" just={true} history={history}/>;
     case 'customer':
-      return <Redirect to="/Customer/Landing"  history={history}/>;
+      return <Redirect to="/Customer/Landing" just={true} history={history}/>;
     default:
       throw new Error(`Could not process user of type ${user.type} user is ${JSON.stringify(user)}`);
     }

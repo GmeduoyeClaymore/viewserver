@@ -47,19 +47,19 @@ class OrderConfirmation extends Component{
   }
 
   async loadEstimatedPrice(){
-    const {client, orderItem, payment, delivery} = this.props;
+    const {client, orderItem, delivery} = this.props;
     const  price = await calculateTotalPrice({client, delivery, orderItem});
     this.setState({price});
   }
 
   render(){
     const {resources} = this;
-    const {client, navigationStrategy, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price} = this.props;
+    const {client, next, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price, history} = this.props;
 
     return <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => navigationStrategy.prev()}>
+          <Button onPress={() => history.goBack()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
