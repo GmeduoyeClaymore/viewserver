@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<config>
+    <viewserver>
+        <isMock>false</isMock>
+        <firebaseKeyPath>firebase/shotgunDelivery.json</firebaseKeyPath>
+        <messagingApiKey>AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA</messagingApiKey>
+        <awsCredentials>
+            <accessKey>AKIAJ5IKVCUUR6JC7NCQ</accessKey>
+            <secretKey>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</secretKey>
+        </awsCredentials>
+        <mapsControllerKey>AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M</mapsControllerKey>
+        <stripe>
+            <key>pk_test_BUWd5f8iUuxmbTT5MqsdOlmk</key>
+            <secret>sk_test_a36Vq8WXGWEf0Jb55tUUdXD4</secret>
+        </stripe>
+        <nexmo>
+            <key>c03cd396</key>
+            <secret>33151c6772f2bd52</secret>
+        </nexmo>
+        <vehicleDetailsKey>87019DD5-A533-4A7C-A8A1-38BF311C1FF6</vehicleDetailsKey>
+        <servers>
+            <master>
+
+                <bootstrapper>com.shotgun.viewserver.setup.ShotgunBootstrapper</bootstrapper>
+                <endpoints>
+                    <endpoint>tcp://0.0.0.0:18000</endpoint>
+                    <endpoint>ws://0.0.0.0:6060</endpoint>
+                </endpoints>
+            </master>
+
+            <slaves>2</slaves>
+        </servers>
+    </viewserver>
+
+    <webserver>
+        <sites>
+            <site port="8090" contentRoot="explorer"/>
+        </sites>
+    </webserver>
+</config>
