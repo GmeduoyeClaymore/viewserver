@@ -44,7 +44,7 @@ export default class OrderSummaryDao{
     }
 
     if (userId != undefined){
-      reportContext.dimensions.dimension_userId = userId;
+      reportContext.dimensions.dimension_customerUserId = [userId];
     }
     if (driverId !== undefined){
       reportContext.dimensions.dimension_driverId = driverId;

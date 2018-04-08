@@ -84,7 +84,10 @@ class UserRelationships extends Component{
   }
 
   onChangeTab(selectedTabIndex){
-    const {history, path} = this.props;
+    const {history, path, isInBackground} = this.props;
+    if (isInBackground){
+      return;
+    }
     const viewElement = this.UserViews[selectedTabIndex];
     history.replace(`${path}/${SubViewPath}${Object.keys(viewElement)[0]}X`);
   }

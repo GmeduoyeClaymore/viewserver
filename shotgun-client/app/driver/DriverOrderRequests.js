@@ -17,8 +17,9 @@ const RowView = ({ item: orderSummary, isLast, isFirst, history, parentPath }) =
 const getDefaultOptions = (contentType, contentTypeOptions) => {
   return {
     ...DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS,
+    userId: undefined,
     contentType,
-    ...contentTypeOptions
+    contentTypeOptions
   };
 };
 const OrderView = ({history, parentPath, contentType, contentTypeOptions, height, width}) => (

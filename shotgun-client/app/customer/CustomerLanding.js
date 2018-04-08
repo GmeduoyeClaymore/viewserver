@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect, ReduxRouter, Route} from 'custom-redux';
+import {connect, ReduxRouter, Route, Redirect} from 'custom-redux';
 import {setLocale} from 'yup/lib/customLocale';
 import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from 'common/components/checkout/Checkout';
@@ -63,8 +63,11 @@ class CustomerLanding extends Component {
   }
 
   render() {
-    const {busy, client, path} = this.props;
+    const {busy, client, path, isLoggedIn, history} = this.props;
     const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth, ordersPath: `${path}/Orders` };
+    if (!isLoggedIn){
+      <Redirect just to="/" history={history}/>;
+    }
     return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
       <Container>
         <ReduxRouter  name="CustomerLandingRouter"  {...completeProps} defaultRoute={'/CustomerOrders'}>

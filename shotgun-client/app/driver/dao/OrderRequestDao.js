@@ -53,7 +53,7 @@ export default class OrderRequestDaoContext{
         dimension_contentTypeId: [contentType.contentTypeId]
       },
       excludedFilters: {
-        dimension_userId: '@userId'
+        dimension_customerUserId: '@userId'
       },
       parameters: {
         driverLatitude,
@@ -89,6 +89,7 @@ export default class OrderRequestDaoContext{
       orderId: orderRequest.orderId,
       status: orderRequest.status,
       totalPrice: orderRequest.totalPrice,
+      customerUserId: orderRequest.customerUserId,
       orderItem: {
         productId: orderRequest.productId,
         notes: orderRequest.notes,

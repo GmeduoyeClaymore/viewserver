@@ -17,7 +17,8 @@ const hasStarted = status => {
 /*eslint-disable */
 const staticPriceControl = (props) => <PriceSummary {...props}/>;
 const dynamicPriceControl = ({price,orderSummary={},onValueChanged, ...props}) => {
-  return hasStarted(orderSummary.status) ? 
+  const {userId} =props;
+  return hasStarted(orderSummary.status) || orderSummary.customerUserId != userId ? 
   <PriceSummary price={orderSummary.totalPrice}  {...props}/> :  
   <Col>
     <PriceSummary price={orderSummary.totalPrice} onValueChanged={onValueChanged} {...props}/>
@@ -75,7 +76,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath} = this.props;
+    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath, userId} = this.props;
     const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
@@ -105,7 +106,7 @@ class CustomerOrderDetail extends Component{
       </Header>
       <Content>
         <ErrorRegion errors={errors}/>
-        <PricingControl readonly={busyUpdating} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
+        <PricingControl readonly={busyUpdating} userId={userId} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
         {showCancelButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> : null}
         {hasDriver && !isComplete ? <Grid style={styles.driverDetailView}>
           <Col style={{alignItems: 'flex-end'}}>

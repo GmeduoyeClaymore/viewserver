@@ -38,6 +38,7 @@ const OrderItems = ({isCompleted, history, parentPath}) => (
 const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
   columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
   reportId: 'customerOrderSummary',
+  userId: '@userId',
   driverId: undefined
 };
 

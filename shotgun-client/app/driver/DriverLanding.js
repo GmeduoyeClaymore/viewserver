@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect, Route, ReduxRouter} from 'custom-redux';
+import {connect, Route, ReduxRouter, Redirect} from 'custom-redux';
 import ReactNativeModal from 'react-native-modal';
 import {View, Dimensions} from 'react-native';
 import {Container, Text, Spinner} from 'native-base';
@@ -64,7 +64,10 @@ class DriverLanding extends Component {
   }
 
   render() {
-    const {busy, path, loadingMessage} = this.props;
+    const {busy, path, loadingMessage, isLoggedIn, history} = this.props;
+    if (!isLoggedIn){
+      <Redirect just to="/" history={history}/>;
+    }
     return  <Container>
       <ReactNativeModal
         isVisible={busy}
