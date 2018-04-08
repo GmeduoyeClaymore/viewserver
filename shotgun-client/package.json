@@ -17,6 +17,7 @@
     "babel-preset-stage-2": "6.24.1",
     "buffer": "5.0.8",
     "color": "^3.0.0",
+    "history": "^4.7.2",
     "moment": "2.19.1",
     "native-base": "2.3.3",
     "prop-types": "15.6.0",
@@ -45,6 +46,7 @@
     "redux-thunk": "2.2.0",
     "rxjs": "5.5.2",
     "seamless-immutable": "7.1.2",
+    "warning": "^3.0.0",
     "yup": "0.23.0"
   },
   "devDependencies": {
