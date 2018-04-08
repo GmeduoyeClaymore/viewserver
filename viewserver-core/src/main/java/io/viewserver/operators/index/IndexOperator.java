@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by nickc on 02/10/2014.
@@ -483,7 +484,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 }
 
                 if (ors.size() == 0) {
-                    return;
+                    continue;
                 } else if (ors.size() == 1) {
                     ands[i] = ors.get(0);
                 } else {
@@ -494,7 +495,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     ands[i] = allRows.xor(ands[i]);
                 }
             }
-            EWAHCompressedBitmap and = EWAHCompressedBitmap.and(ands);
+            EWAHCompressedBitmap and = EWAHCompressedBitmap.and(Arrays.stream(ands).filter(c->c != null).collect(Collectors.toList()).toArray(new EWAHCompressedBitmap[0]));
             if (and != null) {
                 for (int rowId : and.toArray()) {
                     int mappedRow = rows.addInt(rowId);

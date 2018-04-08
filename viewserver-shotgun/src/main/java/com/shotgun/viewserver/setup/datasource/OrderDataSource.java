@@ -85,11 +85,11 @@ public class OrderDataSource {
                 .withCalculatedColumns(
                         new CalculatedColumn("dimension_status", ColumnType.String, "status"),
                         new CalculatedColumn("dimension_orderId", ColumnType.String, "orderId"),
-                        new CalculatedColumn("dimension_userId", ColumnType.String, "userId")
+                        new CalculatedColumn("dimension_customerUserId", ColumnType.String, "userId")
                 )
                 .withDimensions(Arrays.asList(
                         new Dimension("dimension_orderId", Cardinality.Byte, ColumnType.String),
-                        new Dimension("dimension_userId", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_customerUserId", Cardinality.Int, ColumnType.String),
                         new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productCategoryId", Cardinality.Int, ColumnType.String, true),
