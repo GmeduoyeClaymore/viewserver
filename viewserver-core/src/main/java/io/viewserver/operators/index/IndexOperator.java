@@ -484,7 +484,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 }
 
                 if (ors.size() == 0) {
-                    continue;
+                    ands[i] = EWAHCompressedBitmap.bitmapOf();
                 } else if (ors.size() == 1) {
                     ands[i] = ors.get(0);
                 } else {
@@ -495,7 +495,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     ands[i] = allRows.xor(ands[i]);
                 }
             }
-            EWAHCompressedBitmap and = EWAHCompressedBitmap.and(Arrays.stream(ands).filter(c->c != null).collect(Collectors.toList()).toArray(new EWAHCompressedBitmap[0]));
+            EWAHCompressedBitmap and = EWAHCompressedBitmap.and(ands);
             if (and != null) {
                 for (int rowId : and.toArray()) {
                     int mappedRow = rows.addInt(rowId);
