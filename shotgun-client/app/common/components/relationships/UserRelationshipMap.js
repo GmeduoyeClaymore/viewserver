@@ -6,7 +6,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual, debounce} from 'lodash';
 import Logger from 'common/Logger';
 import {LoadingScreen} from 'common/components';
-import {connect} from 'custom-redux'
+import {connect} from 'custom-redux';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.00322;
@@ -21,6 +21,9 @@ class UserRelationshipMap extends Component{
   
   fitMap(newProps){
     try {
+      if (!this.isMapReady){
+        return;
+      }
       const {map} = this;
       let {me} = newProps;
 
@@ -83,9 +86,10 @@ class UserRelationshipMap extends Component{
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };
-
+    const _this = this;
   
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {
+      _this.isMapReady = true;
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}

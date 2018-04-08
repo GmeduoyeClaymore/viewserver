@@ -7,7 +7,7 @@ import {withExternalState} from 'custom-redux';
 
 const AddressDetails  = ({deliveryAddress = {}, match, history, next, parentPath, setState, dispatch}) => {
   const onChangeText = async (field, value) => {
-    setState({deliveryAddress: {...deliveryAddress, [field]: value}}, dispatch);
+    setState({deliveryAddress: {...deliveryAddress, [field]: value}}, undefined, dispatch);
   };
 
   const doAddressLookup = (addressLabel) => {

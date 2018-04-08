@@ -30,6 +30,8 @@ export default class OrderSummaryDao{
     const reportContext =  {
       reportId,
       dimensions: {
+      },
+      excludedFilters: {
       }
     };
 

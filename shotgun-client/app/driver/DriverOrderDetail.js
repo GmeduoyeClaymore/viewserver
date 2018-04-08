@@ -23,7 +23,7 @@ class DriverOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me, busyMessage} = this.props;
+    const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me, busyMessage, ordersRoot} = this.props;
     const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
@@ -31,10 +31,10 @@ class DriverOrderDetail extends Component{
       dispatch(startOrderRequest(orderSummary.orderId, navigateToOrderInProgress));
     };
 
-    const navigateToOrderInProgress = () => history.push('/Driver/DriverOrderInProgress', {orderId: orderSummary.orderId});
+    const navigateToOrderInProgress = () => history.push(`${ordersRoot}/DriverOrderInProgress`, {orderId: orderSummary.orderId});
 
     const onCancelPress = async() => {
-      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push('/Driver/DriverOrders')));
+      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push(`${ordersRoot}/DriverOrders`)));
     };
 
     return busy ? <LoadingScreen text={busyMessage}/> : <Container>

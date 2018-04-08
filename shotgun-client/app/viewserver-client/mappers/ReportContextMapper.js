@@ -5,6 +5,7 @@ export default class ReportContextMapper{
     const reportContextDto = ProtoLoader.Dto.ReportContextDto.create(reportContext);
     reportContextDto.parameters = ReportContextMapper._mapParameters(reportContext.parameters, ReportContextMapper._buildParameter);
     reportContextDto.dimensions =  ReportContextMapper._mapParameters(reportContext.dimensions, ReportContextMapper._buildDimension);
+    reportContextDto.excludedFilters =  ReportContextMapper._mapParameters(reportContext.excludedFilters, ReportContextMapper._buildDimension);
     return reportContextDto;
   }
 

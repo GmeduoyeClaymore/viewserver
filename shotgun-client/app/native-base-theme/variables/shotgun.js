@@ -161,9 +161,10 @@ export default {
   },
 
   // Footer
-  footerHeight: 50,
+
   footerDefaultBg: this.brandPrimary,
-  footerPaddingBottom: isIphoneX ? 34 : 0,
+  footerPaddingBottom: isIphoneX ? 34 : platform === 'ios' ? 0 : 34,
+  footerHeight: 50 + (platform === 'ios' ? 0 : 34),
 
   // FooterTab
   tabBarTextColor: this.silver,

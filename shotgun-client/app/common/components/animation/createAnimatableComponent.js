@@ -7,7 +7,7 @@ import flattenStyle from './flattenStyle';
 import createAnimation from './createAnimation';
 import { getAnimationByName, getAnimationNames } from './registry';
 import EASING_FUNCTIONS from './easing';
-
+import {setStateIfIsMounted} from 'custom-redux';
 // These styles are not number based and thus needs to be interpolated
 const INTERPOLATION_STYLE_PROPERTIES = [
   // Transform styles
@@ -216,6 +216,7 @@ export default function createAnimatableComponent(WrappedComponent) {
           this[animationName] = this.animate.bind(this, animationName);
         }
       });
+      //setStateIfIsMounted(this);
     }
 
     initializeTransitionState(transitionKeys) {

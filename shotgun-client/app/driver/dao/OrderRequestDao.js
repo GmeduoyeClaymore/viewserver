@@ -52,6 +52,9 @@ export default class OrderRequestDaoContext{
       dimensions: {
         dimension_contentTypeId: [contentType.contentTypeId]
       },
+      excludedFilters: {
+        dimension_userId: '@userId'
+      },
       parameters: {
         driverLatitude,
         driverLongitude,
