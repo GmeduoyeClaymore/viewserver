@@ -21,7 +21,7 @@ public class FirebaseConnectionFactory{
 
     private void createConnection() {
         try {
-            InputStream serviceAccount = getClass().getResourceAsStream(firebaseKeyPath);
+            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream(firebaseKeyPath);
             if(serviceAccount == null){
                 throw new Exception("Unable to find firebase key path at " + firebaseKeyPath);
             }

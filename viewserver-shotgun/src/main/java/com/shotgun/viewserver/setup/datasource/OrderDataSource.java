@@ -89,7 +89,7 @@ public class OrderDataSource {
                 )
                 .withDimensions(Arrays.asList(
                         new Dimension("dimension_orderId", Cardinality.Byte, ColumnType.String),
-                        new Dimension("dimension_customerUserId", Cardinality.Int, ColumnType.String),
+                        new Dimension("dimension_customerUserId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true),
                         new Dimension("dimension_productCategoryId", Cardinality.Int, ColumnType.String, true),
