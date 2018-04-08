@@ -216,7 +216,7 @@ export default function createAnimatableComponent(WrappedComponent) {
           this[animationName] = this.animate.bind(this, animationName);
         }
       });
-      //setStateIfIsMounted(this);
+      setStateIfIsMounted(this);
     }
 
     initializeTransitionState(transitionKeys) {

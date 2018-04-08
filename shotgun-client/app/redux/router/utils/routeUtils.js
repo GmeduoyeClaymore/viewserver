@@ -57,7 +57,7 @@ export const getAnimationType = (route) => {
 };
   
 export const getDuration = (route) => {
-  return 1000;
+  return 5000;
 };
 
 export const checkForOverlap = (routes) => {
