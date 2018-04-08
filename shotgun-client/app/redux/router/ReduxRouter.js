@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View } from 'common/components/animation';
+import { View } from 'react-native-animatable';
 import {Dimensions, BackHandler, View as BasicView} from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
