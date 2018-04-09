@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.user;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
@@ -10,6 +12,9 @@ import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.maps.MapsController;
+import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.messaging.AppMessageBuilder;
+import com.shotgun.viewserver.messaging.MessagingController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -38,6 +43,7 @@ public class UserController {
     private LoginController loginController;
     private ImageController imageController;
     private NexmoController nexmoController;
+    private MessagingController messagingController;
     private MapsController mapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
@@ -48,12 +54,14 @@ public class UserController {
                           LoginController loginController,
                           ImageController imageController,
                           NexmoController nexmoController,
+                          MessagingController messagingController,
                           MapsController mapsController, IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
 
         this.loginController = loginController;
         this.imageController = imageController;
         this.nexmoController = nexmoController;
+        this.messagingController = messagingController;
         this.mapsController = mapsController;
         this.reactor = reactor;
 
@@ -197,6 +205,44 @@ public class UserController {
                 .addValue("relationshipType", relationshipType == null ? null : relationshipType.name());
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", userRecord);
+
+        notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
+    }
+
+    private void notifyRelationshipStatus(String userId, String targetUserId, String status, KeyedTable userTable) {
+        try {
+            String formattedStatus = status.toLowerCase();
+            String fromUserName = getUsername(userId, userTable);
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(userId))
+                    .message(String.format("Shotgun friend request", formattedStatus), String.format("Shotgun user %s has %s your friendship", fromUserName, formattedStatus)).build();
+            ListenableFuture future = messagingController.sendMessageToUser(targetUserId, builder);
+
+            Futures.addCallback(future, new FutureCallback<Object>() {
+                @Override
+                public void onSuccess(Object o) {
+                    log.debug("Message sent successfully");
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    log.error("There was a problem sending the notification", throwable);
+                }
+            });
+
+        }catch (Exception ex){
+            log.error("There was a problem sending the notification", ex);
+        }
+    }
+
+    private String createActionUri(String targetUserId) {
+        return String.format("shotgun://Landing/UserRelationships/RelationshipView/DetailX/SelectedUser%sX", targetUserId);
+    }
+
+    private String getUsername(String userId, KeyedTable userTable){
+        String firstName = (String) ControllerUtils.getColumnValue(userTable, "firstName", userId);
+        String lastName = (String) ControllerUtils.getColumnValue(userTable, "lastName", userId);
+        return firstName + " " + lastName;
     }
 
     private String constructKey(String userId, String targetUserId) {

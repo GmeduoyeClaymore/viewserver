@@ -87,7 +87,7 @@ export default class TransitionManager{
         }
       }
     );
-    this.log(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and diff are ${JSON.stringify(diffs)}`);
+    this.log(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and diff are ${JSON.stringify(diffs.map(c=> c.pathname))}`);
     await Promise.all(transitionPromises);
     return transitionPromises.length;
   }
@@ -146,7 +146,7 @@ export default class TransitionManager{
   async transition(componentRef, route){
     const animationType = RouteUtils.getAnimationType(route);
     if (animationType){
-      this.log(`Performing animation type ${animationType} for route ${JSON.stringify(route)}`);
+      this.log(`Performing animation type ${animationType} for route ${route.path}`);
       componentRef.setNativeProps({
         style: {
           zIndex: 1,
@@ -159,7 +159,7 @@ export default class TransitionManager{
           zIndex: route.isRemove ? -1 : route.index
         },
       });
-      this.log(`Finished performing animation type ${animationType} for route ${JSON.stringify(route)}`);
+      this.log(`Finished performing animation type ${animationType} for route ${route.path}`);
     }
   }
 }

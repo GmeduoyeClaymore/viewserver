@@ -52,7 +52,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         VehicleController vehicleController = new VehicleController(getDatabaseUpdater());
         JourneyEmulatorController journeyEmulatorController = new JourneyEmulatorController(mapsController);
         LoginController loginController = new LoginController(getDatabaseUpdater(), getServerCatalog());
-        UserController userController = new UserController(getDatabaseUpdater(), loginController, imageController, nexmoController, mapsController, getServerReactor());
+        UserController userController = new UserController(getDatabaseUpdater(), loginController, imageController, nexmoController, messagingController, mapsController, getServerReactor());
 
         this.registerController(paymentController);
         this.registerController(mapsController);

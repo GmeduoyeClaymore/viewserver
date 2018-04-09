@@ -62,7 +62,8 @@ export default class NavigationContainerTranslator{
     const index = this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path));
     if (!!~index){
       const route = this.routesInScope[index];
-      return {...route, pathname: route.path};
+      const {isReverse, transition} = result;
+      return {...route, pathname: route.path, transition, isReverse};
     }
   }
   
@@ -84,7 +85,8 @@ export default class NavigationContainerTranslator{
           if (matchPath(nextContainer.routeThatShouldBeRendered.pathname, prevContainer.routeThatShouldBeRendered.pathname)){
             result = [{...nextContainer.routeThatShouldBeRendered, isAdd: true}];
           } else {
-            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true}, {...prevContainer.routeThatShouldBeRendered, isRemove: true}];
+            const {isReverse} = nextContainer.routeThatShouldBeRendered;
+            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true}, {...prevContainer.routeThatShouldBeRendered, isRemove: true, isReverse}];
           }
         }
       }

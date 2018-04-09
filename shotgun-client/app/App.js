@@ -33,8 +33,8 @@ class App extends React.Component {
   constructor() {
     super();
     registerTokenListener();
-    //this.client = new Client('ws://shotgun.ltd:6060/');
-    this.client = new Client('ws://192.168.0.20:6060/');
+    this.client = new Client('ws://shotgun.ltd:6060/');
+    //this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
   }
@@ -51,9 +51,9 @@ class App extends React.Component {
   }
   
   render() {
-    const {loginState, busy} = this.props;
+    const {loginState, busy, user = {}} = this.props;
     const {isConnected, isLoggedIn} = (loginState || {});
-    const globalProps = {client: this.client, userId: this.userId, dispatch: this.dispatch, isConnected, isLoggedIn};
+    const globalProps = {client: this.client, userId: this.userId,  dispatch: this.dispatch, isConnected, isLoggedIn};
     const completeProps = {...globalProps, ...this.props};
     if (isLoggedIn === undefined || busy){
       if (!isConnected){
@@ -82,6 +82,7 @@ class App extends React.Component {
                 <Route path="LandingCommon" exact component={LandingCommon}/>
                 <Route path="Customer/Registration" component={CustomerRegistration}/>
                 <Route path="Driver/Registration" component={DriverRegistration}/>
+                <Route path="Landing" component={user.type == 'driver' ? DriverLanding : CustomerLanding}/>
                 <Route path="Customer/Landing" component={CustomerLanding}/>
                 <Route path="Driver/Landing" component={DriverLanding}/>
                 <Route path="TermsAndConditions" component={TermsAndConditions}/>
@@ -96,6 +97,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    user: getDaoState(state, ['user'], 'userDao'),
     busy: isAnyLoading(state, ['loginDao']),
     loginState: getDaoState(state, [], 'loginDao'),
     errors: getLoadingError(state, 'loginDao')

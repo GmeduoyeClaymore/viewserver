@@ -42,6 +42,8 @@ const TransitionStrategies = {
     if (route.isRemove){
       return route.isReverse ? 'zoomOutRight' : 'zoomOutLeft';
     }
+  },
+  immediate: (route) => {
   }
 };
 
@@ -52,8 +54,8 @@ export const getInitialStyleForRoute = (route) => {
 };
   
 export const getAnimationType = (route) => {
-  const strategy = TransitionStrategies.left;
-  return strategy(route);
+  const strategy = TransitionStrategies[route.transition] || TransitionStrategies.left;
+  return strategy == undefined ? undefined : strategy(route);
 };
   
 export const getDuration = (route) => {

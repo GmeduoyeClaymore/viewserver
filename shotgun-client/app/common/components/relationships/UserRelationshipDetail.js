@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import { View, Text, TouchableHighlight, Dimensions} from 'react-native';
+import { View, Text, TouchableHighlight, Dimensions, TouchableOpacity} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {PagingListView, Icon, Swiper, AverageRating} from 'common/components';
 import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 import PhoneCallService from 'common/services/PhoneCallService';
-import {connect, withExternalState} from 'custom-redux';
+import {ReduxRouter, Route, withExternalState} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
 import {RelatedUser, StatusButton} from './RelatedUser';
@@ -103,6 +103,22 @@ const styles = {
   },
   forwardIcon: {
     fontSize: 14,
+  },
+  buttonWrapper: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+
+  buttonText: {
+    fontSize: 50,
+    color: '#007aff',
+    fontFamily: 'Arial'
   }
 };
 
@@ -129,22 +145,49 @@ const JobSummary = ({item: orderSummary, isLast, isFirst}) => {
 };
 
 
-class UserRelationshipDetail extends Component{
+class RelatedUserComponent extends Component{
   constructor(props){
     super(props);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.RelatedUser = this.RelatedUser.bind(this);
-    this.selectUserByIndex = this.selectUserByIndex.bind(this);
-    this.show = this.show.bind(this);
-    this.state = {
-      isVisible: false
-    };
-    this.updateSelectedIndexForUser(this.props);
+    this.navigateTo = this.navigateTo.bind(this);
+  }
+  navigateTo(user, isReverse){
+    const {navigateToUser} = this.props;
+    navigateToUser(user, isReverse);
   }
 
-  RelatedUser = ({user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}}) => {
-    const isSelected = selectedUser.userId === user.userId;
-    return <View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
+  renderNextButton = () => {
+    const {next} = this.props;
+    return <TouchableOpacity onPress={() => this.navigateTo(next)} disabled={!next}>
+      <View>
+        <Text style={styles.buttonText}>›</Text>
+      </View>
+    </TouchableOpacity>;
+  }
+
+  renderPrevButton = () => {
+    const {prev} = this.props;
+    return <TouchableOpacity onPress={() => this.navigateTo(prev, true)} disabled={!prev}>
+      <View>
+        <Text style={styles.buttonText}>‹</Text>
+      </View>
+    </TouchableOpacity>;
+  }
+
+  renderButtons = () => {
+    const {width, height} = this.props;
+    const {renderPrevButton: PrevButton, renderNextButton: NextButton } = this;
+    return (
+      <View pointerEvents='box-none' style={[styles.buttonWrapper, {width, height}]}>
+        <PrevButton/>
+        <NextButton/>
+      </View>
+    );
+  }
+
+  render(){
+    const {user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}} = this.props;
+    const {renderButtons: DirectionButtons} = this;
+    return [<View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       {
         onPressAssignUser ? <Button style={{marginBottom: 15, minHeight: 40, justifyContent: 'flex-start'}} fullWidth statusButton onPress={() => {
           onPressAssignUser(user);
@@ -156,7 +199,7 @@ class UserRelationshipDetail extends Component{
       }
       <RelatedUser {...{user, onPressCallUser, onPressAssignUser, errors, handleCancel}} style={{maxHeight: 120, minHeight: 120}}/>
       <View  style={{flex: 4, paddingLeft: 10, paddingRight: 10}}>
-        {isSelected ? <PagingListView
+        <PagingListView
           ref={oc => {this.ordersControl = oc;}}
           daoName='orderSummaryDao'
           dataPath={['orders']}
@@ -165,53 +208,42 @@ class UserRelationshipDetail extends Component{
           rowView={JobSummary   }
           paginationWaitingView={Paging}
           emptyView={NoItems}
-        /> : <Spinner />}
+        />
       </View>
       <StatusButton user={user} style={{justifyContent: 'flex-start', marginLeft: 10, marginRight: 10}}/>
-    </View>;
+    </View>, <DirectionButtons/>];
+  }
+}
+
+class UserRelationshipDetail extends Component{
+  constructor(props){
+    super(props);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.onNavigateToUser = this.onNavigateToUser.bind(this);
   }
 
-  componentWillReceiveProps(newProps){
-    this.updateSelectedIndexForUser( newProps, this.props);
-  }
-
-  updateSelectedIndexForUser(newProps, oldProps = {}){
-    Logger.info(`Attempting to update selected index selected user is ${JSON.stringify(newProps.selectedUser)}`);
-    if (!isEqual(newProps.selectedUser, oldProps.selectedUser) && newProps.selectedUser){
-      const {relatedUsers} = newProps;
-      const selectedUserIndex = relatedUsers.findIndex(c=> c.userId === newProps.selectedUser.userId);
-      Logger.info(`Attempting to update selected index to ${selectedUserIndex}`);
-      this.setState({selectedUserIndex});
-    }
+  onNavigateToUser(user, isReverse){
+    const {history, path} = this.props;
+    history.push({pathname: `${path}/SelectedUser${user.userId}X`, isReverse});
   }
 
   handleCancel(){
-    super.setState({isVisible: false});
-  }
-
-  show(){
-    super.setState({isVisible: true});
-  }
-
-  selectUserByIndex(idx){
-    const {relatedUsers} = this.props;
-    const selectedUser = relatedUsers[idx];
-    Logger.info(`Selected user is ${selectedUser ? selectedUser.userId : 'undefined'} index is ${idx} related users are ${relatedUsers.map(c=>c.userId).join(',')}`);
-    this.setState({selectedUser, selectedUserIndex: idx});
+    const {history, userRelationshipBasePath} = this.props;
+    history.push({pathname: userRelationshipBasePath, transition: 'immediate'});
   }
 
   render(){
-    const {selectedUser, relatedUsers, onPressAssignUser, onPressCallUser, selectedUserIndex} = this.props;
-    const {RelatedUser} = this;
-    const {isVisible} = this.state;
+    const {relatedUsers, path, history} = this.props;
+    const {onNavigateToUser} = this;
     const scrollViewStyle = {...styles.userSelector, width: ELEMENT_WIDTH, height: ELEMENT_HEIGHT};
-    return <ReactNativeModal
-      isVisible={isVisible}
+    const {selectedUser = relatedUsers[0]} = this.props;
+    return selectedUser ? <ReactNativeModal
+      isVisible={history.location.pathname.includes(path)}
       backdropOpacity={0.4}>
       <View style={{flex: 1, ...scrollViewStyle}}>
-        <Swiper height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} index={selectedUserIndex} contentContainerStyle={{width: '100%', backgroundColor: 'white'}} loop={false} animated={false} bounces={false} showsPagination={false} loadMinimal={true} onIndexChanged={this.selectUserByIndex} style={styles.wrapper} showsButtons={true}>
-          {relatedUsers.map((v, i) => <RelatedUser selectedUserIndex={selectedUserIndex} selectedUser={selectedUser} handleCancel={this.handleCancel} onPressCallUser={onPressCallUser} onPressAssignUser={onPressAssignUser} user={v} key={i}/>)}
-        </Swiper>
+        <ReduxRouter       navigateToUser={onNavigateToUser} path={path} parentPath={path} selectedUser={selectedUser} {...this.props} height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} defaultRoute={`SelectedUser${selectedUser.userId}X`} style={styles.wrapper} showsButtons={true}>
+          {relatedUsers.map((v, i) => <Route prev={relatedUsers[i - 1]} next={relatedUsers[i + 1]}  component={RelatedUserComponent} path={`SelectedUser${v.userId}X`} handleCancel={this.handleCancel} user={v} key={i}/>)}
+        </ReduxRouter>
       </View>
       <TouchableHighlight
         style={styles.cancelButton}
@@ -219,7 +251,7 @@ class UserRelationshipDetail extends Component{
         onPress={this.handleCancel}>
         {cancelButton}
       </TouchableHighlight>
-    </ReactNativeModal>;
+    </ReactNativeModal> : null;
   }
 }
 

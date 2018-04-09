@@ -14,15 +14,15 @@ import UserRelationshipDetail from './UserRelationshipDetail';
 const SubViewPath = 'RelationshipView/';
 
 class UserRelationships extends Component{
+  static InitialState = {
+    showAll: true
+  }
   constructor(props){
     super(props);
-    this.state = {
-      showAll: true,
-      selectedUserIndex: -1
-    };
     this.UserViews = [
       {'Map': UserRelationshipMap},
       {'List': UserRelationshipList},
+      {'Detail': UserRelationshipDetail, hidden: true},
     ];
     this.getOptionsFromProps = this.getOptionsFromProps.bind(this);
     this.onChangeTab = this.onChangeTab.bind(this);
@@ -32,6 +32,7 @@ class UserRelationships extends Component{
     this.updateSubscription = this.updateSubscription.bind(this);
     this.getSelectedTabIndex = this.getSelectedTabIndex.bind(this);
     this.subscribeToUsers = this.subscribeToUsers.bind(this);
+    this.goToTabNamed = this.goToTabNamed.bind(this);
   }
 
   componentDidMount(){
@@ -78,18 +79,25 @@ class UserRelationships extends Component{
 
   setSelectedUser(selectedUser){
     this.setState({selectedUser});
+    const {history, path} = this.props;
     if (selectedUser){
-      this.detail.wrappedInstance.show();
+      history.push(`${path}/${SubViewPath}DetailX`);
     }
   }
 
   onChangeTab(selectedTabIndex){
-    const {history, path, isInBackground} = this.props;
+    const {isInBackground} = this.props;
     if (isInBackground){
       return;
     }
     const viewElement = this.UserViews[selectedTabIndex];
-    history.replace(`${path}/${SubViewPath}${Object.keys(viewElement)[0]}X`);
+    const selectedViewPath = Object.keys(viewElement)[0];
+    this.goToTabNamed(selectedViewPath);
+  }
+
+  goToTabNamed(name){
+    const {history, path} = this.props;
+    history.replace( `${path}/${SubViewPath}${name}X`);
   }
 
   getSelectedTabIndex(){
@@ -115,7 +123,7 @@ class UserRelationships extends Component{
 
   render(){
     const {onChangeTab, UserViews} = this;
-    const {selectedUser, selectedUserIndex, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width, height} = this.props;
+    const {selectedUser, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width, height} = this.props;
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
@@ -134,17 +142,16 @@ class UserRelationships extends Component{
           <Switch style={styles.switch} onValueChange={ (value) => this.setState({ showAll: value }, () => this.updateSubscription())} value={ showAll }/>
         </View>
       </Row> : null}
-      <Tabs style={{flex: 1, width}} page={this.getSelectedTabIndex()} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
-        {UserViews.map(c => <Tab key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
+      <Tabs style={{flex: 1, width}} page={this.getSelectedTabIndex()} {...shotgun.tabsStyle}>
+        {UserViews.filter(v => !v.hidden).map(c => <Tab onPress={() => this.goToTabNamed(Object.keys(c)[0])} key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
-          <ReduxRouter  name="UserRelationshipRouter"  defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props} path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+          <ReduxRouter  name="UserRelationshipRouter"defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
             {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
           </ReduxRouter>
         </ErrorRegion>
       </View>
-      <UserRelationshipDetail ref={detail => {this.detail = detail;}} {...this.props} selectedUser={selectedUser} selectedUserIndex={selectedUserIndex}  />
     </View>;
   }
 }
