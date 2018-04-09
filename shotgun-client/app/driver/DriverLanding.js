@@ -38,7 +38,8 @@ class DriverLanding extends Component {
     Logger.info('Mounting driver landing');
     DriverLanding.loadData(this.props);
     DriverLanding.attemptPaymentCards(this.props);
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(this.props.history, 'Driver', actionUri));
+    const {history, path} = this.props;
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
   }
 
   static oneOffDestruction(props) {

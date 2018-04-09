@@ -104,7 +104,7 @@ class DriverOrderInProgress extends Component{
                   <RatingAction isDriver={true} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push('/Driver')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push(ordersRoot)}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

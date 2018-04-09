@@ -6,7 +6,7 @@ export default class NotificationActionHandlerService {
     const route = parsedActionUri[1];
     const orderId = parsedActionUri[2];
 
-    history.push(`/${baseUrl}/${route}`, {orderId});
+    history.push(`${baseUrl}/${route}`, {orderId});
   }
 
   static parseActionUri(actionUri){

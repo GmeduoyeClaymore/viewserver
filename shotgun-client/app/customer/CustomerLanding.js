@@ -42,8 +42,8 @@ class CustomerLanding extends Component {
   }
 
   beforeNavigateTo() {
-    const {dispatch, client, history} = this.props;
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, 'Customer', actionUri));
+    const {dispatch, client, history, path} = this.props;
+    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
     dispatch(customerServicesRegistrationAction(client));
     this.attemptPaymentCards(this.props);
     dispatch(getCurrentPosition());

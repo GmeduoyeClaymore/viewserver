@@ -62,7 +62,8 @@ public class AppMessage {
         this.action = action;
     }
 
-    public String toSimpleMessage() {
+
+    public String toAndroidMessage() {
         HashMap<String, Object> body = new HashMap<String, Object>();
         HashMap<String, Object> customNotificationBody = new HashMap<>();
         customNotificationBody.put("title", getTitle());
@@ -80,6 +81,22 @@ public class AppMessage {
         return ControllerUtils.toString(body);
     }
 
+    public String toSimpleMessage() {
+        HashMap<String, Object> body = new HashMap<String, Object>();
+        HashMap<String, Object> customNotificationBody = new HashMap<>();
+        customNotificationBody.put("title", getTitle());
+        customNotificationBody.put("body", getBody());
+        customNotificationBody.put("sound", getSound());
+        customNotificationBody.put("click_action", getAction());
+        customNotificationBody.put("priority", getPriority());
+        customNotificationBody.put("show_in_foreground", true);
+        body.put("notification", customNotificationBody);
+        HashMap<String, Object> customNotification = new HashMap<>();
+        customNotification.put("custom_notification", customNotificationBody);
+        body.put("data", customNotification);
+        body.put("to", getTo());
+        return ControllerUtils.toString(body);
+    }
     @Override
     public String toString() {
         return "AppMessage{" +

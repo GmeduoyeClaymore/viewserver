@@ -123,8 +123,9 @@ export default class LoginDao{
 
   async initMessaging(){
     const token = await FCM.getFCMToken();
+    const apnsToken = await FCM.getAPNSToken();
     await this.onChangeToken(token);
-    Logger.info('!!! Finished initializing firebase messaging');
+    Logger.info(`!!! Finished initializing firebase messaging fcm token is ${token} apns token is ${apnsToken}`);
   }
 
   async onChangeToken(token){

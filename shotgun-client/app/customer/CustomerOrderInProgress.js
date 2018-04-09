@@ -76,7 +76,7 @@ class CustomerOrderInProgress extends Component{
                   <RatingAction isDriver={false} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={orderSummary.driverRating == 0} onPress={()=> history.push('/Customer')}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={orderSummary.driverRating == 0} onPress={()=> history.push(`${parentPath}/CustomerOrders`)}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>
