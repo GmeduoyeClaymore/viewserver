@@ -2,7 +2,6 @@ import Logger from 'common/Logger';
 import React from 'react';
 import * as RouteUtils from './routeUtils';
 import matchPath from './matchPath';
-import {Keyboard} from 'react-native';
 
 const combine = async (promises) => {
   const result = [];
@@ -86,7 +85,6 @@ export default class TransitionManager{
         if (diff.isRemove){
           transitionPromises.push(_this.onNavigateAway(routeElement, diff));
         }
-        Keyboard.dismiss();
       }
     );
     this.log(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and diff are ${JSON.stringify(diffs)}`);

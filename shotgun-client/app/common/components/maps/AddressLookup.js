@@ -10,7 +10,7 @@ import {debounce} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/utils';
 import Logger from 'common/Logger';
-
+import {Keyboard} from 'react-native';
 const MAX_RECENT_ADDRESSES = 10;
 
 
@@ -42,6 +42,10 @@ class AddressLookup extends Component {
 
   componentWillReceiveProps(newProps){
     this.goToTabName(newProps.selectedTab, newProps);
+  }
+
+  onNavigateAway(){
+    Keyboard.dismiss();
   }
 
   goToTabName(name, propOverride){
