@@ -25,9 +25,9 @@ class DriverOrderInProgress extends Component{
     };
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     const {dispatch, orderId, position} = this.props;
-    dispatch(resetSubscriptionAction('orderSummaryDao', {
+    dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
       orderId,
       reportId: 'driverOrderSummary'
     }));
@@ -145,10 +145,16 @@ const styles = {
   }
 };
 
+const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return  orderSummaries.find(o => o.orderId == orderId);
+};
+
+
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
-  const orderSummary = orderSummaries.find(o => o.orderId == orderId);
+  let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
+  orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const position = getDaoState(state, ['position'], 'userDao');
   const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]);
 

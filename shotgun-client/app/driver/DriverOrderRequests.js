@@ -47,7 +47,10 @@ class DriverOrderRequests extends Component{
   }
   
   onChangeTab(index){
-    const {selectedContentTypes, history, path} = this.props;
+    const {selectedContentTypes, history, path, isInBackground} = this.props;
+    if (isInBackground){
+      return;
+    }
     const newSelectedContentType = selectedContentTypes[index];
     history.replace(`${path}/ContentTypeId${newSelectedContentType.contentTypeId}X`);
   }
@@ -60,11 +63,11 @@ class DriverOrderRequests extends Component{
     }
   
     const {onChangeTab} = this;
-    return <View style={{flex:1}}>
+    return <View style={{flex: 1}}>
       <Header hasTabs>
         <Body><Title>Available Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
+      <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
         {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} />)}
       </Tabs>
       {selectedContentTypes[0] ? <ReduxRouter  name="DriverOrderRequestRouter" height={height - 150} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
@@ -83,7 +86,7 @@ const getSelectedContentTypeFromLocation = memoize((history, selectedContentType
   if (!location.pathname.includes('/ContentTypeId')){
     return 0;
   }
-  return selectedContentTypes.find(element => { location.pathname.includes(`/ContentTypeId${element.contentTypeId}X`);});
+  return selectedContentTypes.find(element => { return location.pathname.includes(`/ContentTypeId${element.contentTypeId}X`);});
 });
 
 const getSelectedContentTypesFromUser = memoize((user, availableContentTypes) => {

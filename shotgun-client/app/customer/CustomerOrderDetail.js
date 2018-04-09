@@ -63,7 +63,7 @@ class CustomerOrderDetail extends Component{
   subscribeToOrderSummary(props){
     const {dispatch, orderId, orderSummary} = props;
     if (orderSummary == undefined) {
-      dispatch(resetSubscriptionAction('orderSummaryDao', {
+      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
         reportId: 'customerOrderSummary'
       }));
@@ -76,7 +76,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath, userId} = this.props;
+    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath, userId, ordersPath} = this.props;
     const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
@@ -88,11 +88,11 @@ class CustomerOrderDetail extends Component{
     const {PricingControl} = resources;
 
     const onCancelOrder = () => {
-      dispatch(cancelOrder(orderSummary.orderId, () => history.push(`${parentPath}/CustomerOrders`)));
+      dispatch(cancelOrder(orderSummary.orderId, () => history.push(`${ordersPath}`)));
     };
 
     const onRejectDriver = () => {
-      dispatch(rejectDriver(orderSummary.orderId, () => history.push(`${parentPath}/CustomerOrders`)));
+      dispatch(rejectDriver(orderSummary.orderId, () => history.push(`${ordersPath}`)));
     };
 
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
@@ -155,10 +155,17 @@ const styles = {
   }
 };
 
+
+const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return  orderSummaries.find(o => o.orderId == orderId);
+}
+
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
-  const orderSummary = orderSummaries.find(o => o.orderId == orderId);
+  let orderSummary = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
+  orderSummary = orderSummary || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
+  
   const {contentType: selectedContentType} = (orderSummary || {});
   const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}])
   return {
@@ -167,7 +174,7 @@ const mapStateToProps = (state, initialProps) => {
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };
 };

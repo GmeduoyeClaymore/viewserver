@@ -11,8 +11,18 @@ class DriverOrderRequestDetail extends Component{
     super(props);
   }
 
+  beforeNavigateTo(){
+    const {dispatch, orderId, orderSummary} = this.props;
+    if (orderSummary == undefined) {
+      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
+        orderId,
+        reportId: 'driverOrderSummary'
+      }));
+    }
+  }
+
   render() {
-    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery, me, busyMessage, ordersRoot} = this.props;
+    const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery = {}, me, busyMessage, ordersRoot} = this.props;
 
     const onAcceptPress = async() => {
       dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push(`${ordersRoot}/DriverOrders`)));
@@ -44,14 +54,19 @@ const styles = {
   }
 };
 
+const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return  orderSummaries.find(o => o.orderId == orderId);
+};
+
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   if (!orderId){
     Logger.info('Order id must be specified');
     return;
   }
-  const orderSummaries = getDaoState(state, ['driver', 'orders'], 'orderRequestDao') || [];
-  const orderSummary = orderSummaries.find(o => o.orderId == orderId);
+  let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
+  orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const {delivery} = (orderSummary || {});
   const errors = getOperationErrors(state, [
     { driverDao: 'acceptOrderRequest'},

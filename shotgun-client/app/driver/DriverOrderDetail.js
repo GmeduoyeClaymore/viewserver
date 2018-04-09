@@ -15,7 +15,7 @@ class DriverOrderDetail extends Component{
   beforeNavigateTo(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
-      dispatch(resetSubscriptionAction('orderSummaryDao', {
+      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
         reportId: 'driverOrderSummary'
       }));
@@ -70,10 +70,16 @@ const styles = {
   }
 };
 
+const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return  orderSummaries.find(o => o.orderId == orderId);
+};
+
+
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
-  const orderSummary = orderSummaries.find(o => o.orderId == orderId);
+  let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
+  orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const pendingResetSubscription = isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,

@@ -21,9 +21,9 @@ class CustomerOrderInProgress extends Component{
     super(props);
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     const {dispatch, orderId} = this.props;
-    dispatch(resetSubscriptionAction('orderSummaryDao', {
+    dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
       orderId,
       reportId: 'customerOrderSummary'
     }));
@@ -145,11 +145,15 @@ const styles = {
   }
 };
 
+const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return  orderSummaries.find(o => o.orderId == orderId);
+};
+
 const mapStateToProps = (state, initialProps) => {
   const orderId = initialProps.location && initialProps.location.state ? initialProps.location.state.orderId : undefined;
-  const orderSummaries = getDaoState(state, ['orders'], 'orderSummaryDao') || [];
-  const orderSummary = orderSummaries.find(o => o.orderId == orderId);
-
+  let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
+  orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   return {
     ...initialProps,
     orderId,

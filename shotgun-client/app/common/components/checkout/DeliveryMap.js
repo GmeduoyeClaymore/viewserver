@@ -76,8 +76,8 @@ class DeliveryMap extends Component{
     style = address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
     const {onChangeText} = this;
-    return  <Row  style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
-      <Icon name="pin" paddedIcon originPin /><Row>
+    return  <Row fullWidth style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
+      <Icon name="pin" style={{paddingRight: 15}} originPin /><Row>
         {address.line1 !== undefined ? <Col size={30}>
           <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
         </Col> : null}
@@ -112,6 +112,11 @@ class DeliveryMap extends Component{
   render(){
     const {fitMap, setDurationAndDistance, getLocationText} = this;
     const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
+
+    if (!me){
+      return <LoadingScreen text="Waiting for user ..."/>;
+    }
+
     const {latitude, longitude} = me;
   
     const initialRegion = {
@@ -124,6 +129,12 @@ class DeliveryMap extends Component{
     return <Container style={{ flex: 1 }}>
       <Grid>
         <Row size={85}>
+          <Row fullWidth style={{position: 'absolute', top: 40, left: 15, zIndex: 2 }}>
+            <Col>
+              {supportsOrigin ? getLocationText(origin, 'origin', 'Enter pick-up location') : null}
+              {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
+            </Col>
+          </Row>
           <ErrorRegion errors={errors}>
             {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
               showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
@@ -137,11 +148,10 @@ class DeliveryMap extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Row>
-        {supportsOrigin ? getLocationText(origin, 'origin', 'Enter pick-up location') : null}
-        {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
+       
       </Grid>
-      <Button fullWidth paddedBottom iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
-        <Text uppercase={false}>Continue</Text>
+      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
+        <Text uppercase={false} style={{alignSelf: 'center'}}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>
     </Container>;
@@ -153,16 +163,30 @@ const validationSchema = {
 };
 
 const styles = {
+  nextButton: {
+    position: 'absolute', bottom: 15, left: 15, zIndex: 2,
+    width: shotgun.deviceWidth - 45,
+    marginLeft: 8,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
   backButton: {
     position: 'absolute',
     left: 0,
-    top: 0
+    top: 6
   },
   locationTextPlaceholder: {
     color: shotgun.silver
   },
   inputRow: {
-    padding: shotgun.contentPadding
+    width: shotgun.deviceWidth - 45,
+    margin: 8,
+    backgroundColor: 'white',
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingLeft: 16
   }
 };
 

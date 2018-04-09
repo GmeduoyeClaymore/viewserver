@@ -25,6 +25,11 @@ class ContentTypeSelect extends Component{
     this.selectContentType = this.selectContentType.bind(this);
   }
   
+  beforeNavigateTo(){
+    const {resetParentComponentState} = this.props;
+    resetParentComponentState();
+  }
+  
   selectContentType(selectedContentType){
     const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
     const initialState = resources.InitialState;

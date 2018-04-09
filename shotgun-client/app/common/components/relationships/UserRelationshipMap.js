@@ -16,12 +16,20 @@ class UserRelationshipMap extends Component{
   constructor(props){
     super(props);
     this.fitMap = this.fitMap.bind(this);
+    this.isMapReady = this.isMapReady.bind(this);
     this.getLocations = this.getLocations.bind(this);
   }
   
+
+  isMapReady(){
+    const {map} = this;
+    return map && map.state && map.state.isReady;
+  }
+
   fitMap(newProps){
     try {
-      if (!this.isMapReady){
+      if (!this.isMapReady()){
+        Logger.info('Abandoning fit map as map is not ready ' + error);
         return;
       }
       const {map} = this;
@@ -89,7 +97,6 @@ class UserRelationshipMap extends Component{
     const _this = this;
   
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {
-      _this.isMapReady = true;
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}

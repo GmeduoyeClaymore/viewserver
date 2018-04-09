@@ -117,13 +117,13 @@ class AddressLookup extends Component {
           <Body><Title style={styles.title}>{addressLabel}</Title></Body>
         </Header>
         <Content keyboardShouldPersistTaps="always">
-          {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
           <Row size={10} style={{...styles.searchContainer, paddingTop: 10, paddingBottom: 10}}>
             <ErrorRegion errors={errors}>
               <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
               <Input placeholder={addressLabel} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
+          {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => this.goToTabName(tabs[i])}>
             {tabs.map(tab =>  <Tab key={tab} heading={tab}/>)}
           </Tabs> : null}
@@ -282,7 +282,11 @@ const styles = {
     paddingHorizontal: 8,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
-    paddingLeft: shotgun.contentPadding
+    margin: 10,
+    paddingLeft: shotgun.contentPadding,
+    padding: 10,
+    borderWidth: 0.5,
+    borderColor: '#edeaea'
   },
   resultsContainer: {
     borderTopWidth: 1,
