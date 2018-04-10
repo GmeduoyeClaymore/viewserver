@@ -158,7 +158,7 @@ class RelatedUserComponent extends Component{
   renderNextButton = () => {
     const {next} = this.props;
     return <TouchableOpacity onPress={() => this.navigateTo(next)} disabled={!next}>
-      <View>
+      <View  style={{padding: 5}}>
         <Text style={styles.buttonText}>›</Text>
       </View>
     </TouchableOpacity>;
@@ -167,7 +167,7 @@ class RelatedUserComponent extends Component{
   renderPrevButton = () => {
     const {prev} = this.props;
     return <TouchableOpacity onPress={() => this.navigateTo(prev, true)} disabled={!prev}>
-      <View>
+      <View style={{padding: 5}}>
         <Text style={styles.buttonText}>‹</Text>
       </View>
     </TouchableOpacity>;
@@ -242,7 +242,7 @@ class UserRelationshipDetail extends Component{
       backdropOpacity={0.4}>
       <View style={{flex: 1, ...scrollViewStyle}}>
         <ReduxRouter       navigateToUser={onNavigateToUser} path={path} parentPath={path} selectedUser={selectedUser} {...this.props} height={ELEMENT_HEIGHT} width={ELEMENT_WIDTH} defaultRoute={`SelectedUser${selectedUser.userId}X`} style={styles.wrapper} showsButtons={true}>
-          {relatedUsers.map((v, i) => <Route prev={relatedUsers[i - 1]} next={relatedUsers[i + 1]}  component={RelatedUserComponent} path={`SelectedUser${v.userId}X`} handleCancel={this.handleCancel} user={v} key={i}/>)}
+          {relatedUsers.map((v, i) => <Route prev={relatedUsers[i == 0 ? relatedUsers.length - 1 : i - 1]} next={relatedUsers[i == (relatedUsers.length - 1) ? 0 : i + 1 ]}  component={RelatedUserComponent} path={`SelectedUser${v.userId}X`} handleCancel={this.handleCancel} user={v} key={i}/>)}
         </ReduxRouter>
       </View>
       <TouchableHighlight
