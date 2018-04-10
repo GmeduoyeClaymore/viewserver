@@ -44,11 +44,11 @@ class ProductList extends Component{
     return (<ProductListItem key={p.productId} product={p} {...rest}/>);
   }
 
-  headerView({options: opts, search, selectedProduct}) {
-    return <Col>
-      <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>
+  headerView({options, search, selectedProduct, size}) {
+    return size > 20 ? <Col>
+      <SearchBar onChange={search} text={options.searchText} style={{marginBottom: 15}}/>
       {selectedProduct ? <Text note style={{marginBottom: 10}}>{selectedProduct !== undefined ? selectedProduct.description : null}</Text> : null}
-    </Col>;
+    </Col> : null;
   }
 
   search(searchText) {
@@ -79,9 +79,6 @@ class ProductList extends Component{
       <Content padded>
         <Grid>
           <PagingListView
-            ref={c => {
-              this.pagingListView = c;
-            }}
             daoName='productDao'
             dataPath={['product', 'products']}
             pageSize={10}

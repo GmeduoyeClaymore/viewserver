@@ -20,19 +20,13 @@ resourceDictionary.
 class FlatProductCategoryList extends Component{
   constructor(props){
     super(props);
-    this.setCategory = this.setCategory.bind(this);
     this.rowView = this.rowView.bind(this);
+    this.goBack = this.goBack.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
 
     this.state = {
-      selectedCategory: props.selectedCategory || {},
-      parentSelectedCategory: props.parentSelectedCategory || {}
+      selectedCategory: props.selectedCategory || {}
     };
-  }
-
-  componentWillMount(){
-    const {parentSelectedCategory} = this.props;
-    this.setState({parentSelectedCategory});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -50,31 +44,39 @@ class FlatProductCategoryList extends Component{
     </View>;
   }
 
-  headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
+  headerView({selectedCategory}){ return <Text note style={{marginBottom: 10}}>{selectedCategory.description}</Text>;}
 
   navigateToCategory(selectedCategory){
-    const {next, selectedCategory: parentSelectedCategory, history} = this.props;
+    const {next, history} = this.props;
+    const {selectedCategory: parentSelectedCategory} = this.state;
 
     if (selectedCategory && selectedCategory.isLeaf) {
-      this.setState({selectedCategory}, () =>  history.push(next));
+      this.setState({selectedCategory, parentSelectedCategory}, () =>  history.push(next));
     } else {
-      this.setState({parentSelectedCategory, selectedCategory: undefined});
+      this.setState({selectedCategory: undefined});
     }
   }
 
-  setCategory(selectedCategory){
-    this.setState({selectedCategory});
+  goBack(){
+    const {history, rootProductCategory} = this.props;
+    const {parentSelectedCategory} = this.state;
+
+    if (parentSelectedCategory == undefined || rootProductCategory.categoryId === parentSelectedCategory.categoryId){
+      history.goBack();
+    } else {
+      this.navigateToCategory(parentSelectedCategory);
+    }
   }
 
   render(){
-    const {busy, history, rootProductCategory, defaultOptions, selectedCategory, parentSelectedCategory} = this.props;
+    const {busy, history, defaultOptions, selectedCategory} = this.props;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => rootProductCategory.categoryId === parentSelectedCategory.categoryId ?  history.goBack() : this.navigateToCategory()}>
+          <Button onPress={this.goBack}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -97,10 +99,6 @@ class FlatProductCategoryList extends Component{
           headerView={this.headerView}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedCategory}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
     </Container>;
   }
 }
