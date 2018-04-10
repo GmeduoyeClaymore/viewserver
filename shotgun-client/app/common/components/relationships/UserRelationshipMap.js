@@ -15,7 +15,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 class UserRelationshipMap extends Component{
   constructor(props){
     super(props);
-    this.fitMap = this.fitMap.bind(this);
+    this.fitMap = debounce(this.fitMap.bind(this), 1000);
     this.isMapReady = this.isMapReady.bind(this);
     this.getLocations = this.getLocations.bind(this);
   }

@@ -42,17 +42,13 @@ const OrderView = ({history, parentPath, contentType, contentTypeOptions, height
 class DriverOrderRequests extends Component{
   constructor(props){
     super(props);
-    this.onChangeTab = this.onChangeTab.bind(this);
+    this.goToTabNamed = this.goToTabNamed.bind(this);
     this.state  = {};
   }
   
-  onChangeTab(index){
-    const {selectedContentTypes, history, path, isInBackground} = this.props;
-    if (isInBackground){
-      return;
-    }
-    const newSelectedContentType = selectedContentTypes[index];
-    history.replace(`${path}/ContentTypeId${newSelectedContentType.contentTypeId}X`);
+  goToTabNamed(name){
+    const {history, path} = this.props;
+    history.replace(`${path}/ContentTypeId${name}X`);
   }
   
 
@@ -62,13 +58,13 @@ class DriverOrderRequests extends Component{
       return <LoadingScreen text="Loading jobs..." />;
     }
   
-    const {onChangeTab} = this;
+    const {goToTabNamed} = this;
     return <View style={{flex: 1}}>
       <Header hasTabs>
         <Body><Title>Available Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => onChangeTab(i)}>
-        {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} />)}
+      <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle}>
+        {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => goToTabNamed(c.contentTypeId)} />)}
       </Tabs>
       {selectedContentTypes[0] ? <ReduxRouter  name="DriverOrderRequestRouter" height={height - 150} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
         {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={OrderView} />)}

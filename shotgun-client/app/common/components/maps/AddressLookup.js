@@ -26,7 +26,7 @@ class AddressLookup extends Component {
     this.onAddressSelected = this.onAddressSelected.bind(this);
     this.searchAutoCompleteSuggestions = this.searchAutoCompleteSuggestions.bind(this);
     this.onAddressChanged = this.onAddressChanged.bind(this);
-    this.goToTabName = this.goToTabName.bind(this);
+    this.goToTabNamed = this.goToTabNamed.bind(this);
     this.state = {
       busy: false,
       addressSearchText: undefined,
@@ -37,22 +37,19 @@ class AddressLookup extends Component {
   }
 
   onAddressChanged(value){
-    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value, () => this.goToTabName('Suggested')));
+    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value, () => this.goToTabNamed('Suggested')));
   }
 
   componentWillReceiveProps(newProps){
-    this.goToTabName(newProps.selectedTab, newProps);
+    this.goToTabNamed(newProps.selectedTab, newProps);
   }
 
   onNavigateAway(){
     Keyboard.dismiss();
   }
 
-  goToTabName(name, propOverride){
-    const {history, path, addressLabel, addressPath, isInBackground} = propOverride || this.props;
-    if (isInBackground){
-      return;
-    }
+  goToTabNamed(name, propOverride){
+    const {history, path, addressLabel, addressPath} = propOverride || this.props;
     if (!history.location.pathname.endsWith(name)){
       history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}});
     }
@@ -124,8 +121,8 @@ class AddressLookup extends Component {
             </ErrorRegion>
           </Row>
           {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
-          {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} onChangeTab={({ i }) => this.goToTabName(tabs[i])}>
-            {tabs.map(tab =>  <Tab key={tab} heading={tab}/>)}
+          {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >
+            {tabs.map(tab =>  <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}
           </Tabs> : null}
           {tabs.length ? <ReduxRouter style={{padding: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
             <Route path={'Recent'} component={RecentAddresses} {...{deliveryAddresses}}/>

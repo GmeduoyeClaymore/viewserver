@@ -97,7 +97,7 @@ const DefaultTabBar = createReactClass({
             name,
             page,
             isTabActive,
-            this.props.goToPage,
+            this.props.onPress[page] || this.props.goToPage,
             this.props.tabStyle[page],
             this.props.activeTabStyle[page],
             this.props.textStyle[page],

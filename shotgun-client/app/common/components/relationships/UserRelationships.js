@@ -25,7 +25,6 @@ class UserRelationships extends Component{
       {'Detail': UserRelationshipDetail, hidden: true},
     ];
     this.getOptionsFromProps = this.getOptionsFromProps.bind(this);
-    this.onChangeTab = this.onChangeTab.bind(this);
     this.setSelectedUser = this.setSelectedUser.bind(this);
     this.updateDistance = this.updateDistance.bind(this);
     this.setRange = this.setRange.bind(this);
@@ -85,16 +84,6 @@ class UserRelationships extends Component{
     }
   }
 
-  onChangeTab(selectedTabIndex){
-    const {isInBackground} = this.props;
-    if (isInBackground){
-      return;
-    }
-    const viewElement = this.UserViews[selectedTabIndex];
-    const selectedViewPath = Object.keys(viewElement)[0];
-    this.goToTabNamed(selectedViewPath);
-  }
-
   goToTabNamed(name){
     const {history, path} = this.props;
     history.replace( `${path}/${SubViewPath}${name}X`);
@@ -122,7 +111,7 @@ class UserRelationships extends Component{
   }
 
   render(){
-    const {onChangeTab, UserViews} = this;
+    const {UserViews} = this;
     const {selectedUser, oldOptions, showAll, errors, noRelationships, me, searchText, selectedProduct, distance, parentPath, path, width, height} = this.props;
     if (!me){
       return <LoadingScreen text="Loading.."/>;

@@ -45,31 +45,30 @@ const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
 class CustomerOrders extends Component{
   constructor(props){
     super(props);
-    this.onChangeTab = this.onChangeTab.bind(this);
+    this.goToTabNamed = this.goToTabNamed.bind(this);
   }
 
-  onChangeTab(index){
+  goToTabNamed(name){
     const {history, path} = this.props;
-    const newPath = !index ?   `${path}/Live` : `${path}/Complete`;
-    history.replace({pathname: newPath});
+    history.replace({pathname: `${path}/${name}`});
   }
 
 
   render(){
     const {history, path, height, parentPath, isOrdersDaoRegistered} = this.props;
-    const {onChangeTab} = this;
+    const {goToTabNamed} = this;
   
     return <Container>
       <Header hasTabs>
         <Body><Title>My Jobs</Title></Body>
       </Header>
-      <Tabs initialPage={history.location.pathname.endsWith('Complete')  ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => onChangeTab(i)}>
-        <Tab heading="Live Jobs"/>
-        <Tab heading="Complete"/>
+      <Tabs initialPage={history.location.pathname.endsWith('Complete')  ? 1 : 0} page={history.location.pathname.endsWith('Complete')  ? 1 : 0}  {...shotgun.tabsStyle}>
+        <Tab heading="Live Jobs" onPress={() => goToTabNamed('Live')}/>
+        <Tab heading="Complete" onPress={() => goToTabNamed('Complete')}/>
       </Tabs>
       {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - 150} path={path} defaultRoute={'Live'}>
-        <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={OrderItems}/>
-        <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={OrderItems}/>
+        <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={OrderItems} />
+        <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={OrderItems} />
       </ReduxRouter> : <LoadingScreen text="Waiting for order data.."/>}
     </Container>;
   }

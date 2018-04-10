@@ -63,16 +63,12 @@ class OrderListings extends Component{
 class DriverOrders  extends Component{
   constructor(props){
     super(props);
-    this.onChangeTab = this.onChangeTab.bind(this);
+    this.goToTabNamed = this.goToTabNamed.bind(this);
   }
 
-  onChangeTab (isCustomer){
-    const {history, isCompleted, path, canGoBack, isInBackground} = this.props;
-    if (isInBackground){
-      return;
-    }
-    const newPath = isCustomer ? `${path}/Posted` : `${path}/Accepted`;
-    history.replace({pathname: newPath}, {isCompleted, canGoBack});
+  goToTabNamed (name){
+    const {history, isCompleted, path, canGoBack} = this.props;
+    history.replace({pathname: `${path}/${name}`}, {isCompleted, canGoBack});
   }
 
   render() {
@@ -86,9 +82,9 @@ class DriverOrders  extends Component{
         </Left> : null }
         <Body><Title>{'My Jobs' + (isCompleted ? ' (Completed)' : '')}</Title></Body>
       </Header>
-      <Tabs initialPage={isCustomer ? 1 : 0}  page={isCustomer ? 1 : 0} {...shotgun.tabsStyle} onChangeTab={({i}) => this.onChangeTab(i == 1)}>
-        <Tab heading={'Accepted'}/>
-        <Tab heading={'Posted'}/>
+      <Tabs initialPage={isCustomer ? 1 : 0}  page={isCustomer ? 1 : 0} {...shotgun.tabsStyle}>
+        <Tab heading={'Accepted'} onPress={() => this.goToTabNamed('Accepted')}/>
+        <Tab heading={'Posted'} onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
       <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
         <Route path={'Accepted'} component={OrderListings}/>
