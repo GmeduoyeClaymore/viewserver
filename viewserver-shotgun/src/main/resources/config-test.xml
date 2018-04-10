@@ -2,7 +2,7 @@
 <config>
     <viewserver>
         <isMock>false</isMock>
-        <firebaseKeyPath>firebase//shotgunDeliveryTest.json</firebaseKeyPath>
+        <firebaseKeyPath>firebase/shotgunDeliveryTest.json</firebaseKeyPath>
         <messagingApiKey>AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA</messagingApiKey>
 
        <!-- <messagingApiKey>AAAAh0jmqQI:APA91bEuHsGA6Kct6tiIb3YkSAwUX6x7RcUmp-iKO6YmWf5lHrZQ0UkyLqDX1mSiTvIMbwo6xvxNNT2cpMN8S9iDvX4uB1vfhAxh2xux5Dsg5fnUOJUc3nXDWGwTByBZn7B2JYhle1HS</messagingApiKey>
