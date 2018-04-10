@@ -5,7 +5,8 @@ export const INITIAL_STATE = {
     email: undefined,
     contactNo: undefined,
     password: undefined,
-    type: 'customer'
+    type: 'customer',
+    range: 50
   },
   deliveryAddress: {
     line1: undefined,

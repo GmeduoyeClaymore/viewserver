@@ -7,7 +7,8 @@ export const INITIAL_STATE = {
     type: 'driver',
     password: undefined,
     dob: undefined,
-    imageData: undefined
+    imageData: undefined,
+    range: 50
   },
   address: {
     line1: undefined,

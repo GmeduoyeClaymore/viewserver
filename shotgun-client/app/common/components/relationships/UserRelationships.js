@@ -34,7 +34,7 @@ class UserRelationships extends Component{
     this.goToTabNamed = this.goToTabNamed.bind(this);
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     this.subscribeToUsers(this.getOptionsFromProps(this.props));
   }
 
