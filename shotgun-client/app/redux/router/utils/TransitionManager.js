@@ -92,7 +92,7 @@ export default class TransitionManager{
     return transitionPromises.length;
   }
 
-  getBestMatchForPath(diff, defaultPath, routerPath){
+  getBestMatchForPath(diff){
     const diffPath = diff.pathname;
     const result = this.initializedRouteElementReferences[diffPath];
     if (!result && diff.isAdd){

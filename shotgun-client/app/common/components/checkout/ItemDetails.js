@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
 import yup from 'yup';

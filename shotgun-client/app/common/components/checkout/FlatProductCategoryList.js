@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';

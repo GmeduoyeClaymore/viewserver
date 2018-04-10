@@ -4,7 +4,7 @@ import {Text, Spinner, Row, Content} from 'native-base';
 import {LoadingScreen, PagingListView} from 'common/components';
 import {CheckBox} from 'common/components/basic';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 import shotgun from 'native-base-theme/variables/shotgun';

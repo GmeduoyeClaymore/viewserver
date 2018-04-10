@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import {updateSubscriptionAction , getOperationError} from 'common/dao';
+import {updateSubscriptionAction, getOperationError} from 'common/dao';
 import UserRelationshipItem from './UserRelationshipItem';
 import {PagingListView, SearchBar} from 'common/components';
 import {View, Spinner} from 'native-base';

@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withExternalState, ReduxRouter, Route, connect } from 'custom-redux';
+import { withExternalState, ReduxRouter, Route } from 'custom-redux';
 import moment from 'moment';
 import { Text, Button, Header, Left, Body, Container, Title, Input, Tab, Row, List, ListItem, View, Content} from 'native-base';
 import { getDaoState, getNavigationProps } from 'common/dao';
 import { parseGooglePlacesData } from 'common/components/maps/MapUtils';
 import {ErrorRegion, LoadingScreen, Icon, Tabs} from 'common/components';
-import {debounce} from 'lodash';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/utils';
 import Logger from 'common/Logger';

@@ -1,7 +1,6 @@
 import Immutable from 'seamless-immutable';
 import * as RouteUtils from './routeUtils';
 import matchPath from './matchPath';
-import Logger from 'common/Logger';
 import invariant from 'invariant';
 import { memoize } from '../../memoize';
 import removeProperties from '../../removeProperties';
@@ -115,7 +114,7 @@ export default class NavigationContainerTranslator{
     const {navigationStack = []} = this.navContainer;
     const foundKeys = [];
     const croppedStack = navigationStack.slice(-MaxStackLength);
-    croppedStack.forEach((el, idx) => {
+    croppedStack.forEach((el) => {
       const routeFromScope = this.getRouteFromScope(el, el == this.location);
       if (routeFromScope && !~foundKeys.indexOf(routeFromScope.path)){
         foundKeys.push(routeFromScope.path);

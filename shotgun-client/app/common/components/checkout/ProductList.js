@@ -5,7 +5,7 @@ import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Ro
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import {PagingListView, Icon, SearchBar, ValidatingButton} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -57,7 +57,7 @@ class ProductList extends Component{
   }
 
   goBack(){
-    const {next, selectedCategory, parentSelectedCategory, history} = this.props;
+    const {selectedCategory, parentSelectedCategory, history} = this.props;
     this.setState({selectedCategory: parentSelectedCategory}, () => history.goBack(undefined, {selectedCategory, parentSelectedCategory}));
   }
 

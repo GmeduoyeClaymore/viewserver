@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View, Text, TouchableHighlight, Dimensions, TouchableOpacity} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {PagingListView, Icon, Swiper, AverageRating} from 'common/components';
+import {PagingListView, Icon, AverageRating} from 'common/components';
 import {Spinner, Row, Grid, Col, ListItem, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
@@ -10,8 +10,6 @@ import {ReduxRouter, Route, withExternalState} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
 import {RelatedUser, StatusButton} from './RelatedUser';
-import Logger from 'common/Logger';
-import {isEqual} from 'lodash';
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;
@@ -19,6 +17,7 @@ const BUTTON_FONT_COLOR = '#007ff9';
 const BUTTON_FONT_SIZE = 20;
 const ELEMENT_WIDTH = width - 40;
 const ELEMENT_HEIGHT = height - 40;
+
 const styles = {
   userSelector: {
     backgroundColor: BACKGROUND_COLOR,
@@ -185,7 +184,7 @@ class RelatedUserComponent extends Component{
   }
 
   render(){
-    const {user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}} = this.props;
+    const {user, onPressCallUser, onPressAssignUser, errors, handleCancel} = this.props;
     const {renderButtons: DirectionButtons} = this;
     return [<View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       {

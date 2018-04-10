@@ -43,7 +43,7 @@ const TransitionStrategies = {
       return route.isReverse ? 'zoomOutRight' : 'zoomOutLeft';
     }
   },
-  immediate: (route) => {
+  immediate: () => {
   }
 };
 
@@ -58,7 +58,7 @@ export const getAnimationType = (route) => {
   return strategy == undefined ? undefined : strategy(route);
 };
   
-export const getDuration = (route) => {
+export const getDuration = () => {
   return 500;
 };
 

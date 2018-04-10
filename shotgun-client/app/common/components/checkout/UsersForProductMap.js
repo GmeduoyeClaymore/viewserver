@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import {withExternalState} from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row, View, Header, Title, Body, Left, Content} from 'native-base';
+import { Container, Button, Text, Col, Row, Header, Title, Body, Left} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
 import {TextInput, Dimensions} from 'react-native';
@@ -8,9 +8,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/utils';
 import {UserRelationshipsControl} from 'common/components/relationships/UserRelationships';
-const { height, width } = Dimensions.get('window');
-
-const contentHeight = height - shotgun.footerHeight;
+const {width} = Dimensions.get('window');
 const contentWidth = width - 20;
 
 const getAddressForlocation = async (client, location) => {

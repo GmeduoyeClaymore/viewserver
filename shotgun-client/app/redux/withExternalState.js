@@ -3,7 +3,6 @@ import React from 'react';
 import NonReactStatics from 'hoist-non-react-statics';
 import {connect} from './connect';
 import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
-import memoize from './memoize';
 import Logger from 'common/Logger';
 import removeProperties from './removeProperties';
 import invariant  from 'invariant';
@@ -15,19 +14,6 @@ Function.prototype.wrap = function wrap(otherFunction) {
     otherFunction(() => f.apply(this, arguments));
   };
 };
-
-const customAssign = (target) =>  {
-  for (let i = 1; i < arguments.length; i++) {
-    const source = arguments[i];
-    for (const key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  } return target;
-};
-
-const _extends = Object.assign || customAssign;
 
 const getPath = (stateKey) => {
   return stateKey.split('.');

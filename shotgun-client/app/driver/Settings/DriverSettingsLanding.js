@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, Content, List, ListItem, Header, Container, Left, Right, Body, Title, Subtitle, Col, Row, View} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Body, Title, Col, Row, View} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
@@ -10,7 +10,7 @@ import UserStatusControl from 'common/components/relationships/UserStatusControl
 
 const feedbackSubject = '';//`Driver Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
 
-const DriverSettings = ({history, dispatch, user, parentPath, ordersPath}) => {
+const DriverSettings = ({history, dispatch, user, parentPath}) => {
   const signOut = async () => {
     dispatch(logOut(() => history.push('/')));
     dispatch(unregisterAllDaosAndResetComponentState());

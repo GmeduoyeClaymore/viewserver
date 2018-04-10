@@ -5,7 +5,7 @@ import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withExternalState} from 'custom-redux';
 
-const AddressDetails  = ({deliveryAddress = {}, match, history, next, parentPath, setState, dispatch}) => {
+const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setState, dispatch}) => {
   const onChangeText = async (field, value) => {
     setState({deliveryAddress: {...deliveryAddress, [field]: value}}, undefined, dispatch);
   };

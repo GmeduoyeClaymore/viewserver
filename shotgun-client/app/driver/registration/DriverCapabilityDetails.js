@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Text, Content, Item, Label, Button, Grid, Row, Col} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {isAnyLoading, getLoadingErrors, getOperationError } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ValidationService from 'common/services/ValidationService';
@@ -24,8 +24,6 @@ class DriverCapabilityDetails extends Component{
     dimensions: yup.object().required()
   };
 
-
-  
   onChangeText(field, value){
     const {vehicle = {}} = this.props;
     this.setState({vehicle: {...vehicle, [field]: value}});

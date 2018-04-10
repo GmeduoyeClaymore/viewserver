@@ -15,17 +15,6 @@ export const registerTokenListener = () => {
   });
 };
 
-const showLocalNotification  = (notif) => {
-  FCM.presentLocalNotification({
-    title: notif.title,
-    body: notif.body,
-    priority: 'high',
-    click_action: notif.click_action,
-    show_in_foreground: true,
-    local: true
-  });
-};
-
 export const registerActionListener = (handler) => {
   //this callback will be triggered on clicking on a notification when the app is killed
   if (Platform.OS === 'android') {
@@ -63,7 +52,7 @@ export const registerActionListener = (handler) => {
       if (notif.opened_from_tray) {
         handler(notif.aps.category);
       }
-    }else {
+    } else {
       Logger.debug('Notification', notif);
       if (notif.opened_from_tray) {
         handler(notif.click_action);

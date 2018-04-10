@@ -207,7 +207,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {delivery, selectedContentType, selectedProduct, isInBackground} = initialProps;
+  const {delivery, selectedContentType, selectedProduct} = initialProps;
   const {destination, origin, distance, duration} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const supportsDestination = selectedContentType.destination;

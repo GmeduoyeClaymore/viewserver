@@ -24,7 +24,6 @@ class DriverOrderDetail extends Component{
 
   render() {
     const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me, busyMessage, ordersRoot} = this.props;
-    const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
     const onStartPress = async() => {

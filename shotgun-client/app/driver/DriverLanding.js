@@ -14,7 +14,6 @@ import {customerServicesRegistrationAction, getPaymentCards} from 'customer/acti
 import {driverServicesRegistrationAction, stopWatchingPosition, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
 import {getCurrentPosition} from 'common/actions/CommonActions';
 import {isAnyLoading, isAnyOperationPending, getDaoState, isAnyUnregistered, getLoadingMessage} from 'common/dao';
-import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
