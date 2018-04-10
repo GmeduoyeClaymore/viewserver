@@ -22,22 +22,19 @@ class FlatProductCategoryList extends Component{
     super(props);
     this.rowView = this.rowView.bind(this);
     this.goBack = this.goBack.bind(this);
+    this.highlightCategory = this.highlightCategory.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
-
-    this.state = {
-      selectedCategory: props.selectedCategory || {}
-    };
   }
 
   componentWillReceiveProps(nextProps) {
     ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
-  rowView({item: row, index: i, selectedCategory}){
+  rowView({item: row, index: i, highlightedCategory}){
     const {categoryId, category, imageUrl} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.navigateToCategory(row)}>
+      <Button style={{height: 'auto'}} large active={highlightedCategory && highlightedCategory.categoryId == row.categoryId} onPress={() => this.highlightCategory(row)}>
         <Icon name={imageUrl || 'dashed'}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
@@ -46,20 +43,22 @@ class FlatProductCategoryList extends Component{
 
   headerView({selectedCategory}){ return <Text note style={{marginBottom: 10}}>{selectedCategory.description}</Text>;}
 
-  navigateToCategory(selectedCategory){
-    const {next, history} = this.props;
-    const {selectedCategory: parentSelectedCategory} = this.state;
+  highlightCategory(highlightedCategory){
+    this.setState({highlightedCategory});
+  }
 
-    if (selectedCategory && selectedCategory.isLeaf) {
-      this.setState({selectedCategory, parentSelectedCategory}, () =>  history.push(next));
+  navigateToCategory(){
+    const {next, history, selectedCategory: parentSelectedCategory, highlightedCategory} = this.props;
+
+    if (highlightedCategory.isLeaf) {
+      this.setState({selectedCategory: highlightedCategory, parentSelectedCategory}, () =>  history.push(next));
     } else {
-      this.setState({selectedCategory: undefined});
+      this.setState({selectedCategory: highlightedCategory});
     }
   }
 
   goBack(){
-    const {history, rootProductCategory} = this.props;
-    const {parentSelectedCategory} = this.state;
+    const {history, rootProductCategory, parentSelectedCategory} = this.props;
 
     if (parentSelectedCategory == undefined || rootProductCategory.categoryId === parentSelectedCategory.categoryId){
       history.goBack();
@@ -69,7 +68,7 @@ class FlatProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, history, defaultOptions, selectedCategory} = this.props;
+    const {busy, history, defaultOptions, selectedCategory, highlightedCategory} = this.props;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
@@ -86,6 +85,7 @@ class FlatProductCategoryList extends Component{
         <PagingListView
           style={styles.pagingListView}
           selectedCategory={selectedCategory}
+          highlightedCategory={highlightedCategory}
           elementContainer={Row}
           elementContainerStyle={{flexWrap: 'wrap'}}
           daoName='productCategoryDao'
@@ -99,6 +99,10 @@ class FlatProductCategoryList extends Component{
           headerView={this.headerView}
         />
       </Content>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={highlightedCategory}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }
