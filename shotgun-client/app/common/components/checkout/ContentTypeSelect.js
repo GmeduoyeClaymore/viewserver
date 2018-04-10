@@ -48,7 +48,7 @@ class ContentTypeSelect extends Component{
     return (
       <Container>
         <Content padded>
-          <View style={{marginTop: 25}}>
+          <View style={styles.title}>
             <H1 style={styles.h1}>Create a job</H1>
             <Text  style={styles.subTitle} subTitle>What kind of service do you need?</Text>
           </View>
@@ -81,6 +81,9 @@ const validationSchema = {
 };
 
 const styles = {
+  title: {
+    marginTop: 25
+  },
   subTitle: {
     marginTop: 10,
     marginBottom: 20,
@@ -94,7 +97,7 @@ const styles = {
   },
   h1: {
     justifyContent: 'center',
-    marginBottom: 10
+    marginBottom: 0
   }
 };
 

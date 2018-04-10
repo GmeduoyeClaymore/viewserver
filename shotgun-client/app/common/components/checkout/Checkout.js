@@ -64,15 +64,15 @@ class Checkout extends Component {
     const {getNext} = this;
     return <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
       <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
-      <Route stateKey={Checkout.stateKey} path={'DeliveryMap'} exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
-      <Route stateKey={Checkout.stateKey} path={'AddressLookup'} exact component={AddressLookup} next={getNext('AddressLookup')} />
-      <Route stateKey={Checkout.stateKey} path={'DeliveryOptions'} exact component={DeliveryOptions} next={getNext('DeliveryOptions')} />
-      <Route stateKey={Checkout.stateKey} path={'ProductCategoryList'} exact component={ProductCategoryList}  next={getNext('ProductCategoryList')} />
-      <Route stateKey={Checkout.stateKey} path={'FlatProductCategoryList'} exact component={FlatProductCategoryList} next={getNext('FlatProductCategoryList')}  />
-      <Route stateKey={Checkout.stateKey} path={'ProductList'} exact component={ProductList}  next={getNext('ProductList')} />
-      <Route stateKey={Checkout.stateKey} path={'ItemDetails'} exact component={ItemDetails}  next={getNext('ItemDetails')} />
-      <Route stateKey={Checkout.stateKey} path={'OrderConfirmation'} exact component={OrderConfirmation} next={getNext('ItemDetails')}/>
-      <Route stateKey={Checkout.stateKey} path={'UsersForProductMap'} exact component={UsersForProductMap} next={getNext('UsersForProductMap')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'DeliveryMap'} exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
+      <Route stateKey={Checkout.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup} next={getNext('AddressLookup')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'DeliveryOptions'} exact component={DeliveryOptions} next={getNext('DeliveryOptions')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'ProductCategoryList'} exact component={ProductCategoryList}  next={getNext('ProductCategoryList')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'FlatProductCategoryList'} exact component={FlatProductCategoryList} next={getNext('FlatProductCategoryList')}  />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'ProductList'} exact component={ProductList}  next={getNext('ProductList')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'ItemDetails'} exact component={ItemDetails}  next={getNext('ItemDetails')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'OrderConfirmation'} exact component={OrderConfirmation} next={getNext('ItemDetails')}/>
+      <Route stateKey={Checkout.stateKey} transition='left' path={'UsersForProductMap'} exact component={UsersForProductMap} next={getNext('UsersForProductMap')} />
     </ReduxRouter>;
   }
 }

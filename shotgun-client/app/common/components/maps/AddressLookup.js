@@ -117,7 +117,7 @@ class AddressLookup extends Component {
           <Row size={10} style={{...styles.searchContainer, paddingTop: 10, paddingBottom: 10}}>
             <ErrorRegion errors={errors}>
               <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-              <Input placeholder={addressLabel} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
+              <Input placeholder={addressLabel} autoCorrect={false} returnKeyType={'done'} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >

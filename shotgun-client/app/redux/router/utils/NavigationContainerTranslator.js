@@ -61,7 +61,7 @@ export default class NavigationContainerTranslator{
     const index = this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path));
     if (!!~index){
       const route = this.routesInScope[index];
-      const {isReverse, transition} = result;
+      const {isReverse, transition = route.transition} = result;
       return {...route, pathname: route.path, transition, isReverse};
     }
   }

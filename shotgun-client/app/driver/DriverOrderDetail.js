@@ -30,10 +30,10 @@ class DriverOrderDetail extends Component{
       dispatch(startOrderRequest(orderSummary.orderId, navigateToOrderInProgress));
     };
 
-    const navigateToOrderInProgress = () => history.push(`${ordersRoot}/DriverOrderInProgress`, {orderId: orderSummary.orderId});
+    const navigateToOrderInProgress = () => history.push({pathname: `${ordersRoot}/DriverOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
 
     const onCancelPress = async() => {
-      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push(`${ordersRoot}/DriverOrders`)));
+      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'right'})));
     };
 
     return busy ? <LoadingScreen text={busyMessage}/> : <Container>

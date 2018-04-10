@@ -35,13 +35,13 @@ class DriverRegistration extends Component {
     const driverRegistrationProps = {...this.props, stateKey: DriverRegistration.stateKey};
     const {path} = this.props;
     return <ReduxRouter  name="DriverRegistrationRouter" {...driverRegistrationProps} defaultRoute={'DriverRegistrationLanding'}>
-      <Route stateKey={DriverRegistration.stateKey} path={'DriverRegistrationLanding'} exact component={DriverRegistrationLanding}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'Login'} exact component={DriverLogin}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'UserDetails'} next={`${path}/AddressDetails`} exact component={UserDetails}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'AddressDetails'} next={`${path}/BankAccountDetails`} exact component={AddressDetails}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'AddressLookup'} exact component={AddressLookup}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'BankAccountDetails'} exact component={BankAccountDetails}/>
-      <Route stateKey={DriverRegistration.stateKey} path={'DriverAccountType'} exact component={DriverAccountType}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'DriverRegistrationLanding'} exact component={DriverRegistrationLanding}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'Login'} exact component={DriverLogin}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'UserDetails'} next={`${path}/AddressDetails`} exact component={UserDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'AddressDetails'} next={`${path}/BankAccountDetails`} exact component={AddressDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'BankAccountDetails'} exact component={BankAccountDetails}/>
+      <Route stateKey={DriverRegistration.stateKey} transition='left' path={'DriverAccountType'} exact component={DriverAccountType}/>
     </ReduxRouter>;
   }
 }

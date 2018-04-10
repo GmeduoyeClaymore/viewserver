@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Col} from 'native-base';
-import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion} from 'common/components';
+import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion, AverageRating} from 'common/components';
 import  {CurrencyInput} from 'common/components/basic';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {cancelOrder, rejectDriver, updateOrderPrice} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
 import * as ContentTypes from 'common/constants/ContentTypes';
-
 
 const hasStarted = status => {
   return !~[OrderStatuses.PLACED, OrderStatuses.ACCEPTED].indexOf(status);
@@ -88,12 +87,16 @@ class CustomerOrderDetail extends Component{
     const {PricingControl} = resources;
 
     const onCancelOrder = () => {
-      dispatch(cancelOrder(orderSummary.orderId, () => history.push(`${ordersPath}`)));
+      dispatch(cancelOrder(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
     };
 
     const onRejectDriver = () => {
-      dispatch(rejectDriver(orderSummary.orderId, () => history.push(`${ordersPath}`)));
+      dispatch(rejectDriver(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
     };
+
+    const onPressTrack = () => {
+      history.push({pathName: `${parentPath}/CustomerOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
+    }
 
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>
@@ -114,11 +117,11 @@ class CustomerOrderDetail extends Component{
           </Col>
           <Col>
             <Text>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-            <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
+            <AverageRating rating={delivery.driverRatingAvg}/>
           </Col>
         </Grid> : null}
         {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
-        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={() => history.push(`${parentPath}/CustomerOrderInProgress`, {orderId: orderSummary.orderId})}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
+        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={onPressTrack}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
         <RatingSummary orderSummary={orderSummary} isDriver={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>

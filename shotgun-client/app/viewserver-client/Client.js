@@ -157,13 +157,13 @@ export default class Client {
       const resultObservable = Rx.Observable.fromPromise(commandExecutedPromise.promise);
       resultSubscription = resultObservable.subscribe(
         ev => {
-          Logger.info(`Resolved!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(ev)}`);
+          Logger.fine(`Resolved!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(ev)}`);
           resolve(ev);
         },
         err => reject(err)
       );
       result.cancel = () => {
-        Logger.info(`Cancelling!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
+        Logger.fine(`Cancelling!!! JSONCommand Controller: ${controllerName} Action: ${action} Payload ${JSON.stringify(payload)}`);
         resultSubscription.unsubscribe();
       };
       _this.sendCommand('genericJSON', jsonCommand, false, commandExecutedPromise);
