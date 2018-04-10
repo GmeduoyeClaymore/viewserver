@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import { connect, setStateIfIsMounted } from 'custom-redux';
+import { withExternalState} from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
 import {ErrorRegion, Icon, LoadingScreen} from 'common/components';
@@ -10,9 +10,8 @@ import { getDaoState, updateSubscriptionAction } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {TextInput} from 'react-native';
-import {isEqual} from 'lodash';
+import {isEqual, debounce} from 'lodash';
 import {addressToText} from 'common/utils';
-import {withExternalState} from 'custom-redux';
 
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
@@ -26,7 +25,7 @@ class DeliveryMap extends Component{
     this.setDurationAndDistance = this.setDurationAndDistance.bind(this);
     this.getLocationText = this.getLocationText.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
-    this.fitMap = this.fitMap.bind(this);
+    this.fitMap = debounce(this.fitMap.bind(this), 1000);
   }
 
   componentDidMount(){
@@ -98,13 +97,30 @@ class DeliveryMap extends Component{
     history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
   }
 
+
+  getOriginAndDestination(props){
+    const {destination, origin} = props;
+    return {destination, origin};
+  }
+
+  componentDidUpdate(oldProps){
+    const {getOriginAndDestination} = this;
+    if (!isEqual(getOriginAndDestination(oldProps), getOriginAndDestination(this.props))){
+      if (this.mvd){
+        this.mvd.fetchAndRenderRoute();
+      }
+      this.fitMap(this.props);
+    }
+  }
+
+
   fitMap(){
     const {map} = this;
     const {destination, origin} = this.props;
     if ((origin.line1 !== undefined && destination.line1 !== undefined) && map) {
       map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
-        edgePadding: { top: 50, right: 100, bottom: 50, left: 100 },
-        animated: false,
+        edgePadding: { top: 250, right: 100, bottom: 150, left: 100 },
+        animated: true,
       });
     }
   }
@@ -138,7 +154,7 @@ class DeliveryMap extends Component{
           <ErrorRegion errors={errors}>
             {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
               showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-              {showDirections ? <MapViewDirections client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
+              {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
               {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}

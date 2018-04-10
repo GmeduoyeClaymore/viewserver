@@ -60,15 +60,23 @@ class UserRelationshipMap extends Component{
     }
   }
 
-  componentWillReceiveProps(newProps){
-    const {relatedUsers} = newProps;
-    if (!isEqual(relatedUsers, this.props.relatedUsers)){
-      this.fitMap(newProps);
+  componentDidUpdate(oldProps){
+    const {relatedUsers} = oldProps;
+    const {getLocations} = this;
+   
+    if (!isEqual(getLocations(oldProps), getLocations(this.props))){
+      if (this.mvd){
+        this.mvd.fetchAndRenderRoute();
+      }
+    } else {
+      if (!isEqual(relatedUsers, this.props.relatedUsers)){
+        this.fitMap(this.props);
+      }
     }
   }
 
-  getLocations(){
-    const {me, selectedUser} = this.props;
+  getLocations(props){
+    const {me, selectedUser} = props;
     const result = [];
     if (me && me.latitude && me.longitude){
       const {latitude, longitude} = me;
@@ -99,7 +107,7 @@ class UserRelationshipMap extends Component{
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-      {selectedUser && me ? <MapViewDirections client={client} locations={getLocations()} strokeWidth={3} /> : null}
+      {selectedUser && me ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={getLocations(this.props)} strokeWidth={3} /> : null}
       {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;
   }

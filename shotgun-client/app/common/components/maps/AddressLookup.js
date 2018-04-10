@@ -37,7 +37,8 @@ class AddressLookup extends Component {
   }
 
   onAddressChanged(value){
-    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value, () => this.goToTabNamed('Suggested')));
+    this.goToTabNamed('Suggested');
+    this.setState({ addressSearchText: value }, () => this.searchAutoCompleteSuggestions(value));
   }
 
   componentWillReceiveProps(newProps){
@@ -120,12 +121,11 @@ class AddressLookup extends Component {
               <Input placeholder={addressLabel} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
             </ErrorRegion>
           </Row>
-          {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >
             {tabs.map(tab =>  <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}
           </Tabs> : null}
-          {tabs.length ? <ReduxRouter style={{padding: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
-            <Route path={'Recent'} component={RecentAddresses} {...{deliveryAddresses}}/>
+          {tabs.length ? <ReduxRouter style={{paddingLeft: 10, paddingRight: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
+            <Route path={'Recent'} component={RecentAddresses} homeAddress={homeAddress} {...{deliveryAddresses}}/>
             <Route path={'Suggested'} component={SuggestedAddresses} {...{hasLookedUpAddresses, suggestedPlaces, addressSearchText, busy} }/>
             <Route path={'Nearby Places'} component={ReverseGeoAddresses} />
           </ReduxRouter> : null}
@@ -152,8 +152,9 @@ class RecentAddresses extends Component{
   }
 
   render(){
-    const {deliveryAddresses, onAddressSelected} = this.props;
+    const {deliveryAddresses, onAddressSelected, homeAddress} = this.props;
     return deliveryAddresses && deliveryAddresses.length ? <View paddedLeft style={styles.resultsContainer}>
+      {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
       <Text style={styles.smallText}>Recent addresses you have used</Text>
       <List>
         {getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
@@ -279,7 +280,8 @@ const styles = {
     paddingHorizontal: 8,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
-    margin: 10,
+    marginLeft: 10,
+    marginRight: 10,
     paddingLeft: shotgun.contentPadding,
     padding: 10,
     borderWidth: 0.5,
@@ -287,7 +289,7 @@ const styles = {
   },
   resultsContainer: {
     borderTopWidth: 1,
-    marginTop: 10,
+    marginTop: 0,
     paddingTop: shotgun.contentPadding,
     borderColor: shotgun.silver
   },
