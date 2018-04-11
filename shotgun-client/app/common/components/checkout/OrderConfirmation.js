@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError, hasAnyOptionChanged} from 'common/dao';
 import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {calculateTotalPrice} from './CheckoutUtils';
-
-
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 /*eslint-disable */
@@ -32,7 +30,7 @@ class OrderConfirmation extends Component{
 
   purchase(){
     const {dispatch, history, orderItem, payment, delivery, selectedProduct, ordersPath} = this.props;
-    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.replace(`${ordersPath}`, {isCustomer: true})));
+    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
   }
 
   async componentDidMount(){
@@ -53,7 +51,7 @@ class OrderConfirmation extends Component{
 
   render(){
     const {resources} = this;
-    const {client, next, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price, history} = this.props;
+    const {client, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price, history} = this.props;
 
     return <Container>
       <Header withButton>

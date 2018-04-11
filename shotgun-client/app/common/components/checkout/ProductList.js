@@ -5,7 +5,7 @@ import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Ro
 import ProductListItem from './ProductListItem';
 import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
 import {PagingListView, Icon, SearchBar, ValidatingButton} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -44,11 +44,11 @@ class ProductList extends Component{
     return (<ProductListItem key={p.productId} product={p} {...rest}/>);
   }
 
-  headerView({options: opts, search, selectedProduct}) {
-    return <Col>
-      <SearchBar onChange={search} text={opts.searchText} style={{marginBottom: 15}}/>
+  headerView({options, search, selectedProduct, size}) {
+    return size > 20 ? <Col>
+      <SearchBar onChange={search} text={options.searchText} style={{marginBottom: 15}}/>
       {selectedProduct ? <Text note style={{marginBottom: 10}}>{selectedProduct !== undefined ? selectedProduct.description : null}</Text> : null}
-    </Col>;
+    </Col> : null;
   }
 
   search(searchText) {
@@ -57,7 +57,7 @@ class ProductList extends Component{
   }
 
   goBack(){
-    const {next, selectedCategory, parentSelectedCategory, history} = this.props;
+    const {selectedCategory, parentSelectedCategory, history} = this.props;
     this.setState({selectedCategory: parentSelectedCategory}, () => history.goBack(undefined, {selectedCategory, parentSelectedCategory}));
   }
 
@@ -75,9 +75,6 @@ class ProductList extends Component{
       <Content padded>
         <Grid>
           <PagingListView
-            ref={c => {
-              this.pagingListView = c;
-            }}
             daoName='productDao'
             dataPath={['product', 'products']}
             pageSize={10}

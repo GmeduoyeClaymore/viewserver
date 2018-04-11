@@ -25,7 +25,7 @@ class DriverOrderRequestDetail extends Component{
     const {orderSummary, client, history, dispatch, busy, busyUpdating, errors, delivery = {}, me, busyMessage, ordersRoot} = this.props;
 
     const onAcceptPress = async() => {
-      dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push(`${ordersRoot}/DriverOrders`)));
+      dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'left'})));
     };
 
     return busy ? <LoadingScreen text={busyMessage}/> : <Container>

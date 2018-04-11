@@ -29,7 +29,7 @@ class OrderRequest extends Component {
     const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
 
-    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push(next, {orderId: orderSummary.orderId})}>
+    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={70}>

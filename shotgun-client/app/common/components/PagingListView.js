@@ -74,7 +74,7 @@ class PagingListView extends Component {
     return (
       <ErrorRegion errors={errors}>
         <ScrollView style={{flex: 1}} onScroll={this.onScroll}>
-          <HeaderView {...this.props}/>
+          {!busy ? <HeaderView {...this.props}/> : null}
           {(data.length === 0 && !busy) ? <EmptyView {...this.props}/> : <ElementContainer style={elementContainerStyle}>
             {data.map((c, i) => this.renderItem({item: c, index: i, isLast: i == data.length - 1, isFirst: i == 0, ...rest}))}
           </ElementContainer>}

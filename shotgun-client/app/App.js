@@ -28,8 +28,6 @@ if (UIManager.setLayoutAnimationEnabledExperimental){
 }
 
 class App extends React.Component {
-  static INITIAL_ROOT_NAME = 'LandingCommon';
-
   constructor() {
     super();
     registerTokenListener();
@@ -52,45 +50,38 @@ class App extends React.Component {
   
   render() {
     const {loginState, busy, user = {}} = this.props;
-    const {isConnected, isLoggedIn} = (loginState || {});
+    const {isConnected, isLoggedIn} = loginState;
     const globalProps = {client: this.client, userId: this.userId,  dispatch: this.dispatch, isConnected, isLoggedIn};
     const completeProps = {...globalProps, ...this.props};
-    if (isLoggedIn === undefined || busy){
-      if (!isConnected){
-        return <LoadingScreen text={'Awaiting connection ..'}/>;
-      }
-      return <LoadingScreen text={'Awaiting login ..'}/>;
+    if (busy || isLoggedIn == undefined){
+      return !isConnected ? <LoadingScreen text={'Connecting'}/> : <LoadingScreen text={'Signing You In'}/>;
     }
-    return   <Container style={{flexDirection: 'column', flex: 1}}>
+    return <Container>
       <ReactNativeModal
         isVisible={!isConnected}
         backdropOpacity={0.4}>
         <View style={styles.modalContainer}>
           <View style={styles.innerContainer}>
             <Spinner/>
-            <Text>Awaiting Connection ....</Text>
+            <Text>Reconnecting</Text>
           </View>
         </View>
       </ReactNativeModal>
-      <Container style={{flex: 1}}>
-        <Root>
-          <StyleProvider style={getTheme(shotgun)}>
-            <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-              <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
-                <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
-                <Route path="Root" exact component={LandingCommon}/>
-                <Route path="LandingCommon" exact component={LandingCommon}/>
-                <Route path="Customer/Registration" component={CustomerRegistration}/>
-                <Route path="Driver/Registration" component={DriverRegistration}/>
-                <Route path="Landing" component={user.type == 'driver' ? DriverLanding : CustomerLanding}/>
-                <Route path="Customer/Landing" component={CustomerLanding}/>
-                <Route path="Driver/Landing" component={DriverLanding}/>
-                <Route path="TermsAndConditions" component={TermsAndConditions}/>
-              </ReduxRouter>
-            </View>
-          </StyleProvider>
-        </Root>
-      </Container>
+      <Root>
+        <StyleProvider style={getTheme(shotgun)}>
+          <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
+            <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
+            <Route path="Root" exact component={LandingCommon}/>
+            <Route path="LandingCommon" exact component={LandingCommon}/>
+            <Route path="Customer/Registration" component={CustomerRegistration}/>
+            <Route path="Driver/Registration" component={DriverRegistration}/>
+            <Route path="Landing" component={user.type == 'driver' ? DriverLanding : CustomerLanding}/>
+            <Route path="Customer/Landing" component={CustomerLanding}/>
+            <Route path="Driver/Landing" component={DriverLanding}/>
+            <Route path="TermsAndConditions" component={TermsAndConditions}/>
+          </ReduxRouter>
+        </StyleProvider>
+      </Root>
     </Container>;
   }
 }
@@ -99,7 +90,7 @@ const mapStateToProps = (state) => {
   return {
     user: getDaoState(state, ['user'], 'userDao'),
     busy: isAnyLoading(state, ['loginDao']),
-    loginState: getDaoState(state, [], 'loginDao'),
+    loginState: getDaoState(state, [], 'loginDao') || {},
     errors: getLoadingError(state, 'loginDao')
   };
 };

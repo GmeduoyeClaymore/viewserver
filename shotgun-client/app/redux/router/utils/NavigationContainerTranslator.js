@@ -1,7 +1,6 @@
 import Immutable from 'seamless-immutable';
 import * as RouteUtils from './routeUtils';
 import matchPath from './matchPath';
-import Logger from 'common/Logger';
 import invariant from 'invariant';
 import { memoize } from '../../memoize';
 import removeProperties from '../../removeProperties';
@@ -62,7 +61,7 @@ export default class NavigationContainerTranslator{
     const index = this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path));
     if (!!~index){
       const route = this.routesInScope[index];
-      const {isReverse, transition} = result;
+      const {isReverse, transition = route.transition} = result;
       return {...route, pathname: route.path, transition, isReverse};
     }
   }
@@ -85,16 +84,11 @@ export default class NavigationContainerTranslator{
           if (matchPath(nextContainer.routeThatShouldBeRendered.pathname, prevContainer.routeThatShouldBeRendered.pathname)){
             result = [{...nextContainer.routeThatShouldBeRendered, isAdd: true}];
           } else {
-            const {isReverse, transition} = nextContainer.routeThatShouldBeRendered;
-            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true}, {...prevContainer.routeThatShouldBeRendered, isRemove: true, isReverse, transition}];
+            const transition = isReverse ? prevContainer.routeThatShouldBeRendered.transition : nextContainer.routeThatShouldBeRendered.transition;
+            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true, isReverse, transition}, {...prevContainer.routeThatShouldBeRendered, isRemove: true, isReverse, transition}];
           }
         }
       }
-    }
-    if (isReverse && result){
-      result.forEach(c => {
-        c.isReverse = isReverse;
-      });
     }
     return result;
   })
@@ -115,7 +109,7 @@ export default class NavigationContainerTranslator{
     const {navigationStack = []} = this.navContainer;
     const foundKeys = [];
     const croppedStack = navigationStack.slice(-MaxStackLength);
-    croppedStack.forEach((el, idx) => {
+    croppedStack.forEach((el) => {
       const routeFromScope = this.getRouteFromScope(el, el == this.location);
       if (routeFromScope && !~foundKeys.indexOf(routeFromScope.path)){
         foundKeys.push(routeFromScope.path);

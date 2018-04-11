@@ -76,7 +76,6 @@ export const getLoadingMessage = (state, daoNames) => {
 
 const getDaoStatusMessage = (statusPair, state) => {
   let nm;
-  let message;
   if (typeof statusPair === 'string'){
     nm = statusPair;
     messaage = statusPair;

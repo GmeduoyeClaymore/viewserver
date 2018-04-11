@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import {
   Text,
   View,
-  ViewPropTypes,
   ScrollView,
   Dimensions,
   TouchableOpacity,
@@ -15,7 +14,6 @@ import {
   Platform,
   ActivityIndicator
 } from 'react-native';
-import Logger from 'common/Logger';
 
 /**
  * Default styles
@@ -417,7 +415,7 @@ export class Swiper extends Component {
     // Note: if touch very very quickly and continuous,
     // the variation of `index` more than 1.
     // parseInt() ensures it's always an integer
-    index = parseInt(index + Math.round(diff / step));
+    index = parseInt(index + Math.round(diff / step), 10);
 
     if (this.props.loop) {
       if (index <= -1) {
@@ -667,8 +665,6 @@ export class Swiper extends Component {
    * @return {object} react-dom
    */
   render () {
-    const state = this.state;
-    const props = this.props;
     const {
       index,
       total,

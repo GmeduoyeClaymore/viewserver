@@ -7,7 +7,7 @@ import {isEqual, debounce} from 'lodash';
 import Logger from 'common/Logger';
 import {LoadingScreen} from 'common/components';
 import {connect} from 'custom-redux';
-import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
+import { getDaoState} from 'common/dao';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -90,8 +90,8 @@ class UserRelationshipMap extends Component{
   }
 
   render(){
-    const {selectedUser, relatedUsers = [], setSelectedUser, client, geoLocation, height, width} = this.props;
-    let {me, isTransitioning} = this.props;
+    const {selectedUser, relatedUsers = [], setSelectedUser, client, geoLocation, height, width, isTransitioning} = this.props;
+    let {me} = this.props;
     me = geoLocation && geoLocation.latitude ? geoLocation : me;
     const {fitMap, getLocations} = this;
     const {latitude, longitude} = me;
@@ -102,8 +102,7 @@ class UserRelationshipMap extends Component{
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };
-    const _this = this;
-  
+
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
@@ -114,7 +113,6 @@ class UserRelationshipMap extends Component{
 }
 
 const mapStateToProps = (state, initialProps) => {
-  const {dispatch} = initialProps;
   return {
     ...initialProps,
     relatedUsers: getDaoState(state, ['users'], 'userRelationshipDao') || []

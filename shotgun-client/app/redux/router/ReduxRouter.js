@@ -3,7 +3,7 @@ import { View } from 'react-native-animatable';
 import {Dimensions, BackHandler, View as BasicView} from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
-import {ErrorRegion, LoadingScreen} from 'common/components';
+import {LoadingScreen} from 'common/components';
 import { memoize } from '../memoize';
 import removeProperties from '../removeProperties';
 import NavigationContainerTranslator from './utils/NavigationContainerTranslator';
@@ -12,7 +12,6 @@ import TransitionManager from './utils/TransitionManager';
 import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
 import invariant  from 'invariant';
-import {Text} from 'native-base';
 
 const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 

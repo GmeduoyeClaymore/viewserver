@@ -970,4 +970,5 @@ styles = {
     marginTop: 10,
     marginBottom: 15
   }
-}
+};
+

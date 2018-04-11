@@ -68,6 +68,10 @@ class DriverOrderInProgress extends Component{
       }
     };
 
+    const onRatingDonePress = () => {
+      history.push({pathname: ordersRoot, transition: 'left'});
+    }
+
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
         map.fitToElements(false);
@@ -92,7 +96,7 @@ class DriverOrderInProgress extends Component{
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
-          <Button transparent style={styles.backButton} onPress={() => history.push(`${ordersRoot}/DriverOrders`)}>
+          <Button transparent style={styles.backButton} onPress={() => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'right'})}>
             <Icon name='back-arrow'/>
           </Button>
         </Row>
@@ -104,7 +108,7 @@ class DriverOrderInProgress extends Component{
                   <RatingAction isDriver={true} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={()=> history.push(ordersRoot)}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={customerRating == 0} onPress={onRatingDonePress}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>

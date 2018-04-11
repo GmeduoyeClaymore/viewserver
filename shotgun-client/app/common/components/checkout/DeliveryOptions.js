@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
-import { Picker, TextInput } from 'react-native';
-import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, View } from 'native-base';
+import {Picker} from 'react-native';
+import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
 import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
 import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
@@ -60,7 +60,6 @@ resourceDictionary.
 /*eslint-enable */
 
 class DeliveryOptions extends Component {
-
   constructor(props) {
     super(props);
     this.onChangeValue = this.onChangeValue.bind(this);

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
-import {connect, withExternalState} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -20,57 +20,58 @@ resourceDictionary.
 class FlatProductCategoryList extends Component{
   constructor(props){
     super(props);
-    this.setCategory = this.setCategory.bind(this);
     this.rowView = this.rowView.bind(this);
+    this.goBack = this.goBack.bind(this);
+    this.highlightCategory = this.highlightCategory.bind(this);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
-
-    this.state = {
-      selectedCategory: props.selectedCategory || {},
-      parentSelectedCategory: props.parentSelectedCategory || {}
-    };
   }
 
-  componentWillMount(){
-    const {parentSelectedCategory} = this.props;
-    this.setState({parentSelectedCategory});
-  }
-
-  rowView({item: row, index: i, selectedCategory}){
+  rowView({item: row, index: i, highlightedCategory}){
     const {categoryId, category, imageUrl} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
-      <Button style={{height: 'auto'}} large active={selectedCategory.categoryId == row.categoryId} onPress={() => this.navigateToCategory(row)}>
+      <Button style={{height: 'auto'}} large active={highlightedCategory && highlightedCategory.categoryId == row.categoryId} onPress={() => this.highlightCategory(row)}>
         <Icon name={imageUrl || 'dashed'}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
     </View>;
   }
 
-  headerView({selectedCategory}){ return (selectedCategory ? <Text note style={{marginBottom: 10}}>{selectedCategory !== undefined ? selectedCategory.description : null}</Text> : null);}
+  headerView({selectedCategory}){ return <Text note style={{marginBottom: 10}}>{selectedCategory.description}</Text>;}
 
-  navigateToCategory(selectedCategory){
-    const {next, selectedCategory: parentSelectedCategory, history} = this.props;
+  highlightCategory(highlightedCategory){
+    this.setState({highlightedCategory});
+  }
 
-    if (selectedCategory && selectedCategory.isLeaf) {
-      this.setState({selectedCategory}, () =>  history.push(next));
+  navigateToCategory(){
+    const {next, history, selectedCategory: parentSelectedCategory, highlightedCategory} = this.props;
+
+    if (highlightedCategory.isLeaf) {
+      this.setState({selectedCategory: highlightedCategory, parentSelectedCategory}, () =>  history.push(next));
     } else {
-      this.setState({parentSelectedCategory, selectedCategory: undefined});
+      this.setState({selectedCategory: highlightedCategory});
     }
   }
 
-  setCategory(selectedCategory){
-    this.setState({selectedCategory});
+  goBack(){
+    const {history, rootProductCategory, parentSelectedCategory} = this.props;
+
+    if (parentSelectedCategory == undefined || rootProductCategory.categoryId === parentSelectedCategory.categoryId){
+      history.goBack();
+    } else {
+      this.navigateToCategory(parentSelectedCategory);
+    }
   }
 
   render(){
-    const {busy, history, rootProductCategory, defaultOptions, selectedCategory, parentSelectedCategory} = this.props;
+    const {busy, history, defaultOptions, selectedCategory, highlightedCategory} = this.props;
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
     return busy ? <LoadingScreen text="Loading Product Categories" /> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => rootProductCategory.categoryId === parentSelectedCategory.categoryId ?  history.goBack() : this.navigateToCategory()}>
+          <Button onPress={this.goBack}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -80,6 +81,7 @@ class FlatProductCategoryList extends Component{
         <PagingListView
           style={styles.pagingListView}
           selectedCategory={selectedCategory}
+          highlightedCategory={highlightedCategory}
           elementContainer={Row}
           elementContainerStyle={{flexWrap: 'wrap'}}
           daoName='productCategoryDao'
@@ -93,7 +95,7 @@ class FlatProductCategoryList extends Component{
           headerView={this.headerView}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedCategory}>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={highlightedCategory}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>

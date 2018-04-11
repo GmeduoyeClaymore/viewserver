@@ -1,5 +1,6 @@
 import React, {Children, isValidElement} from 'react';
 import matchPath from './matchPath';
+import TransitionStrategies from './TransitionStrategies';
 import invariant  from 'invariant';
 
 export const ensureComponentIsNative = (component) =>  {
@@ -10,43 +11,6 @@ export const ensureComponentIsNative = (component) =>  {
   );
 };
 
-const TransitionStrategies = {
-  left: (route) => {
-    if (route.isAdd){
-      return route.isReverse ? 'slideInLeft' : 'slideInRight';
-    }
-    if (route.isRemove){
-      return route.isReverse ? 'slideOutRight' : 'slideOutLeft';
-    }
-  },
-  bottom: (route) => {
-    if (route.isAdd){
-      return route.isReverse ? 'slideInDown' : 'slideInUp';
-    }
-    if (route.isRemove){
-      return route.isReverse ? 'slideOutUp' : 'slideOutDown';
-    }
-  },
-  flip: (route) => {
-    if (route.isAdd){
-      return route.isReverse ? 'flipInX' : 'flipInY';
-    }
-    if (route.isRemove){
-      return route.isReverse ? 'flipOutY' : 'flipOutX';
-    }
-  },
-  zoom: (route) => {
-    if (route.isAdd){
-      return route.isReverse ? 'zoomInLeft' : 'zoomInRight';
-    }
-    if (route.isRemove){
-      return route.isReverse ? 'zoomOutRight' : 'zoomOutLeft';
-    }
-  },
-  immediate: (route) => {
-  }
-};
-
 export const getInitialStyleForRoute = (route) => {
   return {
     zIndex: route.index
@@ -54,11 +18,11 @@ export const getInitialStyleForRoute = (route) => {
 };
   
 export const getAnimationType = (route) => {
-  const strategy = TransitionStrategies[route.transition] || TransitionStrategies.left;
-  return strategy == undefined ? undefined : strategy(route);
+  const strategy = TransitionStrategies[route.transition] || TransitionStrategies.immediate;
+  return strategy == undefined ? TransitionStrategies.immediate : strategy(route);
 };
   
-export const getDuration = (route) => {
+export const getDuration = () => {
   return 500;
 };
 
@@ -90,8 +54,8 @@ export const combinePaths = (basePath, extension) => {
 export const parseElementIntoRoute = (element, routerPath) => {
   invariant(routerPath, 'Router path is required');
   invariant(element, 'element is required');
-  const { path, exact, strict, sensitive, persistent, ...componentProps} = element.props;
-  return { path: combinePaths(routerPath, path), exact, strict, sensitive, persistent, componentProps};
+  const { path, exact, strict, sensitive, persistent, transition, ...componentProps} = element.props;
+  return { path: combinePaths(routerPath, path), exact, strict, sensitive, persistent, transition, componentProps};
 };
   
 export const getRoutesForChildren = (children, routerPath) => {
@@ -128,13 +92,13 @@ export const parseRoute = (routerPath, route, state) => {
     return {
       pathname: combinePaths(routerPath, route),
       state,
-      transition: 'left'
+      transition: 'immediate'
     };
   }
   invariant(route.pathname, 'route.pathname is required');
   return {
     ...route,
-    transition: route.transition || 'left',
+    transition: route.transition || 'immediate',
     pathname: combinePaths(routerPath, route.pathname),
     state: state == undefined ? route.state : state
   };

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route, memoize} from 'custom-redux';
 import { PagingListView, LoadingScreen, OrderRequest, Tabs } from 'common/components';
-import { View, Text, Container, Spinner, Header, Body, Title, Tab } from 'native-base';
-import { getDaoState, isAnyLoading, getNavigationProps, resetSubscriptionAction} from 'common/dao';
+import { View, Text, Spinner, Header, Body, Title, Tab } from 'native-base';
+import { getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {

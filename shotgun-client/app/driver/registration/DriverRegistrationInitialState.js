@@ -11,6 +11,7 @@ export const INITIAL_STATE = {
     range: 50
   },
   address: {
+    flatNumber: undefined,
     line1: undefined,
     city: undefined,
     postCode: undefined

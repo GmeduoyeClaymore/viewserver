@@ -1,7 +1,7 @@
 import React, {Component}  from 'react';
 import { withExternalState, ReduxRouter, Route } from 'custom-redux';
-import {Button, Tab, View, Text, Row, Switch, Header, Left, Body, Title} from 'native-base';
-import {Tabs, ErrorRegion, Icon, LoadingScreen} from 'common/components';
+import {Tab, View, Text, Row, Switch, Header, Body, Title} from 'native-base';
+import {Tabs, ErrorRegion, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
@@ -137,7 +137,7 @@ class UserRelationships extends Component{
       <View style={{flex: 24}}>
         <ErrorRegion errors={errors}>
           <ReduxRouter  name="UserRelationshipRouter"defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
-            {UserViews.map( (c, idx) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
+            {UserViews.map( (c) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
           </ReduxRouter>
         </ErrorRegion>
       </View>

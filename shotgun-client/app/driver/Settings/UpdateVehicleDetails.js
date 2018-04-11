@@ -3,7 +3,7 @@ import {Text, Content, Header, Body, Container, Title, Item, Label, Left, Button
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {connect} from 'custom-redux';
-import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
+import {isAnyOperationPending, getDaoState, getOperationErrors, isAnyLoading} from 'common/dao';
 import {updateVehicle} from 'driver/actions/DriverActions';
 import Logger from 'common/Logger';
 
@@ -118,7 +118,7 @@ const validationSchema = {
 
 const mapStateToProps = (state, nextOwnProps) => ({
   ...nextOwnProps,
-  busy: isAnyOperationPending(state, [{vehicleDao: 'addOrUpdateVehicle'}]),
+  busy: isAnyLoading(state, ['vehicleDao']) || isAnyOperationPending(state, [{vehicleDao: 'addOrUpdateVehicle'}]),
   errors: getOperationErrors(state, [{vehicleDao: 'addOrUpdateVehicle'}]),
   vehicle: getDaoState(state, ['vehicle'], 'vehicleDao')
 });

@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Text, Content, List, ListItem, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
-import PrincipalService from 'common/services/PrincipalService';
 import {Icon} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import {Linking} from 'react-native';

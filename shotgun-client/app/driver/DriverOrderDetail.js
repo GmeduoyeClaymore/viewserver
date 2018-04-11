@@ -24,23 +24,22 @@ class DriverOrderDetail extends Component{
 
   render() {
     const {orderSummary = {status: ''}, client, history, dispatch, busy, busyUpdating, me, busyMessage, ordersRoot} = this.props;
-    const isStarted = orderSummary.status == OrderStatuses.PICKEDUP;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
 
     const onStartPress = async() => {
       dispatch(startOrderRequest(orderSummary.orderId, navigateToOrderInProgress));
     };
 
-    const navigateToOrderInProgress = () => history.push(`${ordersRoot}/DriverOrderInProgress`, {orderId: orderSummary.orderId});
+    const navigateToOrderInProgress = () => history.push({pathname: `${ordersRoot}/DriverOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
 
     const onCancelPress = async() => {
-      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push(`${ordersRoot}/DriverOrders`)));
+      dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'right'})));
     };
 
     return busy ? <LoadingScreen text={busyMessage}/> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => history.goBack()}>
+          <Button onPress={() => history.goBack({transition: 'right'})}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>

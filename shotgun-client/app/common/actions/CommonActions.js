@@ -19,7 +19,7 @@ export const register = (dispatch, daoContext, options, continueWith) => {
   return dao;
 };
 
-export const registerNakedDao = (dispatch, dao, options, continueWith) => {
+export const registerNakedDao = (dispatch, dao) => {
   dispatch(registerDao(dao));
   return dao;
 };
