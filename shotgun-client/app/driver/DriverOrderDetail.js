@@ -39,7 +39,7 @@ class DriverOrderDetail extends Component{
     return busy ? <LoadingScreen text={busyMessage}/> : <Container>
       <Header withButton>
         <Left>
-          <Button onPress={() => history.goBack()}>
+          <Button onPress={() => history.goBack({transition: 'right'})}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>

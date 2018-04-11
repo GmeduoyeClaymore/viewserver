@@ -17,7 +17,7 @@ class  DriverSettings extends Component{
     const {path, height, width} = this.props;
     const driverSettingsProps = {...this.props, stateKey: 'driverSettings'};
     return <ReduxRouter  name="DriverSettingsRouter"  path={path} defaultRoute={'DriverSettingsLanding'} height={height} width={width} {...driverSettingsProps}>
-      <Route path={'DriverSettingsLanding'} exact component={DriverSettingsLanding}/>
+      <Route transition='left' path={'DriverSettingsLanding'} exact component={DriverSettingsLanding}/>
       <Route transition='left' path={'UpdateUserDetails'} onUpdate={this.onUpdate} exact component={UpdateUserDetails}/>
       <Route transition='left' path={'UpdateBankAccountDetails'} exact component={UpdateBankAccountDetails}/>
       <Route transition='left' path={'UpdateVehicleDetails'} exact component={UpdateVehicleDetails}/>

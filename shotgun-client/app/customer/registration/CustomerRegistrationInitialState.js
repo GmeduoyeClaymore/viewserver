@@ -9,6 +9,7 @@ export const INITIAL_STATE = {
     range: 50
   },
   deliveryAddress: {
+    flatNumber: undefined,
     line1: undefined,
     line2: undefined,
     city: undefined,

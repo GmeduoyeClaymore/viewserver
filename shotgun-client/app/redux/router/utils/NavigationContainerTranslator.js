@@ -84,16 +84,11 @@ export default class NavigationContainerTranslator{
           if (matchPath(nextContainer.routeThatShouldBeRendered.pathname, prevContainer.routeThatShouldBeRendered.pathname)){
             result = [{...nextContainer.routeThatShouldBeRendered, isAdd: true}];
           } else {
-            const {isReverse, transition} = nextContainer.routeThatShouldBeRendered;
-            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true}, {...prevContainer.routeThatShouldBeRendered, isRemove: true, isReverse, transition}];
+            const transition = isReverse ? prevContainer.routeThatShouldBeRendered.transition : nextContainer.routeThatShouldBeRendered.transition;
+            result = [{ ...nextContainer.routeThatShouldBeRendered, isAdd: true, isReverse, transition}, {...prevContainer.routeThatShouldBeRendered, isRemove: true, isReverse, transition}];
           }
         }
       }
-    }
-    if (isReverse && result){
-      result.forEach(c => {
-        c.isReverse = isReverse;
-      });
     }
     return result;
   })
