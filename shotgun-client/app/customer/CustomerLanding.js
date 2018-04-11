@@ -68,7 +68,7 @@ class CustomerLanding extends Component {
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }
-    return busy ? <LoadingScreen text="Loading Customer Landing Screen"/> :
+    return busy ? <LoadingScreen text="Loading"/> :
       <Container>
         <ReduxRouter  name="CustomerLandingRouter"  {...completeProps} defaultRoute={'/CustomerOrders'}>
           <Route path={'/Checkout'} component={Checkout}/>

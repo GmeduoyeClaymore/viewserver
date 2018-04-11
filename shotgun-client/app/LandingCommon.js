@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import {connect, Redirect} from 'custom-redux';
 import {commonServicesRegistrationAction, logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
-import {View, Button, Text} from 'native-base';
+import {Content, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import PermissionsService from 'common/services/PermissionsService';
-
 
 class LandingCommon extends Component {
   constructor(props) {
@@ -26,21 +25,17 @@ class LandingCommon extends Component {
       dispatch(unregisterAllDaosAndResetComponentState());
     };
 
-    if (busy){
-      return <LoadingScreen text="Logging You In"/>;
-    }
-    if (errors){
-      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Unable to find your user details. Please sign out and log back in {errors}</Text>
-        <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
-      </View>;
+    if (busy || !user){
+      return <LoadingScreen text="Signing in"/>;
     }
 
-    if (!user){
-      return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <LoadingScreen text="Waiting for user .. If this takes a while try logging out then in again"/>
+    if (errors){
+      return <Content contentContainerStyle={styles.contentStyle}>
+        <Text>Unable to find your user details. Please sign out and log back in {errors}</Text>
         <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
-      </View>;
+      </Content>;
     }
+
     switch (user.type){
     case 'driver':
       return <Redirect to="/Driver/Landing" just={true} history={history}/>;
@@ -58,6 +53,13 @@ const mapStateToProps = (state, nextOwnProps) => ({
   errors: getLoadingError(state, 'userDao'),
   ...nextOwnProps
 });
+
+const styles = {
+  contentStyle: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+}
 
 export default connect(mapStateToProps)(LandingCommon);
 
