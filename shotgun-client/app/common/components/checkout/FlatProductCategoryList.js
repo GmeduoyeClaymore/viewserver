@@ -22,7 +22,7 @@ class FlatProductCategoryList extends Component{
     super(props);
     this.setCategory = this.setCategory.bind(this);
     this.rowView = this.rowView.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
 
     this.state = {
       selectedCategory: props.selectedCategory || {},
@@ -33,10 +33,6 @@ class FlatProductCategoryList extends Component{
   componentWillMount(){
     const {parentSelectedCategory} = this.props;
     this.setState({parentSelectedCategory});
-  }
-
-  componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
   rowView({item: row, index: i, selectedCategory}){

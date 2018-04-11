@@ -82,10 +82,22 @@ public class CustomerController {
     public String cancelOrder(String orderId){
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.CANCELLED.name());
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
-
         rejectDriver(orderId);
         return orderId;
     }
+
+    @ControllerAction(path = "customerCompleteOrder", isSynchronous = true)
+    public String customerCompleteOrder(String orderId){
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETEDBYCUSTOMER.name());
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
+        String deliveryId = (String)ControllerUtils.getColumnValue(orderTable, "deliveryId", orderId);
+        String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
+        notifyStatusChanged(orderId, driverId, "completed");
+        return orderId;
+    }
+
 
     @ControllerAction(path = "updateOrderPrice", isSynchronous = true)
     public String updateOrderPrice(@ActionParam(name = "orderId")String orderId,@ActionParam(name = "price")Double price){
@@ -162,7 +174,7 @@ public class CustomerController {
 
     private String createActionUri(String orderId, String status){
         switch (status) {
-            case "PICKEDUP":
+            case "INPROGRESS":
                 return String.format("shotgun://DriverOrderInProgress/%s", orderId);
             default:
                 return String.format("shotgun://DriverOrderDetail/%s", orderId);

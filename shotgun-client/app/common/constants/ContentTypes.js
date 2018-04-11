@@ -104,3 +104,28 @@ export class ResourceDictionary{
     return {...this.dictionaries.DEFAULT, ...dictionary};
   }
 }
+
+export const bindToContentTypeResourceDictionary = (component, resourceDictionary) => {
+  //if we're debugging then use the redux devtools extension
+  let {componentWillReceiveProps, componentWillMount} = component;
+  if (componentWillReceiveProps){
+    componentWillReceiveProps = componentWillReceiveProps.bind(component);
+  }
+  if (componentWillMount){
+    componentWillMount = componentWillMount.bind(component);
+  }
+
+  component.componentWillReceiveProps = (props) => {
+    resolveResourceFromProps(props, resourceDictionary, component);
+    if (componentWillReceiveProps){
+      componentWillReceiveProps();
+    }
+  };
+
+  component.componentWillMount = () => {
+    resolveResourceFromProps(component.props, resourceDictionary, component);
+    if (componentWillMount){
+      componentWillMount();
+    }
+  };
+};

@@ -37,6 +37,10 @@ export default class CustomerDao{
     await this.client.invokeJSONCommand('customerController', 'rejectDriver', orderId);
   }
 
+  async customerCompleteOrder({orderId}){
+    await this.client.invokeJSONCommand('customerController', 'customerCompleteOrder', orderId);
+  }
+
   async callDriver({orderId}){
     const driverPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getDriverVirtualNumber', orderId);
     PhoneCallService.call(driverPhoneNumber);

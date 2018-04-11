@@ -27,7 +27,7 @@ class OrderConfirmation extends Component{
     super(props);
     this.purchase = this.purchase.bind(this);
     this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   purchase(){
@@ -40,7 +40,6 @@ class OrderConfirmation extends Component{
   }
 
   componentWillReceiveProps(newProps){
-    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
     if (hasAnyOptionChanged(this.props, newProps, ['isReady']) && newProps.isReady){
       this.loadEstimatedPrice();
     }

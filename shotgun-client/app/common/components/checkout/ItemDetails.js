@@ -28,12 +28,9 @@ class ItemDetails extends Component{
     this.onChangeValue = this.onChangeValue.bind(this);
     this.onSelectImage = this.onSelectImage.bind(this);
     this.showPicker = this.showPicker.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  componentWillReceiveProps(newProps){
-    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
-  }
 
   onChangeValue(field, value){
     const {orderItem={}} = this.props;

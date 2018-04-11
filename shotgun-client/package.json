@@ -38,6 +38,7 @@
     "react-native-modal": "^4.1.1",
     "react-native-restart": "0.0.6",
     "react-native-slider": "^0.11.0",
+    "react-native-swipe-gestures": "^1.0.2",
     "react-native-swiper": "^1.5.13",
     "react-native-vector-icons": "^4.5.0",
     "react-redux": "5.0.6",

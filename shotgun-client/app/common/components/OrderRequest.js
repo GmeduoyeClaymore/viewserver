@@ -19,12 +19,9 @@ resourceDictionary.
 class OrderRequest extends Component {
   constructor(props) {
     super(props);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  componentWillReceiveProps(newProps){
-    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
-  }
 
   render() {
     const {resources} = this;

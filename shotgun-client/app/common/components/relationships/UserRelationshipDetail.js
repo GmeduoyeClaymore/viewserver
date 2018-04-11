@@ -12,6 +12,8 @@ import moment from 'moment';
 import {RelatedUser, StatusButton} from './RelatedUser';
 import Logger from 'common/Logger';
 import {isEqual} from 'lodash';
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+ 
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;
@@ -122,6 +124,11 @@ const styles = {
   }
 };
 
+const config = {
+  velocityThreshold: 0.01,
+  directionalOffsetThreshold: 100
+};
+
 
 const cancelButton = <Text style={[styles.cancelText]}>Cancel</Text>;
 const Paging = () => <View><Spinner /></View>;
@@ -185,9 +192,13 @@ class RelatedUserComponent extends Component{
   }
 
   render(){
-    const {user, onPressCallUser, onPressAssignUser, errors, handleCancel, selectedUser = {}} = this.props;
+    const {user, onPressCallUser, onPressAssignUser, errors, handleCancel, prev, next} = this.props;
     const {renderButtons: DirectionButtons} = this;
-    return [<View style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
+    return [<GestureRecognizer
+      onSwipeLeft={() => this.navigateTo(prev, true)}
+      onSwipeRight={() => this.navigateTo(next)}
+      config={config}
+      style={{flex: 1, margin: 20, flexDirection: 'column', maxHeight: ELEMENT_HEIGHT - 120}}>
       {
         onPressAssignUser ? <Button style={{marginBottom: 15, minHeight: 40, justifyContent: 'flex-start'}} fullWidth statusButton onPress={() => {
           onPressAssignUser(user);
@@ -211,7 +222,7 @@ class RelatedUserComponent extends Component{
         />
       </View>
       <StatusButton user={user} style={{justifyContent: 'flex-start', marginLeft: 10, marginRight: 10}}/>
-    </View>, <DirectionButtons/>];
+    </GestureRecognizer>, <DirectionButtons/>];
   }
 }
 

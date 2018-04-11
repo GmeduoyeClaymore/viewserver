@@ -129,10 +129,6 @@ export default class TransitionManager{
     return  () => this.transition(componentRef, {...diff, route}, true);
   }
 
-  blockUpdate(){
-    return false;
-  }
-
   async removeElement(path){
     const element = this.initializedRouteElementReferences[path];
     if (!element){

@@ -33,7 +33,7 @@ class ContentTypeSelector extends Component{
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.doValidate = this.doValidate.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   handleSelectContentType(){
@@ -56,7 +56,6 @@ class ContentTypeSelector extends Component{
   }
 
   componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
     if (!isEqual(this.props.unsavedSelectedContentTypes, nextProps.unsavedSelectedContentTypes)){
       this.doValidate(nextProps);
     }

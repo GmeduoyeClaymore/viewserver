@@ -4,6 +4,9 @@ export default (variables = variable) => {
   const viewTheme = {
     '.padder': {
       padding: variables.contentPadding
+    },
+    '.column': {
+      flexDirection: 'flex-col'
     }
   };
 

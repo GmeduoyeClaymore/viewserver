@@ -78,8 +78,7 @@ class DeliveryOptions extends Component {
       selectedCard: undefined,
       date: undefined
     };
-
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   async componentDidMount() {
@@ -94,7 +93,6 @@ class DeliveryOptions extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
     if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined) {
       this.setCard(nextProps.defaultCard);
     }

@@ -29,8 +29,6 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 
@@ -160,10 +158,10 @@ public class DriverController {
         int currentRow = orderTable.getRow(new TableKey(orderId));
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
 
-        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PICKEDUP.name());
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.INPROGRESS.name());
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
 
-        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.PICKEDUP.name());
+        notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.INPROGRESS.name());
 
         if(isMock) {
             journeyEmulatorController.emulateJourneyForOrder(orderId, "emulator-5558", driverId);
@@ -241,7 +239,7 @@ public class DriverController {
 
     private String createActionUri(String orderId, String status){
         switch (status) {
-            case "PICKEDUP":
+            case "INPROGRESS":
                 return String.format("shotgun://CustomerOrderInProgress/%s", orderId);
             default:
                 return String.format("shotgun://CustomerOrderDetail/%s", orderId);

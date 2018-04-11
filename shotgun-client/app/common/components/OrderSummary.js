@@ -19,13 +19,10 @@ resourceDictionary.
 class OrderSummary extends Component{
   constructor(props){
     super(props);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
     this.renderItemDetails = this.renderItemDetails.bind(this);
   }
 
-  componentWillReceiveProps(newProps){
-    ContentTypes.resolveResourceFromProps(newProps, resourceDictionary, this);
-  }
 
   renderMap(){
     const { width } = Dimensions.get('window');

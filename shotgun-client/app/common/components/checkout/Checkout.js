@@ -34,11 +34,7 @@ class Checkout extends Component {
     const {history, path} = props;
     Logger.info('Creating checkout component');
     this.getNext = this.getNext.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   componentWillUnmount(){

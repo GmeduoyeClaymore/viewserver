@@ -37,7 +37,7 @@ class ProductList extends Component{
     this.search = this.search.bind(this);
     this.setState = this.setState.bind(this);
     this.goBack = this.goBack.bind(this);
-    ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   rowView({item: p, ...rest}){
@@ -59,10 +59,6 @@ class ProductList extends Component{
   goBack(){
     const {next, selectedCategory, parentSelectedCategory, history} = this.props;
     this.setState({selectedCategory: parentSelectedCategory}, () => history.goBack(undefined, {selectedCategory, parentSelectedCategory}));
-  }
-
-  componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
   render(){

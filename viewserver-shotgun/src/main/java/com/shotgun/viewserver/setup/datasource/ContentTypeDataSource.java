@@ -25,11 +25,12 @@ public class
                     new Column("origin", "origin", ColumnType.Bool),
                     new Column("destination", "destination", ColumnType.Bool),
                     new Column("noPeople", "noPeople", ColumnType.Bool),
-                    new Column("fromTime", "fromTime", ColumnType.Bool),
                     new Column("tillTime", "tillTime", ColumnType.Bool),
+                    new Column("fromTime", "fromTime", ColumnType.Bool),
+                    new Column("doubleComplete", "doubleComplete", ColumnType.Bool),
                     new Column("noItems", "noItems", ColumnType.Bool),
                     new Column("rootProductCategory", "rootProductCategory", ColumnType.String),
-                                        new Column("description", "description", ColumnType.String),
+                    new Column("description", "description", ColumnType.String),
                     new Column("pricingStrategy", "pricingStrategy", ColumnType.String)
             ))
             .withKeyColumns("contentTypeId");
