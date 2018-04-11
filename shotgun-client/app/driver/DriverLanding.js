@@ -16,14 +16,9 @@ import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import Checkout from 'common/components/checkout/Checkout';
-<<<<<<< HEAD
-import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
-import CustomerOrderInProgress from 'customer/orders/CustomerOrderInProgress';
-=======
 import CustomerOrderDetail from 'customer/CustomerOrderDetail';
 import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
 import {LoadingScreen} from 'common/components';
->>>>>>> 297b48ba3db5c482c08dbaa5387840ce02b921e2
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
 
