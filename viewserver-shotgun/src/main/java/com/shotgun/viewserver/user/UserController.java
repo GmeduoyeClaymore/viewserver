@@ -71,9 +71,9 @@ public class UserController {
     public String addOrUpdateUser(@ActionParam(name = "user") User user) {
         log.debug("addOrUpdateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
+       /* if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
             throw new RuntimeException("Already  user registered for email " + user.getEmail());
-        }
+        }*/
 
         Date now = new Date();
 
@@ -272,7 +272,7 @@ public class UserController {
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
             log.info("Waiting for user {}",userId);
-            return output.observable().filter(ev -> hasUserId(ev,userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String,Object>)ev.getEventData());
+            return output.observable().filter(ev -> hasUserId(ev,userId)).take(1).timeout(30, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String,Object>)ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));
     }
