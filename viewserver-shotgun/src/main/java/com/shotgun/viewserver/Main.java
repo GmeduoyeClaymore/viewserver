@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         ViewServerLauncher launcher = new ViewServerLauncher<IShotgunViewServerConfiguration>(
-                new ShotgunViewServerConfiguration(System.getProperty("viewserver.configurationFile", "config-prod.xml")),
+                new ShotgunViewServerConfiguration(System.getProperty("viewserver.configurationFile", "config-test.xml")),
                 ShotgunViewServerMaster::new);
         launcher.launch(args);
     }
