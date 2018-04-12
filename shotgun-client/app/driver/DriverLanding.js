@@ -16,8 +16,8 @@ import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import Checkout from 'common/components/checkout/Checkout';
-import CustomerOrderDetail from 'customer/CustomerOrderDetail';
-import CustomerOrderInProgress from 'customer/CustomerOrderInProgress';
+import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
+import CustomerOrderInProgress from 'customer/orders/CustomerOrderInProgress';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -58,7 +58,7 @@ class DriverLanding extends Component {
       <Redirect just to="/" history={history}/>;
     }
     return  busy ? <LoadingScreen text="Loading"/> : <Container>
-      <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={'Checkout'} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
+      <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'DriverOrderRequests'} exact component={DriverOrderRequests}/>
         <Route path={'DriverOrderRequestDetail'} exact component={DriverOrderRequestDetail}/>

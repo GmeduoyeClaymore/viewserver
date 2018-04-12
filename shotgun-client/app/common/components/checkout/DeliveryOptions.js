@@ -91,7 +91,7 @@ class DeliveryOptions extends Component {
     await this.loadEstimatedPrice();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps = {}) {
     if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined) {
       this.setCard(nextProps.defaultCard);
     }

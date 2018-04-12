@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import { SpinnerButton} from 'common/components';
 import Text from 'react-native';
 import {cancelOrder, rejectDriver, customerCompleteOrder} from 'customer/actions/CustomerActions';
+import {View} from 'native-base';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 /*eslint-disable */
@@ -11,7 +12,7 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
   property('RejectButtonCaption', 'Reject').
     delivery('Reject Driver').
     personell('Reject Worker').
-    rubbish('Reject Driver')
+    rubbish('Reject Driver');
 /*eslint-disable */
 
 const  CancelOrder = ({orderSummary, history, ordersPath, busyUpdating}) => {
@@ -35,7 +36,7 @@ const  CompleteOrder = ({orderSummary, history, ordersPath, busyUpdating, resour
     return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCompleteOrder}><Text uppercase={false}>Complete</Text></SpinnerButton>
 };
 
-class OrderStatusButtons extends Component {
+export default class OrderStatusButtons extends Component {
     static propTypes = {
         me: PropTypes.object.isRequired,
         orderSummary: PropTypes.object.isRequired

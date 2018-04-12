@@ -10,13 +10,8 @@ import {ReduxRouter, Route, withExternalState} from 'custom-redux';
 import {getOperationError} from 'common/dao';
 import moment from 'moment';
 import {RelatedUser, StatusButton} from './RelatedUser';
-<<<<<<< HEAD
-import Logger from 'common/Logger';
-import {isEqual} from 'lodash';
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
- 
-=======
->>>>>>> 297b48ba3db5c482c08dbaa5387840ce02b921e2
+import GestureRecognizer from 'react-native-swipe-gestures';
+import invariant from 'invariant';
 const {height, width} = Dimensions.get('window');
 const BACKGROUND_COLOR = 'white';
 const BORDER_RADIUS = 13;

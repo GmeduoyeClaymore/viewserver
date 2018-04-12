@@ -8,6 +8,7 @@ import OrderStatusButtons from './OrderStatusButtons';
 import OrderPriceControl from './OrderPriceControl';
 import DriverDetails from './DriverDetails';
 import MapDetails from './MapDetails';
+import invariant from 'invariant';
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
@@ -21,21 +22,16 @@ resourceDictionary.
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
-    this.onFixedPriceValueChanged = this.onFixedPriceValueChanged.bind(this);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  componentDidMount(){
+  beforeNavigateTo(){
     this.subscribeToOrderSummary(this.props);
   }
 
-  componentWillReceiveProps(newProps){
-    this.subscribeToOrderSummary(newProps);
-  }
-
   subscribeToOrderSummary(props){
-    const {dispatch, orderId, orderSummary} = props;
-    if (orderSummary == undefined) {
+    const {dispatch, orderId, orderSummary, isPendingOrderSummarySubscription} = props;
+    if (orderSummary == undefined && !isPendingOrderSummarySubscription) {
       dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
         reportId: 'customerOrderSummary'
@@ -44,6 +40,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
+    const {busy, orderSummary, errors} = this.props;
     const {resources} = this;
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>
@@ -74,18 +71,29 @@ const findOrderSummaryFromDao = (state, orderId, daoName) => {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
+  invariant(orderId, 'orderId should be specfied');
   let orderSummary = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
   orderSummary = orderSummary || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
   
-  const {contentType: selectedContentType} = (orderSummary || {});
+  const {delivery = {}, contentType, orderItem} = (orderSummary || {});
+  const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
+  const {origin = {}, destination = {}} = delivery;
   const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}])
+  const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,
-    selectedContentType,
+    driverPosition,
+    delivery,
+    contentType,
+    destination,
+    orderItem,
+    origin,
     orderId,
+    isPendingOrderSummarySubscription,
+    me: getDaoState(state, ['user'], 'userDao'),
     errors,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}]),
-    busy: isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
+    busy: isPendingOrderSummarySubscription|| orderSummary == undefined,
     orderSummary
   };
 };

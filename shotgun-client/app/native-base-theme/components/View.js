@@ -6,7 +6,7 @@ export default (variables = variable) => {
       padding: variables.contentPadding
     },
     '.column': {
-      flexDirection: 'flex-col'
+      flexDirection: 'column'
     }
   };
 

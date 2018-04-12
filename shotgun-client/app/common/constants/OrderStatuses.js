@@ -1,3 +1,4 @@
+import invariant from 'invariant';
 
 export const OrderStatuses = {
   PLACED: 'PLACED',
@@ -65,7 +66,7 @@ export const getPossibleStatuses = ({
   orderSummaryStatus,
   iAmTheCustomer,
   doubleComplete}) => {
-  invariant(orderSummary, 'Order summary must be defined');
+  invariant(orderSummaryStatus, 'orderSummaryStatus must be defined');
 
   if (orderSummaryStatus == OrderStatuses.PLACED){
     if (iAmTheCustomer){
@@ -101,5 +102,9 @@ export const getPossibleStatuses = ({
     }
     return [];
   }
+  if (orderSummaryStatus == OrderStatuses.COMPLETED){
+    return [];
+  }
+  throw new Error('Unrecognized order summary status ' + orderSummaryStatus);
 };
 

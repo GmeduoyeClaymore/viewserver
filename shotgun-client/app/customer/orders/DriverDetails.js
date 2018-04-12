@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Button, Text, Col} from 'native-base';
-import {ErrorRegion} from 'common/components';
+import {Button, Text, Col, Row} from 'native-base';
+import {ErrorRegion, Icon, AverageRating} from 'common/components';
 import {callDriver} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -38,19 +38,17 @@ export default class DriverDetails extends Component{
       <Col>
         <Text style={styles.subTitle}><DetailsTitle product={product}/></Text>
         <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-        <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
+        <AverageRating rating={delivery.driverRatingAvg}/>
       </Col>
       <Col>
         <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/>
       </Col>
     </Row>,
     <Row>
-      <ErrorRegion errors={errors}>
-        <Button fullWidth callButtonSml onPress={onPressCallDriver}>
-          <Icon name="phone" paddedIcon/>
-          <Text uppercase={false}>Call {product.name}</Text>
-        </Button>
-      </ErrorRegion>
+      <Button fullWidth callButtonSml onPress={onPressCallDriver}>
+        <Icon name="phone" paddedIcon/>
+        <Text uppercase={false}>Call {product.name}</Text>
+      </Button>
     </Row>];
   }
 }

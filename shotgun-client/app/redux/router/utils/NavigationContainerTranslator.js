@@ -49,7 +49,7 @@ export default class NavigationContainerTranslator{
     const match = matchPath(this.location.pathname, this.routerPath);
     if (match && match.isExact){
       const newStack = [...this.navigationStack];
-      const newHead = {...this.location, ...removeProperties(this.defaultRoute, ['state'])};
+      const newHead = {...this.location, ...this.defaultRoute};
       newStack[this.navContainer.navPointer] = newHead;
       return {...newHead, navContainerOverride: this.navContainer.setIn(['navigationStack'], newStack)};
     }

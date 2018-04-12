@@ -49,6 +49,10 @@ export class ResourceDictionaryProperty{
   property(propertyName, defaultValue){
     return this.resourceDictionary.property(propertyName, defaultValue);
   }
+
+  resolve(contentTypeId){
+    return this.resourceDictionary.resolve(contentTypeId);
+  }
 }
 
 export const resolveResourceFromProps = (props, resourceDictionary, caller) => {
@@ -118,7 +122,7 @@ export const bindToContentTypeResourceDictionary = (component, resourceDictionar
   component.componentWillReceiveProps = (props) => {
     resolveResourceFromProps(props, resourceDictionary, component);
     if (componentWillReceiveProps){
-      componentWillReceiveProps();
+      componentWillReceiveProps(props);
     }
   };
 
