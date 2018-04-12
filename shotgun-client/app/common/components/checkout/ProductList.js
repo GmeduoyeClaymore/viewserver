@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row, Grid, Col} from 'native-base';
 import ProductListItem from './ProductListItem';
-import {updateSubscriptionAction, getNavigationProps, resetSubscriptionAction} from 'common/dao';
+import {updateSubscriptionAction, getNavigationProps} from 'common/dao';
 import {PagingListView, Icon, SearchBar, ValidatingButton} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import yup from 'yup';
@@ -57,8 +57,9 @@ class ProductList extends Component{
   }
 
   goBack(){
-    const {selectedCategory, parentSelectedCategory, history} = this.props;
-    this.setState({selectedCategory: parentSelectedCategory}, () => history.goBack(undefined, {selectedCategory, parentSelectedCategory}));
+    const {parentSelectedCategory, history} = this.props;
+    history.goBack();
+    this.setState({selectedCategory: parentSelectedCategory});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -118,22 +119,17 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {dispatch, selectedContentType, selectedProduct, selectedCategory = {}} = initialProps;
+  const {selectedContentType, selectedProduct, selectedCategory = {}} = initialProps;
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {
     categoryId: navProps.parentSelectedCategory != undefined ? navProps.parentSelectedCategory.categoryId : selectedCategory.categoryId
   };
 
-  const resetProducts = () => {
-    dispatch(resetSubscriptionAction('productDao', defaultOptions));
-  };
-
   return {
     ...navProps,
     selectedContentType,
     selectedProduct,
-    resetProducts,
     defaultOptions,
     ...initialProps
   };

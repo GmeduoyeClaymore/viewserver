@@ -51,7 +51,8 @@ class FlatProductCategoryList extends Component{
     const {next, history, selectedCategory: parentSelectedCategory, highlightedCategory} = this.props;
 
     if (highlightedCategory.isLeaf) {
-      this.setState({selectedCategory: highlightedCategory, parentSelectedCategory}, () =>  history.push(next));
+      history.push(next);
+      this.setState({selectedCategory: highlightedCategory, parentSelectedCategory});
     } else {
       this.setState({selectedCategory: highlightedCategory});
     }

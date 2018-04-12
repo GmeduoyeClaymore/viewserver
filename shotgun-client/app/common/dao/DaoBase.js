@@ -54,6 +54,7 @@ export default class Dao {
   get countObservable(){
     return this.countSubject;
   }
+
   get snapshotCompleteObservable(){
     return this.snapshotCompleteSubject;
   }
