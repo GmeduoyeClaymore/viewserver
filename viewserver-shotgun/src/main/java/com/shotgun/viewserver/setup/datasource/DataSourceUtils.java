@@ -13,7 +13,7 @@ public class DataSourceUtils {
     public static IDataLoader getDataLoader(IShotgunViewServerConfiguration shotgunConfiguration, String name, String dataPath) {
         IDataAdapter dataAdapter;
 
-        if (!shotgunConfiguration.isTest()) {
+        if (!shotgunConfiguration.isTest() && !shotgunConfiguration.isMock()) {
             dataAdapter = new FirebaseDataAdapter(shotgunConfiguration.getFirebaseKeyPath(), name);
         } else {
             dataAdapter = getDataAdapter(shotgunConfiguration, name, dataPath);
