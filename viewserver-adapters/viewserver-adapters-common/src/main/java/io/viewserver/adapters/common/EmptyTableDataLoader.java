@@ -34,6 +34,7 @@ public class EmptyTableDataLoader extends DataLoader {
 
     @Override
     protected void loadSnapshot(Consumer<IRecord> consumer) {
+        loadDataFuture.set(true);
     }
 
     public void setName(String name) {

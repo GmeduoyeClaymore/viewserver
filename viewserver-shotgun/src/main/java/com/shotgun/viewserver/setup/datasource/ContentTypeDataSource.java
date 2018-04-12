@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
+import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
@@ -34,13 +35,13 @@ public class
             ))
             .withKeyColumns("contentTypeId");
 
-    public static DataSource getDataSource(String firebaseKeyPath) {
+    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
         return new DataSource()
                 .withName(NAME)
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/contentTypes.csv"),
+                                DataSourceUtils.getDataAdapter(shotgunConfiguration, NAME, "data/contentTypes.csv"),
                                 null
                         )
                 )

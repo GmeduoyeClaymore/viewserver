@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class OrderDataSource {
     public static final String NAME = "order";
 
-    public static DataSource getDataSource(String firebaseKeyPath) {
+    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("orderId", "orderId", ColumnType.String),
@@ -34,13 +35,7 @@ public class OrderDataSource {
 
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(
-                        new DataLoader(
-                                NAME,
-                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/order.csv"),
-                                null
-                        )
-                )
+                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/order.csv"))
                 .withSchema(schema)
                 .withNodes(
                         new JoinNode("deliveryJoin")

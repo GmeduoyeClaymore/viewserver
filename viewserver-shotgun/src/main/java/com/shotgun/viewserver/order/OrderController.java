@@ -38,6 +38,7 @@ public class OrderController {
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
     private MessagingController messagingController;
+    private boolean isMock;
     private KeyedTable productTable;
     private IDatabaseUpdater iDatabaseUpdater;
     private Double labourerRate;
@@ -47,13 +48,15 @@ public class OrderController {
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver,
-                           MessagingController messagingController) {
+                           MessagingController messagingController,
+                           boolean isMock) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
         this.pricingStrategyResolver = pricingStrategyResolver;
         this.messagingController = messagingController;
+        this.isMock = isMock;
     }
 
     KeyedTable getProductTable(){
@@ -181,6 +184,10 @@ public class OrderController {
     }
 
     private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
+        if(this.isMock){
+            return 0.10d;
+        }
+
         if(delivery.getIsFixedPrice()){
             return Double.valueOf(delivery.getFixedPriceValue());
         }

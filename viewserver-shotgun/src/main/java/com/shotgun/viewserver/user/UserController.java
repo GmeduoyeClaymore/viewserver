@@ -71,9 +71,9 @@ public class UserController {
     public String addOrUpdateUser(@ActionParam(name = "user") User user) {
         log.debug("addOrUpdateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-       /* if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
+        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
             throw new RuntimeException("Already  user registered for email " + user.getEmail());
-        }*/
+        }
 
         Date now = new Date();
 

@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.Constants;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
@@ -18,7 +19,7 @@ public class
 UserProductDataSource {
     public static final String NAME = "userProduct";
 
-    public static DataSource getDataSource(String firebaseKeyPath) {
+    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(

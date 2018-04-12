@@ -36,24 +36,29 @@ import java.util.Map;
  */
 public class ShotgunBootstrapper extends BootstrapperBase {
     private static final Logger log = LoggerFactory.getLogger(ShotgunBootstrapper.class);
-    String firebaseKeyPath;
+    private IShotgunViewServerConfiguration shotgunConfiguration;
 
     @Override
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
-        dataSources.add(UserDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(RatingDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(DeliveryAddressDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(DeliveryDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(OrderDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(UserRelationshipDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(OrderItemsDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(VehicleDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(ProductCategoryDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(ProductDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(ContentTypeDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(PhoneNumberDataSource.getDataSource(firebaseKeyPath));
-        dataSources.add(UserProductDataSource.getDataSource(firebaseKeyPath));
+
+        //DataSources which require data from csv in all modes
+        dataSources.add(ProductCategoryDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(ProductDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(ContentTypeDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(PhoneNumberDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(UserProductDataSource.getDataSource(shotgunConfiguration));
+
+        //DataSources which require data from csv only in test mode
+        dataSources.add(UserDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(RatingDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(DeliveryAddressDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(DeliveryDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(OrderDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(UserRelationshipDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(OrderItemsDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(VehicleDataSource.getDataSource(shotgunConfiguration));
+
         return dataSources;
     }
 
@@ -77,9 +82,10 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     @Override
     public void run(IViewServerMasterConfiguration configuration) {
         log.info("Bootstrapping local database");
-        firebaseKeyPath = ((IShotgunViewServerConfiguration) configuration).getFirebaseKeyPath();
-        if(!"MOCK".equals(firebaseKeyPath)) {
-            FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
+        shotgunConfiguration = (IShotgunViewServerConfiguration) configuration;
+
+        if(!shotgunConfiguration.isMock()) {
+            FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(shotgunConfiguration.getFirebaseKeyPath());
             setup(firebaseConnectionFactory.getConnection());
         }else{
             super.run(configuration);

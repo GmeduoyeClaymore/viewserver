@@ -10,6 +10,7 @@ import io.viewserver.server.XmlViewServerConfiguration;
 
 public class ShotgunViewServerConfiguration extends XmlViewServerConfiguration implements IShotgunViewServerConfiguration{
     public static final String VIEWSERVER_ISMOCK = "viewserver.isMock";
+    public static final String VIEWSERVER_ISTEST = "viewserver.isTest";
     public static final String VIEWSERVER_FIREBASE_KEY_PATH = "viewserver.firebaseKeyPath";
     public static final String VIEWSERVER_MESSAGING_API_KEY = "viewserver.messagingApiKey";
     public static final String VIEWSERVER_AWS_ACCESS = "viewserver.awsCredentials.accessKey";
@@ -60,7 +61,12 @@ public class ShotgunViewServerConfiguration extends XmlViewServerConfiguration i
     public VehicleDetailsApiKey getVehicleDetailsKey() {
         return new VehicleDetailsApiKey(configuration.getString(VIEWSERVER_VEHICLE_DETAILS_KEY));
     }
+
     public boolean isMock() {
         return configuration.getBoolean(VIEWSERVER_ISMOCK);
+    }
+
+    public boolean isTest() {
+        return configuration.getBoolean(VIEWSERVER_ISTEST);
     }
 }
