@@ -23,12 +23,12 @@ resourceDictionary.
 class OrderConfirmation extends Component{
   constructor(props){
     super(props);
-    this.purchase = this.purchase.bind(this);
+    this.createJob = this.createJob.bind(this);
     this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
   }
 
-  purchase(){
+  createJob(){
     const {dispatch, history, orderItem, payment, delivery, selectedProduct, ordersPath} = this.props;
     dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
   }
@@ -66,10 +66,10 @@ class OrderConfirmation extends Component{
       <Content>
         <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isDriver={false} price={price}/>
         <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
-        <ErrorRegion errors={errors}>
-          <SpinnerButton busy={busy} onPress={this.purchase} fullWidth iconRight paddedBottom><Text uppercase={false}>{resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
-        </ErrorRegion>
       </Content>
+      <ErrorRegion errors={errors}>
+        <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
+      </ErrorRegion>
     </Container>;
   }
 }
