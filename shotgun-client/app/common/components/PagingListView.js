@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Dimensions, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
-import {resetSubscriptionAction, updateSubscriptionAction, resetDataAction, clearCommandStatus} from 'common/dao/DaoActions';
+import {updateSubscriptionAction, resetDataAction, clearCommandStatus} from 'common/dao/DaoActions';
 import {isEqual, connectAdvanced} from 'custom-redux';
 import {bindActionCreators} from 'redux';
 import {ErrorRegion} from 'common/components';
@@ -14,7 +14,6 @@ class PagingListView extends Component {
   constructor(props) {
     super(props);
     this.onScroll = this.onScroll.bind(this);
-    this.reset = this.reset.bind(this);
     this.daoName = props.daoName;
     this.state = {pageSize: props.pageSize, limit: props.pageSize};
   }
@@ -33,19 +32,10 @@ class PagingListView extends Component {
     }
   }
 
-  reset(){
-    const {reset} = this.props;
-    if (reset){
-      Logger.info('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - Reset called explicitly on paging list view');
-      reset();
-    }
-  }
-
   componentWillReceiveProps(newProps) {
     const {options} = this.props;
 
     if (newProps.options !== null && !isEqual(options, newProps.options, true)) {
-      //reset();
       this.setOptions(options, newProps.options);
       Logger.debug('PagingProps-' + JSON.stringify(newProps.options));
     }
@@ -97,7 +87,7 @@ const styles = {
 const selectorFactory = (dispatch, initializationProps) => {
   let result = {};
   let ownProps = {};
-  const actions = bindActionCreators({resetSubscriptionAction, updateSubscriptionAction, resetDataAction, clearCommandStatus}, dispatch);
+  const actions = bindActionCreators({updateSubscriptionAction, resetDataAction, clearCommandStatus}, dispatch);
   const {daoName} = initializationProps;
 
   return (nextState, nextOwnProps) => {
@@ -109,22 +99,19 @@ const selectorFactory = (dispatch, initializationProps) => {
     
     const clearStatusThen = func => {
       actions.clearCommandStatus(daoName, 'updateSubscription');
-      actions.clearCommandStatus(daoName, 'resetSubscription');
       func();
     };
 
-    const errors = getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]);
+    const errors = getOperationErrors(nextState, [{[daoName]: 'updateSubscription'}]);
 
     const nextResult = {
-      busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}, {[daoName]: 'resetSubscription'}]) || (!getSnapshotComplete(nextState, daoName) && !errors),
+      busy: isAnyOperationPending(nextState, [{ [daoName]: 'updateSubscription'}]) || (!getSnapshotComplete(nextState, daoName) && !errors),
       data: getDaoState(nextState, initializationProps.dataPath, daoName),
       size: getDaoSize(nextState, daoName),
       errors,
       options,
       doPage: limit => clearStatusThen(() => actions.updateSubscriptionAction(daoName, {limit})),
       setOptions: options => clearStatusThen(() => actions.updateSubscriptionAction(daoName, options)),
-      reset: () => actions.resetDataAction(daoName),
-      
       limit: daoPageStatus === 'success' ? daoPageResult : (ownProps.limit || initializationProps.pageSize),
       ...nextOwnProps
     };
