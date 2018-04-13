@@ -64,6 +64,7 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
             });
             return ss.get();
         }catch(Exception ex){
+            logger.error(String.format("Error adding snapshot listener for Firebase table %s", tableName));
             throw new RuntimeException("Error getting records");
         }
     }
