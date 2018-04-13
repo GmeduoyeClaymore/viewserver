@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
+import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.adapters.common.DataLoader;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
@@ -16,7 +17,7 @@ public class
 ProductCategoryDataSource {
     public static final String NAME = "productCategory";
 
-    public static DataSource getDataSource(String firebaseKeyPath) {
+    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
         Schema schema = new Schema()
                 .withColumns(Arrays.asList(
                         new Column("categoryId", "categoryId", ColumnType.String),
@@ -33,7 +34,7 @@ ProductCategoryDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                DataSourceUtils.get(firebaseKeyPath, NAME, "data/productCategory.csv"),
+                                DataSourceUtils.getDataAdapter(shotgunConfiguration, NAME, "data/productCategory.csv"),
                                 null
                         )
                 )

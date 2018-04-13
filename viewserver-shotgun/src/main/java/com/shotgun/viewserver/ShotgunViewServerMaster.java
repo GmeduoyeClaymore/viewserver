@@ -24,7 +24,6 @@ import io.viewserver.server.ViewServerMasterBase;
  */
 public class ShotgunViewServerMaster extends ViewServerMasterBase {
     private final String firebaseKeyPath;
-    private final boolean isOfflineDb;
     private IShotgunViewServerConfiguration configuration;
 
     public ShotgunViewServerMaster(String name, IShotgunViewServerConfiguration configuration) {
@@ -32,8 +31,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         this.configuration = configuration;
         this.getServerExecutionContext().getFunctionRegistry().register("containsProduct", ContainsProduct.class);
         firebaseKeyPath = configuration.getFirebaseKeyPath();
-        isOfflineDb = firebaseKeyPath.equals("MOCK");
-        localStorageDataAdapterFactory = isOfflineDb ? new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath()) : new FirebaseInstallingDataAdapterFactory(firebaseKeyPath);
+        localStorageDataAdapterFactory = configuration.isMock() ? new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath()) : new FirebaseInstallingDataAdapterFactory(firebaseKeyPath);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         MessagingController messagingController = new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
         MapsController mapsController = new MapsController(configuration.getMapsKey());
         NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), configuration.getNexmoKey(), getDatabaseUpdater());
-        PaymentController paymentController = isOfflineDb ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
+        PaymentController paymentController = configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
         //TODO need to test live stripe payments - StripeApiKey apiKey = isOfflineDb ? new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4") : new StripeApiKey("pk_live_7zCPIyqeDeEnLvwzPeS4vXQv", "sk_live_ZZXR0KcIO0s4CswZC3eQrewL");
 
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(getDatabaseUpdater());
@@ -58,9 +56,9 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new DriverController(getDatabaseUpdater(),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), configuration.isMock()));
+        this.registerController(new DriverController(getDatabaseUpdater(),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), configuration.isTest()));
         this.registerController(new CustomerController(getDatabaseUpdater(),paymentController, deliveryAddressController, messagingController, userController, nexmoController));
-        this.registerController(new OrderController(getDatabaseUpdater(), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver(), messagingController));
+        this.registerController(new OrderController(getDatabaseUpdater(), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver(), messagingController, configuration.isTest()));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
         this.registerController(messagingController);
@@ -73,10 +71,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
     }
 
     private IDatabaseUpdater getDatabaseUpdater() {
-        if(isOfflineDb){
-            return new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry);
-        }
-        return new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath);
+        return configuration.isMock() ? new TableUpdater(getServerExecutionContext(), dimensionMapper, dataSourceRegistry): new FirebaseDatabaseUpdater(getServerExecutionContext(), firebaseKeyPath);
     }
 
     protected Iterable<IEndpoint> getMasterEndpoints(){

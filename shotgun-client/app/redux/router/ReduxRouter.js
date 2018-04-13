@@ -22,6 +22,7 @@ class ReduxRouterClass extends Component{
     this.transitionManager = new TransitionManager(props.name, this.forceUpdate.bind(this));
     this.performTransition = this.performTransition.bind(this);
     this.handleRef = this.handleRef.bind(this);
+    this.handleBack = this.handleBack.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
     this.doesMatch = memoize((loc, path) => matchPath(loc, path));
   }
@@ -165,13 +166,13 @@ const mapStateToProps = () => {
   return (state, props) => {
     const {setState, dispatch} = props;
     const navigationContainerTranslator = fromProps(props);
-    const historyFactory =  navigationContextOverride => memoizedHistoryFactory(navigationContextOverride, navigationContainerTranslator.navContainer, setState, dispatch);
+    const historyOverrideFactory =  navigationContextOverride => memoizedHistoryFactory(navigationContextOverride, navigationContainerTranslator.navContainer, setState, dispatch);
     const {location} = navigationContainerTranslator;
     
     return {
       navigationContainerTranslator,
       ...props,
-      historyOverrideFactory: historyFactory,
+      historyOverrideFactory,
       location,
     };
   };

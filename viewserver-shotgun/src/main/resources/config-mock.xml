@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <config>
     <viewserver>
-        <isMock>false</isMock>
-        <firebaseKeyPath>MOCK</firebaseKeyPath>
+        <isMock>true</isMock>
+        <isTest>true</isTest>
+        <firebaseKeyPath></firebaseKeyPath>
         <messagingApiKey>AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA</messagingApiKey>
 
        <!-- <messagingApiKey>AAAAh0jmqQI:APA91bEuHsGA6Kct6tiIb3YkSAwUX6x7RcUmp-iKO6YmWf5lHrZQ0UkyLqDX1mSiTvIMbwo6xvxNNT2cpMN8S9iDvX4uB1vfhAxh2xux5Dsg5fnUOJUc3nXDWGwTByBZn7B2JYhle1HS</messagingApiKey>
@@ -10,7 +11,7 @@
             <accessKey>AKIAJ5IKVCUUR6JC7NCQ</accessKey>
             <secretKey>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</secretKey>
         </awsCredentials>
-        <mapsControllerKey>AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M</mapsControllerKey>
+        <mapsControllerKey>AIzaSyBauRixXaHVHwj87XPPbjwsiL3KYyaurE8</mapsControllerKey>
         <stripe>
             <key>pk_test_BUWd5f8iUuxmbTT5MqsdOlmk</key>
             <secret>sk_test_a36Vq8WXGWEf0Jb55tUUdXD4</secret>

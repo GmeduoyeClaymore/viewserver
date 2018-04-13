@@ -10,6 +10,7 @@ import io.viewserver.server.IViewServerConfiguration;
 
 public interface IShotgunViewServerConfiguration extends IViewServerConfiguration {
     boolean isMock();
+    boolean isTest();
     String getFirebaseKeyPath();
     MessagingApiKey getMessagingApiKey();
     BasicAWSCredentials getAwsCredentials();

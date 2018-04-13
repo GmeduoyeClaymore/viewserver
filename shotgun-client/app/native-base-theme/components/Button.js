@@ -250,6 +250,12 @@ export default (variables = variable) => {
       marginRight: variables.contentPadding,
       marginBottom: variables.contentPadding
     },
+    '.floatingBottom': {
+      position: 'absolute',
+      bottom: variables.contentPadding,
+      left: variables.contentPadding,
+      right: variables.contentPadding
+    },
     '.large': {
       width: '100%',
       aspectRatio: 1.5,
