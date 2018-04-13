@@ -7,7 +7,7 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getOperatio
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {callDriver} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {LoadingScreen, RatingAction, ErrorRegion, Icon} from 'common/components';
+import {LoadingScreen, RatingAction, ErrorRegion, Icon, AverageRating} from 'common/components';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import locationImg from 'common/assets/location.png';
 
@@ -64,7 +64,7 @@ class CustomerOrderInProgress extends Component{
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
-          <Button transparent style={styles.backButton} onPress={() => history.push(`${parentPath}/CustomerOrders`)}>
+          <Button transparent style={styles.backButton} onPress={() => history.push({pathname: `${parentPath}/CustomerOrders`, transition: 'right'})}>
             <Icon name='back-arrow'/>
           </Button>
         </Row>
@@ -85,7 +85,7 @@ class CustomerOrderInProgress extends Component{
                     <Col>
                       <Text style={styles.subTitle}>Your driver</Text>
                       <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-                      <Text><Icon name='star' avgStar/>{delivery.driverRatingAvg}</Text>
+                      <AverageRating rating={delivery.driverRatingAvg}/>
                     </Col>
                     <Col>
                       <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/>

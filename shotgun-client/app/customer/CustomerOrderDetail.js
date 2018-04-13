@@ -121,7 +121,7 @@ class CustomerOrderDetail extends Component{
           </Col>
         </Grid> : null}
         {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
-        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={onPressTrack}><Text uppercase={false}>{resourceDictionary.TrackButtonCaption}</Text></Button> : null}
+        {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={onPressTrack}><Text uppercase={false}>{resources.TrackButtonCaption}</Text></Button> : null}
         <RatingSummary orderSummary={orderSummary} isDriver={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>
