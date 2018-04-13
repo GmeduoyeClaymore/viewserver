@@ -40,6 +40,7 @@ public class VehicleController {
             }
 
             Record vehicleRecord = new Record()
+                    .addValue("vehicleId", vehicle.getVehicleId())
                     .addValue("userId", userId)
                     .addValue("registrationNumber", vehicle.getRegistrationNumber())
                     .addValue("colour", vehicle.getColour())

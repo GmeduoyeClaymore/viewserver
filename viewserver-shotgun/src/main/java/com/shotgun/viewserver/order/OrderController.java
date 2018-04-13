@@ -141,11 +141,15 @@ public class OrderController {
     }
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
-    public Double calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        if(delivery.getIsFixedPrice()){
-            return Double.valueOf(delivery.getFixedPriceValue());
+    public int calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
+        if(this.isTest){
+            return 10;
         }
-        Double result = new Double(0);
+
+        if(delivery.getIsFixedPrice()){
+            return delivery.getFixedPriceValue();
+        }
+        int result = 0;
         for(OrderItem orderItem : orderItems){
             result += calculatePrice(orderItem,delivery);
         }
@@ -184,10 +188,6 @@ public class OrderController {
     }
 
     private int calculatePrice(OrderItem orderItem, Delivery delivery) {
-        if(this.isTest){
-            return 10;
-        }
-
         if(delivery.getIsFixedPrice()){
             return delivery.getFixedPriceValue();
         }
