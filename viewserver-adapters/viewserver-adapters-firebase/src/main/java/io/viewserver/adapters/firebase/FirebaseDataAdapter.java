@@ -48,9 +48,13 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
                 }
 
                 for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                    //TODO - deal with removes
-                    DocumentChangeRecord changeRecord = new DocumentChangeRecord(schema, dc.getDocument());
-                    consumer.accept(changeRecord);
+                    try {
+                        //TODO - deal with removes
+                        DocumentChangeRecord changeRecord = new DocumentChangeRecord(schema, dc.getDocument());
+                        consumer.accept(changeRecord);
+                    }catch (Exception ex){
+                        logger.error(String.format("There was an error updating a record in the %s table", tableName));
+                    }
                 }
 
                 if (!snapshotComplete) {
