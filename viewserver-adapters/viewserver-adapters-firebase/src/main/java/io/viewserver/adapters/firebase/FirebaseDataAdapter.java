@@ -11,6 +11,8 @@ import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.IRowFlags;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class FirebaseDataAdapter implements IWritableDataAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseDataAdapter.class);
     private String firebaseKeyPath;
     private String tableName;
     protected DataSource dataSource;
@@ -38,9 +41,14 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
         CompletableFuture<Integer> ss = new CompletableFuture<>();
 
         try {
+            logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
             getCollection().addSnapshotListener((snapshot, e) -> {
+                if(snapshotComplete) {
+                    logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
+                }
+
                 for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                    //TODO - deal with adds, updates and removes
+                    //TODO - deal with removes
                     DocumentChangeRecord changeRecord = new DocumentChangeRecord(schema, dc.getDocument());
                     consumer.accept(changeRecord);
                 }
