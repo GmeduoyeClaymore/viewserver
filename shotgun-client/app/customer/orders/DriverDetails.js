@@ -10,8 +10,8 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('DetailsTitle', ({product}) => `Your ${product.name}`).
     delivery(() => 'Your delivery driver').
-    rubbish(() => 'Rubbish collector').
-  property('DetailsTitle', ({product}) => `Call ${product.name}`).
+    rubbish(() => 'Your Rubbish collector').
+  property('CallButtonTitle', ({product}) => `Call ${product.name}`).
   delivery(() => 'Call Delivery Driver').
     rubbish(() => 'Call Rubbish collector');
 /*eslint-enable */
@@ -27,7 +27,7 @@ export default class DriverDetails extends Component{
     const {orderSummary, dispatch} = this.props;
     const {product, delivery} = orderSummary;
     const {resources} = this;
-    const {DetailsTitle} = resources;
+    const {DetailsTitle, CallButtonTitle} = resources;
 
 
     const onPressCallDriver = async () => {
@@ -36,8 +36,8 @@ export default class DriverDetails extends Component{
 
     return [<Row>
       <Col>
-        <Text style={styles.subTitle}><DetailsTitle product={product}/></Text>
-        <Text style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
+        <Text key="title" style={styles.subTitle}><DetailsTitle product={product}/></Text>
+        <Text key="summary" style={styles.data}>{delivery.driverFirstName} {delivery.driverLastName}</Text>
         <AverageRating rating={delivery.driverRatingAvg}/>
       </Col>
       <Col>
@@ -47,7 +47,7 @@ export default class DriverDetails extends Component{
     <Row>
       <Button fullWidth callButtonSml onPress={onPressCallDriver}>
         <Icon name="phone" paddedIcon/>
-        <Text uppercase={false}>Call {product.name}</Text>
+        <Text uppercase={false}><CallButtonTitle product={product}/></Text>
       </Button>
     </Row>];
   }
@@ -58,6 +58,9 @@ const styles = {
   subTitle: {
     color: shotgun.brandLight,
     fontSize: 12,
+    borderWidth: 10,
+    borderColor: 'red',
+    whitespace: 'nowrap',
     paddingBottom: 5
   },
   driverImage: {

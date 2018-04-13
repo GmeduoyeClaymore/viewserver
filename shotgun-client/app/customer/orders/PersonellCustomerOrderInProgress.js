@@ -29,8 +29,8 @@ export default class PersonellCustomerOrderInProgress extends Component{
         <Tab heading="Directions" onPress={() => goToTabNamed('MapDetails')}/>
       </Tabs>
       <ReduxRouter defaultRoute="OrderPhotoUpload">
-        <Route path="OrderPhotoUpload" component={OrderPhotoUpload}/>
-        <Route path="MapDetails" component={MapDetails}/>
+        <Route key="OrderPhotoUpload" path="OrderPhotoUpload" component={OrderPhotoUpload}/>
+        <Route key="MapDetails" path="MapDetails" component={MapDetails}/>
       </ReduxRouter>
     </Grid>;
   }
