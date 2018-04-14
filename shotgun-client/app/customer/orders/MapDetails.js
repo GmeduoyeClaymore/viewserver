@@ -17,7 +17,7 @@ export default class MapDetails extends Component{
   }
   render(){
     let map;
-    const {origin, destination, driverPosition, contentType} = this.props;
+    const {origin, destination, driverPosition, contentType, client} = this.props;
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
         map.fitToElements(false);

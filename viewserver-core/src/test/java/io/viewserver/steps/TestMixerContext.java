@@ -22,10 +22,7 @@ import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.factories.*;
-import io.viewserver.operators.ChangeRecorder;
-import io.viewserver.operators.IInput;
-import io.viewserver.operators.IOperator;
-import io.viewserver.operators.IOutput;
+import io.viewserver.operators.*;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.index.IndexOperator;
 import io.viewserver.operators.table.KeyedTable;
@@ -52,11 +49,13 @@ public class TestMixerContext {
 
     public TestMixerContext() {
         executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         functionRegistry = new FunctionRegistry();
         summaryRegistry = new SummaryRegistry();
         tableStorage = new ChunkedColumnStorage(1024);
         catalog = new Catalog(executionContext);
         operatorFactories = new HashMap<>();
+        ExecutionContext.blockThreadAssertionForTest = true;
 
         register(new TestTableFactory(executionContext, catalog));
         register(new TestFilterOperatorFactory(executionContext, catalog,functionRegistry));

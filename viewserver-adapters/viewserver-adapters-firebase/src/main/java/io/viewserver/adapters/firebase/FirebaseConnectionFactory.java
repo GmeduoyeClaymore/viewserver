@@ -31,6 +31,7 @@ public class FirebaseConnectionFactory{
                     .build();
             FirebaseApp.initializeApp(options);
 
+
             connection = FirestoreClient.getFirestore();
         }catch(Exception ex){
             throw new RuntimeException("Could not open a connection to the firebase database", ex);

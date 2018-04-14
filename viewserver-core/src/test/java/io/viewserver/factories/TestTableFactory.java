@@ -100,44 +100,50 @@ public class TestTableFactory implements ITestOperatorFactory {
     }
 
     public void updateTable(String operatorName,List<Map<String,String>> records){
-        KeyedTable table = (KeyedTable) catalog.getOperator(operatorName);
-        if(table == null){
-            throw new RuntimeException("Unable to find table named \"" + operatorName + "\"");
-        }
-        List<FieldDefinition> definitions = getFieldDefinitions(records);
-        FieldDefinition idField = null;
-        for(FieldDefinition def : definitions){
-            if(def.getFieldName().equals("id")){
-                idField = def;
-                break;
-            }
-        }
-
-        if(idField == null){
-            throw new RuntimeException("Record set doesn't contain a field named id");
-        }
-
-        for(Map<String,String> record : records){
-            Object id = idField.getValue(record);
-            if(id == null){
-                throw new RuntimeException("Row must contain an id");
-            }
-            TableKey key = new TableKey(id);
-            if(table.getRow(key) == -1){
-                table.addRow(key, row -> {
-                    for(FieldDefinition def : definitions){
-                        def.setValue(record,row);
+        executionContext.submit(
+                () -> {
+                    KeyedTable table = (KeyedTable) catalog.getOperator(operatorName);
+                    if(table == null){
+                        throw new RuntimeException("Unable to find table named \"" + operatorName + "\"");
                     }
-                });
-            } else{
-                table.updateRow(key, row -> {
+                    List<FieldDefinition> definitions = getFieldDefinitions(records);
+                    FieldDefinition idField = null;
                     for(FieldDefinition def : definitions){
-                        def.setValue(record,row);
+                        if(def.getFieldName().equals("id")){
+                            idField = def;
+                            break;
+                        }
                     }
-                });
-            }
 
-        }
+                    if(idField == null){
+                        throw new RuntimeException("Record set doesn't contain a field named id");
+                    }
+
+                    for(Map<String,String> record : records){
+                        Object id = idField.getValue(record);
+                        if(id == null){
+                            throw new RuntimeException("Row must contain an id");
+                        }
+                        TableKey key = new TableKey(id);
+                        if(table.getRow(key) == -1){
+                            table.addRow(key, row -> {
+                                for(FieldDefinition def : definitions){
+                                    def.setValue(record,row);
+                                }
+                            });
+                        } else{
+                            table.updateRow(key, row -> {
+                                for(FieldDefinition def : definitions){
+                                    def.setValue(record,row);
+                                }
+                            });
+                        }
+
+                    }
+                }, 0
+
+        );
+
     }
 
     private List<String> getFields(List<Map<String, String>> records) {

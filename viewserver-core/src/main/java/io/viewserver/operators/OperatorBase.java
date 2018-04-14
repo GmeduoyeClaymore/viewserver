@@ -171,7 +171,7 @@ public abstract class OperatorBase implements IOperator {
         }
         inputsReadyCount++;
         if (inputsReadyCount == commitDependencyCount) {
-            executionContext.submit(() -> commit(), 0);
+            executionContext.submit(this::commit, 0);
         }
     }
 

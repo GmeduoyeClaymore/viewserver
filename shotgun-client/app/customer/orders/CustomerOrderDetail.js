@@ -40,7 +40,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, orderSummary, errors} = this.props;
+    const {busy, orderSummary, errors, history} = this.props;
     const {resources} = this;
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>

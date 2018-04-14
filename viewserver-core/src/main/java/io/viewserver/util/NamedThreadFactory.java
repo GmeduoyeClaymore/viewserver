@@ -1,4 +1,4 @@
-package com.shotgun.viewserver;
+package io.viewserver.util;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;

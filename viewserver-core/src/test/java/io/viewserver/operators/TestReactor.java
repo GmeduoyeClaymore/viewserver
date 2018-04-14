@@ -6,6 +6,7 @@ import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.IReactorCommandWheel;
 import io.viewserver.reactor.ITask;
 import io.viewserver.reactor.SimpleReactorCommandWheel;
+import io.viewserver.util.NamedThreadFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class TestReactor implements IReactor {
-    Executor current = Executors.newSingleThreadExecutor();
+    Executor current = Executors.newSingleThreadExecutor(new NamedThreadFactory("reactor-"));
     SimpleReactorCommandWheel wheel = new SimpleReactorCommandWheel();
     List<Runnable> loopTasks = new ArrayList<Runnable>();
 
@@ -64,7 +65,7 @@ public class TestReactor implements IReactor {
 
     @Override
     public void scheduleTask(ITask task, long delay, long frequency) {
-
+        task.execute();
     }
 
     @Override

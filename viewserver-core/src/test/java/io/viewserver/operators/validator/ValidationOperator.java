@@ -77,9 +77,7 @@ public class ValidationOperator extends OperatorBase{
         tableData.add(keysList);
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
-            for(String key : keys){
-                if(ValidationUtils.IGNORED_COLUMNS.contains(key))
-                    continue;
+            for(String key : keysList){
                 Object val = row.get(key);
                 if(val == null){
                     result.add("");

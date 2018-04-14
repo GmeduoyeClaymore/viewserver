@@ -257,7 +257,6 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
 
             boolean isRangeSet = start != -1 && end != -1;
 
-            int addedRowsCount = addedRows.size();
             int updatedRowsCount = updatedRows.size();
             int removedRowsCount = removedRows.size();
 
@@ -274,158 +273,24 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             }
 
             IRowSequence allRows = getProducer().getAllRows();
-            NavigableSet<Integer> pluses = new TreeSet<>();
-            NavigableSet<Integer> minuses = new TreeSet<>();
-            TIntIntHashMap nexts = new TIntIntHashMap(addedRows.size() + updatedRows.size(), 0.75f, -1, -1);
-            if (addedRowsCount + updatedRowsCount - removedRowsCount == getProducer().getRowCount()) {
-                sort();
-            } else {
-                for (int i = 0; i < removedRowsCount; i++) {
-                    Integer removedRow = getOutputRow(removedRows.get(i));
-                    int oldRank = rankColumn.getInt(removedRow);
-                    minuses.add(oldRank);
-                    if (!isRangeSet || (oldRank >= start && (end == -1 || oldRank < end))) {
-                        output.handleRemove(removedRow);
-                    }
-                }
-                for (int i = 0; i < updatedRowsCount; i++) {
-                    Integer rowId = updatedRows.get(i);
-                    Integer updatedRow = getOutputRow(rowId);
-                    // if the value hasn't actually changed
-//                    if (comparer.compare(rowId, false, rowId, true) == 0) {
-//                        continue;
-//                    }
-                    int oldRank = rankColumn.getInt(updatedRow);
-                    minuses.add(oldRank);
-                }
 
-                if (!addedRows.isEmpty() || !updatedRows.isEmpty()) {
-                    while (allRows.moveNext()) {
-                        int rowId = allRows.getRowId();
-                        int outputRow = getOutputRow(rowId);
-                        for (int i = 0; i < addedRowsCount; i++) {
-                            Integer addedRow = addedRows.get(i);
-                            if (rowId == addedRow) {
-                                continue;
-                            }
-                            if (comparer.compare(rowId, false, addedRow, false) > 0) {
-                                int next = nexts.get(addedRow);
-                                if (next == -1 || comparer.compare(rowId, false, next, false) < 0) {
-                                    nexts.put(addedRow, rowId);
-                                }
-                            }
-                        }
-                        for (int i = 0; i < updatedRowsCount; i++) {
-                            Integer updatedRow = updatedRows.get(i);
-                            // don't compare the row with itself; or if the value hasn't actually changed
-                            if (rowId == updatedRow) { // || comparer.compare(updatedRow, false, updatedRow, true) == 0) {
-                                continue;
-                            }
-                            // if this row's value is greater than the updated row's value...
-                            if (comparer.compare(rowId, false, updatedRow, false) > 0) {
-                                // ...and the updated row is not already this row's previous neighbour...
-                                if (rankColumn.getInt(getOutputRow(updatedRow)) != rankColumn.getInt(outputRow) - 1) {
-                                    int next = nexts.get(updatedRow);
-                                    // ...and this is the first such row, or is greater by a lesser margin than the previous such row
-                                    if (next == -1 || comparer.compare(rowId, false, next, false) < 0) {
-                                        nexts.put(updatedRow, rowId);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                nexts.forEachEntry(new TIntIntProcedure() {
-                    @Override
-                    public boolean execute(int a, int b) {
-                        ((IWritableColumnInt) rankColumn.getColumn()).setInt(getOutputRow(a), rankColumn.getInt(getOutputRow(b)));
-                        return true;
-                    }
-                });
-
-                List<Integer> tails = new ArrayList<>();
-                for (int i = 0; i < addedRowsCount; i++) {
-                    Integer addedRow = addedRows.get(i);
-                    int next = nexts.get(addedRow);
-                    if (next == -1) {
-                        tails.add(addedRow);
-                    } else {
-                        pluses.add(rankColumn.getInt(getOutputRow(addedRow)));
-                    }
-                }
-                for (int i = 0; i < updatedRowsCount; i++) {
-                    Integer updatedRow = updatedRows.get(i);
-                    int next = nexts.get(updatedRow);
-                    if (next == -1) {
-                        tails.add(updatedRow);
-                    } else {
-                        pluses.add(rankColumn.getInt(getOutputRow(updatedRow)));
-                    }
-                }
-
-                if (!tails.isEmpty()) {
-                    int[] tailRanks = new int[tails.size()];
-                    for (int i = 0; i < tailRanks.length; i++) {
-                        tailRanks[i] = rankColumn.getInt(getOutputRow(tails.get(i)));
-                    }
-                    do {
-                        boolean maxRankInTail = false;
-                        for (int i = 0; i < tailRanks.length; i++) {
-                            if (tailRanks[i] == maxRank) {
-                                maxRank--;
-                                maxRankInTail = true;
-                            }
-                        }
-                        if (!maxRankInTail) {
-                            break;
-                        }
-                    } while (true);
-
-                    int i = 0;
-                    for (Integer tail : tails) {
-                        tailRanks[i++] = tail;
-                    }
-
-                    for (int col = sortDescriptor.columnsToSort.size() - 1; col >= 0; col--) {
-                        SortColumn columnToSort = sortDescriptor.columnsToSort.get(col);
-                        sortColumn(tailRanks, sortColumnHolders[col],
-                                columnToSort.descending, sortDescriptor.columnsToSort.size() > 1);
-                    }
-                    for (i = 0; i < tailRanks.length; i++) {
-                        ((IWritableColumnInt) rankColumn.getColumn()).setInt(getOutputRow(tailRanks[i]), ++maxRank);
-                    }
+            sort();
+            for (int i = 0; i < removedRowsCount; i++) {
+                Integer removedRow = getOutputRow(removedRows.get(i));
+                int oldRank = rankColumn.getInt(removedRow);
+                if (!isRangeSet || (oldRank >= start && (end == -1 || oldRank < end))) {
+                    output.handleRemove(removedRow);
                 }
             }
 
-//            pluses = pluses.descendingSet();
-//            minuses = minuses.descendingSet();
             allRows.reset();
-            ArrayList<Integer> plusesList = new ArrayList<>(pluses);
-            int plusesCount = pluses.size();
-            ArrayList<Integer> minusesList = new ArrayList<>(minuses);
-            int minusesCount = minuses.size();
             while (allRows.moveNext()) {
                 int rowId = allRows.getRowId();
+
                 int outputRow = getOutputRow(rowId);
+
                 int oldRank = rankColumn.getPreviousInt(outputRow);
                 int newRank = rankColumn.getInt(outputRow);
-                for (int i = 0; i < minusesCount; i++) {
-                    Integer minus = minusesList.get(i);
-                    if (oldRank > minus || (oldRank == minus && nexts.containsValue(rowId))) {
-                        newRank--;
-                    } else {
-                        break;
-                    }
-                }
-                for (int i = 0; i < plusesCount; i++) {
-                    Integer plus = plusesList.get(i);
-                    if (oldRank > plus || (oldRank == plus && nexts.containsValue(rowId))) {
-                        newRank++;
-                    } else {
-                        break;
-                    }
-                }
 
                 boolean newInRange = !isRangeSet || (newRank >= start && (end == -1 || newRank < end));
                 if (newRank != oldRank) {
@@ -481,8 +346,8 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                     output.handleUpdate(outputRow);
                 }
 
-                setTotalSize();
             }
+            setTotalSize();
         }
 
         private void setTotalSize() {
@@ -560,7 +425,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                 rowIds[i++] = allRows.getRowId();
             }
 
-//            printSort(rowIds, "Unsorted");
+            //printSort(rowIds, "Unsorted");
 
             for (int j = sortDescriptor.columnsToSort.size() - 1; j >= 0; j--) {
                 SortColumn columnToSort = sortDescriptor.columnsToSort.get(j);
@@ -569,18 +434,18 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                     continue;
                 }
                 rowIds = sortColumn(rowIds, sortColumnHolder, columnToSort.descending, sortDescriptor.columnsToSort.size() > 1);
-//                printSort(rowIds, "After sort by " + columnToSort.getName());
+                printSort(rowIds,sortColumnHolder, "After sort by " + columnToSort.getName());
             }
 
             // mark the whole column as dirty
-            output.getCurrentChanges().markColumnDirty(rankColumn.getColumnId());
             IWritableColumnInt rankColumn = (IWritableColumnInt) SortOperator.this.rankColumn.getColumn();
-            i = 0;
             allRows.reset();
             log.debug("Writing ranks");
-            while (allRows.moveNext()) {
-                rankColumn.setInt(getOutputRow(rowIds[i]), i);
-                i++;
+            for (int j=0;j< rowIds.length;j++) {
+                int outputRow = getOutputRow(rowIds[j]);
+                log.debug("Rank input row {} mapped to {} is {}",rowIds[j], outputRow, j);
+                rankColumn.setInt(outputRow, j);
+                log.debug("Rank input row {} mapped to {} is {} - dirty {}",rowIds[j], outputRow, rankColumn.getInt(outputRow), output.getCurrentChanges().isDirty(outputRow, SortOperator.this.rankColumn.getColumnId()));
             }
             if (--i > maxRank) {
                 maxRank = i;
@@ -689,6 +554,17 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             }
             return columnComparer;
         }
+    }
+
+    private void printSort(int[] rowIds, ColumnHolder columnName, String caption) {
+        StringBuilder sb = new StringBuilder();
+        for(int i =0;i< rowIds.length;i++){
+            if(sb.length() > 0){
+                sb.append(",");
+            }
+            sb.append(rowIds[i] + "=" + ColumnHolderUtils.getValue(columnName,rowIds[i]));
+        }
+        log.debug(caption + " - " + sb.toString());
     }
 
     private class Output extends MappedOutputBase {

@@ -53,11 +53,14 @@ public class ExecutionContext implements IExecutionContext{
     private IExpressionParser expressionParser;
     private boolean paused;
     private int numberThreads;
-
+    public static boolean blockThreadAssertionForTest = false;
 
     public static void AssertUpdateThread(){
+        if(blockThreadAssertionForTest){
+            return;
+        }
         if(!Thread.currentThread().getName().startsWith("reactor-")){
-            throw new RuntimeException("This code is being called from a non reactor thread this is wrong");
+            throw new RuntimeException(String.format("This code is being called from a non reactor thread this is wrong \"%s\"",Thread.currentThread().getName()));
         }
     }
 
