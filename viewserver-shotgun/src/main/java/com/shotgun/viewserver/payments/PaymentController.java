@@ -19,7 +19,7 @@ public interface PaymentController {
                                 @ActionParam(name = "deliveryAddress") DeliveryAddress address,
                                 @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
 
-    void createCharge(Double totalPrice,
+    void createCharge(int totalPrice,
                       int chargePercentage,
                       String paymentId,
                       String customerId,

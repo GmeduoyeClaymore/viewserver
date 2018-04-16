@@ -143,7 +143,7 @@ public class OrderController {
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
     public int calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
         if(this.isTest){
-            return 10;
+            return 30;
         }
 
         if(delivery.getIsFixedPrice()){

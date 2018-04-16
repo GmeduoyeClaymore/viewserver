@@ -10,6 +10,7 @@ import io.viewserver.datasource.IDataAdapter;
 import io.viewserver.datasource.IDataLoader;
 
 public class DataSourceUtils {
+    //TODO - add flag to say whether to reset data
     public static IDataLoader getDataLoader(IShotgunViewServerConfiguration shotgunConfiguration, String name, String dataPath) {
         IDataAdapter dataAdapter;
 

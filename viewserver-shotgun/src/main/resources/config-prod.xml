@@ -14,6 +14,10 @@
             <key>pk_test_BUWd5f8iUuxmbTT5MqsdOlmk</key>
             <secret>sk_test_a36Vq8WXGWEf0Jb55tUUdXD4</secret>
         </stripe>
+       <!-- LIVE KEYS ONLY UNCOMMENT IF YOU WANT TO START PAYING FOR THINGS <stripe>
+            <key>pk_live_7zCPIyqeDeEnLvwzPeS4vXQv</key>
+            <secret>sk_live_ZZXR0KcIO0s4CswZC3eQrewL</secret>
+        </stripe>-->
         <nexmo>
             <key>c03cd396</key>
             <secret>33151c6772f2bd52</secret>
