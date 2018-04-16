@@ -19,6 +19,7 @@ package io.viewserver.server.steps;
 import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.DataSource;
+import io.viewserver.distribution.INodeMonitor;
 import io.viewserver.network.netty.inproc.NettyInProcEndpoint;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.MultiThreadedEventLoopReactor;
@@ -31,6 +32,8 @@ import com.google.common.io.Resources;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -38,49 +41,49 @@ import java.io.IOException;
  * Created by nick on 10/02/2015.
  */
 public class ViewServerSteps {
-    private InProcessViewServerContext viewServerContext;
-
-    public ViewServerSteps(InProcessViewServerContext viewServerContext) {
+    private IViewServerContext viewServerContext;
+    private static final Logger log = LoggerFactory.getLogger(ViewServerSteps.class);
+    public ViewServerSteps(IViewServerContext viewServerContext) {
         this.viewServerContext = viewServerContext;
     }
 
     @After
     public void afterScenario() {
-        for (ViewServerSlave slave : viewServerContext.slaves) {
+        for (ViewServerSlave slave : viewServerContext.getSlaves()) {
             IReactor reactor = slave.getServerReactor();
             reactor.shutDown();
             reactor.waitForShutdown();
         }
-        viewServerContext.slaves.clear();
+        viewServerContext.getSlaves().clear();
 
-        if (viewServerContext.master != null) {
-            IReactor reactor = viewServerContext.master.getServerReactor();
+        if (viewServerContext.getMaster() != null) {
+            IReactor reactor = viewServerContext.getMaster().getServerReactor();
             reactor.shutDown();
             reactor.waitForShutdown();
-            viewServerContext.master = null;
+            viewServerContext.setMaster(null);
         }
     }
 
     @Given("^an in-process viewserver with ([0-9]+) slave nodes$")
     public void an_in_process_viewserver_with_slave_nodes(int numSlaves) throws Throwable {
 //        System.setProperty("server.bypassDataSources", "true");
-        BootstrapperBase.bootstrap(viewServerContext.masterConfiguration);
+        BootstrapperBase.bootstrap(viewServerContext.getMasterConfiguration());
 
-        viewServerContext.master = new ViewServerMasterTest("master", viewServerContext.masterConfiguration);
+        viewServerContext.setMaster(new ViewServerMasterTest("master", viewServerContext.getMasterConfiguration()));
 
-        viewServerContext.master.run();
+        viewServerContext.getMaster().run();
 
         for (int i = 0; i < numSlaves; i++) {
             ViewServerSlave slave = new ViewServerSlave("slave-" + i, new NettyInProcEndpoint("inproc://master"));
             slave.run();
-            viewServerContext.slaves.add(slave);
+            viewServerContext.getSlaves().add(slave);
         }
     }
 
     @Given("^a data source defined by \"([^\"]*)\"$")
     public void a_data_source_defined_by(String dataSourceDefinitionFile) throws Exception {
-        viewServerContext.dataSource = getDataSource(dataSourceDefinitionFile);
-        viewServerContext.master.getDataSourceRegistry().register(viewServerContext.dataSource);
+        viewServerContext.setDataSource(getDataSource(dataSourceDefinitionFile));
+        viewServerContext.getMaster().getDataSourceRegistry().register(viewServerContext.getDataSource());
     }
 
     @Given("^a CSV data source defined by \"([^\"]*)\" and loaded from \"([^\"]*)\"$")
@@ -90,7 +93,7 @@ public class ViewServerSteps {
             throw new Exception("Data source must use a CsvDataAdapter to use this step");
         }
         ((CsvDataAdapter) dataSource.getDataLoader().getDataAdapter()).setFileName(dataFile);
-        viewServerContext.master.getDataSourceRegistry().register(dataSource);
+        viewServerContext.getMaster().getDataSourceRegistry().register(dataSource);
     }
 
     private DataSource getDataSource(String dataSourceFile) throws IOException {
@@ -105,16 +108,18 @@ public class ViewServerSteps {
         JacksonSerialiser serialiser = new JacksonSerialiser();
         String json = Resources.toString(Resources.getResource(reportDefinitionFile), Charsets.UTF_8);
         ReportDefinition reportDefinition = serialiser.deserialise(json, ReportDefinition.class);
-        viewServerContext.master.getReportRegistry().register(reportDefinition);
+        viewServerContext.getMaster().getReportRegistry().register(reportDefinition);
     }
 
     @And("^all slave nodes are initialised$")
     public void all_slave_nodes_are_initialised() throws Throwable {
-        viewServerContext.master.waitForNodes(viewServerContext.slaves.size());
+        viewServerContext.getMaster().nodeAddedSubject().take(viewServerContext.getSlaves().size()).toBlocking().forEach(
+                nd -> log.info("Node {} has been registered", nd.toString())
+        );
     }
 
     @Given("^the viewserver has been bootstrapped from \"([^\"]*)\"$")
     public void the_viewserver_has_been_bootstrapped_from(String bootstrapperClassName) throws Throwable {
-        viewServerContext.bootstrapperClass = bootstrapperClassName;
+        viewServerContext.setBootstrapperClass(bootstrapperClassName);
     }
 }

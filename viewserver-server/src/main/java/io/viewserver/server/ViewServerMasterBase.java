@@ -12,9 +12,7 @@ import io.viewserver.configurator.IConfiguratorSpec;
 import io.viewserver.controller.ControllerCatalog;
 import io.viewserver.controller.ControllerJSONCommandHandler;
 import io.viewserver.datasource.*;
-import io.viewserver.distribution.CoalescorFactory;
-import io.viewserver.distribution.DistributionManager;
-import io.viewserver.distribution.DistributionOperatorFactory;
+import io.viewserver.distribution.*;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.SystemReportExecutor;
 import io.viewserver.execution.nodes.IGraphNode;
@@ -41,6 +39,9 @@ import io.viewserver.sql.ExecuteSqlCommandHandler;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +50,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> implements IDataSourceListener {
+public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> implements IDataSourceListener, INodeMonitor {
     private static final Logger log = LoggerFactory.getLogger(ViewServerMaster.class);
     private static final String DATASOURCE_DEPENDENCY_PREFIX = "/" + IDataSourceRegistry.TABLE_NAME + "/";
     protected final DimensionMapper dimensionMapper = new DimensionMapper();
@@ -65,9 +66,22 @@ public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> im
     private ControllerJSONCommandHandler controllerHandler;
     private ControllerCatalog controllerCatalog;
 
+    private final PublishSubject<ViewServerNode> nodeAddedSubject;
+    private final PublishSubject<ViewServerNode> nodeRemovedSubject;
+
     protected ViewServerMasterBase(String name) {
         super(name);
+        this.nodeAddedSubject = PublishSubject.create();
+        this.nodeRemovedSubject = PublishSubject.create();
     }
+
+    public Observable<ViewServerNode> nodeAddedSubject(){
+        return nodeAddedSubject;
+    }
+    public Observable<ViewServerNode> nodeRemovedSubject(){
+        return nodeRemovedSubject;
+    }
+
 
 
     protected ListeningExecutorService getDataLoaderExecutor() {
@@ -88,6 +102,7 @@ public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> im
                 dimensionMapper,
                 getServerCatalog()
         );
+
         executionPlanRunner.setDistributionManager(distributionManager);
 
         // reporting
@@ -104,6 +119,7 @@ public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> im
         systemReportExecutor = new SystemReportExecutor(multiContextHandlerRegistry, dimensionMapper, executionPlanRunner, distributionManager, dataSourceRegistry, reportRegistry);
         ReportDistributor reportDistributor = new ReportDistributor(getServerExecutionContext(), getServerCatalog(), reportContextRegistry, systemReportExecutor);
         distributionManager.addNodeMonitor(reportDistributor, false);
+        distributionManager.addNodeMonitor(this,false);
         reportContextRegistry.setDistributionManager(distributionManager);
         reportRegistry.loadReports();
 
@@ -318,6 +334,10 @@ public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> im
                 distributionManager, configurator, executionPlanRunner, getServerExecutionContext().getSummaryRegistry()));
     }
 
+    public ReportRegistry getReportRegistry() {
+        return reportRegistry;
+    }
+
     @Override
     protected IReactor getReactor(Network serverNetwork) {
         return new EventLoopReactor(super.getName(), serverNetwork);
@@ -336,6 +356,27 @@ public abstract class ViewServerMasterBase extends ViewServerBase<DataSource> im
     @Override
     public void onDataSourceStatusChanged(IDataSource dataSource, DataSourceStatus status) {
     }
+
+    @Override
+    public void onNodeAdded(ViewServerNode node) {
+        this.nodeAddedSubject.onNext(node);
+    }
+
+    @Override
+    public void onNodeRemoved(ViewServerNode node) {
+        this.nodeRemovedSubject.onNext(node);
+    }
+
+    @Override
+    public void onNodesChanged(List<ViewServerNode> addedNodes, List<ViewServerNode> removedNodes, CommandResult commandResult) {
+        for (ViewServerNode node:  addedNodes) {
+            this.nodeAddedSubject.onNext(node);
+        }
+        for (ViewServerNode node:  removedNodes) {
+            this.nodeRemovedSubject.onNext(node);
+        }
+    }
+
 
     protected static class DataLoaderThreadFactory implements ThreadFactory {
         private final ThreadGroup group;

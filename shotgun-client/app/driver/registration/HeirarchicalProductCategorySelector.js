@@ -99,8 +99,10 @@ class HeirarchicalProductCategoryList extends Component{
     ;
   }
 
-  toggleCategory(categoryObj){
+  toggleCategory(categoryObjAll){
     let {selectedProductCategories = []} = this.props;
+    const {path, categoryId} = categoryObjAll;
+    const categoryObj = {path, categoryId};
     const index = selectedProductCategories.findIndex(c=> c.categoryId === categoryObj.categoryId);
     if (!!~index || isImplicitylChecked(categoryObj, selectedProductCategories)){
       selectedProductCategories = selectedProductCategories.filter((category, idx) => idx !== index);

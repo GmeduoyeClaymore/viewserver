@@ -5,7 +5,8 @@ import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
-
+import {Dimensions} from 'react-native';
+const {width} = Dimensions;
 const withFixedPice = (state) => {
   const delivery = {...state.delivery, isFixedPrice: true};
   return {...state, delivery};
@@ -55,7 +56,7 @@ class ContentTypeSelect extends Component{
           <Grid>
             <Row style={{flexWrap: 'wrap'}}>
               {contentTypes.map((v, i) => {
-                return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+                return <View key={i} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
                   <Button style={{height: 'auto'}} large active={selectedContentType.contentTypeId == v.contentTypeId} onPress={() => this.selectContentType(v)}>
                     <Icon name={v.imageUrl || 'dashed'}/>
                   </Button>

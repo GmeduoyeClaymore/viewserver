@@ -29,7 +29,7 @@ class FlatProductCategoryList extends Component{
   rowView({item: row, index: i, highlightedCategory}){
     const {categoryId, category, imageUrl} = row;
  
-    return <View key={categoryId} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+    return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
       <Button style={{height: 'auto'}} large active={highlightedCategory && highlightedCategory.categoryId == row.categoryId} onPress={() => this.highlightCategory(row)}>
         <Icon name={imageUrl || 'dashed'}/>
       </Button>

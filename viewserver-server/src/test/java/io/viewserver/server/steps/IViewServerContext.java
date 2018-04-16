@@ -16,9 +16,30 @@
 
 package io.viewserver.server.steps;
 
+import io.viewserver.datasource.DataSource;
+import io.viewserver.server.IViewServerMasterConfiguration;
+import io.viewserver.server.ViewServerMaster;
+import io.viewserver.server.ViewServerMasterBase;
+import io.viewserver.server.ViewServerSlave;
+
+import java.util.List;
+
 /**
  * Created by nick on 10/02/2015.
  */
 public interface IViewServerContext {
     String getUrl();
+    ViewServerMasterBase getMaster();
+    List<ViewServerSlave> getSlaves();
+    void setMaster(ViewServerMasterBase master);
+
+    DataSource getDataSource();
+
+    void setDataSource(DataSource dataSource);
+
+    String getBootstrapperClass();
+
+    void setBootstrapperClass(String bootstrapperClass);
+
+    IViewServerMasterConfiguration getMasterConfiguration();
 }

@@ -1,8 +1,14 @@
 {
   "user": {
+    "firstName": "Example2",
+    "lastName": "Driver",
+    "email": "Gmeduoye@gmail.com",
+    "contactNo": "07966265016",
     "type": "driver",
+    "password": "welcome",
+    "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
-    "selectedContentTypes": "{\"1\":{\"selectedProductIds\":[\"1SmallVan\",\"2MediumVan\"]},\"2\":{\"selectedProductCategories\":[{\"path\":\"1Rubbish>2CommercialWaste\",\"categoryId\":\"2CommercialWaste\"},{\"path\":\"1Rubbish>2HouseHoldWaste\",\"categoryId\":\"2HouseHoldWaste\"}]},\"5\":{\"selectedProductIds\":[\"BrickLayer\",\"Labourer\",\"Painter\",\"Plasterer\"]}}"
+    "selectedContentTypes": "ref://driverRegistration_selectedContentTypes.json"
   },
   "vehicle": {
     "dimensions": {
@@ -18,10 +24,19 @@
     "selectedProductIds": [
       "1SmallVan",
       "2MediumVan"
-    ],
-    "numAvailableForOffload": 2
+    ]
   },
-  "bankAccount": {},
-  "address": {}
+  "bankAccount": {
+    "accountNumber": "00012345",
+    "sortCode": "118800"
+  },
+  "address": {
+    "line1": "12 Kinnoul Rd",
+    "city": "London",
+    "postCode": "W6",
+    "country": "United Kingdom",
+    "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
+    "latitude": 51.4857236,
+    "longitude": -0.2123406
+  }
 }
-

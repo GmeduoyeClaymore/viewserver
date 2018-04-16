@@ -1,40 +1,24 @@
-/*
- * Copyright 2016 Claymore Minds Limited and Niche Solutions (UK) Limited
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package features;
 
-package io.viewserver.server.steps;
-
+import com.shotgun.viewserver.ShotgunViewServerMaster;
+import com.shotgun.viewserver.setup.ShotgunBootstrapper;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.network.EndpointFactoryRegistry;
 import io.viewserver.network.IEndpoint;
-import io.viewserver.server.*;
-import io.viewserver.server.setup.DefaultBootstrapper;
+import io.viewserver.server.IViewServerMasterConfiguration;
+import io.viewserver.server.ViewServerMaster;
+import io.viewserver.server.ViewServerMasterBase;
+import io.viewserver.server.ViewServerSlave;
+import io.viewserver.server.steps.IViewServerContext;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by nick on 10/02/2015.
- */
-public class InProcessViewServerContext implements IViewServerContext {
-    public ViewServerMaster master;
-    public final List<ViewServerSlave> slaves = new ArrayList<>();
-    public DataSource dataSource;
-    public String bootstrapperClass = DefaultBootstrapper.class.getName();
+public class ShotgunInProcViewServerContext implements IViewServerContext {
+    public ShotgunViewServerMaster master;
+    public String bootstrapperClass = ShotgunBootstrapper.class.getName();
     public IViewServerMasterConfiguration masterConfiguration = new IViewServerMasterConfiguration() {
         @Override
         public String getBootstrapperClass() {
@@ -57,8 +41,8 @@ public class InProcessViewServerContext implements IViewServerContext {
             return System.getProperty("user.home") + "/viewserver_test";
         }
     };
+    private DataSource dataSource;
 
-    @Override
     public String getUrl() {
         return "inproc://master";
     }
@@ -68,13 +52,14 @@ public class InProcessViewServerContext implements IViewServerContext {
         return master;
     }
 
+    @Override
     public List<ViewServerSlave> getSlaves() {
-        return slaves;
+        return new ArrayList<>();
     }
 
     @Override
-    public void setMaster(ViewServerMasterBase mast) {
-        master = (ViewServerMaster) mast;
+    public void setMaster(ViewServerMasterBase master) {
+        this.master = (ShotgunViewServerMaster) master;
     }
 
     @Override
@@ -97,7 +82,9 @@ public class InProcessViewServerContext implements IViewServerContext {
         this.bootstrapperClass = bootstrapperClass;
     }
 
+    @Override
     public IViewServerMasterConfiguration getMasterConfiguration() {
         return masterConfiguration;
     }
 }
+

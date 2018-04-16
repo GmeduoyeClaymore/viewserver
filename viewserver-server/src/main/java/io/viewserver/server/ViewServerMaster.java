@@ -76,9 +76,7 @@ public class ViewServerMaster extends ViewServerMasterBase {
         localStorageDataAdapterFactory = new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath());
     }
 
-    public ReportRegistry getReportRegistry() {
-        return reportRegistry;
-    }
+
 
     protected void registerFunction(String name, Class<? extends IUserDefinedFunction> function) {
         getServerExecutionContext().getFunctionRegistry().register(name, function);

@@ -38,10 +38,10 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
         if(param == null){
             return null;
         }
-        if(param.length() < 2000){
+        if(param.length() < 4000){
             return param;
         }
-        return param.substring(0,2000);
+        return param.substring(0,4000);
     }
 
     @Override

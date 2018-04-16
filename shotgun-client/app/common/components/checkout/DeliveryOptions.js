@@ -41,6 +41,8 @@ resourceDictionary.
   property('PageTitle', 'Delivery Options').
     delivery('Delivery Details').
     personell('Job Details').
+    hire('Hire Duration').
+    skip('Hire Duration').
     rubbish('Collection Details').
   property('NoPeopleCaption', 'How Many People Do you need?').
     delivery('Do you need more than one person to lift your item?').

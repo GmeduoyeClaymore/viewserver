@@ -3,7 +3,8 @@
     "selectedProductIds": [
       "1SmallVan",
       "2MediumVan"
-    ]
+    ],
+    "numAvailableForOffload": 3
   },
   "2": {
     "selectedProductCategories": [
@@ -17,13 +18,44 @@
       }
     ]
   },
+  "3": {
+    "selectedProductCategories": [
+      {
+        "categoryId": "2AccessLadder",
+        "path": "1Plant>2AccessLadder"
+      },
+      {
+        "categoryId": "2BreakingDrilling",
+        "path": "1Plant>2BreakingDrilling"
+      },
+      {
+        "categoryId": "2CleaningFloorcare",
+        "path": "1Plant>2CleaningFloorcare"
+      },
+      {
+        "categoryId": "2ConcretePreparation",
+        "path": "1Plant>2ConcretePreparation"
+      }
+    ]
+  },
+  "4": {
+    "selectedProductCategories": [
+      {
+        "categoryId": "2Cage",
+        "path": "1Waste>2Cage"
+      },
+      {
+        "categoryId": "2Skips",
+        "path": "1Waste>2Skips"
+      }
+    ]
+  },
   "5": {
     "selectedProductIds": [
       "BrickLayer",
+      "GroundWorker",
       "Labourer",
-      "Painter",
       "Plasterer"
     ]
   }
 }
- 
