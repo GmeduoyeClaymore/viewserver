@@ -37,7 +37,6 @@ class ConfigureServices extends Component{
         <Grid>
           <Row>
             <Col>
-              <ErrorRegion errors={errors}/>
               <View style={{...styles.productSelectView}}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
@@ -51,12 +50,11 @@ class ConfigureServices extends Component{
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
-          <Text uppercase={false}>Save</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
+        <Text uppercase={false}>Save</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }

@@ -115,10 +115,9 @@ class AddressLookup extends Component {
         </Header>
         <Content keyboardShouldPersistTaps="always">
           <Row size={10} style={{...styles.searchContainer, paddingTop: 10, paddingBottom: 10}}>
-            <ErrorRegion errors={errors}>
-              <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-              <Input placeholder={addressLabel} autoCorrect={false} returnKeyType={'done'} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
-            </ErrorRegion>
+            <ErrorRegion errors={errors}/>
+            <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
+            <Input placeholder={addressLabel} autoCorrect={false} returnKeyType={'done'} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
           </Row>
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >
             {tabs.map(tab =>  <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}

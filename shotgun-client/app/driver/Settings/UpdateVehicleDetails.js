@@ -97,13 +97,12 @@ class UpdateVehicleDetails extends Component {
           </Row>) : null}
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight busy={busy}
-          onPress={onUpdateVehicle}
-          validationSchema={yup.object(validationSchema)} model={vehicle}>
-          <Text uppercase={false}>Update vehicle</Text>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <ValidatingButton paddedBottom fullWidth iconRight busy={busy}
+        onPress={onUpdateVehicle}
+        validationSchema={yup.object(validationSchema)} model={vehicle}>
+        <Text uppercase={false}>Update vehicle</Text>
+      </ValidatingButton>
     </Container>;
   }
 }

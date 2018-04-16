@@ -135,11 +135,10 @@ class UserRelationships extends Component{
         {UserViews.filter(v => !v.hidden).map(c => <Tab onPress={() => this.goToTabNamed(Object.keys(c)[0])} key={Object.keys(c)[0]} heading={Object.keys(c)[0]} />)}
       </Tabs>
       <View style={{flex: 24}}>
-        <ErrorRegion errors={errors}>
-          <ReduxRouter  name="UserRelationshipRouter"defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
-            {UserViews.map( (c) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
-          </ReduxRouter>
-        </ErrorRegion>
+        <ErrorRegion errors={errors}/>
+        <ReduxRouter  name="UserRelationshipRouter"defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions} width={width}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+          {UserViews.map( (c) => <Route width={150} key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
+        </ReduxRouter>
       </View>
     </View>;
   }

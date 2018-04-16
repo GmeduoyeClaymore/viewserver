@@ -95,7 +95,7 @@ class CustomerOrderDetail extends Component{
     };
 
     const onPressTrack = () => {
-      history.push({pathName: `${parentPath}/CustomerOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
+      history.push({pathname: `${parentPath}/CustomerOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
     }
 
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>

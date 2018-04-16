@@ -151,21 +151,20 @@ class DeliveryMap extends Component{
               {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
             </Col>
           </Row>
-          <ErrorRegion errors={errors}>
-            {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-              showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-              {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
-              {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-              {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
-              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
-            </MapView>}
-          </ErrorRegion>
+          {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
+            showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+            {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
+            {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+            {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
+            {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
+          </MapView>}
           <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
             <Icon name='back-arrow'/>
           </Button>
         </Row>
        
       </Grid>
+      <ErrorRegion errors={errors}/>
       <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false} style={{alignSelf: 'center'}}>Continue</Text>
         <Icon name='forward-arrow' next/>
@@ -199,7 +198,7 @@ const styles = {
   inputRow: {
     width: shotgun.deviceWidth - 45,
     margin: 8,
-    backgroundColor: 'white',
+    backgroundColor: shotgun.brandPrimary,
     paddingTop: 16,
     paddingBottom: 16,
     paddingLeft: 16

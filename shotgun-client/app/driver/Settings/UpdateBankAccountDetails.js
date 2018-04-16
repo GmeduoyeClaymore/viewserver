@@ -80,13 +80,12 @@ class UpdateBankAccountDetails extends Component {
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true}
-          onPress={onSetBankAccount}
-          validationSchema={yup.object(validationSchema)} model={bankAccount}>
-          <Text uppercase={false}>Set Bank Account</Text>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true}
+        onPress={onSetBankAccount}
+        validationSchema={yup.object(validationSchema)} model={bankAccount}>
+        <Text uppercase={false}>Set Bank Account</Text>
+      </ValidatingButton>
     </Container>;
   }
 }

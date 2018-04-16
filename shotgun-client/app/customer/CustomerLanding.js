@@ -12,16 +12,13 @@ import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
-import {getCurrentPosition} from 'common/actions/CommonActions';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Dimensions} from 'react-native';
-const { height, width } = Dimensions.get('window');
 
-const contentHeight = height - shotgun.footerHeight;
-const contentWidth = width;
+const contentHeight = shotgun.deviceHeight - shotgun.footerHeight;
+const contentWidth = shotgun.deviceWidth;
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -46,7 +43,6 @@ class CustomerLanding extends Component {
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
     dispatch(customerServicesRegistrationAction(client));
     this.attemptPaymentCards(this.props);
-    dispatch(getCurrentPosition());
     dispatch(watchPosition());
   }
 

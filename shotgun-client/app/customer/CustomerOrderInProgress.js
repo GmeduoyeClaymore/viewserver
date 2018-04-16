@@ -47,6 +47,10 @@ class CustomerOrderInProgress extends Component{
       dispatch(callDriver(orderSummary.orderId));
     };
 
+    const onRatingDonePress = () => {
+      history.push({pathname: `${parentPath}/CustomerOrders`, transition: 'left'});
+    };
+
     const region = {
       latitude: driverPosition.latitude,
       longitude: driverPosition.longitude,
@@ -58,7 +62,7 @@ class CustomerOrderInProgress extends Component{
       <Grid>
         <Row size={60}>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
-            showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
+            showsUserLocation={false} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
             {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
             <MapView.Marker image={locationImg} coordinate={{...driverPosition}}/>
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
@@ -76,7 +80,7 @@ class CustomerOrderInProgress extends Component{
                   <RatingAction isDriver={false} orderSummary={orderSummary}/>
                 </Col>
               </Row>
-              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={orderSummary.driverRating == 0} onPress={()=> history.push(`${parentPath}/CustomerOrders`)}><Text uppercase={false}>Done</Text></Button></Col></Row>
+              <Row><Col style={{justifyContent: 'flex-end'}}><Button fullWidth disabled={orderSummary.driverRating == 0} onPress={onRatingDonePress}><Text uppercase={false}>Done</Text></Button></Col></Row>
             </Col> :
             <Col>
               <Grid>
@@ -102,12 +106,11 @@ class CustomerOrderInProgress extends Component{
                   </Row>
                 </Col>
               </Grid>
-              <ErrorRegion errors={errors}>
-                <Button fullWidth callButtonSml onPress={onPressCallDriver}>
-                  <Icon name="phone" paddedIcon/>
-                  <Text uppercase={false}>Call driver</Text>
-                </Button>
-              </ErrorRegion>
+              <ErrorRegion errors={errors}/>
+              <Button fullWidth callButtonSml onPress={onPressCallDriver}>
+                <Icon name="phone" paddedIcon/>
+                <Text uppercase={false}>Call driver</Text>
+              </Button>
             </Col>
           }
         </Row>
@@ -158,7 +161,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     orderId,
     errors: getOperationError(state, 'customerDao', 'callDriver' ),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };
 };

@@ -46,12 +46,11 @@ class PaymentCardDetails extends Component {
       <Content keyboardShouldPersistTaps="always">
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
-      <ErrorRegion errors={errors}>
-        <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </SpinnerButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
+        <Text uppercase={false}>Continue</Text>
+        <Icon next name='forward-arrow'/>
+      </SpinnerButton>
       <TermsAgreement history={history}/>
     </Container>;
   }

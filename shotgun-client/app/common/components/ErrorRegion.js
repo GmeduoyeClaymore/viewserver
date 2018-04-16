@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
 import {PropTypes} from 'prop-types';
-
+import {Text} from 'native-base';
 
 const JAVA_EXCEPTION_STRING = 'java.lang.RuntimeException: ';
 
@@ -34,15 +33,8 @@ export class ErrorRegion extends Component {
   }
 
   render() {
-    const {errors} = this.props;
-    return (
-      this.hasErrors(errors) ? <View style={{flex: 1}}>
-        <View style={{height: 25}}>
-          <Text style={{flex: 1, color: 'red', fontSize: 10}}>{this.removeStacktrace(errors)}</Text>
-        </View>
-        {this.props.children || null}
-      </View> : (this.props.children || null)
-    );
+    const {errors, style} = this.props;
+    return this.hasErrors(errors) ? <Text style={[style, {color: 'red', fontSize: 10}]}>{this.removeStacktrace(errors)}</Text> : null;
   }
 }
 

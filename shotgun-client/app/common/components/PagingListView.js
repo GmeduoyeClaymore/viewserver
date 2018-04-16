@@ -61,17 +61,14 @@ class PagingListView extends Component {
   render() {
     const {data = [], errors, busy, emptyView: EmptyView, paginationWaitingView, elementContainerStyle = styles.list, elementContainer: ElementContainer = List, headerView: HeaderView = () => null, ...rest} = this.props;
 
-    return (
-      <ErrorRegion errors={errors}>
-        <ScrollView style={{flex: 1}} onScroll={this.onScroll}>
-          {!busy ? <HeaderView {...this.props}/> : null}
-          {(data.length === 0 && !busy) ? <EmptyView {...this.props}/> : <ElementContainer style={elementContainerStyle}>
-            {data.map((c, i) => this.renderItem({item: c, index: i, isLast: i == data.length - 1, isFirst: i == 0, ...rest}))}
-          </ElementContainer>}
-          {busy ? paginationWaitingView() : null}
-        </ScrollView>
-      </ErrorRegion>
-    );
+    return [<ErrorRegion errors={errors} key='errors'/>,
+      <ScrollView key='scrollView' style={{flex: 1}} onScroll={this.onScroll}>
+        {!busy ? <HeaderView {...this.props}/> : null}
+        {(data.length === 0 && !busy) ? <EmptyView {...this.props}/> : <ElementContainer style={elementContainerStyle}>
+          {data.map((c, i) => this.renderItem({item: c, index: i, isLast: i == data.length - 1, isFirst: i == 0, ...rest}))}
+        </ElementContainer>}
+        {busy ? paginationWaitingView() : null}
+      </ScrollView>];
   }
 }
 

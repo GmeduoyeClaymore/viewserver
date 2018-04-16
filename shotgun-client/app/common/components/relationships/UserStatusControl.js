@@ -42,26 +42,25 @@ class UserRelationships extends Component{
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <ErrorRegion errors={errors}>
-      <View style={{ flex: 1, padding: 15}}>
-        <Row style={{flex: 1}}>
-          <Picker
-            itemStyle={{paddingTop: 10, paddingBottom: 10, paddingLeft: 10}}
-            iosHeader="Select one"
-            mode="dropdown"
-            selectedValue={me.status}
-            onValueChange={(status) => this.setStatus({status})}>
-            <Picker.Item padded color="#008000" label="Online" value="ONLINE" />
-            <Picker.Item padded color="#FFA500" label="Busy" value="BUSY" />
-            <Picker.Item padded color="#0000ff" label="Available Soon" value="AVAILABLESOON" />
-            <Picker.Item padded color="#ff0000" label="Appear Offline" value="OFFLINE" />
-          </Picker>
-        </Row>
-        <Row style={{flex: 1}}>
-          <Input value={state.statusMessage} placeholder="What are you up to ?" placeholderTextColor={shotgun.silver} onChangeText={value => this.updateStatusMessage(value)} onBlur={() => this.setStatus({statusMessage: state.statusMessage})}/>
-        </Row>
-      </View>
-    </ErrorRegion>;
+    return <View style={{ flex: 1, padding: 15}}>
+      <Row style={{flex: 1}}>
+        <Picker
+          itemStyle={{paddingTop: 10, paddingBottom: 10, paddingLeft: 10}}
+          iosHeader="Select one"
+          mode="dropdown"
+          selectedValue={me.status}
+          onValueChange={(status) => this.setStatus({status})}>
+          <Picker.Item padded color="#008000" label="Online" value="ONLINE" />
+          <Picker.Item padded color="#FFA500" label="Busy" value="BUSY" />
+          <Picker.Item padded color="#0000ff" label="Available Soon" value="AVAILABLESOON" />
+          <Picker.Item padded color="#ff0000" label="Appear Offline" value="OFFLINE" />
+        </Picker>
+      </Row>
+      <Row style={{flex: 1}}>
+        <ErrorRegion errors={errors}/>
+        <Input value={state.statusMessage} placeholder="What are you up to ?" placeholderTextColor={shotgun.silver} onChangeText={value => this.updateStatusMessage(value)} onBlur={() => this.setStatus({statusMessage: state.statusMessage})}/>
+      </Row>
+    </View>;
   }
 }
 
