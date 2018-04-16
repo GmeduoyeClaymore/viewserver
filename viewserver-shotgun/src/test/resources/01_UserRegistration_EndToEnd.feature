@@ -1,17 +1,26 @@
-Feature: Sort operator fixture
+Feature: User registration content type feature
 
   Background:
-    Given table named "source" with data
-      | id~Int | market~Int | day~Int | notional~Long | description~String | code~String |
-      | 0      | 100        | 1       | 20            | a                  | ccc         |
-      | 1      | 100        | 2       | 40            | f                  | ddd         |
-      | 2      | 30         | 3       | 60            | c                  | bbb         |
-      | 3      | 40         | 3       | 60            | e                  | eee         |
-      | 4      | 40         | 5       | 60            | d                  | fff         |
-      | 5      | 40         | 2       | 60            | b                  | aaa         |
+    Given an in-process viewserver with 2 slave nodes
+    And a data source defined by "distributed_aggregations_datasource.json"
+    And a report defined by "distributed_aggregations_report.json"
+    And a client connected to "inproc://master"
+    Given controller "driverController "action  named "registerDriver" with data "driverRegistrion.json"
 
 
-  Scenario: Can sort single number column descending
+  Scenario: Can see driver in drivers report
+      Given report parameters
+        | Name     | Type   | Value |
+        | measures | String | sum   |
+      Given dimension filters
+        | Name             | Type   | Value |
+        | dimension_userId | String | sum   |
+
+      When I subscribe to report "distributed_aggregations_report"
+      Then the following data is received
+        | customer | value_sum |
+        | One      | 3000      |
+
     When operator type "sort" named "sort1" created
       | field           | value                  |
       | sortDescriptors | marketRank~market~desc |

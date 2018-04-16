@@ -8,11 +8,13 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import {connect} from 'custom-redux';
 
 /*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
+const resourceDictionary = new ContentTypes.ResourceDictionary().
   property('OrderStatusResolver', getProductBasedFriendlyOrderStatusName).
     delivery(getDeliveryFriendlyOrderStatusName).
-    rubbish(getRubbishFriendlyOrderStatusName);
+    rubbish(getRubbishFriendlyOrderStatusName).
+  property('supportsFromTime', true).
+  property('supportsTillTime', true).
+    rubbish(false);
 
 /*eslint-enable */
 
@@ -28,6 +30,7 @@ class OrderRequest extends Component {
     const {orderSummary, history, next, isLast, isFirst} = this.props;
     const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
+    const {supportsFromTime, supportsTillTime} = resources;
 
     return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
       <Grid>
@@ -43,8 +46,8 @@ class OrderRequest extends Component {
         </Row>
         <Row size={25}>
           <Col size={70}>
-            {!delivery.isFixedPrice && contentType.fromTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
-            {!delivery.isFixedPrice && contentType.tillTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row> : null}
+            {!delivery.isFixedPrice && supportsFromTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
+            {!delivery.isFixedPrice && supportsTillTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row> : null}
           </Col>
           {noRequiredForOffload > 0 ?
             <Col size={30} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text key='text' style={{alignSelf: 'flex-start'}}>{`${noRequiredForOffload} ${noRequiredForOffload > 1 ? 'people' : 'person'}  required`}</Text>] : null}</Row></Col> : null

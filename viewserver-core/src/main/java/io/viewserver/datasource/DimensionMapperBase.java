@@ -28,7 +28,6 @@ import java.util.Map;
 public abstract class DimensionMapperBase implements IDimensionMapper {
     private static final NullableBool[] nullableBoolValues = { NullableBool.Null, NullableBool.False, NullableBool.True };
     private Map<LookupKey, Object> lookups = new HashMap<>();
-    private final LookupKey lookupKey = new LookupKey();
 
     @Override
     public void registerDimension(IDataSource dataSource, Dimension dimension) {
@@ -151,9 +150,7 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
     }
 
     private LookupKey getLookupKey(IDataSource dataSource, Dimension dimension, boolean global) {
-        lookupKey.dataSource = global ? null : dataSource;
-        lookupKey.dimension = dimension;
-        return lookupKey;
+        return new LookupKey(global ? null : dataSource, dimension);
     }
 
     @Override
@@ -164,6 +161,11 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
     private class LookupKey {
         private IDataSource dataSource;
         private Dimension dimension;
+
+        public LookupKey(IDataSource dataSource, Dimension dimension) {
+            this.dataSource = dataSource;
+            this.dimension = dimension;
+        }
 
         @Override
         public String toString() {

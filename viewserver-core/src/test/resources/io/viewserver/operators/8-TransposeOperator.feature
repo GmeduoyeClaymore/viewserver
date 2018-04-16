@@ -23,14 +23,14 @@ Feature: Transpose operator fixture
     Then operator "transpose1" output "out" is
       | ~Action     | ~Name            | ~ColumnType | ~TEId | market | bucket1_notional | bucket2_notional | bucket1_id | bucket2_id |
       | SchemaReset |                  |             |       |        |                  |                  |            |            |
-      | ColumnAdd   | market           | Int         | 0     |        |                  |                  |            |            |
       | ColumnAdd   | bucket1_id       | Int         | 1     |        |                  |                  |            |            |
-      | ColumnAdd   | bucket1_notional | Long        | 2     |        |                  |                  |            |            |
       | ColumnAdd   | bucket2_id       | Int         | 3     |        |                  |                  |            |            |
+      | ColumnAdd   | market           | Int         | 0     |        |                  |                  |            |            |
+      | ColumnAdd   | bucket1_notional | Long        | 2     |        |                  |                  |            |            |
       | ColumnAdd   | bucket2_notional | Long        | 4     |        |                  |                  |            |            |
       | DataReset   |                  |             |       |        |                  |                  |            |            |
-      | RowAdd      |                  |             | 0     | 100    | 20               | 40               | 0          | 1          |
-      | RowAdd      |                  |             | 1     | 30     | 60               | 0                | 2          | 0          |
-      | RowAdd      |                  |             | 2     | 40     | 60               | 60               | 4          | 5          |
+      | RowAdd      |                  |             | 5     | 100    | 20               | 40               | 0          | 1          |
+      | RowAdd      |                  |             | 6     | 30     | 60               | 0                | 2          | 0          |
+      | RowAdd      |                  |             | 7     | 40     | 60               | 60               | 4          | 5          |
     And commit
 

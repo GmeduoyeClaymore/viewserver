@@ -5,15 +5,30 @@ import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/utils';
+import * as ContentTypes from 'common/constants/ContentTypes';
+
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('supportsOrigin', true).
+  property('supportsDestination', true).
+    skip(false).
+    hire(false).
+    rubbish(false);
+/*eslint-enable */
 
 export class OriginDestinationSummary extends Component{
   constructor(){
     super();
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   render(){
-    const {contentType, delivery} = this.props;
+    const {resources} = this;
+    const {delivery} = this.props;
     const {origin, destination = {}, distance, duration} = delivery;
+    const {supportsOrigin, supportsDestination} = resources;
 
     const formatDuration = () => {
       const momentDuration = moment.duration(duration, 'seconds');
@@ -21,16 +36,16 @@ export class OriginDestinationSummary extends Component{
     };
 
     return <Grid>
-      {contentType.origin ? <Row>
+      {supportsOrigin ? <Row>
         <Icon name="pin" paddedIcon originPin/>
         <Text style={{alignSelf: 'flex-start'}}>{addressToText(origin)}</Text>
       </Row> : null}
-      {contentType.destination ? <Row style={styles.timeRow}>
+      {supportsDestination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
         </Text>
       </Row> : null}
-      {contentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
+      {supportsDestination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
     </Grid>;
   }
 }

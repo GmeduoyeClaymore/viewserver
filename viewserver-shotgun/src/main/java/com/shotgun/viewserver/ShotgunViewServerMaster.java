@@ -15,6 +15,7 @@ import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.PaymentControllerImpl;
 import com.shotgun.viewserver.user.*;
 import io.viewserver.network.IEndpoint;
+import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.server.FirebaseInstallingDataAdapterFactory;
 import io.viewserver.server.H2LocalStorageDataAdapterFactory;
 import io.viewserver.server.ViewServerMasterBase;
@@ -30,6 +31,9 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         super(name);
         this.configuration = configuration;
         this.getServerExecutionContext().getFunctionRegistry().register("containsProduct", ContainsProduct.class);
+        SpreadFunctionRegistry spreadColumnRegistry = this.getServerExecutionContext().getSpreadColumnRegistry();
+        spreadColumnRegistry.register("getProductIdsFromContentTypeJSON", ProductSpreadFunction.class);
+        spreadColumnRegistry.register("getCategoryIdsFromContentTypeJSON", CategorySpreadFunction.class);
         firebaseKeyPath = configuration.getFirebaseKeyPath();
         localStorageDataAdapterFactory = configuration.isMock() ? new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath()) : new FirebaseInstallingDataAdapterFactory(firebaseKeyPath);
     }

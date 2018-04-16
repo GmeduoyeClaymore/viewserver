@@ -5,11 +5,10 @@ import io.viewserver.configurator.Configurator;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.IOperator;
-import io.viewserver.operators.OperatorBase;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.group.summary.SummaryRegistry;
+import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.reactor.IReactor;
-import jdk.nashorn.internal.runtime.PropertyMap;
 
 /**
  * Created by Gbemiga on 20/12/17.
@@ -23,6 +22,9 @@ public interface IExecutionContext {
     Configurator getConfigurator();
     IExpressionParser getExpressionParser();
     MetadataRegistry getMetadataRegistry();
+
+    SpreadFunctionRegistry getSpreadColumnRegistry();
+
     void pause();
     void resume();
     int getExecutionCount();

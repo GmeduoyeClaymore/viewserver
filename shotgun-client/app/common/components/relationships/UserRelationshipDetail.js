@@ -141,7 +141,7 @@ const JobSummary = ({item: orderSummary, isLast, isFirst}) => {
         <Row style={{width: '100%'}}>
           <Text style={{marginBottom: 8}}>{orderSummary.product.name }</Text>
         </Row>
-        {contentType.fromTime ? <Row style={{paddingRight: 10, marginBottom: 8}}><Icon paddedIcon name="delivery-time"/><Text style={{paddingTop: 3}}>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
+        <Row style={{paddingRight: 10, marginBottom: 8}}><Icon paddedIcon name="delivery-time"/><Text style={{paddingTop: 3}}>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row>
       </Col>
       <Col size={60}>
         <AverageRating rating={orderSummary.customerRating} text="No Rating"/>

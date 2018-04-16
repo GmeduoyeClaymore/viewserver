@@ -1,0 +1,27 @@
+{
+  "user": {
+    "type": "driver",
+    "range": 50,
+    "selectedContentTypes": "{\"1\":{\"selectedProductIds\":[\"1SmallVan\",\"2MediumVan\"]},\"2\":{\"selectedProductCategories\":[{\"path\":\"1Rubbish>2CommercialWaste\",\"categoryId\":\"2CommercialWaste\"},{\"path\":\"1Rubbish>2HouseHoldWaste\",\"categoryId\":\"2HouseHoldWaste\"}]},\"5\":{\"selectedProductIds\":[\"BrickLayer\",\"Labourer\",\"Painter\",\"Plasterer\"]}}"
+  },
+  "vehicle": {
+    "dimensions": {
+      "volume": 7.9,
+      "weight": 1073
+    },
+    "vehicleId": null,
+    "registrationNumber": "YA61AYB",
+    "colour": "White",
+    "make": "Ford",
+    "model": "Transit 100 T280 Fwd",
+    "bodyStyle": "PANEL VAN",
+    "selectedProductIds": [
+      "1SmallVan",
+      "2MediumVan"
+    ],
+    "numAvailableForOffload": 2
+  },
+  "bankAccount": {},
+  "address": {}
+}
+

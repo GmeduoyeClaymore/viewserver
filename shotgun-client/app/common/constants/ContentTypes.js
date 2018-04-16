@@ -103,9 +103,9 @@ export class ResourceDictionary{
   resolve(contentTypeId){
     const dictionary = this.dictionaries[contentTypeId];
     if (!dictionary || !Object.keys(dictionary).length){
-      return this.dictionaries.DEFAULT;
+      return {...this.dictionaries.DEFAULT, contentTypeId};
     }
-    return {...this.dictionaries.DEFAULT, ...dictionary};
+    return {...this.dictionaries.DEFAULT, ...dictionary, contentTypeId};
   }
 }
 

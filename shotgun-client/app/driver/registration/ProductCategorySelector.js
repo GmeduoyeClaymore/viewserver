@@ -53,7 +53,9 @@ class ProductCategoryList extends Component {
     </Row>;
   }
 
-  toggleCategory(categoryObj) {
+  toggleCategory(categoryObjAll) {
+    const {path, categoryId} = categoryObjAll;
+    const categoryObj = {path, categoryId};
     let {selectedProductCategories = []} = this.props;
     const index = selectedProductCategories.findIndex(c => c.categoryId === categoryObj.categoryId);
     if (!!~index || this.isImplicitlyChecked(categoryObj, selectedProductCategories)) {

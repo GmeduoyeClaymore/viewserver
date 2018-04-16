@@ -25,7 +25,6 @@ export const INITIAL_STATE = {
     colour: undefined,
     make: undefined,
     model: undefined,
-    numAvailableForOffload: undefined,
     dimensions: {
       height: undefined,
       width: undefined,
@@ -63,7 +62,6 @@ export const INITIAL_STATE = {
     colour: undefined,
     make: undefined,
     model: undefined,
-    numAvailableForOffload: undefined,
     dimensions: {
       height: undefined,
       width: undefined,

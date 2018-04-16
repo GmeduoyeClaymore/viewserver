@@ -5,13 +5,13 @@ import {ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {withExternalState} from 'custom-redux';
 
-const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setState, dispatch}) => {
+const AddressDetails  = ({address = {}, history, next, parentPath, setState, dispatch}) => {
   const onChangeText = async (field, value) => {
-    setState({deliveryAddress: {...deliveryAddress, [field]: value}}, undefined, dispatch);
+    setState({address: {...address, [field]: value}}, undefined, dispatch);
   };
 
   const doAddressLookup = (addressLabel) => {
-    history.push(`${parentPath}/AddressLookup`, {addressPath: ['deliveryAddress'], addressLabel});
+    history.push(`${parentPath}/AddressLookup`, {addressPath: ['address'], addressLabel});
   };
 
   const getLocationText = (location = {}, placeholder) => {
@@ -35,7 +35,7 @@ const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setSt
           <Col>
             <Item stackedLabel>
               <Label>Street Address</Label>
-              {getLocationText(deliveryAddress, 'Search for your home address')}
+              {getLocationText(address, 'Search for your home address')}
             </Item>
           </Col>
         </Row>
@@ -43,7 +43,7 @@ const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setSt
           <Col>
             <Item stackedLabel>
               <Label>Flat number/Business Name</Label>
-              <ValidatingInput bold placeholder="Optional" value={deliveryAddress.flatNumber} validateOnMount={deliveryAddress.flatNumber !== undefined} onChangeText={(value) => onChangeText('flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
+              <ValidatingInput bold placeholder="Optional" value={address.flatNumber} validateOnMount={address.flatNumber !== undefined} onChangeText={(value) => onChangeText('flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -51,7 +51,7 @@ const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setSt
           <Col>
             <Item stackedLabel>
               <Label>City</Label>
-              <ValidatingInput bold placeholder="Cityville" value={deliveryAddress.city} validateOnMount={deliveryAddress.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
+              <ValidatingInput bold placeholder="Cityville" value={address.city} validateOnMount={address.city !== undefined} onChangeText={(value) => onChangeText('city', value)} validationSchema={validationSchema.city} maxLength={30}/>
             </Item>
           </Col>
         </Row>
@@ -59,13 +59,13 @@ const AddressDetails  = ({deliveryAddress = {}, history, next, parentPath, setSt
           <Col>
             <Item stackedLabel>
               <Label>Postcode</Label>
-              <ValidatingInput bold placeholder="PC12 ABC" value={deliveryAddress.postCode} validateOnMount={deliveryAddress.postCode !== undefined} onChangeText={(value) => onChangeText('postCode', value)} validationSchema={validationSchema.postCode} maxLength={30}/>
+              <ValidatingInput bold placeholder="PC12 ABC" value={address.postCode} validateOnMount={address.postCode !== undefined} onChangeText={(value) => onChangeText('postCode', value)} validationSchema={validationSchema.postCode} maxLength={30}/>
             </Item>
           </Col>
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={deliveryAddress}>
+    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={address}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='forward-arrow' next/>
     </ValidatingButton>

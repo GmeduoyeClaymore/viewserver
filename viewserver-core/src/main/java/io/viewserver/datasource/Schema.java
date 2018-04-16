@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by nickc on 13/10/2014.
- */
+
 public class Schema {
     private List<Column> columns;
     private List<String> keyColumns;

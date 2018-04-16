@@ -30,28 +30,25 @@ UserProductDataSource {
                                         new IProjectionConfig.ProjectionColumn("userStatus", "userStatus"))
                                 )
                                 .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME)),
+                        new SpreadNode("productsSpread")
+                                .withInputColumn("selectedContentTypes")
+                                .withOutputColumn("spreadProductId")
+                                .withSpreadFunction("getProductIdsFromContentTypeJSON")
+                                .withConnection("userProjection", Constants.OUT, Constants.IN),
                         new JoinNode("productJoin")
-                                .withLeftJoinColumns("userConstantJoinCol")
-                                .withRightJoinColumns("prodConstantJoinCol")
+                                .withLeftJoinColumns("spreadProductId")
+                                .withRightJoinColumns("productId")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
-                                .withConnection("userProjection", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right"),
-                        new JoinNode("productCategoryJoin")
-                                .withLeftJoinColumns("product_categoryId")
-                                .withRightJoinColumns("categoryId")
-                                .withColumnPrefixes("", "productCategory_")
-                                .withAlwaysResolveNames()
-                                .withConnection("productJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductCategoryDataSource.NAME, ProductCategoryDataSource.NAME), Constants.OUT, "right"),
-                        new CalcColNode("userHasProductCalc")
-                                .withCalculations(new CalcColOperator.CalculatedColumn("hasProduct", "containsProduct(selectedContentTypes, productCategory_path, product_productId)"))
-                                .withConnection("productCategoryJoin"),
-                        new FilterNode("hasProductFilter")
-                                .withExpression("hasProduct")
-                                .withConnection("userHasProductCalc")
+                                .withConnection("productsSpread", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right")
                 )
-                .withOutput("hasProductFilter")
+                .withCalculatedColumns(
+                        new CalculatedColumn("dimension_productId", ColumnType.String, "product_productId")
+                )
+                .withDimensions(Arrays.asList(
+                        new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true)))
+                .withOutput("productJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

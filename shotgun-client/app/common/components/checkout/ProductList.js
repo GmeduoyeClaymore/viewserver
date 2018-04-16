@@ -105,9 +105,9 @@ class ProductList extends Component{
 }
 
 ProductList.propTypes = {
-  product: PropTypes.object,
-  screenProps: PropTypes.object,
-  navigation: PropTypes.object,
+  selectedCategory: PropTypes.object,
+  next: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const validationSchema = {

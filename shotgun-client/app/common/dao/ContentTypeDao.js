@@ -24,6 +24,10 @@ export default class ContentTypeDaoContext{
     };
   }
 
+  get canSubscribeWithoutLogin(){
+    return true;
+  }
+
   get name(){
     return 'contentTypeDao';
   }

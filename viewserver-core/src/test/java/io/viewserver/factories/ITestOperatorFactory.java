@@ -68,7 +68,7 @@ public interface ITestOperatorFactory {
 
         TestTypeConverter converter = typeConverters.get(paramType);
         if(converter == null){
-            throw new RuntimeException(String.format("Unable to convert parameter \"%s\" value \"%s\" to type \"%s\"",paramName,param));
+            throw new RuntimeException(String.format("Unable to convert parameter \"%s\" value \"%s\" to type \"%s\"",paramName,param,paramType));
         }
         return (ParamClass) converter.convert(param + "");
 

@@ -148,10 +148,10 @@ const mapStateToProps = () => {
       invariant(setState, 'Set state must be defined');
       const navContainerOverride = navigationContextOverride && navigationContextOverride.version >= navigationContainer.version ? navigationContextOverride : navigationContainer;
       const tranformation = new NavigationTransformation(navContainerOverride);
-      const replace = navigateFactory((action) => tranformation.replace(action), setState, dispatch);
+      const replace = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.replace(action);}, setState, dispatch);
       const goBack = navigateFactory((action) => tranformation.goBack(action), setState, dispatch);
-      const just = navigateFactory((action) => tranformation.just(action), setState, dispatch);
-      const push = navigateFactory((action) => tranformation.next(action), setState, dispatch);
+      const just = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.just(action);}, setState, dispatch);
+      const push = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.next(action);}, setState, dispatch);
       const location = tranformation.location;
       return {
         location,

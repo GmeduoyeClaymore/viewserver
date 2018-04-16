@@ -37,10 +37,12 @@ export default class UserRelationshipDaoContext{
     const {latitude = 0, longitude = 0} = position;
     const baseReportContext =  {
       reportId: reportId + (showUnrelated ? 'All' : ''),
+      dimensions: selectedProduct ? {
+        dimension_productId: [selectedProduct.productId]
+      } : undefined,
       parameters: {
         latitude,
         longitude,
-        productId: selectedProduct.productId,
         maxDistance,
         showUnrelated,
         showOutOfRange

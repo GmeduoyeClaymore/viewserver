@@ -12,10 +12,16 @@ import yup from 'yup';
 import {TextInput} from 'react-native';
 import {isEqual, debounce} from 'lodash';
 import {addressToText} from 'common/utils';
-
+import * as ContentTypes from 'common/constants/ContentTypes';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary().
+  property('supportsDestination', false).
+    delivery(true).
+  property('supportsOrigin', true);
 
 class DeliveryMap extends Component{
   stateKey = 'checkout';
@@ -26,6 +32,8 @@ class DeliveryMap extends Component{
     this.getLocationText = this.getLocationText.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.fitMap = debounce(this.fitMap.bind(this), 1000);
+
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   componentDidMount(){
@@ -126,9 +134,9 @@ class DeliveryMap extends Component{
   }
 
   render(){
-    const {fitMap, setDurationAndDistance, getLocationText} = this;
-    const {destination, origin, isTransitioning, showDirections, supportsDestination, supportsOrigin, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
-
+    const {fitMap, setDurationAndDistance, getLocationText, resources} = this;
+    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
+    const {supportsOrigin, supportsDestination} = resources;
     if (!me){
       return <LoadingScreen text="Waiting for user ..."/>;
     }
@@ -166,7 +174,7 @@ class DeliveryMap extends Component{
         </Row>
        
       </Grid>
-      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
+      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton(supportsDestination, supportsOrigin)}>
         <Text uppercase={false} style={{alignSelf: 'center'}}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>
@@ -210,15 +218,13 @@ const mapStateToProps = (state, initialProps) => {
   const {delivery, selectedContentType, selectedProduct} = initialProps;
   const {destination, origin, distance, duration} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
-  const supportsDestination = selectedContentType.destination;
-  const supportsOrigin = selectedContentType.origin;
-  const disableDoneButton = origin.line1 == undefined || !distance || !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
+  const disableDoneButton = (supportsDestination, supportsOrigin) => origin.line1 == undefined || supportsDestination && !distance || supportsDestination && !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   return {
     ...initialProps,
     state,
     me: getDaoState(state, ['user'], 'userDao'),
-    delivery, selectedProduct, selectedContentType, destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton,
+    delivery, selectedProduct, selectedContentType, destination, origin, showDirections, disableDoneButton,
     usersWithProduct: getDaoState(state, ['users'], 'userRelationshipDao') || []
   };
 };

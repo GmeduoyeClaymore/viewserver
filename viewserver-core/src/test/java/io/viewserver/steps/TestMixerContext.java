@@ -25,6 +25,7 @@ import io.viewserver.factories.*;
 import io.viewserver.operators.*;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.union.UnionOperator;
 import io.viewserver.operators.validator.ValidationOperator;
@@ -45,6 +46,7 @@ public class TestMixerContext {
     private final FunctionRegistry functionRegistry;
     private final SummaryRegistry summaryRegistry;
     private final ChunkedColumnStorage tableStorage;
+    private final SpreadFunctionRegistry spreadColumnRegistry;
     private HashMap<String,ITestOperatorFactory> operatorFactories;
 
     public TestMixerContext() {
@@ -55,6 +57,7 @@ public class TestMixerContext {
         tableStorage = new ChunkedColumnStorage(1024);
         catalog = new Catalog(executionContext);
         operatorFactories = new HashMap<>();
+        spreadColumnRegistry = new SpreadFunctionRegistry();
         ExecutionContext.blockThreadAssertionForTest = true;
 
         register(new TestTableFactory(executionContext, catalog));
@@ -63,6 +66,7 @@ public class TestMixerContext {
         register(new TestGroupByOperatorFactory(executionContext, catalog,summaryRegistry,tableStorage));
         register(new TestIndexOperatorFactory(executionContext, catalog));
         register(new TestJoinOperatorFactory(executionContext, catalog));
+        register(new TestSpreadOperatorFactory(executionContext, catalog, spreadColumnRegistry));
         register(new TestProjectionOperatorFactory(executionContext, catalog));
         register(new TestSortOperatorFactory(executionContext, catalog,tableStorage));
         register(new TestTransposeOperatorFactory(executionContext, catalog,tableStorage));

@@ -19,10 +19,10 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('NavigationPath').
     personell(['ContentTypeSelect','ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
-    rubbish(['ContentTypeSelect','FlatProductCategoryList', 'ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
-    skip(['ContentTypeSelect','ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation']).
+    rubbish(['ContentTypeSelect','FlatProductCategoryList','ProductList', 'UsersForProductMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
+    skip(['ContentTypeSelect','FlatProductCategoryList','ProductList', 'UsersForProductMap', 'DeliveryOptions', 'OrderConfirmation']).
     delivery(['ContentTypeSelect','ProductList', 'DeliveryMap', 'DeliveryOptions', 'ItemDetails', 'OrderConfirmation']).
-    hire(['ContentTypeSelect','ProductCategoryList', 'DeliveryMap', 'DeliveryOptions', 'OrderConfirmation']);
+    hire(['ContentTypeSelect','FlatProductCategoryList','ProductList', 'UsersForProductMap', 'DeliveryOptions', 'OrderConfirmation']);
 
 class Checkout extends Component {
   static InitialState = INITIAL_STATE;
@@ -48,6 +48,8 @@ class Checkout extends Component {
       const {path} = this.props;
       if(!!~currentIndex){
         return `${path}/${navigationPath[currentIndex+1]}`;
+      }else{
+        Logger.info(`Unable to find next for "${currentPath}" for content type ${this.resources.contentTypeId}`);
       }
     }
   }
@@ -61,7 +63,7 @@ class Checkout extends Component {
     return <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
       <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
       <Route stateKey={Checkout.stateKey} transition='left' path={'DeliveryMap'} exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
-      <Route stateKey={Checkout.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup} next={getNext('AddressLookup')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup} />
       <Route stateKey={Checkout.stateKey} transition='left' path={'DeliveryOptions'} exact component={DeliveryOptions} next={getNext('DeliveryOptions')} />
       <Route stateKey={Checkout.stateKey} transition='left' path={'ProductCategoryList'} exact component={ProductCategoryList}  next={getNext('ProductCategoryList')} />
       <Route stateKey={Checkout.stateKey} transition='left' path={'FlatProductCategoryList'} exact component={FlatProductCategoryList} next={getNext('FlatProductCategoryList')}  />

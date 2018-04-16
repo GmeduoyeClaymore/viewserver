@@ -49,6 +49,9 @@ public class OperatorSteps {
             return Integer.parseInt(param);
         }, Integer.class);
         ITestOperatorFactory.register(param -> {
+            return Boolean.parseBoolean(param);
+        }, boolean.class);
+        ITestOperatorFactory.register(param -> {
             List<String> result = new ArrayList<String>();
             if(param == null){
                 return result;

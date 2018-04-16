@@ -31,7 +31,7 @@ public class ValidationUtils {
     public static String COLUMN_TYPE_NAME = "~ColumnType";
     public static String CURRENT_PREVIOUS_DELIMITER = " << ";
 
-    public static  List<String> IGNORED_COLUMNS =  Arrays.asList(ACTION_NAME, NAME_NAME,COLUMN_TYPE_NAME,ID_NAME);
+    public static  List<String> IGNORED_COLUMNS =  Arrays.asList(ID_NAME);
 
     public static void orderColumns(List<String> unorderedColumns){
         unorderedColumns.sort(new Comparator<String>() {
@@ -194,15 +194,9 @@ public class ValidationUtils {
                     currentStr = val + "";
                 }
 
-
-                row.put(key,currentStr);
-//                if(previous.get(key) != null){
-//                    String previousStr = previous.get(key) + "";
-//                    row.put(key,currentStr + CURRENT_PREVIOUS_DELIMITER + previousStr);
-//                }
-//                else{
-//                    row.put(key,currentStr);
-//                }
+                if(!row.containsKey(key)) {
+                    row.put(key, currentStr);
+                }
 
             }
         }

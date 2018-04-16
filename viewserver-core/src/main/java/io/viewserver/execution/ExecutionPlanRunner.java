@@ -279,7 +279,7 @@ public class ExecutionPlanRunner {
                 IGraphNode targetNode = distributedNodes.get(connection.getOperator());
                 if (targetNode != null) {
                     if (!(targetNode instanceof ICoalesceableGraphNode)) {
-                        throw new ViewServerException(String.format("Cannot coalesce nodes of type '%s'", targetNode.getType()));
+                        throw new ViewServerException(String.format("Cannot coalesce nodes of type '%s name %s'", targetNode.getType(), targetNode.getName()));
                     }
                     String coalescorName = targetNode.getName() + "_coalescor";
                     if (!coalescors.contains(coalescorName)) {

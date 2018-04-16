@@ -63,7 +63,7 @@ public class TestFilterOperatorFactory implements ITestOperatorFactory{
         }
         FilterOperator.FilterMode mode = ITestOperatorFactory.getParam(FILTER_MODE_PARAM_NAME, config, FilterOperator.FilterMode.class);
         String  filterExpression = ITestOperatorFactory.getParam(FILTER_EXPRESSION_PARAM_NAME, config, String.class);
-                ((FilterOperator) filter).configure(new IFilterConfig() {
+        ((FilterOperator) filter).configure(new IFilterConfig() {
             @Override
             public FilterOperator.FilterMode getMode() {
                 return mode;

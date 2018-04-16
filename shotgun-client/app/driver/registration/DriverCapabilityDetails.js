@@ -14,6 +14,9 @@ class DriverCapabilityDetails extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.togglePeopleVisibility = this.togglePeopleVisibility.bind(this);
     this.requestVehicleDetails = this.requestVehicleDetails.bind(this);
+    this.state = {
+      errors: ''
+    };
   }
 
   static validationSchema = {
@@ -24,18 +27,24 @@ class DriverCapabilityDetails extends Component{
     dimensions: yup.object().required()
   };
 
-  onChangeText(field, value){
+  onChangeVehicleText(field, value){
     const {vehicle = {}} = this.props;
     this.setState({vehicle: {...vehicle, [field]: value}});
+  }
+
+  onChangeText(field, value){
+    this.setState({[field]: value});
   }
 
   async requestVehicleDetails(){
     const {client, vehicle} = this.props;
     try {
       const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
-      this.setState({vehicle: vehicleDetails, errors: '', selectedProductIds: vehicleDetails.selectedProductIds});
+      this.setState({vehicle: vehicleDetails, selectedProductIds: vehicleDetails.selectedProductIds});
+      super.setState({errors: ''});
     } catch (error){
-      this.setState({vehicle: {registrationNumber: vehicle.registrationNumber}, errors: error});
+      this.setState({vehicle: {registrationNumber: vehicle.registrationNumber}});
+      super.setState({errors: error});
     }
   }
 
@@ -44,8 +53,9 @@ class DriverCapabilityDetails extends Component{
   }
 
   render(){
-    const {dimensions, errors, vehicle} = this.props;
-    const {numAvailableForOffload} = vehicle;
+    const {dimensions, errors: errorsFromProps = '', vehicle, numAvailableForOffload} = this.props;
+    const {errors: errorsFromState = ''} = this.state;
+    const errors = [errorsFromProps, errorsFromState].filter( c=> !!c).join('\n');
     const peopleVisible = numAvailableForOffload > 0;
     const combinedErrors = `${errors}`;
 
@@ -54,7 +64,7 @@ class DriverCapabilityDetails extends Component{
         <Row>
           <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
             <Label>Vehicle registration</Label>
-            <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} maxLength={10}/>
+            <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeVehicleText('registrationNumber', value)} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} maxLength={10}/>
           </Item>
         </Row>
         <Row>
@@ -145,7 +155,7 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {vehicle = {}, selectedContentTypes, user, bankAccount, address, errors} = initialProps;
+  const {vehicle = {}, selectedContentTypes, user, bankAccount, address} = initialProps;
   const {dimensions} = vehicle;
   const registrationErrors = getOperationError(state, 'loginDao', 'registerAndLoginDriver') || [];
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
@@ -159,7 +169,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentTypes,
     dimensions,
     busy,
-    errors: [loadingErrors, errors, registrationErrors].filter( c=> !!c).join('\n')
+    errors: [loadingErrors, registrationErrors].filter( c=> !!c).join('\n')
   };
 };
 

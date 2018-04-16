@@ -1,0 +1,29 @@
+{
+  "1": {
+    "selectedProductIds": [
+      "1SmallVan",
+      "2MediumVan"
+    ]
+  },
+  "2": {
+    "selectedProductCategories": [
+      {
+        "path": "1Rubbish>2CommercialWaste",
+        "categoryId": "2CommercialWaste"
+      },
+      {
+        "path": "1Rubbish>2HouseHoldWaste",
+        "categoryId": "2HouseHoldWaste"
+      }
+    ]
+  },
+  "5": {
+    "selectedProductIds": [
+      "BrickLayer",
+      "Labourer",
+      "Painter",
+      "Plasterer"
+    ]
+  }
+}
+ 

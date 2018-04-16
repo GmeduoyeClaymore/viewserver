@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.viewserver.operators.calccol;
+package io.viewserver.operators.spread;
 
 import io.viewserver.configurator.Configurator;
-import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
 import io.viewserver.schema.ITableStorage;
@@ -25,35 +24,38 @@ import io.viewserver.schema.ITableStorage;
 /**
  * Created by nickc on 31/10/2014.
  */
-public class CalcColOperatorFactory extends ConfigurableOperatorFactoryBase<ICalcColConfig> {
-    private final ITableStorage.Factory tableStorageFactory;
+public class SpreadOperatorFactory extends ConfigurableOperatorFactoryBase<ISpreadConfig> {
 
-    public CalcColOperatorFactory(ITableStorage.Factory tableStorageFactory) {
+    private ISpreadFunctionRegistry columnRegistry;
+    private ITableStorage.Factory tableStorageFactory;
+
+    public SpreadOperatorFactory(ISpreadFunctionRegistry spreadColumnParser, ITableStorage.Factory tableStorageFactory) {
+        this.columnRegistry = spreadColumnParser;
         this.tableStorageFactory = tableStorageFactory;
     }
 
     @Override
     public String getOperatorType() {
-        return "CalcCol";
+        return "Spread";
     }
 
     @Override
     public Class<? extends IOperator> getOperatorClass() {
-        return CalcColOperator.class;
+        return SpreadOperator.class;
     }
 
     @Override
     public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
-        return new CalcColOperator(name, state.executionContext, state.catalog, tableStorageFactory.createStorage(), state.executionContext.getExpressionParser());
+        return new SpreadOperator(name, state.executionContext, tableStorageFactory.createStorage(), state.catalog, columnRegistry);
     }
 
     @Override
     public Class getProtoConfigDtoClass() {
-        return io.viewserver.messages.config.ICalcColConfig.class;
+        return io.viewserver.messages.config.IFilterConfig.class;
     }
 
     @Override
     public Object getProtoConfigWrapper(Object configDto) {
-        return new ProtoCalcColConfig((io.viewserver.messages.config.ICalcColConfig) configDto);
+        return new ProtoSpreadConfig((io.viewserver.messages.config.ISpreadConfig) configDto);
     }
 }

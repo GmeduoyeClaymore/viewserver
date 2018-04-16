@@ -56,7 +56,19 @@ resourceDictionary.
   property('CannedStartDateOptions', undefined).
     personell([ASAPWorkingDateOption, TommorowDateOption]).
     property('CannedEndDateOptions', undefined).
-    personell([OneWorkingDayOption, TwoWorkingDayOption]);
+    personell([OneWorkingDayOption, TwoWorkingDayOption]).
+  property('supportsFromTime', true).
+  property('supportsTillTime', true).
+    rubbish(false).
+  property('supportsOrigin', true).
+  property('supportsDestination', true).
+      skip(false).
+      hire(false).
+      rubbish(false).
+  property('supportsNoPeople', true).
+      rubbish(false).
+      hire(false);
+
 /*eslint-enable */
 
 class DeliveryOptions extends Component {
@@ -152,6 +164,8 @@ class DeliveryOptions extends Component {
     const { quantity: noRequiredForOffload } = orderItem;
     const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
 
+    const {supportsFromTime, supportsTillTime, supportsNoPeople} = resources;
+
     const datePickerOptions = {
       datePickerModeAndroid: 'calendar',
       mode: 'datetime',
@@ -162,11 +176,11 @@ class DeliveryOptions extends Component {
 
     const validationSchema = {};
 
-    if (selectedContentType.fromTime){
+    if (supportsFromTime){
       validationSchema.from = yup.date().required();
     }
 
-    if (selectedContentType.tillTime){
+    if (supportsTillTime){
       validationSchema.till = yup.date().required();
     }
 
@@ -203,7 +217,7 @@ class DeliveryOptions extends Component {
                   onValueChanged={this.onFixedPriceValueChanged}
                 /> : <Text style={{fontSize: 18, fontWeight: 'bold'}}>{formatPrice(price / 100)}</Text>}
               </Row></ListItem> : null}
-          { !delivery.isFixedPrice && selectedContentType.fromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
+          { !delivery.isFixedPrice && supportsFromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
             <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}  isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => {
@@ -213,7 +227,7 @@ class DeliveryOptions extends Component {
               }
             }} {...datePickerOptions} />
           </ListItem> : null}
-          {!delivery.isFixedPrice && selectedContentType.tillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
+          {!delivery.isFixedPrice && supportsTillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
             <Icon paddedIcon name="delivery-time" />
             {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
             <DatePicker ref={ tillInput => { this.tillInput = tillInput;}}cannedDateOptions={resources.CannedEndDateOptions} from={delivery.from} asapDateResolver={resources.AsapEndDateResolver} isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
@@ -225,13 +239,13 @@ class DeliveryOptions extends Component {
             </Picker>
           </ListItem> : null}
           
-          {selectedContentType.noPeople ?
+          {supportsNoPeople ?
             <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
               <CheckBox checked={requireHelp} categorySelectionCheckbox onPress={() => this.setRequireHelp(!requireHelp)} />
               <Text>{resources.NoPeopleCaption}</Text>
             </ListItem> : null}
 
-          {selectedContentType.noPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
+          {supportsNoPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
             <Grid>
               <Row>
                 <Text style={{ paddingBottom: 5 }}>How many people do you need?</Text>

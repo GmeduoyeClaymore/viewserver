@@ -25,6 +25,8 @@ import io.viewserver.operators.index.IndexOperatorFactory;
 import io.viewserver.operators.join.JoinOperatorFactory;
 import io.viewserver.operators.projection.ProjectionOperatorFactory;
 import io.viewserver.operators.sort.SortOperatorFactory;
+import io.viewserver.operators.spread.ISpreadFunctionRegistry;
+import io.viewserver.operators.spread.SpreadOperatorFactory;
 import io.viewserver.operators.table.TablePartitionFactory;
 import io.viewserver.operators.table.UserSessionPartitionerFactory;
 import io.viewserver.operators.transpose.TransposeOperatorFactory;
@@ -40,9 +42,10 @@ import java.util.Map;
 public class OperatorFactoryRegistry {
     private final Map<String, IOperatorFactory> factories = new HashMap<>();
 
-    public OperatorFactoryRegistry(FunctionRegistry functionRegistry, ITableStorage.Factory tableStorageFactory,
+    public OperatorFactoryRegistry(ISpreadFunctionRegistry spreadColumnRegistry, FunctionRegistry functionRegistry, ITableStorage.Factory tableStorageFactory,
                                    SummaryRegistry summaryRegistry) {
-        register(new CalcColOperatorFactory(functionRegistry, tableStorageFactory));
+        register(new CalcColOperatorFactory(tableStorageFactory));
+        register(new SpreadOperatorFactory(spreadColumnRegistry, tableStorageFactory));
         register(new FilterOperatorFactory(functionRegistry));
         register(new GroupByOperatorFactory(tableStorageFactory, summaryRegistry));
         register(new JoinOperatorFactory());

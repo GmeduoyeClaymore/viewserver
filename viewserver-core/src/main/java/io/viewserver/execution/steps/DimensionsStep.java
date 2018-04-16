@@ -89,9 +89,9 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
 
         IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
                 .withQueryHolders(queryHolders);
-        if (reportExecutionPlanContext.isDistributed()) {
+        /*if (reportExecutionPlanContext.isDistributed()) {
             indexNode.withDistribution();
-        }
+        }*/
 
         reportExecutionPlanContext.addNodes(indexNode);
         reportExecutionPlanContext.setInput(indexNode.getName(), indexNode.getConfigForOutputName());

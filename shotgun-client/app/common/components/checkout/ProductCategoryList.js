@@ -29,9 +29,9 @@ class ProductCategoryList extends Component{
 
 
   navigateToCategory(category){
-    const {history, match} = this.props;
+    const {history, parentPath} = this.props;
     if (category.isLeaf) {
-      history.push(`${match.path}/ProductList`, {category});
+      history.push(`${parentPath}/ProductList`, {category});
     } else {
       this.goToCategory(category);
     }
@@ -43,11 +43,11 @@ class ProductCategoryList extends Component{
   }
 
   render(){
-    const {busy, next, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions} = this.props;
+    const {busy, next, selectedProduct, selectedCategory = {}, history, rootProductCategory, defaultOptions, parentPath} = this.props;
     const {rowView} = this;
 
     if (selectedCategory.isLeaf){
-      return <Redirect push={true} to={{pathname: `${match.path}/ProductList`, state: {category: selectedCategory}}}/>;
+      return <Redirect push={true} to={{pathname: `${parentPath}/ProductList`, state: {category: selectedCategory}}}/>;
     }
 
     const Paging = () => <Spinner />;

@@ -25,6 +25,7 @@ import io.viewserver.operators.IInputOperator;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.group.summary.SummaryRegistry;
+import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.ITask;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
@@ -43,6 +44,7 @@ public class ExecutionContext implements IExecutionContext{
     private final List<IOperator> operators = new ArrayList<>();
     private final MetadataRegistry metadataRegistry;
     private final SummaryRegistry summaryRegistry;
+    private final SpreadFunctionRegistry spreadColumnRegistry;
     private ThreadLocal<Integer> executionCount = ThreadLocal.withInitial(() -> 0);
     private IReactor reactor;
     private boolean committing;
@@ -72,7 +74,8 @@ public class ExecutionContext implements IExecutionContext{
         this.functionRegistry = new FunctionRegistry();
         this.expressionParser = new AntlrExpressionParser(functionRegistry);
         this.summaryRegistry = new SummaryRegistry();
-        this.operatorFactoryRegistry = new OperatorFactoryRegistry(functionRegistry, () -> new ChunkedColumnStorage(1024), summaryRegistry);
+        this.spreadColumnRegistry = new SpreadFunctionRegistry();
+        this.operatorFactoryRegistry = new OperatorFactoryRegistry(this.spreadColumnRegistry, functionRegistry,() -> new ChunkedColumnStorage(1024), summaryRegistry);
         this.configurator = new Configurator(operatorFactoryRegistry);
         this.metadataRegistry = new MetadataRegistry();
     }
@@ -95,6 +98,11 @@ public class ExecutionContext implements IExecutionContext{
 
     public SummaryRegistry getSummaryRegistry() {
         return summaryRegistry;
+    }
+
+    @Override
+    public SpreadFunctionRegistry getSpreadColumnRegistry() {
+        return spreadColumnRegistry;
     }
 
     public void pause() {

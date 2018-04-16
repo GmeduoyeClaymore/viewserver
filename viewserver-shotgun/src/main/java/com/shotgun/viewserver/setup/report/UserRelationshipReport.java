@@ -3,6 +3,7 @@ package com.shotgun.viewserver.setup.report;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
 import io.viewserver.controller.ControllerActionEntry;
+import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.*;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -96,8 +97,8 @@ public class UserRelationshipReport {
             List<IGraphNode> nodes = new ArrayList<IGraphNode>(
                     Arrays.asList(
                             new FilterNode("productFilter")
-                                    .withExpression("product_productId == \"{productId}\"")
-                                    .withConnection("#input", null, Constants.IN),
+                                    .withExpression("1 == 1")
+                                    .withConnection("#input"),
                             new GroupByNode("uniqueUserByProductGroupBy")
                                     .withGroupByColumns("userId")
                                     .withConnection("productFilter"),
@@ -127,7 +128,7 @@ public class UserRelationshipReport {
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
                     .withParameter("_userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
-                    .withDataSource(UserRelationshipDataSource.NAME)
+                    .withDataSource(UserProductDataSource.NAME)
                     .withOutput("meFilter");
 
         }
