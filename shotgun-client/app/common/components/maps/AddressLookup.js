@@ -199,10 +199,10 @@ class SuggestedAddresses extends Component{
     if (busy){
       return <LoadingScreen text={`Looking up results for ${addressSearchText}...`}/>;
     }
-    return hasLookedUpAddresses ? <ErrorRegion errors={errors}><View  paddedLeft style={{paddingTop: 15}}>
+    return hasLookedUpAddresses ? <View  paddedLeft style={{paddingTop: 15}}><ErrorRegion errors={errors}/>
       <Text style={styles.smallText}>{suggestedPlaces.length ? `${suggestedPlaces.length > 1 ? 'Addresses' : 'Address'} matching "${addressSearchText}"` : `No Results Found matching "${addressSearchText}"`}</Text>
       <List>{suggestedPlaces.map((r, i) => <SuggestedPlace key={i} result={r} onSuggestedPlaceSelected={onSuggestedPlaceSelected}/>)}</List>
-    </View></ErrorRegion>  : null;
+    </View> : null;
   }
 }
 
