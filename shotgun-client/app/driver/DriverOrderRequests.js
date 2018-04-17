@@ -66,7 +66,7 @@ class DriverOrderRequests extends Component{
       <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle}>
         {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => goToTabNamed(c.contentTypeId)} />)}
       </Tabs>
-      {selectedContentTypes[0] ? <ReduxRouter  name="DriverOrderRequestRouter" height={height - 150} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
+      {selectedContentTypes[0] ? <ReduxRouter  name="DriverOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
         {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={OrderView} />)}
       </ReduxRouter> : null}
     </View>;

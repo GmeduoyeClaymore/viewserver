@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
 import {PagingListView, Tabs, OrderRequest, LoadingScreen} from 'common/components';
-import {View, Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
+import {Container, Spinner, Header, Body, Title, Tab, Text} from 'native-base';
 import {isAnyLoading, getNavigationProps, resetSubscriptionAction, getDao} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
@@ -17,22 +17,20 @@ const getDefaultOptions = (isCompleted) => ({
   ...CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS,
   isCompleted
 });
+
 const OrderItems = ({isCompleted, history, parentPath}) => (
-  <View style={{flex: 1}}>
-    <PagingListView
-      ref={ c => {this.pagingListView = c;}}
-      daoName='orderSummaryDao'
-      dataPath={['orders']}
-      history={history}
-      rowView={RowView}
-      options={getDefaultOptions(isCompleted)}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      parentPath={parentPath}
-      pageSize={10}
-      headerView={() => null}
-    />
-  </View>
+  <PagingListView
+    daoName='orderSummaryDao'
+    dataPath={['orders']}
+    history={history}
+    rowView={RowView}
+    options={getDefaultOptions(isCompleted)}
+    paginationWaitingView={Paging}
+    emptyView={NoItems}
+    parentPath={parentPath}
+    pageSize={10}
+    headerView={() => null}
+  />
 );
 
 const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
@@ -66,7 +64,7 @@ class CustomerOrders extends Component{
         <Tab heading="Live Jobs" onPress={() => goToTabNamed('Live')}/>
         <Tab heading="Complete" onPress={() => goToTabNamed('Complete')}/>
       </Tabs>
-      {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - 150} path={path} defaultRoute={'Live'}>
+      {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - shotgun.tabHeight} path={path} defaultRoute={'Live'}>
         <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={OrderItems} />
         <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={OrderItems} />
       </ReduxRouter> : <LoadingScreen text="Waiting for order data.."/>}

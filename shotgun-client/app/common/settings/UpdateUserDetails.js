@@ -122,19 +122,16 @@ class UpdateUserDetails extends Component{
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} style={styles.continueButton}
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
         onPress={onUpdateDetails} validationSchema={yup.object(validationSchema)} model={user}>
         <Text uppercase={false}>Update details</Text>
       </ValidatingButton>
+      <ErrorRegion errors={errors}/>
     </Container>;
   }
 }
 
 const styles = {
-  continueButton: {
-    marginTop: 50
-  },
   image: {
     aspectRatio: 1,
     borderRadius: 150,

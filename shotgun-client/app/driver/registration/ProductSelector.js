@@ -56,24 +56,18 @@ class ProductList extends Component{
     const Paging = () => <Spinner />;
     const NoItems = () => <Text empty>No items to display</Text>;
 
-    return busy ? <LoadingScreen text="Loading Products" /> : <Container>
-      <Content keyboardShouldPersistTaps="always" padded>
-        <View>
-          <PagingListView
-            style={styles.pagingListView}
-            {...{selectedProductIds}}
-            daoName='productDao'
-            dataPath={['product', 'products']}
-            pageSize={10}
-            options={{...options, categoryId: contentType.rootProductCategory}}
-            rowView={this.rowView}
-            paginationWaitingView={Paging}
-            emptyView={NoItems}
-            headerView={undefined}
-          />
-        </View>
-      </Content>
-    </Container>;
+    return busy ? <LoadingScreen text="Loading Products" /> : <PagingListView
+      style={styles.pagingListView}
+      {...{selectedProductIds}}
+      daoName='productDao'
+      dataPath={['product', 'products']}
+      pageSize={10}
+      options={{...options, categoryId: contentType.rootProductCategory}}
+      rowView={this.rowView}
+      paginationWaitingView={Paging}
+      emptyView={NoItems}
+      headerView={undefined}
+    />;
   }
 }
 
@@ -83,7 +77,6 @@ const styles = {
     paddingTop: 10
   },
   productRow: {
-    padding: 5,
     paddingTop: 20,
     backgroundColor: shotgun.brandPrimary
   },

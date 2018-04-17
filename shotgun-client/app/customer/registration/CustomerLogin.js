@@ -25,7 +25,7 @@ class CustomerLogin extends Component {
     };
 
     const login = async() => {
-      dispatch(loginUserByUsernameAndPassword({email, password}, () => history.push('/Root')));
+      dispatch(loginUserByUsernameAndPassword({email, password}, () => history.replace('/Root')));
     };
 
     return <Container>

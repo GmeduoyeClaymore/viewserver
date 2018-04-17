@@ -87,40 +87,27 @@ class ProductCategoryList extends Component {
     const Paging = () => <Spinner/>;
     const NoItems = () => <Text empty>No items to display</Text>;
     return busy ? <LoadingScreen text="Loading Product Categories"/> :
-      <Content keyboardShouldPersistTaps="always" style={styles.content} padded>
-        <View style={styles.view}>
-          <PagingListView
-            style={styles.pagingListView}
-            {...{selectedProductCategories, expandedCategoryIds}}
-            daoName='productCategoryDao'
-            dataPath={['product', 'categories']}
-            pageSize={10}
-            options={this.getOptions()}
-            rowView={this.rowView}
-            paginationWaitingView={Paging}
-            emptyView={NoItems}
-            headerView={undefined}
-          />
-        </View>
-      </Content>;
+      <PagingListView
+        style={styles.pagingListView}
+        {...{selectedProductCategories, expandedCategoryIds}}
+        daoName='productCategoryDao'
+        dataPath={['product', 'categories']}
+        pageSize={10}
+        options={this.getOptions()}
+        rowView={this.rowView}
+        paginationWaitingView={Paging}
+        emptyView={NoItems}
+        headerView={undefined}
+      />;
   }
 }
 
 const styles = {
-  content: {
-    flex: 1,
-    marginTop: 10
-  },
-  view: {
-    flex: 1,
-    height: shotgun.deviceHeight - 220
-  },
   pagingListView: {
     backgroundColor: shotgun.brandPrimary,
-    marginTop: 10
+    paddingTop: 10
   },
   categoryRow: {
-    padding: 5,
     backgroundColor: shotgun.brandPrimary
   },
   categoryView: {

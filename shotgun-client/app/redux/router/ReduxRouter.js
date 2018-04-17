@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { View } from 'react-native-animatable';
-import {Dimensions, BackHandler, View as BasicView} from 'react-native';
+import {BackHandler, Keyboard} from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
 import {LoadingScreen} from 'common/components';
@@ -12,8 +12,9 @@ import TransitionManager from './utils/TransitionManager';
 import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
 import invariant  from 'invariant';
+import shotgun from 'native-base-theme/variables/shotgun';
+import {Container} from 'native-base';
 
-const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 
 class ReduxRouterClass extends Component{
   constructor(props){
@@ -23,10 +24,23 @@ class ReduxRouterClass extends Component{
     this.performTransition = this.performTransition.bind(this);
     this.handleRef = this.handleRef.bind(this);
     this.handleBack = this.handleBack.bind(this);
+    this.getHeight = this.getHeight.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
-    this.doesMatch = memoize((loc, path) => matchPath(loc, path));
   }
-  
+
+  componentWillMount () {
+    const {resizeForKeyboard = false} = this.props;
+    super.setState({keyboardOffset: 0});
+
+    if (resizeForKeyboard) {
+      Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
+      Keyboard.addListener('keyboardDidShow', this.keyboardWillShow);
+    }
+
+    Keyboard.addListener('keyboardDidHide', this.keyboardWillHide);
+    Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
+  }
+
   componentDidMount(){
     if (this.props.name === 'AppRouter'){
       BackHandler.addEventListener('hardwareBackPress', this.handleBack);
@@ -62,6 +76,14 @@ class ReduxRouterClass extends Component{
     }
   }
 
+  keyboardWillShow = (event) => {
+    super.setState({keyboardOffset: event.endCoordinates.height});
+  };
+
+  keyboardWillHide = () => {
+    super.setState({keyboardOffset: 0});
+  };
+
   handleRef(route, ref){
     this.transitionManager.initialize(route, ref);
   }
@@ -74,15 +96,24 @@ class ReduxRouterClass extends Component{
     this.transitionManager.initializeActualComponent(route, actualComponentRef);
   }
 
+  getHeight(){
+    const {height: initialHeight = shotgun.deviceHeight, hasFooter = false} = this.props;
+    const {keyboardOffset} = this.state;
+    return initialHeight - keyboardOffset + (hasFooter && keyboardOffset > 0 ? shotgun.footerHeight : 0);
+  }
+
   render() {
     Logger.info(`${this.props.name} - rendering`);
-    const {width = deviceWidth, height  = deviceHeight, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground} = this.props;
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
+    const {width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground} = this.props;
+    const height = this.getHeight();
+
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
     if (routesToRender.length){
       Logger.info(`${this.props.name} - visible routes are - ${JSON.stringify(routesToRender)}`);
     }
-    const result =  <BasicView style={{flex: 1, ...style, height, width, position: 'relative'}}>
+
+    const result =  <Container>
       {routesToRender.length ? routesToRender.map(
         (rt) => {
           const {componentProps, match, navContainerOverride} = rt;
@@ -101,14 +132,14 @@ class ReduxRouterClass extends Component{
               ...style,
               height, width,
               left: 0,
-              backgroundColor: 'white',
+              backgroundColor: shotgun.brandPrimary,
               zIndex: rt.index,
               top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.path} ref={ref => {this.handleRef(rt, ref);}}>
             <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined}  {...completeProps}/>
           </View>;
         }
       ) : <LoadingScreen text="Navigating ..."/>}
-    </BasicView>;
+    </Container>;
 
     if (!routesToRender.length){
       Logger.info(`${isInBackground} - No routes found to match the path ${navigationContainerTranslator.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
@@ -119,6 +150,7 @@ class ReduxRouterClass extends Component{
 }
 
 const navigateFactory = (getNewContainer, setState, dispatch) => (action, state, continueWith) => {
+  Keyboard.dismiss();
   const newnavigationContainer =  getNewContainer(RouteUtils.parseAction(action, state));
   if (newnavigationContainer){
     setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);

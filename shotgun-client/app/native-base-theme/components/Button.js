@@ -244,17 +244,14 @@ export default (variables = variable) => {
       marginLeft: variables.contentPadding,
       marginRight: variables.contentPadding
     },
-
     '.paddedBottom': {
       marginLeft: variables.contentPadding,
       marginRight: variables.contentPadding,
       marginBottom: variables.contentPadding
     },
-    '.floatingBottom': {
-      position: 'absolute',
-      bottom: variables.contentPadding,
-      left: variables.contentPadding,
-      right: variables.contentPadding
+    '.paddedTopBottom': {
+      marginTop: variables.contentPadding,
+      marginBottom: variables.contentPadding
     },
     '.large': {
       width: '100%',

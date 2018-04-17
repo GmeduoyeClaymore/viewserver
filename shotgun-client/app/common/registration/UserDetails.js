@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import {Image} from 'react-native';
+import {Image, ScrollView} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
@@ -16,6 +16,14 @@ const datePickerOptions = {
   maximumDate: moment().add(1, 'years').toDate()
 };
 
+const imagePickerOptions = {
+  cropping: true,
+  cropperCircleOverlay: true,
+  useFrontCamera: true,
+  height: 400,
+  width: 400
+};
+
 class UserDetails  extends Component{
   constructor(props){
     super(props);
@@ -23,15 +31,6 @@ class UserDetails  extends Component{
     this.onChangeText = this.onChangeText.bind(this);
     this.onSelectImage = this.onSelectImage.bind(this);
     this.showPicker = this.showPicker.bind(this);
-    this.state = {
-    };
-    this.pickerOptions = {
-      cropping: true,
-      cropperCircleOverlay: true,
-      useFrontCamera: true,
-      height: 400,
-      width: 400
-    };
   }
 
   onChangeText(field, value){
@@ -45,7 +44,7 @@ class UserDetails  extends Component{
   }
 
   toggleDatePicker(dobIsDatePickerVisible){
-    super.setState({dobIsDatePickerVisible});
+    this.setState({dobIsDatePickerVisible});
   }
 
   onSelectImage(response){
@@ -53,13 +52,12 @@ class UserDetails  extends Component{
   }
 
   showPicker(){
-    ImageSelector.show({title: 'Select Image', onSelect: this.onSelectImage, options: this.pickerOptions});
+    ImageSelector.show({title: 'Select Image', onSelect: this.onSelectImage, options: imagePickerOptions});
   }
 
   render(){
     const {onChangeText} = this;
-    const {history, next, user} = this.props;
-    const {dobIsDatePickerVisible} = this.state;
+    const {history, next, user, dobIsDatePickerVisible} = this.props;
     const isDriver = user.type === 'driver';
 
 
@@ -140,7 +138,7 @@ class UserDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>Create an account password</Label>
-                <ValidatingInput bold secureTextEntry={true} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => this.onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
+                <ValidatingInput bold secureTextEntry={true} returnKeyType={'next'} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => this.onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
               </Item>
             </Col>
           </Row>
@@ -161,8 +159,8 @@ const styles = {
     width: 100
   },
   imageButton: {
-    marginTop: shotgun.contentPadding,
     height: 80,
+    marginTop: shotgun.contentPadding,
     marginLeft: shotgun.contentPadding,
     marginRight: shotgun.contentPadding,
     width: 'auto',
@@ -187,7 +185,6 @@ const validationSchema = {
   email: yup.string().required().email().max(100), //BREAKS in IOS .matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
   contactNo: yup.string().required().max(35),
 };
-
 
 const drivervalidationSchema = {
   ...validationSchema,

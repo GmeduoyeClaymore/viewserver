@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {withExternalState} from 'custom-redux';
-import {Image, Dimensions} from 'react-native';
+import {Image} from 'react-native';
 import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
+import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
-const { width } = Dimensions.get('window');
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
@@ -67,7 +67,7 @@ class ItemDetails extends Component{
         <Content padded>
           {orderItem.imageData != undefined ? <Grid onPress={showPicker}>
             <Row style={{justifyContent: 'center'}}>
-              <Image source={{uri: `data:image/jpeg;base64,${orderItem.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? width / 2 : width - 50 }]}/>
+              <Image source={{uri: `data:image/jpeg;base64,${orderItem.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
             </Row>
           </Grid> : null}
           {orderItem.imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>

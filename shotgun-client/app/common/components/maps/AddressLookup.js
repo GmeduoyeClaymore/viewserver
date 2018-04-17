@@ -122,7 +122,7 @@ class AddressLookup extends Component {
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >
             {tabs.map(tab =>  <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}
           </Tabs> : null}
-          {tabs.length ? <ReduxRouter style={{paddingLeft: 10, paddingRight: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - 150} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
+          {tabs.length ? <ReduxRouter style={{paddingLeft: 10, paddingRight: 10}} client={client} myLocation={me} onAddressSelected={onAddressSelected}  path={path} name="AddressLookupRouter"  height={height - shotgun.tabHeight} width={width} defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath }}}  >
             <Route path={'Recent'} component={RecentAddresses} homeAddress={homeAddress} {...{deliveryAddresses}}/>
             <Route path={'Suggested'} component={SuggestedAddresses} {...{hasLookedUpAddresses, suggestedPlaces, addressSearchText, busy} }/>
             <Route path={'Nearby Places'} component={ReverseGeoAddresses} />

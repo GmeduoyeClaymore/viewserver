@@ -39,7 +39,7 @@ class DriverAccountType extends Component{
         <Grid>
           <Row>
             <Col>
-              <View style={{...styles.productSelectView}}>
+              <View style={styles.productSelectView}>
                 <Grid>
                   <Row style={{flexWrap: 'wrap'}}>
                     {contentTypes.map((contentType, i) =>

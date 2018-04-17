@@ -86,7 +86,7 @@ class DriverOrders  extends Component{
         <Tab heading={'Accepted'} onPress={() => this.goToTabNamed('Accepted')}/>
         <Tab heading={'Posted'} onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
-      <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+      <ReduxRouter  name="DriverOrdersRouter" height={height - shotgun.tabHeight} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
         <Route path={'Accepted'} component={OrderListings}/>
         <Route path={'Posted'} component={OrderListings}/>
       </ReduxRouter>
