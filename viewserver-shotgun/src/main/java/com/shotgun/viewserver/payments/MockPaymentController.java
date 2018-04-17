@@ -72,7 +72,7 @@ public class MockPaymentController implements PaymentController {
             Map<String, Object> tosAcceptance = new HashMap<>();
             tosAcceptance.put("date", (long) System.currentTimeMillis() / 1000L);
             IPeerSession session = ControllerContext.Current().getPeerSession();
-            String ip = ((NioSocketChannel) ((NettyChannel) session.getChannel()).getChannel()).remoteAddress().getAddress().toString().substring(1);
+            String ip = "127.0.0.1";
             tosAcceptance.put("ip", ip);
 
             Map<String, Object> dob = new HashMap<>();

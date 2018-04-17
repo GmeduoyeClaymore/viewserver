@@ -17,6 +17,7 @@
 package io.viewserver.logging.log4j.log4j;
 
 import io.viewserver.authentication.LoggerAuthenticationHandler;
+import io.viewserver.client.CommandResult;
 import io.viewserver.client.ITableCreationConfig;
 import io.viewserver.client.RollingTableCreationConfig;
 import io.viewserver.client.RowEvent;
@@ -105,9 +106,9 @@ public class ViewServerManager extends AbstractManager {
 
             Futures.addCallback(
                     client.createTable(data.tableName, clientColumns, tableClass, tableCreationConfig),
-                    new FutureCallback<Boolean>() {
+                    new FutureCallback<CommandResult>() {
                         @Override
-                        public void onSuccess(Boolean result) {
+                        public void onSuccess(CommandResult result) {
 
                         }
 

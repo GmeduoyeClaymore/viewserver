@@ -37,14 +37,14 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         firebaseKeyPath = configuration.getFirebaseKeyPath();
         localStorageDataAdapterFactory = configuration.isMock() ? new H2LocalStorageDataAdapterFactory(configuration.getMasterDatabasePath()) : new FirebaseInstallingDataAdapterFactory(firebaseKeyPath);
     }
-
+//Todo put this configuration in the PICO container
     @Override
     protected void initCommandHandlerRegistry() {
         super.initCommandHandlerRegistry();
         ImageController imageController = new ImageController(configuration.getAwsCredentials());
         MessagingController messagingController = new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
         MapsController mapsController = new MapsController(configuration.getMapsKey());
-        NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), configuration.getNexmoKey(), getDatabaseUpdater());
+        INexmoController nexmoController = configuration.isMock() ? new MockNexmoController() : new NexmoController(9000, this.getServerCatalog(), configuration.getNexmoKey(), getDatabaseUpdater());
         PaymentController paymentController = configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
         //TODO need to test live stripe payments - StripeApiKey apiKey = isOfflineDb ? new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4") : new StripeApiKey("pk_live_7zCPIyqeDeEnLvwzPeS4vXQv", "sk_live_ZZXR0KcIO0s4CswZC3eQrewL");
 

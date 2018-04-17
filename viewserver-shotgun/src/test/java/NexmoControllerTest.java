@@ -17,7 +17,7 @@ public class NexmoControllerTest {
 
     @Test
     public void canGetNumberInfo() throws NoSuchMethodException {
-        HashMap<String, Object> reps = sut.getPhoneNumberInfo("07733362799");
+        String reps = sut.getInternationalFormatNumber("07733362799");
         System.out.println(reps);
     }
 }

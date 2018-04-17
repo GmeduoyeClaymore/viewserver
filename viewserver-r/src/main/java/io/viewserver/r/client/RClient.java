@@ -16,6 +16,7 @@
 
 package io.viewserver.r.client;
 
+import io.viewserver.client.CommandResult;
 import io.viewserver.client.RowEvent;
 import io.viewserver.client.SubscriptionEventHandlerBase;
 import io.viewserver.client.ViewServerClient;
@@ -76,7 +77,7 @@ public class RClient extends ViewServerClient {
         }
     }
 
-    public boolean writeTable(String tableName, Object[] rowEventArray) throws ExecutionException, InterruptedException {
+    public CommandResult writeTable(String tableName, Object[] rowEventArray) throws ExecutionException, InterruptedException {
         ArrayList<RowEvent> rowEvents = new ArrayList<>();
         int numCols = rowEventArray.length;
         int numRows = Array.getLength(rowEventArray[0]);

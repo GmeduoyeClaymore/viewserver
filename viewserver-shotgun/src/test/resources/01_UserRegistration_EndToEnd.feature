@@ -1,24 +1,23 @@
 Feature: User registration content type feature
 
   Background:
-    Given an in-process viewserver with 2 slave nodes
-    And a data source defined by "distributed_aggregations_datasource.json"
-    And a report defined by "distributed_aggregations_report.json"
-    And a client connected to "inproc://master"
-    Given controller "driverController "action  named "registerDriver" with data "driverRegistrion.json"
+    Given a running shotgun viewserver
+    Given a client connected to "inproc://master"
+    Given controller "driverController" action "registerDriver" invoked with data file "driverRegistration.json"
 
 
   Scenario: Can see driver for product in userProduct report
       Given report parameters
         | Name           | Type    | Value |
-        | showOutOfRange | boolean | false |
-        | showUnrelated  | boolean | true  |
-        | latitude       | int     | 0     |
-        | longitude      | int     | 0     |
-        | userId         | int     | 0     |
+        | showOutOfRange | Boolean | false |
+        | showUnrelated  | Boolean | true  |
+        | latitude       | Integer | 0     |
+        | longitude      | Integer | 0     |
+        | userId         | Integer | 0     |
       Given dimension filters
         | Name             | Type   | Value      |
-        | dimension_userId | String | BrickLayer |
+        | dimension_productId | String | BrickLayer |
+      And paging from 0 to 100 by "userId" descending
       When I subscribe to report "usersForProductAll"
       Then the following data is received
         | ~Action     | ~Name           | ~ColumnType | ~TEId | day | description | descriptionRank | id | market | notional |

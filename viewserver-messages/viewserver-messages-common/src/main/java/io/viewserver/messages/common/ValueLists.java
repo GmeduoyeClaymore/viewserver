@@ -75,7 +75,7 @@ public class ValueLists {
             }
             return stringList;
         }
-        throw new IllegalArgumentException("Unsupported type in values");
+        throw new IllegalArgumentException(String.format("Unsupported type in values %s",values[0]));
     }
 
     public interface IValueList {

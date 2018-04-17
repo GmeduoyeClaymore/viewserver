@@ -58,9 +58,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 
-/**
- * Created by nick on 10/02/2015.
- */
 public class ViewServerClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(ViewServerClient.class);
     private static final ISubscriptionFactory<ClientSubscription> defaultSubscriptionFactory = ClientSubscription::new;
@@ -119,12 +116,12 @@ public class ViewServerClient implements AutoCloseable {
     private void registerCommands() {
     }
 
-    protected ListenableFuture<Boolean> sendCommand(Command command) {
+    public ListenableFuture<CommandResult> sendCommand(Command command) {
         return sendCommand(command, true);
     }
 
-    protected ListenableFuture<Boolean> sendCommand(Command command, boolean requireAuthentication) {
-        SettableFuture<Boolean> future = SettableFuture.create();
+    protected ListenableFuture<CommandResult> sendCommand(Command command, boolean requireAuthentication) {
+        SettableFuture<CommandResult> future = SettableFuture.create();
         if (command.getMessage() != null) {
             command.getMessage().retain();
         }
@@ -134,7 +131,7 @@ public class ViewServerClient implements AutoCloseable {
                 ICommandResultListener originalListener = command.getCommandResultListener();
                 command.setCommandResultListener((result) -> {
                     if (result.isSuccess()) {
-                        future.set(true);
+                        future.set(new CommandResult(true, result.getMessage()));
                     } else {
                         future.setException(new ViewServerClientException(result.getMessage()));
                     }
@@ -160,15 +157,15 @@ public class ViewServerClient implements AutoCloseable {
         return serverReactor;
     }
 
-    public ListenableFuture<Boolean> authenticate(String type, String... tokens) {
+    public ListenableFuture<CommandResult> authenticate(String type, String... tokens) {
         IAuthenticateCommand authenticateCommandDto = MessagePool.getInstance().get(IAuthenticateCommand.class)
                 .setType(type);
         authenticateCommandDto.getTokens().addAll(Arrays.asList(tokens));
 
-        ListenableFuture<Boolean> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto, false);
-        Futures.addCallback(authenticationFuture, new FutureCallback<Boolean>() {
+        ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto, false);
+        Futures.addCallback(authenticationFuture, new FutureCallback<CommandResult>() {
             @Override
-            public void onSuccess(Boolean result) {
+            public void onSuccess(CommandResult result) {
                 try {
                     authenticateFuture.set(connectFuture.get());
                 } catch (Exception e) {
@@ -323,11 +320,11 @@ public class ViewServerClient implements AutoCloseable {
         return future;
     }
 
-    ListenableFuture<Boolean> updateSubscription(ClientSubscription subscription, Options options) {
+    ListenableFuture<CommandResult> updateSubscription(ClientSubscription subscription, Options options) {
         IUpdateSubscriptionCommand updateSubscriptionCommandDto = MessagePool.getInstance().get(IUpdateSubscriptionCommand.class)
                 .setCommandId(subscription.getCommandId())
                 .setOptions(options.toMessage());
-        final ListenableFuture<Boolean> future = sendCommand("updateSubscription", updateSubscriptionCommandDto);
+        final ListenableFuture<CommandResult> future = sendCommand("updateSubscription", updateSubscriptionCommandDto);
         updateSubscriptionCommandDto.release();
         return future;
     }
@@ -352,11 +349,11 @@ public class ViewServerClient implements AutoCloseable {
         return values;
     }
 
-    public ListenableFuture<Boolean> createTable(String tableName, List<Column> columns) {
+    public ListenableFuture<CommandResult> createTable(String tableName, List<Column> columns) {
         return createTable(tableName, columns, null, null);
     }
 
-    public ListenableFuture<Boolean> createTable(String tableName, List<Column> columns, String tableType, ITableCreationConfig config) {
+    public ListenableFuture<CommandResult> createTable(String tableName, List<Column> columns, String tableType, ITableCreationConfig config) {
         ITableEditCommand tableEditCommandBuilder = MessagePool.getInstance().get(ITableEditCommand.class)
                 .setTableName(tableName)
                 .setOperation(ITableEditCommand.Operation.Create);
@@ -380,12 +377,12 @@ public class ViewServerClient implements AutoCloseable {
             schemaChangeBuilder.getAddColumns().add(addColumn);
             addColumn.release();
         }
-        final ListenableFuture<Boolean> future = sendCommand("tableEdit", tableEditCommandBuilder);
+        final ListenableFuture<CommandResult> future = sendCommand("tableEdit", tableEditCommandBuilder);
         tableEditCommandBuilder.release();
         return future;
     }
 
-    public ListenableFuture<Boolean> editTable(String tableName, Iterable<RowEvent> rowEvents, List<Column> columns,ITableEditCommand.ICreationConfig creationConfig, boolean reset) {
+    public ListenableFuture<CommandResult> editTable(String tableName, Iterable<RowEvent> rowEvents, List<Column> columns,ITableEditCommand.ICreationConfig creationConfig, boolean reset) {
 
         ITableEditCommand tableEditCommand = MessagePool.getInstance().get(ITableEditCommand.class)
                 .setCreationConfig(creationConfig)
@@ -451,7 +448,7 @@ public class ViewServerClient implements AutoCloseable {
             rowEventDto.release();
         }
 
-        final ListenableFuture<Boolean> future = sendCommand("tableEdit", tableEditCommand);
+        final ListenableFuture<CommandResult> future = sendCommand("tableEdit", tableEditCommand);
         tableEditCommand.release();
         return future;
     }
@@ -484,11 +481,11 @@ public class ViewServerClient implements AutoCloseable {
         }
     }
 
-    public ListenableFuture<Boolean> sendCommand(String commandName, IPoolableMessage commandDto) {
+    public ListenableFuture<CommandResult> sendCommand(String commandName, IPoolableMessage commandDto) {
         return sendCommand(commandName, commandDto, true);
     }
 
-    private ListenableFuture<Boolean> sendCommand(String commandName, IPoolableMessage commandDto, boolean requireAuthentication) {
+    private ListenableFuture<CommandResult> sendCommand(String commandName, IPoolableMessage commandDto, boolean requireAuthentication) {
         Command command = new Command(commandName, commandDto);
         return sendCommand(command, requireAuthentication);
     }

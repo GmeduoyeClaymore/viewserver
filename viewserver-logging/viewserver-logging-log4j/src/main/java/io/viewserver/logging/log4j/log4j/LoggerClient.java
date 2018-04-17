@@ -16,6 +16,7 @@
 
 package io.viewserver.logging.log4j.log4j;
 
+import io.viewserver.client.CommandResult;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.network.Command;
 import io.viewserver.network.Network;
@@ -44,7 +45,7 @@ public class LoggerClient extends ViewServerClient {
     }
 
     @Override
-    protected ListenableFuture<Boolean> sendCommand(Command command, boolean requireAuthentication) {
+    protected ListenableFuture<CommandResult> sendCommand(Command command, boolean requireAuthentication) {
         command.setSilent(true);
         return super.sendCommand(command, requireAuthentication);
     }

@@ -31,7 +31,7 @@ import java.util.List;
  * Created by nick on 10/02/2015.
  */
 public class InProcessViewServerContext implements IViewServerContext {
-    public ViewServerMaster master;
+    public ViewServerMasterBase master;
     public final List<ViewServerSlave> slaves = new ArrayList<>();
     public DataSource dataSource;
     public String bootstrapperClass = DefaultBootstrapper.class.getName();
@@ -74,7 +74,7 @@ public class InProcessViewServerContext implements IViewServerContext {
 
     @Override
     public void setMaster(ViewServerMasterBase mast) {
-        master = (ViewServerMaster) mast;
+        master = (ViewServerMasterBase) mast;
     }
 
     @Override

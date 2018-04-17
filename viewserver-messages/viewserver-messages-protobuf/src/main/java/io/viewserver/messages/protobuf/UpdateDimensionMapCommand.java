@@ -335,6 +335,9 @@ public class UpdateDimensionMapCommand extends PoolableMessage<UpdateDimensionMa
         @Override
         public String getStringValue() {
             final UpdateDimensionMapCommandMessage.Mapping.ValueCase valueCase = getValueCase();
+            if(valueCase == UpdateDimensionMapCommandMessage.Mapping.ValueCase.NULLVALUE){
+                return null;
+            }
             if (valueCase != UpdateDimensionMapCommandMessage.Mapping.ValueCase.STRINGVALUE &&
                     valueCase != UpdateDimensionMapCommandMessage.Mapping.ValueCase.VALUE_NOT_SET) {
                 throw new UnsupportedOperationException(String.format("Value is of type %s, cannot get string", valueCase));

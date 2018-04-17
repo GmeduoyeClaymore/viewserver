@@ -16,6 +16,7 @@
 
 package io.viewserver.client;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import io.viewserver.execution.Options;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.OutputPrinter;
@@ -45,7 +46,7 @@ public class ClientSubscription extends ClientSubscriptionBase {
         this.client = client;
     }
 
-    public Future<Boolean> update(ISubscriptionOptionsUpdater updater) {
+    public ListenableFuture<io.viewserver.client.CommandResult> update(ISubscriptionOptionsUpdater updater) {
         updater.update(options);
         return client.updateSubscription(this, options);
     }

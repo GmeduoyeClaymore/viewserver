@@ -59,6 +59,7 @@ public class ShotgunInProcViewServerContext implements IViewServerContext {
 
     @Override
     public void setMaster(ViewServerMasterBase master) {
+
         this.master = (ShotgunViewServerMaster) master;
     }
 

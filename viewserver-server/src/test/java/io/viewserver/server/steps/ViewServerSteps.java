@@ -80,6 +80,15 @@ public class ViewServerSteps {
         }
     }
 
+    @Given("^an in-process viewserver$")
+    public void an_in_process_viewserver() throws Throwable {
+//        System.setProperty("server.bypassDataSources", "true");
+        BootstrapperBase.bootstrap(viewServerContext.getMasterConfiguration());
+
+        viewServerContext.getMaster().run();
+    }
+
+
     @Given("^a data source defined by \"([^\"]*)\"$")
     public void a_data_source_defined_by(String dataSourceDefinitionFile) throws Exception {
         viewServerContext.setDataSource(getDataSource(dataSourceDefinitionFile));

@@ -25,8 +25,9 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 
+
 @Controller(name = "nexmoController")
-public class NexmoController {
+public class NexmoController implements INexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
     private Catalog systemCatalog;
@@ -42,8 +43,9 @@ public class NexmoController {
         this.createHttpServer(httpPort);
     }
 
-    @ControllerAction(path = "getPhoneNumberInfo", isSynchronous = false)
-    public HashMap<String, Object> getPhoneNumberInfo(String phoneNumber) {
+    @Override
+    @ControllerAction(path = "getInternationalFormatNumber", isSynchronous = false)
+    public String getInternationalFormatNumber(String phoneNumber) {
         if (phoneNumber == null || "".equals(phoneNumber)) {
             throw new RuntimeException("Phone number cannot be null");
         }
@@ -60,7 +62,7 @@ public class NexmoController {
             if(map.get("status") != null && !map.get("status").equals(0)){
                 throw new RuntimeException("Problem with nexmo request status:" + map.get("status") + " - message:" + map.get("status_message"));
             }
-            return map;
+            return (String) map.get("international_format_number");
         } catch (Exception ex) {
             log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);
             throw new RuntimeException(ex);

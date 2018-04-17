@@ -3,7 +3,8 @@
     "name" : "customer",
     "label" : "customer",
     "cardinality" : "Int",
-    "aggregator" : true
+    "aggregator" : true,
+    "columnType" : "String"
   } ],
   "dataLoader" : {
     "@class" : "io.viewserver.adapters.common.EmptyTableDataLoader",

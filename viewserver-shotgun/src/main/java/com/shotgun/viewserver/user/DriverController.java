@@ -43,7 +43,7 @@ public class DriverController {
     private JourneyEmulatorController journeyEmulatorController;
     private LoginController loginController;
     private ImageController imageController;
-    private NexmoController nexmoController;
+    private INexmoController nexmoController;
     private IReactor reactor;
     private boolean isMock;
 
@@ -55,7 +55,7 @@ public class DriverController {
                             JourneyEmulatorController journeyEmulatorController,
                             LoginController loginController,
                             ImageController imageController,
-                            NexmoController nexmoController,
+                            INexmoController nexmoController,
                             IReactor reactor,
                             boolean isMock) {
         this.iDatabaseUpdater = iDatabaseUpdater;
@@ -97,7 +97,7 @@ public class DriverController {
             user.setImageUrl(imageUrl);
         }
 
-        user.setContactNo((String)nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"));
+        user.setContactNo((String)nexmoController.getInternationalFormatNumber(user.getContactNo()));
 
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();

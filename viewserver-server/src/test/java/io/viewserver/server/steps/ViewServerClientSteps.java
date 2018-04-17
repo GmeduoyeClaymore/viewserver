@@ -17,14 +17,18 @@
 package io.viewserver.server.steps;
 
 import io.viewserver.client.ClientSubscription;
+import io.viewserver.client.CommandResult;
 import io.viewserver.client.RowEvent;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ColumnType;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.messages.MessagePool;
+import io.viewserver.messages.command.IGenericJSONCommand;
 import io.viewserver.messages.command.ITableEditCommand;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.messages.config.IRollingTableConfig;
+import io.viewserver.network.Command;
 import io.viewserver.operators.table.ProtoRollingTableConfig;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.MapReader;
@@ -39,9 +43,13 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import gherkin.formatter.model.DataTableRow;
+import org.h2.util.IOUtils;
 import org.junit.Assert;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -119,9 +127,16 @@ public class ViewServerClientSteps {
                         typedValues[j] = Double.parseDouble(values[j]);
                         break;
                     }
+                    case "Boolean": {
+                        typedValues[j] = Boolean.parseBoolean(values[j]);
+                        break;
+                    }
                     case "String": {
                         typedValues[j] = values[j];
                         break;
+                    }
+                    default:{
+                        throw new RuntimeException(String.format("Unrecognised type \"%s\"", type));
                     }
                 }
             }
@@ -141,6 +156,66 @@ public class ViewServerClientSteps {
         Assert.assertNotNull(clientContext.getSubscription("report"));
     }
 
+    @Given("^controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
+    public void controller_action_invoked_with_data_file(String controllerName, String action, String dataFile) throws Throwable {
+        assertClientConnected();
+        I_Invoke_Action_On_Controller_With_Data_With_Result(controllerName, action, getJsonFromFile(dataFile), null);
+    }
+
+    private String getJsonFromFile(String dataFile) {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dataFile);
+        if(inputStream == null){
+            throw new RuntimeException("Unable to find resource at at " + dataFile);
+        }
+        Reader reader = IOUtils.getBufferedReader(inputStream);
+        try {
+            String json = IOUtils.readStringAndClose(reader,0);
+            return parseReferencesInJSONFile(json);
+        } catch (IOException e) {
+            throw  new RuntimeException(e);
+        }
+    }
+
+    private String parseReferencesInJSONFile(String json) {
+        HashMap<String, Object> result = ControllerUtils.mapDefault(json);
+        replaceReferences(result);
+        return ControllerUtils.toString(result);
+    }
+
+    private void replaceReferences(HashMap<String, Object> result) {
+        for (Map.Entry<String,Object> entry : result.entrySet()){
+            if(entry.getValue() instanceof HashMap){
+                replaceReferences((HashMap)entry.getValue());
+            }
+            else if(entry.getValue() instanceof String){
+                String value = (String) entry.getValue();
+                if(value.startsWith("ref://")){
+                    String fileReference = value.substring(6);
+                    entry.setValue(getJsonFromFile(fileReference));
+                }
+            }
+        }
+    }
+
+    @When("^Given controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
+    public void I_Invoke_Action_On_Controller_With_Data_With_Result(String controllerName, String action, String data, String result) throws Throwable {
+        assertClientConnected();
+
+        IGenericJSONCommand genericJSONCommand = MessagePool.getInstance().get(IGenericJSONCommand.class)
+                .setAction(action)
+                .setPayload(data)
+                .setPath(controllerName);
+        Command command = new Command("genericJSON", genericJSONCommand);
+        ListenableFuture<CommandResult> future = clientContext.client.sendCommand(command);
+
+        CommandResult actual = future.get(20, TimeUnit.SECONDS);
+        Assert.assertTrue(actual.isStatus());
+        if(result != null) {
+            Assert.assertEquals(result, actual.getMessage());
+        }
+    }
+
+//Given controller "driverController" action "registerDriver" with data "driverRegistrion.json"
     private void trySubscribe(CountDownLatch subscribeLatch){
         ListenableFuture<ClientSubscription> subFuture = clientContext.client.subscribeToReport(
                 clientContext.reportContext,

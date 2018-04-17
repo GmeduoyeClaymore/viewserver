@@ -6,7 +6,7 @@
         </Console>
     </appenders>
     <Loggers>
-        <Root level="trace">
+        <Root level="debug">
             <AppenderRef ref="Console" />
         </Root>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>

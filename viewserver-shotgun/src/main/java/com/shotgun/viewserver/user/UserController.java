@@ -19,7 +19,6 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -42,7 +41,7 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private LoginController loginController;
     private ImageController imageController;
-    private NexmoController nexmoController;
+    private INexmoController nexmoController;
     private MessagingController messagingController;
     private MapsController mapsController;
     private IDatabaseUpdater iDatabaseUpdater;
@@ -53,7 +52,7 @@ public class UserController {
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           LoginController loginController,
                           ImageController imageController,
-                          NexmoController nexmoController,
+                          INexmoController nexmoController,
                           MessagingController messagingController,
                           MapsController mapsController, IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
@@ -91,7 +90,7 @@ public class UserController {
                 .addValue("dob", user.getDob())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
                 .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
-                .addValue("contactNo", nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"))
+                .addValue("contactNo", nexmoController.getInternationalFormatNumber(user.getContactNo()))
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
                 .addValue("range", user.getRange())

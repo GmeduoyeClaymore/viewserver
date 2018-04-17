@@ -40,14 +40,14 @@ public class CustomerController {
     private DeliveryAddressController deliveryAddressController;
     private MessagingController messagingController;
     private UserController userController;
-    private NexmoController nexmoController;
+    private INexmoController nexmoController;
 
     public CustomerController(IDatabaseUpdater iDatabaseUpdater,
                               PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
                               MessagingController messagingController,
                               UserController userController,
-                              NexmoController nexmoController) {
+                              INexmoController nexmoController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
@@ -64,7 +64,7 @@ public class CustomerController {
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
         user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
 
-        String international_format_number = (String) nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number");
+        String international_format_number = (String) nexmoController.getInternationalFormatNumber(user.getContactNo());
         if(international_format_number == null){
             throw new RuntimeException("Unable to format user contact number " + user.getContactNo() + " is it valid?");
         }
