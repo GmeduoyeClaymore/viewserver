@@ -67,7 +67,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         this.registerController(imageController);
         this.registerController(new PhoneCallController(getDatabaseUpdater()));
         this.registerController(nexmoController);
-        this.registerController(new VehicleDetailsController(configuration.getVehicleDetailsKey()));
+        this.registerController(new VehicleDetailsController(configuration.getVehicleDetailsKey(), configuration.isMock()));
     }
 
     private IDatabaseUpdater getDatabaseUpdater() {

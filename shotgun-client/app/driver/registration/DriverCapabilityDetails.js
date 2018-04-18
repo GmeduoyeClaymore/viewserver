@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, ScrollView} from 'react-native';
-import {Text, Item, Label, Button, Grid, Row, Col} from 'native-base';
+import {Text, Item, Label, Button, Grid, Row, Col, Container, Content} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
@@ -41,47 +41,41 @@ class DriverCapabilityDetails extends Component{
     const peopleVisible = numAvailableForOffload > 0;
     const combinedErrors = `${errors}`;
 
-    return <Grid>
+    return <Content><Grid>
       <Row>
         <Col>
-          <Row>
           <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
             <Label>Vehicle registration</Label>
             <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeText('registrationNumber', value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
           </Item>
-          </Row>
-          <Row>
           <ValidatingButton fullWidth onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
-          </Row>
-          <Row style={{flexWrap: 'wrap'}}>{vehicle.make != undefined ?
-            <Col>
-              <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-                <Label>Vehicle model</Label>
-                <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
-              </Item></Col>
-              <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-                <Label>Vehicle colour</Label>
-                <Text>{vehicle.colour}</Text>
-              </Item></Col>
-              <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-                <Label>Approx dimensions</Label>
-                <Text>{`${dimensions.volume}m\xB3 load space`}</Text>
-                <Text>{`${dimensions.weight}kg Max`}</Text>
-              </Item></Col></Col>
-            : null}
-          </Row>
         </Col>
-
       </Row>
 
-
+      {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Vehicle model</Label>
+          <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
+        </Item></Col>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Vehicle colour</Label>
+          <Text>{vehicle.colour}</Text>
+        </Item></Col>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Approx dimensions</Label>
+          <Text>{`${dimensions.volume}m\xB3 load space`}</Text>
+          <Text>{`${dimensions.weight}kg Max`}</Text>
+        </Item></Col>
+      </Row>) : null}
       <Row>
         <Col>
+          <Grid style={{marginBottom: shotgun.contentPadding, marginTop: 20}}>
+            <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
             <Row>
-              <Col><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Col>
               <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={peopleVisible} onPress={() => this.togglePeopleVisibility(true)}><Text uppercase={false}>Yes</Text></Button></Col>
               <Col><Button fullWidth light active={!peopleVisible} onPress={() => this.togglePeopleVisibility(false)}><Text uppercase={false}>No</Text></Button></Col>
             </Row>
+          </Grid>
           {peopleVisible ?
             <Grid>
               <Row>
@@ -91,31 +85,31 @@ class DriverCapabilityDetails extends Component{
                 <Col style={{marginRight: 10}}>
                   <Row>
                     <Button personButton active={numAvailableForOffload == 1} onPress={() => this.onChangeText('numAvailableForOffload', 1)} >
-                      <Icon name='one-person'/>
+                      <View>
+                        <Icon name='one-person'/>
+                        <Text style={styles.personSelectText}>1</Text>
+                      </View>
                     </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>1</Text>
                   </Row>
                 </Col>
                 <Col style={{marginRight: 10}}>
                   <Row>
                     <Button personButton active={numAvailableForOffload == 2} onPress={() => this.onChangeText('numAvailableForOffload', 2)} >
-                      <Icon name='one-person'/>
+                      <View>
+                        <Icon name='one-person'/>
+                        <Text style={styles.personSelectText}>2</Text>
+                      </View>
                     </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>2</Text>
                   </Row>
                 </Col>
                 <Col>
                   <Row>
                     <Button personButton active={numAvailableForOffload == 3} onPress={() => this.onChangeText('numAvailableForOffload', 3)} >
-                      <Icon name='one-person'/>
+                      <View>
+                        <Icon name='one-person'/>
+                        <Text style={styles.personSelectText}>3</Text>
+                      </View>
                     </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>3</Text>
                   </Row>
                 </Col>
               </Row>
@@ -123,7 +117,7 @@ class DriverCapabilityDetails extends Component{
         </Col>
       </Row>
       <ErrorRegion errors={combinedErrors}/>
-    </Grid>;
+    </Grid></Content>;
   }
 }
 
@@ -141,7 +135,7 @@ const styles = {
   },
   personSelectText: {
     marginTop: 5,
-    marginBottom: 25,
+    fontWeight: 'normal',
     fontSize: 16,
     textAlign: 'center'
   }

@@ -8,6 +8,8 @@ import io.viewserver.controller.ControllerAction;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ public class VehicleDetailsController {
     private static final Logger log = LoggerFactory.getLogger(VehicleDetailsController.class);
     private static String VEHICLE_DETAILS_QUERY_URL = "https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData";
     private VehicleDetailsApiKey apiKey;
+    private boolean isMock;
+
     private static String[] PERMITTED_BODY_STYLES = new String[]{
             VehicleBodyStyles.BOX_VAN, VehicleBodyStyles.PANEL_VAN,
             VehicleBodyStyles.CAR_DERIVED_VAN, VehicleBodyStyles.LIGHT_VAN,
@@ -27,8 +31,9 @@ public class VehicleDetailsController {
             VehicleBodyStyles.LUTON_VAN, VehicleBodyStyles.INSULATED_VAN,
             VehicleBodyStyles.SPECIALLY_FITTED_VAN, VehicleBodyStyles.DROPSIDE_LORRY};
 
-    public VehicleDetailsController(VehicleDetailsApiKey apiKey) {
+    public VehicleDetailsController(VehicleDetailsApiKey apiKey, boolean isMock) {
         this.apiKey = apiKey;
+        this.isMock = isMock;
     }
 
     @ControllerAction(path = "getDetails")
@@ -75,6 +80,14 @@ public class VehicleDetailsController {
     }
 
     private String getJSON(VehicleDetailsQuery query) {
+        if(isMock){
+            URL resource = getClass().getClassLoader().getResource("mock//vehicleDetails.json");
+            if(resource == null){
+                throw new RuntimeException("Unable to find mock vehicle details");
+            }
+            return ControllerUtils.urlToString(resource);
+        }
+
         return ControllerUtils.execute("GET", VEHICLE_DETAILS_QUERY_URL, query.toQueryString(apiKey.getKey()));
     }
 

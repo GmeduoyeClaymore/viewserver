@@ -11,7 +11,7 @@ public class VehicleDetailsControllerTest {
     private VehicleDetailsController sut;
 
     public void createSut(){
-        sut = new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c"));
+        sut = new VehicleDetailsController(new VehicleDetailsApiKey("881fc904-6ddf-4a48-91ad-7248677ffd1c"), true);
     }
 
     @Test
