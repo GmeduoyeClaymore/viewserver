@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import {Image, ScrollView} from 'react-native';
+import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';

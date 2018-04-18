@@ -22,6 +22,7 @@
     "no-unused-vars": [2, {          // http://eslint.org/docs/rules/no-unused-vars
       "vars": "all",
       "args": "after-used",
+      "ignoreRestSiblings": true,
       "varsIgnorePattern": "[rR]eact"
     }],
     "no-use-before-define": 0,       // http://eslint.org/docs/rules/no-use-before-define

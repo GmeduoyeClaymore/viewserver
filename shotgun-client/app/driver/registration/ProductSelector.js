@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import {Text, Spinner, Container, Row, Col, Content} from 'native-base';
+import {Text, Spinner, Row, Col} from 'native-base';
 import {LoadingScreen, PagingListView} from 'common/components';
 import {CheckBox} from 'common/components/basic';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';

@@ -6,7 +6,7 @@ export default class OrderRequestDaoContext{
   static DEFAULT_POSITION = {
     latitude: 0,
     longitude: 0
-  }
+  };
   static OPTIONS = {
     offset: 0,
     limit: 10,

@@ -4,7 +4,6 @@ import {commonServicesRegistrationAction, logOut, unregisterAllDaosAndResetCompo
 import {isAnyLoading, getDaoState, getLoadingError} from 'common/dao';
 import {Content, Button, Text} from 'native-base';
 import {LoadingScreen} from 'common/components';
-import PermissionsService from 'common/services/PermissionsService';
 
 class LandingCommon extends Component {
   constructor(props) {
@@ -58,7 +57,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center'
   }
-}
+};
 
 export default connect(mapStateToProps)(LandingCommon);
 

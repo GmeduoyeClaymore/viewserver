@@ -4,7 +4,7 @@ import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Icon, AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
-import {View, Linking} from 'react-native';
+import {Linking} from 'react-native';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
@@ -23,7 +23,7 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
             <Title>{user.firstName} {user.lastName}</Title>
           </Col>
           <Col size={25} style={{paddingTop: 20}}>
-           <AverageRating rating={user.ratingAvg}/>
+            <AverageRating rating={user.ratingAvg}/>
           </Col>
         </Row>
       </Body>
