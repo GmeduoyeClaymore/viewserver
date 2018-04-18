@@ -8,22 +8,6 @@ import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import {withExternalState} from 'custom-redux';
 
-const datePickerOptions = {
-  datePickerModeAndroid: 'spinner',
-  mode: 'date',
-  titleIOS: 'Select delivery time',
-  minimumDate: moment().add(-100, 'years').toDate(),
-  maximumDate: moment().add(1, 'years').toDate()
-};
-
-const imagePickerOptions = {
-  cropping: true,
-  cropperCircleOverlay: true,
-  useFrontCamera: true,
-  height: 400,
-  width: 400
-};
-
 class UserDetails  extends Component{
   constructor(props){
     super(props);
@@ -176,6 +160,22 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'flex-start'
   }
+};
+
+const datePickerOptions = {
+  datePickerModeAndroid: 'spinner',
+  mode: 'date',
+  titleIOS: 'Select delivery time',
+  minimumDate: moment().add(-100, 'years').toDate(),
+  maximumDate: moment().add(1, 'years').toDate()
+};
+
+const imagePickerOptions = {
+  cropping: true,
+  cropperCircleOverlay: true,
+  useFrontCamera: true,
+  height: 400,
+  width: 400
 };
 
 const validationSchema = {

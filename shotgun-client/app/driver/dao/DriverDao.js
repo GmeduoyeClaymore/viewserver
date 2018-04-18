@@ -1,10 +1,14 @@
 import Logger from 'common/Logger';
 import PhoneCallService from 'common/services/PhoneCallService';
+import Rx from 'rxjs/Rx';
 
 export default class DriverDao{
   constructor(client) {
     this.client = client;
     this.name = 'driverDao';
+    this.subject = new Rx.Subject();
+    this.state = {};
+    this.subject.next();
     this.updateDriver = this.updateDriver.bind(this);
     this.acceptOrderRequest = this.acceptOrderRequest.bind(this);
     this.startOrderRequest = this.startOrderRequest.bind(this);
@@ -12,6 +16,18 @@ export default class DriverDao{
     this.completeOrderRequest = this.completeOrderRequest.bind(this);
     this.rateCustomer = this.rateCustomer.bind(this);
     this.callCustomer = this.callCustomer.bind(this);
+    this.getVehicleDetails = this.getVehicleDetails.bind(this);
+    this.updateState = this.updateState.bind(this);
+  }
+
+  get observable(){
+    return this.subject;
+  }
+
+  updateState(partialState){
+    const newState = {...this.state, ...partialState};
+    this.state = newState;
+    this.subject.next(newState);
   }
 
   async updateDriver({driver}){
@@ -44,6 +60,11 @@ export default class DriverDao{
 
   async rateCustomer({orderId, rating}){
     await this.client.invokeJSONCommand('orderController', 'addCustomerRating', {orderId,  rating});
+  }
+
+  async getVehicleDetails({registrationNumber}){
+    const vehicleDetails = await this.client.invokeJSONCommand('vehicleDetailsController', 'getDetails', registrationNumber);
+    this.updateState({vehicleDetails});
   }
 }
 

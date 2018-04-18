@@ -82,7 +82,7 @@ public class VehicleDetailsController {
     private String getJSON(VehicleDetailsQuery query) {
         if(isMock){
             URL resource = getClass().getClassLoader().getResource("mock//vehicleDetails.json");
-            if(resource == null){
+            if(resource == null || query.getRegNo().equals("ERROR")){
                 throw new RuntimeException("Unable to find mock vehicle details");
             }
             return ControllerUtils.urlToString(resource);
