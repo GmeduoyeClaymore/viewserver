@@ -151,7 +151,7 @@ public class UnionOperator extends ConfigurableOperatorBase<IUnionConfig> {
                         continue;
                     }
                     if (inboundSchema.getColumnHolder(outputHolder.getName()) == null) {
-                        throw new ViewServerException(String.format("Schema for %s is missing column '%s', which is in the output schema",
+                        throw new ViewServerException(String.format("SchemaConfig for %s is missing column '%s', which is in the output schema",
                                 getName(), outputHolder.getName()));
                     }
                 }
@@ -169,7 +169,7 @@ public class UnionOperator extends ConfigurableOperatorBase<IUnionConfig> {
             } else {
                 outboundColumnHolder = output.getSchema().getColumnHolder(columnHolder.getName());
                 if (outboundColumnHolder == null) {
-                    throw new RuntimeException("Schema for " + getName() + " has column '" + columnHolder.getName() + "', which does not exist in the output schema");
+                    throw new RuntimeException("SchemaConfig for " + getName() + " has column '" + columnHolder.getName() + "', which does not exist in the output schema");
                 }
                 if (outboundColumnHolder.getType() != columnHolder.getType()) {
                     throw new RuntimeException("Column '" + columnHolder.getName() + "' has different type (" + columnHolder.getType() + ") to the output schema (" + outboundColumnHolder.getType() + ")");

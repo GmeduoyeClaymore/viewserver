@@ -23,9 +23,6 @@ import io.viewserver.datasource.IRecord;
 
 import java.util.List;
 
-/**
- * Created by paulrg on 16/01/2015.
- */
 
 public abstract class BaseRecordWrapper implements IRecord {
     protected DataSource dataSource;
@@ -56,12 +53,5 @@ public abstract class BaseRecordWrapper implements IRecord {
             value = this.getColumn(columnName).getDefaultValue();
         }
         return type.cast(value);
-    }
-
-    protected String getDataSourceColumnName(String columnName) {
-        if(this.dataSource != null) {
-            return dataSource.getSchema().getColumn(columnName).getDataSourceName();
-        }
-        return columnName;
     }
 }

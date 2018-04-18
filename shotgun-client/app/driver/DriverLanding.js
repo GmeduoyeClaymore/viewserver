@@ -10,8 +10,7 @@ import DriverOrderInProgress from './DriverOrderInProgress';
 import DriverSettings from './Settings/DriverSettings';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
 import {driverServicesRegistrationAction, getBankAccount, watchPosition} from 'driver/actions/DriverActions';
-import {getCurrentPosition} from 'common/actions/CommonActions';
-import {isAnyLoading, isAnyOperationPending, getDaoState} from 'common/dao';
+import {isAnyLoading, getDaoState} from 'common/dao';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
@@ -46,7 +45,6 @@ class DriverLanding extends Component {
     }
     dispatch(driverServicesRegistrationAction(client, userId));
     dispatch(customerServicesRegistrationAction(client));
-    dispatch(getCurrentPosition());
     dispatch(watchPosition());
     dispatch(getBankAccount());
     dispatch(getPaymentCards());
@@ -83,7 +81,7 @@ const mapStateToProps = (state, nextOwnProps) => {
     ...nextOwnProps,
     parentMatch,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
-    busy: isLoggedIn && isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || isAnyOperationPending(state, [{ userDao: 'getCurrentPosition'}]) || !user,
+    busy: isLoggedIn && isAnyLoading(state, ['userDao', 'driverDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || !user,
     user
   };
 };

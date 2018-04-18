@@ -162,12 +162,6 @@
 
             <dependency>
                 <groupId>io.viewserver</groupId>
-                <artifactId>viewserver-adapters-firebase</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.viewserver</groupId>
                 <artifactId>viewserver-r</artifactId>
                 <version>${project.version}</version>
             </dependency>

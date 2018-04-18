@@ -52,7 +52,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
 
     public void setSchema(Schema schema) {
         if (schema == null) {
-            throw new IllegalArgumentException("Schema must not be null");
+            throw new IllegalArgumentException("SchemaConfig must not be null");
         }
         output.setSchema(schema);
         tableRow = new TableRow(0, schema);

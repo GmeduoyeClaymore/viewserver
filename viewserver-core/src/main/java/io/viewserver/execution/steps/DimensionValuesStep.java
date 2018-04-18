@@ -74,7 +74,7 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
                 } else {
                     throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
                 }
-                mappedValues[j] = dimensionMapper.map(dataSource, dimension, value);
+                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(), dimension.getColumnType(), value);
             }
 
             IndexOperator.QueryHolder queryHolder = dimensionFilter.isExclude()
@@ -85,9 +85,6 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
 
         IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
                 .withQueryHolders(queryHolders);
-        if (dimensionExecutionPlanContext.isDistributed()) {
-            indexNode.withDistribution();
-        }
 
         dimensionExecutionPlanContext.addNodes(indexNode);
         dimensionExecutionPlanContext.setInput(indexNode.getName(), indexNode.getConfigForOutputName());

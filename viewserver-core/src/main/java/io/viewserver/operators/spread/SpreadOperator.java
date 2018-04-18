@@ -37,7 +37,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
         this.spreadColumnRegistry = spreadColumnRegistry;
-        input = new Input(Constants.IN, this, true);
+        input = new Input(Constants.IN, this);
         addInput(input);
 
         output = new Output(Constants.OUT, this);
@@ -71,7 +71,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
 
     private class Input extends InputBase {
 
-        public Input(String name, IOperator owner, boolean isLeft) {
+        public Input(String name, IOperator owner) {
             super(name, owner);
         }
 

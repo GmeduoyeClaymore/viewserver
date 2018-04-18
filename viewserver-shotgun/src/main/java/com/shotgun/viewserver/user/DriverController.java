@@ -185,7 +185,7 @@ public class DriverController {
         String stripeCustomerId = (String)ControllerUtils.getColumnValue(userTable, "stripeCustomerId", currentCustomerRow);
         String accountId = (String)ControllerUtils.getColumnValue(userTable, "stripeAccountId", currentDriverRow);
         int chargePercentage = (int)ControllerUtils.getColumnValue(userTable, "chargePercentage", currentDriverRow);
-        Double totalPrice = (Double)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
+        int totalPrice = (int)ControllerUtils.getColumnValue(orderTable, "totalPrice", currentOrderRow);
 
         String contentTypeName = (String)ControllerUtils.getOperatorColumnValue(orderTableProjection, "contentType_name", currentOrderRow);
         String productName = (String)ControllerUtils.getOperatorColumnValue(orderTableProjection, "product_name", currentOrderRow);

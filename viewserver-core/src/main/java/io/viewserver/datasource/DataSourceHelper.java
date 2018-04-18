@@ -18,9 +18,7 @@ package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
-import io.viewserver.configurator.Configurator;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.plan.DataSourceExecutionPlan;
@@ -36,13 +34,23 @@ import java.util.List;
  * Created by nickc on 21/11/2014.
  */
 public class DataSourceHelper {
-    public static void runDataSourceExecutionPlan(IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, IExecutionContext executionContext, ICatalog catalog, IDistributionManager distributionManager, CommandResult commandResult) {
-        Configurator configurator = executionContext.getConfigurator();
-        ExecutionPlanRunner executionPlanRunner = new ExecutionPlanRunner(configurator, distributionManager);
+
+    public static io.viewserver.schema.Schema getSchema(SchemaConfig schema1 ) {
+        io.viewserver.schema.Schema schema = new io.viewserver.schema.Schema();
+        List<Column> columns = schema1.getColumns();
+        int count = columns.size();
+        for (int i = 0; i < count; i++) {
+            Column column = columns.get(i);
+            ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(column.getName(), column.getType().getColumnType());
+            schema.addColumn(columnHolder);
+        }
+        return schema;
+    }
+    public static void runDataSourceExecutionPlan(IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
+        ExecutionPlanRunner executionPlanRunner = new ExecutionPlanRunner();
         DataSourceExecutionPlanContext dataSourceExecutionPlanContext = new DataSourceExecutionPlanContext(dataSource);
         dataSourceExecutionPlanContext.setExecutionContext(executionContext);
         dataSourceExecutionPlanContext.setCatalog(catalog);
-        dataSourceExecutionPlanContext.setDistributionManager(distributionManager);
         DataSourceExecutionPlan dataSourceExecutionPlan = new DataSourceExecutionPlan();
 
         executionPlanRunner.executePlan(dataSourceExecutionPlan, dataSourceExecutionPlanContext, executionContext, catalog, commandResult);
@@ -50,46 +58,19 @@ public class DataSourceHelper {
         dataSourceRegistry.onDataSourceBuilt(dataSourceExecutionPlanContext);
     }
 
-    public static io.viewserver.schema.Schema getSchema(IDataSource dataSource, IDimensionMapper dimensionMapper) {
-        io.viewserver.schema.Schema schema = new io.viewserver.schema.Schema();
 
-        List<Column> columns = dataSource.getSchema().getColumns();
-        int count = columns.size();
-        for (int i = 0; i < count; i++) {
-            Column column = columns.get(i);
-            ColumnHolder columnHolder = createColumnHolder(column.getName(), column.getType(), dataSource, dimensionMapper);
-            schema.addColumn(columnHolder);
-        }
-
-        List<CalculatedColumn> calculatedColumns = dataSource.getCalculatedColumns();
-        count = calculatedColumns.size();
-        for (int i = 0; i < count; i++) {
-            CalculatedColumn calculatedColumn = calculatedColumns.get(i);
-            ColumnHolder columnHolder = createColumnHolder(calculatedColumn.getName(), calculatedColumn.getType(), dataSource, dimensionMapper);
-            columnHolder.getMetadata().setFlag(ColumnFlags.DATASOURCE_CALCULATION);
-            schema.addColumn(columnHolder);
-        }
-
-        return schema;
-    }
-
-    private static ColumnHolder createColumnHolder(String name, ColumnType type, IDataSource dataSource, IDimensionMapper dimensionMapper) {
+    public static ColumnHolder createColumnHolder(String dimensionNamespace, String dimensionName, ColumnType type,Cardinality cardinality,IDimensionMapper dimensionMapper) {
         io.viewserver.schema.column.ColumnType schemaColumnType = type.getColumnType();
-        Dimension dimension = dataSource.getDimension(name);
-        if (dimension != null) {
-            schemaColumnType = dimension.getCardinality().getColumnType();
-            if (dimensionMapper != null) {
-                dimensionMapper.registerDimension(dataSource, dimension);
-            }
+        if (dimensionMapper != null) {
+            dimensionMapper.registerDimension(dimensionNamespace, dimensionName, type);
         }
-        ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(name, schemaColumnType);
+        ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(dimensionName, schemaColumnType);
         ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(schemaColumnType);
         columnMetadata.setDataType(type);
-        if (dimension != null) {
-            columnMetadata.setFlag(ColumnFlags.DIMENSION);
-            columnMetadata.setDataSource(dataSource);
-            columnMetadata.setDimension(dimension);
-        }
+        columnMetadata.setFlag(ColumnFlags.DIMENSION);
+        columnMetadata.setDimensionNameSpace(dimensionNamespace);
+        columnMetadata.setDimensionName(dimensionName);
+        columnMetadata.setCardinality(cardinality);
         columnHolder.setMetadata(columnMetadata);
         return columnHolder;
     }

@@ -2,7 +2,7 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.user.User;

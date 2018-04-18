@@ -16,9 +16,8 @@
 
 package io.viewserver.schema.column;
 
+import io.viewserver.datasource.*;
 import io.viewserver.datasource.ColumnType;
-import io.viewserver.datasource.Dimension;
-import io.viewserver.datasource.IDataSource;
 
 import java.util.BitSet;
 
@@ -28,8 +27,9 @@ import java.util.BitSet;
 public abstract class ColumnMetadata {
     private ColumnType dataType;
     private final BitSet flags = new BitSet();
-    private Dimension dimension;
-    private IDataSource dataSource;
+    private String dimensionName;
+    private String dimensionNameSpace;
+    private Cardinality cardinality;
 
     public ColumnType getDataType() {
         return dataType;
@@ -51,19 +51,27 @@ public abstract class ColumnMetadata {
         flags.clear(flag);
     }
 
-    public void setDimension(Dimension dimension) {
-        this.dimension = dimension;
+    public void setCardinality(Cardinality cardinality) {
+        this.cardinality = cardinality;
     }
 
-    public Dimension getDimension() {
-        return dimension;
+    public Cardinality getCardinality(){
+        return cardinality;
     }
 
-    public IDataSource getDataSource() {
-        return dataSource;
+    public String getDimensionName() {
+        return dimensionName;
     }
 
-    public void setDataSource(IDataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setDimensionName(String dimensionName) {
+        this.dimensionName = dimensionName;
+    }
+
+    public String getDimensionNameSpace() {
+        return dimensionNameSpace;
+    }
+
+    public void setDimensionNameSpace(String dimensionNameSpace) {
+        this.dimensionNameSpace = dimensionNameSpace;
     }
 }

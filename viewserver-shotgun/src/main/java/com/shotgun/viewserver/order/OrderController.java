@@ -38,10 +38,10 @@ public class OrderController {
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
     private MessagingController messagingController;
-    private boolean isMock;
+    private boolean isTest;
     private KeyedTable productTable;
     private IDatabaseUpdater iDatabaseUpdater;
-    private Double labourerRate;
+    private Integer labourerRate;
 
     public OrderController(IDatabaseUpdater iDatabaseUpdater,
                            DeliveryAddressController deliveryAddressController,
@@ -49,14 +49,14 @@ public class OrderController {
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver,
                            MessagingController messagingController,
-                           boolean isMock) {
+                           boolean isTest) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
         this.pricingStrategyResolver = pricingStrategyResolver;
         this.messagingController = messagingController;
-        this.isMock = isMock;
+        this.isTest = isTest;
     }
 
     KeyedTable getProductTable(){
@@ -141,11 +141,15 @@ public class OrderController {
     }
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
-    public Double calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        if(delivery.getIsFixedPrice()){
-            return Double.valueOf(delivery.getFixedPriceValue());
+    public int calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
+        if(this.isTest){
+            return 30;
         }
-        Double result = new Double(0);
+
+        if(delivery.getIsFixedPrice()){
+            return delivery.getFixedPriceValue();
+        }
+        int result = 0;
         for(OrderItem orderItem : orderItems){
             result += calculatePrice(orderItem,delivery);
         }
@@ -183,13 +187,9 @@ public class OrderController {
         iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
     }
 
-    private Double calculatePrice(OrderItem orderItem, Delivery delivery) {
-        if(this.isMock){
-            return 0.10d;
-        }
-
+    private int calculatePrice(OrderItem orderItem, Delivery delivery) {
         if(delivery.getIsFixedPrice()){
-            return Double.valueOf(delivery.getFixedPriceValue());
+            return delivery.getFixedPriceValue();
         }
         PriceStrategy strategy = getPriceStrategy(orderItem);
         if(strategy == null){
@@ -210,14 +210,14 @@ public class OrderController {
         }
     }
 
-    private double calculateAdditionalLabour(OrderItem item) {
+    private int calculateAdditionalLabour(OrderItem item) {
         if(item.getQuantity() > 1){
             return (item.getQuantity() - 1) * getLabourerRate();
     }
         return 0;
     }
 
-    private double getLabourerRate() {
+    private int getLabourerRate() {
         if(this.labourerRate == null) {
             Product product = getProduct("Labourer");
             this.labourerRate = product.getPrice();
@@ -261,7 +261,7 @@ public class OrderController {
         result.setCategoryId((String) ControllerUtils.getColumnValue(this.productTable, "categoryId", row));
         result.setDescription((String) ControllerUtils.getColumnValue(this.productTable, "description", row));
         result.setName((String) ControllerUtils.getColumnValue(this.productTable, "name", row));
-        result.setPrice((Double) ControllerUtils.getColumnValue(this.productTable, "price", row));
+        result.setPrice((int) ControllerUtils.getColumnValue(this.productTable, "price", row));
         result.setProductId((String)ControllerUtils.getColumnValue(this.productTable,"productId",row));
         return result;
     }

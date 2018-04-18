@@ -16,6 +16,7 @@
 
 package io.viewserver.schema.column;
 
+import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 
 /**
@@ -240,4 +241,41 @@ public class ColumnHolderUtils {
             }
         }
     }
+
+    public static void setValue(ColumnHolder columnHolder, int row, Object value) {
+        switch (columnHolder.getType()) {
+            case Bool: {
+                ((IWritableColumnBool)columnHolder).setBool(row, (Boolean) value);
+            }
+            case NullableBool: {
+                ((IWritableColumnNullableBool)columnHolder).setNullableBool(row, (NullableBool) value);
+            }
+            case Byte: {
+                ((IWritableColumnByte)columnHolder).setByte(row, (Byte) value);
+            }
+            case Short: {
+                ((IWritableColumnShort)columnHolder).setShort(row, (Short) value);
+            }
+            case Int: {
+                ((IWritableColumnInt)columnHolder).setInt(row, (Integer) value);
+            }
+            case Long: {
+                ((IWritableColumnLong)columnHolder).setLong(row, (Long) value);
+            }
+            case Float: {
+                ((IWritableColumnFloat)columnHolder).setFloat(row, (Float) value);
+            }
+            case Double: {
+                ((IWritableColumnDouble)columnHolder).setDouble(row, (Double) value);
+            }
+            case String: {
+                ((IWritableColumnString)columnHolder).setString(row, (String) value);
+            }
+            default: {
+                throw new RuntimeException("Unable to set value " + value + " of type " + columnHolder.getType());
+            }
+        }
+    }
+
+
 }

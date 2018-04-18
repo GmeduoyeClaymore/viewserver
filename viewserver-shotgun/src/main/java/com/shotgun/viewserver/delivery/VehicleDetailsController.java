@@ -11,11 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Map;
 
-/**
- * Created by Gbemiga on 09/01/18.
- */
 @Controller(name = "vehicleDetailsController")
-public class VehicleDetailsController {
+public class VehicleDetailsController implements IVehicleDetailsController {
 
     private static final Logger log = LoggerFactory.getLogger(VehicleDetailsController.class);
     private static String VEHICLE_DETAILS_QUERY_URL = "https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData";
@@ -31,6 +28,7 @@ public class VehicleDetailsController {
         this.apiKey = apiKey;
     }
 
+    @Override
     @ControllerAction(path = "getDetails")
     public Vehicle getDetails(String registrationNumber){
         try {

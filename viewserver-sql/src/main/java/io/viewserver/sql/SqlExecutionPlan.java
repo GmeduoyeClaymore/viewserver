@@ -17,6 +17,7 @@
 package io.viewserver.sql;
 
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.plan.IExecutionPlan;
 import io.viewserver.execution.steps.IExecutionPlanStep;
 import io.viewserver.operators.group.summary.SummaryRegistry;
@@ -29,9 +30,9 @@ import java.util.List;
  */
 public class SqlExecutionPlan implements IExecutionPlan<SqlExecutionPlanContext> {
     private SummaryRegistry summaryRegistry;
-    private ExecutionPlanRunner executionPlanRunner;
+    private IExecutionPlanRunner executionPlanRunner;
 
-    public SqlExecutionPlan(SummaryRegistry summaryRegistry, ExecutionPlanRunner executionPlanRunner) {
+    public SqlExecutionPlan(SummaryRegistry summaryRegistry, IExecutionPlanRunner executionPlanRunner) {
         this.summaryRegistry = summaryRegistry;
         this.executionPlanRunner = executionPlanRunner;
     }

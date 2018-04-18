@@ -28,11 +28,11 @@ import io.viewserver.schema.column.*;
 public class UnEnumColumnNullableBool implements IColumnNullableBool {
     private ColumnHolder sourceHolder;
     private ColumnHolder outHolder;
-    private IDataSource dataSource;
+    private String dataSource;
     private Dimension dimension;
     private IDimensionMapper dimensionMapper;
 
-    public UnEnumColumnNullableBool(ColumnHolder sourceHolder, ColumnHolder outHolder, IDataSource dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
+    public UnEnumColumnNullableBool(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
         this.sourceHolder = sourceHolder;
         this.outHolder = outHolder;
         this.dataSource = dataSource;
@@ -63,7 +63,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
             return NullableBool.Null;
         }
 
-        return dimensionMapper.lookupNullableBool(dataSource, dimension, id);
+        return dimensionMapper.lookupNullableBool(dataSource, dimension.getName(), id);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
         if (id == -1) {
             return NullableBool.Null;
         }
-        return dimensionMapper.lookupNullableBool(dataSource, dimension, id);
+        return dimensionMapper.lookupNullableBool(dataSource, dimension.getName(), id);
     }
 
     private int getPreviousLookupId(int row) {

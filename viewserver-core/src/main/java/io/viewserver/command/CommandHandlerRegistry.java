@@ -24,7 +24,7 @@ import java.util.HashMap;
 /**
  * Created by nickc on 07/10/2014.
  */
-public class CommandHandlerRegistry {
+public class CommandHandlerRegistry implements ICommandHandlerRegistry {
     private static final Logger log = LoggerFactory.getLogger(CommandHandlerRegistry.class);
     private final HashMap<String, ICommandHandler> handlers = new HashMap<>();
 
@@ -32,6 +32,7 @@ public class CommandHandlerRegistry {
         handlers.put(command, handler);
     }
 
+    @Override
     public ICommandHandler get(String command) {
         return handlers.get(command);
     }

@@ -47,21 +47,21 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
                 final DataSource dataSource = new DataSource();
                 dataSource.setName("test");
-                dataSource.setSchema(new io.viewserver.datasource.Schema());
+                dataSource.setSchema(new SchemaConfig());
                 dataSource.getSchema().getColumns().addAll(Arrays.asList(
                         new Column("market", io.viewserver.datasource.ColumnType.String),
                         new Column("product", io.viewserver.datasource.ColumnType.Int)
                 ));
                 dataSource.getDimensions().addAll(Arrays.asList(
-                        new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
+                        new Dimension("market","market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
                 ));
 
                 DimensionMapper dimensionMapper = new DimensionMapper();
                 Dimension marketDimension = dataSource.getDimension("market");
-                dimensionMapper.registerDimension(dataSource, marketDimension);
+                dimensionMapper.registerDimension(dataSource.getName(), marketDimension.getName(), marketDimension.getColumnType());
 
                 for (int i = 0; i < 10; i++) {
-                    dimensionMapper.mapString(dataSource, marketDimension, UUID.randomUUID().toString());
+                    dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), UUID.randomUUID().toString());
                 }
 
                 Schema schema = new Schema();
@@ -126,15 +126,15 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 new Column("product", io.viewserver.datasource.ColumnType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
-                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
+                new Dimension("market", "market",Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
         ));
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource, marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
 
         for (int i = 0; i < 10; i++) {
-            dimensionMapper.mapString(dataSource, marketDimension, "market" + i);
+            dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
         }
 
         Schema schema = new Schema();
@@ -198,15 +198,15 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 new Column("product", io.viewserver.datasource.ColumnType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
-                new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
+                new Dimension("market", "market",Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
         ));
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource, marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
 
         for (int i = 0; i < 10; i++) {
-            dimensionMapper.mapString(dataSource, marketDimension, "market" + i);
+            dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
         }
 
         Schema schema = new Schema();
@@ -276,10 +276,10 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource, marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
 
         for (int i = 0; i < 10; i++) {
-            dimensionMapper.mapString(dataSource, marketDimension, "market" + i);
+            dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
         }
 
         Schema schema = new Schema();

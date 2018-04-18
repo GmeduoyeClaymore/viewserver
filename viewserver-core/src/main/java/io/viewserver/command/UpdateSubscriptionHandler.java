@@ -16,9 +16,7 @@
 
 package io.viewserver.command;
 
-import io.viewserver.configurator.IConfigurator;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
 import io.viewserver.execution.plan.UserExecutionPlan;
@@ -34,11 +32,11 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateSubscriptionHandler extends CommandHandlerBase<IUpdateSubscriptionCommand> {
     private static final Logger log = LoggerFactory.getLogger(UpdateSubscriptionHandler.class);
-    private final ExecutionPlanRunner executionPlanRunner;
+    private final IExecutionPlanRunner executionPlanRunner;
 
-    public UpdateSubscriptionHandler(IConfigurator configurator, IDistributionManager distributionManager) {
+    public UpdateSubscriptionHandler(IExecutionPlanRunner executionPlanRunner) {
         super(IUpdateSubscriptionCommand.class);
-        this.executionPlanRunner = new ExecutionPlanRunner(configurator, distributionManager);
+        this.executionPlanRunner = executionPlanRunner;
     }
 
     @Override

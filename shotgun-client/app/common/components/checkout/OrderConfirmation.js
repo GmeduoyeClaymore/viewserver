@@ -66,9 +66,8 @@ class OrderConfirmation extends Component{
         <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isDriver={false} price={price}/>
         <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
       </Content>
-      <ErrorRegion errors={errors}>
-        <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
     </Container>;
   }
 }

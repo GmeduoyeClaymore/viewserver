@@ -26,6 +26,8 @@ import io.viewserver.schema.Schema;
 public interface ITableUpdater {
     ITable createTable(String name, Schema schema);
 
+    ITable createTable(String name, SchemaConfig schema);
+
     int addRow(ITableRowUpdater rowUpdater);
 
     void updateRow(ITableRowUpdater rowUpdater);

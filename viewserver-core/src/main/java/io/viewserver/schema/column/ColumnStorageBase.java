@@ -42,7 +42,7 @@ public abstract class ColumnStorageBase implements ITableStorage {
             throw new IllegalArgumentException("Capacity must be > 0");
         }
         if (schema == null) {
-            throw new IllegalArgumentException("Schema cannot be null");
+            throw new IllegalArgumentException("SchemaConfig cannot be null");
         }
 
         this.columnWatcher = columnWatcher;

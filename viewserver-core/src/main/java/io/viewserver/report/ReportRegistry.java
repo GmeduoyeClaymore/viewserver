@@ -19,40 +19,35 @@ package io.viewserver.report;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
-import io.viewserver.datasource.IDataLoader;
-import io.viewserver.datasource.ILocalStorageDataAdapterFactory;
-import io.viewserver.datasource.LocalKeyedTableUpdater;
-import io.viewserver.operators.table.*;
+import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.operators.table.ITableRowUpdater;
+import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
+import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.util.ViewServerException;
-import com.google.common.util.concurrent.ListeningExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by paulg on 03/11/2014.
- */
-public class ReportRegistry {
+
+public class ReportRegistry  extends KeyedTable  {
     public static final String TABLE_NAME = "report_registry";
     public static final String ID_COL = "id";
     public static final String NAME_COL = "name";
     public static final String DATASOURCE_COL = "dataSource";
     public static final String JSON_COL = "json";
+    private IJsonSerialiser serialiser = new JacksonSerialiser();
+
     private static final Logger log = LoggerFactory.getLogger(ReportRegistry.class);
-    private final IDataLoader dataLoader;
 
-    private ICatalog systemCatalog;
-    private IExecutionContext executionContext;
-    private ListeningExecutorService dataLoaderExecutor;
-    private KeyedTable reportTable;
-
-    private KeyedTable defaultReportTable() {
-        KeyedTable keyedTable = new KeyedTable(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), new TableKeyDefinition(ID_COL));
-        keyedTable.initialise(50);
-        return keyedTable;
+    public ReportRegistry(ICatalog systemCatalog, IExecutionContext executionContext) {
+        super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinitions());
+        setSystemOperator(true);
+        setAllowDataReset(true);
+        initialise(8);
     }
 
     private static Schema getSchema() {
@@ -64,56 +59,31 @@ public class ReportRegistry {
         return schema;
     }
 
-    private IJsonSerialiser serialiser;
-
-    public ReportRegistry(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser,
-                          ILocalStorageDataAdapterFactory localStorageDataAdapterFactory, ListeningExecutorService dataLoaderExecutor){
-        this.serialiser = serialiser;
-        this.systemCatalog = systemCatalog;
-        this.executionContext = executionContext;
-        this.dataLoaderExecutor = dataLoaderExecutor;
-
-        this.dataLoader = localStorageDataAdapterFactory.getAdapter(TABLE_NAME, "Reports", 100);
+    protected static TableKeyDefinition getTableKeyDefinitions() {
+        return new TableKeyDefinition(ID_COL);
     }
 
+
     public void register(ReportDefinition report) {
-        ITableRowUpdater rowUpdater = new ITableRowUpdater() {
-            @Override
-            public void setValues(ITableRow row) {
-                row.setString(ID_COL, report.getId());
-                row.setString(NAME_COL, report.getName());
-                row.setString(DATASOURCE_COL, report.getDataSource());
-                row.setString(JSON_COL, serialiser.serialise(report));
-            }
+        log.info("Report {} registered",report);
+        ITableRowUpdater rowUpdater = row -> {
+            row.setString(ID_COL, report.getId());
+            row.setString(NAME_COL, report.getName());
+            row.setString(DATASOURCE_COL, report.getDataSource());
+            row.setString(JSON_COL, serialiser.serialise(report));
         };
         TableKey key = new TableKey(report.getId());
-        reportTable.addRow(key, rowUpdater);
+        this.addRow(key, rowUpdater);
     }
 
     public ReportDefinition getReportById(String reportId) {
-        int rowId = reportTable.getRow(new TableKey(reportId));
+        int rowId = this.getRow(new TableKey(reportId));
         if (rowId == -1) {
             throw new ViewServerException("No such report '" + reportId + "'");
         }
-        ColumnHolder jsonColHolder = reportTable.getOutput().getSchema().getColumnHolder(JSON_COL);
+        ColumnHolder jsonColHolder = this.getOutput().getSchema().getColumnHolder(JSON_COL);
         Object value = ColumnHolderUtils.getValue(jsonColHolder, rowId);
         String reportDefinitionJson = value.toString();
         return serialiser.deserialise(reportDefinitionJson, ReportDefinition.class);
-    }
-
-    public void loadReports() {
-        LocalKeyedTableUpdater tableUpdater = new LocalKeyedTableUpdater(executionContext, systemCatalog);
-        tableUpdater.setTableKeyDefinition(new TableKeyDefinition("id"));
-        dataLoader.configure(tableUpdater,
-                null, null, null, null, executionContext);
-        dataLoader.setSchema(getSchema());
-        dataLoader.createTable();
-        dataLoader.load();
-        reportTable = (KeyedTable) dataLoader.getTable();
-        reportTable.setSystemOperator(true);
-    }
-
-    public void defaultRegistry() {
-        this.reportTable =  defaultReportTable();
     }
 }

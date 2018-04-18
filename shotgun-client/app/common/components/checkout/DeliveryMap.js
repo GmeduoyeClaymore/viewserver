@@ -207,7 +207,7 @@ const styles = {
   inputRow: {
     width: shotgun.deviceWidth - 45,
     margin: 8,
-    backgroundColor: 'white',
+    backgroundColor: shotgun.brandPrimary,
     paddingTop: 16,
     paddingBottom: 16,
     paddingLeft: 16

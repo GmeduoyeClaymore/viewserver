@@ -34,11 +34,5 @@ public class ReportInitialisationStep implements IExecutionPlanStep<ReportExecut
 
         IGraphDefinition reportDefinition = reportExecutionPlanContext.getGraphDefinition();
         final List<IGraphNode> graphNodes = reportDefinition.getNodes();
-        final int count = graphNodes.size();
-        for (int i = 0; i < count; i++) {
-            if (graphNodes.get(i) instanceof GroupByNode) {
-                reportExecutionPlanContext.setAggregating(true);
-            }
-        }
     }
 }

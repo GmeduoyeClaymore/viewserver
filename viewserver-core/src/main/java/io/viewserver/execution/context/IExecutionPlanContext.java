@@ -20,8 +20,6 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IDataSource;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.distribution.ViewServerNode;
 import io.viewserver.execution.ParameterHelper;
 import io.viewserver.execution.nodes.IGraphNode;
 
@@ -49,10 +47,6 @@ public interface IExecutionPlanContext {
 
     void setExecutionContext(IExecutionContext executionContext);
 
-    void setAggregating(boolean aggregating);
-
-    boolean isAggregating();
-
     ParameterHelper getParameterHelper();
 
     void addNodes(IGraphNode... graphNodes);
@@ -63,10 +57,6 @@ public interface IExecutionPlanContext {
 
     void clearNodes();
 
-    void setDistributionManager(IDistributionManager distributionManager);
-
-    IDistributionManager getDistributionManager();
-
     IDataSource getDataSource();
 
     void setDataSource(IDataSource dataSource);
@@ -75,17 +65,8 @@ public interface IExecutionPlanContext {
 
     String getOperatorName(String nodeName);
 
-    CommandResult getRemoteConfigurationResult();
-
-    void setRemoteConfigurationResult(CommandResult remoteConfigurationResult);
-
-    boolean isDistributed();
-
     boolean shouldHashNames();
 
     Map<String, String> getDefaultNodeNames();
 
-    void setViewServerNodes(List<ViewServerNode> viewServerNodes);
-
-    List<ViewServerNode> getViewServerNodes();
 }

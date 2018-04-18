@@ -78,7 +78,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
                 } else {
                     throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
                 }
-                mappedValues[j] = dimensionMapper.map(dataSource, dimension, value);
+                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(),dimension.getColumnType(), value);
             }
 
             IndexOperator.QueryHolder queryHolder = dimensionFilter.isExclude()

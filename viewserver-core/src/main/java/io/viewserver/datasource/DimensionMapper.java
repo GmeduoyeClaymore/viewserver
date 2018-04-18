@@ -19,15 +19,12 @@ package io.viewserver.datasource;
 import io.viewserver.collections.*;
 import io.viewserver.core.NullableBool;
 
-/**
- * Created by nickc on 13/10/2014.
- */
-public class DimensionMapper extends DimensionMapperBase {
-    private IDimensionMapperListener dimensionMapperListener;
 
-    public void setDimensionMapperListener(IDimensionMapperListener dimensionMapperListener) {
-        this.dimensionMapperListener = dimensionMapperListener;
+public class DimensionMapper extends DimensionMapperBase {
+
+    public DimensionMapper() {
     }
+
 
     @Override
     protected ByteHashSet createByteLookup() {
@@ -56,29 +53,29 @@ public class DimensionMapper extends DimensionMapperBase {
         return stringHashSet;
     }
 
-    public int map(IDataSource dataSource, Dimension dimension, Object value){
-        switch (dimension.getColumnType()) {
+    public int map(String namespace, String  dimensionName, ColumnType dimensionColumnType, Object value){
+        switch (dimensionColumnType) {
             case Bool: {
-                return mapBool(dataSource, dimension, (value instanceof String) ? Boolean.valueOf(value.toString()) : (boolean) value);
+                return mapBool(namespace, dimensionName, (value instanceof String) ? Boolean.valueOf(value.toString()) : (boolean) value);
             }
             case NullableBool: {
-                return mapNullableBool(dataSource, dimension, (NullableBool) value);
+                return mapNullableBool(namespace, dimensionName, (NullableBool) value);
             }
             case Byte: {
-                return mapByte(dataSource, dimension, value instanceof Integer ? ((Integer) value).byteValue() : ((value instanceof String ? ((Integer) Integer.parseInt((String) value)).byteValue() : (byte) value)));
+                return mapByte(namespace, dimensionName, value instanceof Integer ? ((Integer) value).byteValue() : ((value instanceof String ? ((Integer) Integer.parseInt((String) value)).byteValue() : (byte) value)));
             }
             case Short: {
-                return mapShort(dataSource, dimension, (short) value);
+                return mapShort(namespace, dimensionName, (short) value);
             }
             case Int: {
-                int i = mapInt(dataSource, dimension, value instanceof Integer ? ((Integer) value).intValue() : (int) value);
+                int i = mapInt(namespace, dimensionName, value instanceof Integer ? ((Integer) value).intValue() : (int) value);
                 return i;
             }
             case Long: {
-                return mapLong(dataSource, dimension, (long) value);
+                return mapLong(namespace, dimensionName, (long) value);
             }
             case String: {
-                return mapString(dataSource, dimension, (String) value);
+                return mapString(namespace, dimensionName, (String) value);
             }
             default:{
                 throw new RuntimeException("Attempting to map unhandled type");
@@ -86,13 +83,13 @@ public class DimensionMapper extends DimensionMapperBase {
         }
     }
 
-    public int mapString(IDataSource dataSource, Dimension dimension, String value) {
-        StringHashSet lookup = (StringHashSet) getLookup(dataSource, dimension);
+    public int mapString(String namespace, String dimensionName, String value) {
+        StringHashSet lookup = (StringHashSet) getLookup(namespace, dimensionName);
         int index = lookup.addString(value);
         if (index < 0) {
             index = -index - 1;
         } else {
-            fireDimensionValueMapped(dataSource, dimension, index, value);
+            fireDimensionValueMapped(namespace, dimensionName, index, value);
         }
         return index;
     }
@@ -102,13 +99,13 @@ public class DimensionMapper extends DimensionMapperBase {
         return ((StringHashSet)lookup).get(id);
     }
 
-    public int mapByte(IDataSource dataSource, Dimension dimension, byte value) {
-        ByteHashSet lookup = (ByteHashSet) getLookup(dataSource, dimension);
+    public int mapByte(String namespace, String dimensionName, byte value) {
+        ByteHashSet lookup = (ByteHashSet) getLookup(namespace, dimensionName);
         int index = lookup.addByte(value);
         if (index < 0) {
             index = -index - 1;
         } else {
-            fireDimensionValueMapped(dataSource, dimension, index, value);
+            fireDimensionValueMapped(namespace, dimensionName, index, value);
         }
         return index;
     }
@@ -118,13 +115,13 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((ByteHashSet)lookup).get(id));
     }
 
-    public int mapShort(IDataSource dataSource, Dimension dimension, short value) {
-        ShortHashSet lookup = (ShortHashSet) getLookup(dataSource, dimension);
+    public int mapShort(String namespace, String dimensionName, short value) {
+        ShortHashSet lookup = (ShortHashSet) getLookup(namespace, dimensionName);
         int index = lookup.addShort(value);
         if (index < 0) {
             index = -index - 1;
         } else {
-            fireDimensionValueMapped(dataSource, dimension, index, value);
+            fireDimensionValueMapped(namespace, dimensionName, index, value);
         }
         return index;
     }
@@ -134,13 +131,13 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((ShortHashSet)lookup).get(id));
     }
 
-    public int mapInt(IDataSource dataSource, Dimension dimension, int value) {
-        IntHashSet lookup = (IntHashSet) getLookup(dataSource, dimension);
+    public int mapInt(String namespace, String dimensionName, int value) {
+        IntHashSet lookup = (IntHashSet) getLookup(namespace, dimensionName);
         int index = lookup.addInt(value);
         if (index < 0) {
             index = -index - 1;
         } else {
-            fireDimensionValueMapped(dataSource, dimension, index, value);
+            fireDimensionValueMapped(namespace, dimensionName, index, value);
         }
         return index;
     }
@@ -150,13 +147,13 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((IntHashSet)lookup).get(id));
     }
 
-    public int mapLong(IDataSource dataSource, Dimension dimension, long value) {
-        LongHashSet lookup = (LongHashSet) getLookup(dataSource, dimension);
+    public int mapLong(String namespace, String dimensionName, long value) {
+        LongHashSet lookup = (LongHashSet) getLookup(namespace, dimensionName);
         int index = lookup.addLong(value);
         if (index < 0) {
             index = -index - 1;
         } else {
-            fireDimensionValueMapped(dataSource, dimension, index, value);
+            fireDimensionValueMapped(namespace, dimensionName, index, value);
         }
         return index;
     }
@@ -166,9 +163,9 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((LongHashSet)lookup).get(id));
     }
 
-    public HashPrimitiveIterator getAllValues(IDataSource dataSource, Dimension dimension) {
-        Object lookup = getLookup(dataSource, dimension);
-        switch (dimension.getColumnType()) {
+    public HashPrimitiveIterator getAllValues(String namespace, String dimensionName, ColumnType columnType) {
+        Object lookup = getLookup(namespace, dimensionName);
+        switch (columnType) {
             case Byte: {
                 return (HashPrimitiveIterator) ((ByteHashSet)lookup).iterator();
             }
@@ -186,14 +183,11 @@ public class DimensionMapper extends DimensionMapperBase {
             }
             default: {
                 throw new UnsupportedOperationException(String.format("Unhandled dimension type '%s' for dimension '%s' in data source '%s'",
-                        dimension.getColumnType(), dimension.getName(), dataSource.getName()));
+                        columnType, dimensionName, namespace));
             }
         }
     }
 
-    private void fireDimensionValueMapped(IDataSource dataSource, Dimension dimension, int id, Object value) {
-        if (dimensionMapperListener != null) {
-            dimensionMapperListener.onDimensionValueMapped(dataSource, dimension, id, value);
-        }
+    private void fireDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
     }
 }

@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;

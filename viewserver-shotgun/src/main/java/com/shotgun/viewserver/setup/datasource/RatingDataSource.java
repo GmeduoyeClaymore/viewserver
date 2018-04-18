@@ -1,10 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -15,15 +11,14 @@ import java.util.Arrays;
 public class RatingDataSource {
     public static final String NAME = "rating";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/rating.csv"))
-                .withSchema(new Schema()
+                .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("userId", "userId", ColumnType.String),
-                                        new Column("orderId", "orderId", ColumnType.String),
-                                        new Column("rating", "rating", ColumnType.Int)
+                                        new Column("userId", ColumnType.String),
+                                        new Column("orderId", ColumnType.String),
+                                        new Column("rating", ColumnType.Int)
                                 ))
                                 .withKeyColumns("orderId", "userId")
                 )

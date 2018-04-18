@@ -16,7 +16,6 @@
 
 package io.viewserver.core;
 
-import io.viewserver.datasource.DataSourceSerialisationModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
@@ -47,7 +46,6 @@ public class JacksonSerialiser implements IJsonSerialiser {
         mapper.registerModules(
                 new AfterburnerModule(),
                 new ParameterNamesModule(),
-                new DataSourceSerialisationModule(),
                 new ValueListSerialisationModule()
         );
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

@@ -51,7 +51,7 @@ public class SpreadOperatorFactory extends ConfigurableOperatorFactoryBase<ISpre
 
     @Override
     public Class getProtoConfigDtoClass() {
-        return io.viewserver.messages.config.IFilterConfig.class;
+        return io.viewserver.messages.config.ISpreadConfig.class;
     }
 
     @Override

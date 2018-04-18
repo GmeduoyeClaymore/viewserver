@@ -19,7 +19,7 @@ import java.net.URL;
 
 
 @Controller(name = "imageController")
-public class ImageController {
+public class ImageController implements IImageController {
 
     private BasicAWSCredentials awsCredentials;
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
@@ -28,8 +28,9 @@ public class ImageController {
         this.awsCredentials = awsCredentials;
     }
 
-    @ControllerAction(path = "saveToS3", isSynchronous = false)
-    public String saveToS3(@ActionParam(name = "bucketName")String bucketName, @ActionParam(name = "fileName")String fileName, @ActionParam(name = "imageData")String imageData){
+    @Override
+    @ControllerAction(path = "saveImage", isSynchronous = false)
+    public String saveImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "fileName") String fileName, @ActionParam(name = "imageData") String imageData){
 
         byte[] data = Base64.decodeBase64(imageData);
         ByteArrayInputStream input = new ByteArrayInputStream(data);
@@ -50,3 +51,5 @@ public class ImageController {
         }
     }
 }
+
+

@@ -1,15 +1,14 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.images.IImageController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
@@ -17,12 +16,12 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 public class OrderItemController {
 
     private IDatabaseUpdater iDatabaseUpdater;
-    private ImageController imageController;
+    private IImageController IImageController;
 
     public OrderItemController(IDatabaseUpdater iDatabaseUpdater,
-                               ImageController imageController) {
+                               IImageController IImageController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
-        this.imageController = imageController;
+        this.IImageController = IImageController;
     }
 
     @ControllerAction(path = "addOrUpdateOrderItem", isSynchronous = true)
@@ -32,7 +31,7 @@ public class OrderItemController {
         //save image if required
         if(orderItem.getImageData() != null){
             String fileName = BucketNames.orderImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(),fileName,orderItem.getImageData());
+            String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(),fileName,orderItem.getImageData());
             orderItem.setImageUrl(imageUrl);
         }
 

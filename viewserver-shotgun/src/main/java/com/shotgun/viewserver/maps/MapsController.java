@@ -16,7 +16,7 @@ import static com.shotgun.viewserver.ControllerUtils.getUser;
 
 
 @Controller(name = "mapsController")
-public class MapsController {
+public class MapsController implements IMapsController {
 
     private MapsControllerKey controllerKey;
     private static final Logger logger = LoggerFactory.getLogger(MapsController.class);
@@ -33,17 +33,20 @@ public class MapsController {
         this.controllerKey = controllerKey;
     }
 
+    @Override
     @ControllerAction(path = "requestNearbyPlaces", isSynchronous = false)
     public HashMap<String,Object> requestNearbyPlaces(NearbyPlaceRequest request){
         String url = this.controllerKey.isSupportsReverseGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
         return getResponse(request, ControllerUtils.execute("GET", url, request.toQueryString(controllerKey.getKey(), controllerKey.isSupportsReverseGeocoding())),true);
     }
 
+    @Override
     @ControllerAction(path = "mapPlaceRequest", isSynchronous = false)
     public HashMap<String,Object> mapPlaceRequest(PlaceRequest request){
         return getResponse(request, ControllerUtils.execute("GET", PLACE_URL, request.toQueryString(controllerKey.getKey())), true);
     }
 
+    @Override
     @ControllerAction(path = "getAddressesFromLatLong", isSynchronous = false)
     public List<DeliveryAddress> getAddressesFromLatLong(LatLng request){
         HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", REVERSE_GEOCODING_URL, request.toQueryString(controllerKey.getKey())), true);
@@ -60,6 +63,7 @@ public class MapsController {
 
 
 
+    @Override
     @ControllerAction(path = "mapDirectionRequest", isSynchronous = false)
     public HashMap<String,Object> mapDirectionRequest(DirectionRequest request){
         HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", DIRECTION_URL, request.toQueryString(controllerKey.getKey())),false);
@@ -69,6 +73,7 @@ public class MapsController {
         }
         return get;
     }
+    @Override
     @ControllerAction(path = "getLocationFromPostcode", isSynchronous = false)
     public LatLng getLocationFromPostcode(String postcode){
         HashMap<String, Object> x = this.makeAutoCompleteRequest(new MapRequest(postcode, "en"));
@@ -95,6 +100,7 @@ public class MapsController {
         return new LatLng((Double)location.get("lat"),(Double)location.get("lng"));
     }
 
+    @Override
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)
     public HashMap<String,Object> makeAutoCompleteRequest(MapRequest request){
         return getResponse(request, ControllerUtils.execute("GET", AUTO_COMPLETE_URL, request.toQueryString(controllerKey.getKey())),true);

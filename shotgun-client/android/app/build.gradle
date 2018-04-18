@@ -87,6 +87,9 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
+
+ /** live android google maps key - should use this somewhere AIzaSyA2BXqPMQ4AhhY_fI_Kf1yCNgc39nW_RF4*/
+
 def enableProguardInReleaseBuilds = false
 
 android {
@@ -109,7 +112,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        manifestPlaceholders = [HOCKEYAPP_APP_ID: "c7e0c57dc3c2454c8c652263a6710805"]
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "c7e0c57dc3c2454c8c652263a6710805", GOOGLE_MAPS_KEY: "AIzaSyB2gk8EElnroecxQiasL8bDpCVta1aXbe4"]
         vectorDrawables.useSupportLibrary = true
     }
     signingConfigs {

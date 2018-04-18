@@ -56,7 +56,7 @@
             </intent-filter>
         </receiver>
         <meta-data android:name="com.google.android.geo.API_KEY"
-                   android:value="AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M"/>
+                   android:value="${GOOGLE_MAPS_KEY}"/>
         <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
   
     </application>

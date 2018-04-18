@@ -63,13 +63,12 @@ class DriverLogin extends Component {
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}>
-        <ValidatingButton paddedBottom fullWidth iconRight
-          onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
-          <Text uppercase={false}>Sign In</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
-      </ErrorRegion>
+      <ErrorRegion errors={errors}/>
+      <ValidatingButton paddedBottom fullWidth iconRight
+        onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
+        <Text uppercase={false}>Sign In</Text>
+        <Icon next name='forward-arrow'/>
+      </ValidatingButton>
     </Container>;
   }
 }

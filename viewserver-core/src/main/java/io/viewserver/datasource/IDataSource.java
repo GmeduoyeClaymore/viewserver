@@ -36,7 +36,7 @@ public interface IDataSource {
 
     List<Dimension> getDimensions();
 
-    Schema getSchema();
+    SchemaConfig getSchema();
 
     String getName();
 

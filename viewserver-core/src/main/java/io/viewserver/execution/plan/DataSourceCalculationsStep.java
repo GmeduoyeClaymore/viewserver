@@ -22,9 +22,11 @@ import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.execution.steps.IExecutionPlanStep;
+import io.viewserver.operators.calccol.CalcColOperator;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by nick on 23/10/15.
@@ -41,6 +43,7 @@ public class DataSourceCalculationsStep implements IExecutionPlanStep<DataSource
                 || options.contains(DataSourceOption.IsReportSource)
                 || !calculatedColumns.isEmpty()) {
             nodes.add(new CalcColNode(DataSource.CALCS_NAME)
+                    .withCalculations(calculatedColumns.stream().map(col -> new CalcColOperator.CalculatedColumn(col.getName(),col.getExpression())).collect(Collectors.toList()))
                     .withDataRefreshedOnColumnAdd(false)
                     .withConnection(dataSource.getOutput(), Constants.OUT, Constants.IN));
             // set the output of the data source to be the calculations

@@ -20,7 +20,6 @@ import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.Hasher;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.operators.IOperator;
@@ -51,7 +50,6 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
     private static final String COL_LAST_RUN = "lastRunTime";
     private final List<ReportContext> reportContexts = new ArrayList<>();
     private final ICatalog catalogHolder;
-    private IDistributionManager distributionManager;
 
     public ReportContextRegistry(IExecutionContext executionContext, ICatalog catalog, ITableStorage storage) {
         super(OPERATOR_NAME, executionContext, catalog, getSchema(), storage, new TableKeyDefinition(COL_ID));
@@ -62,9 +60,6 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
         catalogHolder = new CatalogHolder(this);
     }
 
-    public void setDistributionManager(IDistributionManager distributionManager) {
-        this.distributionManager = distributionManager;
-    }
 
     private static Schema getSchema() {
         Schema schema = new Schema();
@@ -94,7 +89,7 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
         } else {
             reportContexts.add(reportContext);
 
-            ReportCatalog reportCatalog = new ReportCatalog(hash, executionPlanContext, this, distributionManager, new ChunkedColumnStorage(1024));
+            ReportCatalog reportCatalog = new ReportCatalog(hash, executionPlanContext, this, new ChunkedColumnStorage(1024));
 
             addRow(tableKey, row -> {
                 row.setString(COL_ID, hash);

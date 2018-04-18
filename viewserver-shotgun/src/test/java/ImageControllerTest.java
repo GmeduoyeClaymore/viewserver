@@ -1,4 +1,5 @@
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.images.ImageController;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 
 public class ImageControllerTest {
 
-    private ImageController sut;
+    private IImageController sut;
 
 
     @Before
@@ -23,6 +24,6 @@ public class ImageControllerTest {
     public void canUploadImage() throws FileNotFoundException {
         URL url = this.getClass().getResource("image_1.txt");
         String entireFileText = new Scanner(new File(url.getFile())).next();
-        System.out.println(sut.saveToS3("shotgunclientimages", "testimages/test1.jpg", entireFileText));
+        System.out.println(sut.saveImage("shotgunclientimages", "testimages/test1.jpg", entireFileText));
     }
 }

@@ -21,11 +21,7 @@ import io.viewserver.configurator.Configurator;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.execution.ExecutionPlanRunner;
-import io.viewserver.execution.Options;
-import io.viewserver.execution.ReportContext;
-import io.viewserver.execution.SystemReportExecutor;
+import io.viewserver.execution.*;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.messages.command.ISubscribeReportCommand;
 import io.viewserver.messages.common.ValueLists;
@@ -46,11 +42,10 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
     public SubscribeReportHandler(DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry,
                                   ReportRegistry reportRegistry, SubscriptionManager subscriptionManager,
-                                  IDistributionManager distributionManager,
                                   Configurator configurator,
-                                  ExecutionPlanRunner executionPlanRunner, ReportContextRegistry reportContextRegistry,
+                                  IExecutionPlanRunner executionPlanRunner, ReportContextRegistry reportContextRegistry,
                                   SystemReportExecutor systemReportExecutor) {
-        super(ISubscribeReportCommand.class, dimensionMapper, dataSourceRegistry, reportRegistry, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+        super(ISubscribeReportCommand.class, dimensionMapper, dataSourceRegistry, reportRegistry, subscriptionManager, configurator, executionPlanRunner);
         this.reportContextRegistry = reportContextRegistry;
         this.systemReportExecutor = systemReportExecutor;
     }
@@ -76,8 +71,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             activeExecutionPlanContext = systemReportExecutor.executeContext(reportContext,
                     peerSession.getExecutionContext(),
                     graphNodesCatalog,
-                    systemExecutionPlanResult,
-                    "", new CommandResult(), null);
+                    systemExecutionPlanResult);
 
             //converts int values back to strings
 

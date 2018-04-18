@@ -41,10 +41,6 @@ export const unregisterAllDaosAndResetComponentState = () => {
   };
 };
 
-export const getCurrentPosition = () => {
-  return invokeDaoCommand('userDao', 'getCurrentPosition');
-};
-
 export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
   return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
 };

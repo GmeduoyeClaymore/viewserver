@@ -13,6 +13,12 @@ public class AppMessageBuilder {
         message = new AppMessage();
     }
 
+    public AppMessageBuilder withFromTo(String from,String to){
+        message.setToUserId(to);
+        message.setFromUserId(from);
+        return this;
+    }
+
     public AppMessageBuilder withDefaults(){
         message.setSound("default");
         message.setPriority("high");

@@ -1,11 +1,7 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.Constants;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.GroupByNode;
 import io.viewserver.execution.nodes.JoinNode;
@@ -18,35 +14,34 @@ import java.util.Arrays;
 public class UserDataSource {
     public static final String NAME = "user";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/user.csv"))
-                .withSchema(new Schema()
+                .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("userId", "userId", ColumnType.String),
-                                        new Column("created", "created", ColumnType.DateTime),
-                                        new Column("dob", "dob", ColumnType.Date),
-                                        new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                        new Column("firstName", "firstName", ColumnType.String),
-                                        new Column("lastName", "lastName", ColumnType.String),
-                                        new Column("password", "password", ColumnType.String),
-                                        new Column("contactNo", "contactNo", ColumnType.String),
-                                        new Column("selectedContentTypes", "selectedContentTypes", ColumnType.String),
-                                        new Column("email", "email", ColumnType.String),
-                                        new Column("type", "type", ColumnType.String),
-                                        new Column("stripeCustomerId", "stripeCustomerId", ColumnType.String),
-                                        new Column("stripeAccountId", "stripeAccountId", ColumnType.String),
-                                        new Column("stripeDefaultSourceId", "stripeDefaultSourceId", ColumnType.String),
-                                        new Column("fcmToken", "fcmToken", ColumnType.String),
-                                        new Column("chargePercentage", "chargePercentage", ColumnType.Int),
-                                        new Column("latitude", "latitude", ColumnType.Double),
-                                        new Column("longitude", "longitude", ColumnType.Double),
-                                        new Column("range", "range", ColumnType.Int),
-                                        new Column("imageUrl", "imageUrl", ColumnType.String),
-                                        new Column("online", "online", ColumnType.Bool),
-                                        new Column("userStatus", "userStatus", ColumnType.String),
-                                        new Column("statusMessage", "statusMessage", ColumnType.String)
+                                        new Column("userId", ColumnType.String),
+                                        new Column("created", ColumnType.DateTime),
+                                        new Column("dob", ColumnType.Date),
+                                        new Column("lastModified", ColumnType.DateTime),
+                                        new Column("firstName", ColumnType.String),
+                                        new Column("lastName", ColumnType.String),
+                                        new Column("password", ColumnType.String),
+                                        new Column("contactNo", ColumnType.String),
+                                        new Column("selectedContentTypes", ColumnType.String),
+                                        new Column("email",  ColumnType.String),
+                                        new Column("type",  ColumnType.String),
+                                        new Column("stripeCustomerId",  ColumnType.String),
+                                        new Column("stripeAccountId", ColumnType.String),
+                                        new Column("stripeDefaultSourceId",  ColumnType.String),
+                                        new Column("fcmToken",  ColumnType.String),
+                                        new Column("chargePercentage",  ColumnType.Int),
+                                        new Column("latitude", ColumnType.Double),
+                                        new Column("longitude", ColumnType.Double),
+                                        new Column("range",  ColumnType.Int),
+                                        new Column("imageUrl",  ColumnType.String),
+                                        new Column("online",ColumnType.Bool),
+                                        new Column("userStatus",  ColumnType.String),
+                                        new Column("statusMessage",  ColumnType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )

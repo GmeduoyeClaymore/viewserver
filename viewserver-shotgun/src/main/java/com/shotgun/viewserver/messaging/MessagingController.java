@@ -2,7 +2,7 @@ package com.shotgun.viewserver.messaging;
 
 import com.google.common.util.concurrent.*;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
@@ -28,7 +28,7 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
  * Created by Gbemiga on 17/01/18.
  */
 @Controller(name = "messagingController")
-public class MessagingController {
+public class MessagingController implements IMessagingController {
 
     private static final Logger logger = LoggerFactory.getLogger(MessagingController.class);
 
@@ -44,22 +44,25 @@ public class MessagingController {
         this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
+    @Override
     public void sendMessage(AppMessage message){
         sendPayload(message.toSimpleMessage());
     }
 
-    public ListenableFuture sendMessageToUser(String userId, AppMessage message){
+    @Override
+    public ListenableFuture sendMessageToUser(AppMessage message){
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        return ListenableFutureObservable.to(waitForUser(userId, userTable).observeOn(Schedulers.from(service)).map(rec -> {
+        return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
-            String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, userId, currentToken);
-            logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, userId, currentToken));
+            String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
+            logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
             message.setTo(currentToken);
             sendPayload(message.toSimpleMessage());
             return format;
         }));
     }
 
+    @Override
     @ControllerAction(path = "updateUserToken")
     public ListenableFuture updateUserToken(String token){
 
@@ -95,3 +98,6 @@ public class MessagingController {
         }
     }
 }
+
+
+

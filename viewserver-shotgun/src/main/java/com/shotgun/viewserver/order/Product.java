@@ -5,13 +5,13 @@ package com.shotgun.viewserver.order;
  */
 public class Product {
     String productId,name,description,categoryId;
-    Double price;
+    int price;
 
-    public Double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

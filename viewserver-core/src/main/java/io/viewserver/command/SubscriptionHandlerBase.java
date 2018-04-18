@@ -16,25 +16,19 @@
 
 package io.viewserver.command;
 
-import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.configurator.IConfiguratorSpec;
-import io.viewserver.core.IExecutionContext;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.IExecutionPlanContext;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
-import io.viewserver.execution.nodes.UnEnumNode;
 import io.viewserver.execution.plan.UserExecutionPlan;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.serialiser.SerialiserOperator;
 import io.viewserver.util.ViewServerException;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,25 +37,19 @@ import java.util.UUID;
 
 
 public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBase<TCommand> {
-    protected final ExecutionPlanRunner executionPlanRunner;
+    protected final IExecutionPlanRunner executionPlanRunner;
     protected final SubscriptionManager subscriptionManager;
-    protected final IDistributionManager distributionManager;
     protected final Configurator configurator;
-//    private final IPool<MessageMessage.MessageDto.Builder> messagePool;
 
-    protected SubscriptionHandlerBase(Class<TCommand> clazz, SubscriptionManager subscriptionManager, IDistributionManager distributionManager,
-                                      Configurator configurator, ExecutionPlanRunner executionPlanRunner) {
+    protected SubscriptionHandlerBase(Class<TCommand> clazz, SubscriptionManager subscriptionManager,
+                                      Configurator configurator, IExecutionPlanRunner executionPlanRunner) {
         super(clazz);
         this.subscriptionManager = subscriptionManager;
-        this.distributionManager = distributionManager;
         this.configurator = configurator;
         this.executionPlanRunner = executionPlanRunner;
-
-//        messagePool = new Pool<>(MessageMessage.MessageDto::newBuilder, 128, MessageMessage.MessageDto.Builder::clear);
     }
 
     protected void runUserExecutionPlan(IExecutionPlanContext executionPlanContext, Options options, int commandId, IPeerSession peerSession, CommandResult commandResult){
-        // run user report execution plan
         UserExecutionPlan userExecutionPlan = new UserExecutionPlan(commandId);
         OptionsExecutionPlanContext optionsExecutionPlanContext = (OptionsExecutionPlanContext) executionPlanContext;
         optionsExecutionPlanContext.setOptions(options);

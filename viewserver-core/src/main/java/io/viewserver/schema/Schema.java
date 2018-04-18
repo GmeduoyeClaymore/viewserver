@@ -95,7 +95,7 @@ public class Schema {
         ColumnHolder columnHolder = columnHolders.set(columnId, null);
         columnHoldersCopy = null;
         if (columnHolder == null) {
-            throw new IllegalArgumentException(String.format("Schema has no column ID %d", columnId));
+            throw new IllegalArgumentException(String.format("SchemaConfig has no column ID %d", columnId));
         }
         columnNameToIdMap.remove(columnHolder.getName());
         width--;

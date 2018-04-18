@@ -16,20 +16,20 @@
 
 package io.viewserver.sql;
 
+import com.facebook.presto.sql.parser.SqlParser;
+import com.facebook.presto.sql.parser.SqlParserOptions;
+import com.facebook.presto.sql.tree.Query;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.MultiCommandResult;
 import io.viewserver.command.SubscriptionHandlerBase;
 import io.viewserver.command.SubscriptionManager;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.group.summary.SummaryRegistry;
-import com.facebook.presto.sql.parser.SqlParser;
-import com.facebook.presto.sql.parser.SqlParserOptions;
-import com.facebook.presto.sql.tree.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +41,10 @@ public class ExecuteSqlCommandHandler extends SubscriptionHandlerBase<IExecuteSq
     private final SqlParser parser;
     private SummaryRegistry summaryRegistry;
 
-    public ExecuteSqlCommandHandler(SubscriptionManager subscriptionManager, IDistributionManager distributionManager,
-                                    Configurator configurator, ExecutionPlanRunner executionPlanRunner,
+    public ExecuteSqlCommandHandler(SubscriptionManager subscriptionManager,
+                                    Configurator configurator, IExecutionPlanRunner executionPlanRunner,
                                     SummaryRegistry summaryRegistry) {
-        super(IExecuteSqlCommand.class, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+        super(IExecuteSqlCommand.class, subscriptionManager, configurator, executionPlanRunner);
         this.summaryRegistry = summaryRegistry;
         SqlParserOptions options = new SqlParserOptions();
         parser = new SqlParser(options);

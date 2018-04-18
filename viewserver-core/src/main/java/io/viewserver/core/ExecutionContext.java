@@ -18,6 +18,7 @@ package io.viewserver.core;
 
 import io.viewserver.catalog.MetadataRegistry;
 import io.viewserver.configurator.Configurator;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.expression.AntlrExpressionParser;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.FunctionRegistry;
@@ -45,6 +46,7 @@ public class ExecutionContext implements IExecutionContext{
     private final MetadataRegistry metadataRegistry;
     private final SummaryRegistry summaryRegistry;
     private final SpreadFunctionRegistry spreadColumnRegistry;
+    private final DimensionMapper dimensionMapper;
     private ThreadLocal<Integer> executionCount = ThreadLocal.withInitial(() -> 0);
     private IReactor reactor;
     private boolean committing;
@@ -75,9 +77,15 @@ public class ExecutionContext implements IExecutionContext{
         this.expressionParser = new AntlrExpressionParser(functionRegistry);
         this.summaryRegistry = new SummaryRegistry();
         this.spreadColumnRegistry = new SpreadFunctionRegistry();
-        this.operatorFactoryRegistry = new OperatorFactoryRegistry(this.spreadColumnRegistry, functionRegistry,() -> new ChunkedColumnStorage(1024), summaryRegistry);
+        this.dimensionMapper = new DimensionMapper();
+        this.operatorFactoryRegistry = new OperatorFactoryRegistry(dimensionMapper, this.spreadColumnRegistry, functionRegistry,() -> new ChunkedColumnStorage(1024), summaryRegistry);
         this.configurator = new Configurator(operatorFactoryRegistry);
         this.metadataRegistry = new MetadataRegistry();
+    }
+
+    @Override
+    public DimensionMapper getDimensionMapper() {
+        return dimensionMapper;
     }
 
     public FunctionRegistry getFunctionRegistry() {

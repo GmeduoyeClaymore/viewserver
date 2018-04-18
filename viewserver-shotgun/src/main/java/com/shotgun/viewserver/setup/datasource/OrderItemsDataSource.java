@@ -1,10 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -15,20 +11,19 @@ import java.util.Arrays;
 public class OrderItemsDataSource {
         public static final String NAME = "orderItem";
 
-        public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+        public static DataSource getDataSource() {
                 return new DataSource()
                         .withName(NAME)
-                        .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/orderItem.csv"))
-                        .withSchema(new Schema()
+                        .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("orderItemId", "orderItemId", ColumnType.String),
-                                        new Column("contentTypeId", "contentTypeId", ColumnType.Int),
-                                        new Column("orderId", "orderId", ColumnType.String),
-                                        new Column("userId", "userId", ColumnType.String),
-                                        new Column("productId", "productId", ColumnType.String),
-                                        new Column("notes", "notes", ColumnType.String),
-                                        new Column("imageUrl", "imageUrl", ColumnType.String),
-                                        new Column("quantity", "quantity", ColumnType.Int)
+                                        new Column("orderItemId",  ColumnType.String),
+                                        new Column("contentTypeId",  ColumnType.Int),
+                                        new Column("orderId", ColumnType.String),
+                                        new Column("userId",  ColumnType.String),
+                                        new Column("productId",  ColumnType.String),
+                                        new Column("notes", ColumnType.String),
+                                        new Column("imageUrl", ColumnType.String),
+                                        new Column("quantity", ColumnType.Int)
                                 ))
                                 .withKeyColumns("orderItemId"))
                         .withOutput(NAME)

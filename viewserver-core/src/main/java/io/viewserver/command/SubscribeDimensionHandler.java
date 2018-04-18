@@ -18,21 +18,15 @@ package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.configurator.IConfiguratorSpec;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.execution.ExecutionPlanRunner;
-import io.viewserver.execution.Options;
-import io.viewserver.execution.ParameterHelper;
-import io.viewserver.execution.ReportContext;
+import io.viewserver.execution.*;
 import io.viewserver.execution.context.DimensionExecutionPlanContext;
 import io.viewserver.execution.plan.SystemDimensionExecutionPlan;
 import io.viewserver.messages.command.ISubscribeDimensionCommand;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
-import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
 import org.slf4j.Logger;
@@ -44,8 +38,8 @@ import org.slf4j.LoggerFactory;
 public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDimensionCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeDimensionHandler.class);
 
-    public SubscribeDimensionHandler(DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, IDistributionManager distributionManager, OperatorFactoryRegistry operatorFactoryRegistry, Configurator configurator, ExecutionPlanRunner executionPlanRunner) {
-        super(ISubscribeDimensionCommand.class, dimensionMapper, dataSourceRegistry, reportRegistry, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+    public SubscribeDimensionHandler(DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, Configurator configurator, IExecutionPlanRunner executionPlanRunner) {
+        super(ISubscribeDimensionCommand.class, dimensionMapper, dataSourceRegistry, reportRegistry, subscriptionManager, configurator, executionPlanRunner);
     }
 
     @Override
@@ -70,12 +64,10 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             dimensionExecutionPlanContext.setOptions(options);
             dimensionExecutionPlanContext.setDataSource(dataSource);
             dimensionExecutionPlanContext.setDimension(data.getDimension());
-            dimensionExecutionPlanContext.setDistributionManager(distributionManager);
             dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(dimensionExecutionPlanContext.getReportContext()));
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeDimensionHandler", commandResult);
             CommandResult systemPlanResult = multiCommandResult.getResultForDependency("System execution plan");
-            CommandResult unenumeratorResult = multiCommandResult.getResultForDependency("Unenumerator");
             CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
 
             final ICatalog graphNodesCatalog = getGraphNodesCatalog(peerSession);

@@ -24,10 +24,10 @@ public class H2DataAdapterTest {
 //    public void serialisationTest() throws Throwable {
 //        JacksonSerialiser serialiser = new JacksonSerialiser();
 //
-//        H2DataAdapter dataAdapter = new H2DataAdapter("name", "path", "username", "password", "tableName");
+//        H2RecordLoader dataAdapter = new H2RecordLoader("name", "path", "username", "password", "tableName");
 //        String json = serialiser.serialise(dataAdapter);
 //
-//        H2DataAdapter deserialised = (H2DataAdapter)serialiser.deserialise(json, DataLoader.class);
+//        H2RecordLoader deserialised = (H2RecordLoader)serialiser.deserialise(json, DataLoader.class);
 //
 //        Assert.assertEquals("name", deserialised.getName());
 //        Assert.assertEquals("path", deserialised.getPath());

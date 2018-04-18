@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class MapsControllerTest {
 
-    private MapsController sut;
+    private IMapsController sut;
 
 
     @Before

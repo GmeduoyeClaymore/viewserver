@@ -23,23 +23,28 @@ import io.viewserver.core._KeyType_;
  * Created by nick on 02/07/15.
  */
 public interface IDimensionMapper {
-    void registerDimension(IDataSource dataSource, Dimension dimension);
 
-    String lookupString(IDataSource dataSource, Dimension dimension, int id);
+    LookupKey registerDimension(String dimensionNamespace, Dimension dimension);
 
-    byte lookupByte(IDataSource dataSource, Dimension dimension, int id);
+    LookupKey registerDimension(String dimensionNamespace, String dimensionName, ColumnType dimensionColumnType);
 
-    boolean lookupBool(IDataSource dataSource, Dimension dimension, int id);
+    String lookupString(String dimensionNamespace, String dimensionName, int id);
 
-    NullableBool lookupNullableBool(IDataSource dataSource, Dimension dimension, int id);
+    byte lookupByte(String dimensionNamespace, String dimensionName, int id);
 
-    short lookupShort(IDataSource dataSource, Dimension dimension, int id);
+    boolean lookupBool(String dimensionNamespace, String dimensionName, int id);
 
-    int lookupInt(IDataSource dataSource, Dimension dimension, int id);
+    NullableBool lookupNullableBool(String dimensionNamespace, String dimensionName, int id);
 
-    long lookupLong(IDataSource dataSource, Dimension dimension, int id);
+    short lookupShort(String dimensionNamespace, String dimensionName, int id);
 
-    _KeyType_ lookup_KeyName_(IDataSource dataSource, Dimension dimension, int id);
+    int lookupInt(String dimensionNamespace, String dimensionName, int id);
+
+    long lookupLong(String dimensionNamespace, String dimensionName, int id);
+
+    _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, int id);
 
     void clear();
 }
+
+

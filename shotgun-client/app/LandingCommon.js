@@ -14,7 +14,6 @@ class LandingCommon extends Component {
   beforeNavigateTo() {
     const {dispatch, client} = this.props;
     dispatch(commonServicesRegistrationAction(client));
-    PermissionsService.requestLocationPermission();
   }
 
   render() {

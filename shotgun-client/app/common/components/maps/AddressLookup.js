@@ -115,10 +115,9 @@ class AddressLookup extends Component {
         </Header>
         <Content keyboardShouldPersistTaps="always">
           <Row size={10} style={{...styles.searchContainer, paddingTop: 10, paddingBottom: 10}}>
-            <ErrorRegion errors={errors}>
-              <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
-              <Input placeholder={addressLabel} autoCorrect={false} returnKeyType={'done'} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
-            </ErrorRegion>
+            <ErrorRegion errors={errors}/>
+            <Icon name="pin" paddedIcon originPin style={{ alignSelf: 'center' }} />
+            <Input placeholder={addressLabel} autoCorrect={false} returnKeyType={'done'} style={styles.input} value={addressSearchText} autoFocus={true} onChangeText={onAddressChanged} />
           </Row>
           {tabs.length ? <Tabs initialPage={selectedTabIndex}  page={selectedTabIndex} {...shotgun.tabsStyle} >
             {tabs.map(tab =>  <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}
@@ -200,10 +199,10 @@ class SuggestedAddresses extends Component{
     if (busy){
       return <LoadingScreen text={`Looking up results for ${addressSearchText}...`}/>;
     }
-    return hasLookedUpAddresses ? <ErrorRegion errors={errors}><View  paddedLeft style={{paddingTop: 15}}>
+    return hasLookedUpAddresses ? <View  paddedLeft style={{paddingTop: 15}}><ErrorRegion errors={errors}/>
       <Text style={styles.smallText}>{suggestedPlaces.length ? `${suggestedPlaces.length > 1 ? 'Addresses' : 'Address'} matching "${addressSearchText}"` : `No Results Found matching "${addressSearchText}"`}</Text>
       <List>{suggestedPlaces.map((r, i) => <SuggestedPlace key={i} result={r} onSuggestedPlaceSelected={onSuggestedPlaceSelected}/>)}</List>
-    </View></ErrorRegion>  : null;
+    </View> : null;
   }
 }
 

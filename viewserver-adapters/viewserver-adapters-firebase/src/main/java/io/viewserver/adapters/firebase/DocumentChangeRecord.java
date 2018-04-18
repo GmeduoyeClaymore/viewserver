@@ -2,7 +2,9 @@ package io.viewserver.adapters.firebase;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
@@ -15,9 +17,9 @@ import java.sql.Timestamp;
  */
 
 public class DocumentChangeRecord extends Record {
-    private final Schema schema;
+    private final SchemaConfig schema;
 
-    public DocumentChangeRecord(Schema schema, QueryDocumentSnapshot doc) {
+    public DocumentChangeRecord(SchemaConfig schema, QueryDocumentSnapshot doc) {
         this.schema = schema;
         initialise(doc);
     }
@@ -25,15 +27,12 @@ public class DocumentChangeRecord extends Record {
     private void initialise(QueryDocumentSnapshot doc) {
         values.clear();
 
-        for (ColumnHolder columnHolder : schema.getColumnHolders()) {
-            ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
-            String columnName = columnHolder.getName();
-
-            if (dataType == null || !doc.contains(columnName)) {
+        for (Column column : schema.getColumns()) {
+            String columnName = column.getName();
+            if (!doc.contains(columnName)) {
                 continue;
             }
-
-            values.put(columnName, getFirebaseDocumentValue(dataType, columnName, doc));
+            values.put(columnName, getFirebaseDocumentValue(column.getType(), columnName, doc));
         }
     }
 

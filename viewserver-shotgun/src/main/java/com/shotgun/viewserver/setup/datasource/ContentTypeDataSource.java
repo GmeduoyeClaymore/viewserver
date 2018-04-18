@@ -1,13 +1,8 @@
 package com.shotgun.viewserver.setup.datasource;
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by bennett on 26/09/17.
@@ -19,37 +14,29 @@ public class
         ContentTypeDataSource {
     public static final String NAME = "contentType";
 
-    public static final Schema schema = new Schema()
+    public static final SchemaConfig schema = new SchemaConfig()
             .withColumns(Arrays.asList(
-                    new Column("contentTypeId", "contentTypeId", ColumnType.Int),
-                    new Column("name", "name", ColumnType.String),
-                    new Column("origin", "origin", ColumnType.Bool),
-                    new Column("destination", "destination", ColumnType.Bool),
-                    new Column("noPeople", "noPeople", ColumnType.Bool),
-                    new Column("tillTime", "tillTime", ColumnType.Bool),
-                    new Column("fromTime", "fromTime", ColumnType.Bool),
-                    new Column("doubleComplete", "doubleComplete", ColumnType.Bool),
-                    new Column("noItems", "noItems", ColumnType.Bool),
-                    new Column("rootProductCategory", "rootProductCategory", ColumnType.String),
-                    new Column("description", "description", ColumnType.String),
-                    new Column("pricingStrategy", "pricingStrategy", ColumnType.String)
+                    new Column("contentTypeId", ColumnType.Int),
+                    new Column("name",ColumnType.String),
+                    new Column("origin",  ColumnType.Bool),
+                    new Column("destination",ColumnType.Bool),
+                    new Column("noPeople", ColumnType.Bool),
+                    new Column("tillTime", ColumnType.Bool),
+                    new Column("fromTime",  ColumnType.Bool),
+                    new Column("doubleComplete",  ColumnType.Bool),
+                    new Column("noItems", ColumnType.Bool),
+                    new Column("rootProductCategory",  ColumnType.String),
+                    new Column("description", ColumnType.String),
+                    new Column("pricingStrategy",  ColumnType.String)
             ))
             .withKeyColumns("contentTypeId");
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(
-                        new DataLoader(
-                                NAME,
-                                DataSourceUtils.getDataAdapter(shotgunConfiguration, NAME, "data/contentTypes.csv"),
-                                null
-                        )
-                )
                 .withSchema(schema)
-                .withCalculatedColumns(new CalculatedColumn("dimension_contentTypeId", ColumnType.Int, "contentTypeId"))
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId", Cardinality.Int, ColumnType.Int, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId","contentTypeId" ,Cardinality.Int, ColumnType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

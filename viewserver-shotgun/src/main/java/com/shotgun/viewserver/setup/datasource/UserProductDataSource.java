@@ -1,13 +1,11 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.Constants;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.*;
-import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.execution.nodes.JoinNode;
+import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.execution.nodes.SpreadNode;
 import io.viewserver.operators.projection.IProjectionConfig;
 
 import java.util.Arrays;
@@ -19,7 +17,7 @@ public class
 UserProductDataSource {
     public static final String NAME = "userProduct";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(

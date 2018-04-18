@@ -55,17 +55,11 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by nick on 10/02/2015.
- */
 public class ViewServerClientSteps {
     private ViewServerClientContext clientContext;
-    private InProcessViewServerContext serverContext;
 
-    public ViewServerClientSteps(ViewServerClientContext clientContext,
-                                 InProcessViewServerContext serverContext) {
+    public ViewServerClientSteps(ViewServerClientContext clientContext) {
         this.clientContext = clientContext;
-        this.serverContext = serverContext;
     }
 
     @After
@@ -215,7 +209,6 @@ public class ViewServerClientSteps {
         }
     }
 
-//Given controller "driverController" action "registerDriver" with data "driverRegistrion.json"
     private void trySubscribe(CountDownLatch subscribeLatch){
         ListenableFuture<ClientSubscription> subFuture = clientContext.client.subscribeToReport(
                 clientContext.reportContext,
@@ -267,74 +260,6 @@ public class ViewServerClientSteps {
         diff(expectedData, snapshot);
     }
 
-    @And("^the following records in table \"([^\"]*)\"$")
-    public void the_following_records_in_table(String tableName, List<Map<String, String>> records) throws Throwable {
-        assertClientConnected();
-        List<Column> columns = serverContext.dataSource.getSchema().getColumns();
-        Iterable<RowEvent> rowEvents = Iterables.transform(records, record -> {
-            HashMap<Integer, Object> values = new HashMap<>();
-            for (Map.Entry<String, String> value : record.entrySet()) {
-                int columnId = -1;
-                for (int i = 0; i < columns.size(); i++) {
-                    if (columns.get(i).getName().equals(value.getKey())) {
-                        columnId = i;
-                        break;
-                    }
-                }
-                if (columnId != -1) {
-                    switch (columns.get(columnId).getType()) {
-                        case Bool: {
-                            values.put(columnId, Boolean.parseBoolean(value.getValue()));
-                            break;
-                        }
-                        case Byte: {
-                            values.put(columnId, Byte.parseByte(value.getValue()));
-                            break;
-                        }
-                        case Short: {
-                            values.put(columnId, Short.parseShort(value.getValue()));
-                            break;
-                        }
-                        case Int: {
-                            values.put(columnId, Integer.parseInt(value.getValue()));
-                            break;
-                        }
-                        case Long: {
-                            values.put(columnId, Long.parseLong(value.getValue()));
-                            break;
-                        }
-                        case Float: {
-                            values.put(columnId, Float.parseFloat(value.getValue()));
-                            break;
-                        }
-                        case Double: {
-                            values.put(columnId, Double.parseDouble(value.getValue()));
-                            break;
-                        }
-                        case String: {
-                            values.put(columnId, value.getValue());
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return RowEvent.addRow(values);
-        });
-        List<io.viewserver.client.Column> tableColumns = new ArrayList<>();
-        Map<String, String> record = records.get(0);
-        for(String column : record.keySet()){
-            Column col = serverContext.dataSource.getSchema().getColumn(column);
-            io.viewserver.schema.column.ColumnType type = ColumnHolderUtils.getType(col.getType());
-            tableColumns.add(new io.viewserver.client.Column(column, type == io.viewserver.schema.column.ColumnType.String ? io.viewserver.schema.column.ColumnType.Int : type));
-        }
-        /*ITableEditCommand.ICreationConfig creationConfig= MessagePool.getInstance().get(ITableEditCommand.ICreationConfig.class);
-        IRollingTableConfig rollingTableConfig = MessagePool.getInstance().get(IRollingTableConfig.class);
-        rollingTableConfig.setSize(records.size());
-        creationConfig.setTableType("RollingTable");
-        creationConfig.setConfig(new ProtoRollingTableConfig(rollingTableConfig));*/
-        clientContext.client.editTable(tableName, rowEvents, tableColumns,null, true).get();
-    }
 
     private void assertClientConnected() throws Exception {
         if (clientContext.client == null) {
@@ -342,7 +267,7 @@ public class ViewServerClientSteps {
         }
     }
 
-    private Exception diff(DataTable table, List<Map<String, Object>> snapshot) throws Exception {
+    private void diff(DataTable table, List<Map<String, Object>> snapshot) throws Exception {
         if (snapshot.isEmpty()) throw new Exception("Snapshot was empty.");
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -350,13 +275,8 @@ public class ViewServerClientSteps {
             Map<String, String> r = mapRow(row);
             rows.add(r);
         }
-//        new CountDownLatch(1).await();
-//        try {
+
         table.diff(rows);
-//        } catch(TableDiffException e) {
-//            return e;
-//        }
-        return null;
     }
 
     private Map<String, String> mapRow(Map<String, Object> row) {
@@ -368,17 +288,6 @@ public class ViewServerClientSteps {
             if (value == null) {
                 mapped.put(key, "");
             }
-//            else if (value instanceof Long) {
-//                Object nanos = row.get(key + "_nanos");
-//                if (nanos != null) {
-//                    Timestamp timestamp = reader.readTimestamp(key);
-//                    mapped.put(key, timestamp == null ? "" : KdbFormatter.formatTimestamp(timestamp));
-//                }
-//                else {
-//                    Date date = reader.readDate(key);
-//                    mapped.put(key, date == null ? "" : KdbFormatter.formatDate(date));
-//                }
-//            }
             else if (value instanceof Double) {
                 Double aDouble = reader.readDouble(key);
                 DecimalFormat df = new DecimalFormat("#");

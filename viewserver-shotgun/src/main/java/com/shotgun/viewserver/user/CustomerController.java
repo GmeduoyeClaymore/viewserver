@@ -4,14 +4,14 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
-import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.PaymentController;
 import io.viewserver.adapters.common.Record;
@@ -38,14 +38,14 @@ public class CustomerController {
     private IDatabaseUpdater iDatabaseUpdater;
     private PaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
-    private MessagingController messagingController;
+    private IMessagingController messagingController;
     private UserController userController;
     private INexmoController nexmoController;
 
     public CustomerController(IDatabaseUpdater iDatabaseUpdater,
                               PaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
-                              MessagingController messagingController,
+                              IMessagingController messagingController,
                               UserController userController,
                               INexmoController nexmoController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
@@ -152,8 +152,9 @@ public class CustomerController {
             String formattedStatus = status.toLowerCase();
             AppMessage builder = new AppMessageBuilder().withDefaults()
                     .withAction(createActionUri(orderId, status))
+                    .withFromTo(getUserId(),orderDriverId)
                     .message(String.format("Shotgun order %s", formattedStatus), String.format("Shotgun order has been %s by the customer", formattedStatus)).build();
-            ListenableFuture future = messagingController.sendMessageToUser(orderDriverId, builder);
+            ListenableFuture future = messagingController.sendMessageToUser(builder);
 
             Futures.addCallback(future, new FutureCallback<Object>() {
                 @Override

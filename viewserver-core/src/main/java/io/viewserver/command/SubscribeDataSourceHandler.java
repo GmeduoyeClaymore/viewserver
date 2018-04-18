@@ -18,15 +18,12 @@ package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.configurator.IConfiguratorSpec;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.datasource.SlaveDataSource;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
-import io.viewserver.messages.command.IInitialiseSlaveCommand;
 import io.viewserver.messages.command.ISubscribeDataSourceCommand;
 import io.viewserver.messages.config.IProjectionConfig;
 import io.viewserver.network.Command;
@@ -39,10 +36,10 @@ import org.slf4j.LoggerFactory;
  */
 public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscribeDataSourceCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeDataSourceHandler.class);
-    private IDataSourceRegistry<SlaveDataSource> dataSourceRegistry;
+    private IDataSourceRegistry dataSourceRegistry;
 
-    public SubscribeDataSourceHandler(IDataSourceRegistry dataSourceRegistry, SubscriptionManager subscriptionManager, IDistributionManager distributionManager, Configurator configurator, ExecutionPlanRunner executionPlanRunner) {
-        super(ISubscribeDataSourceCommand.class, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+    public SubscribeDataSourceHandler(IDataSourceRegistry dataSourceRegistry, SubscriptionManager subscriptionManager, Configurator configurator, IExecutionPlanRunner executionPlanRunner) {
+        super(ISubscribeDataSourceCommand.class, subscriptionManager, configurator, executionPlanRunner);
         this.dataSourceRegistry = dataSourceRegistry;
     }
 
@@ -65,26 +62,22 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
 
             optionsExecutionPlanContext.setDataSource(dataSource);
             optionsExecutionPlanContext.setInput(dataSource.getFinalOutput());
-            optionsExecutionPlanContext.setDistributionManager(distributionManager);
 
             final IProjectionConfig projection = data.getProjection();
             if (projection != null) {
                 optionsExecutionPlanContext.setProjectionConfig(io.viewserver.operators.projection.IProjectionConfig.fromDto(projection));
             }
 
-            //for sorting, paging etc - only allow on the master node
-            if(this.distributionManager.getNodeType().equals(IInitialiseSlaveCommand.Type.Master)) {
-                multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
+            multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
 
-                String inputOperator = optionsExecutionPlanContext.getInputOperator();
-                if (inputOperator.charAt(0) != '/') {
-                    inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();
-                    optionsExecutionPlanContext.setInput(inputOperator, optionsExecutionPlanContext.getInputOutputName());
-                }
-
-                CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
-                this.runUserExecutionPlan(optionsExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);
+            String inputOperator = optionsExecutionPlanContext.getInputOperator();
+            if (inputOperator.charAt(0) != '/') {
+                inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();
+                optionsExecutionPlanContext.setInput(inputOperator, optionsExecutionPlanContext.getInputOutputName());
             }
+
+            CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
+            this.runUserExecutionPlan(optionsExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);
 
             this.createSubscription(optionsExecutionPlanContext, command.getId(), peerSession, options);
 

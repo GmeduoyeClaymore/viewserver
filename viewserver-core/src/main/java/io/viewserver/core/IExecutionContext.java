@@ -2,6 +2,7 @@ package io.viewserver.core;
 
 import io.viewserver.catalog.MetadataRegistry;
 import io.viewserver.configurator.Configurator;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.IOperator;
@@ -18,16 +19,20 @@ public interface IExecutionContext {
     void register(IOperator operator);
     void tearDownOperator(IOperator operator);
     void unregister(IOperator operator);
+
     IReactor getReactor();
     Configurator getConfigurator();
     IExpressionParser getExpressionParser();
     MetadataRegistry getMetadataRegistry();
-
     SpreadFunctionRegistry getSpreadColumnRegistry();
+    DimensionMapper getDimensionMapper();
+
 
     void pause();
     void resume();
     int getExecutionCount();
+
+
     FunctionRegistry getFunctionRegistry();
     OperatorFactoryRegistry getOperatorFactoryRegistry();
     void commit();

@@ -91,27 +91,27 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
                 switch (type) {
                     case NullableBool: {
-                        outHolder.setColumn(new UnEnumColumnNullableBool(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnNullableBool(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                     case Byte: {
-                        outHolder.setColumn(new UnEnumColumnByte(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnByte(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                     case Short: {
-                        outHolder.setColumn(new UnEnumColumnShort(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnShort(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                     case Int: {
-                        outHolder.setColumn(new UnEnumColumnInt(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnInt(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                     case Long: {
-                        outHolder.setColumn(new UnEnumColumnLong(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnLong(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                     case String: {
-                        outHolder.setColumn(new UnEnumColumnString(columnHolder, outHolder, dataSource, dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnString(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
                         break;
                     }
                 }

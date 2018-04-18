@@ -9,7 +9,6 @@ export default class UserDaoContext{
     this.getPositionAsPromise = this.getPositionAsPromise.bind(this);
     this.watchPositionOnSuccess = this.watchPositionOnSuccess.bind(this);
     this.watchPositionOnError = this.watchPositionOnError.bind(this);
-    this.position = undefined;
     this.locationOptions = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10};
   }
 
@@ -43,8 +42,7 @@ export default class UserDaoContext{
 
   mapDomainEvent(dataSink){
     return {
-      user: this.mapUser(dataSink.rows[0]),
-      position: this.position
+      user: this.mapUser(dataSink.rows[0])
     };
   }
 
@@ -84,13 +82,11 @@ export default class UserDaoContext{
   }
 
   extendDao(dao){
-    dao.getCurrentPosition = async () =>{
+    dao.watchPosition = async () => {
       const position = await this.getPositionAsPromise().timeoutWithError(3000, 'Unable to get current position after 3 seconds');
       Logger.info(`Got user position as ${JSON.stringify(position)}`);
-      this.position = position.coords;
-      dao.subject.next(this.mapDomainEvent(dao.dataSink));
-    };
-    dao.watchPosition = async () => {
+      await this.watchPositionOnSuccess(position);
+
       await navigator.geolocation.getCurrentPosition((position) => this.watchPositionOnSuccess(position), this.watchPositionOnError, {enableHighAccuracy: true});
       this.watchId = navigator.geolocation.watchPosition((position) => this.watchPositionOnSuccess(position), this.watchPositionOnError, this.locationOptions);
     };

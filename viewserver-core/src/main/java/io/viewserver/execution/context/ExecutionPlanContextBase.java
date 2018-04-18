@@ -18,15 +18,11 @@ package io.viewserver.execution.context;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IDataSource;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.distribution.ViewServerNode;
 import io.viewserver.execution.ParameterHelper;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.expression.IExpressionParser;
-import io.viewserver.messages.command.IInitialiseSlaveCommand;
 
 import java.util.*;
 
@@ -38,15 +34,11 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
     private String inputOperator;
     private String inputOutputName;
     private IExecutionContext executionContext;
-    private boolean aggregating;
     private ParameterHelper parameterHelper;
     private List<IGraphNode> graphNodes = new ArrayList<>();
-    private IDistributionManager distributionManager;
     private IDataSource dataSource;
     private IExpressionParser expressionParser;
     private Map<String, String> operatorNames = new HashMap<>();
-    private CommandResult remoteConfigurationResult;
-    private List<ViewServerNode> viewServerNodes;
 
     @Override
     public ICatalog getCatalog() {
@@ -89,16 +81,6 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
         this.executionContext = executionContext;
     }
 
-    @Override
-    public void setAggregating(boolean aggregating) {
-        this.aggregating = aggregating;
-    }
-
-    @Override
-    public boolean isAggregating() {
-        return aggregating;
-    }
-
     public void setParameterHelper(ParameterHelper parameterHelper) {
         this.parameterHelper = parameterHelper;
     }
@@ -128,15 +110,6 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
         graphNodes.clear();
     }
 
-    public void setDistributionManager(IDistributionManager distributionManager) {
-        this.distributionManager = distributionManager;
-    }
-
-    @Override
-    public IDistributionManager getDistributionManager() {
-        return distributionManager;
-    }
-
     @Override
     public IDataSource getDataSource() {
         return dataSource;
@@ -158,23 +131,6 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
     }
 
     @Override
-    public CommandResult getRemoteConfigurationResult() {
-        return remoteConfigurationResult;
-    }
-
-    @Override
-    public void setRemoteConfigurationResult(CommandResult remoteConfigurationResult) {
-        this.remoteConfigurationResult = remoteConfigurationResult;
-    }
-
-    @Override
-    public boolean isDistributed() {
-        return isAggregating()
-                && distributionManager.getNodeType().equals(IInitialiseSlaveCommand.Type.Master)
-                && !distributionManager.getAggregatorNodes().isEmpty();
-    }
-
-    @Override
     public boolean shouldHashNames() {
         return true;
     }
@@ -192,13 +148,4 @@ public abstract class ExecutionPlanContextBase implements IExecutionPlanContext 
         this.expressionParser = expressionParser;
     }
 
-    @Override
-    public void setViewServerNodes(List<ViewServerNode> viewServerNodes) {
-        this.viewServerNodes = viewServerNodes;
-    }
-
-    @Override
-    public List<ViewServerNode> getViewServerNodes() {
-        return viewServerNodes;
-    }
 }

@@ -3,8 +3,8 @@ package com.shotgun.viewserver.user;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.maps.DirectionRequest;
+import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.maps.LatLng;
-import com.shotgun.viewserver.maps.MapsController;
 import io.viewserver.controller.Controller;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -18,10 +18,10 @@ import java.util.LinkedHashMap;
 @Controller(name = "journeyEmulatorController")
 public class JourneyEmulatorController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
-    private MapsController mapsController;
+    private IMapsController IMapsController;
 
-    public JourneyEmulatorController(MapsController mapsController) {
-        this.mapsController = mapsController;
+    public JourneyEmulatorController(IMapsController IMapsController) {
+        this.IMapsController = IMapsController;
     }
 
     public void emulateJourneyForOrder(String orderId, String emulator, String userId) {
@@ -71,7 +71,7 @@ public class JourneyEmulatorController {
     }
 
     public void emulateJourney(String emulator, DirectionRequest directionsRequest) {
-        HashMap<String, Object> directions = mapsController.mapDirectionRequest(directionsRequest);
+        HashMap<String, Object> directions = IMapsController.mapDirectionRequest(directionsRequest);
 
         try {
             System.out.println("Path is - " + System.getenv("PATH"));

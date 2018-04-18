@@ -1,9 +1,5 @@
 package com.shotgun.viewserver.setup.datasource;
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -11,17 +7,16 @@ import java.util.Arrays;
 public class UserRelationshipDataSource {
     public static final String NAME = "userRelationship";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/userRelationship.csv"))
-                .withSchema(new Schema()
+                .withSchema(new SchemaConfig()
                         .withColumns(Arrays.asList(
-                                new Column("relationshipId", "relationshipId", ColumnType.String),
-                                new Column("fromUserId", "fromUserId", ColumnType.String),
-                                new Column("toUserId", "toUserId", ColumnType.String),
-                                new Column("relationshipStatus", "relationshipStatus", ColumnType.String),
-                                new Column("relationshipType", "relationshipType", ColumnType.String)
+                                new Column("relationshipId", ColumnType.String),
+                                new Column("fromUserId",  ColumnType.String),
+                                new Column("toUserId",  ColumnType.String),
+                                new Column("relationshipStatus",  ColumnType.String),
+                                new Column("relationshipType",  ColumnType.String)
                         ))
                         .withKeyColumns("relationshipId")
                 )

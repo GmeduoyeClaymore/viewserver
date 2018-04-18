@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, Linking} from 'react-native';
+import {Linking} from 'react-native';
 import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
@@ -11,35 +11,29 @@ import {RatingAction, ErrorRegion, LoadingScreen, SpinnerButton, Icon, OriginDes
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import Logger from 'common/Logger';
 
-const {width, height} = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
+const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class DriverOrderInProgress extends Component{
   constructor(props) {
     super(props);
-
-    this.state = {
-      initialPosition: undefined
-    };
   }
 
   beforeNavigateTo(){
-    const {dispatch, orderId, position} = this.props;
+    const {dispatch, orderId} = this.props;
     dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
       orderId,
       reportId: 'driverOrderSummary'
     }));
-
-    this.setState({initialPosition: position});
   }
 
   render() {
     let map;
-    const {orderSummary = {status: ''}, history, position = {}, dispatch, busy, busyUpdating, client, errors, ordersRoot} = this.props;
-    const {initialPosition} = this.state;
-    const {latitude, longitude} = position;
+    const {orderSummary = {status: ''}, history, user, dispatch, busy, busyUpdating, client, errors, ordersRoot} = this.props;
+    //const {initialPosition} = this.state;
+    const {latitude, longitude} = user;
+    const initialPosition = {latitude, longitude};
     const {delivery = {}, contentType, customerRating} = orderSummary;
     const {origin = {}, destination = {}} = delivery;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
@@ -70,7 +64,7 @@ class DriverOrderInProgress extends Component{
 
     const onRatingDonePress = () => {
       history.push({pathname: ordersRoot, transition: 'left'});
-    }
+    };
 
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
@@ -89,7 +83,7 @@ class DriverOrderInProgress extends Component{
       <Grid>
         <Row size={60}>
           <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
-            showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
+            showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
             <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>
             {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
 
@@ -120,13 +114,12 @@ class DriverOrderInProgress extends Component{
                   <Col><Button fullWidth statusButton onPress={onPressCallCustomer}><Icon name="phone"/><Text uppercase={false}>Call customer</Text></Button></Col>
                 </Row>
               </Grid>
-              <ErrorRegion errors={errors}>
-                <SpinnerButton busy={busyUpdating} fullWidth><Text uppercase={false} onPress={onCompletePress}>Complete job</Text></SpinnerButton>
-              </ErrorRegion>
             </Col>
           }
         </Row>
       </Grid>
+      <ErrorRegion errors={errors} style={styles.error} />
+      {!isComplete ? <SpinnerButton busy={busyUpdating} paddedBottom fullWidth onPress={onCompletePress}><Text uppercase={false}>Complete job</Text></SpinnerButton> : null}
     </Container>;
   }
 }
@@ -140,8 +133,11 @@ const styles = {
   infoRow: {
     padding: shotgun.contentPadding
   },
+  error: {
+    padding: shotgun.contentPadding
+  },
   ctaRow: {
-    paddingBottom: 15
+    paddingTop: 15
   },
   navigateButton: {
     borderTopRightRadius: 0,
@@ -159,16 +155,16 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
   orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
-  const position = getDaoState(state, ['position'], 'userDao');
-  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]);
+  const errors = getOperationErrors(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}, {driverDao: 'callCustomer'}, { orderSummaryDao: 'resetSubscription'}]);
+  const user = getDaoState(state, ['user'], 'userDao');
 
   return {
     ...initialProps,
-    position,
+    user,
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{driverDao: 'startOrderRequest'}, {driverDao: 'completeOrderRequest'}]),
-    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !position,
+    busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined  || !user.latitude,
     orderSummary
   };
 };

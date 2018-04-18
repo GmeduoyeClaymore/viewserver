@@ -52,3 +52,5 @@ public interface IRecord {
 
     boolean hasValue(String columnName);
 }
+
+

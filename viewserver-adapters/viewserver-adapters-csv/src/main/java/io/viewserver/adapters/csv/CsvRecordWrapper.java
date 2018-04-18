@@ -151,8 +151,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
 
     @Override
     public String getString(String columnName) {
-        String dataSourceColumnName = this.getDataSourceColumnName(columnName);
-        String value = record.isSet(columnName) ? record.get(dataSourceColumnName) : null;
+        String value = record.isSet(columnName) ? record.get(columnName) : null;
         String s = this.replaceNullValues(columnName, value, String.class);
         return s == null ? null : s.trim();
     }

@@ -1,13 +1,12 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

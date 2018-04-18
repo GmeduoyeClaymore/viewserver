@@ -5,14 +5,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -30,12 +29,12 @@ import java.util.HashMap;
 public class NexmoController implements INexmoController {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
-    private Catalog systemCatalog;
+    private ICatalog systemCatalog;
     private NexmoControllerKey nexmoControllerKey;
     private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
 
-    public NexmoController(int httpPort, Catalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater) {
+    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.nexmoControllerKey = nexmoControllerKey;
@@ -83,9 +82,9 @@ public class NexmoController implements INexmoController {
     }
 
     private class CallHandler implements HttpHandler {
-        private Catalog systemCatalog;
+        private ICatalog systemCatalog;
 
-        public CallHandler(Catalog systemCatalog) {
+        public CallHandler(ICatalog systemCatalog) {
             this.systemCatalog = systemCatalog;
         }
 

@@ -8,11 +8,29 @@ import java.util.Map;
 
 public class AppMessage {
     private String to;
+    private String fromUserId;
+    private String toUserId;
     private String priority;
     private String title;
     private String body;
     private String sound;
     private String action;
+
+    public String getFromUserId() {
+        return fromUserId;
+    }
+
+    public void setFromUserId(String from) {
+        this.fromUserId = from;
+    }
+
+    public String getToUserId() {
+        return toUserId;
+    }
+
+    public void setToUserId(String toUserId) {
+        this.toUserId = toUserId;
+    }
 
     public String getTitle() {
         return title;

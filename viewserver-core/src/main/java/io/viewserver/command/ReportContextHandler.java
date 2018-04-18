@@ -21,8 +21,8 @@ import io.viewserver.datasource.DataSourceStatus;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.InvalidReportContextException;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.report.ReportDefinition;
@@ -34,8 +34,8 @@ public abstract class ReportContextHandler<TCommand> extends SubscriptionHandler
     protected ReportRegistry reportRegistry;
     protected DimensionMapper dimensionMapper;
 
-    protected ReportContextHandler(Class<TCommand> clazz, DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, IDistributionManager distributionManager, Configurator configurator, ExecutionPlanRunner executionPlanRunner){
-        super(clazz, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+    protected ReportContextHandler(Class<TCommand> clazz, DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, Configurator configurator, IExecutionPlanRunner executionPlanRunner){
+        super(clazz, subscriptionManager, configurator, executionPlanRunner);
         this.dimensionMapper = dimensionMapper;
         this.dataSourceRegistry = dataSourceRegistry;
         this.reportRegistry = reportRegistry;

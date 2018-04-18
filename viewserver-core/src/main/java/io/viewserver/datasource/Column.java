@@ -16,6 +16,8 @@
 
 package io.viewserver.datasource;
 
+import io.viewserver.messages.tableevent.ISchemaChange;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -24,7 +26,6 @@ import java.util.EnumSet;
  */
 public class Column {
     private String name;
-    private String dataSourceName;
     private ColumnType type;
     private EnumSet<ColumnOption> options = EnumSet.noneOf(ColumnOption.class);
     private Object defaultValue;
@@ -34,15 +35,7 @@ public class Column {
 
     public Column(String name, ColumnType type) {
         this.name = name;
-        this.dataSourceName = name;
         this.type = type;
-
-    }
-
-    public Column(String name, String dataSourceName, ColumnType type) {
-        this.name = name;
-        this.type = type;
-        this.dataSourceName = dataSourceName;
     }
 
     public Column withOptions(ColumnOption... options) {
@@ -69,13 +62,6 @@ public class Column {
         return options;
     }
 
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
 
     public String getName() {
         return name;
@@ -93,3 +79,4 @@ public class Column {
         this.type = type;
     }
 }
+

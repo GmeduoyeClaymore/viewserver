@@ -36,6 +36,7 @@ import io.viewserver.network.PeerSession;
 import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
     private final List<ViewServerNode> addedNodes = new ArrayList<>();
     private final ProcessNodeChangesTask processNodeChangesTask = new ProcessNodeChangesTask();
     private boolean processNodeChangesTaskScheduled;
-    private final Map<IDataSource, Map<Dimension, List<MappedDimensionValue>>> pendingDimensionMappings = new HashMap<>();
+    private final Map<String, Map<String, List<MappedDimensionValue>>> pendingDimensionMappings = new HashMap<>();
     private int processNodeChangesDelay = 5000;
     private int minimumSlaves = 1;
     private final List<ViewServerNode> removedNodes = new ArrayList<>();
@@ -218,7 +219,7 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
                         continue;
                     }
 
-                    HashPrimitiveIterator allValues = dimensionMapper.getAllValues(dataSource, dimension);
+                    HashPrimitiveIterator allValues = dimensionMapper.getAllValues(dataSource.getName(), dimension.getName(), dimension.getColumnType());
                     if (!allValues.hasNext()) {
                         continue;
                     }
@@ -423,20 +424,20 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
     }
 
     @Override
-    public void onDimensionValueMapped(IDataSource dataSource, Dimension dimension, int id, Object value) {
+    public void onDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
         if (nodesByType.isEmpty()) {
             return;
         }
 
-        Map<Dimension, List<MappedDimensionValue>> dimensions = pendingDimensionMappings.get(dataSource);
+        Map<String, List<MappedDimensionValue>> dimensions = pendingDimensionMappings.get(namespace);
         if (dimensions == null) {
             dimensions = new HashMap<>();
-            pendingDimensionMappings.put(dataSource, dimensions);
+            pendingDimensionMappings.put(namespace, dimensions);
         }
-        List<MappedDimensionValue> mappedDimensionValues = dimensions.get(dimension);
+        List<MappedDimensionValue> mappedDimensionValues = dimensions.get(dimensionName);
         if (mappedDimensionValues == null) {
             mappedDimensionValues = new ArrayList<>();
-            dimensions.put(dimension, mappedDimensionValues);
+            dimensions.put(dimensionName, mappedDimensionValues);
         }
         mappedDimensionValues.add(new MappedDimensionValue(id, value));
     }
@@ -562,19 +563,20 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
             pendingDimensionMappings.clear();
         }
 
-        private void addDataSource(IUpdateDimensionMapCommand updateDimensionMapCommand, Map.Entry<IDataSource, Map<Dimension, List<MappedDimensionValue>>> dataSource) {
+        private void addDataSource(IUpdateDimensionMapCommand updateDimensionMapCommand, Map.Entry<String, Map<String, List<MappedDimensionValue>>> dataSource) {
             if (dataSource.getValue().isEmpty()) {
                 return;
             }
 
             final IUpdateDimensionMapCommand.IDataSource dataSourceMessage = MessagePool.getInstance().get(IUpdateDimensionMapCommand.IDataSource.class)
-                    .setName(dataSource.getKey().getName());
-            dataSource.getValue().entrySet().forEach(dimensionValue -> addDimensionValue(dataSourceMessage, dimensionValue));
+                    .setName(dataSource.getKey());
+            throw new NotImplementedException();
+            /*dataSource.getValue().entrySet().forEach(dimensionValue -> addDimensionValue(dataSourceMessage, dimensionValue, dimensionColumnType));
             updateDimensionMapCommand.getDataSources().add(dataSourceMessage);
-            dataSourceMessage.release();
+            dataSourceMessage.release();*/
         }
 
-        private void addDimensionValue(IUpdateDimensionMapCommand.IDataSource dataSourceMessage, Map.Entry<Dimension, List<MappedDimensionValue>> dimension) {
+        private void addDimensionValue(IUpdateDimensionMapCommand.IDataSource dataSourceMessage, Map.Entry<String, List<MappedDimensionValue>> dimension, ColumnType dimensionColumnType) {
             if (dimension.getValue().isEmpty()) {
                 return;
             }
@@ -582,9 +584,9 @@ public class DistributionManager implements IDistributionManager, PeerSession.ID
             int valueCount = values.size();
 
             IUpdateDimensionMapCommand.IDimension dimensionBuilder = MessagePool.getInstance().get(IUpdateDimensionMapCommand.IDimension.class)
-                    .setName(dimension.getKey().getName());
+                    .setName(dimension.getKey());
             final List<IUpdateDimensionMapCommand.IMapping> mappings = dimensionBuilder.getMappings();
-            switch (dimension.getKey().getColumnType()) {
+            switch (dimensionColumnType) {
                 case Byte: {
                     for (int i = 0; i < valueCount; i++) {
                         MappedDimensionValue mappedDimensionValue = values.get(i);

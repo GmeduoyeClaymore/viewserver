@@ -34,7 +34,6 @@ public class DataSourceExecutionPlan implements IExecutionPlan<DataSourceExecuti
                 new DataSourceStep(),
                 new DataSourceCalculationsStep(),
                 new DataSourceIndexStep(),
-                new DataSourceDistributionStep(),
                 new DimensionListStep()
         );
     }

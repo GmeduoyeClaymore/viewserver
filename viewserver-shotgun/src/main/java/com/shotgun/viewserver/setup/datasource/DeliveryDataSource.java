@@ -1,9 +1,4 @@
 package com.shotgun.viewserver.setup.datasource;
-
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -15,25 +10,24 @@ public class
 DeliveryDataSource {
     public static final String NAME = "delivery";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/delivery.csv"))
-                .withSchema(new Schema()
+                .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("deliveryId", "deliveryId", ColumnType.String),
-                                        new Column("customerId", "customerId", ColumnType.String),
-                                        new Column("created", "created", ColumnType.DateTime),
-                                        new Column("lastModified", "lastModified", ColumnType.DateTime),
-                                        new Column("driverId", "driverId", ColumnType.String),
-                                        new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
-                                        new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
-                                        new Column("from", "from", ColumnType.DateTime),
-                                        new Column("till", "till", ColumnType.DateTime),
-                                        new Column("distance", "distance", ColumnType.Int),
-                                        new Column("duration", "duration", ColumnType.Int),
-                                        new Column("fixedPriceValue", "fixedPriceValue", ColumnType.Int),
-                                        new Column("isFixedPrice", "isFixedPrice", ColumnType.Bool)
+                                        new Column("deliveryId", ColumnType.String),
+                                        new Column("customerId", ColumnType.String),
+                                        new Column("created", ColumnType.DateTime),
+                                        new Column("lastModified", ColumnType.DateTime),
+                                        new Column("driverId", ColumnType.String),
+                                        new Column("originDeliveryAddressId", ColumnType.String),
+                                        new Column("destinationDeliveryAddressId", ColumnType.String),
+                                        new Column("from",  ColumnType.DateTime),
+                                        new Column("till",  ColumnType.DateTime),
+                                        new Column("distance", ColumnType.Int),
+                                        new Column("duration",  ColumnType.Int),
+                                        new Column("fixedPriceValue",  ColumnType.Int),
+                                        new Column("isFixedPrice",  ColumnType.Bool)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )

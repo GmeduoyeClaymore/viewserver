@@ -1,10 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -16,22 +12,21 @@ public class
         VehicleDataSource {
     public static final String NAME = "vehicle";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
+    public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/vehicle.csv"))
-                .withSchema(new Schema()
+                .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("vehicleId", "vehicleId", ColumnType.String),
-                                        new Column("userId", "userId", ColumnType.String),
-                                        new Column("registrationNumber", "registrationNumber", ColumnType.String),
-                                        new Column("colour", "colour", ColumnType.String),
-                                        new Column("make", "make", ColumnType.String),
-                                        new Column("model", "model", ColumnType.String),
-                                        new Column("dimensions", "dimensions", ColumnType.String),
-                                        new Column("selectedProductIds", "selectedProductIds", ColumnType.String),
-                                        new Column("numAvailableForOffload", "numAvailableForOffload", ColumnType.Int),
-                                        new Column("bodyStyle", "bodyStyle", ColumnType.String)
+                                        new Column("vehicleId", ColumnType.String),
+                                        new Column("userId", ColumnType.String),
+                                        new Column("registrationNumber",  ColumnType.String),
+                                        new Column("colour", ColumnType.String),
+                                        new Column("make",ColumnType.String),
+                                        new Column("model",  ColumnType.String),
+                                        new Column("dimensions",  ColumnType.String),
+                                        new Column("selectedProductIds",  ColumnType.String),
+                                        new Column("numAvailableForOffload", ColumnType.Int),
+                                        new Column("bodyStyle", ColumnType.String)
                                 ))
                                 .withKeyColumns("vehicleId")
                 )

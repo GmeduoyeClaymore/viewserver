@@ -5,16 +5,16 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
+import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.maps.LatLng;
-import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
-import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.messaging.IMessagingController;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -40,10 +40,10 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private LoginController loginController;
-    private ImageController imageController;
+    private IImageController IImageController;
     private INexmoController nexmoController;
-    private MessagingController messagingController;
-    private MapsController mapsController;
+    private IMessagingController messagingController;
+    private IMapsController IMapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
 
@@ -51,17 +51,17 @@ public class UserController {
 
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           LoginController loginController,
-                          ImageController imageController,
+                          IImageController IImageController,
                           INexmoController nexmoController,
-                          MessagingController messagingController,
-                          MapsController mapsController, IReactor reactor) {
+                          IMessagingController messagingController,
+                          IMapsController IMapsController, IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
 
         this.loginController = loginController;
-        this.imageController = imageController;
+        this.IImageController = IImageController;
         this.nexmoController = nexmoController;
         this.messagingController = messagingController;
-        this.mapsController = mapsController;
+        this.IMapsController = IMapsController;
         this.reactor = reactor;
 
     }
@@ -115,7 +115,7 @@ public class UserController {
 
         if (user.getImageData() != null) {
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
             user.setImageUrl(imageUrl);
         }
 
@@ -150,7 +150,7 @@ public class UserController {
     @ControllerAction(path = "setLocationFromPostcode", isSynchronous = false)
     public ListenableFuture setLocationFromPostcode(@ActionParam(name = "postcode") String postcode) {
         String userId = getUserId();
-        LatLng result = mapsController.getLocationFromPostcode(postcode);
+        LatLng result = IMapsController.getLocationFromPostcode(postcode);
 
         Record userRecord = new Record()
                 .addValue("userId", userId)
@@ -214,8 +214,9 @@ public class UserController {
             String fromUserName = getUsername(userId, userTable);
             AppMessage builder = new AppMessageBuilder().withDefaults()
                     .withAction(createActionUri(userId))
+                    .withFromTo(userId, targetUserId)
                     .message(String.format("Shotgun friend request", formattedStatus), String.format("Shotgun user %s has %s your friendship", fromUserName, formattedStatus)).build();
-            ListenableFuture future = messagingController.sendMessageToUser(targetUserId, builder);
+            ListenableFuture future = messagingController.sendMessageToUser(builder);
 
             Futures.addCallback(future, new FutureCallback<Object>() {
                 @Override

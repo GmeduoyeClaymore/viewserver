@@ -20,6 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.steps.IExecutionPlanStep;
 import io.viewserver.operators.group.summary.SummaryRegistry;
@@ -36,9 +37,9 @@ import java.util.Optional;
 public class SqlFromStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     private boolean firstJoin = true;
     private SummaryRegistry summaryRegistry;
-    private ExecutionPlanRunner executionPlanRunner;
+    private IExecutionPlanRunner executionPlanRunner;
 
-    public SqlFromStep(SummaryRegistry summaryRegistry, ExecutionPlanRunner executionPlanRunner) {
+    public SqlFromStep(SummaryRegistry summaryRegistry, IExecutionPlanRunner executionPlanRunner) {
         this.summaryRegistry = summaryRegistry;
         this.executionPlanRunner = executionPlanRunner;
     }

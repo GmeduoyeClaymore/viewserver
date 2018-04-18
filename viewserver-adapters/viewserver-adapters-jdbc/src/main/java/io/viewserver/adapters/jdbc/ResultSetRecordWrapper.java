@@ -241,6 +241,11 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         }
     }
 
+    private String getDataSourceColumnName(String columnName) {
+        return  columnName;
+    }
+
+
     @Override
     public boolean hasValue(String columnName) {
         return true;

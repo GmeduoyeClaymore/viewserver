@@ -24,8 +24,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties({ "type" })
 public class Dimension {
-    private boolean aggregator;
     private String name;
+    private String sourceColumnName;
     private String label;
     private String group;
     private String plural;
@@ -36,17 +36,27 @@ public class Dimension {
     public Dimension() {
     }
 
-    public Dimension(String name, Cardinality cardinality, ColumnType columnType) {
-        this(name, cardinality, columnType, false);
-    }
-
     public Dimension(String name, Cardinality cardinality, ColumnType columnType, boolean global) {
+        this(name,name,cardinality,columnType, global);
+    }
+    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ColumnType columnType, boolean global) {
         this.name = name;
+        this.sourceColumnName = sourceColumnName;
         this.cardinality = cardinality;
         this.columnType = columnType;
         this.global = global;
-        this.aggregator = true;
     }
+
+    public Dimension(String name, Cardinality cardinality, ColumnType columnType) {
+        this(name,name,cardinality,columnType);
+    }
+    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ColumnType columnType) {
+        this.name = name;
+        this.sourceColumnName = sourceColumnName;
+        this.cardinality = cardinality;
+        this.columnType = columnType;
+    }
+
 
     public String getName() {
         return name;
@@ -59,6 +69,14 @@ public class Dimension {
 
     public String getGroup() {
         return group;
+    }
+
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 
     public Dimension setGroup(String group) {
@@ -91,6 +109,14 @@ public class Dimension {
         return this;
     }
 
+    public String getSourceColumnName() {
+        return sourceColumnName;
+    }
+
+    public void setSourceColumnName(String sourceColumnName) {
+        this.sourceColumnName = sourceColumnName;
+    }
+
     public String getPlural() {
         return plural;
     }
@@ -100,20 +126,4 @@ public class Dimension {
         return this;
     }
 
-    public boolean isAggregator() {
-        return aggregator;
-    }
-
-    public Dimension setAggregator(boolean isAggregator) {
-        this.aggregator = isAggregator;
-        return this;
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public void setGlobal(boolean global) {
-        this.global = global;
-    }
 }

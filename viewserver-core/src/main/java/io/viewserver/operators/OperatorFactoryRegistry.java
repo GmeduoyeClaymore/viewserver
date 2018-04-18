@@ -16,8 +16,10 @@
 
 package io.viewserver.operators;
 
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.calccol.CalcColOperatorFactory;
+import io.viewserver.operators.dimension.DimensionMapperOperatorFactory;
 import io.viewserver.operators.filter.FilterOperatorFactory;
 import io.viewserver.operators.group.GroupByOperatorFactory;
 import io.viewserver.operators.group.summary.SummaryRegistry;
@@ -30,6 +32,7 @@ import io.viewserver.operators.spread.SpreadOperatorFactory;
 import io.viewserver.operators.table.TablePartitionFactory;
 import io.viewserver.operators.table.UserSessionPartitionerFactory;
 import io.viewserver.operators.transpose.TransposeOperatorFactory;
+import io.viewserver.operators.unenum.UnEnumOperatorFactory;
 import io.viewserver.operators.union.UnionOperatorFactory;
 import io.viewserver.schema.ITableStorage;
 
@@ -42,17 +45,19 @@ import java.util.Map;
 public class OperatorFactoryRegistry {
     private final Map<String, IOperatorFactory> factories = new HashMap<>();
 
-    public OperatorFactoryRegistry(ISpreadFunctionRegistry spreadColumnRegistry, FunctionRegistry functionRegistry, ITableStorage.Factory tableStorageFactory,
+    public OperatorFactoryRegistry(DimensionMapper mapper, ISpreadFunctionRegistry spreadColumnRegistry, FunctionRegistry functionRegistry, ITableStorage.Factory tableStorageFactory,
                                    SummaryRegistry summaryRegistry) {
         register(new CalcColOperatorFactory(tableStorageFactory));
-        register(new SpreadOperatorFactory(spreadColumnRegistry, tableStorageFactory));
         register(new FilterOperatorFactory(functionRegistry));
+        register(new SpreadOperatorFactory(spreadColumnRegistry, tableStorageFactory));
+        register(new DimensionMapperOperatorFactory(mapper, tableStorageFactory));
         register(new GroupByOperatorFactory(tableStorageFactory, summaryRegistry));
         register(new JoinOperatorFactory());
         register(new SortOperatorFactory(tableStorageFactory));
         register(new TransposeOperatorFactory(tableStorageFactory));
         register(new UnionOperatorFactory(tableStorageFactory));
         register(new IndexOperatorFactory());
+        register(new UnEnumOperatorFactory(mapper));
         register(new ProjectionOperatorFactory());
         register(new TablePartitionFactory());
         register(new UserSessionPartitionerFactory());

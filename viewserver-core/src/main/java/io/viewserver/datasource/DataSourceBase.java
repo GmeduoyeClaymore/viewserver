@@ -28,7 +28,7 @@ import java.util.List;
  */
 public abstract class DataSourceBase implements IDataSource {
     protected List<Dimension> dimensions;
-    protected Schema schema;
+    protected SchemaConfig schema;
     protected String output;
     private String finalOutput;
     protected String name;
@@ -73,7 +73,7 @@ public abstract class DataSourceBase implements IDataSource {
     }
 
     @Override
-    public Schema getSchema() {
+    public SchemaConfig getSchema() {
         return schema;
     }
 
@@ -118,7 +118,7 @@ public abstract class DataSourceBase implements IDataSource {
         this.dimensions = dimensions;
     }
 
-    public void setSchema(Schema schema) {
+    public void setSchema(SchemaConfig schema) {
         this.schema = schema;
     }
 

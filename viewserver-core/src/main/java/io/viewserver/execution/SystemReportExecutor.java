@@ -24,14 +24,10 @@ import io.viewserver.datasource.DataSourceStatus;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.distribution.IDistributionManager;
-import io.viewserver.distribution.ViewServerNode;
 import io.viewserver.execution.context.IExecutionPlanContext;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
 import io.viewserver.execution.plan.IExecutionPlan;
-import io.viewserver.execution.plan.IMultiContextHandler;
-import io.viewserver.execution.plan.MultiContextHandlerRegistry;
 import io.viewserver.execution.plan.SystemReportExecutionPlan;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
@@ -44,79 +40,35 @@ import java.util.List;
  * Created by nick on 05/10/15.
  */
 public class SystemReportExecutor {
-    private final MultiContextHandlerRegistry multiContextHandlerRegistry;
     private final DimensionMapper dimensionMapper;
-    private final ExecutionPlanRunner executionPlanRunner;
-    private final IDistributionManager distributionManager;
+    private final IExecutionPlanRunner executionPlanRunner;
     private final IDataSourceRegistry dataSourceRegistry;
     private final ReportRegistry reportRegistry;
 
-    public SystemReportExecutor(MultiContextHandlerRegistry multiContextHandlerRegistry,
+    public SystemReportExecutor(
                                 DimensionMapper dimensionMapper,
-                                ExecutionPlanRunner executionPlanRunner,
-                                IDistributionManager distributionManager,
+                                IExecutionPlanRunner executionPlanRunner,
                                 IDataSourceRegistry dataSourceRegistry,
                                 ReportRegistry reportRegistry) {
-        this.multiContextHandlerRegistry = multiContextHandlerRegistry;
         this.dimensionMapper = dimensionMapper;
         this.executionPlanRunner = executionPlanRunner;
-        this.distributionManager = distributionManager;
         this.dataSourceRegistry = dataSourceRegistry;
         this.reportRegistry = reportRegistry;
     }
 
-    public ReportContextExecutionPlanContext executeContext(ReportContext reportContext, IExecutionContext executionContext, ICatalog systemCatalog, CommandResult commandResult, String prefix, CommandResult remoteConfigurationResult, List<ViewServerNode> viewServerNodes) {
+    public ReportContextExecutionPlanContext executeContext(ReportContext reportContext, IExecutionContext executionContext, ICatalog systemCatalog, CommandResult commandResult) {
         IExecutionPlan activeExecutionPlan;
         ReportContextExecutionPlanContext activeExecutionPlanContext;
 
         ReportDefinition reportDefinition = getReportDefinition(reportContext);
         IDataSource dataSource = reportDefinition.getDataSource() == null ? null : getDataSource(reportDefinition.getDataSource());
 
-        if (!reportContext.getChildContexts().isEmpty()) {
-            MultiCommandResult childContextsResult = MultiCommandResult.wrap("ExecuteContext" + prefix, commandResult);
-            CommandResult childContextsPlaceholder = childContextsResult.getResultForDependency("Placeholder");
-            MultiCommandResult childContextRemoteConfigurationResults = MultiCommandResult.wrap("ExecuteContext" + prefix, remoteConfigurationResult);
-            CommandResult childContextRemoteConfigurationPlaceholder = childContextRemoteConfigurationResults.getResultForDependency("Placeholder");
-            List<IExecutionPlanContext> childExecutionPlanContexts = new ArrayList<>();
-            for (int i = 0; i < reportContext.getChildContexts().size(); i++) {
-                ReportContext context = reportContext.getChildContexts().get(i);
-                String childPrefix = prefix + ("".equals(prefix) ? "" : ".") + i;
-                CommandResult childContextResult = childContextsResult.getResultForDependency("Child context " + childPrefix);
-                CommandResult childContextRemoteConfigurationResult = childContextRemoteConfigurationResults.getResultForDependency("Child context " + childPrefix);
-                IExecutionPlanContext childExecutionPlanContext = executeContext(context,
-                        executionContext,
-                        systemCatalog,
-                        childContextResult,
-                        childPrefix,
-                        childContextRemoteConfigurationResult,
-                        viewServerNodes);
-                childExecutionPlanContexts.add(childExecutionPlanContext);
-            }
+        activeExecutionPlanContext = buildReportExecutionPlanContext(reportContext, dataSource, reportDefinition);
+        activeExecutionPlan = new SystemReportExecutionPlan(dimensionMapper);
 
-            IMultiContextHandler multiContextHandler = multiContextHandlerRegistry.get(reportContext.getMultiContextMode());
-            if (multiContextHandler == null) {
-                throw new InvalidReportContextException("Unknown multi-context mode '" + reportContext.getMultiContextMode() + "'");
-            }
-            CommandResult multiContextExecutionPlanResult = childContextsResult.getResultForDependency("Multi-context execution plan");
-            activeExecutionPlanContext = multiContextHandler.createExecutionPlanContext(reportContext, childExecutionPlanContexts);
-            activeExecutionPlanContext.setDataSource(dataSource);
-            activeExecutionPlan = multiContextHandler.createExecutionPlan();
-            commandResult = multiContextExecutionPlanResult;
-
-            childContextsPlaceholder.setSuccess(true).setComplete(true);
-            childContextRemoteConfigurationPlaceholder.setSuccess(true).setComplete(true);
-        } else {
-            activeExecutionPlanContext = buildReportExecutionPlanContext(reportContext, dataSource, reportDefinition, remoteConfigurationResult);
-            activeExecutionPlan = new SystemReportExecutionPlan(dimensionMapper);
-        }
-
-        activeExecutionPlanContext.setViewServerNodes(viewServerNodes);
-
-        // run system report execution plan
         executionPlanRunner.executePlan(activeExecutionPlan, activeExecutionPlanContext, executionContext, systemCatalog, commandResult);
 
         if (reportContext.getOutput() != null) {
-            // TODO: specify output name in context as well as operator name
             String operatorName = activeExecutionPlanContext.getOperatorName(reportContext.getOutput());
             if (operatorName == null) {
                 throw new ViewServerException("Invalid report output '" + reportContext.getOutput() + "' requested.");
@@ -127,7 +79,7 @@ public class SystemReportExecutor {
         return activeExecutionPlanContext;
     }
 
-    private ReportExecutionPlanContext buildReportExecutionPlanContext(ReportContext reportContext, IDataSource dataSource, ReportDefinition reportDefinition, CommandResult remoteConfigurationResult) {
+    private ReportExecutionPlanContext buildReportExecutionPlanContext(ReportContext reportContext, IDataSource dataSource, ReportDefinition reportDefinition) {
 
         ReportExecutionPlanContext reportExecutionPlanContext = new ReportExecutionPlanContext();
         if(dataSource != null) {
@@ -136,8 +88,6 @@ public class SystemReportExecutor {
         reportExecutionPlanContext.setReportContext(reportContext);
         reportExecutionPlanContext.setGraphDefinition(reportDefinition);
         reportExecutionPlanContext.setDataSource(dataSource);
-        reportExecutionPlanContext.setDistributionManager(distributionManager);
-        reportExecutionPlanContext.setRemoteConfigurationResult(remoteConfigurationResult);
 
         return reportExecutionPlanContext;
     }

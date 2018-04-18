@@ -19,10 +19,6 @@ package io.viewserver.execution.context;
 public class DimensionExecutionPlanContext extends ReportContextExecutionPlanContext{
     private String dimension;
 
-    public DimensionExecutionPlanContext() {
-        setAggregating(true);
-    }
-
     public String getDimension() {
         return dimension;
     }

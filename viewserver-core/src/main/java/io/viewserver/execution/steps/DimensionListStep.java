@@ -34,11 +34,6 @@ public class DimensionListStep implements IExecutionPlanStep<DataSourceExecution
     @Override
     public void execute(DataSourceExecutionPlanContext dataSourceExecutionPlanContext) {
         IDataSource dataSource = dataSourceExecutionPlanContext.getDataSource();
-        if (!dataSourceExecutionPlanContext.getDistributionManager().getNodeType()
-                .equals(IInitialiseSlaveCommand.Type.Master)
-                || dataSource.getDimensions().isEmpty()) {
-            return;
-        }
         buildDimensionListTable(dataSourceExecutionPlanContext, dataSource);
     }
 

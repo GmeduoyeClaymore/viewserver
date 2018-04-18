@@ -473,7 +473,11 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             EWAHCompressedBitmap[] ands = new EWAHCompressedBitmap[queryHolders.length];
             for (int i = 0; i < queryHolders.length; i++) {
                 QueryHolder queryHolder = queryHolders[i];
-                IndexHolder indexHolder = input.indexHolders.get(queryHolder.getColumnHolder().getName());
+                ColumnHolder columnHolder = queryHolder.getColumnHolder();
+                if(columnHolder == null){
+                    throw new RuntimeException(String.format("Unable to find column named \"%s\" in the input operator for this index",queryHolder.columnName));
+                }
+                IndexHolder indexHolder = input.indexHolders.get(columnHolder.getName());
                 List<EWAHCompressedBitmap> ors = new ArrayList<>();
                 for (int j = 0; j < queryHolder.values.length; j++) {
                     EWAHCompressedBitmap or = indexHolder.indices.get(queryHolder.values[j]);

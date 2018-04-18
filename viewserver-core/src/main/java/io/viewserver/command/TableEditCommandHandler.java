@@ -50,15 +50,10 @@ import java.util.List;
  */
 public class TableEditCommandHandler extends CommandHandlerBase<ITableEditCommand> {
     private static final Logger log = LoggerFactory.getLogger(TableEditCommandHandler.class);
-    private IDataSourceRegistry dataSourceRegistry;
-    private DimensionMapper dimensionMapper;
     private TableFactoryRegistry tableFactoryRegistry;
 
-    public TableEditCommandHandler(IDataSourceRegistry dataSourceRegistry, DimensionMapper dimensionMapper,
-                                   TableFactoryRegistry tableFactoryRegistry) {
+    public TableEditCommandHandler(TableFactoryRegistry tableFactoryRegistry) {
         super(ITableEditCommand.class);
-        this.dataSourceRegistry = dataSourceRegistry;
-        this.dimensionMapper = dimensionMapper;
         this.tableFactoryRegistry = tableFactoryRegistry;
     }
 
@@ -112,7 +107,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                         ((Table) operator).initialise(8);
                     }
                 } else {
-                    throw new UnsupportedOperationException("Schema changes are not supported after creation");
+                    throw new UnsupportedOperationException("SchemaConfig changes are not supported after creation");
                 }
             }
 
@@ -130,13 +125,6 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                 }
             }
 
-            IDataSource dataSource = dataSourceRegistry.get(tableName);
-
-            if(dataSource == null){//TODO - this is a hack as we currently send the full path to the table for some reason and so it can't be found in the registry
-                dataSource = dataSourceRegistry.get(tableName.substring(tableName.lastIndexOf("/")+1));
-            }
-            final IDataSource finalDataSource = dataSource;
-
             boolean willReset = false;
             final List<IStatus> statuses = tableEvent.getStatuses();
             final int statusCount = statuses.size();
@@ -146,7 +134,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                 try {
                     switch (statusId) {
                         case SchemaReset: {
-                            throw new UnsupportedOperationException("Schema reset in table edit not implemented (yet)");
+                            throw new UnsupportedOperationException("SchemaConfig reset in table edit not implemented (yet)");
                         }
                         case DataReset: {
                             operator.resetData();
@@ -164,9 +152,9 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
 
             Iterator iterator = data.getTableEvent().getRowEvents().iterator();
             if (willReset && operator instanceof IInputOperator) {
-                ((IInputOperator)operator).deferOperation(() -> performRowOperations(tableName1, iterator, commandResult, operator, finalDataSource, peerSession));
+                ((IInputOperator)operator).deferOperation(() -> performRowOperations(tableName1, iterator, commandResult, operator, peerSession));
             } else {
-                performRowOperations(tableName1, iterator, commandResult, operator, dataSource, peerSession);
+                performRowOperations(tableName1, iterator, commandResult, operator, peerSession);
             }
         } catch(Exception e) {
             if (peerSession.shouldLog()) {
@@ -209,10 +197,10 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
 //            throw new ViewServerException(message, e);
 //        }
 //
-//        return (IOperator) tableFactory.create(data.getTableName(), executionContext, catalog, new Schema(), tableFactory.getProtoConfigWrapper(config));
+//        return (IOperator) tableFactory.create(data.getTableName(), executionContext, catalog, new SchemaConfig(), tableFactory.getProtoConfigWrapper(config));
     }
 
-    private void performRowOperations(String tableName,Iterator<IRowEvent> rowEvents,CommandResult commandResult, final IOperator operator, final IDataSource dataSource, IPeerSession peerSession) {
+    private void performRowOperations(String tableName,Iterator<IRowEvent> rowEvents,CommandResult commandResult, final IOperator operator, IPeerSession peerSession) {
         TIntIntHashMap rowIdMap = (TIntIntHashMap) operator.getMetadata("rowIdMap");
         int rowEventCount = 0;
         while (rowEvents.hasNext()) {
@@ -232,161 +220,7 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
                     continue;
                 }
 
-                ITableRowUpdater tableRowUpdater = new ITableRowUpdater() {
-                    @Override
-                    public void setValues(ITableRow row) {
-                        final List<IRowEvent.IColumnValue> columnValues = rowEventDto.getColumnValues();
-                        final int columnValueCount = columnValues.size();
-                        for (int i = 0; i < columnValueCount; i++) {
-                            final IRowEvent.IColumnValue columnValue = columnValues.get(i);
-                            try {
-                                ColumnHolder columnHolder = ((ITable) operator).getOutput().getSchema().getColumnHolder(columnValue.getColumnId());
-                                if(columnHolder == null){
-                                    continue;
-                                }
-                                Dimension dimension = null;
-                                if (dataSource != null && dimensionMapper != null) {
-                                    dimension = dataSource.getDimension(columnHolder.getName());
-                                    if (dimension != null) {
-                                        int id = -1;
-                                        switch (dimension.getColumnType()) {
-                                            case Bool: {
-                                                id = dimensionMapper.mapBool(dataSource, dimension, columnValue.getBooleanValue());
-                                                break;
-                                            }
-                                            case NullableBool: {
-                                                NullableBool value;
-                                                if (columnValue.getNullValue()) {
-                                                    value = NullableBool.Null;
-                                                } else {
-                                                    value = columnValue.getBooleanValue() ? NullableBool.True : NullableBool.False;
-                                                }
-                                                id = dimensionMapper.mapNullableBool(dataSource, dimension, value);
-                                                break;
-                                            }
-                                            case Byte: {
-                                                id = dimensionMapper.mapByte(dataSource, dimension, (byte) columnValue.getIntegerValue());
-                                                break;
-                                            }
-                                            case Short: {
-                                                id = dimensionMapper.mapShort(dataSource, dimension, (short) columnValue.getIntegerValue());
-                                                break;
-                                            }
-                                            case Int: {
-                                                id = dimensionMapper.mapInt(dataSource, dimension, columnValue.getIntegerValue());
-                                                break;
-                                            }
-                                            case Long: {
-                                                id = dimensionMapper.mapLong(dataSource, dimension, columnValue.getLongValue());
-                                                break;
-                                            }
-                                            case String: {
-                                                id = dimensionMapper.mapString(dataSource, dimension, columnValue.getStringValue());
-                                                break;
-                                            }
-                                        }
-                                        switch (dimension.getCardinality()) {
-                                            case Boolean: {
-                                                row.setBool(columnHolder.getName(), id == 1);
-                                                break;
-                                            }
-                                            case Byte: {
-                                                row.setByte(columnHolder.getName(), (byte) (id & 0xff));
-                                                break;
-                                            }
-                                            case Short: {
-                                                row.setShort(columnHolder.getName(), (short) (id & 0xffff));
-                                                break;
-                                            }
-                                            case Int: {
-                                                row.setInt(columnHolder.getName(), id);
-                                                break;
-                                            }
-                                        }
-                                        continue;
-                                    }
-                                }
-
-                                switch (columnHolder.getType()) {
-                                    case Bool: {
-                                        row.setBool(columnHolder.getName(), columnValue.getBooleanValue());
-                                        break;
-                                    }
-                                    case NullableBool: {
-                                        NullableBool value;
-                                        if (columnValue.getNullValue()) {
-                                            value = NullableBool.Null;
-                                        } else {
-                                            value = columnValue.getBooleanValue() ? NullableBool.True : NullableBool.False;
-                                        }
-                                        row.setNullableBool(columnHolder.getName(), value);
-                                        break;
-                                    }
-                                    case Byte: {
-                                        row.setByte(columnHolder.getName(), (byte) columnValue.getIntegerValue());
-                                        break;
-                                    }
-                                    case Short: {
-                                        row.setShort(columnHolder.getName(), (short) columnValue.getIntegerValue());
-                                        break;
-                                    }
-                                    case Int: {
-                                        row.setInt(columnHolder.getName(), columnValue.getIntegerValue());
-                                        break;
-                                    }
-                                    case Long: {
-                                        switch (columnValue.getValueType()) {
-                                            case Long: {
-                                                row.setLong(columnHolder.getName(), columnValue.getLongValue());
-                                                break;
-                                            }
-                                            case Double: {
-                                                row.setLong(columnHolder.getName(), (long) columnValue.getDoubleValue());
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    case Float: {
-                                        switch (columnValue.getValueType()) {
-                                            case Float: {
-                                                row.setFloat(columnHolder.getName(), columnValue.getFloatValue());
-                                                break;
-                                            }
-                                            case Double: {
-                                                row.setFloat(columnHolder.getName(), (float) columnValue.getDoubleValue());
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    case Double: {
-                                        switch (columnValue.getValueType()) {
-                                            case Double: {
-                                                row.setDouble(columnHolder.getName(), columnValue.getDoubleValue());
-                                                break;
-                                            }
-                                            case Float: {
-                                                row.setDouble(columnHolder.getName(), columnValue.getFloatValue());
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    case String: {
-                                        row.setString(columnHolder.getName(), columnValue.getStringValue());
-                                        break;
-                                    }
-                                    default: {
-                                        throw new RuntimeException("Invalid column type '" + columnHolder.getType() + "'");
-                                    }
-                                }
-                            } finally {
-                                columnValue.release();
-                            }
-                        }
-                    }
-                };
+                ITableRowUpdater tableRowUpdater = new RowUpdater();
                 if (rowEventDto.getType().equals(IRowEvent.Type.Add)) {
                     int rowId = ((ITable) operator).addRow(tableRowUpdater);
                     if(commandResult.getMessage().length() > 0)

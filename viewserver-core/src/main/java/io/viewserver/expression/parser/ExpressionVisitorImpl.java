@@ -17,6 +17,7 @@
 package io.viewserver.expression.parser;
 
 import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.Cardinality;
 import io.viewserver.datasource.Dimension;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDimensionMapper;
@@ -330,7 +331,7 @@ public class ExpressionVisitorImpl extends ExpressionBaseVisitor<IExpression> im
 //        if (dimensionMapper != null) {
             ColumnMetadata metadata = columnHolder.getMetadata();
             if (metadata != null && metadata.isFlagged(ColumnFlags.DIMENSION)) {
-                return new UnEnumExpression(columnHolder, metadata.getDataSource(), metadata.getDimension());
+                return new UnEnumExpression(columnHolder, metadata.getDimensionNameSpace(), metadata.getDimensionName(), metadata.getCardinality());
             }
 //        }
 
@@ -436,15 +437,17 @@ public class ExpressionVisitorImpl extends ExpressionBaseVisitor<IExpression> im
 
     private class UnEnumExpression implements IExpressionColumn, IExpressionBool, IExpressionNullableBool, IExpressionByte, IExpressionShort, IExpressionInt, IExpressionLong, IExpressionString {
         private final ColumnType type;
+        private Cardinality cardinality;
         private ColumnHolder columnHolder;
-        private IDataSource dataSource;
-        private Dimension dimension;
+        private String dimensionNamespace;
+        private String dimensionName;
 
-        public UnEnumExpression(ColumnHolder columnHolder, IDataSource dataSource, Dimension dimension) {
+        public UnEnumExpression(ColumnHolder columnHolder, String dimensionNamespace, String  dimensionName, Cardinality cardinality) {
             this.columnHolder = columnHolder;
-            this.dataSource = dataSource;
-            this.dimension = dimension;
-            this.type = dimension.getColumnType().getColumnType();
+            this.dimensionNamespace = dimensionNamespace;
+            this.dimensionName = dimensionName;
+            this.type = columnHolder.getType();
+            this.cardinality = cardinality;
         }
 
         @Override
@@ -454,37 +457,37 @@ public class ExpressionVisitorImpl extends ExpressionBaseVisitor<IExpression> im
 
         @Override
         public boolean getBool(int row) {
-            return dimensionMapper.lookupBool(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupBool(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public byte getByte(int row) {
-            return dimensionMapper.lookupByte(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupByte(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public int getInt(int row) {
-            return dimensionMapper.lookupInt(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupInt(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public long getLong(int row) {
-            return dimensionMapper.lookupLong(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupLong(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public NullableBool getNullableBool(int row) {
-            return dimensionMapper.lookupNullableBool(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupNullableBool(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public short getShort(int row) {
-            return dimensionMapper.lookupShort(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupShort(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
         public String getString(int row) {
-            return dimensionMapper.lookupString(dataSource, dimension, getLookupId(row));
+            return dimensionMapper.lookupString(dimensionNamespace, dimensionName, getLookupId(row));
         }
 
         @Override
@@ -495,7 +498,7 @@ public class ExpressionVisitorImpl extends ExpressionBaseVisitor<IExpression> im
         private int getLookupId(int row) {
             int id = -1;
             ColumnMetadata metadata = columnHolder.getMetadata();
-            switch (dimension.getCardinality()) {
+            switch (this.cardinality) {
                 case Boolean: {
                     id = NullableBool.fromBoolean(((IColumnBool)columnHolder).getBool(row)).getNumericValue();
                     break;

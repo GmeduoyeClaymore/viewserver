@@ -18,11 +18,10 @@ package io.viewserver.command;
 
 import io.viewserver.Constants;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.distribution.IDistributionManager;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
-import io.viewserver.messages.command.IInitialiseSlaveCommand;
 import io.viewserver.messages.command.ISubscribeCommand;
 import io.viewserver.messages.config.IProjectionConfig;
 import io.viewserver.network.Command;
@@ -37,8 +36,8 @@ import org.slf4j.LoggerFactory;
 public class SubscribeHandler extends SubscriptionHandlerBase<ISubscribeCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeHandler.class);
 
-    public SubscribeHandler(SubscriptionManager subscriptionManager, IDistributionManager distributionManager, Configurator configurator, ExecutionPlanRunner executionPlanRunner) {
-        super(ISubscribeCommand.class, subscriptionManager, distributionManager, configurator, executionPlanRunner);
+    public SubscribeHandler(SubscriptionManager subscriptionManager,  Configurator configurator, IExecutionPlanRunner executionPlanRunner) {
+        super(ISubscribeCommand.class, subscriptionManager, configurator, executionPlanRunner);
     }
 
     @Override
@@ -64,7 +63,6 @@ public class SubscribeHandler extends SubscriptionHandlerBase<ISubscribeCommand>
                 output = Constants.OUT;
             }
             optionsExecutionPlanContext.setInput(operator.getPath(), output);
-            optionsExecutionPlanContext.setDistributionManager(distributionManager);
 
             final IProjectionConfig projection = data.getProjection();
             if (projection != null) {
@@ -73,12 +71,9 @@ public class SubscribeHandler extends SubscriptionHandlerBase<ISubscribeCommand>
 
             MultiCommandResult multiCommandResult = null;
 
-            //for sorting, paging etc - only allow on the master node
-            if(this.distributionManager.getNodeType().equals(IInitialiseSlaveCommand.Type.Master)) {
-                multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
-                CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
-                this.runUserExecutionPlan(optionsExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);
-            }
+            multiCommandResult = MultiCommandResult.wrap("SubscribeHandler", commandResult);
+            CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
+            this.runUserExecutionPlan(optionsExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);
 
             this.createSubscription(optionsExecutionPlanContext, command.getId(), peerSession, options);
 
