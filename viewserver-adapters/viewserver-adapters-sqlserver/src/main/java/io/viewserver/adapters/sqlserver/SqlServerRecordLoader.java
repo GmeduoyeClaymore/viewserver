@@ -19,8 +19,7 @@
  */
 package io.viewserver.adapters.sqlserver;
 
-import io.viewserver.adapters.common.IWritableDataQueryProvider;
-import io.viewserver.adapters.jdbc.JdbcDataAdapterBase;
+import io.viewserver.adapters.jdbc.JdbcRecordLoaderBase;
 import io.viewserver.util.ViewServerException;
 import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 import org.slf4j.Logger;
@@ -28,57 +27,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-public class SqlServerDataAdapter extends JdbcDataAdapterBase {
-    private static final Logger log = LoggerFactory.getLogger(SqlServerDataAdapter.class);
+/*public class SqlServerRecordLoader extends JdbcRecordLoaderBase {
+    private static final Logger log = LoggerFactory.getLogger(SqlServerRecordLoader.class);
     private JtdsDataSource dataSource;
     private String server;
     private Integer port;
     private String instance;
     private String database;
 
-    public SqlServerDataAdapter(String server, Integer port, String instance, String database, String username, String password) {
-        super(username, password);
-        this.server = server;
-        this.port = port;
-        this.instance = instance;
-        this.database = database;
-    }
 
-    public String getInstance() {
-        return instance;
-    }
+}*/
 
-    public String getServer() {
-        return server;
-    }
 
-    public Integer getPort() {
-        return port;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    @Override
-    protected DataSource createDataSource() {
-        try {
-            dataSource = new JtdsDataSource();
-            dataSource.setServerName(server);
-
-            if(this.instance != null) {
-                dataSource.setInstance(instance);
-            }else{
-                dataSource.setPortNumber(port);
-            }
-
-            dataSource.setDatabaseName(database);
-
-            //TODO - set best settings see here https://msdn.microsoft.com/en-us/library/ms378988(v=sql.110).aspx
-
-            return dataSource;
-        } catch (Throwable e) {
-            throw new ViewServerException(e);
-        }
-    }
-}

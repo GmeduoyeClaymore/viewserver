@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
@@ -9,7 +9,7 @@ import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
-import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -37,8 +37,7 @@ public class OrderController {
     DeliveryController deliveryController;
     OrderItemController orderItemController;
     private PricingStrategyResolver pricingStrategyResolver;
-    private MessagingController messagingController;
-    private boolean isTest;
+    private IMessagingController messagingController;
     private KeyedTable productTable;
     private IDatabaseUpdater iDatabaseUpdater;
     private Integer labourerRate;
@@ -48,15 +47,13 @@ public class OrderController {
                            DeliveryController deliveryController,
                            OrderItemController orderItemController,
                            PricingStrategyResolver pricingStrategyResolver,
-                           MessagingController messagingController,
-                           boolean isTest) {
+                           IMessagingController messagingController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
         this.orderItemController = orderItemController;
         this.pricingStrategyResolver = pricingStrategyResolver;
         this.messagingController = messagingController;
-        this.isTest = isTest;
     }
 
     KeyedTable getProductTable(){
@@ -130,7 +127,7 @@ public class OrderController {
                     .withAction(createActionUri(orderId))
                     .message(String.format("Shotgun job assigned to you"), String.format("%s has  just assigned a job to you in shotgun", user.getFirstName() + " " + user.getLastName()))
                     .build();
-            messagingController.sendMessageToUser(driverId, builder);
+            messagingController.sendMessageToUser(builder);
         }catch (Exception ex){
             logger.error("There was a problem sending the notification", ex);
         }
@@ -142,9 +139,6 @@ public class OrderController {
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
     public int calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        if(this.isTest){
-            return 30;
-        }
 
         if(delivery.getIsFixedPrice()){
             return delivery.getFixedPriceValue();

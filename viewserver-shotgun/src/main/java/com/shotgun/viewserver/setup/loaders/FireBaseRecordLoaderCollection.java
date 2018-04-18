@@ -1,8 +1,7 @@
 package com.shotgun.viewserver.setup.loaders;
 
-import com.shotgun.viewserver.setup.IDataLoaderCollection;
+import io.viewserver.datasource.IRecordLoaderCollection;
 import com.shotgun.viewserver.setup.datasource.*;
-import io.viewserver.adapters.csv.CsvRecordLoader;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseRecordLoader;
 import io.viewserver.datasource.IRecordLoader;
@@ -11,16 +10,16 @@ import io.viewserver.datasource.SchemaConfig;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FireBaseDataLoaderCollection implements IDataLoaderCollection {
+public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
     private FirebaseConnectionFactory connectionFactory;
 
-    public FireBaseDataLoaderCollection(FirebaseConnectionFactory connectionFactory){
+    public FireBaseRecordLoaderCollection(FirebaseConnectionFactory connectionFactory){
         this.connectionFactory = connectionFactory;
     }
 
-    public FireBaseDataLoaderCollection() {
+    public FireBaseRecordLoaderCollection() {
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);

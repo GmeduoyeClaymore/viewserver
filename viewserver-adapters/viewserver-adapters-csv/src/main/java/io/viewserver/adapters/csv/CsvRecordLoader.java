@@ -16,13 +16,9 @@
 
 package io.viewserver.adapters.csv;
 
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.IDataAdapter;
 import io.viewserver.datasource.IRecord;
-import io.viewserver.operators.IRowSequence;
-import io.viewserver.operators.rx.EventType;
-import io.viewserver.operators.rx.OperatorEvent;
-import io.viewserver.schema.Schema;
+import io.viewserver.datasource.IRecordLoader;
+import io.viewserver.datasource.SchemaConfig;
 import javolution.io.UTF8StreamReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -32,24 +28,20 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
-import rx.Observer;
-import rx.observables.AsyncOnSubscribe;
-import rx.subjects.PublishSubject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Observable;
 import java.util.function.Consumer;
 
-import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
-
-public class CsvDataAdapter implements IDataAdapter {
-    private static final Logger log = LoggerFactory.getLogger(CsvDataAdapter.class);
+public class CsvRecordLoader implements IRecordLoader {
+    private static final Logger log = LoggerFactory.getLogger(CsvRecordLoader.class);
     protected String fileName;
     protected int multiple = 1;
     protected final CsvRecordWrapper recordWrapper;
+    private SchemaConfig schemaConfig;
 
-    public CsvDataAdapter() {
+    public CsvRecordLoader(SchemaConfig schemaConfig) {
+        this.schemaConfig = schemaConfig;
         recordWrapper = getCsvRecordWrapper();
     }
 
@@ -57,9 +49,9 @@ public class CsvDataAdapter implements IDataAdapter {
         return new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
     }
 
-    @Override
-    public Schema getDerivedSchema() {
-        throw new UnsupportedOperationException("You must specify the schema in the data source when using a CsvDataAdapter");
+
+    public SchemaConfig getSchemaConfig() {
+        return schemaConfig;
     }
 
     @Override
@@ -108,7 +100,7 @@ public class CsvDataAdapter implements IDataAdapter {
         return recordsLoaded;
     }
 
-    public CsvDataAdapter withFileName(String fileName) {
+    public CsvRecordLoader withFileName(String fileName) {
         this.fileName = fileName;
         return this;
     }

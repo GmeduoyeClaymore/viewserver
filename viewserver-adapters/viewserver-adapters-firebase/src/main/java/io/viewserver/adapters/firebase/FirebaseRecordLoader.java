@@ -1,77 +1,69 @@
 package io.viewserver.adapters.firebase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-import com.google.firebase.FirebaseException;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentChange;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreException;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.IWritableDataAdapter;
-import io.viewserver.operators.table.ITableRow;
-import io.viewserver.operators.table.TableKeyDefinition;
+import io.viewserver.datasource.IRecordLoader;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
-import io.viewserver.schema.column.IRowFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Emitter;
+import rx.Observable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class FirebaseDataAdapter implements IWritableDataAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(FirebaseDataAdapter.class);
-    private String firebaseKeyPath;
+public class FirebaseRecordLoader implements IRecordLoader{
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseRecordLoader.class);
+    private final FirebaseConnectionFactory connectionFactory;
     private String tableName;
-    protected DataSource dataSource;
-    protected TableKeyDefinition tableKeyDefinition;
-    protected Schema schema;
+    private SchemaConfig config;
     boolean snapshotComplete;
-    private FirebaseConnectionFactory connectionFactory;
 
-    public FirebaseDataAdapter(FirebaseConnectionFactory connectionFactory, String tableName) {
+    public FirebaseRecordLoader(FirebaseConnectionFactory connectionFactory, String tableName, SchemaConfig config) {
         this.connectionFactory = connectionFactory;
         this.tableName = tableName;
+        this.config = config;
     }
 
     @Override
-    public int getRecords(String query, Consumer<IRecord> consumer) {
-        CompletableFuture<Integer> ss = new CompletableFuture<>();
+    public SchemaConfig getSchemaConfig() {
+        return config;
+    }
 
-        try {
-            logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
-            getCollection().addSnapshotListener((snapshot, e) -> {
-                if (e != null) {
-                    logger.error(String.format("Listener failed for %s table", tableName), e);
-                    return;
-                }
-
-                for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                    try {
-                        if(snapshotComplete) {
-                            logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
-                        }
-                        //TODO - deal with removes
-                        DocumentChangeRecord changeRecord = new DocumentChangeRecord(schema, dc.getDocument());
-                        consumer.accept(changeRecord);
-                    }catch (Exception ex){
-                        logger.error(String.format("There was an error updating a record in the %s table", tableName));
+    public Observable<IRecord> getRecords(String query) {
+        return  rx.Observable.create(subscriber -> {
+            try{
+                logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
+                getCollection().addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        logger.error(String.format("Listener failed for %s table", tableName), e);
+                        return;
                     }
-                }
 
-                if (!snapshotComplete) {
-                    ss.complete(snapshot.size());
-                    snapshotComplete = true;
-                }
-            });
-            return ss.get();
-        }catch(Exception ex){
-            logger.error(String.format("Error adding snapshot listener for Firebase table %s", tableName));
-            throw new RuntimeException("Error getting records");
-        }
+                    for (DocumentChange dc : snapshot.getDocumentChanges()) {
+                        try {
+                            if(snapshotComplete) {
+                                logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
+                            }
+                            //TODO - deal with removes
+                            DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
+                            subscriber.onNext(changeRecord);
+                        }catch (Exception ex){
+                            logger.error(String.format("There was an error updating a record in the %s table", tableName));
+                        }
+                    }
+                });
+            }catch (Exception ex){
+                subscriber.onError(ex);
+            }}, Emitter.BackpressureMode.BUFFER);
+
     }
 
     private int addFirebaseListener(Consumer<IRecord> consumer){
@@ -91,7 +83,7 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
                             logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
                         }
                         //TODO - deal with removes
-                        DocumentChangeRecord changeRecord = new DocumentChangeRecord(schema, dc.getDocument());
+                        DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
                         consumer.accept(changeRecord);
                     }catch (Exception ex){
                         logger.error(String.format("There was an error updating a record in the %s table", tableName));
@@ -116,30 +108,14 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
         addFirebaseListener(consumer);
     }
 
-
-    public TableKeyDefinition getDerivedTableKeyDefinition() {
-        return null;
+    protected CollectionReference getCollection(){
+        return getDb().collection(tableName);
     }
 
-    @Override
-    @JsonIgnore
-    public Schema getDerivedSchema() {return null;}
-
-    public String getFirebaseKeyPath() {
-        return firebaseKeyPath;
+    protected Firestore getDb(){
+        return connectionFactory.getConnection();
     }
 
-    public void setFirebaseKeyPath(String firebaseKeyPath) {
-        this.firebaseKeyPath = firebaseKeyPath;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 }
 
 

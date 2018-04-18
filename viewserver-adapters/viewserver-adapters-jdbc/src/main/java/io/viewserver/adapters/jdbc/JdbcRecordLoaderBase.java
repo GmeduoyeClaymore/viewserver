@@ -16,82 +16,56 @@
 
 package io.viewserver.adapters.jdbc;
 
-import io.viewserver.adapters.common.IDataQueryProvider;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.viewserver.adapters.common.IWritableDataQueryProvider;
-import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.IWritableDataAdapter;
+import io.viewserver.datasource.*;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.TableKeyDefinition;
-import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.*;
+import io.viewserver.schema.column.IRowFlags;
 import io.viewserver.util.ViewServerException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Emitter;
+import rx.Observable;
 
-import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-/**
- * Created by nick on 16/02/2015.
- */
-public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
-    private static final Logger log = LoggerFactory.getLogger(JdbcDataAdapterBase.class);
-    private DataSource dataSource;
-    private final String username;
-    private final String password;
+
+public abstract class JdbcRecordLoaderBase implements IWritableRecordLoader {
+    private static final Logger log = LoggerFactory.getLogger(JdbcRecordLoaderBase.class);
     private IWritableDataQueryProvider dataQueryProvider;
-    private Schema schema;
+    private JdbcConnectionFactory connectionFactory;
+    private SchemaConfig config;
     private TableKeyDefinition tableKeyDefinition;
     private final int FETCHSIZE = 10000;
 
     private final ResultSetRecordWrapper recordWrapper = new ResultSetRecordWrapper();
 
-    protected JdbcDataAdapterBase(String username, String password, IWritableDataQueryProvider dataQueryProvider) {
-        this.username = username;
-        this.password = password;
+    protected JdbcRecordLoaderBase(IWritableDataQueryProvider dataQueryProvider, JdbcConnectionFactory connectionFactory, SchemaConfig config) {
         this.dataQueryProvider = dataQueryProvider;
+        this.connectionFactory = connectionFactory;
+        this.config = config;
     }
 
-    public String getUsername() {
-        return username;
+    public SchemaConfig getConfig() {
+        return config;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public void setDataSource(io.viewserver.datasource.DataSource dataSource) {
-        recordWrapper.setDataSource(dataSource);
-    }
-
-    @Override
-    public Schema getDerivedSchema() {
-        Schema derivedSchema = new Schema();
+    public SchemaConfig getDerivedSchema() {
+        SchemaConfig derivedSchema = new SchemaConfig();
         executeQuery(dataQueryProvider.getSchemaQuery(), (resultSet) -> {
             ResultSetMetaData metaData = resultSet.getMetaData();
+            List<Column> result = new ArrayList<>();
             for (int i = 1; i <= metaData.getColumnCount(); i++) {
                 int columnType = metaData.getColumnType(i);
-                ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(metaData.getColumnName(i),
-                        getColumnType(columnType));
-                ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(columnHolder.getType());
-                columnMetadata.setDataType(getDataType(columnType));
-                columnHolder.setMetadata(columnMetadata);
-                derivedSchema.addColumn(columnHolder);
+                result.add(new Column(metaData.getColumnName(i),getColumnType(columnType)));
             }
         });
         return derivedSchema;
     }
 
-    @Override
-    public void setSchema(Schema schema) {
-        this.schema = schema;
-    }
-
-    @JsonIgnore
     @Override
     public TableKeyDefinition getDerivedTableKeyDefinition() {
         return null;
@@ -103,30 +77,33 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
     }
 
     @Override
-    public int getRecords(String query, Consumer<IRecord> consumer) {
+    public Observable<IRecord> getRecords(String query) {
         final int[] recordCount = new int[1];
-
-        executeQuery(query, (resultSet) -> {
-            recordWrapper.setResultSet(resultSet);
-            while (resultSet.next()) {
-                consumer.accept(recordWrapper);
-                recordCount[0] = resultSet.getRow();
-            }
-            recordWrapper.setResultSet(null);
-        });
-
-        return recordCount[0];
+        return  rx.Observable.create(subscriber -> {
+            try{
+                executeQuery(query, (resultSet) -> {
+                    recordWrapper.setResultSet(resultSet);
+                    while (resultSet.next()) {
+                        subscriber.onNext(recordWrapper);
+                        recordCount[0] = resultSet.getRow();
+                    }
+                    recordWrapper.setResultSet(null);
+                });
+                subscriber.onCompleted();
+            }catch (Exception ex){
+                subscriber.onError(ex);
+            }}, Emitter.BackpressureMode.BUFFER);
     }
 
     @Override
     public void insertRecord(ITableRow tableRow) {
 
-        try (PreparedStatement statement = this.getPreparedStatement(((IWritableDataQueryProvider) dataQueryProvider).getInsertQuery())) {
+        try (PreparedStatement statement = this.getPreparedStatement(dataQueryProvider.getInsertQuery())) {
             int paramIndex = 1;
-            List<ColumnHolder> columnHolders = schema.getColumnHolders();
+            List<Column> columnHolders = config.getColumns();
             int count = columnHolders.size();
             for (int i = 0; i < count; i++) {
-                ColumnHolder columnHolder = columnHolders.get(i);
+                Column columnHolder = columnHolders.get(i);
                 if (columnHolder == null) {
                     continue;
                 }
@@ -141,19 +118,18 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
     @Override
     public void updateRecord(ITableRow tableRow, IRowFlags rowFlags) {
 
-        try (PreparedStatement statement = this.getPreparedStatement(((IWritableDataQueryProvider) dataQueryProvider).getUpdateQuery(tableKeyDefinition))) {
+        try (PreparedStatement statement = this.getPreparedStatement(dataQueryProvider.getUpdateQuery(tableKeyDefinition))) {
             int paramIndex = 1;
-            List<ColumnHolder> columnHolders = schema.getColumnHolders();
-            int count = columnHolders.size();
-            for (int i = 0; i < count; i++) {
-                ColumnHolder columnHolder = columnHolders.get(i);
-                if (columnHolder == null || tableKeyDefinition.getKeys().contains(columnHolder.getName())) {
+
+            for(Column col : this.config.getColumns()){
+                if (tableKeyDefinition.getKeys().contains(col.getName())) {
                     continue;
                 }
-                setPlaceholderValue(statement, paramIndex++, tableRow, columnHolder);
+                setPlaceholderValue(statement, paramIndex++, tableRow, col);
             }
+
             for (String key : tableKeyDefinition.getKeys()) {
-                ColumnHolder columnHolder = schema.getColumnHolder(key);
+                Column columnHolder = this.config.getColumn(key);
                 setPlaceholderValue(statement, paramIndex++, tableRow, columnHolder);
             }
             statement.execute();
@@ -168,10 +144,10 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
             throw new ViewServerException("Delete can only be called on a IWritableDataQueryProvider");
         }
 
-        try (PreparedStatement statement = this.getPreparedStatement(((IWritableDataQueryProvider) dataQueryProvider).getDeleteQuery(tableKeyDefinition))) {
+        try (PreparedStatement statement = this.getPreparedStatement(dataQueryProvider.getDeleteQuery(tableKeyDefinition))) {
             int paramIndex = 1;
             for (String key : tableKeyDefinition.getKeys()) {
-                ColumnHolder columnHolder = schema.getColumnHolder(key);
+                Column columnHolder = this.config.getColumn(key);
                 setPlaceholderValue(statement, paramIndex++, tableRow, columnHolder);
             }
             statement.execute();
@@ -186,16 +162,15 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
             throw new ViewServerException("Clear can only be called on a IWritableDataQueryProvider");
         }
 
-        try (PreparedStatement statement =  this.getPreparedStatement(((IWritableDataQueryProvider) dataQueryProvider).getDeleteQuery())){
+        try (PreparedStatement statement =  this.getPreparedStatement(dataQueryProvider.getDeleteQuery())){
             statement.execute();
         } catch (SQLException e) {
             log.error("Could not clear data", e);
         }
     }
 
-    private void setPlaceholderValue(PreparedStatement statement, int paramIndex, ITableRow tableRow, ColumnHolder columnHolder) throws SQLException {
-        ColumnMetadata metadata = columnHolder.getMetadata();
-        switch (metadata.getDataType()) {
+    private void setPlaceholderValue(PreparedStatement statement, int paramIndex, ITableRow tableRow, Column columnHolder) throws SQLException {
+        switch (columnHolder.getType()) {
             case Bool: {
                 statement.setBoolean(paramIndex, tableRow.getBool(columnHolder.getName()));
                 break;
@@ -339,13 +314,8 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
         }
     }
 
-    protected Connection getConnection(DataSource dataSource) throws SQLException {
-        return dataSource.getConnection(username, password);
-    }
-
     protected PreparedStatement getPreparedStatement(String query) throws SQLException {
-        DataSource dataSource = getDataSource();
-        Connection connection = getConnection(dataSource);
+        Connection connection = connectionFactory.getConnection();
         if (query.startsWith("{call")) {
             return connection.prepareCall(query);
         }
@@ -355,16 +325,6 @@ public abstract class JdbcDataAdapterBase implements IWritableDataAdapter {
 
         return preparedStatement;
     }
-
-    private DataSource getDataSource() {
-        if (dataSource == null) {
-            dataSource = createDataSource();
-        }
-        return dataSource;
-    }
-
-    protected abstract DataSource createDataSource();
-
 
 
     protected interface IResultSetHandler {

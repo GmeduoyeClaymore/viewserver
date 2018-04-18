@@ -23,9 +23,7 @@ import io.viewserver.schema.column.IRowFlags;
 /**
  * Created by nick on 19/02/2015.
  */
-public interface IWritableDataAdapter extends IDataAdapter {
-    void setSchema(io.viewserver.schema.Schema schema);
-
+public interface IWritableRecordLoader extends IRecordLoader {
     TableKeyDefinition getDerivedTableKeyDefinition();
 
     void setTableKeyDefinition(TableKeyDefinition tableKeyDefinition);

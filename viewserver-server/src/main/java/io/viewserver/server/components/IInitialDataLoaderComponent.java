@@ -1,4 +1,4 @@
 package io.viewserver.server.components;
 
-public interface IInitialDataLoaderComponent {
+public interface IInitialDataLoaderComponent extends IServerComponent{
 }

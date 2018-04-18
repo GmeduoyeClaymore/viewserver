@@ -16,18 +16,10 @@
 
 package io.viewserver.datasource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.viewserver.schema.Schema;
 import rx.Observable;
 
-/**
- * Created by nick on 16/09/15.
- */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CLASS,
-        include = JsonTypeInfo.As.PROPERTY)
-public interface IDataAdapter {
+public interface IRecordLoader {
+    SchemaConfig getSchemaConfig();
     Observable<IRecord> getRecords(String query);
 }
 

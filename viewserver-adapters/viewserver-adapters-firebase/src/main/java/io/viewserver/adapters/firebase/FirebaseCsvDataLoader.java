@@ -1,10 +1,12 @@
 package io.viewserver.adapters.firebase;
 
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
+import io.viewserver.adapters.ILoader;
 import io.viewserver.adapters.csv.CsvRecordWrapper;
-import io.viewserver.datasource.Column;
-import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.operators.table.TableKeyDefinition;
 import javolution.io.UTF8StreamReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -19,27 +21,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
-    private static final Logger log = LoggerFactory.getLogger(FirebaseCsvDataAdapter.class);
+public class FirebaseCsvDataLoader implements ILoader {
+    private static final Logger log = LoggerFactory.getLogger(FirebaseCsvDataLoader.class);
     private CsvRecordWrapper recordWrapper;
     private String fileName;
+    private String tableName;
+    private TableKeyDefinition tableKey;
+    private FirebaseConnectionFactory firebaseConnectionFactory;
 
-    public FirebaseCsvDataAdapter(String firebaseKeyPath, String tableName, String fileName) {
-        super(firebaseKeyPath, tableName);
+    public FirebaseCsvDataLoader(String fileName, String tableName, TableKeyDefinition tableKey, FirebaseConnectionFactory firebaseConnectionFactory) {
         this.fileName = fileName;
+        this.tableName = tableName;
+        this.tableKey = tableKey;
+        this.firebaseConnectionFactory = firebaseConnectionFactory;
         this.recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
     }
 
-    @Override
-    public int getRecords(String query, Consumer<IRecord> consumer) {
-        //FirebaseUtils.deleteCollection(getCollection()); - if uncommented all data will be cleared and
-        loadRecordsFromCsv();
-        return super.getRecords(query, consumer);
-    }
 
-    protected int loadRecordsFromCsv() {
+    public int load() {
         InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
         WriteBatch batch = getDb().batch();
         int recordsLoaded = 0;
@@ -54,7 +54,6 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
                     recordsLoaded++;
                 }
             } finally {
-                //TODO - make this async
                 batch.commit().get();
                 reader.close();
             }
@@ -75,34 +74,29 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
 
     private String getCsvDocumentId(IRecord record) {
         List<String> values = new ArrayList<>();
-
-        for (String key : tableKeyDefinition.getKeys()) {
+        for (String key : tableKey.getKeys()) {
             values.add(record.getValue(key).toString());
         }
         return String.join("_", values);
     }
 
-    @Override
-    public void setDataSource(DataSource dataSource) {
-        super.setDataSource(dataSource);
-        recordWrapper.setDataSource(dataSource);
-    }
 
     private Map<String, Object> getDocumentData(IRecord record) {
         Map<String, Object> docData = new HashMap<>();
 
-        for (Column col : dataSource.getSchema().getColumns()) {
-            docData.put(col.getName(), record.getValue(col.getName()));
+        for (String col : record.getColumnNames()) {
+            docData.put(col, record.getValue(col));
         }
 
         return docData;
     }
 
-    public String getFileName() {
-        return fileName;
+    protected CollectionReference getCollection(){
+        return getDb().collection(tableName);
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    protected Firestore getDb(){
+        return firebaseConnectionFactory.getConnection();
     }
+
 }

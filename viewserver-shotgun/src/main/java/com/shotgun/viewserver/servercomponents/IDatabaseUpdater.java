@@ -1,4 +1,4 @@
-package com.shotgun.viewserver;
+package com.shotgun.viewserver.servercomponents;
 
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;

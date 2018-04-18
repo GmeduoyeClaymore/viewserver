@@ -1,4 +1,4 @@
-package io.viewserver.server;
+package io.viewserver.server.components;
 
 import io.viewserver.datasource.IDataSourceRegistry;
 

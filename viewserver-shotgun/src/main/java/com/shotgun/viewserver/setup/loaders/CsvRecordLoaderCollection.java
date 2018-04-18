@@ -1,6 +1,6 @@
 package com.shotgun.viewserver.setup.loaders;
 
-import com.shotgun.viewserver.setup.IDataLoaderCollection;
+import io.viewserver.datasource.IRecordLoaderCollection;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.csv.CsvRecordLoader;
 import io.viewserver.datasource.IRecordLoader;
@@ -9,11 +9,11 @@ import io.viewserver.datasource.SchemaConfig;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CsvDataLoaderCollection implements IDataLoaderCollection {
+public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
 
-    public CsvDataLoaderCollection() {
+    public CsvRecordLoaderCollection() {
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);

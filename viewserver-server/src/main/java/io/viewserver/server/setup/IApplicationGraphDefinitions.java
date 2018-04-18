@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.setup;
+package io.viewserver.server.setup;
 
 import io.viewserver.datasource.DataSource;
 import io.viewserver.report.ReportDefinition;

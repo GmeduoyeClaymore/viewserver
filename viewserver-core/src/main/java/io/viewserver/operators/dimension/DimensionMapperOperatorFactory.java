@@ -14,29 +14,34 @@
  * limitations under the License.
  */
 
-package io.viewserver.operators.spread;
+package io.viewserver.operators.dimension;
 
 import io.viewserver.configurator.Configurator;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
+import io.viewserver.operators.spread.ISpreadConfig;
+import io.viewserver.operators.spread.ISpreadFunctionRegistry;
+import io.viewserver.operators.spread.ProtoSpreadConfig;
+import io.viewserver.operators.spread.SpreadOperator;
 import io.viewserver.schema.ITableStorage;
 
 /**
  * Created by nickc on 31/10/2014.
  */
-public class SpreadOperatorFactory extends ConfigurableOperatorFactoryBase<ISpreadConfig> {
+public class DimensionMapperOperatorFactory extends ConfigurableOperatorFactoryBase<IDimensionMapConfig> {
 
-    private ISpreadFunctionRegistry columnRegistry;
+    private DimensionMapper mapper;
     private ITableStorage.Factory tableStorageFactory;
 
-    public SpreadOperatorFactory(ISpreadFunctionRegistry spreadColumnParser, ITableStorage.Factory tableStorageFactory) {
-        this.columnRegistry = spreadColumnParser;
+    public DimensionMapperOperatorFactory(DimensionMapper mapper, ITableStorage.Factory tableStorageFactory) {
+        this.mapper = mapper;
         this.tableStorageFactory = tableStorageFactory;
     }
 
     @Override
     public String getOperatorType() {
-        return "Spread";
+        return "DimensionMapper";
     }
 
     @Override
@@ -46,16 +51,16 @@ public class SpreadOperatorFactory extends ConfigurableOperatorFactoryBase<ISpre
 
     @Override
     public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
-        return new SpreadOperator(name, state.executionContext, tableStorageFactory.createStorage(), state.catalog, columnRegistry);
+        return new DimensionMapperOperator(name, state.executionContext, tableStorageFactory.createStorage(), state.catalog, mapper);
     }
 
     @Override
     public Class getProtoConfigDtoClass() {
-        return io.viewserver.messages.config.IFilterConfig.class;
+        return io.viewserver.messages.config.IDimensionMapConfig.class;
     }
 
     @Override
     public Object getProtoConfigWrapper(Object configDto) {
-        return new ProtoSpreadConfig((io.viewserver.messages.config.ISpreadConfig) configDto);
+        return new ProtoDimensionMapConfig((io.viewserver.messages.config.IDimensionMapConfig) configDto);
     }
 }

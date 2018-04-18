@@ -1,11 +1,7 @@
 package com.shotgun.viewserver.setup.datasource;
 
 
-import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.Constants;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
@@ -19,23 +15,22 @@ import java.util.Arrays;
 public class OrderDataSource {
     public static final String NAME = "order";
 
-    public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {
-        Schema schema = new Schema()
+    public static DataSource getDataSource() {
+        SchemaConfig schema = new SchemaConfig()
                 .withColumns(Arrays.asList(
-                        new Column("orderId", "orderId", ColumnType.String),
-                        new Column("created", "created", ColumnType.DateTime),
-                        new Column("lastModified", "lastModified", ColumnType.DateTime),
-                        new Column("status", "status", ColumnType.String),
-                        new Column("userId", "userId", ColumnType.String),
-                        new Column("paymentId", "paymentId", ColumnType.String),
-                        new Column("deliveryId", "deliveryId", ColumnType.String),
-                        new Column("totalPrice", "totalPrice", ColumnType.Int)
+                        new Column("orderId", ColumnType.String),
+                        new Column("created", ColumnType.DateTime),
+                        new Column("lastModified", ColumnType.DateTime),
+                        new Column("status", ColumnType.String),
+                        new Column("userId", ColumnType.String),
+                        new Column("paymentId", ColumnType.String),
+                        new Column("deliveryId", ColumnType.String),
+                        new Column("totalPrice", ColumnType.Int)
                 ))
                 .withKeyColumns("orderId");
 
         return new DataSource()
                 .withName(NAME)
-                .withDataLoader(DataSourceUtils.getDataLoader(shotgunConfiguration, NAME, "data/order.csv"))
                 .withSchema(schema)
                 .withNodes(
                         new JoinNode("deliveryJoin")

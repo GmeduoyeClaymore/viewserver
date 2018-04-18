@@ -21,11 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class Schema {
+public class SchemaConfig {
     private List<Column> columns;
     private List<String> keyColumns;
 
-    public Schema() {
+    public SchemaConfig() {
         columns = new ArrayList<>();
         keyColumns = new ArrayList<>();
     }
@@ -38,7 +38,7 @@ public class Schema {
         this.columns = columns;
     }
 
-    public Schema withColumns(List<Column> columns) {
+    public SchemaConfig withColumns(List<Column> columns) {
         this.columns = columns;
         return this;
     }
@@ -51,7 +51,7 @@ public class Schema {
         this.keyColumns = keyColumns;
     }
 
-    public Schema withKeyColumns(String... keyColumns) {
+    public SchemaConfig withKeyColumns(String... keyColumns) {
         this.keyColumns = Arrays.asList(keyColumns);
         return this;
     }

@@ -1,12 +1,16 @@
-package com.shotgun.viewserver;
+package com.shotgun.viewserver.servercomponents;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
+import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseUtils;
+import io.viewserver.command.RowUpdater;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.datasource.RecordUtils;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.reactor.IReactor;
@@ -22,13 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FirebaseDatabaseUpdater implements IDatabaseUpdater {
+
+public class FirebaseTableUpdater implements IDatabaseUpdater {
     private final IReactor reactor;
     private FirebaseConnectionFactory connectionFactory;
     private String firebaseKeyPath;
-    private static final Logger log = LoggerFactory.getLogger(FirebaseDatabaseUpdater.class);
+    private static final Logger log = LoggerFactory.getLogger(FirebaseTableUpdater.class);
 
-    public FirebaseDatabaseUpdater(IExecutionContext executionContext, String firebaseKeyPath) {
+    public FirebaseTableUpdater(IExecutionContext executionContext, String firebaseKeyPath) {
         this.firebaseKeyPath = firebaseKeyPath;
         this.reactor = executionContext.getReactor();
     }

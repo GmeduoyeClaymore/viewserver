@@ -1,29 +1,26 @@
 package com.shotgun.viewserver.servercomponents;
 
-import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
-import com.shotgun.viewserver.delivery.VehicleDetailsController;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.delivery.IVehicleDetailsController;
+import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
-import com.shotgun.viewserver.maps.MapsController;
-import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.maps.IMapsController;
+import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.OrderController;
 import com.shotgun.viewserver.order.OrderItemController;
 import com.shotgun.viewserver.order.PricingStrategyResolver;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.user.*;
-import io.viewserver.catalog.Catalog;
-import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.server.components.ControllerComponents;
 import io.viewserver.server.components.IBasicServerComponents;
 
 
-public abstract class ShotgunControllersComponent extends ControllerComponents{
-    private IDatabaseUpdater databaseUpdater;
+public abstract class ShotgunControllersComponents extends ControllerComponents{
+    protected IDatabaseUpdater databaseUpdater;
 
-    public ShotgunControllersComponent(IBasicServerComponents basicServerComponents, IDatabaseUpdater databaseUpdater) {
+    public ShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater databaseUpdater) {
         super(basicServerComponents);
         this.databaseUpdater = databaseUpdater;
     }
@@ -31,25 +28,25 @@ public abstract class ShotgunControllersComponent extends ControllerComponents{
     @Override
     public void start() {
         super.start();
-        ImageController imageController = getImageController();
-        MessagingController messagingController = getMessagingController(); //new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
-        MapsController mapsController = getMapsController();
+        IImageController IImageController = getImageController();
+        IMessagingController messagingController = getMessagingController(); //new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
+        IMapsController IMapsController = getMapsController();
         INexmoController nexmoController = getNexmoController();
         PaymentController paymentController = getPaymentController(); //configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
 
 
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(getDatabaseUpdater());
         DeliveryController deliveryController = new DeliveryController(getDatabaseUpdater());
-        OrderItemController orderItemController = new OrderItemController(getDatabaseUpdater(), imageController);
+        OrderItemController orderItemController = new OrderItemController(getDatabaseUpdater(), IImageController);
         VehicleController vehicleController = new VehicleController(getDatabaseUpdater());
         LoginController loginController = new LoginController(getDatabaseUpdater(), basicServerComponents.getServerCatalog());
-        UserController userController = new UserController(getDatabaseUpdater(), loginController, imageController, nexmoController, messagingController, mapsController, getServerReactor());
+        UserController userController = new UserController(getDatabaseUpdater(), loginController, IImageController, nexmoController, messagingController, IMapsController, getServerReactor());
 
         this.registerController(paymentController);
-        this.registerController(mapsController);
+        this.registerController(IMapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new DriverController(getDatabaseUpdater(), paymentController, messagingController, userController, vehicleController, loginController, imageController, nexmoController, this.getServerReactor()));
+        this.registerController(new DriverController(getDatabaseUpdater(), paymentController, messagingController, userController, vehicleController, loginController, IImageController, nexmoController, this.getServerReactor()));
         this.registerController(new CustomerController(getDatabaseUpdater(), paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(new OrderController(getDatabaseUpdater(), deliveryAddressController, deliveryController, orderItemController, new PricingStrategyResolver(), messagingController));
         this.registerController(vehicleController);
@@ -57,7 +54,7 @@ public abstract class ShotgunControllersComponent extends ControllerComponents{
         this.registerController(messagingController);
         this.registerController(deliveryAddressController);
         this.registerController(orderItemController);
-        this.registerController(imageController);
+        this.registerController(IImageController);
         this.registerController(new PhoneCallController(getDatabaseUpdater()));
         this.registerController(nexmoController);
         this.registerController(getVehicleDetailsController());
@@ -70,10 +67,10 @@ public abstract class ShotgunControllersComponent extends ControllerComponents{
 
     protected abstract INexmoController getNexmoController();
     protected abstract PaymentController getPaymentController();
-    protected abstract ImageController getImageController();
-    protected abstract  MessagingController getMessagingController() ;
-    protected abstract  MapsController getMapsController() ;
-    protected abstract  VehicleDetailsController getVehicleDetailsController() ;
+    protected abstract IImageController getImageController();
+    protected abstract IMessagingController getMessagingController() ;
+    protected abstract IMapsController getMapsController() ;
+    protected abstract IVehicleDetailsController getVehicleDetailsController() ;
 
     public IDatabaseUpdater getDatabaseUpdater() {
         return databaseUpdater;

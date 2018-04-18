@@ -16,19 +16,17 @@
 
 package io.viewserver.server.setup;
 
+import com.google.common.io.Resources;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.core.Utils;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.report.ReportDefinition;
-import io.viewserver.server.IViewServerMasterConfiguration;
-import com.google.common.io.Resources;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.NClob;
@@ -36,23 +34,25 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by nick on 10/09/15.
  */
-public class H2ApplicationSetup {
+public class H2ApplicationSetup implements IApplicationSetup {
     private static final Logger log = LoggerFactory.getLogger(H2ApplicationSetup.class);
 
     protected IJsonSerialiser serialiser = new JacksonSerialiser();
     protected String databasePath;
+    private IApplicationGraphDefinitions graphDefinitions;
 
-    public H2ApplicationSetup(String databasePath) {
+    public H2ApplicationSetup(String databasePath, IApplicationGraphDefinitions graphDefinitions) {
         this.databasePath = databasePath;
+        this.graphDefinitions = graphDefinitions;
     }
 
-    public void run(IApplicationGraphDefinitions graphDefinitions) {
+    @Override
+    public void run() {
         log.info("Bootstrapping local database");
 
         String path = Utils.replaceSystemTokens(databasePath);

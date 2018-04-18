@@ -1,4 +1,4 @@
 package io.viewserver.server.components;
 
-public interface IControllerComponents {
+public interface IControllerComponents extends IServerComponent{
 }

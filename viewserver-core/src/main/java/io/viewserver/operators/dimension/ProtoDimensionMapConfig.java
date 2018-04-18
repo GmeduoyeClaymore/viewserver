@@ -14,41 +14,36 @@
  * limitations under the License.
  */
 
-package io.viewserver.operators.spread;
+package io.viewserver.operators.dimension;
 
-import io.viewserver.operators.filter.FilterOperator;
-import io.viewserver.operators.filter.IFilterConfig;
+import io.viewserver.datasource.Dimension;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by nickc on 20/10/2014.
  */
 
-public class ProtoSpreadConfig implements ISpreadConfig {
+public class ProtoDimensionMapConfig implements IDimensionMapConfig {
+    private io.viewserver.messages.config.IDimensionMapConfig dimensionMapConfig;
 
-
-    private io.viewserver.messages.config.ISpreadConfig spreadConfig;
-
-    public ProtoSpreadConfig(io.viewserver.messages.config.ISpreadConfig spreadConfig) {
-        this.spreadConfig = spreadConfig;
-    }
-
-    public String getInputColumnName() {
-        return spreadConfig.getInputColumnName();
-    }
-
-    public String getOutputColumnName() {
-        return spreadConfig.getOutputColumnName();
-    }
-
-    public String spreadFunctionName() {
-        return spreadConfig.getSpreadFunctionName();
+    public ProtoDimensionMapConfig(io.viewserver.messages.config.IDimensionMapConfig spreadConfig) {
+        this.dimensionMapConfig = spreadConfig;
     }
 
     @Override
-    public boolean removeInputColumn() {
-        return spreadConfig.removeInputColumn();
+    public List<Dimension> getDimensions() {
+        return this.dimensionMapConfig.getDimensions();
+    }
+
+    @Override
+    public boolean removeInputColumns() {
+        return this.dimensionMapConfig.removeInputColumns();
+    }
+
+    @Override
+    public String getDataSourceName() {
+        return this.dimensionMapConfig.getDataSourceName();
     }
 }
 

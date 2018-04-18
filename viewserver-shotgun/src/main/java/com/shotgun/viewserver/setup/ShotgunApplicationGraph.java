@@ -4,10 +4,12 @@ import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.setup.report.*;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.report.ReportDefinition;
-import io.viewserver.server.setup.BootstrapperBase;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
 

@@ -22,6 +22,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.core.Utils;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.nodes.IGraphNode;
@@ -31,7 +32,6 @@ import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.ColumnStringBase;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import rx.Observable;
@@ -46,20 +46,19 @@ import java.util.function.Consumer;
 /**
  * Created by nick on 18/02/2015.
  */
-public abstract class DataSourceRegistryBase<T extends IDataSource> extends KeyedTable implements IDataSourceRegistry<T>, ICatalog {
+public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implements IDataSourceRegistry<T>, ICatalog {
     protected final ICatalog systemCatalog;
     protected final IExecutionContext executionContext;
-    private final IJsonSerialiser serialiser;
+    private final IJsonSerialiser serialiser = new JacksonSerialiser();
     private Class<T> clazz;
     private final List<IDataSourceListener> listeners = new ArrayList<>();
     private final TIntObjectHashMap<T> dataSourcesById = new TIntObjectHashMap<>();
     private final CatalogHolder catalogHolder;
 
-    protected DataSourceRegistryBase(ICatalog systemCatalog, IExecutionContext executionContext, IJsonSerialiser serialiser, Class<T> clazz) {
+    public DataSourceRegistry(ICatalog systemCatalog, IExecutionContext executionContext, Class<T> clazz) {
         super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinitions());
         this.systemCatalog = systemCatalog;
         this.executionContext = executionContext;
-        this.serialiser = serialiser;
         this.clazz = clazz;
 
         this.catalogHolder = new CatalogHolder(this);
@@ -290,7 +289,7 @@ public abstract class DataSourceRegistryBase<T extends IDataSource> extends Keye
         public static final String PATH_COLUMN = "path";
 
         public DataSourceCatalog(String id, ITableStorage storage) {
-            super(id, DataSourceRegistryBase.this.executionContext, DataSourceRegistryBase.this);
+            super(id, DataSourceRegistry.this.executionContext, DataSourceRegistry.this);
 
             this.storage = storage;
             output = new Output(Constants.OUT, this);

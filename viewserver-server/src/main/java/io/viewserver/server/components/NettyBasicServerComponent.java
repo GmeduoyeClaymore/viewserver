@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.viewserver.server;
+package io.viewserver.server.components;
 
 import io.viewserver.messages.protobuf.Decoder;
 import io.viewserver.messages.protobuf.Encoder;

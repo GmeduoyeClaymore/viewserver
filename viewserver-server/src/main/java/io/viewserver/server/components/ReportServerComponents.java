@@ -1,11 +1,8 @@
-package io.viewserver.server;
+package io.viewserver.server.components;
 
 import io.viewserver.command.ICommandHandler;
-import io.viewserver.command.SubscribeDataSourceHandler;
 import io.viewserver.command.SubscribeDimensionHandler;
 import io.viewserver.command.SubscribeReportHandler;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.DataSourceRegistry;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.SystemReportExecutor;
 import io.viewserver.report.ReportContextRegistry;

@@ -2,18 +2,18 @@ package com.shotgun.viewserver.user;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.shotgun.viewserver.IDatabaseUpdater;
+import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
-import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentController;
 import io.viewserver.adapters.common.Record;
@@ -37,38 +37,32 @@ public class DriverController {
     private static final Logger log = LoggerFactory.getLogger(DriverController.class);
     private IDatabaseUpdater iDatabaseUpdater;
     private PaymentController paymentController;
-    private MessagingController messagingController;
+    private IMessagingController messagingController;
     private UserController userController;
     private VehicleController vehicleController;
-    private JourneyEmulatorController journeyEmulatorController;
     private LoginController loginController;
-    private ImageController imageController;
+    private IImageController IImageController;
     private INexmoController nexmoController;
     private IReactor reactor;
-    private boolean isMock;
 
     public DriverController(IDatabaseUpdater iDatabaseUpdater,
                             PaymentController paymentController,
-                            MessagingController messagingController,
+                            IMessagingController messagingController,
                             UserController userController,
                             VehicleController vehicleController,
-                            JourneyEmulatorController journeyEmulatorController,
                             LoginController loginController,
-                            ImageController imageController,
+                            IImageController IImageController,
                             INexmoController nexmoController,
-                            IReactor reactor,
-                            boolean isMock) {
+                            IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.paymentController = paymentController;
         this.messagingController = messagingController;
         this.userController = userController;
         this.vehicleController = vehicleController;
         this.loginController = loginController;
-        this.journeyEmulatorController = journeyEmulatorController;
-        this.imageController = imageController;
+        this.IImageController = IImageController;
         this.nexmoController = nexmoController;
         this.reactor = reactor;
-        this.isMock = isMock;
     }
 
     @ControllerAction(path = "registerDriver", isSynchronous = false)
@@ -93,7 +87,7 @@ public class DriverController {
         //save image if required
         if(user.getImageData() != null){
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
             user.setImageUrl(imageUrl);
         }
 
@@ -163,9 +157,6 @@ public class DriverController {
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.INPROGRESS.name());
 
-        if(isMock) {
-            journeyEmulatorController.emulateJourneyForOrder(orderId, "emulator-5558", driverId);
-        }
 
         return orderId;
     }
@@ -229,9 +220,10 @@ public class DriverController {
 
             AppMessage builder = new AppMessageBuilder().withDefaults()
                     .withAction(createActionUri(orderId, status))
+                    .withFromTo(driverId,orderUserId)
                     .message(String.format("Shotgun order %s", formattedStatus), String.format("%s has %s your Shotgun order", firstName + " " + lastName, formattedStatus))
                     .build();
-            messagingController.sendMessageToUser(orderUserId, builder);
+            messagingController.sendMessageToUser(builder);
         }catch (Exception ex){
             log.error("There was a problem sending the notification", ex);
         }
