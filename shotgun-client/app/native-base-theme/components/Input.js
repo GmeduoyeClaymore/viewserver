@@ -9,13 +9,12 @@ export default (variables = variable) => {
       fontWeight: 'bold',
       fontSize: 18
     },
-    height: variables.inputHeightBase,
     color: variables.inputColor,
     paddingLeft: 0,
     paddingRight: 5,
     flex: 1,
     fontSize: variables.inputFontSize,
-    lineHeight: variables.inputLineHeight,
+    lineHeight: variables.inputFontSize,
   };
 
   return inputTheme;
