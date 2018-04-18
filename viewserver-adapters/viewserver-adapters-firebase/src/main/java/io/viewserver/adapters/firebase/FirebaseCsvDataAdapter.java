@@ -25,16 +25,21 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
     private static final Logger log = LoggerFactory.getLogger(FirebaseCsvDataAdapter.class);
     private CsvRecordWrapper recordWrapper;
     private String fileName;
+    private boolean resetData;
 
-    public FirebaseCsvDataAdapter(String firebaseKeyPath, String tableName, String fileName) {
+    public FirebaseCsvDataAdapter(String firebaseKeyPath, String tableName, String fileName, boolean resetData) {
         super(firebaseKeyPath, tableName);
         this.fileName = fileName;
+        this.resetData = resetData;
         this.recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
     }
 
     @Override
     public int getRecords(String query, Consumer<IRecord> consumer) {
-        //FirebaseUtils.deleteCollection(getCollection()); - if uncommented all data will be cleared and
+        if(resetData) {
+            FirebaseUtils.deleteCollection(getCollection());
+        }
+
         loadRecordsFromCsv();
         return super.getRecords(query, consumer);
     }
@@ -96,6 +101,14 @@ public class FirebaseCsvDataAdapter extends FirebaseDataAdapter {
         }
 
         return docData;
+    }
+
+    public boolean isResetData() {
+        return resetData;
+    }
+
+    public void setResetData(boolean resetData) {
+        this.resetData = resetData;
     }
 
     public String getFileName() {

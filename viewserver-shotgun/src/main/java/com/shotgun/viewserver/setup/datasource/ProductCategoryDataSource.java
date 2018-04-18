@@ -3,10 +3,7 @@ package com.shotgun.viewserver.setup.datasource;
 
 import com.shotgun.viewserver.IShotgunViewServerConfiguration;
 import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.GroupByNode;
 
 import java.util.Arrays;
 
@@ -34,7 +31,7 @@ ProductCategoryDataSource {
                 .withDataLoader(
                         new DataLoader(
                                 NAME,
-                                DataSourceUtils.getDataAdapter(shotgunConfiguration, NAME, "data/productCategory.csv"),
+                                DataSourceUtils.getCsvDataAdapter(shotgunConfiguration, NAME, "data/productCategory.csv", true),
                                 null
                         )
                 )
