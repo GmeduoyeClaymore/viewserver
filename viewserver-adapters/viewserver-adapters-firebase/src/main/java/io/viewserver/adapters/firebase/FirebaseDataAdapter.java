@@ -1,24 +1,20 @@
 package io.viewserver.adapters.firebase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-import com.google.firebase.FirebaseException;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentChange;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreException;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.IWritableDataAdapter;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.IRowFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 

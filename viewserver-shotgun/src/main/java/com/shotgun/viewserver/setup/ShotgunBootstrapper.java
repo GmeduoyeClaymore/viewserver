@@ -42,14 +42,13 @@ public class ShotgunBootstrapper extends BootstrapperBase {
     protected Collection<io.viewserver.datasource.DataSource> getDataSources() {
         Collection<io.viewserver.datasource.DataSource> dataSources = super.getDataSources();
 
-        //DataSources which require data from csv in all modes
+        //DataSources which contain reference data
         dataSources.add(ProductCategoryDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(ProductDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(ContentTypeDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(PhoneNumberDataSource.getDataSource(shotgunConfiguration));
-        dataSources.add(UserProductDataSource.getDataSource(shotgunConfiguration));
 
-        //DataSources which require data from csv only in test mode
+        //DataSources which contain user data
         dataSources.add(UserDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(RatingDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(DeliveryAddressDataSource.getDataSource(shotgunConfiguration));
@@ -58,6 +57,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
         dataSources.add(UserRelationshipDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(OrderItemsDataSource.getDataSource(shotgunConfiguration));
         dataSources.add(VehicleDataSource.getDataSource(shotgunConfiguration));
+        dataSources.add(UserProductDataSource.getDataSource(shotgunConfiguration));
 
         return dataSources;
     }
@@ -81,7 +81,7 @@ public class ShotgunBootstrapper extends BootstrapperBase {
 
     @Override
     public void run(IViewServerMasterConfiguration configuration) {
-        log.info("Bootstrapping local database");
+        log.info("Bootstrapping FireBase database");
         shotgunConfiguration = (IShotgunViewServerConfiguration) configuration;
 
         if(!shotgunConfiguration.isMock()) {
