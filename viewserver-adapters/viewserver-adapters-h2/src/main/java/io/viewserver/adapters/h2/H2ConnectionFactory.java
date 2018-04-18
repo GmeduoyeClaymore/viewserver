@@ -17,7 +17,7 @@ public class H2ConnectionFactory extends JdbcConnectionFactory{
     @Override
     public DataSource getDataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setURL(String.format("jdbc:h2:%s;IFEXISTS=TRUE;MV_STORE=FALSE;DATABASE_TO_UPPER=FALSE", Utils.replaceSystemTokens(path)));
+        dataSource.setURL(String.format("jdbc:h2:%s;MV_STORE=FALSE;DATABASE_TO_UPPER=FALSE", Utils.replaceSystemTokens(path)));
         return dataSource;
     }
 }

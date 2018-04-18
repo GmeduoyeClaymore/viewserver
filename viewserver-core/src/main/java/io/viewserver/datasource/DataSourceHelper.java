@@ -42,6 +42,9 @@ public class DataSourceHelper {
         for (int i = 0; i < count; i++) {
             Column column = columns.get(i);
             ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(column.getName(), column.getType().getColumnType());
+            ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(columnHolder.getType());
+            columnMetadata.setDataType(column.getType());
+            columnHolder.setMetadata(columnMetadata);
             schema.addColumn(columnHolder);
         }
         return schema;

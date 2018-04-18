@@ -20,7 +20,7 @@ public class BasicServer {
         this.initialDataLoaderComponent = initialDataLoaderComponent;
     }
 
-    public BasicServer(List<IEndpoint> endpointList) {
+    BasicServer(List<IEndpoint> endpointList) {
         basicServerComponents = new NettyBasicServerComponent(endpointList);
         dataSourceServerComponents = new DataSourceComponents(basicServerComponents);
         controllerComponents = new ControllerComponents(basicServerComponents);

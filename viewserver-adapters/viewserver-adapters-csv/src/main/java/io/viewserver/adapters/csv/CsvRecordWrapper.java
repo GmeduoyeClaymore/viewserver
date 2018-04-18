@@ -20,6 +20,7 @@ import io.viewserver.adapters.common.BaseRecordWrapper;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.SchemaConfig;
 import javolution.text.TypeFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.joda.time.DateTime;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 
 public class CsvRecordWrapper extends BaseRecordWrapper {
     private final DateTime startDate;
+    private SchemaConfig config;
     private static String dateFormatStr = "dd/MM/yyyy";
     private static String dateTimeFormatStr = "dd/MM/yyyy HH:mm";
     private static final Logger log = LoggerFactory.getLogger(CsvRecordWrapper.class);
@@ -66,21 +68,18 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     private CSVRecord record;
 
 
-    public CsvRecordWrapper(DateTime startTime) {
-        super();
+    public CsvRecordWrapper(DateTime startTime, SchemaConfig config) {
+        super(config);
         this.startTime = startTime;
         this.startDate = startTime.withMillisOfDay(0);
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.config = config;
     }
 
 
     @Override
     public Object getValue(String columnName) {
 
-        Column column = dataSource.getSchema().getColumn(columnName);
+        Column column = this.config .getColumn(columnName);
         switch (column.getType()) {
             case Bool: {
                 return getBool(columnName);

@@ -18,6 +18,9 @@ package io.viewserver.schema.column;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
+import io.viewserver.expression.tree.IExpressionLong;
+
+import java.util.Date;
 
 /**
  * Created by nickc on 26/09/2014.
@@ -245,31 +248,53 @@ public class ColumnHolderUtils {
     public static void setValue(ColumnHolder columnHolder, int row, Object value) {
         switch (columnHolder.getType()) {
             case Bool: {
-                ((IWritableColumnBool)columnHolder).setBool(row, (Boolean) value);
+                ((IWritableColumnBool)columnHolder.getColumn()).setBool(row, (Boolean) value);
+                break;
             }
             case NullableBool: {
-                ((IWritableColumnNullableBool)columnHolder).setNullableBool(row, (NullableBool) value);
+                ((IWritableColumnNullableBool)columnHolder.getColumn()).setNullableBool(row, (NullableBool) value);
+                break;
             }
             case Byte: {
-                ((IWritableColumnByte)columnHolder).setByte(row, (Byte) value);
+                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) value);
+                break;
             }
             case Short: {
-                ((IWritableColumnShort)columnHolder).setShort(row, (Short) value);
+                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) value);
+                break;
             }
             case Int: {
-                ((IWritableColumnInt)columnHolder).setInt(row, (Integer) value);
+                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row, (Integer) value);
+                break;
             }
             case Long: {
-                ((IWritableColumnLong)columnHolder).setLong(row, (Long) value);
+                Object val = columnHolder.getMetadata().getDataType().getColumnType().getNullValue();
+                if(value != null) {
+                    switch (columnHolder.getMetadata().getDataType()) {
+                        case Date:
+                        case DateTime: {
+                            val = ((Date) value).getTime();
+                            break;
+                        }
+                        default: {
+                            val = (Long) value;
+                        }
+                    }
+                }
+                ((IWritableColumnLong)columnHolder.getColumn()).setLong(row, (Long) val);
+                break;
             }
             case Float: {
-                ((IWritableColumnFloat)columnHolder).setFloat(row, (Float) value);
+                ((IWritableColumnFloat)columnHolder.getColumn()).setFloat(row, (Float) value);
+                break;
             }
             case Double: {
-                ((IWritableColumnDouble)columnHolder).setDouble(row, (Double) value);
+                ((IWritableColumnDouble)columnHolder.getColumn()).setDouble(row, (Double) value);
+                break;
             }
             case String: {
-                ((IWritableColumnString)columnHolder).setString(row, (String) value);
+                ((IWritableColumnString)columnHolder.getColumn()).setString(row, (String) value);
+                break;
             }
             default: {
                 throw new RuntimeException("Unable to set value " + value + " of type " + columnHolder.getType());

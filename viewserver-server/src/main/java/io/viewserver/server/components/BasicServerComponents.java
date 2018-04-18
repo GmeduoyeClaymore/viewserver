@@ -12,6 +12,7 @@ import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.IExecutionPlanRunner;
+import io.viewserver.messages.protobuf.Message;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.table.TableFactoryRegistry;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
@@ -36,6 +37,7 @@ public class BasicServerComponents implements IBasicServerComponents {
 
 
     public BasicServerComponents() {
+        new Message();//to init the message pool
         serverExecutionContext = new ExecutionContext();
         serverCatalog = new Catalog(serverExecutionContext);
         operatorFactoryRegistry = serverExecutionContext.getOperatorFactoryRegistry();

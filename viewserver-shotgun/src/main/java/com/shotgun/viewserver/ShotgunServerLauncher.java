@@ -14,8 +14,14 @@ import com.shotgun.viewserver.setup.ShotgunApplicationGraph;
 import com.shotgun.viewserver.setup.loaders.CsvRecordLoaderCollection;
 import com.shotgun.viewserver.setup.loaders.FireBaseRecordLoaderCollection;
 import com.shotgun.viewserver.user.NexmoControllerKey;
+import com.sun.tools.javac.util.List;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
+import io.viewserver.adapters.h2.H2ConnectionFactory;
+import io.viewserver.core.Utils;
+import io.viewserver.network.EndpointFactoryRegistry;
+import io.viewserver.network.IEndpoint;
 import io.viewserver.server.BasicServer;
+import io.viewserver.server.components.*;
 import io.viewserver.server.setup.H2ApplicationSetup;
 import io.viewserver.server.setup.IApplicationSetup;
 import org.picocontainer.MutablePicoContainer;
@@ -28,7 +34,6 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 public class ShotgunServerLauncher{
-    MutablePicoContainer container = (new PicoBuilder()).withCaching().withLifecycle().build();
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
 
     public ShotgunServerLauncher(){
@@ -39,12 +44,21 @@ public class ShotgunServerLauncher{
     }
 
     private static void SharedConfig(MutablePicoContainer container){
-        container.addComponent(BasicServer.class);
+        NettyBasicServerComponent basicServerComponent = new NettyBasicServerComponent(List.of(EndpointFactoryRegistry.createEndpoint(get("server.endpoint"))));
+        container.addComponent(basicServerComponent);
+        container.addComponent(basicServerComponent.getServerCatalog());
+        container.addComponent(basicServerComponent.getExecutionContext());
+        container.addComponent(basicServerComponent.getConfigurator());
+        container.addComponent(ReportServerComponents.class);
+        container.addComponent(DataSourceComponents.class);
         container.addComponent(ShotgunApplicationGraph.class);
+        container.addComponent(InitialDataLoaderComponent.class);
+        container.addComponent(BasicServer.class);
     }
 
     private static boolean ConfigureForMockEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
+        container.addComponent(new H2ConnectionFactory(null,null,get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(MockShotgunControllersComponents.class);
         container.addComponent(DirectTableUpdater.class);
@@ -68,19 +82,29 @@ public class ShotgunServerLauncher{
     }
 
     private static String get(String property){
-        return System.getProperty(property);
+
+        String property1 = System.getProperty(property);
+        if(property1 == null || "".equals(property)){
+            throw new RuntimeException(String.format("\"%s\" is a required prop",property));
+        }
+        return Utils.replaceSystemTokens(property1);
     }
 
 
     public void run(String environment, boolean bootstrap) throws IOException {
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        container.addComponent(ShotgunApplicationGraph.class);
 
         Properties props = new Properties();
         try(InputStream resourceStream = loader.getResourceAsStream(String.format("%s.properties",environment))) {
             props.load(resourceStream);
+            for(String propName : props.stringPropertyNames()){
+                System.setProperty(propName, (String) props.get(propName));
+            }
         }
+
+        MutablePicoContainer container = (new PicoBuilder()).withCaching().withLifecycle().build();
+
         ENVIRONMENT_CONFIGURATIONS.get(environment).test(container);
 
         if(bootstrap){

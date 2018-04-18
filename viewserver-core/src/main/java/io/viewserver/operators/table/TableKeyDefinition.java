@@ -36,6 +36,9 @@ public class TableKeyDefinition{
     }
 
     public TableKeyDefinition(String... keys) {
+        if(Arrays.stream(keys).anyMatch(c-> c == null)){
+            throw new RuntimeException("Null keys are not allowed");
+        }
         this.keys = Arrays.asList(keys);
     }
 

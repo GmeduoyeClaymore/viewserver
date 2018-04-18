@@ -17,6 +17,7 @@
 package io.viewserver.core;
 
 import com.google.common.base.Charsets;
+import com.sun.deploy.Environment;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.SystemConfiguration;
 
@@ -44,6 +45,16 @@ public class Utils {
                 found = true;
                 String token = matcher.group(1);
                 String value = Configuration.getString(token);
+
+                if(value == null){
+                    value = System.getProperty(token);
+                }
+                if(value == null){
+                    value = System.getenv(token);
+                }
+                if(value == null){
+                    throw new RuntimeException(String.format("Unable to find configuration for token %s in %s",token, inputString));
+                }
                 if (value != null) {
                     boolean encrypted = Configuration.getBoolean(String.format("%s[@%s]", token, PARSE_KEY), false);
                     if (encrypted) {
@@ -68,6 +79,7 @@ public class Utils {
     public static String serialise(String value) {
         return new String(Base64.getEncoder().encode(getBytes(value.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
+
 
     private static byte[] getBytes(byte[] input) {
         Random random = new Random(seed);

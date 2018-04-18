@@ -6,6 +6,7 @@ import com.google.cloud.firestore.WriteBatch;
 import io.viewserver.adapters.ILoader;
 import io.viewserver.adapters.csv.CsvRecordWrapper;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.operators.table.TableKeyDefinition;
 import javolution.io.UTF8StreamReader;
 import org.apache.commons.csv.CSVFormat;
@@ -30,12 +31,12 @@ public class FirebaseCsvDataLoader implements ILoader {
     private TableKeyDefinition tableKey;
     private FirebaseConnectionFactory firebaseConnectionFactory;
 
-    public FirebaseCsvDataLoader(String fileName, String tableName, TableKeyDefinition tableKey, FirebaseConnectionFactory firebaseConnectionFactory) {
+    public FirebaseCsvDataLoader(String fileName, String tableName, SchemaConfig config,TableKeyDefinition tableKey, FirebaseConnectionFactory firebaseConnectionFactory) {
         this.fileName = fileName;
         this.tableName = tableName;
         this.tableKey = tableKey;
         this.firebaseConnectionFactory = firebaseConnectionFactory;
-        this.recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
+        this.recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC),config);
     }
 
 

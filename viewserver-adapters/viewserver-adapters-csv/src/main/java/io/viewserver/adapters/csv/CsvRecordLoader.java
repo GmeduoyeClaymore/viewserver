@@ -42,13 +42,12 @@ public class CsvRecordLoader implements IRecordLoader {
 
     public CsvRecordLoader(SchemaConfig schemaConfig) {
         this.schemaConfig = schemaConfig;
-        recordWrapper = getCsvRecordWrapper();
+        recordWrapper = getCsvRecordWrapper(schemaConfig);
     }
 
-    protected CsvRecordWrapper getCsvRecordWrapper() {
-        return new CsvRecordWrapper(new DateTime(DateTimeZone.UTC));
+    protected CsvRecordWrapper getCsvRecordWrapper(SchemaConfig schemaConfig) {
+        return new CsvRecordWrapper(new DateTime(DateTimeZone.UTC), schemaConfig);
     }
-
 
     public SchemaConfig getSchemaConfig() {
         return schemaConfig;

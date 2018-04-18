@@ -1,11 +1,13 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.delivery.DeliveryAddress;
+import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 
 import java.util.HashMap;
 import java.util.List;
 
+@Controller(name = "mapsController")
 public class MockMapsController implements IMapsController{
 
     @Override

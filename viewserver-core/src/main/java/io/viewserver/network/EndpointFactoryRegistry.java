@@ -44,13 +44,17 @@ public class EndpointFactoryRegistry {
         factories.put(scheme, factory);
     }
 
-    public static IEndpoint createEndpoint(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        IEndpointFactory factory = factories.get(uri.getScheme());
-        if (factory == null) {
-            throw new IllegalArgumentException("No endpoint factory registered for scheme '" + uri.getScheme() + "'");
+    public static IEndpoint createEndpoint(String url) {
+        try {
+            URI uri = new URI(url);
+            IEndpointFactory factory = factories.get(uri.getScheme());
+            if (factory == null) {
+                throw new IllegalArgumentException("No endpoint factory registered for scheme '" + uri.getScheme() + "'");
+            }
+            return factory.create(url);
+        }catch (URISyntaxException uri){
+            throw new RuntimeException(uri);
         }
-        return factory.create(url);
     }
 
     public interface IEndpointFactory {

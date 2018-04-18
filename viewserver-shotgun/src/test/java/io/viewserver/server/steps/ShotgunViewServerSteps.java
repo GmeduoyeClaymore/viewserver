@@ -7,11 +7,7 @@ import io.viewserver.server.setup.IApplicationSetup;
 
 public class ShotgunViewServerSteps {
 
-    private IApplicationSetup applicationSetup;
-    private IApplicationGraphDefinitions graphDefinitions;
-    public ShotgunViewServerSteps(IApplicationSetup applicationSetup, IApplicationGraphDefinitions graphDefinitions) {
-        this.applicationSetup = applicationSetup;
-        this.graphDefinitions = graphDefinitions;
+    public ShotgunViewServerSteps() {
     }
 
     @Given("^a running shotgun viewserver$")

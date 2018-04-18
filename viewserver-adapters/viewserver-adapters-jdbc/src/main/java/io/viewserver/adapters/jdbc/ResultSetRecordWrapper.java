@@ -20,6 +20,7 @@ import io.viewserver.adapters.common.BaseRecordWrapper;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.util.ViewServerException;
 
 import java.sql.Clob;
@@ -37,28 +38,21 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
     private ResultSet resultSet;
     private Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
-    ResultSetRecordWrapper() {}
 
-    public ResultSetRecordWrapper(ResultSet resultSet, DataSource dataSource) {
-        super(dataSource);
+    public ResultSetRecordWrapper(ResultSet resultSet, SchemaConfig config) {
+        super(config);
         this.resultSet = resultSet;
     }
-
-    void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public ResultSetRecordWrapper(SchemaConfig config) {
+        super(config);
     }
+
 
     void setResultSet(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
 
-    @Override
-    public String[] getColumnNames() {
-       if(this.dataSource == null){
-           return getResultSetColumnNames();
-       }
-        return super.getColumnNames();
-    }
+
 
     private String[] getResultSetColumnNames(){
         try {
@@ -184,61 +178,46 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
 
     @Override
     public Object getValue(String columnName) {
-        try {
-
-            if(this.dataSource == null){
-                String dataSourceColumnName = getDataSourceColumnName(columnName);
-
-                Object value = resultSet.getObject(dataSourceColumnName);
-                // TODO: this is a mess...we don't deal correctly with NullableBools here either
-                if (value instanceof Clob) {
-                    return resultSet.getString(dataSourceColumnName);
-                }
-                return value;
-            }else{
-                Column column = dataSource.getSchema().getColumn(columnName);
-                switch (column.getType()) {
-                    case Bool: {
-                        return getBool(columnName);
-                    }
-                    case NullableBool: {
-                        return getNullableBool(columnName);
-                    }
-                    case Byte: {
-                        return getByte(columnName);
-                    }
-                    case Short: {
-                        return getShort(columnName);
-                    }
-                    case Int: {
-                        return getInt(columnName);
-                    }
-                    case Long: {
-                        return getLong(columnName);
-                    }
-                    case Float: {
-                        return getFloat(columnName);
-                    }
-                    case Double: {
-                        return getDouble(columnName);
-                    }
-                    case String: {
-                        return getString(columnName);
-                    }
-                    case Date: {
-                        return getDate(columnName);
-                    }
-                    case DateTime: {
-                        return getDateTime(columnName);
-                    }
-                    default: {
-                        throw new UnsupportedOperationException(String.format("Unsupported column type %s in record", column.getType()));
-                    }
-                }
+        Column column = this.config.getColumn(columnName);
+        switch (column.getType()) {
+            case Bool: {
+                return getBool(columnName);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            case NullableBool: {
+                return getNullableBool(columnName);
+            }
+            case Byte: {
+                return getByte(columnName);
+            }
+            case Short: {
+                return getShort(columnName);
+            }
+            case Int: {
+                return getInt(columnName);
+            }
+            case Long: {
+                return getLong(columnName);
+            }
+            case Float: {
+                return getFloat(columnName);
+            }
+            case Double: {
+                return getDouble(columnName);
+            }
+            case String: {
+                return getString(columnName);
+            }
+            case Date: {
+                return getDate(columnName);
+            }
+            case DateTime: {
+                return getDateTime(columnName);
+            }
+            default: {
+                throw new UnsupportedOperationException(String.format("Unsupported column type %s in record", column.getType()));
+            }
         }
+
     }
 
     private String getDataSourceColumnName(String columnName) {

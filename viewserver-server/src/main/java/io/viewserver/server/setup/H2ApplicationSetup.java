@@ -17,6 +17,7 @@
 package io.viewserver.server.setup;
 
 import com.google.common.io.Resources;
+import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.core.Utils;
@@ -45,20 +46,16 @@ public class H2ApplicationSetup implements IApplicationSetup {
     protected IJsonSerialiser serialiser = new JacksonSerialiser();
     protected String databasePath;
     private IApplicationGraphDefinitions graphDefinitions;
+    private H2ConnectionFactory h2ConnectionFactory;
 
-    public H2ApplicationSetup(String databasePath, IApplicationGraphDefinitions graphDefinitions) {
-        this.databasePath = databasePath;
+    public H2ApplicationSetup(H2ConnectionFactory h2ConnectionFactory, IApplicationGraphDefinitions graphDefinitions) {
+        this.h2ConnectionFactory = h2ConnectionFactory;
         this.graphDefinitions = graphDefinitions;
     }
 
     @Override
     public void run() {
-        log.info("Bootstrapping local database");
-
-        String path = Utils.replaceSystemTokens(databasePath);
-        log.info("Using database at {}", path);
-        JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setURL(String.format("jdbc:h2:%s;MV_STORE=FALSE;DATABASE_TO_UPPER=FALSE", path));
+        javax.sql.DataSource dataSource = h2ConnectionFactory.getDataSource();
         try (Connection connection = dataSource.getConnection()) {
             setupDatabase(connection, graphDefinitions);
         } catch (Throwable e) {

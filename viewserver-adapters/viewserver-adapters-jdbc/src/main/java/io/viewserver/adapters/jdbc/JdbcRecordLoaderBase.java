@@ -41,12 +41,13 @@ public abstract class JdbcRecordLoaderBase implements IWritableRecordLoader {
     private TableKeyDefinition tableKeyDefinition;
     private final int FETCHSIZE = 10000;
 
-    private final ResultSetRecordWrapper recordWrapper = new ResultSetRecordWrapper();
+    private final ResultSetRecordWrapper recordWrapper;
 
     protected JdbcRecordLoaderBase(IWritableDataQueryProvider dataQueryProvider, JdbcConnectionFactory connectionFactory, SchemaConfig config) {
         this.dataQueryProvider = dataQueryProvider;
         this.connectionFactory = connectionFactory;
         this.config = config;
+        recordWrapper = new ResultSetRecordWrapper(config);
     }
 
     public SchemaConfig getConfig() {

@@ -16,26 +16,22 @@
 
 package io.viewserver.adapters.common;
 
-import io.viewserver.datasource.Column;
-import io.viewserver.datasource.ColumnOption;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.IRecord;
+import io.viewserver.datasource.*;
 
 import java.util.List;
 
 
 public abstract class BaseRecordWrapper implements IRecord {
-    protected DataSource dataSource;
 
-    protected BaseRecordWrapper() {
+    protected SchemaConfig config;
+
+    protected BaseRecordWrapper(SchemaConfig config) {
+        this.config = config;
     }
 
-    protected BaseRecordWrapper(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     public String[] getColumnNames() {
-        List<Column> columns = dataSource.getSchema().getColumns();
+        List<Column> columns = config.getColumns();
         String[] columnNames = new String[columns.size()];
         int i = 0;
         for (Column column: columns) {
@@ -45,7 +41,7 @@ public abstract class BaseRecordWrapper implements IRecord {
     }
 
     protected Column getColumn(String columnName){
-        return dataSource.getSchema().getColumn(columnName);
+        return config.getColumn(columnName);
     }
 
     protected <T> T replaceNullValues(String columnName, Object value, Class<T> type){

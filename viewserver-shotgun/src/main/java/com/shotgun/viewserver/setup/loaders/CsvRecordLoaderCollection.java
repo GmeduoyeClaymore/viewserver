@@ -35,6 +35,6 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
 
     @Override
     public Map<String, IRecordLoader> getDataLoaders() {
-        return null;
+        return loaders;
     }
 }
