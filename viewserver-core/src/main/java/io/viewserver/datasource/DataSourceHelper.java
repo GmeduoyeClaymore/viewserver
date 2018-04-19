@@ -20,6 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.execution.ExecutionPlanRunner;
+import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.plan.DataSourceExecutionPlan;
 import io.viewserver.operators.table.TableKeyDefinition;
@@ -27,6 +28,8 @@ import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -35,22 +38,12 @@ import java.util.List;
  */
 public class DataSourceHelper {
 
-    public static io.viewserver.schema.Schema getSchema(SchemaConfig schema1 ) {
-        io.viewserver.schema.Schema schema = new io.viewserver.schema.Schema();
-        List<Column> columns = schema1.getColumns();
-        int count = columns.size();
-        for (int i = 0; i < count; i++) {
-            Column column = columns.get(i);
-            ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(column.getName(), column.getType().getColumnType());
-            ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(columnHolder.getType());
-            columnMetadata.setDataType(column.getType());
-            columnHolder.setMetadata(columnMetadata);
-            schema.addColumn(columnHolder);
-        }
-        return schema;
-    }
-    public static void runDataSourceExecutionPlan(IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
-        ExecutionPlanRunner executionPlanRunner = new ExecutionPlanRunner();
+    private static final Logger log = LoggerFactory.getLogger(DataSourceExecutionPlan.class);
+
+    public static void runDataSourceExecutionPlan(IExecutionPlanRunner executionPlanRunner,IDataSource dataSource, IDataSourceRegistry dataSourceRegistry, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult) {
+
+        log.info("Starting to run execution plan for " + dataSource.getName());
+
         DataSourceExecutionPlanContext dataSourceExecutionPlanContext = new DataSourceExecutionPlanContext(dataSource);
         dataSourceExecutionPlanContext.setExecutionContext(executionContext);
         dataSourceExecutionPlanContext.setCatalog(catalog);
@@ -59,10 +52,12 @@ public class DataSourceHelper {
         executionPlanRunner.executePlan(dataSourceExecutionPlan, dataSourceExecutionPlanContext, executionContext, catalog, commandResult);
 
         dataSourceRegistry.onDataSourceBuilt(dataSourceExecutionPlanContext);
+
+        log.info("Finished execution plan for " + dataSource.getName());
     }
 
 
-    public static ColumnHolder createColumnHolder(String dimensionNamespace, String dimensionName, ColumnType type,Cardinality cardinality,IDimensionMapper dimensionMapper) {
+    public static ColumnHolder createColumnHolder(String dimensionNamespace, String dimensionName, ContentType type, Cardinality cardinality, IDimensionMapper dimensionMapper) {
         io.viewserver.schema.column.ColumnType schemaColumnType = type.getColumnType();
         if (dimensionMapper != null) {
             dimensionMapper.registerDimension(dimensionNamespace, dimensionName, type);

@@ -3,12 +3,8 @@ package io.viewserver.adapters.firebase;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.datasource.Column;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.SchemaConfig;
-import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnFlags;
-import io.viewserver.schema.column.ColumnHolder;
-import io.viewserver.schema.column.ColumnMetadata;
 
 import java.sql.Timestamp;
 
@@ -36,7 +32,7 @@ public class DocumentChangeRecord extends Record {
         }
     }
 
-    public Object getFirebaseDocumentValue(ColumnType dataType, String colName, QueryDocumentSnapshot doc) {
+    public Object getFirebaseDocumentValue(ContentType dataType, String colName, QueryDocumentSnapshot doc) {
         switch (dataType) {
             case Bool: {
                 return doc.getBoolean(colName);

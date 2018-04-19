@@ -22,7 +22,7 @@ package io.viewserver.datasource;
 public class CalculatedColumn extends Column {
     private String expression;
 
-    public CalculatedColumn(String name, ColumnType type, String expression) {
+    public CalculatedColumn(String name, ContentType type, String expression) {
         super(name, type);
         this.expression = expression;
     }

@@ -28,8 +28,11 @@ import java.util.List;
 
 @JsonIgnoreProperties({ "calcsName", "indexName" })
 public class DataSource extends DataSourceBase {
+    public static final String DIMENSION_MAP_NAME = "dimMap";
     public static final String CALCS_NAME = "calcs";
     public static final String INDEX_NAME = "index";
+    public static final String TABLE_NAME = "table";
+    public static final String DEFAUT_NAME = "default";
     private static final Logger log = LoggerFactory.getLogger(DataSource.class);
     private List<ReportContext> startupReports;
     private PartitionConfig partitionConfig;

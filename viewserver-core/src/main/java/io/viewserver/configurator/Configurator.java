@@ -117,7 +117,7 @@ public class Configurator implements IConfigurator {
                     state.catalog = (ICatalog) state.catalog.getOperator(parent);
                     name = name.substring(lastSlash + 1);
                 }
-                operator = operatorFactory.createOperator(name, state);
+                operator = operatorFactory.createOperator(name, state,  operatorConfig.getConfig());
                 state.catalog = tempCatalog;
                 state.newOperators.add(operator);
             }

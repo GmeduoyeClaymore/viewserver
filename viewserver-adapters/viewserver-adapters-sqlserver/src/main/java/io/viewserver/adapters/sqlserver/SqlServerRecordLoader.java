@@ -19,15 +19,7 @@
  */
 package io.viewserver.adapters.sqlserver;
 
-import io.viewserver.adapters.jdbc.JdbcRecordLoaderBase;
-import io.viewserver.util.ViewServerException;
-import net.sourceforge.jtds.jdbcx.JtdsDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sql.DataSource;
-
-/*public class SqlServerRecordLoader extends JdbcRecordLoaderBase {
+/*public class SqlServerRecordLoader extends JdbcRecordLoader {
     private static final Logger log = LoggerFactory.getLogger(SqlServerRecordLoader.class);
     private JtdsDataSource dataSource;
     private String server;

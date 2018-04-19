@@ -16,24 +16,20 @@
 
 package io.viewserver.datasource;
 
-import io.viewserver.messages.tableevent.ISchemaChange;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 
-/**
- * Created by nickc on 13/10/2014.
- */
+
 public class Column {
     private String name;
-    private ColumnType type;
+    private ContentType type;
     private EnumSet<ColumnOption> options = EnumSet.noneOf(ColumnOption.class);
     private Object defaultValue;
 
     public Column() {
     }
 
-    public Column(String name, ColumnType type) {
+    public Column(String name, ContentType type) {
         this.name = name;
         this.type = type;
     }
@@ -71,12 +67,22 @@ public class Column {
         this.name = name;
     }
 
-    public ColumnType getType() {
+    public ContentType getType() {
         return type;
     }
 
-    public void setType(ColumnType type) {
+    public void setType(ContentType type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Column{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", options=" + options +
+                ", defaultValue=" + defaultValue +
+                '}';
     }
 }
 

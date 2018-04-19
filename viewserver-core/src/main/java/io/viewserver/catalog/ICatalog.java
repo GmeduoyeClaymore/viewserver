@@ -44,13 +44,18 @@ public interface ICatalog {
 
     ICatalog createDescendant(String path);
 
+    ICatalog getDescendant(String path);
+
     void addChild(ICatalog childCatalog);
 
     void removeChild(ICatalog childCatalog);
+
+    IOperator getRelativeOperator(String relativePath, boolean isLocalName);
 
     java.util.Collection<IOperator> getAllOperators();
 
     ICatalog getChild(String name);
 
     void tearDown();
+
 }

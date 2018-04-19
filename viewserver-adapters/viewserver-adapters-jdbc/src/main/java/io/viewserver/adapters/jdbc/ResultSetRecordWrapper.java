@@ -22,6 +22,8 @@ import io.viewserver.datasource.Column;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.util.ViewServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Clob;
 import java.sql.ResultSet;
@@ -37,22 +39,21 @@ import java.util.TimeZone;
 public class ResultSetRecordWrapper extends BaseRecordWrapper {
     private ResultSet resultSet;
     private Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private static final Logger log = LoggerFactory.getLogger(ResultSetRecordWrapper.class);
+
+    public ResultSetRecordWrapper(SchemaConfig config) {
+        super(config);
+    }
 
 
     public ResultSetRecordWrapper(ResultSet resultSet, SchemaConfig config) {
         super(config);
         this.resultSet = resultSet;
     }
-    public ResultSetRecordWrapper(SchemaConfig config) {
-        super(config);
-    }
 
-
-    void setResultSet(ResultSet resultSet) {
+    public void setResultSet(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
-
-
 
     private String[] getResultSetColumnNames(){
         try {
@@ -75,7 +76,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getBoolean(columnName);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return false;
         }
     }
 
@@ -88,7 +90,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
             }
             return NullableBool.fromBoolean(value);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return null;
         }
     }
 
@@ -97,7 +100,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getByte(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -106,7 +110,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getShort(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -115,7 +120,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getInt(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -124,7 +130,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getLong(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -133,7 +140,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getFloat(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -142,7 +150,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getDouble(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return -1;
         }
     }
 
@@ -152,7 +161,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
             String value = resultSet.getString(getDataSourceColumnName(columnName));
             return this.replaceNullValues(columnName, value, String.class);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return null;
         }
     }
 
@@ -163,7 +173,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getDate(getDataSourceColumnName(columnName), cal);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return null;
         }
     }
 
@@ -172,7 +183,8 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getTimestamp(getDataSourceColumnName(columnName), cal);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.trace(String.format("Issue getting column %s",columnName),e);
+            return null;
         }
     }
 

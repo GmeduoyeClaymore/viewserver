@@ -1,6 +1,6 @@
 package io.viewserver.command;
 
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.ITableRow;
@@ -50,7 +50,7 @@ public class RowUpdater implements ITableRowUpdater {
             }
 
             ColumnMetadata metadata = columnHolder.getMetadata();
-            ColumnType dataType = metadata.getDataType();
+            ContentType dataType = metadata.getDataType();
 
             switch (dataType) {
                 case Bool: {

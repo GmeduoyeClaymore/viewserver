@@ -18,6 +18,7 @@ package io.viewserver.adapters.csv;
 
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.IRecordLoader;
+import io.viewserver.datasource.OperatorCreationConfig;
 import io.viewserver.datasource.SchemaConfig;
 import javolution.io.UTF8StreamReader;
 import org.apache.commons.csv.CSVFormat;
@@ -39,9 +40,11 @@ public class CsvRecordLoader implements IRecordLoader {
     protected int multiple = 1;
     protected final CsvRecordWrapper recordWrapper;
     private SchemaConfig schemaConfig;
+    private OperatorCreationConfig creationConfig;
 
-    public CsvRecordLoader(SchemaConfig schemaConfig) {
+    public CsvRecordLoader(SchemaConfig schemaConfig, OperatorCreationConfig creationConfig) {
         this.schemaConfig = schemaConfig;
+        this.creationConfig = creationConfig;
         recordWrapper = getCsvRecordWrapper(schemaConfig);
     }
 
@@ -51,6 +54,12 @@ public class CsvRecordLoader implements IRecordLoader {
 
     public SchemaConfig getSchemaConfig() {
         return schemaConfig;
+    }
+
+
+    @Override
+    public OperatorCreationConfig getCreationConfig() {
+        return creationConfig;
     }
 
     @Override

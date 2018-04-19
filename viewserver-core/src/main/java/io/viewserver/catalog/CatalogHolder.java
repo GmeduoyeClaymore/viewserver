@@ -163,7 +163,8 @@ public class CatalogHolder implements ICatalog {
         return getRelativeOperator(name, isLocalName);
     }
 
-    private IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
+    @Override
+    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
         String name;
         int nextSlash = relativePath.indexOf("/");
         if (nextSlash > -1) {
@@ -177,7 +178,7 @@ public class CatalogHolder implements ICatalog {
         }
         if ("..".equals(name)) {
             if (getParent() != null) {
-                return getParent().getOperator(relativePath);
+                return getParent().getRelativeOperator(relativePath, isLocalName);
             } else {
                 return null;
             }
@@ -185,11 +186,11 @@ public class CatalogHolder implements ICatalog {
         IOperator operator = operatorsByName.get(name);
         if (relativePath != null && operator instanceof ICatalog) {
             // pass the path to the child catalog
-            return ((ICatalog) operator).getOperator(relativePath);
+            return ((ICatalog) operator).getRelativeOperator(relativePath, isLocalName);
         }
         if (operator == null && isLocalName && getParent() != null) {
             // if it's a local name, search up the tree
-            return getParent().getOperator(name);
+            return getParent().getRelativeOperator(name, isLocalName);
         }
         // we either found it here, or it doesn't exist
         return operator;
@@ -314,5 +315,18 @@ public class CatalogHolder implements ICatalog {
     public ICatalog getChild(String name) {
         Optional<ICatalog> child = children.values().stream().filter((c) -> c.getName().equals(name)).findFirst();
         return child.isPresent() ? child.get() : null;
+    }
+
+    @Override
+    public ICatalog getDescendant(String path) {
+        ICatalog tempParent = this;
+        String[] components = path.split("/");
+        for (String component : components) {
+            if("".equals(component)){
+                continue;
+            }
+            tempParent = getChild(component);
+        }
+        return tempParent;
     }
 }

@@ -115,6 +115,11 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     }
 
     @Override
+    public ICatalog getDescendant(String path) {
+        return catalogHolder.getDescendant(path);
+    }
+
+    @Override
     public void addChild(ICatalog childCatalog) {
         catalogHolder.addChild(childCatalog);
     }
@@ -122,6 +127,11 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     @Override
     public void removeChild(ICatalog childCatalog) {
         catalogHolder.removeChild(childCatalog);
+    }
+
+    @Override
+    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
+        return catalogHolder.getRelativeOperator(relativePath,isLocalName);
     }
 
     @Override

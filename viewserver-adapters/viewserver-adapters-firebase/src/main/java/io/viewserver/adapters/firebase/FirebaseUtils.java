@@ -2,7 +2,7 @@ package io.viewserver.adapters.firebase;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnMetadata;
@@ -24,8 +24,8 @@ public class FirebaseUtils{
         }
     }
 
-    public static ColumnType getDataType(ColumnHolder columnHolder){
-        io.viewserver.datasource.ColumnType dataType = null;
+    public static ContentType getDataType(ColumnHolder columnHolder){
+        ContentType dataType = null;
         ColumnMetadata metadata = columnHolder.getMetadata();
         if (metadata != null) {
             if (metadata.isFlagged(ColumnFlags.DATASOURCE_CALCULATION)) {
@@ -40,26 +40,26 @@ public class FirebaseUtils{
         return dataType;
     }
 
-    public static io.viewserver.datasource.ColumnType mapToDataType(io.viewserver.schema.column.ColumnType columnType) {
+    public static ContentType mapToDataType(io.viewserver.schema.column.ColumnType columnType) {
         switch (columnType) {
             case Bool:
-                return io.viewserver.datasource.ColumnType.Bool;
+                return ContentType.Bool;
             case NullableBool:
-                return io.viewserver.datasource.ColumnType.NullableBool;
+                return ContentType.NullableBool;
             case Byte:
-                return io.viewserver.datasource.ColumnType.Byte;
+                return ContentType.Byte;
             case Short:
-                return io.viewserver.datasource.ColumnType.Short;
+                return ContentType.Short;
             case Int:
-                return io.viewserver.datasource.ColumnType.Int;
+                return ContentType.Int;
             case Long:
-                return io.viewserver.datasource.ColumnType.Long;
+                return ContentType.Long;
             case Float:
-                return io.viewserver.datasource.ColumnType.Float;
+                return ContentType.Float;
             case Double:
-                return io.viewserver.datasource.ColumnType.Double;
+                return ContentType.Double;
             case String:
-                return io.viewserver.datasource.ColumnType.String;
+                return ContentType.String;
             default:
                 throw new IllegalArgumentException(String.format("Unknown column type '%s'", columnType));
         }

@@ -5,10 +5,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentChange;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreException;
-import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.IRecordLoader;
-import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.datasource.*;
 import io.viewserver.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +21,19 @@ public class FirebaseRecordLoader implements IRecordLoader{
     private final FirebaseConnectionFactory connectionFactory;
     private String tableName;
     private SchemaConfig config;
+    private OperatorCreationConfig creationConfig;
     boolean snapshotComplete;
 
-    public FirebaseRecordLoader(FirebaseConnectionFactory connectionFactory, String tableName, SchemaConfig config) {
+    public FirebaseRecordLoader(FirebaseConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.connectionFactory = connectionFactory;
         this.tableName = tableName;
         this.config = config;
+        this.creationConfig = creationConfig;
+    }
+
+    @Override
+    public OperatorCreationConfig getCreationConfig() {
+        return creationConfig;
     }
 
     @Override

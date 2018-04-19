@@ -1,21 +1,14 @@
 package io.viewserver.adapters.common;
 
-import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.*;
-import io.viewserver.datasource.ColumnType;
-import io.viewserver.expression.IExpressionParser;
-import io.viewserver.expression.function.FunctionRegistry;
-import io.viewserver.expression.parser.ExpressionVisitorImpl;
-import io.viewserver.expression.tree.*;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.schema.column.*;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Paul on 15/02/2018.
@@ -56,7 +49,7 @@ public class RowUpdater implements ITableRowUpdater {
             }
 
             ColumnMetadata metadata = columnHolder.getMetadata();
-            io.viewserver.datasource.ColumnType dataType = metadata.getDataType();
+            ContentType dataType = metadata.getDataType();
 
             switch (dataType) {
                 case Bool: {

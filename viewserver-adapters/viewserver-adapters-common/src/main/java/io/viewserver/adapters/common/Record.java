@@ -37,7 +37,7 @@ public class Record implements IRecord {
 
     public Record() {}
 
-    void initialiseFromRecord(IRecord source) {
+    public void initialiseFromRecord(IRecord source) {
         values.clear();
         String[] columnNames = source.getColumnNames();
         int count = columnNames.length;

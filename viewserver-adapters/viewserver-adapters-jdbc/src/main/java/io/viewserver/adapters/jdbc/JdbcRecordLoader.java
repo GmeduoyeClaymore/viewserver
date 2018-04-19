@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class JdbcRecordLoaderBase implements IWritableRecordLoader {
+public class JdbcRecordLoaderBase implements IWritableRecordLoader {
     private static final Logger log = LoggerFactory.getLogger(JdbcRecordLoaderBase.class);
     private IWritableDataQueryProvider dataQueryProvider;
     private JdbcConnectionFactory connectionFactory;
@@ -48,10 +48,6 @@ public abstract class JdbcRecordLoaderBase implements IWritableRecordLoader {
         this.connectionFactory = connectionFactory;
         this.config = config;
         recordWrapper = new ResultSetRecordWrapper(config);
-    }
-
-    public SchemaConfig getConfig() {
-        return config;
     }
 
     public SchemaConfig getDerivedSchema() {
@@ -75,6 +71,11 @@ public abstract class JdbcRecordLoaderBase implements IWritableRecordLoader {
     @Override
     public void setTableKeyDefinition(TableKeyDefinition tableKeyDefinition) {
         this.tableKeyDefinition = tableKeyDefinition;
+    }
+
+    @Override
+    public SchemaConfig getSchemaConfig() {
+        return config;
     }
 
     @Override
