@@ -16,6 +16,10 @@ export default class OrderRequestDaoContext{
     position: OrderRequestDaoContext.DEFAULT_POSITION
   };
 
+  static DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
+    columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    reportId: 'driverOrderRequest'
+  };
 
   constructor(client, options = {}) {
     this.client = client;

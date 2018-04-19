@@ -1,85 +1,38 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route, memoize} from 'custom-redux';
-import { PagingListView, LoadingScreen, OrderRequest, Tabs } from 'common/components';
-import { View, Text, Spinner, Header, Body, Title, Tab } from 'native-base';
-import { getDaoState, isAnyLoading, getNavigationProps} from 'common/dao';
+import {LoadingScreen, Tabs } from 'common/components';
+import {Container, Header, Body, Title, Tab } from 'native-base';
+import {getDaoState, isAnyLoading} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
+import DriverOrderRequestItems from './DriverOrderRequestItems';
 
-const DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
-  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-  reportId: 'driverOrderRequest'
-};
-
-const Paging = () => <Spinner />;
-const NoItems = () => <Text empty>No jobs available</Text>;
-const RowView = ({ item: orderSummary, isLast, isFirst, history, parentPath }) => <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} isLast={isLast} isFirst={isFirst} next={`${parentPath}/DriverOrderRequestDetail`} />;
-
-const getDefaultOptions = (contentType, contentTypeOptions) => {
-  return {
-    ...DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS,
-    userId: undefined,
-    contentType,
-    contentTypeOptions
-  };
-};
-const OrderView = ({history, parentPath, contentType, contentTypeOptions, height, width}) => (
-  <View style={{ flex: 1, height, width}}>
-    <PagingListView
-      ref={c=> {this.pagingListView = c;}}
-      daoName='orderRequestDao'
-      parentPath={parentPath}
-      history={history}
-      dataPath={['driver', 'orders']}
-      rowView={RowView}
-      options={getDefaultOptions(contentType, contentTypeOptions)}
-      paginationWaitingView={Paging}
-      emptyView={NoItems}
-      pageSize={10}
-      headerView={() => null}
-    />
-  </View>
-);
 class DriverOrderRequests extends Component{
-  constructor(props){
-    super(props);
-    this.goToTabNamed = this.goToTabNamed.bind(this);
-    this.state  = {};
-  }
-  
-  goToTabNamed(name){
+  goToTabNamed = (name) => {
     const {history, path} = this.props;
     history.replace(`${path}/ContentTypeId${name}X`);
   }
-  
 
   render(){
     const { busy, selectedContentTypes = [], height, history, navContainerOverride, parentPath, path, contentTypeOptions, selectedContentTypeIndex} = this.props;
-    if (busy) {
-      return <LoadingScreen text="Loading jobs..." />;
-    }
-  
-    const {goToTabNamed} = this;
-    return <View style={{flex: 1}}>
+
+    return busy ? <LoadingScreen text="Loading available jobs..." /> : <Container>
       <Header hasTabs>
         <Body><Title>Available Jobs</Title></Body>
       </Header>
       <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle}>
-        {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => goToTabNamed(c.contentTypeId)} />)}
+        {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => this.goToTabNamed(c.contentTypeId)}/>)}
       </Tabs>
       {selectedContentTypes[0] ? <ReduxRouter  name="DriverOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
-        {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={OrderView} />)}
+        {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={DriverOrderRequestItems} />)}
       </ReduxRouter> : null}
-    </View>;
+    </Container>;
   }
 }
 
-
+//TODO - tidy up this unholy mess :)
 const getSelectedContentTypeFromLocation = memoize((history, selectedContentTypes) => {
   const {location} = history;
-  if (!selectedContentTypes){
-    return 0;
-  }
-  if (!location.pathname.includes('/ContentTypeId')){
+  if (!selectedContentTypes || !location.pathname.includes('/ContentTypeId')){
     return 0;
   }
   return selectedContentTypes.find(element => { return location.pathname.includes(`/ContentTypeId${element.contentTypeId}X`);});
@@ -99,8 +52,8 @@ const mapStateToProps = (state, initialProps) => {
   if (!user){
     return;
   }
+  //TODO - urg this could also do with some love
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao') || [];
-  const navigationProps = getNavigationProps(initialProps) || [];
   const {history} = initialProps;
   const {selectedContentTypes, selectedContentTypeOptions} = getSelectedContentTypesFromUser(user, contentTypes);
   const selectedContentType = getSelectedContentTypeFromLocation(history, selectedContentTypes) || selectedContentTypes[0] || {};
@@ -108,6 +61,7 @@ const mapStateToProps = (state, initialProps) => {
   const contentTypeOptions = contentTypeId ? selectedContentTypeOptions[contentTypeId] : {};
   let selectedContentTypeIndex = selectedContentTypes.indexOf(selectedContentType);
   selectedContentTypeIndex = !!~selectedContentTypeIndex ? selectedContentTypeIndex : 0;
+
   return {
     ...initialProps,
     selectedContentTypes,
@@ -115,12 +69,9 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentTypeIndex,
     contentTypeId,
     selectedContentType,
-    isDelivery: navigationProps.isDelivery !== undefined ? navigationProps.isDelivery : true,
     busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !selectedContentType,
     user
   };
 };
 
-export default connect(
-  mapStateToProps
-)(DriverOrderRequests);
+export default connect(mapStateToProps)(DriverOrderRequests);
