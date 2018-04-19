@@ -18,21 +18,14 @@ package io.viewserver.server.steps;
 
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
-import io.viewserver.client.RowEvent;
 import io.viewserver.controller.ControllerUtils;
-import io.viewserver.datasource.Column;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.command.IGenericJSONCommand;
-import io.viewserver.messages.command.ITableEditCommand;
 import io.viewserver.messages.common.ValueLists;
-import io.viewserver.messages.config.IRollingTableConfig;
 import io.viewserver.network.Command;
-import io.viewserver.operators.table.ProtoRollingTableConfig;
-import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.MapReader;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,11 +38,12 @@ import cucumber.api.java.en.When;
 import gherkin.formatter.model.DataTableRow;
 import org.h2.util.IOUtils;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -57,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ViewServerClientSteps {
     private ViewServerClientContext clientContext;
-
+    private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
     public ViewServerClientSteps(ViewServerClientContext clientContext) {
         this.clientContext = clientContext;
     }
@@ -150,6 +144,47 @@ public class ViewServerClientSteps {
         Assert.assertNotNull(clientContext.getSubscription("report"));
     }
 
+    @When("^All data sources are built$")
+    public void All_datasources_are_initialized() throws Throwable {
+        assertClientConnected();
+        CountDownLatch subscribeLatch = new CountDownLatch(1);
+        Options options = new Options();
+        options.setOffset(0);
+        options.setLimit(100);
+        trySubscribeOperator("/datasources",options,subscribeLatch);
+        subscribeLatch.await(20, TimeUnit.SECONDS);
+
+        ClientSubscription subscription = clientContext.getSubscription("/datasources");
+        Assert.assertNotNull(subscription);
+
+        boolean hasUnbuiltDataSource = false;
+        int counter = 0;
+        do{
+            System.out.println("------------------ CHECKING DATA SOURCES --------------------");
+            List<Map<String, Object>> snapshot = subscription.getSnapshot().get();
+            for(Map<String,Object> snap :snapshot){
+                String status = (String) snap.get("status");
+                if(!"BUILT".equals(status)){
+                    hasUnbuiltDataSource = true;
+                    System.out.println(String.format("Waiting for data source %s which is in state %s",snap.get("name"),status));
+                }
+            }
+            if(hasUnbuiltDataSource){
+                System.out.println("------------------ WAITING ON DATA SOURCES --------------------");
+                Thread.sleep(1000);
+            }
+            counter++;
+        }while (hasUnbuiltDataSource && counter < 20);
+
+        Assert.assertFalse("Some data sources still not built",hasUnbuiltDataSource);
+        subscription.close();
+
+
+
+    }
+
+
+
     @Given("^controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
     public void controller_action_invoked_with_data_file(String controllerName, String action, String dataFile) throws Throwable {
         assertClientConnected();
@@ -225,6 +260,29 @@ public class ViewServerClientSteps {
             @Override
             public void onFailure(Throwable throwable) {
                     trySubscribe(subscribeLatch);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void trySubscribeOperator(String operatorName,Options options,CountDownLatch subscribeLatch){
+        ListenableFuture<ClientSubscription> subFuture = clientContext.client.subscribe(operatorName, options,
+                new TestSubscriptionEventHandler());
+
+        Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
+            @Override
+            public void onSuccess(ClientSubscription clientSubscription) {
+                clientContext.addSubscription(operatorName, clientSubscription);
+                subscribeLatch.countDown();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                trySubscribe(subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

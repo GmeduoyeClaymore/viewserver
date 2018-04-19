@@ -31,16 +31,16 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
 
     @Override
     public LookupKey registerDimension(String dimensionNamespace, Dimension dimension) {
-        return registerDimension(dimensionNamespace, dimension.getName(),dimension.getColumnType());
+        return registerDimension(dimensionNamespace, dimension.getName(),dimension.getContentType());
     }
-    public LookupKey registerDimension(String dimensionNamespace, String dimensionName, ColumnType dimensionColumnType) {
+    public LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType) {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         Object existingLookup = lookups.get(key);
         if (existingLookup != null) {
             throw new IllegalStateException(String.format("%s has already been registered as a dimension", key));
         }
 
-        switch (dimensionColumnType) {
+        switch (dimensionContentType) {
             case Bool:
             case NullableBool: {
                 break;
@@ -66,7 +66,7 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
                 break;
             }
             default: {
-                throw new IllegalArgumentException(String.format("Invalid dimension type '%s'", dimensionColumnType));
+                throw new IllegalArgumentException(String.format("Invalid dimension type '%s'", dimensionContentType));
             }
         }
         return key;

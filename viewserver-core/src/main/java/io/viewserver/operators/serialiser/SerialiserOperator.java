@@ -21,7 +21,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.SubscriptionManager;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.messages.IMessage;
@@ -183,7 +183,7 @@ public class SerialiserOperator extends OperatorBase {
             addColumn.release();
         }
 
-        private ISchemaChange.DataType serialiseDataType(ColumnType dataType) {
+        private ISchemaChange.DataType serialiseDataType(ContentType dataType) {
             switch (dataType) {
                 case Bool: {
                     return ISchemaChange.DataType.Boolean;

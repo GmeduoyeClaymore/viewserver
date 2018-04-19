@@ -45,7 +45,7 @@ public class GroupByOperatorFactory extends ConfigurableOperatorFactoryBase<IGro
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new GroupByOperator(name, state.executionContext, state.catalog, summaryRegistry, tableStorageFactory.createStorage());
     }
 

@@ -19,40 +19,40 @@ public class UserDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("userId", ColumnType.String),
-                                        new Column("created", ColumnType.DateTime),
-                                        new Column("dob", ColumnType.Date),
-                                        new Column("lastModified", ColumnType.DateTime),
-                                        new Column("firstName", ColumnType.String),
-                                        new Column("lastName", ColumnType.String),
-                                        new Column("password", ColumnType.String),
-                                        new Column("contactNo", ColumnType.String),
-                                        new Column("selectedContentTypes", ColumnType.String),
-                                        new Column("email",  ColumnType.String),
-                                        new Column("type",  ColumnType.String),
-                                        new Column("stripeCustomerId",  ColumnType.String),
-                                        new Column("stripeAccountId", ColumnType.String),
-                                        new Column("stripeDefaultSourceId",  ColumnType.String),
-                                        new Column("fcmToken",  ColumnType.String),
-                                        new Column("chargePercentage",  ColumnType.Int),
-                                        new Column("latitude", ColumnType.Double),
-                                        new Column("longitude", ColumnType.Double),
-                                        new Column("range",  ColumnType.Int),
-                                        new Column("imageUrl",  ColumnType.String),
-                                        new Column("online",ColumnType.Bool),
-                                        new Column("userStatus",  ColumnType.String),
-                                        new Column("statusMessage",  ColumnType.String)
+                                        new Column("userId", ContentType.String),
+                                        new Column("created", ContentType.DateTime),
+                                        new Column("dob", ContentType.Date),
+                                        new Column("lastModified", ContentType.DateTime),
+                                        new Column("firstName", ContentType.String),
+                                        new Column("lastName", ContentType.String),
+                                        new Column("password", ContentType.String),
+                                        new Column("contactNo", ContentType.String),
+                                        new Column("selectedContentTypes", ContentType.String),
+                                        new Column("email",  ContentType.String),
+                                        new Column("type",  ContentType.String),
+                                        new Column("stripeCustomerId",  ContentType.String),
+                                        new Column("stripeAccountId", ContentType.String),
+                                        new Column("stripeDefaultSourceId",  ContentType.String),
+                                        new Column("fcmToken",  ContentType.String),
+                                        new Column("chargePercentage",  ContentType.Int),
+                                        new Column("latitude", ContentType.Double),
+                                        new Column("longitude", ContentType.Double),
+                                        new Column("range",  ContentType.Int),
+                                        new Column("imageUrl",  ContentType.String),
+                                        new Column("online", ContentType.Bool),
+                                        new Column("userStatus",  ContentType.String),
+                                        new Column("statusMessage",  ContentType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )
                 .withCalculatedColumns(
-                        new CalculatedColumn("userConstantJoinCol", ColumnType.Int, "1")
+                        new CalculatedColumn("userConstantJoinCol", ContentType.Int, "1")
                 )
 				.withNodes(
                         new GroupByNode("ratingGroupBy")
                                 .withGroupByColumns("userId")
                                 .withSummary("ratingAvg", "avg", "rating")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(RatingDataSource.NAME, RatingDataSource.NAME)),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME)),
                         new JoinNode("ratingJoin")
                                 .withLeftJoinColumns("userId")
                                 .withLeftJoinOuter()
@@ -60,8 +60,8 @@ public class UserDataSource {
                                 .withConnection(UserDataSource.NAME, Constants.OUT, "left")
                                 .withConnection("ratingGroupBy", Constants.OUT, "right")
                 )
-                .withCalculatedColumns(new CalculatedColumn("dimension_userId", ColumnType.String, "userId"))
-                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ColumnType.String), new Dimension("online", Cardinality.Byte, ColumnType.Bool, true)))
+                .withCalculatedColumns(new CalculatedColumn("dimension_userId", ContentType.String, "userId"))
+                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ContentType.String), new Dimension("online", Cardinality.Byte, ContentType.Bool, true)))
                 .withOutput("ratingJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

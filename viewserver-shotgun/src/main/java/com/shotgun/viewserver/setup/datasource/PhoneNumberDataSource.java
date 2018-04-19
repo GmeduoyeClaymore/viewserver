@@ -14,11 +14,11 @@ public class PhoneNumberDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("phoneNumber", ColumnType.String),
-                                        new Column("orderId",  ColumnType.String),
-                                        new Column("userPhoneNumber", ColumnType.String),
-                                        new Column("phoneNumberStatus", ColumnType.String),
-                                        new Column("assignedTime",  ColumnType.DateTime)
+                                        new Column("phoneNumber", ContentType.String),
+                                        new Column("orderId",  ContentType.String),
+                                        new Column("userPhoneNumber", ContentType.String),
+                                        new Column("phoneNumberStatus", ContentType.String),
+                                        new Column("assignedTime",  ContentType.DateTime)
                                 ))
                                 .withKeyColumns("phoneNumber")
                 )

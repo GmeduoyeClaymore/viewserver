@@ -16,12 +16,14 @@
 
 package io.viewserver.datasource;
 
+import io.viewserver.operators.table.ISchemaConfig;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class SchemaConfig {
+public class SchemaConfig implements ISchemaConfig {
     private List<Column> columns;
     private List<String> keyColumns;
 
@@ -30,12 +32,14 @@ public class SchemaConfig {
         keyColumns = new ArrayList<>();
     }
 
+    @Override
     public List<Column> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Column> columns) {
+    public SchemaConfig setColumns(List<Column> columns) {
         this.columns = columns;
+        return this;
     }
 
     public SchemaConfig withColumns(List<Column> columns) {
@@ -43,12 +47,14 @@ public class SchemaConfig {
         return this;
     }
 
+    @Override
     public List<String> getKeyColumns() {
         return keyColumns;
     }
 
-    public void setKeyColumns(List<String> keyColumns) {
+    public SchemaConfig setKeyColumns(List<String> keyColumns) {
         this.keyColumns = keyColumns;
+        return this;
     }
 
     public SchemaConfig withKeyColumns(String... keyColumns) {
@@ -76,5 +82,13 @@ public class SchemaConfig {
             i++;
         }
         return -1;
+    }
+
+    @Override
+    public String toString() {
+        return "SchemaConfig{" +
+                "columns=" + columns +
+                ", keyColumns=" + keyColumns +
+                '}';
     }
 }

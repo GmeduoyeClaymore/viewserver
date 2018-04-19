@@ -17,7 +17,6 @@
 package io.viewserver.operators.calccol;
 
 import io.viewserver.configurator.Configurator;
-import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
 import io.viewserver.schema.ITableStorage;
@@ -43,7 +42,7 @@ public class CalcColOperatorFactory extends ConfigurableOperatorFactoryBase<ICal
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new CalcColOperator(name, state.executionContext, state.catalog, tableStorageFactory.createStorage(), state.executionContext.getExpressionParser());
     }
 

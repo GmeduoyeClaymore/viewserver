@@ -14,19 +14,19 @@ public class ProductCategoryDataSource {
     public static DataSource getDataSource() {
         SchemaConfig schema = new SchemaConfig()
                 .withColumns(Arrays.asList(
-                        new Column("categoryId", ColumnType.String),
-                        new Column("category", ColumnType.String),
-                        new Column("parentCategoryId", ColumnType.String),
-                        new Column("path", ColumnType.String),
-                        new Column("level", ColumnType.Int),
-                        new Column("isLeaf", ColumnType.Bool)
+                        new Column("categoryId", ContentType.String),
+                        new Column("category", ContentType.String),
+                        new Column("parentCategoryId", ContentType.String),
+                        new Column("path", ContentType.String),
+                        new Column("level", ContentType.Int),
+                        new Column("isLeaf", ContentType.Bool)
                 ))
                 .withKeyColumns("categoryId");
 
         return new DataSource()
                 .withName(NAME)
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_parentCategoryId","parentCategoryId",Cardinality.Byte, ColumnType.String)
+                        new Dimension("dimension_parentCategoryId","parentCategoryId",Cardinality.Byte, ContentType.String)
                 ))
                 .withSchema(schema)
                 .withOutput(NAME)

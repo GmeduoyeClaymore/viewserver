@@ -18,9 +18,13 @@ package io.viewserver.schema.column;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
-import io.viewserver.expression.tree.IExpressionLong;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.operators.table.ISchemaConfig;
+import io.viewserver.operators.table.TableKeyDefinition;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by nickc on 26/09/2014.
@@ -210,8 +214,8 @@ public class ColumnHolderUtils {
     }
 
 
-    public static io.viewserver.schema.column.ColumnType getType(io.viewserver.datasource.ColumnType columnType) {
-        switch (columnType) {
+    public static io.viewserver.schema.column.ColumnType getType(ContentType contentType) {
+        switch (contentType) {
             case Bool: {
                 return io.viewserver.schema.column.ColumnType.Bool;
             }
@@ -240,15 +244,18 @@ public class ColumnHolderUtils {
                 return ColumnType.String;
             }
             default: {
-                throw new IllegalArgumentException("Cannot create metadata for column of unknown type " + columnType);
+                throw new IllegalArgumentException("Cannot create metadata for column of unknown type " + contentType);
             }
         }
     }
 
     public static void setValue(ColumnHolder columnHolder, int row, Object value) {
+        if(columnHolder.getColumn() == null){
+            throw new RuntimeException(String.format("No column configured for column holder named %s",columnHolder.getName()));
+        }
         switch (columnHolder.getType()) {
             case Bool: {
-                ((IWritableColumnBool)columnHolder.getColumn()).setBool(row, (Boolean) value);
+                ((IWritableColumnBool)columnHolder.getColumn()).setBool(row, (Boolean) defaultVal(value,false) );
                 break;
             }
             case NullableBool: {
@@ -256,15 +263,15 @@ public class ColumnHolderUtils {
                 break;
             }
             case Byte: {
-                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) value);
+                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) defaultVal(value,-1) );
                 break;
             }
             case Short: {
-                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) value);
+                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) defaultVal(value,-1) );
                 break;
             }
             case Int: {
-                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row, (Integer) value);
+                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row, (Integer) defaultVal(value,-1) );
                 break;
             }
             case Long: {
@@ -281,15 +288,16 @@ public class ColumnHolderUtils {
                         }
                     }
                 }
-                ((IWritableColumnLong)columnHolder.getColumn()).setLong(row, (Long) val);
+                ((IWritableColumnLong)columnHolder.getColumn()).setLong(row, (Long) defaultVal(val,Long.valueOf(-1)) );
                 break;
             }
             case Float: {
-                ((IWritableColumnFloat)columnHolder.getColumn()).setFloat(row, (Float) value);
+                ((IWritableColumnFloat)columnHolder.getColumn()).setFloat(row, (Float) defaultVal(value,Float.valueOf(-1)) );
                 break;
             }
             case Double: {
-                ((IWritableColumnDouble)columnHolder.getColumn()).setDouble(row, (Double) value);
+                IWritableColumnDouble column = (IWritableColumnDouble) columnHolder.getColumn();
+                column.setDouble(row, (Double) defaultVal(value,Double.valueOf(-1)) );
                 break;
             }
             case String: {
@@ -302,5 +310,31 @@ public class ColumnHolderUtils {
         }
     }
 
+    private static Object defaultVal(Object value, Object defaultVal) {
+        if(value == null){
+            return defaultVal;
+        }
+        return value;
+    }
 
+
+    public static TableKeyDefinition getKey(ISchemaConfig config){
+        List<String> keyColumns = config.getKeyColumns();
+        return new TableKeyDefinition(keyColumns.toArray(new String[keyColumns.size()]));
+    }
+
+    public static io.viewserver.schema.Schema getSchema(ISchemaConfig schema1 ) {
+        io.viewserver.schema.Schema schema = new io.viewserver.schema.Schema();
+        List<Column> columns = schema1.getColumns();
+        int count = columns.size();
+        for (int i = 0; i < count; i++) {
+            Column column = columns.get(i);
+            ColumnHolder columnHolder = createColumnHolder(column.getName(), column.getType().getColumnType());
+            ColumnMetadata columnMetadata = createColumnMetadata(columnHolder.getType());
+            columnMetadata.setDataType(column.getType());
+            columnHolder.setMetadata(columnMetadata);
+            schema.addColumn(columnHolder);
+        }
+        return schema;
+    }
 }

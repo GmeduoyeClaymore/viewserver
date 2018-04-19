@@ -42,7 +42,7 @@ public class SortOperatorFactory extends ConfigurableOperatorFactoryBase<ISortCo
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new SortOperator(name, state.executionContext, state.catalog, tableStorageFactory.createStorage());
     }
 

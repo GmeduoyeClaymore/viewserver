@@ -42,7 +42,7 @@ public class FilterOperatorFactory extends ConfigurableOperatorFactoryBase<IFilt
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new FilterOperator(name, state.executionContext, state.catalog, state.executionContext.getExpressionParser());
     }
 

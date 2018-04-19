@@ -16,107 +16,92 @@
 
 package io.viewserver.execution.nodes;
 
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.execution.ParameterHelper;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.config.IOperatorConfig;
-import io.viewserver.operators.filter.FilterOperator;
-import io.viewserver.operators.filter.IFilterConfig;
+import io.viewserver.operators.table.ISchemaConfig;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by nickc on 03/11/2014.
- */
-public class FilterNode extends GraphNodeBase<FilterNode> {
-    private FilterOperator.FilterMode mode = FilterOperator.FilterMode.Transparent;
-    private String expression;
 
-    public FilterNode(){
+public class TableNode extends GraphNodeBase<TableNode> {
+    private ISchemaConfig config;
+
+    public TableNode(){
         super();
     }
 
-    public FilterNode(String name) {
-        super(name, "Filter");
+    public TableNode(String name) {
+        super(name, "Table");
     }
 
-    public FilterNode withMode(FilterOperator.FilterMode mode) {
-        this.mode = mode;
+    public TableNode withSchemaConfig(ISchemaConfig config) {
+        this.config = config;
         return this;
     }
 
-    public FilterNode withExpression(String expression) {
-        this.expression = expression;
-        this.mode = FilterOperator.FilterMode.Filter;
-        return this;
+    public ISchemaConfig getConfig() {
+        return config;
     }
 
     @Override
     public Object getConfig(final ParameterHelper parameterHelper) {
-        return new IFilterConfig() {
+        return new ISchemaConfig() {
+
             @Override
-            public FilterOperator.FilterMode getMode() {
-                return mode;
+            public List<Column> getColumns() {
+                return parameteriseCols(config.getColumns(),parameterHelper);
             }
 
             @Override
-            public String getExpression() {
-                return parameterHelper != null ? parameterHelper.substituteParameterValues(expression) : expression;
-            }
-
-            @Override
-            public Map<String, String> getColumnAliases() {
-                return null;
+            public List<String> getKeyColumns() {
+                return parameterise(config.getKeyColumns(),parameterHelper);
             }
         };
     }
 
-    @Override
-    protected IOperatorConfig getConfigDto(ParameterHelper parameterHelper) {
-        return MessagePool.getInstance().get(io.viewserver.messages.config.IFilterConfig.class)
-                .setMode(getModeForDto(mode))
-                .setExpression(parameterHelper.substituteParameterValues(expression));
+    private List<Column> parameteriseCols(List<Column> columns, ParameterHelper parameterHelper) {
+        List<Column> result = new ArrayList<>();
+        for(Column col: columns){
+            result.add(new Column(parameterHelper.substituteParameterValues(col.getName()), col.getType()));
+        }
+        return result;
     }
 
-    private io.viewserver.messages.config.IFilterConfig.FilterMode getModeForDto(FilterOperator.FilterMode mode) {
-        switch (mode) {
-            case Transparent: {
-                return io.viewserver.messages.config.IFilterConfig.FilterMode.Transparent;
-            }
-            case Filter: {
-                return io.viewserver.messages.config.IFilterConfig.FilterMode.Filter;
-            }
-            default: {
-                throw new IllegalArgumentException(String.format("Unknown mode '%s'", mode.toString()));
-            }
+    private List<String> parameterise(List<String> columns,ParameterHelper parameterHelper) {
+        List<String> result = new ArrayList<>();
+        for(String col: columns){
+            result.add(parameterHelper.substituteParameterValues(col));
         }
+        return result;
     }
+
+    private SchemaConfig parameterise(ISchemaConfig config, ParameterHelper helper) {
+        return new SchemaConfig().setKeyColumns(parameterise(config.getKeyColumns(),helper)).setColumns(parameteriseCols(config.getColumns(),helper));
+    }
+
+    @Override
+    protected IOperatorConfig getConfigDto(ParameterHelper parameterHelper) {
+        return MessagePool.getInstance().get(io.viewserver.messages.config.ISchemaConfig.class)
+                .setKeyColumns(parameterise(config.getKeyColumns(),parameterHelper))
+                .setColumns(parameterise(config.getKeyColumns(),parameterHelper));
+    }
+
 
     @Override
     protected String getConfigForOperatorName(ParameterHelper parameterHelper) {
-        return String.format("filter:%s:%s", parameterHelper.substituteParameterValues(this.expression), this.mode.toString());
+        return String.format("table:%s", parameterise(this.config, parameterHelper));
     }
 
-    public FilterOperator.FilterMode getMode() {
-        return mode;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setMode(FilterOperator.FilterMode mode) {
-        this.mode = mode;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
 
     @Override
     public String toString() {
-        return "FilterNode{" +
-                "mode=" + mode +
-                ", expression='" + expression + '\'' +
+        return "TableNode{" +
+                "config=" + config +
+                ", operatorName='" + operatorName + '\'' +
                 '}';
     }
 }

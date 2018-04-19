@@ -43,7 +43,7 @@ public class UnionOperatorFactory extends ConfigurableOperatorFactoryBase<IUnion
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new UnionOperator(name, state.executionContext, state.catalog, tableStorageFactory.createStorage());
     }
 

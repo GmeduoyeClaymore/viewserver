@@ -17,8 +17,8 @@ public class ContentTypeReport {
                         new JoinNode("productCategoryJoin")
                                 .withLeftJoinColumns("rootProductCategory")
                                 .withRightJoinColumns("categoryId")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ContentTypeDataSource.NAME, ContentTypeDataSource.NAME), Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductCategoryDataSource.NAME, ProductCategoryDataSource.NAME), Constants.OUT, "right")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ContentTypeDataSource.NAME), Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductCategoryDataSource.NAME), Constants.OUT, "right")
                 )
                 .withOutput("productCategoryJoin");
     }

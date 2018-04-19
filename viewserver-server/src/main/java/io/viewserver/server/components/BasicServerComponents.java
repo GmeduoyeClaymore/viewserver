@@ -43,7 +43,7 @@ public class BasicServerComponents implements IBasicServerComponents {
         operatorFactoryRegistry = serverExecutionContext.getOperatorFactoryRegistry();
         configurator = new Configurator(operatorFactoryRegistry);
         commandHandlerRegistry = new CommandHandlerRegistry();
-        executionPlanRunner = new ExecutionPlanRunner();
+        executionPlanRunner = new ExecutionPlanRunner(configurator);
         subscriptionManager = new SubscriptionManager();
         connectionManager = new ConnectionManager(serverExecutionContext, getServerCatalog(), new ChunkedColumnStorage(1024));
         tableFactoryRegistry = new TableFactoryRegistry();

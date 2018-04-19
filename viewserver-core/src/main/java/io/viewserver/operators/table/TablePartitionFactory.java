@@ -30,10 +30,10 @@ public class TablePartitionFactory extends ConfigurableOperatorFactoryBase<ITabl
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
-        ITablePartitionConfig config = (ITablePartitionConfig) state.operatorSpec.getConfig();
-        return new TablePartitionOperator(name, state.executionContext, state.catalog, config.getPartitionColumnName(),
-                config.getPartitionValue());
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
+        ITablePartitionConfig cfg = (ITablePartitionConfig) state.operatorSpec.getConfig();
+        return new TablePartitionOperator(name, state.executionContext, state.catalog, cfg.getPartitionColumnName(),
+                cfg.getPartitionValue());
     }
 
     @Override

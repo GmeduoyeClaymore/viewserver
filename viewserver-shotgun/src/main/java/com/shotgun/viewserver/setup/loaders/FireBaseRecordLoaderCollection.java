@@ -1,11 +1,9 @@
 package com.shotgun.viewserver.setup.loaders;
 
-import io.viewserver.datasource.IRecordLoaderCollection;
+import io.viewserver.datasource.*;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseRecordLoader;
-import io.viewserver.datasource.IRecordLoader;
-import io.viewserver.datasource.SchemaConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +33,11 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
     }
 
     private void register(SchemaConfig schema, String operatorName) {
-        loaders.put(operatorName,new FirebaseRecordLoader(connectionFactory, operatorName, schema));
+        loaders.put(getOperatorPath(operatorName),new FirebaseRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT)));
+    }
+
+    static String getOperatorPath(String operatorName) {
+        return String.format("/%s/%s/table", "datasources/", operatorName);
     }
 
 

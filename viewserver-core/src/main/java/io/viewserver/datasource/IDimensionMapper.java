@@ -26,7 +26,7 @@ public interface IDimensionMapper {
 
     LookupKey registerDimension(String dimensionNamespace, Dimension dimension);
 
-    LookupKey registerDimension(String dimensionNamespace, String dimensionName, ColumnType dimensionColumnType);
+    LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType);
 
     String lookupString(String dimensionNamespace, String dimensionName, int id);
 

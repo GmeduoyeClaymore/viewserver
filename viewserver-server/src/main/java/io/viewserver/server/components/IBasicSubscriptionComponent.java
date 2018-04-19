@@ -1,4 +1,4 @@
 package io.viewserver.server.components;
 
-public interface IBasicSubscriptionComponent {
+public interface IBasicSubscriptionComponent extends IServerComponent{
 }

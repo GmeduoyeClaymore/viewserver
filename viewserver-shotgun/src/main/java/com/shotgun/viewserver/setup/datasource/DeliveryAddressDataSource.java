@@ -14,20 +14,20 @@ public class DeliveryAddressDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("deliveryAddressId", ColumnType.String),
-                                        new Column("userId", ColumnType.String),
-                                        new Column("created", ColumnType.DateTime),
-                                        new Column("lastUsed", ColumnType.DateTime),
-                                        new Column("isDefault", ColumnType.Bool),
-                                        new Column("flatNumber", ColumnType.String),
-                                        new Column("line1",  ColumnType.String),
-                                        new Column("line2",  ColumnType.String),
-                                        new Column("city", ColumnType.String),
-                                        new Column("country",  ColumnType.String),
-                                        new Column("postCode",  ColumnType.String),
-                                        new Column("latitude",  ColumnType.Double),
-                                        new Column("longitude", ColumnType.Double),
-                                        new Column("googlePlaceId",  ColumnType.String)
+                                        new Column("deliveryAddressId", ContentType.String),
+                                        new Column("userId", ContentType.String),
+                                        new Column("created", ContentType.DateTime),
+                                        new Column("lastUsed", ContentType.DateTime),
+                                        new Column("isDefault", ContentType.Bool),
+                                        new Column("flatNumber", ContentType.String),
+                                        new Column("line1",  ContentType.String),
+                                        new Column("line2",  ContentType.String),
+                                        new Column("city", ContentType.String),
+                                        new Column("country",  ContentType.String),
+                                        new Column("postCode",  ContentType.String),
+                                        new Column("latitude",  ContentType.Double),
+                                        new Column("longitude", ContentType.Double),
+                                        new Column("googlePlaceId",  ContentType.String)
                                         ))
                                 .withKeyColumns("deliveryAddressId")
                 )

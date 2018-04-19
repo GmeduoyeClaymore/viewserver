@@ -3,13 +3,20 @@ package io.viewserver.datasource;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 public class RecordUtils{
 
+    private static final Logger logger = LoggerFactory.getLogger(RecordUtils.class);
+
+    public static void addRecordToTableOperator(Observable<KeyedTable> operator, IRecord rec) {
+        operator.subscribe(kt -> addRecordToTableOperator(kt,rec));
+    }
+
     public static void addRecordToTableOperator(KeyedTable operator, IRecord rec) {
+        logger.info("Added record rec to operator " + operator.getPath());
         TableKeyDefinition tableKeyDefinition = operator.getTableKeyDefinition();
         if(tableKeyDefinition == null ){
             throw new RuntimeException(String.format("Cannot map record as no key columns are defined on schema - %s", rec));
@@ -23,9 +30,15 @@ public class RecordUtils{
             }
             elements[counter++] = keyElement;
         }
-        ITableRowUpdater rowUpdater = row -> {
-            for(ColumnHolder holder : operator.getOutput().getSchema().getColumnHolders()){
-                ColumnHolderUtils.setValue(holder,row.getRowId(), rec.getValue(holder.getName()));
+        ITableRowUpdater rowUpdater = new ITableRowUpdater() {
+            public Object getValue(String columnName) {
+                return rec.getValue(columnName);
+            }
+            @Override
+            public void setValues(ITableRow row) {
+                for (ColumnHolder holder : operator.getOutput().getSchema().getColumnHolders()) {
+                    ColumnHolderUtils.setValue(holder, row.getRowId(), rec.getValue(holder.getName()));
+                }
             }
         };
         int row = operator.getRow(new TableKey(elements));

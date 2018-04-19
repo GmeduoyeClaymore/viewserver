@@ -53,8 +53,8 @@ public class DimensionMapper extends DimensionMapperBase {
         return stringHashSet;
     }
 
-    public int map(String namespace, String  dimensionName, ColumnType dimensionColumnType, Object value){
-        switch (dimensionColumnType) {
+    public int map(String namespace, String  dimensionName, ContentType dimensionContentType, Object value){
+        switch (dimensionContentType) {
             case Bool: {
                 return mapBool(namespace, dimensionName, (value instanceof String) ? Boolean.valueOf(value.toString()) : (boolean) value);
             }
@@ -163,9 +163,9 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((LongHashSet)lookup).get(id));
     }
 
-    public HashPrimitiveIterator getAllValues(String namespace, String dimensionName, ColumnType columnType) {
+    public HashPrimitiveIterator getAllValues(String namespace, String dimensionName, ContentType contentType) {
         Object lookup = getLookup(namespace, dimensionName);
-        switch (columnType) {
+        switch (contentType) {
             case Byte: {
                 return (HashPrimitiveIterator) ((ByteHashSet)lookup).iterator();
             }
@@ -183,7 +183,7 @@ public class DimensionMapper extends DimensionMapperBase {
             }
             default: {
                 throw new UnsupportedOperationException(String.format("Unhandled dimension type '%s' for dimension '%s' in data source '%s'",
-                        columnType, dimensionName, namespace));
+                        contentType, dimensionName, namespace));
             }
         }
     }

@@ -35,7 +35,7 @@ public class JoinOperatorFactory extends ConfigurableOperatorFactoryBase<IJoinCo
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new JoinOperator(name, state.executionContext, state.catalog);
     }
 

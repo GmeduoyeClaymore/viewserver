@@ -20,6 +20,9 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -32,6 +35,8 @@ import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 
 public class ReportRegistry  extends KeyedTable  {
     public static final String TABLE_NAME = "report_registry";
@@ -42,6 +47,14 @@ public class ReportRegistry  extends KeyedTable  {
     private IJsonSerialiser serialiser = new JacksonSerialiser();
 
     private static final Logger log = LoggerFactory.getLogger(ReportRegistry.class);
+    static SchemaConfig config = new SchemaConfig()
+            .withColumns(Arrays.asList(
+                    new Column(ID_COL, ContentType.String),
+                    new Column(JSON_COL, ContentType.String),
+                    new Column(DATASOURCE_COL, ContentType.String),
+                    new Column(NAME_COL, ContentType.String)
+
+            )).withKeyColumns(ID_COL);
 
     public ReportRegistry(ICatalog systemCatalog, IExecutionContext executionContext) {
         super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinitions());
@@ -51,12 +64,11 @@ public class ReportRegistry  extends KeyedTable  {
     }
 
     private static Schema getSchema() {
-        Schema schema = new Schema();
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(ID_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(JSON_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(DATASOURCE_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(NAME_COL, io.viewserver.schema.column.ColumnType.String));
-        return schema;
+        return ColumnHolderUtils.getSchema(getSchemaConfig());
+    }
+
+    public static SchemaConfig getSchemaConfig(){
+        return config;
     }
 
     protected static TableKeyDefinition getTableKeyDefinitions() {

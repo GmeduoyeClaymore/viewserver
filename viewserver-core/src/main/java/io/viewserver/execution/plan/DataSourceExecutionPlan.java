@@ -32,7 +32,10 @@ public class DataSourceExecutionPlan implements IExecutionPlan<DataSourceExecuti
         return Arrays.asList(
                 new DataSourceParametersStep(),
                 new DataSourceStep(),
+                new TableCreationStep(),
                 new DataSourceCalculationsStep(),
+                new DataSourceDimensionMappingStep(),
+                new DefaultOutputStep(),
                 new DataSourceIndexStep(),
                 new DimensionListStep()
         );

@@ -5,13 +5,16 @@ import io.viewserver.configurator.IConfiguratorSpec;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.reactor.IReactor;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.functions.FuncN;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class DataSourceComponents implements IDataSourceServerComponents{
@@ -33,66 +36,60 @@ public class DataSourceComponents implements IDataSourceServerComponents{
 
     @Override
     public void start() {
-        dataSourceRegistry = new DataSourceRegistry(basicServerComponents.getServerCatalog(), basicServerComponents.getExecutionContext(),DataSource.class);
-        dataSourceRegistry.addListener(new IDataSourceListener() {
-            @Override
-            public void onDataSourceRegistered(IDataSource dataSource) {
-            }
+        dataSourceRegistry = new DataSourceRegistry(basicServerComponents.getServerCatalog(), basicServerComponents.getExecutionContext());
+        dataSourceRegistry.getRegistered().subscribe(c-> {
+                    Set<String> dependencies = this.getDependencies(c);
+                    List<String> dependeciesToWaitFor = dependencies.stream().filter(dep -> !this.isBuilt(dataSourceRegistry.get(dep))).collect(Collectors.toList());
+                    if(dependeciesToWaitFor.size() > 0){
+                        waitFor(c.getName(), dependeciesToWaitFor).subscribe(ds -> runDataSource(c));
+                    }
+                    else{
+                        runDataSource(c);
+                    }
+        }, err -> log.error("Problem subscribing to registered data sources",err));
+    }
 
-            @Override
-            public void onDataSourceStatusChanged(IDataSource dataSource, DataSourceStatus status) {
-                final Set<String> dependencies = new HashSet<>();
-                final List<IGraphNode> nodes = dataSource.getNodes();
-                final int nodeCount = nodes.size();
-                for (int i = 0; i < nodeCount; i++) {
-                    final IGraphNode node = nodes.get(i);
-                    final List<IConfiguratorSpec.Connection> connections = node.getConnections();
-                    final int connectionCount = connections.size();
-                    for (int j = 0; j < connectionCount; j++) {
-                        final IConfiguratorSpec.Connection connection = connections.get(j);
-                        final String operator = connection.getOperator();
-                        if (operator.startsWith(DATASOURCE_DEPENDENCY_PREFIX)) {
-                            final String suffix = operator.substring(DATASOURCE_DEPENDENCY_PREFIX.length());
-                            final int slashIndex = suffix.indexOf("/");
-                            if (slashIndex > -1) {
-                                final String dependencyName = suffix.substring(0, slashIndex);
-                                final DataSourceStatus dependencyStatus = dataSourceRegistry.getStatus(dependencyName);
-                                if (status != DataSourceStatus.BUILT && dependencyStatus != DataSourceStatus.INITIALIZED) {
-                                    dependencies.add(dependencyName);
-                                }
-                            }
-                        }
-                    }
-                }
-                if (dependencies.contains(dataSource.getName()) && (status == DataSourceStatus.BUILT
-                        || status == DataSourceStatus.INITIALIZED)) {
-                    dependencies.remove(dataSource.getName());
-                    if (dependencies.isEmpty()) {
-                        runDataSource(dataSource);
-                    }
-                }
+    private Observable<Object> waitFor(String dataSourceName, List<String> dependeciesToWaitFor) {
+        List<Observable<IDataSource>> observablesToWaitFor = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for(String ds : dependeciesToWaitFor){
+            if(sb.length() > 0){
+                sb.append(",");
             }
-        });
+            sb.append(ds);
+            observablesToWaitFor.add(dataSourceRegistry.getStatusChanged().filter(c-> c.getName().equals(ds) && isBuilt(dataSourceRegistry.get(ds))).take(1));
+        }
+
+        log.info(String.format("WAITING - Data sources %s Waiting for %s",dataSourceName,sb));
+
+        FuncN<?> onCompletedAll = new FuncN<Object>() {
+            @Override
+            public Object call(Object... objects) {
+                log.info(String.format("COMPLETED FINISHED WAITING %s for %s ",dataSourceName,sb));
+                return true;
+            }
+        };
+        return Observable.zip(observablesToWaitFor, onCompletedAll);
     }
 
     private void runDataSource(final IDataSource dataSource) {
+        if (getDependencies(dataSource).stream().anyMatch(c-> !isBuilt(dataSourceRegistry.get(c)))) {
+            log.error("You are trying to built a datasource that is still waiting for dependencies aborting");
+            return;
+        }
         this.basicServerComponents.getExecutionContext().getReactor().scheduleTask(() -> {
             try {
-                if (!checkDependencies(dataSource)) {
-                    return;
-                }
-
                 getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZING);
                 CommandResult planResult = new CommandResult();
                 planResult.setListener(res -> {
                     if (res.isSuccess()) {
                         getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
                     } else {
-                        log.error("Problem occurred loading data for " + dataSource.getName(), res.getMessage());
+                        log.error("Problem occurred running execution plan for " + dataSource.getName(), res.getMessage());
                         getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);
                     }
                 });
-                DataSourceHelper.runDataSourceExecutionPlan(dataSource, dataSourceRegistry, this.basicServerComponents.getExecutionContext(),
+                DataSourceHelper.runDataSourceExecutionPlan(this.basicServerComponents.getExecutionPlanRunner(),dataSource, dataSourceRegistry, this.basicServerComponents.getExecutionContext(),
                         IDataSourceRegistry.getDataSourceCatalog(dataSource, this.basicServerComponents.getServerCatalog()), planResult);
             } catch (Throwable t) {
                 log.error("Problem occurred loading data for " + dataSource.getName(), t);
@@ -101,9 +98,10 @@ public class DataSourceComponents implements IDataSourceServerComponents{
         }, 0, -1);
     }
 
-    private boolean checkDependencies(IDataSource dependingDataSource) {
+
+    private Set<String> getDependencies(IDataSource dataSource) {
         final Set<String> dependencies = new HashSet<>();
-        final List<IGraphNode> nodes = dependingDataSource.getNodes();
+        final List<IGraphNode> nodes = dataSource.getNodes();
         final int nodeCount = nodes.size();
         for (int i = 0; i < nodeCount; i++) {
             final IGraphNode node = nodes.get(i);
@@ -117,27 +115,18 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                     final int slashIndex = suffix.indexOf("/");
                     if (slashIndex > -1) {
                         final String dependencyName = suffix.substring(0, slashIndex);
-                        final DataSourceStatus status = dataSourceRegistry.getStatus(dependencyName);
-                        if (status != DataSourceStatus.BUILT && status != DataSourceStatus.INITIALIZED) {
-                            dependencies.add(dependencyName);
-                        }
+                        dependencies.add(dependencyName);
                     }
                 }
             }
         }
-        if (dependencies.isEmpty()) {
-            log.debug("{} has no outstanding dependencies - will build", dependingDataSource.getName());
-            return true;
-        }
-
-
-        if (log.isDebugEnabled()) {
-            log.debug("{} has outstanding dependencies - {} - not building now", dependingDataSource.getName(),
-                    StringUtils.join(dependencies, ','));
-        }
-        return false;
+        return dependencies;
     }
-
-
-
+    private boolean isBuilt(IDataSource iDataSource) {
+        if(iDataSource == null){
+            return false;
+        }
+        DataSourceStatus status = dataSourceRegistry.getStatus(iDataSource.getName());
+        return status.equals(DataSourceStatus.INITIALIZED);
+    }
 }

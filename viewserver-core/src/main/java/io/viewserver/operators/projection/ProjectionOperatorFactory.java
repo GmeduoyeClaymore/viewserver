@@ -35,7 +35,7 @@ public class ProjectionOperatorFactory extends ConfigurableOperatorFactoryBase<I
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new ProjectionOperator(name, state.executionContext, state.catalog);
     }
 

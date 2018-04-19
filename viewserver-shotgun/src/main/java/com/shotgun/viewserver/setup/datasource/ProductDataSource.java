@@ -15,12 +15,12 @@ ProductDataSource {
     public static DataSource getDataSource() {
         SchemaConfig schema = new SchemaConfig()
                 .withColumns(Arrays.asList(
-                        new Column("productId", ColumnType.String),
-                        new Column("name", ColumnType.String),
-                        new Column("description", ColumnType.String),
-                        new Column("categoryId", ColumnType.String),
-                        new Column("price", ColumnType.Int),
-                        new Column("imageUrl", ColumnType.String)
+                        new Column("productId", ContentType.String),
+                        new Column("name", ContentType.String),
+                        new Column("description", ContentType.String),
+                        new Column("categoryId", ContentType.String),
+                        new Column("price", ContentType.Int),
+                        new Column("imageUrl", ContentType.String)
                 ))
                 .withKeyColumns("productId");
 
@@ -28,11 +28,11 @@ ProductDataSource {
                 .withName(NAME)
                 .withSchema(schema)
                 .withCalculatedColumns(
-                        new CalculatedColumn("dimension_productId", ColumnType.String, "productId"),
-                        new CalculatedColumn("prodConstantJoinCol", ColumnType.Int, "1")
+                        new CalculatedColumn("dimension_productId", ContentType.String, "productId"),
+                        new CalculatedColumn("prodConstantJoinCol", ContentType.Int, "1")
                 )
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

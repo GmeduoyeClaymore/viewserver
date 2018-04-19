@@ -16,8 +16,8 @@
 
 package io.viewserver.adapters.jdbc;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.viewserver.adapters.common.IWritableDataQueryProvider;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.TableKeyDefinition;
@@ -33,21 +33,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class JdbcRecordLoaderBase implements IWritableRecordLoader {
-    private static final Logger log = LoggerFactory.getLogger(JdbcRecordLoaderBase.class);
+public class JdbcRecordLoader implements IWritableRecordLoader {
+    private static final Logger log = LoggerFactory.getLogger(JdbcRecordLoader.class);
+    private final ResultSetRecordWrapper resultSetRecordWrapper;
+    private OperatorCreationConfig creationConfig;
     private IWritableDataQueryProvider dataQueryProvider;
     private JdbcConnectionFactory connectionFactory;
     private SchemaConfig config;
     private TableKeyDefinition tableKeyDefinition;
     private final int FETCHSIZE = 10000;
 
-    private final ResultSetRecordWrapper recordWrapper;
 
-    protected JdbcRecordLoaderBase(IWritableDataQueryProvider dataQueryProvider, JdbcConnectionFactory connectionFactory, SchemaConfig config) {
+    public JdbcRecordLoader(IWritableDataQueryProvider dataQueryProvider, JdbcConnectionFactory connectionFactory, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.dataQueryProvider = dataQueryProvider;
         this.connectionFactory = connectionFactory;
         this.config = config;
-        recordWrapper = new ResultSetRecordWrapper(config);
+        this.resultSetRecordWrapper  = new ResultSetRecordWrapper(config);
+        this.creationConfig = creationConfig;
     }
 
     public SchemaConfig getDerivedSchema() {
@@ -61,6 +63,11 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
             }
         });
         return derivedSchema;
+    }
+
+    @Override
+    public OperatorCreationConfig getCreationConfig() {
+        return creationConfig;
     }
 
     @Override
@@ -83,18 +90,23 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
         final int[] recordCount = new int[1];
         return  rx.Observable.create(subscriber -> {
             try{
-                executeQuery(query, (resultSet) -> {
-                    recordWrapper.setResultSet(resultSet);
+                executeQuery(dataQueryProvider.getSnapshotQuery(), (resultSet) -> {
                     while (resultSet.next()) {
-                        subscriber.onNext(recordWrapper);
+                        subscriber.onNext(getRecord(resultSet));
                         recordCount[0] = resultSet.getRow();
                     }
-                    recordWrapper.setResultSet(null);
                 });
                 subscriber.onCompleted();
             }catch (Exception ex){
                 subscriber.onError(ex);
             }}, Emitter.BackpressureMode.BUFFER);
+    }
+
+    private IRecord getRecord(ResultSet resultSet){
+        Record result = new Record();
+        resultSetRecordWrapper.setResultSet(resultSet);
+        result.initialiseFromRecord(resultSetRecordWrapper);
+        return result;
     }
 
     @Override
@@ -216,32 +228,32 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
         }
     }
 
-    private ColumnType getColumnType(int columnType) {
+    private ContentType getColumnType(int columnType) {
         switch (columnType) {
             case Types.BOOLEAN: {
-                return ColumnType.Bool;
+                return ContentType.Bool;
             }
             case Types.TINYINT: {
-                return ColumnType.Byte;
+                return ContentType.Byte;
             }
             case Types.SMALLINT: {
-                return ColumnType.Short;
+                return ContentType.Short;
             }
             case Types.INTEGER: {
-                return ColumnType.Int;
+                return ContentType.Int;
             }
             case Types.BIGINT:
             case Types.DATE:
             case Types.TIME:
             case Types.TIMESTAMP: {
-                return ColumnType.Long;
+                return ContentType.Long;
             }
             case Types.REAL: {
-                return ColumnType.Float;
+                return ContentType.Float;
             }
             case Types.FLOAT:
             case Types.DOUBLE: {
-                return ColumnType.Double;
+                return ContentType.Double;
             }
             case Types.CHAR:
             case Types.NCHAR:
@@ -250,7 +262,7 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
             case Types.LONGVARCHAR:
             case Types.LONGNVARCHAR:
             case Types.CLOB: {
-                return ColumnType.String;
+                return ContentType.String;
             }
             default: {
                 throw new IllegalArgumentException("Cannot handle column type " + columnType);
@@ -258,36 +270,36 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
         }
     }
 
-    private io.viewserver.datasource.ColumnType getDataType(int columnType) {
+    private ContentType getDataType(int columnType) {
         switch (columnType) {
             case Types.BOOLEAN: {
-                return io.viewserver.datasource.ColumnType.Bool;
+                return ContentType.Bool;
             }
             case Types.TINYINT: {
-                return io.viewserver.datasource.ColumnType.Byte;
+                return ContentType.Byte;
             }
             case Types.SMALLINT: {
-                return io.viewserver.datasource.ColumnType.Short;
+                return ContentType.Short;
             }
             case Types.INTEGER: {
-                return io.viewserver.datasource.ColumnType.Int;
+                return ContentType.Int;
             }
             case Types.BIGINT: {
-                return io.viewserver.datasource.ColumnType.Long;
+                return ContentType.Long;
             }
             case Types.DATE: {
-                return io.viewserver.datasource.ColumnType.Date;
+                return ContentType.Date;
             }
             case Types.TIME:
             case Types.TIMESTAMP: {
-                return io.viewserver.datasource.ColumnType.DateTime;
+                return ContentType.DateTime;
             }
             case Types.REAL: {
-                return io.viewserver.datasource.ColumnType.Float;
+                return ContentType.Float;
             }
             case Types.FLOAT:
             case Types.DOUBLE: {
-                return io.viewserver.datasource.ColumnType.Double;
+                return ContentType.Double;
             }
             case Types.CHAR:
             case Types.NCHAR:
@@ -296,7 +308,7 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
             case Types.LONGVARCHAR:
             case Types.LONGNVARCHAR:
             case Types.CLOB: {
-                return io.viewserver.datasource.ColumnType.String;
+                return ContentType.String;
             }
             default: {
                 throw new IllegalArgumentException("Cannot handle column type " + columnType);
@@ -305,7 +317,7 @@ public class JdbcRecordLoaderBase implements IWritableRecordLoader {
     }
 
     protected void executeQuery(String query, IResultSetHandler resultSetHandler) {
-        try (PreparedStatement statement = getPreparedStatement(query)) {
+        try(PreparedStatement statement = getPreparedStatement(query)){
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.setFetchSize(FETCHSIZE);
                 resultSetHandler.handle(resultSet);

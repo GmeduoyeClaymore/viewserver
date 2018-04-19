@@ -45,11 +45,13 @@ public class DataSourceCalculationsStep implements IExecutionPlanStep<DataSource
             nodes.add(new CalcColNode(DataSource.CALCS_NAME)
                     .withCalculations(calculatedColumns.stream().map(col -> new CalcColOperator.CalculatedColumn(col.getName(),col.getExpression())).collect(Collectors.toList()))
                     .withDataRefreshedOnColumnAdd(false)
-                    .withConnection(dataSource.getOutput(), Constants.OUT, Constants.IN));
+                    .withConnection(dataSource.getFinalOutput(), Constants.OUT, Constants.IN));
             // set the output of the data source to be the calculations
             // if a report context specifies no index filters, then this will be the report source
             // otherwise, the output from the index filter will be the report source
-            dataSource.setFinalOutput(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.CALCS_NAME));
+            dataSource.setFinalOutput(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.CALCS_NAME));
         }
     }
 }
+
+

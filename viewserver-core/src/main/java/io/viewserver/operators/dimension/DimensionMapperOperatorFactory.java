@@ -20,9 +20,6 @@ import io.viewserver.configurator.Configurator;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
-import io.viewserver.operators.spread.ISpreadConfig;
-import io.viewserver.operators.spread.ISpreadFunctionRegistry;
-import io.viewserver.operators.spread.ProtoSpreadConfig;
 import io.viewserver.operators.spread.SpreadOperator;
 import io.viewserver.schema.ITableStorage;
 
@@ -50,7 +47,7 @@ public class DimensionMapperOperatorFactory extends ConfigurableOperatorFactoryB
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new DimensionMapperOperator(name, state.executionContext, tableStorageFactory.createStorage(), state.catalog, mapper);
     }
 

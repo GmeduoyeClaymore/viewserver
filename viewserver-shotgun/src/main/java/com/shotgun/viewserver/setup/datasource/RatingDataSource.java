@@ -16,9 +16,9 @@ public class RatingDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("userId", ColumnType.String),
-                                        new Column("orderId", ColumnType.String),
-                                        new Column("rating", ColumnType.Int)
+                                        new Column("userId", ContentType.String),
+                                        new Column("orderId", ContentType.String),
+                                        new Column("rating", ContentType.Int)
                                 ))
                                 .withKeyColumns("orderId", "userId")
                 )

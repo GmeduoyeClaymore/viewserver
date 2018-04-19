@@ -30,7 +30,7 @@ public class UserSessionPartitionerFactory extends ConfigurableOperatorFactoryBa
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new UserSessionPartitioner(name, state.executionContext, state.catalog);
     }
 

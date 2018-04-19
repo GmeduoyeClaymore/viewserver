@@ -35,7 +35,7 @@ public class SumFactory implements ISummaryFactory {
             } else if (arguments[0] instanceof String) {
                 columnType = ColumnType.valueOf((String)arguments[0]);
             } else {
-                throw new IllegalArgumentException("Argument 1 for Sum should be of type ColumnType or String");
+                throw new IllegalArgumentException("Argument 1 for Sum should be of type ContentType or String");
             }
         }
         return new Sum(name, target, columnType);

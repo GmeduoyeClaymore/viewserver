@@ -1,10 +1,12 @@
 package com.shotgun.viewserver.setup.loaders;
 
-import io.viewserver.datasource.IRecordLoaderCollection;
+import io.viewserver.adapters.common.sql.SimpleSqlDataQueryProvider;
+import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
+import io.viewserver.adapters.jdbc.JdbcRecordLoader;
+import io.viewserver.datasource.*;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.csv.CsvRecordLoader;
-import io.viewserver.datasource.IRecordLoader;
-import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.report.ReportRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,7 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
 
     public CsvRecordLoaderCollection() {
         loaders = new HashMap<>();
+        register(UserDataSource.getDataSource().getSchema(), UserDataSource.NAME);
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
         register(DeliveryAddressDataSource.getDataSource().getSchema(), DeliveryAddressDataSource.NAME);
@@ -29,7 +32,11 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
     }
 
     private void register(SchemaConfig schema, String operatorName) {
-        loaders.put(operatorName,new CsvRecordLoader(schema).withFileName(String.format("data/%s.csv", operatorName)));
+        loaders.put( getOperatorPath(operatorName),new CsvRecordLoader(schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT)).withFileName(String.format("data/%s.csv", operatorName)));
+    }
+
+    static String getOperatorPath(String operatorName) {
+        return String.format("/%s/%s/table", "datasources", operatorName);
     }
 
 
@@ -38,3 +45,6 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
         return loaders;
     }
 }
+
+
+

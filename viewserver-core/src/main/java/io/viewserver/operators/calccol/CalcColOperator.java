@@ -20,7 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.expression.IExpressionParser;
 import io.viewserver.expression.function.HookingContext;
 import io.viewserver.expression.tree.*;
@@ -518,7 +518,7 @@ public class CalcColOperator extends ConfigurableOperatorBase<ICalcColConfig> {
         private String expression;
         private String sourceColumnRegexString;
         private Pattern sourceColumnRegex;
-        private ColumnType dataType;
+        private ContentType dataType;
 
         public CalculatedColumn() {
         }
@@ -570,11 +570,11 @@ public class CalcColOperator extends ConfigurableOperatorBase<ICalcColConfig> {
             return sourceColumnRegex;
         }
 
-        public ColumnType getDataType() {
+        public ContentType getDataType() {
             return dataType;
         }
 
-        public void setDataType(ColumnType dataType) {
+        public void setDataType(ContentType dataType) {
             this.dataType = dataType;
         }
 

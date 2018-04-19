@@ -9,7 +9,7 @@ import io.viewserver.report.ReportRegistry;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.sql.ExecuteSqlCommandHandler;
 
-public class BasicSubscriptionComponent implements IServerComponent{
+public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
 
 
     private final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
@@ -31,7 +31,7 @@ public class BasicSubscriptionComponent implements IServerComponent{
         register("updateSubscription", new UpdateSubscriptionHandler(basicServerComponents.getExecutionPlanRunner()));
         register("tableEdit", new TableEditCommandHandler(basicServerComponents.getTableFactoryRegistry()));
         register("executeSql", new ExecuteSqlCommandHandler(basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), basicServerComponents.getExecutionContext().getSummaryRegistry()));
-
+        this.registerAuthenticationHandlers();
     }
 
     void register(String name, ICommandHandler commandHandler){

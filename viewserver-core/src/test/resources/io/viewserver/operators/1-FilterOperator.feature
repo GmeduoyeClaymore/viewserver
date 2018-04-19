@@ -291,7 +291,7 @@ Feature: Filter operator fixture
   #currently if a filtered column is removed and then re-added the filter is not re-applied maybe it should be ?????
 #  Scenario: When filtered column re-added filter is re-applied
 #    Then operator "filter1" output "out" is
-#      | ~Action     | ~Name   | ~TEId | id | ~ColumnType | product | time | market |
+#      | ~Action     | ~Name   | ~TEId | id | ~ContentType | product | time | market |
 #      | SchemaReset |         |       |    |             |         |      |        |
 #      | ColumnAdd   | id      | 0     |    | Int         |         |      |        |
 #      | ColumnAdd   | market  | 1     |    | String      |         |      |        |
@@ -302,7 +302,7 @@ Feature: Filter operator fixture
 #    And commit
 #    When columns "time,product" removed from table "source"
 #    Then operator "filter1" output "out" is
-#      | ~Action      | ~TEId | ~Name   | id | ~ColumnType | market |
+#      | ~Action      | ~TEId | ~Name   | id | ~ContentType | market |
 #      | ColumnRemove | 3     | time    | 1  | Long        |        |
 #      | ColumnRemove | 2     | product | 2  | String      |        |
 #      | DataReset    |       |         |    |             |        |
@@ -311,7 +311,7 @@ Feature: Filter operator fixture
 #      | RowAdd       | 2     |         | 2  |             | Mark1  |
 #    And commit
 #    When columns added to table "source"
-#      | ~Name   |  | ~ColumnType |
+#      | ~Name   |  | ~ContentType |
 #      | product |  | String      |
 #      | time    |  | Long        |
 #    And table "source" updated to
@@ -320,7 +320,7 @@ Feature: Filter operator fixture
 #      | 1      | 300       |
 #      | 2      | 400       |
 #    Then operator "filter1" output "out" is
-#      | ~Action   | ~TEId | ~Name   | id | ~ColumnType | market | product | time  |
+#      | ~Action   | ~TEId | ~Name   | id | ~ContentType | market | product | time  |
 #      | ColumnAdd | 3     | time    | 1  | Long        |        |         |       |
 #      | ColumnAdd | 2     | product | 2  | String      |        |         |       |
 #      | DataReset |       |         |    |             |        |         |       |

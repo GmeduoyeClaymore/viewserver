@@ -2,8 +2,6 @@ package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
-import io.viewserver.controller.ControllerActionEntry;
-import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.*;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -27,7 +25,7 @@ public class UserRelationshipReport {
                                         new CalcColOperator.CalculatedColumn("initiatedByMe", "\"{@userId}\" == fromUserId"),
                                         new CalcColOperator.CalculatedColumn("relatedToUserId", "if(\"{@userId}\" == fromUserId, toUserId, fromUserId)")
                                 )
-                                .withConnection(IDataSourceRegistry.getOperatorPath(UserRelationshipDataSource.NAME, UserRelationshipDataSource.NAME)),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserRelationshipDataSource.NAME)),
                         new FilterNode("relatedFilter")
                                 .withExpression("isRelated")
                                 .withConnection("userRelationships"),

@@ -55,7 +55,7 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
 
     @Override
     public ColumnType getType() {
-        return dimension.getColumnType().getColumnType();
+        return dimension.getContentType().getColumnType();
     }
 
     @Override

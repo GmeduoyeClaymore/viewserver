@@ -36,7 +36,7 @@ public class IndexOperatorFactory extends ConfigurableOperatorFactoryBase<IIndex
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new IndexOperator(name, state.executionContext, state.catalog);
     }
 

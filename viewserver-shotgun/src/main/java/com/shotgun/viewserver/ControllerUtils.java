@@ -198,6 +198,9 @@ public class ControllerUtils{
 
     public static ITable getTable(String tableName){
         IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
+        if(table == null){
+            throw new RuntimeException("Table " + tableName + " does not exist");
+        }
         if (!(table instanceof ITable)) {
             throw new RuntimeException("Operator '" + tableName + "' is not a table");
         }

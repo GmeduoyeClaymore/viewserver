@@ -16,16 +16,14 @@
 
 package io.viewserver.operators.table;
 
+import io.viewserver.command.CommandResult;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.datasource.ISchemaConfig;
 import io.viewserver.datasource.SchemaConfig;
-import io.viewserver.expression.function.FunctionRegistry;
+import io.viewserver.execution.nodes.TableNode;
 import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
-import io.viewserver.operators.filter.ProtoFilterConfig;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 
 /**
  * Created by nickc on 31/10/2014.
@@ -50,19 +48,23 @@ public class TableOperatorFactory extends ConfigurableOperatorFactoryBase<ISchem
 
     @Override
     public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
-        SchemaConfig schemaConfig = (SchemaConfig) config;
-        KeyedTable operator = new KeyedTable(name, state.executionContext, state.catalog, ColumnHolderUtils.getSchema(schemaConfig),tableStorageFactory.createStorage(, ColumnHolderUtils.getKey(schemaConfig)));
+        ISchemaConfig schemaConfig = (ISchemaConfig) config;
+        KeyedTable operator = new KeyedTable(name, state.executionContext, state.catalog, ColumnHolderUtils.getSchema(schemaConfig),tableStorageFactory.createStorage(), ColumnHolderUtils.getKey(schemaConfig));
         operator.initialise(8);
         return operator;
     }
 
     @Override
+    public void configureOperator(IOperator operator, Object config, Configurator.ConfiguratorState state, CommandResult configureResult) {
+    }
+
+    @Override
     public Class getProtoConfigDtoClass() {
-        return io.viewserver.messages.config.IFilterConfig.class;
+        return io.viewserver.messages.config.ISchemaConfig.class;
     }
 
     @Override
     public Object getProtoConfigWrapper(Object configDto) {
-        return new ProtoFilterConfig((io.viewserver.messages.config.IFilterConfig) configDto);
+        return new ProtoTableConfig((io.viewserver.messages.config.ISchemaConfig) configDto);
     }
 }

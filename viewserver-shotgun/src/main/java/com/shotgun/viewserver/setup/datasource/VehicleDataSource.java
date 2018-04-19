@@ -17,16 +17,16 @@ public class
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("vehicleId", ColumnType.String),
-                                        new Column("userId", ColumnType.String),
-                                        new Column("registrationNumber",  ColumnType.String),
-                                        new Column("colour", ColumnType.String),
-                                        new Column("make",ColumnType.String),
-                                        new Column("model",  ColumnType.String),
-                                        new Column("dimensions",  ColumnType.String),
-                                        new Column("selectedProductIds",  ColumnType.String),
-                                        new Column("numAvailableForOffload", ColumnType.Int),
-                                        new Column("bodyStyle", ColumnType.String)
+                                        new Column("vehicleId", ContentType.String),
+                                        new Column("userId", ContentType.String),
+                                        new Column("registrationNumber",  ContentType.String),
+                                        new Column("colour", ContentType.String),
+                                        new Column("make", ContentType.String),
+                                        new Column("model",  ContentType.String),
+                                        new Column("dimensions",  ContentType.String),
+                                        new Column("selectedProductIds",  ContentType.String),
+                                        new Column("numAvailableForOffload", ContentType.Int),
+                                        new Column("bodyStyle", ContentType.String)
                                 ))
                                 .withKeyColumns("vehicleId")
                 )

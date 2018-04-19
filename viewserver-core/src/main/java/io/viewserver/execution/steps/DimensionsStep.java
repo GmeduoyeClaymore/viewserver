@@ -56,7 +56,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
             for (int j = 0; j < mappedValues.length; j++) {
                 final Object value;
                 if (values instanceof ValueLists.IBooleanList) {
-                    if (dimension.getColumnType() == ColumnType.NullableBool) {
+                    if (dimension.getContentType() == ContentType.NullableBool) {
                         value = NullableBool.fromBoolean(((ValueLists.IBooleanList) values).get(j));
                         // commenting out the following, as I can't see a path that gets us to here - the report context
                         // has no capability for dealing with nullable booleans as it stands
@@ -78,7 +78,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
                 } else {
                     throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
                 }
-                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(),dimension.getColumnType(), value);
+                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(),dimension.getContentType(), value);
             }
 
             IndexOperator.QueryHolder queryHolder = dimensionFilter.isExclude()
@@ -87,7 +87,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
             queryHolders[i++] = queryHolder;
         }
 
-        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
+        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.INDEX_NAME))
                 .withQueryHolders(queryHolders);
         /*if (reportExecutionPlanContext.isDistributed()) {
             indexNode.withDistribution();

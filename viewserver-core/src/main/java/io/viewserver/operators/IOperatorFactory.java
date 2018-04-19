@@ -26,5 +26,5 @@ public interface IOperatorFactory {
 
     Class<? extends IOperator> getOperatorClass();
 
-    IOperator createOperator(String name, Configurator.ConfiguratorState state);
+    IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config);
 }

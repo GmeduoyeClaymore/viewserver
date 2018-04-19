@@ -28,14 +28,14 @@ public class CustomerOrderSummaryReport {
                                 .withLeftJoinOuter()
                                 .withRightJoinColumns("userId")
                                 .withConnection("driverJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(VehicleDataSource.NAME, VehicleDataSource.NAME), Constants.OUT, "right"),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(VehicleDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("originDeliveryAddressJoin")
                                 .withLeftJoinColumns("originDeliveryAddressId")
                                 .withRightJoinColumns("deliveryAddressId")
                                 .withColumnPrefixes("", "origin_")
                                 .withAlwaysResolveNames()
                                 .withConnection("vehicleJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("destinationDeliveryAddressJoin")
                                 .withLeftJoinColumns("destinationDeliveryAddressId")
                                 .withLeftJoinOuter()
@@ -43,13 +43,13 @@ public class CustomerOrderSummaryReport {
                                 .withColumnPrefixes("", "destination_")
                                 .withAlwaysResolveNames()
                                 .withConnection("originDeliveryAddressJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(DeliveryAddressDataSource.NAME, DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("ratingJoin")
                                 .withLeftJoinColumns("orderId", "driverId")
                                 .withLeftJoinOuter()
                                 .withRightJoinColumns("orderId", "userId")
                                 .withConnection("destinationDeliveryAddressJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(RatingDataSource.NAME, RatingDataSource.NAME), Constants.OUT, "right"),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(

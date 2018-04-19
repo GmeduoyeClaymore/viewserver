@@ -49,8 +49,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 dataSource.setName("test");
                 dataSource.setSchema(new SchemaConfig());
                 dataSource.getSchema().getColumns().addAll(Arrays.asList(
-                        new Column("market", io.viewserver.datasource.ColumnType.String),
-                        new Column("product", io.viewserver.datasource.ColumnType.Int)
+                        new Column("market", ContentType.String),
+                        new Column("product", ContentType.Int)
                 ));
                 dataSource.getDimensions().addAll(Arrays.asList(
                         new Dimension("market","market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
@@ -58,7 +58,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
                 DimensionMapper dimensionMapper = new DimensionMapper();
                 Dimension marketDimension = dataSource.getDimension("market");
-                dimensionMapper.registerDimension(dataSource.getName(), marketDimension.getName(), marketDimension.getColumnType());
+                dimensionMapper.registerDimension(dataSource.getName(), marketDimension.getName(), marketDimension.getContentType());
 
                 for (int i = 0; i < 10; i++) {
                     dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), UUID.randomUUID().toString());
@@ -122,8 +122,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         final DataSource dataSource = new DataSource();
         dataSource.setName("test");
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
-                new Column("market", io.viewserver.datasource.ColumnType.String),
-                new Column("product", io.viewserver.datasource.ColumnType.Int)
+                new Column("market", ContentType.String),
+                new Column("product", ContentType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
                 new Dimension("market", "market",Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
@@ -194,8 +194,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         final DataSource dataSource = new DataSource();
         dataSource.setName("test");
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
-                new Column("market", io.viewserver.datasource.ColumnType.String),
-                new Column("product", io.viewserver.datasource.ColumnType.Int)
+                new Column("market", ContentType.String),
+                new Column("product", ContentType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
                 new Dimension("market", "market",Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())
@@ -267,8 +267,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         final DataSource dataSource = new DataSource();
         dataSource.setName("test");
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
-                new Column("market", io.viewserver.datasource.ColumnType.String),
-                new Column("product", io.viewserver.datasource.ColumnType.Int)
+                new Column("market", ContentType.String),
+                new Column("product", ContentType.Int)
         ));
         dataSource.getDimensions().addAll(Arrays.asList(
                 new Dimension("market", Cardinality.Byte, dataSource.getSchema().getColumn("market").getType())

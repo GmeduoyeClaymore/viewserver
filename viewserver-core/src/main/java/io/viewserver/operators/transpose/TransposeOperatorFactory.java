@@ -42,7 +42,7 @@ public class TransposeOperatorFactory extends ConfigurableOperatorFactoryBase<IT
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new TransposeOperator(name, state.executionContext, state.catalog, tableStorageFactory.createStorage());
     }
 

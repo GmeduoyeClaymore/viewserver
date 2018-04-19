@@ -5,12 +5,9 @@ import com.google.cloud.firestore.*;
 import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseUtils;
-import io.viewserver.command.RowUpdater;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.datasource.ColumnType;
-import io.viewserver.datasource.DimensionMapper;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.RecordUtils;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.reactor.IReactor;
@@ -116,7 +113,7 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
 
     private Object getRecordValue(String column, IRecord record, Schema schema) {
         ColumnHolder columnHolder = schema.getColumnHolder(column);
-        ColumnType dataType = FirebaseUtils.getDataType(columnHolder);
+        ContentType dataType = FirebaseUtils.getDataType(columnHolder);
         String columnName = columnHolder.getName();
 
         try {

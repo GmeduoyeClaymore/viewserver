@@ -16,10 +16,12 @@
 
 package io.viewserver.datasource;
 
+import io.viewserver.messages.command.ITableEditCommand;
 import rx.Observable;
 
 public interface IRecordLoader {
     SchemaConfig getSchemaConfig();
     Observable<IRecord> getRecords(String query);
+    OperatorCreationConfig getCreationConfig();
 }
 

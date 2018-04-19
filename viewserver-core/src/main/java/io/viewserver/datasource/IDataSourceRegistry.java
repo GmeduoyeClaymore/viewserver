@@ -18,13 +18,14 @@ package io.viewserver.datasource;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
+import rx.Observable;
 
 import java.util.Collection;
 
 /**
  * Created by nick on 18/02/2015.
  */
-public interface IDataSourceRegistry<T extends IDataSource> {
+public interface IDataSourceRegistry{
     String TABLE_NAME = "datasources";
     String ID_COL = "name";
     String JSON_COL = "json";
@@ -35,7 +36,11 @@ public interface IDataSourceRegistry<T extends IDataSource> {
         return String.format("/%s/%s/%s", TABLE_NAME, dataSourceName, operatorName);
     }
 
-    static String getOperatorPath(IDataSource dataSource, String operatorName) {
+    static String getDefaultOperatorPath(String dataSourceName) {
+        return String.format("/%s/%s/%s", TABLE_NAME, dataSourceName, DataSource.DEFAUT_NAME);
+    }
+
+    static String getDefaultOperatorPath(IDataSource dataSource, String operatorName) {
         return getOperatorPath(dataSource.getName(), operatorName);
     }
 
@@ -47,17 +52,19 @@ public interface IDataSourceRegistry<T extends IDataSource> {
         return systemCatalog.getChild(TABLE_NAME).getChild(dataSource.getName());
     }
 
-    void register(T dataSource);
+    Observable<IDataSource> getRegistered();
+
+    Observable<IDataSource> getStatusChanged();
+
+    void register(IDataSource dataSource);
 
     void setStatus(String name, DataSourceStatus status);
 
     DataSourceStatus getStatus(String name);
 
-    T get(String name);
+    IDataSource get(String name);
 
-    Collection<T> getAll();
-
-    void addListener(IDataSourceListener listener);
+    Collection<IDataSource> getAll();
 
     void clear();
 

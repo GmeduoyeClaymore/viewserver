@@ -16,18 +16,18 @@ public class
 
     public static final SchemaConfig schema = new SchemaConfig()
             .withColumns(Arrays.asList(
-                    new Column("contentTypeId", ColumnType.Int),
-                    new Column("name",ColumnType.String),
-                    new Column("origin",  ColumnType.Bool),
-                    new Column("destination",ColumnType.Bool),
-                    new Column("noPeople", ColumnType.Bool),
-                    new Column("tillTime", ColumnType.Bool),
-                    new Column("fromTime",  ColumnType.Bool),
-                    new Column("doubleComplete",  ColumnType.Bool),
-                    new Column("noItems", ColumnType.Bool),
-                    new Column("rootProductCategory",  ColumnType.String),
-                    new Column("description", ColumnType.String),
-                    new Column("pricingStrategy",  ColumnType.String)
+                    new Column("contentTypeId", ContentType.Int),
+                    new Column("name", ContentType.String),
+                    new Column("origin",  ContentType.Bool),
+                    new Column("destination", ContentType.Bool),
+                    new Column("noPeople", ContentType.Bool),
+                    new Column("tillTime", ContentType.Bool),
+                    new Column("fromTime",  ContentType.Bool),
+                    new Column("doubleComplete",  ContentType.Bool),
+                    new Column("noItems", ContentType.Bool),
+                    new Column("rootProductCategory",  ContentType.String),
+                    new Column("description", ContentType.String),
+                    new Column("pricingStrategy",  ContentType.String)
             ))
             .withKeyColumns("contentTypeId");
 
@@ -36,7 +36,7 @@ public class
                 .withName(NAME)
                 .withSchema(schema)
                 .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId","contentTypeId" ,Cardinality.Int, ColumnType.Int, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId","contentTypeId" ,Cardinality.Int, ContentType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

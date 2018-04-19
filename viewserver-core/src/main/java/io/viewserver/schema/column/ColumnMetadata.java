@@ -17,7 +17,7 @@
 package io.viewserver.schema.column;
 
 import io.viewserver.datasource.*;
-import io.viewserver.datasource.ColumnType;
+import io.viewserver.datasource.ContentType;
 
 import java.util.BitSet;
 
@@ -25,17 +25,17 @@ import java.util.BitSet;
  * Created by nickc on 16/01/2015.
  */
 public abstract class ColumnMetadata {
-    private ColumnType dataType;
+    private ContentType dataType;
     private final BitSet flags = new BitSet();
     private String dimensionName;
     private String dimensionNameSpace;
     private Cardinality cardinality;
 
-    public ColumnType getDataType() {
+    public ContentType getDataType() {
         return dataType;
     }
 
-    public void setDataType(ColumnType dataType) {
+    public void setDataType(ContentType dataType) {
         this.dataType = dataType;
     }
 

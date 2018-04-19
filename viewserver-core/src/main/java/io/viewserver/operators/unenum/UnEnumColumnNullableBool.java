@@ -18,7 +18,6 @@ package io.viewserver.operators.unenum;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Dimension;
-import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDimensionMapper;
 import io.viewserver.schema.column.*;
 
@@ -52,7 +51,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
 
     @Override
     public ColumnType getType() {
-        return dimension.getColumnType().getColumnType();
+        return dimension.getContentType().getColumnType();
     }
 
     @Override

@@ -23,6 +23,7 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.command.ICommandResultListener;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.command.ISubscribeCommand;
@@ -320,19 +321,19 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
         columnHolder.setMetadata(metadata);
     }
 
-    private io.viewserver.datasource.ColumnType deserialiseDataType(ISchemaChange.DataType dataType) {
+    private ContentType deserialiseDataType(ISchemaChange.DataType dataType) {
         switch (dataType) {
-            case Boolean: { return io.viewserver.datasource.ColumnType.Bool; }
-            case NullableBoolean: { return io.viewserver.datasource.ColumnType.NullableBool; }
-            case Byte: { return io.viewserver.datasource.ColumnType.Byte; }
-            case Short: { return io.viewserver.datasource.ColumnType.Short; }
-            case Integer: { return io.viewserver.datasource.ColumnType.Int; }
-            case Long: { return io.viewserver.datasource.ColumnType.Long; }
-            case Float: { return io.viewserver.datasource.ColumnType.Float; }
-            case Double: { return io.viewserver.datasource.ColumnType.Double; }
-            case String: { return io.viewserver.datasource.ColumnType.String; }
-            case Date: { return io.viewserver.datasource.ColumnType.Date; }
-            case DateTime: { return io.viewserver.datasource.ColumnType.DateTime; }
+            case Boolean: { return ContentType.Bool; }
+            case NullableBoolean: { return ContentType.NullableBool; }
+            case Byte: { return ContentType.Byte; }
+            case Short: { return ContentType.Short; }
+            case Integer: { return ContentType.Int; }
+            case Long: { return ContentType.Long; }
+            case Float: { return ContentType.Float; }
+            case Double: { return ContentType.Double; }
+            case String: { return ContentType.String; }
+            case Date: { return ContentType.Date; }
+            case DateTime: { return ContentType.DateTime; }
             default: { throw new IllegalArgumentException("Unknown data type '" + dataType + "'"); }
         }
     }

@@ -11,12 +11,15 @@ import com.shotgun.viewserver.servercomponents.MockShotgunControllersComponents;
 import com.shotgun.viewserver.servercomponents.RealShotgunControllersComponents;
 import com.shotgun.viewserver.setup.FirebaseApplicationSetup;
 import com.shotgun.viewserver.setup.ShotgunApplicationGraph;
+import com.shotgun.viewserver.setup.loaders.CompositeRecordLoaderCollection;
 import com.shotgun.viewserver.setup.loaders.CsvRecordLoaderCollection;
 import com.shotgun.viewserver.setup.loaders.FireBaseRecordLoaderCollection;
+import com.shotgun.viewserver.setup.loaders.H2RecordLoaderCollection;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import com.sun.tools.javac.util.List;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
+import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
 import io.viewserver.core.Utils;
 import io.viewserver.network.EndpointFactoryRegistry;
 import io.viewserver.network.IEndpoint;
@@ -51,6 +54,7 @@ public class ShotgunServerLauncher{
         container.addComponent(basicServerComponent.getConfigurator());
         container.addComponent(ReportServerComponents.class);
         container.addComponent(DataSourceComponents.class);
+        container.addComponent(BasicSubscriptionComponent.class);
         container.addComponent(ShotgunApplicationGraph.class);
         container.addComponent(InitialDataLoaderComponent.class);
         container.addComponent(BasicServer.class);
@@ -58,11 +62,14 @@ public class ShotgunServerLauncher{
 
     private static boolean ConfigureForMockEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
-        container.addComponent(new H2ConnectionFactory(null,null,get("h2.db.path")));
+        container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(MockShotgunControllersComponents.class);
         container.addComponent(DirectTableUpdater.class);
-        container.addComponent(CsvRecordLoaderCollection.class);
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new H2RecordLoaderCollection(container.getComponent(JdbcConnectionFactory.class)),
+                CsvRecordLoaderCollection::new
+        ));
         return true;
     }
     private static boolean ConfigureForRealEnvironment(MutablePicoContainer container) {

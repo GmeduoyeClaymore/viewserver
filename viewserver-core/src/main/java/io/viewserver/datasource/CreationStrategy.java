@@ -1,4 +1,7 @@
 package io.viewserver.datasource;
 
-public class CreationStrategy {
+public enum CreationStrategy{
+    CREATE,
+    WAIT,
+    FAIL
 }

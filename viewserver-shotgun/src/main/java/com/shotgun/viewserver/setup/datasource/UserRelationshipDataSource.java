@@ -12,16 +12,16 @@ public class UserRelationshipDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                         .withColumns(Arrays.asList(
-                                new Column("relationshipId", ColumnType.String),
-                                new Column("fromUserId",  ColumnType.String),
-                                new Column("toUserId",  ColumnType.String),
-                                new Column("relationshipStatus",  ColumnType.String),
-                                new Column("relationshipType",  ColumnType.String)
+                                new Column("relationshipId", ContentType.String),
+                                new Column("fromUserId",  ContentType.String),
+                                new Column("toUserId",  ContentType.String),
+                                new Column("relationshipStatus",  ContentType.String),
+                                new Column("relationshipType",  ContentType.String)
                         ))
                         .withKeyColumns("relationshipId")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("relationshipType", Cardinality.Int, ColumnType.String)))
+                        new Dimension("relationshipType", Cardinality.Int, ContentType.String)))
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

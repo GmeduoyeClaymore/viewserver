@@ -47,7 +47,7 @@ public class DataSourceStep implements IExecutionPlanStep<DataSourceExecutionPla
         if (dataSource.getOutput() == null) {
             log.warn("Data source '{}' has no output set - results may be unpredictable!", dataSource);
         } else {
-            dataSource.setFinalOutput(IDataSourceRegistry.getOperatorPath(dataSource, dataSource.getOutput()));
+            dataSource.setFinalOutput(IDataSourceRegistry.getDefaultOperatorPath(dataSource, dataSource.getOutput()));
         }
     }
 }

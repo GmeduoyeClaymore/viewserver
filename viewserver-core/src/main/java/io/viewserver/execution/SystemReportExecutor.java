@@ -94,9 +94,9 @@ public class SystemReportExecutor {
 
     protected IDataSource getDataSource(String name) {
         IDataSource dataSource = dataSourceRegistry.get(name);
-
-        if(this.dataSourceRegistry.getStatus(name) != DataSourceStatus.INITIALIZED){
-            throw new ViewServerException(String.format("DataSource %s has not been initialised", name));
+        DataSourceStatus status = this.dataSourceRegistry.getStatus(name);
+        if(status != DataSourceStatus.INITIALIZED){
+            throw new ViewServerException(String.format("DataSource %s is not ready and is in status %s", name, status));
         }
 
         return dataSource;

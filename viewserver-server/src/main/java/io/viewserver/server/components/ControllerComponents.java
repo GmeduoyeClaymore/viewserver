@@ -11,18 +11,24 @@ public class ControllerComponents implements IControllerComponents {
     private ControllerCatalog controllerCatalog;
 
     public ControllerComponents(IBasicServerComponents basicServerComponents) {
+        this.controllerCatalog = new ControllerCatalog(new ChunkedColumnStorage(1024), basicServerComponents.getExecutionContext(),basicServerComponents.getServerCatalog());
         this.controllerHandler = new ControllerJSONCommandHandler(controllerCatalog);
         this.basicServerComponents = basicServerComponents;
     }
 
+    @Override
     public Object registerController(Object controller){
         this.controllerCatalog.registerController(controller);
         return controller;
     }
 
     @Override
+    public ControllerCatalog getControllerCatalog() {
+        return controllerCatalog;
+    }
+
+    @Override
     public void start() {
-        this.controllerCatalog = new ControllerCatalog(new ChunkedColumnStorage(1024), basicServerComponents.getExecutionContext(),basicServerComponents.getServerCatalog());
         basicServerComponents.getCommandHandlerRegistry().register("genericJSON", this.controllerHandler);
     }
 }

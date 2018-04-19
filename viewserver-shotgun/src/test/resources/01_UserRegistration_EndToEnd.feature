@@ -3,6 +3,7 @@ Feature: User registration content type feature
   Background:
     Given a running shotgun viewserver
     Given a client connected to "inproc://master"
+    Given All data sources are built
     Given controller "driverController" action "registerDriver" invoked with data file "driverRegistration.json"
 
 

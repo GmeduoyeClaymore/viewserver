@@ -20,6 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.command.UpdateSubscriptionHandler;
 import io.viewserver.configurator.ConfiguratorSpec;
+import io.viewserver.configurator.IConfigurator;
 import io.viewserver.configurator.IConfiguratorSpec;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.execution.context.IExecutionPlanContext;
@@ -34,8 +35,13 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class ExecutionPlanRunner implements IExecutionPlanRunner {
-    private static final Logger log = LoggerFactory.getLogger(UpdateSubscriptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecutionPlanRunner.class);
 
+    private IConfigurator configurator;
+
+    public ExecutionPlanRunner(IConfigurator configurator) {
+        this.configurator = configurator;
+    }
 
     @Override
     public <TContext extends IExecutionPlanContext> void executePlan(IExecutionPlan<TContext> executionPlan, TContext context,
@@ -152,6 +158,13 @@ public class ExecutionPlanRunner implements IExecutionPlanRunner {
         String hashedInputName = hashedOperatorNames.get(context.getInputOperator());
         if (hashedInputName != null) {
             context.setInput(hashedInputName, context.getInputOutputName());
+        }
+
+        if (!localConfiguratorSpec.getOperators().isEmpty()) {
+            log.debug("Creating {} operators",localConfiguratorSpec.getOperators().size());
+            configurator.process(localConfiguratorSpec, executionContext, catalog, commandResult);
+            commandResult.setSuccess(true);
+            commandResult.setComplete(true);
         }
 
     }

@@ -16,7 +16,6 @@
 
 package io.viewserver.datasource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -30,31 +29,31 @@ public class Dimension {
     private String group;
     private String plural;
     private Cardinality cardinality;
-    private ColumnType columnType;
+    private ContentType contentType;
     private boolean global;
 
     public Dimension() {
     }
 
-    public Dimension(String name, Cardinality cardinality, ColumnType columnType, boolean global) {
-        this(name,name,cardinality,columnType, global);
+    public Dimension(String name, Cardinality cardinality, ContentType contentType, boolean global) {
+        this(name,name,cardinality, contentType, global);
     }
-    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ColumnType columnType, boolean global) {
+    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ContentType contentType, boolean global) {
         this.name = name;
         this.sourceColumnName = sourceColumnName;
         this.cardinality = cardinality;
-        this.columnType = columnType;
+        this.contentType = contentType;
         this.global = global;
     }
 
-    public Dimension(String name, Cardinality cardinality, ColumnType columnType) {
-        this(name,name,cardinality,columnType);
+    public Dimension(String name, Cardinality cardinality, ContentType contentType) {
+        this(name,name,cardinality, contentType);
     }
-    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ColumnType columnType) {
+    public Dimension(String name, String sourceColumnName, Cardinality cardinality, ContentType contentType) {
         this.name = name;
         this.sourceColumnName = sourceColumnName;
         this.cardinality = cardinality;
-        this.columnType = columnType;
+        this.contentType = contentType;
     }
 
 
@@ -92,12 +91,12 @@ public class Dimension {
         this.cardinality = cardinality;
     }
 
-    public ColumnType getColumnType() {
-        return columnType;
+    public ContentType getContentType() {
+        return contentType;
     }
 
-    public void setColumnType(ColumnType columnType) {
-        this.columnType = columnType;
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
     }
 
     public String getLabel() {

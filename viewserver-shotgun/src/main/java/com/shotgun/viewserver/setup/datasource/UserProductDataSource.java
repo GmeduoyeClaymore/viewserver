@@ -27,7 +27,7 @@ UserProductDataSource {
                                         new IProjectionConfig.ProjectionColumn("type", "userType"),
                                         new IProjectionConfig.ProjectionColumn("userStatus", "userStatus"))
                                 )
-                                .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, UserDataSource.NAME)),
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME)),
                         new SpreadNode("productsSpread")
                                 .withInputColumn("selectedContentTypes")
                                 .withOutputColumn("spreadProductId")
@@ -39,13 +39,10 @@ UserProductDataSource {
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
                                 .withConnection("productsSpread", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(ProductDataSource.NAME, ProductDataSource.NAME), Constants.OUT, "right")
-                )
-                .withCalculatedColumns(
-                        new CalculatedColumn("dimension_productId", ColumnType.String, "product_productId")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId", Cardinality.Int, ColumnType.String, true)))
+                        new Dimension("dimension_productId","product_productId", Cardinality.Int, ContentType.String, true)))
                 .withOutput("productJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

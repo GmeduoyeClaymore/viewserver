@@ -28,7 +28,7 @@ public class ValidationUtils {
     public static String ACTION_NAME = "~Action";
     public static String ID_NAME = "~TEId";
     public static String NAME_NAME = "~Name";
-    public static String COLUMN_TYPE_NAME = "~ColumnType";
+    public static String COLUMN_TYPE_NAME = "~ContentType";
     public static String CURRENT_PREVIOUS_DELIMITER = " << ";
 
     public static  List<String> IGNORED_COLUMNS =  Arrays.asList(ID_NAME);

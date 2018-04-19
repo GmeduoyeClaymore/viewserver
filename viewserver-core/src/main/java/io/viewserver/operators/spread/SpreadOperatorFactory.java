@@ -45,7 +45,7 @@ public class SpreadOperatorFactory extends ConfigurableOperatorFactoryBase<ISpre
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new SpreadOperator(name, state.executionContext, tableStorageFactory.createStorage(), state.catalog, columnRegistry);
     }
 

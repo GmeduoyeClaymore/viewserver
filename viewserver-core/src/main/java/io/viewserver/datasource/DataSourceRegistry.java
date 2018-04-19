@@ -35,8 +35,12 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
+import rx.subjects.Subject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,22 +50,30 @@ import java.util.function.Consumer;
 /**
  * Created by nick on 18/02/2015.
  */
-public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implements IDataSourceRegistry<T>, ICatalog {
+public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistry, ICatalog {
     protected final ICatalog systemCatalog;
     protected final IExecutionContext executionContext;
     private final IJsonSerialiser serialiser = new JacksonSerialiser();
-    private Class<T> clazz;
-    private final List<IDataSourceListener> listeners = new ArrayList<>();
-    private final TIntObjectHashMap<T> dataSourcesById = new TIntObjectHashMap<>();
+    private final TIntObjectHashMap<IDataSource> dataSourcesById = new TIntObjectHashMap<>();
     private final CatalogHolder catalogHolder;
+    private ReplaySubject<IDataSource> registered = ReplaySubject.create();
+    private ReplaySubject<IDataSource> statusChanged = ReplaySubject.create();
 
-    public DataSourceRegistry(ICatalog systemCatalog, IExecutionContext executionContext, Class<T> clazz) {
+    static SchemaConfig config = new SchemaConfig()
+            .withColumns(Arrays.asList(
+                    new Column(ID_COL, ContentType.String),
+                    new Column(JSON_COL, ContentType.String),
+                    new Column(STATUS_COL, ContentType.String),
+                    new Column(PATH_COL, ContentType.String)
+
+            )).withKeyColumns(ID_COL);
+
+    public DataSourceRegistry(ICatalog systemCatalog, IExecutionContext executionContext) {
         super(TABLE_NAME, executionContext, systemCatalog, getSchema(), new ChunkedColumnStorage(32), getTableKeyDefinitions());
         this.systemCatalog = systemCatalog;
         this.executionContext = executionContext;
-        this.clazz = clazz;
-
         this.catalogHolder = new CatalogHolder(this);
+
 
         setSystemOperator(true);
         setAllowDataReset(true);
@@ -69,12 +81,22 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     }
 
     private static Schema getSchema() {
-        Schema schema = new Schema();
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(ID_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(JSON_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(STATUS_COL, io.viewserver.schema.column.ColumnType.String));
-        schema.addColumn(ColumnHolderUtils.createColumnHolder(PATH_COL, io.viewserver.schema.column.ColumnType.String));
-        return schema;
+        return ColumnHolderUtils.getSchema(config);
+    }
+
+    public static SchemaConfig getSchemaConfig(){
+        return config;
+    }
+
+
+    @Override
+    public Observable<IDataSource> getRegistered() {
+        return registered;
+    }
+
+    @Override
+    public Observable<IDataSource> getStatusChanged() {
+        return statusChanged;
     }
 
     protected static TableKeyDefinition getTableKeyDefinitions() {
@@ -82,7 +104,7 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     }
 
     @Override
-    public void register(T dataSource) {
+    public void register(IDataSource dataSource) {
         executionContext.getReactor().scheduleTask(() -> {
             addRow(new ITableRowUpdater() {
                 @Override
@@ -125,7 +147,7 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
             }
         });
         new DataSourceCatalog(values[0], new ChunkedColumnStorage(1024));
-        fireListeners(l -> l.onDataSourceRegistered(getDataSourceForRow(row)));
+        this.registered.onNext(getDataSourceForRow(row));
         return row;
     }
 
@@ -133,15 +155,9 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     public void setStatus(String name, DataSourceStatus status) {
         int rowId = getRow(new TableKey(name));
         updateRow(rowId, row -> row.setString(STATUS_COL, status.toString()));
-        fireListeners(l -> l.onDataSourceStatusChanged(get(name), status));
+        this.statusChanged.onNext(get(name));
     }
 
-    private void fireListeners(Consumer<IDataSourceListener> consumer) {
-        int count = listeners.size();
-        for (int i = 0; i < count; i++) {
-            consumer.accept(listeners.get(i));
-        }
-    }
 
     @Override
     public DataSourceStatus getStatus(String name) {
@@ -155,7 +171,7 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     }
 
     @Override
-    public T get(String name) {
+    public IDataSource get(String name) {
         int rowId = getRow(new TableKey(name));
         if (rowId == -1) {
             return null;
@@ -163,8 +179,8 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
         return getDataSourceForRow(rowId);
     }
 
-    private T getDataSourceForRow(int rowId) {
-        T dataSource = dataSourcesById.get(rowId);
+    private IDataSource getDataSourceForRow(int rowId) {
+        IDataSource dataSource = dataSourcesById.get(rowId);
         if (dataSource != null) {
             return dataSource;
         }
@@ -176,8 +192,8 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     }
 
     @Override
-    public Collection<T> getAll() {
-        List<T> dataSources = new ArrayList<>();
+    public Collection<IDataSource> getAll() {
+        List<IDataSource> dataSources = new ArrayList<>();
         IRowSequence allRows =  getOutput().getAllRows();
         while (allRows.moveNext()) {
             dataSources.add(getDataSourceForRow(allRows.getRowId()));
@@ -204,22 +220,11 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
         dataSourceCatalog.registerNodes(dataSourceExecutionPlanContext);
     }
 
-    @Override
-    public void addListener(IDataSourceListener listener) {
-        listeners.add(listener);
 
-        ArrayList<T> dataSources = new ArrayList<>(getAll());
-        int count = dataSources.size();
-        for (int i = 0; i < count; i++) {
-            IDataSource dataSource = dataSources.get(i);
-            listener.onDataSourceRegistered(dataSource);
-            listener.onDataSourceStatusChanged(dataSource, getStatus(dataSource.getName()));
-        }
-    }
 
-    private T deserialise(String json) {
+    private IDataSource deserialise(String json) {
         json = Utils.replaceSystemTokens(json);
-        return serialiser.deserialise(json, clazz);
+        return serialiser.deserialise(json, DataSource.class);
     }
 
     @Override
@@ -248,6 +253,11 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     }
 
     @Override
+    public ICatalog getDescendant(String path) {
+        return catalogHolder.getDescendant(path);
+    }
+
+    @Override
     public void addChild(ICatalog childCatalog) {
         catalogHolder.addChild(childCatalog);
     }
@@ -255,6 +265,11 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
     @Override
     public void removeChild(ICatalog childCatalog) {
         catalogHolder.removeChild(childCatalog);
+    }
+
+    @Override
+    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
+        return catalogHolder.getRelativeOperator(relativePath, isLocalName);
     }
 
     @Override
@@ -289,7 +304,7 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
         public static final String PATH_COLUMN = "path";
 
         public DataSourceCatalog(String id, ITableStorage storage) {
-            super(id, DataSourceRegistry.this.executionContext, DataSourceRegistry.this);
+            super(id , DataSourceRegistry.this.executionContext, DataSourceRegistry.this);
 
             this.storage = storage;
             output = new Output(Constants.OUT, this);
@@ -335,8 +350,13 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
             myTableRow.setRowId(rowId);
             myTableRow.setString(NAME_COLUMN,  node.name );
             myTableRow.setString(TYPE_COLUMN,  node.type);
-            myTableRow.setString(OPNAME_COLUMN,  getOperatorName(node));
-            myTableRow.setString(PATH_COLUMN,  getOperator(getOperatorName(node)).getPath());
+            String operatorName = getOperatorName(node);
+            myTableRow.setString(OPNAME_COLUMN, operatorName);
+            IOperator operator = getOperator(operatorName);
+            if(operator == null){
+                throw new RuntimeException(String.format("Unable to find operator named \"%s\"",operatorName));
+            }
+            myTableRow.setString(PATH_COLUMN,  operator.getPath());
             output.handleAdd(rowId);
         }
 
@@ -381,6 +401,11 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
         }
 
         @Override
+        public ICatalog getDescendant(String path) {
+            return catalogHolder.getDescendant(path);
+        }
+
+        @Override
         public void addChild(ICatalog childCatalog) {
             catalogHolder.addChild(childCatalog);
         }
@@ -388,6 +413,11 @@ public class DataSourceRegistry<T extends IDataSource> extends KeyedTable implem
         @Override
         public void removeChild(ICatalog childCatalog) {
             catalogHolder.removeChild(childCatalog);
+        }
+
+        @Override
+        public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
+            return catalogHolder.getRelativeOperator(relativePath,isLocalName);
         }
 
         @Override

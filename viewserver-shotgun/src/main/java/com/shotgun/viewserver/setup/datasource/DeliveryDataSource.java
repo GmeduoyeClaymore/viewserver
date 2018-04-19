@@ -15,27 +15,27 @@ DeliveryDataSource {
                 .withName(NAME)
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
-                                        new Column("deliveryId", ColumnType.String),
-                                        new Column("customerId", ColumnType.String),
-                                        new Column("created", ColumnType.DateTime),
-                                        new Column("lastModified", ColumnType.DateTime),
-                                        new Column("driverId", ColumnType.String),
-                                        new Column("originDeliveryAddressId", ColumnType.String),
-                                        new Column("destinationDeliveryAddressId", ColumnType.String),
-                                        new Column("from",  ColumnType.DateTime),
-                                        new Column("till",  ColumnType.DateTime),
-                                        new Column("distance", ColumnType.Int),
-                                        new Column("duration",  ColumnType.Int),
-                                        new Column("fixedPriceValue",  ColumnType.Int),
-                                        new Column("isFixedPrice",  ColumnType.Bool)
+                                        new Column("deliveryId", ContentType.String),
+                                        new Column("customerId", ContentType.String),
+                                        new Column("created", ContentType.DateTime),
+                                        new Column("lastModified", ContentType.DateTime),
+                                        new Column("driverId", ContentType.String),
+                                        new Column("originDeliveryAddressId", ContentType.String),
+                                        new Column("destinationDeliveryAddressId", ContentType.String),
+                                        new Column("from",  ContentType.DateTime),
+                                        new Column("till",  ContentType.DateTime),
+                                        new Column("distance", ContentType.Int),
+                                        new Column("duration",  ContentType.Int),
+                                        new Column("fixedPriceValue",  ContentType.Int),
+                                        new Column("isFixedPrice",  ContentType.Bool)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )
                 .withOutput(NAME)
                 .withCalculatedColumns(
-                        new CalculatedColumn("dimension_driverId", ColumnType.Int, "driverId")
+                        new CalculatedColumn("dimension_driverId", ContentType.Int, "driverId")
                 )
-                .withDimensions(Arrays.asList(new Dimension("dimension_driverId", Cardinality.Int, ColumnType.String, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_driverId", Cardinality.Int, ContentType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

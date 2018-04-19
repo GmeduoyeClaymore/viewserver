@@ -29,6 +29,7 @@ import io.viewserver.operators.projection.ProjectionOperatorFactory;
 import io.viewserver.operators.sort.SortOperatorFactory;
 import io.viewserver.operators.spread.ISpreadFunctionRegistry;
 import io.viewserver.operators.spread.SpreadOperatorFactory;
+import io.viewserver.operators.table.TableOperatorFactory;
 import io.viewserver.operators.table.TablePartitionFactory;
 import io.viewserver.operators.table.UserSessionPartitionerFactory;
 import io.viewserver.operators.transpose.TransposeOperatorFactory;
@@ -61,6 +62,7 @@ public class OperatorFactoryRegistry {
         register(new ProjectionOperatorFactory());
         register(new TablePartitionFactory());
         register(new UserSessionPartitionerFactory());
+        register(new TableOperatorFactory(tableStorageFactory));
     }
 
     public void register(IOperatorFactory factory) {

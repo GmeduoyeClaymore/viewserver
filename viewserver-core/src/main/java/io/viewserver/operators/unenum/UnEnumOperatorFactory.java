@@ -42,7 +42,7 @@ public class UnEnumOperatorFactory extends ConfigurableOperatorFactoryBase<IUnEn
     }
 
     @Override
-    public IOperator createOperator(String name, Configurator.ConfiguratorState state) {
+    public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         return new UnEnumOperator(name, state.executionContext, state.catalog, dimensionMapper);
     }
 
