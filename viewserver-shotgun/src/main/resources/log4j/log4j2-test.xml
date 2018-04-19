@@ -2,7 +2,7 @@
 <configuration status="OFF">
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            <PatternLayout pattern="%d{yy/MM/dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
     </appenders>
     <Loggers>
@@ -10,8 +10,8 @@
             <AppenderRef ref="Console" />
         </Root>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
-        <Logger name="io.grpc.netty" level="WARN"/>
-        <Logger name="io.netty" level="WARN"/>
-        <!--<Logger name="com.cmm.viewserver.command.MultiCommandResult" level="trace"/>-->
+        <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
+        <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
+        <Logger name="io.viewserver.operators.sortxx" level="trace"/>
     </Loggers>
 </configuration>

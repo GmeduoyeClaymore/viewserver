@@ -280,7 +280,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 StringBuilder sb = new StringBuilder();
                 if (queryMatches(output, row, false, sb)) {
                     output.handleAdd(getOutputRow(output, row));
-                    log.info("!!! Matched a row on add " + sb);
+                    log.trace("!!! Matched a row on add " + sb);
                 }
 
             }
@@ -315,7 +315,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     } else {
                         output.handleAdd(outputRow);
                     }
-                    log.info("!!! Matched a row on update " + sb);
+                    log.trace("!!! Matched a row on update " + sb);
                 } else if ((outputRow = output.rows.index(row)) != -1) {
                     output.handleRemove(outputRow);
                     output.markRowForRemoval(row);

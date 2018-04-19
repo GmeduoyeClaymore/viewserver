@@ -81,7 +81,7 @@ const validationSchema = {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   errors: getOperationError(state, 'loginDao', 'loginUserByUsernameAndPassword'),
-  busy: isAnyOperationPending(state, [{ customerDao: 'loginUserByUsernameAndPassword'}])
+  busy: isAnyOperationPending(state, [{ loginDao: 'loginUserByUsernameAndPassword'}])
 });
 
 export default connect(mapStateToProps)(CustomerLogin);
