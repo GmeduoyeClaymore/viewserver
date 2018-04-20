@@ -25,6 +25,6 @@ import io.viewserver.execution.context.OptionsExecutionPlanContext;
 public class UserParametersStep implements IExecutionPlanStep<OptionsExecutionPlanContext> {
     @Override
     public void execute(OptionsExecutionPlanContext optionsExecutionPlanContext) {
-        optionsExecutionPlanContext.setParameterHelper(new ParameterHelper(null));
+        optionsExecutionPlanContext.setParameterHelper(ParameterHelper.NO_PARAM_HELPER);
     }
 }

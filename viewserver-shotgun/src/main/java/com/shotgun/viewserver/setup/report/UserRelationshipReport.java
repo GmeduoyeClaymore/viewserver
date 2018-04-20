@@ -109,7 +109,7 @@ public class UserRelationshipReport {
             return new ReportDefinition(USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""), USER_FOR_PRODUCT_REPORT_ID + ((showUnrelated) ? "All" : ""))
                     .withDataSource(UserProductDataSource.NAME)
                     .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
-                    .withParameter("productId", "Product ID", String[].class)
+                    .withNonRequiredParameter("productId", "Product ID", String[].class,false, "")
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)

@@ -22,10 +22,14 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.operators.IOutput;
+import io.viewserver.operators.rx.RxUtils;
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 
 /**
  * Created by nick on 14/10/15.
@@ -235,7 +239,7 @@ public class CatalogHolder implements ICatalog {
         if(operatorsByName.containsKey(name)){
             return rx.Observable.just(operatorsByName.get(name));
         }
-        return operatorRegistrations.filter(op -> op.getName().equals(name)).take(1);
+        return operatorRegistrations.observeOn(RxUtils.executionContextScheduler(this.getExecutionContext(),1)).filter(op -> op.getName().equals(name)).take(1);
     }
 
     @Override

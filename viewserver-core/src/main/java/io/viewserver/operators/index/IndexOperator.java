@@ -644,7 +644,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     return previous ? column.getPreviousInt(row) : column.getInt(row);
                 }
                 default: {
-                    throw new RuntimeException("Invalid column type for index");
+                    throw new RuntimeException("Invalid column type for index " + columnHolder.getType() + " name " + columnHolder.getName());
                 }
             }
         }

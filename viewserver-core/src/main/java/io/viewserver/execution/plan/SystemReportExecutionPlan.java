@@ -19,21 +19,27 @@ package io.viewserver.execution.plan;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
 import io.viewserver.execution.steps.*;
+import io.viewserver.report.ReportContextRegistry;
+import io.viewserver.report.ReportRegistry;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class SystemReportExecutionPlan implements IExecutionPlan<ReportExecutionPlanContext> {
     private DimensionMapper dimensionMapper;
+    protected ReportRegistry reportRegistry;
 
-    public SystemReportExecutionPlan(DimensionMapper dimensionMapper) {
+
+
+    public SystemReportExecutionPlan(DimensionMapper dimensionMapper, ReportRegistry reportRegistry) {
         this.dimensionMapper = dimensionMapper;
+        this.reportRegistry = reportRegistry;
     }
 
     @Override
     public List<IExecutionPlanStep<ReportExecutionPlanContext>> getSteps() {
         return Arrays.asList(
-                new ReportInitialisationStep(),
+                new ReportInitialisationStep(reportRegistry),
                 new CalculationsStep(),
                 new MeasuresStep(),
                 new DimensionsStep(dimensionMapper),

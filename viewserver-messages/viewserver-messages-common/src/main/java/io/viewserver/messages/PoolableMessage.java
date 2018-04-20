@@ -57,7 +57,7 @@ public abstract class PoolableMessage<T> implements IPoolableMessage<T> {
             for (int j = 0; j < stackTraceSize; j++) {
                 builder.append("        at ").append(stackTraceElements[j]).append(System.lineSeparator());
             }
-            log.trace("Releasing poolable message of type {}\n{}", getClass().getName(), builder.toString());
+            //log.trace("Releasing poolable message of type {}\n{}", getClass().getName(), builder.toString());
         }
         if (retainCount == 0) {
             throw new RuntimeException(String.format("Poolable message of type %s over-released!", getClass().getName()));

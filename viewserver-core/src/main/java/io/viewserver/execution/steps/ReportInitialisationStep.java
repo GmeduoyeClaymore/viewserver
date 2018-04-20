@@ -17,10 +17,13 @@
 package io.viewserver.execution.steps;
 
 import io.viewserver.execution.ParameterHelper;
+import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
 import io.viewserver.execution.nodes.GroupByNode;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.report.IGraphDefinition;
+import io.viewserver.report.ReportDefinition;
+import io.viewserver.report.ReportRegistry;
 
 import java.util.List;
 
@@ -28,9 +31,17 @@ import java.util.List;
  * Created by nickc on 03/12/2014.
  */
 public class ReportInitialisationStep implements IExecutionPlanStep<ReportExecutionPlanContext> {
+    private ReportRegistry reportRegistry;
+
+    public ReportInitialisationStep(ReportRegistry reportRegistry) {
+        this.reportRegistry = reportRegistry;
+    }
+
     @Override
     public void execute(ReportExecutionPlanContext reportExecutionPlanContext) {
-        reportExecutionPlanContext.setParameterHelper(new ParameterHelper(reportExecutionPlanContext.getReportContext()));
+        ReportContext reportContext = reportExecutionPlanContext.getReportContext();
+        ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
+        reportExecutionPlanContext.setParameterHelper(new ParameterHelper(definition, reportContext));
 
         IGraphDefinition reportDefinition = reportExecutionPlanContext.getGraphDefinition();
         final List<IGraphNode> graphNodes = reportDefinition.getNodes();

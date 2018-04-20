@@ -48,6 +48,7 @@ public class BasicServerComponents implements IBasicServerComponents {
         connectionManager = new ConnectionManager(serverExecutionContext, getServerCatalog(), new ChunkedColumnStorage(1024));
         tableFactoryRegistry = new TableFactoryRegistry();
         new Catalog("graphNodes", getServerCatalog());
+
     }
 
     @Override

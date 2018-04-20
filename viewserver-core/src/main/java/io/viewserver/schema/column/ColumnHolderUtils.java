@@ -249,6 +249,31 @@ public class ColumnHolderUtils {
         }
     }
 
+
+    public static void setDimensionValue(ColumnHolder columnHolder, int row, int mappedValue) {
+        if(columnHolder.getColumn() == null){
+            throw new RuntimeException(String.format("No column configured for column holder named %s",columnHolder.getName()));
+        }
+        switch (columnHolder.getType()) {
+
+            case Byte: {
+                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (byte) mappedValue);
+                break;
+            }
+            case Short: {
+                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (short) mappedValue);
+                break;
+            }
+            case Int: {
+                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row,mappedValue );
+                break;
+            }
+            default: {
+                throw new RuntimeException("Unable to set value " + mappedValue + " of type " + columnHolder.getType());
+            }
+        }
+    }
+
     public static void setValue(ColumnHolder columnHolder, int row, Object value) {
         if(columnHolder.getColumn() == null){
             throw new RuntimeException(String.format("No column configured for column holder named %s",columnHolder.getName()));
@@ -263,11 +288,11 @@ public class ColumnHolderUtils {
                 break;
             }
             case Byte: {
-                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) defaultVal(value,-1) );
+                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) defaultVal(value,(byte)-1) );
                 break;
             }
             case Short: {
-                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) defaultVal(value,-1) );
+                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) defaultVal(value,(short)-1) );
                 break;
             }
             case Int: {

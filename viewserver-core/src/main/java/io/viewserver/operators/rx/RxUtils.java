@@ -2,12 +2,16 @@ package io.viewserver.operators.rx;
 
 import io.viewserver.core.IExecutionContext;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Actions;
 import rx.internal.util.ActionSubscriber;
+import rx.schedulers.Schedulers;
+
+import java.util.concurrent.Executor;
 
 public class RxUtils {
 
@@ -21,6 +25,16 @@ public class RxUtils {
             return observable.subscribe(new ExecutionContextSubscriber<T>(context, onNext, onError, onCompleted));
         }
     }
+
+    public static final Scheduler executionContextScheduler(IExecutionContext context, int delay){
+        return Schedulers.from(new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                context.submit(command,delay);
+            }
+        });
+    }
+
 }
 
 

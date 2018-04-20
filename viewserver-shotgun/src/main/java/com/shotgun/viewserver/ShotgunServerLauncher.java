@@ -5,10 +5,7 @@ import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.payments.StripeApiKey;
-import com.shotgun.viewserver.servercomponents.DirectTableUpdater;
-import com.shotgun.viewserver.servercomponents.FirebaseTableUpdater;
-import com.shotgun.viewserver.servercomponents.MockShotgunControllersComponents;
-import com.shotgun.viewserver.servercomponents.RealShotgunControllersComponents;
+import com.shotgun.viewserver.servercomponents.*;
 import com.shotgun.viewserver.setup.FirebaseApplicationSetup;
 import com.shotgun.viewserver.setup.ShotgunApplicationGraph;
 import com.shotgun.viewserver.setup.loaders.CompositeRecordLoaderCollection;
@@ -20,6 +17,7 @@ import com.sun.tools.javac.util.List;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Utils;
 import io.viewserver.network.EndpointFactoryRegistry;
 import io.viewserver.network.IEndpoint;
@@ -47,7 +45,7 @@ public class ShotgunServerLauncher{
     }
 
     private static void SharedConfig(MutablePicoContainer container){
-        NettyBasicServerComponent basicServerComponent = new NettyBasicServerComponent(List.of(EndpointFactoryRegistry.createEndpoint(get("server.endpoint"))));
+        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")));
         container.addComponent(basicServerComponent);
         container.addComponent(basicServerComponent.getServerCatalog());
         container.addComponent(basicServerComponent.getExecutionContext());
@@ -100,6 +98,7 @@ public class ShotgunServerLauncher{
 
     public void run(String environment, boolean bootstrap) throws IOException {
 
+        ExecutionContext.blockThreadAssertion  = true;
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         Properties props = new Properties();
@@ -121,5 +120,6 @@ public class ShotgunServerLauncher{
 
         BasicServer server = container.getComponent(BasicServer.class);
         server.start();
+        ExecutionContext.blockThreadAssertion  = false;
     }
 }

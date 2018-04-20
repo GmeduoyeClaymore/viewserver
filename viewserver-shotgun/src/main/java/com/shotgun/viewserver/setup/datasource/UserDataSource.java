@@ -57,10 +57,9 @@ public class UserDataSource {
                                 .withLeftJoinColumns("userId")
                                 .withLeftJoinOuter()
                                 .withRightJoinColumns("userId")
-                                .withConnection(UserDataSource.NAME, Constants.OUT, "left")
+                                .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
                                 .withConnection("ratingGroupBy", Constants.OUT, "right")
                 )
-                .withCalculatedColumns(new CalculatedColumn("dimension_userId", ContentType.String, "userId"))
                 .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ContentType.String), new Dimension("online", Cardinality.Byte, ContentType.Bool, true)))
                 .withOutput("ratingJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

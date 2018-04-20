@@ -23,6 +23,8 @@ import io.viewserver.network.netty.websocket.NettyWebSocketEndpoint;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,6 +46,13 @@ public class EndpointFactoryRegistry {
         factories.put(scheme, factory);
     }
 
+    public static List<IEndpoint> createEndpoints(String url) {
+        List<IEndpoint> result = new ArrayList<>();
+        for(String point : url.split(",")){
+            result.add(createEndpoint(point));
+        }
+        return result;
+    }
     public static IEndpoint createEndpoint(String url) {
         try {
             URI uri = new URI(url);

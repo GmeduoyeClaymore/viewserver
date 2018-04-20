@@ -64,7 +64,7 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             dimensionExecutionPlanContext.setOptions(options);
             dimensionExecutionPlanContext.setDataSource(dataSource);
             dimensionExecutionPlanContext.setDimension(data.getDimension());
-            dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(dimensionExecutionPlanContext.getReportContext()));
+            dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(reportDefinition,dimensionExecutionPlanContext.getReportContext()));
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeDimensionHandler", commandResult);
             CommandResult systemPlanResult = multiCommandResult.getResultForDependency("System execution plan");

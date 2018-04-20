@@ -10,11 +10,12 @@ Feature: User registration content type feature
   Scenario: Can see driver for product in userProduct report
       Given report parameters
         | Name           | Type    | Value |
-        | showOutOfRange | Boolean | false |
-        | showUnrelated  | Boolean | true  |
+        | showOutOfRange | String | false |
+        | showUnrelated  | String | true  |
         | latitude       | Integer | 0     |
         | longitude      | Integer | 0     |
         | userId         | Integer | 0     |
+        | maxDistance    | Integer | 0     |
       Given dimension filters
         | Name             | Type   | Value      |
         | dimension_productId | String | BrickLayer |

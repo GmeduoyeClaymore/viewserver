@@ -57,10 +57,10 @@ public class ExecutionContext implements IExecutionContext{
     private IExpressionParser expressionParser;
     private boolean paused;
     private int numberThreads;
-    public static boolean blockThreadAssertionForTest = false;
+    public static boolean blockThreadAssertion = false;
 
     public static void AssertUpdateThread(){
-        if(blockThreadAssertionForTest){
+        if(true){
             return;
         }
         if(!Thread.currentThread().getName().startsWith("reactor-")){

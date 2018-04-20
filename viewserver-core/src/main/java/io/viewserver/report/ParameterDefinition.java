@@ -24,16 +24,31 @@ public class ParameterDefinition<TType> {
     private String name;
     private String label;
     private Class type;
+    private boolean isRequired;
     private TType[] validValues;
 
     //TODO - add in optional valid values array
     public ParameterDefinition(){}
 
-    public ParameterDefinition(String name, String label, Class<TType> type, TType... validValues) {
+    public ParameterDefinition(String name, String label, Class<TType> type, boolean isRequired,TType... validValues) {
         this.name = name;
         this.label = label;
         this.type = type;
+        this.isRequired = isRequired;
         this.validValues = validValues;
+    }
+
+    public ParameterDefinition<TType> withRequired(boolean isRequired){
+        this.isRequired = isRequired;
+        return this;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean required) {
+        isRequired = required;
     }
 
     public String getName() {

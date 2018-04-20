@@ -64,7 +64,7 @@ public class SystemReportExecutor {
         IDataSource dataSource = reportDefinition.getDataSource() == null ? null : getDataSource(reportDefinition.getDataSource());
 
         activeExecutionPlanContext = buildReportExecutionPlanContext(reportContext, dataSource, reportDefinition);
-        activeExecutionPlan = new SystemReportExecutionPlan(dimensionMapper);
+        activeExecutionPlan = new SystemReportExecutionPlan(dimensionMapper, reportRegistry);
 
         executionPlanRunner.executePlan(activeExecutionPlan, activeExecutionPlanContext, executionContext, systemCatalog, commandResult);
 

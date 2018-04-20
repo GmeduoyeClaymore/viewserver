@@ -2,8 +2,10 @@ package io.viewserver.server.components;
 
 import io.viewserver.command.CommandResult;
 import io.viewserver.configurator.IConfiguratorSpec;
+import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.nodes.IGraphNode;
+import io.viewserver.operators.rx.RxUtils;
 import io.viewserver.reactor.IReactor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                     Set<String> dependencies = this.getDependencies(c);
                     List<String> dependeciesToWaitFor = dependencies.stream().filter(dep -> !this.isBuilt(dataSourceRegistry.get(dep))).collect(Collectors.toList());
                     if(dependeciesToWaitFor.size() > 0){
-                        waitFor(c.getName(), dependeciesToWaitFor).subscribe(ds -> runDataSource(c));
+                        waitFor(c.getName(), dependeciesToWaitFor).subscribeOn(RxUtils.executionContextScheduler(basicServerComponents.getExecutionContext(),1)).subscribe(ds -> runDataSource(c));
                     }
                     else{
                         runDataSource(c);
@@ -77,25 +79,26 @@ public class DataSourceComponents implements IDataSourceServerComponents{
             log.error("You are trying to built a datasource that is still waiting for dependencies aborting");
             return;
         }
-        this.basicServerComponents.getExecutionContext().getReactor().scheduleTask(() -> {
+        IExecutionContext executionContext = this.basicServerComponents.getExecutionContext();
+        executionContext.getReactor().scheduleTask(() -> {
             try {
                 getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZING);
                 CommandResult planResult = new CommandResult();
                 planResult.setListener(res -> {
                     if (res.isSuccess()) {
-                        getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
+                        executionContext.submit(() -> getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED),1);
                     } else {
                         log.error("Problem occurred running execution plan for " + dataSource.getName(), res.getMessage());
                         getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);
                     }
                 });
-                DataSourceHelper.runDataSourceExecutionPlan(this.basicServerComponents.getExecutionPlanRunner(),dataSource, dataSourceRegistry, this.basicServerComponents.getExecutionContext(),
+                DataSourceHelper.runDataSourceExecutionPlan(this.basicServerComponents.getExecutionPlanRunner(),dataSource, dataSourceRegistry, executionContext,
                         IDataSourceRegistry.getDataSourceCatalog(dataSource, this.basicServerComponents.getServerCatalog()), planResult);
             } catch (Throwable t) {
                 log.error("Problem occurred loading data for " + dataSource.getName(), t);
                 getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);
             }
-        }, 0, -1);
+        }, 1, -1);
     }
 
 

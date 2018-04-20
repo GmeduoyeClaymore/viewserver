@@ -122,6 +122,8 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
             if (!peerSession.isTornDown()) {
                 peerSession.closeCommand(subscribeCommand);
                 subscribeCommand.getMessage().release();
+                IUnsubscribeCommand unsubscribeCommand = MessagePool.getInstance().get(IUnsubscribeCommand.class)
+                        .setSubscriptionId(subscribeCommand.getId());
                 subscribeCommand = null;
 
                 if (updateCommand != null) {
@@ -129,8 +131,6 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
                     updateCommand = null;
                 }
 
-                IUnsubscribeCommand unsubscribeCommand = MessagePool.getInstance().get(IUnsubscribeCommand.class)
-                        .setSubscriptionId(subscribeCommand.getId());
                 peerSession.sendCommand(new Command("unsubscribe", unsubscribeCommand));
                 unsubscribeCommand.release();
 

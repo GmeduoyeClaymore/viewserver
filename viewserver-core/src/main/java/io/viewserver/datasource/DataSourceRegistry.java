@@ -27,6 +27,7 @@ import io.viewserver.core.Utils;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.operators.*;
+import io.viewserver.operators.rx.RxUtils;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
@@ -34,6 +35,8 @@ import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
@@ -58,6 +61,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     private final CatalogHolder catalogHolder;
     private ReplaySubject<IDataSource> registered = ReplaySubject.create();
     private ReplaySubject<IDataSource> statusChanged = ReplaySubject.create();
+
+    private static final Logger log = LoggerFactory.getLogger(DataSourceRegistry.class);
 
     static SchemaConfig config = new SchemaConfig()
             .withColumns(Arrays.asList(
@@ -91,12 +96,12 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
 
     @Override
     public Observable<IDataSource> getRegistered() {
-        return registered;
+        return registered.observeOn(RxUtils.executionContextScheduler(this.executionContext,1));
     }
 
     @Override
     public Observable<IDataSource> getStatusChanged() {
-        return statusChanged;
+        return statusChanged.observeOn(RxUtils.executionContextScheduler(this.executionContext,1));
     }
 
     protected static TableKeyDefinition getTableKeyDefinitions() {
@@ -147,13 +152,16 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             }
         });
         new DataSourceCatalog(values[0], new ChunkedColumnStorage(1024));
-        this.registered.onNext(getDataSourceForRow(row));
+        IDataSource dataSourceForRow = getDataSourceForRow(row);
+        log.info("Adding data source {} to row {}",dataSourceForRow.getName(),row);
+        this.registered.onNext(dataSourceForRow);
         return row;
     }
 
     @Override
     public void setStatus(String name, DataSourceStatus status) {
         int rowId = getRow(new TableKey(name));
+        log.info("Adding data source {} to row {}",name,rowId);
         updateRow(rowId, row -> row.setString(STATUS_COL, status.toString()));
         this.statusChanged.onNext(get(name));
     }

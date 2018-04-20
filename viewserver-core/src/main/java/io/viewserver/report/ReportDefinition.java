@@ -65,10 +65,18 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition>
         return this;
     }
 
-    public ReportDefinition withParameter(String name, String label, Class type, Object... validValues) {
-        parameters.put(name, new ParameterDefinition(name, label, type, validValues));
+    public ReportDefinition withParameter(String name, String label, Class type,Object... validValues) {
+        return withParameter(name,label,type,true,validValues);
+    }
+
+    public ReportDefinition withNonRequiredParameter(String name, String label, Class type,Object... validValues) {
+        return withParameter(name,label,type,false,validValues);
+    }
+    public ReportDefinition withParameter(String name, String label, Class type,boolean isRequired,Object... validValues) {
+        parameters.put(name, new ParameterDefinition(name, label, type, isRequired, validValues));
         return this;
     }
+
 
     public ReportDefinition withParameters(ParameterDefinition... parameters) {
         for (ParameterDefinition parameter : parameters) {

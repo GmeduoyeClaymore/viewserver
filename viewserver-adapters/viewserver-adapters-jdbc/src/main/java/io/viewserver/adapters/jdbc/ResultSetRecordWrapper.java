@@ -76,7 +76,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getBoolean(columnName);
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
             }
             return NullableBool.fromBoolean(value);
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getByte(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -110,7 +110,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getShort(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -120,7 +120,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getInt(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -130,7 +130,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getLong(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -140,7 +140,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getFloat(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -150,7 +150,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getDouble(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return -1;
         }
     }
@@ -161,7 +161,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
             String value = resultSet.getString(getDataSourceColumnName(columnName));
             return this.replaceNullValues(columnName, value, String.class);
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return null;
         }
     }
@@ -173,7 +173,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getDate(getDataSourceColumnName(columnName), cal);
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return null;
         }
     }
@@ -183,7 +183,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
         try {
             return resultSet.getTimestamp(getDataSourceColumnName(columnName), cal);
         } catch (SQLException e) {
-            log.trace(String.format("Issue getting column %s",columnName),e);
+            log.trace(String.format("Issue getting column %s",columnName));
             return null;
         }
     }

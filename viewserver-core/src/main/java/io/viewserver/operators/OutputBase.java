@@ -107,6 +107,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     @Override
     public void handleAdd(int row) {
+        ExecutionContext.AssertUpdateThread();
         if (getRowTracker().getOwner() == this) {
             getRowTracker().handleAdd(row);
         }
@@ -136,6 +137,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     @Override
     public void handleRemove(int row) {
+        ExecutionContext.AssertUpdateThread();
         if (getRowTracker().getOwner() == this) {
             getRowTracker().handleRemove(row);
         }

@@ -164,7 +164,7 @@ public class ViewServerClientSteps {
             List<Map<String, Object>> snapshot = subscription.getSnapshot().get();
             for(Map<String,Object> snap :snapshot){
                 String status = (String) snap.get("status");
-                if(!"BUILT".equals(status)){
+                if(!"INITIALIZED".equals(status)){
                     hasUnbuiltDataSource = true;
                     System.out.println(String.format("Waiting for data source %s which is in state %s",snap.get("name"),status));
                 }
@@ -174,7 +174,7 @@ public class ViewServerClientSteps {
                 Thread.sleep(1000);
             }
             counter++;
-        }while (hasUnbuiltDataSource && counter < 20);
+        }while (hasUnbuiltDataSource && counter < 200);
 
         Assert.assertFalse("Some data sources still not built",hasUnbuiltDataSource);
         subscription.close();
@@ -314,7 +314,7 @@ public class ViewServerClientSteps {
                 return ((Integer) o1.get("rank")) > ((Integer) o2.get("rank")) ? 1 : -1;
             }
         });
-
+        Thread.sleep(10000000);
         diff(expectedData, snapshot);
     }
 

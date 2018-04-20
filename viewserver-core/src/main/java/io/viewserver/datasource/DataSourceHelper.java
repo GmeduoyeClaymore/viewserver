@@ -62,8 +62,8 @@ public class DataSourceHelper {
         if (dimensionMapper != null) {
             dimensionMapper.registerDimension(dimensionNamespace, dimensionName, type);
         }
-        ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(dimensionName, schemaColumnType);
-        ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(schemaColumnType);
+        ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(dimensionName, cardinality.getColumnType());
+        ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(cardinality.getColumnType());
         columnMetadata.setDataType(type);
         columnMetadata.setFlag(ColumnFlags.DIMENSION);
         columnMetadata.setDimensionNameSpace(dimensionNamespace);

@@ -17,6 +17,8 @@
 package io.viewserver.execution;
 
 import io.viewserver.messages.common.ValueLists;
+import io.viewserver.report.ParameterDefinition;
+import io.viewserver.report.ReportDefinition;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,21 +27,43 @@ import java.util.regex.Pattern;
  * Created by nickc on 31/10/2014.
  */
 public class ParameterHelper {
-    public static ParameterHelper NO_PARAM_HELPER = new ParameterHelper(null);
+    public static ParameterHelper NO_PARAM_HELPER = new ParameterHelper();
     private final Pattern parameterPattern = Pattern.compile("\\{([^,\\}]+)((,([^,\\}]+))(,([^,\\}]+))?)?\\}");
+    private ReportDefinition definition;
     private ReportContext reportContext;
     private IParameterHolder parameterHolder;
 
     public ParameterHelper() {
     }
 
-    public ParameterHelper(IParameterHolder parameterHolder) {
+    public ParameterHelper(ReportDefinition definition, IParameterHolder parameterHolder) {
+        this.definition = definition;
         this.parameterHolder = parameterHolder;
+        validate(definition,parameterHolder);
     }
 
-    public ParameterHelper(ReportContext reportContext, IParameterHolder parameterHolder) {
-        this(parameterHolder);
+    public ParameterHelper(ReportDefinition definition, ReportContext reportContext, IParameterHolder parameterHolder) {
+        this(definition, parameterHolder);
+        this.definition = definition;
         this.reportContext = reportContext;
+
+        validate(definition, reportContext);
+    }
+
+    private void validate(ReportDefinition definition, IParameterHolder reportContext) {
+        StringBuilder errors = new StringBuilder();
+        for(ParameterDefinition par : definition.getParameters().values()){
+            ValueLists.IValueList parameterValue = reportContext.getParameterValue(par.getName());
+            if(par.isRequired() && (parameterValue == null || parameterValue.isEmpty())){
+                if(errors.length() > 0){
+                    errors.append("\n");
+                }
+                errors.append(String.format("Parameter \"%s\" is required and has not been specified",par.getName()));
+            }
+        }
+        if(errors.length() > 0){
+            throw new RuntimeException(errors.toString());
+        }
     }
 
     public ValueLists.IValueList getParameterValues(String parameterName) {

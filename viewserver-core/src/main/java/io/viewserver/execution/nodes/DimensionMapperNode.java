@@ -73,7 +73,7 @@ public class DimensionMapperNode  extends GraphNodeBase<DimensionMapperNode> {
     private List<Dimension> parameterise(List<Dimension> dimensions, ParameterHelper parameterHelper) {
         List<Dimension> result = new ArrayList<>();
         for(Dimension dim : dimensions){
-            result.add(new Dimension(parameterHelper.substituteParameterValues(dataSourceName),dim.getSourceColumnName(), dim.getCardinality(), dim.getContentType(),dim.isGlobal()));
+            result.add(new Dimension(parameterHelper.substituteParameterValues(dim.getName()),dim.getSourceColumnName(), dim.getCardinality(), dim.getContentType(),dim.isGlobal()));
         }
         return result;
     }

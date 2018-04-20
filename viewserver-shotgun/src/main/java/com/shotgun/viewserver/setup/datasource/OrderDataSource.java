@@ -36,7 +36,7 @@ public class OrderDataSource {
                         new JoinNode("deliveryJoin")
                                 .withLeftJoinColumns("deliveryId")
                                 .withRightJoinColumns("deliveryId")
-                                .withConnection(OrderDataSource.NAME, Constants.OUT, "left")
+                                .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(DeliveryDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("orderItemsJoin")
                                 .withLeftJoinColumns("orderId")
@@ -72,18 +72,13 @@ public class OrderDataSource {
                 )
 
                 .withOutput("projectionNode")
-                .withCalculatedColumns(
-                        new CalculatedColumn("dimension_status", ContentType.String, "status"),
-                        new CalculatedColumn("dimension_orderId", ContentType.String, "orderId"),
-                        new CalculatedColumn("dimension_customerUserId", ContentType.String, "userId")
-                )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId", Cardinality.Byte, ContentType.String),
-                        new Dimension("dimension_customerUserId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String),
+                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_driverId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_productCategoryId", Cardinality.Int, ContentType.String, true),
-                        new Dimension("dimension_status", Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String),
                         new Dimension("dimension_contentTypeId", Cardinality.Int, ContentType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

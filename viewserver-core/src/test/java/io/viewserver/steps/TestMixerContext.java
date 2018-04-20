@@ -58,7 +58,7 @@ public class TestMixerContext {
         catalog = new Catalog(executionContext);
         operatorFactories = new HashMap<>();
         spreadColumnRegistry = new SpreadFunctionRegistry();
-        ExecutionContext.blockThreadAssertionForTest = true;
+        ExecutionContext.blockThreadAssertion = true;
 
         register(new TestTableFactory(executionContext, catalog));
         register(new TestFilterOperatorFactory(executionContext, catalog,functionRegistry));
