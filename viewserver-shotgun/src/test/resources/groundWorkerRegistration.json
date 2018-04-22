@@ -1,14 +1,14 @@
 {
   "user": {
-    "firstName": "Modestas",
-    "lastName": "BrickLayer",
-    "email": "ModestasBrickLayer@gmail.com",
+    "firstName": "Bogdan",
+    "lastName": "Groundworker",
+    "email": "BogdanGroundworker@gmail.com",
     "contactNo": "07966265016",
     "type": "driver",
     "password": "welcome",
     "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
-    "selectedContentTypes": "ref://brickLayer_selectedContentTypes.json"
+    "selectedContentTypes": "ref://groundWorker_selectedContentTypes.json"
   },
   "bankAccount": {
     "accountNumber": "00012345",

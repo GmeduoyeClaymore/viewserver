@@ -1,14 +1,14 @@
 {
   "user": {
-    "firstName": "Bogdan",
-    "lastName": "Groundworker",
-    "email": "BogdanGroundworker@gmail.com",
+    "firstName": "Emil",
+    "lastName": "Plasterer",
+    "email": "EmilPlasterer@gmail.com",
     "contactNo": "07966265016",
     "type": "driver",
     "password": "welcome",
     "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
-    "selectedContentTypes": "ref://groundWorker_selectedContentTypes.json"
+    "selectedContentTypes": "ref://plasterer_selectedContentTypes.json"
   },
   "bankAccount": {
     "accountNumber": "00012345",
