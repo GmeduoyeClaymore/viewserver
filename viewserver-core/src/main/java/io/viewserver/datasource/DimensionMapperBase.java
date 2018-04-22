@@ -18,6 +18,9 @@ package io.viewserver.datasource;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.core._KeyType_;
+import io.viewserver.operators.dimension.DimensionMapperOperator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.Map;
  * Created by nick on 02/07/15.
  */
 public abstract class DimensionMapperBase implements IDimensionMapper {
+    private static final Logger log = LoggerFactory.getLogger(DimensionMapperBase.class);
     private static final NullableBool[] nullableBoolValues = { NullableBool.Null, NullableBool.False, NullableBool.True };
     private Map<LookupKey, Object> lookups = new HashMap<>();
 
@@ -37,7 +41,8 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         Object existingLookup = lookups.get(key);
         if (existingLookup != null) {
-            throw new IllegalStateException(String.format("%s has already been registered as a dimension", key));
+            log.warn("Already found a dimension named " + existingLookup + " not registering it again");
+            return (LookupKey) key;
         }
 
         switch (dimensionContentType) {

@@ -35,7 +35,7 @@ public class
         return new DataSource()
                 .withName(NAME)
                 .withSchema(schema)
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withDimensions(Arrays.asList(new Dimension("dimension_contentTypeId","contentTypeId" ,Cardinality.Int, ContentType.Int, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

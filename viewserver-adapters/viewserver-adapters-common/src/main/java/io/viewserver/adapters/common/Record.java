@@ -95,8 +95,8 @@ public class Record implements IRecord {
     }
 
     @Override
-    public short getShort(String columnName) {
-        return (short)values.get(columnName);
+    public Short getShort(String columnName) {
+        return (Short)values.get(columnName);
     }
 
     @Override
@@ -109,18 +109,18 @@ public class Record implements IRecord {
     }
 
     @Override
-    public long getLong(String columnName) {
-        return (long)values.get(columnName);
+    public Long getLong(String columnName) {
+        return (Long)values.get(columnName);
     }
 
     @Override
-    public float getFloat(String columnName) {
-        return (float)values.get(columnName);
+    public Float getFloat(String columnName) {
+        return (Float)values.get(columnName);
     }
 
     @Override
-    public double getDouble(String columnName) {
-        return (double)values.get(columnName);
+    public Double getDouble(String columnName) {
+        return (Double)values.get(columnName);
     }
 
     @Override

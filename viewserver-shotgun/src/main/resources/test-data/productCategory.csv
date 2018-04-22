@@ -1,0 +1,42 @@
+path,level,categoryId,category,parentCategoryId,isLeaf
+1Vans,1,1Vans,Vans,NONE,TRUE
+1Waste,1,1Waste,Waste,NONE,FALSE
+1Waste>2Skips,2,2Skips,Skips,1Waste,TRUE
+1Waste>2Grab,2,2Grab,Grab,1Waste,TRUE
+1Waste>2Cage,2,2Cage,Cage,1Waste,TRUE
+1Rubbish,1,1Rubbish,Rubbish,NONE,FALSE
+1Rubbish>2HouseHoldWaste,2,2HouseHoldWaste,Household Waste,1Rubbish,TRUE
+1Rubbish>2CommercialWaste,2,2CommercialWaste,Commercial Waste,1Rubbish,TRUE
+1Workers,1,1Workers,Workers,NONE,TRUE
+1Plant,1,1Plant,Plant,NONE,FALSE
+1Plant>2AccessLadder,2,2AccessLadder,Access & Ladders ,1Plant,FALSE
+1Plant>2AccessLadder>3Ladder,3,3Ladder,Ladder,2AccessLadder,TRUE
+1Plant>2AccessLadder>3StepLadder,3,3StepLadder,Step Ladder,2AccessLadder,TRUE
+1Plant>2AccessLadder>3Staging,3,3Staging,Staging,2AccessLadder,TRUE
+1Plant>2AccessLadder>3LadderCombination,3,3LadderCombination,Ladder Combination,2AccessLadder,TRUE
+1Plant>2BreakingDrilling,2,2BreakingDrilling,Breaking & Drilling ,1Plant,FALSE
+1Plant>2BreakingDrilling>3Breaker,3,3Breaker,Breaker,2BreakingDrilling,TRUE
+1Plant>2BreakingDrilling>3Drill,3,3Drill,Drill,2BreakingDrilling,TRUE
+1Plant>2BreakingDrilling>3CoreDrill,3,3CoreDrill,Core Drill,2BreakingDrilling,TRUE
+1Plant>2BuildingSiteworks,2,2BuildingSiteworks,Building & Siteworks ,1Plant,TRUE
+1Plant>2CleaningFloorcare,2,2CleaningFloorcare,Cleaning & Floorcare ,1Plant,TRUE
+1Plant>2ConcretePreparation,2,2ConcretePreparation,Concreting & Preparation ,1Plant,TRUE
+1Plant>2GardeningEvent,2,2GardeningEvent,Gardening & Event,1Plant,FALSE
+1Plant>2GardeningEvent>3HandTools,3,3HandTools,Hand Tools,2GardeningEvent,TRUE
+1Plant>2GardeningEvent>3LawnMowers,3,3LawnMowers,Lawn Mowers,2GardeningEvent,TRUE
+1Plant>2GardeningEvent>3TrimmersAndStrimmers,3,3TrimmersAndStrimmers,Trimmers and Strimmers,2GardeningEvent,TRUE
+1Plant>2GardeningEvent>3RotovatorsBlowers,3,3RotovatorsBlowers,Rotavators & Blowers,2GardeningEvent,TRUE
+1Plant>2HeatingDrying,2,2HeatingDrying,Heating & Drying ,1Plant,TRUE
+1Plant>2LiftingHandling,2,2LiftingHandling,Lifting & Handling ,1Plant,TRUE
+1Plant>2PaintingDecorating,2,2PaintingDecorating,Painting & Decorating ,1Plant,TRUE
+1Plant>2PlumbingPumping,2,2PlumbingPumping,Plumbing & Pumping ,1Plant,TRUE
+1Plant>2SandingFixing,2,2SandingFixing,Sanding & Fixing ,1Plant,TRUE
+1Plant>2CuttingGrinding,2,2CuttingGrinding,Cutting & Grinding ,1Plant,FALSE
+1Plant>2CuttingGrinding>3Grinder,3,3Grinder,Grinder,2CuttingGrinding,TRUE
+1Plant>2CuttingGrinding>3Saw,3,3Saw,Saw,2CuttingGrinding,TRUE
+1Plant>2CuttingGrinding>3TileCutterSaw,3,3TileCutterSaw,Tile Cutters & Saws,2CuttingGrinding,TRUE
+1Plant>2CuttingGrinding>3PlanerJointerSplitterRouter,3,3PlanerJointerSplitterRouter,"Planer, Jointer, Splitter & Router",2CuttingGrinding,TRUE
+1Plant>2SurveyingLocation,2,2SurveyingLocation,Surveying & Location ,1Plant,TRUE
+1Plant>2WeldingPower,2,2WeldingPower,Welding & Power ,1Plant,TRUE
+1Plant>2Lighting,2,2Lighting,Lighting ,1Plant,TRUE
+1Plant>2Miscellaneous,2,2Miscellaneous,Miscellaneous,1Plant,TRUE

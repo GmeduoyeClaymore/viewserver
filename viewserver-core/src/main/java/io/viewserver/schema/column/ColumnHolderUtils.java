@@ -288,11 +288,11 @@ public class ColumnHolderUtils {
                 break;
             }
             case Byte: {
-                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) defaultVal(value,(byte)-1) );
+                ((IWritableColumnByte)columnHolder.getColumn()).setByte(row, (Byte) defaultVal(value == null ?  null : ((Integer)value).byteValue(),(byte)-1) );
                 break;
             }
             case Short: {
-                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) defaultVal(value,(short)-1) );
+                ((IWritableColumnShort)columnHolder.getColumn()).setShort(row, (Short) defaultVal(value == null ?  null : ((Integer)value).shortValue(),(short)-1) );
                 break;
             }
             case Int: {

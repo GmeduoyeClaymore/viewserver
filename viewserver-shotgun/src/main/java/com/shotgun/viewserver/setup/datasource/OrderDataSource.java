@@ -74,12 +74,12 @@ public class OrderDataSource {
                 .withOutput("projectionNode")
                 .withDimensions(Arrays.asList(
                         new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String),
-                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
-                        new Dimension("dimension_driverId", Cardinality.Int, ContentType.String, true),
-                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true),
-                        new Dimension("dimension_productCategoryId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_driverId","driverId", Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported(),
+                        new Dimension("dimension_productCategoryId", "productCategoryId", Cardinality.Int, ContentType.String),
                         new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_contentTypeId", Cardinality.Int, ContentType.Int, true)))
+                        new Dimension("dimension_contentTypeId",Cardinality.Int, ContentType.Int, true).withImported()))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

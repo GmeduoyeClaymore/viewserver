@@ -35,6 +35,8 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
     private static final Logger log = LoggerFactory.getLogger(NettyBasicServerComponent.class);
 
     private List<IEndpoint> endpointList;
+    private Network serverNetwork;
+    private IReactor serverReactor;
 
     public NettyBasicServerComponent(List<IEndpoint> endpointList) {
         this.endpointList = endpointList;
@@ -46,8 +48,8 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
             final NettyNetworkAdapter networkAdapter = new NettyNetworkAdapter();
             final SimpleNetworkMessageWheel networkMessageWheel = new SimpleNetworkMessageWheel(new Encoder(), new Decoder());
             networkAdapter.setNetworkMessageWheel(networkMessageWheel);
-            Network serverNetwork = new Network(this.getCommandHandlerRegistry(), this.getExecutionContext(), this.getServerCatalog(), networkAdapter);
-            IReactor serverReactor = this.initReactor(serverNetwork);
+            serverNetwork = new Network(this.getCommandHandlerRegistry(), this.getExecutionContext(), this.getServerCatalog(), networkAdapter);
+            serverReactor = this.initReactor(serverNetwork);
             serverReactor.start();
             serverReactor.scheduleTask(() -> {
                 Runtime runtime = Runtime.getRuntime();
@@ -58,6 +60,16 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
             endpointList.forEach(serverNetwork::listen);
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        if(serverReactor != null){
+            serverReactor.shutDown();
+        }
+        if(serverNetwork != null){
+            serverNetwork.shutdown();
         }
     }
 

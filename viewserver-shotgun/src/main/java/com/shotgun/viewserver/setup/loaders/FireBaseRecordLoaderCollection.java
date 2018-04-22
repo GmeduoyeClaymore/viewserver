@@ -4,6 +4,7 @@ import io.viewserver.datasource.*;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseRecordLoader;
+import io.viewserver.report.ReportRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +16,6 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
 
     public FireBaseRecordLoaderCollection(FirebaseConnectionFactory connectionFactory){
         this.connectionFactory = connectionFactory;
-    }
-
-    public FireBaseRecordLoaderCollection() {
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
@@ -30,19 +28,29 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
         register(RatingDataSource.getDataSource().getSchema(), RatingDataSource.NAME);
         register(UserRelationshipDataSource.getDataSource().getSchema(), UserRelationshipDataSource.NAME);
         register(VehicleDataSource.getDataSource().getSchema(), VehicleDataSource.NAME);
+        registerAtRoot(DataSourceRegistry.getSchemaConfig(), IDataSourceRegistry.TABLE_NAME);
+        registerAtRoot(ReportRegistry.getSchemaConfig(), ReportRegistry.TABLE_NAME);
+    }
+
+    private void registerAtRoot(SchemaConfig schema, String operatorName) {
+        loaders.put("/"+operatorName, getLoader(schema, operatorName));
     }
 
     private void register(SchemaConfig schema, String operatorName) {
-        loaders.put(getOperatorPath(operatorName),new FirebaseRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT)));
+        loaders.put(getOperatorPath(operatorName), getLoader(schema, operatorName));
+    }
+
+    private FirebaseRecordLoader getLoader(SchemaConfig schema, String operatorName) {
+        return new FirebaseRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT));
     }
 
     static String getOperatorPath(String operatorName) {
-        return String.format("/%s/%s/table", "datasources/", operatorName);
+        return String.format("/%s/%s/table", "datasources", operatorName);
     }
 
 
     @Override
     public Map<String, IRecordLoader> getDataLoaders() {
-        return null;
+        return loaders;
     }
 }

@@ -52,6 +52,9 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
             throw new RuntimeException("Dimensions should not be nul");
         }
         for(Dimension dim : config.getDimensions()){
+            if(dim.isImported()){
+                continue;
+            }
             indexedDimensions.put(dim.getName(),dim);
             indexedDimensionsBySourceColumn.put(dim.getSourceColumnName(),dim);
         }
@@ -78,12 +81,15 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
             if(indexedDimensionsBySourceColumn.containsKey(name)){
                 Dimension dim = indexedDimensionsBySourceColumn.get(name);
                 dimensionName = dim.getName();
-                ColumnHolder holder = DataSourceHelper.createColumnHolder(dataSourceName, dimensionName,dim.getContentType(),dim.getCardinality(),dimensionMapper);
-                dimensionColumns.put(dimensionName, holder);
-                output.getSchema().addColumn(holder);
-                DimensionMapperOperator.this.tableStorage.initialiseColumn(holder);
+                if(!(dim.isGlobal() && output.getSchema().getColumnHolder(dimensionName) != null)){
+                    ColumnHolder holder = DataSourceHelper.createColumnHolder(dim.isGlobal() ? "global" : dataSourceName, dimensionName,dim.getContentType(),dim.getCardinality(),dimensionMapper);
+                    dimensionColumns.put(dimensionName, holder);
+                    output.getSchema().addColumn(holder);
+                    DimensionMapperOperator.this.tableStorage.initialiseColumn(holder);
+                }
+
             }
-            if(!(indexedDimensions.containsKey(name) && removeInputColumns) && !name.equals(dimensionName)) {
+            if(!(indexedDimensionsBySourceColumn.containsKey(name) && removeInputColumns) && !name.equals(dimensionName)) {
                 ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder);
                 output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
             }
@@ -105,9 +111,7 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
                 if(columnHolder == null){
                     log.warn(String.format("Source column %s has not been found in datasource %s", sourceColumnName, DimensionMapperOperator.this.dataSourceName));
                 }
-                Object value = ColumnHolderUtils.getValue(columnHolder, row);
-                int map = DimensionMapperOperator.this.dimensionMapper.map(DimensionMapperOperator.this.dataSourceName, dim.getName(), dim.getContentType(), value);
-                ColumnHolderUtils.setDimensionValue(dimEntry.getValue(),row, map);
+                mapDimColumn(row, dimEntry, dim, columnHolder);
             }
             output.handleAdd(row);
         }
@@ -123,7 +127,7 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
                     log.warn(String.format("Source column %s has not been found in datasource %s",dim.getSourceColumnName(), DimensionMapperOperator.this.dataSourceName));
                 }
                 if(rowFlags == null || rowFlags.isDirty(columnHolder.getColumnId())){
-                    ColumnHolderUtils.setValue(dimEntry.getValue(),row, DimensionMapperOperator.this.dimensionMapper.map(DimensionMapperOperator.this.dataSourceName, dim.getName(),dim.getContentType(), ColumnHolderUtils.getValue(columnHolder,row)));
+                    mapDimColumn(row, dimEntry, dim, columnHolder);
                 }
             }
             output.handleUpdate(row);
@@ -133,6 +137,15 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
         protected void onRowRemove(int row) {
             output.handleRemove(row);
         }
+    }
+
+    private void mapDimColumn(int row, Map.Entry<String, ColumnHolder> dimEntry, Dimension dim, ColumnHolder columnHolder) {
+        if(columnHolder.getMetadata().isFlagged(ColumnFlags.DIMENSION)){
+            return;
+        }
+        Object value = ColumnHolderUtils.getValue(columnHolder, row);
+        int map = DimensionMapperOperator.this.dimensionMapper.map(dim.isGlobal() ? "global" : DimensionMapperOperator.this.dataSourceName, dim.getName(), dim.getContentType(), value);
+        ColumnHolderUtils.setDimensionValue(dimEntry.getValue(),row, map);
     }
 
     private class Output extends MappedOutputBase {

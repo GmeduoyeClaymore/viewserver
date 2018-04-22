@@ -22,7 +22,7 @@ public class PhoneNumberDataSource {
                                 ))
                                 .withKeyColumns("phoneNumber")
                 )
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

@@ -49,7 +49,7 @@ public class DataSourceCalculationsStep implements IExecutionPlanStep<DataSource
             // set the output of the data source to be the calculations
             // if a report context specifies no index filters, then this will be the report source
             // otherwise, the output from the index filter will be the report source
-            dataSource.setFinalOutput(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.CALCS_NAME));
+            dataSource.setFinalOutput(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.CALCS_NAME));
         }
     }
 }

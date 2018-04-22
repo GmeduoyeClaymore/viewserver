@@ -25,7 +25,7 @@ public class DataSourceDimensionMappingStep implements IExecutionPlanStep<DataSo
                     .withDataSourceName(dataSource.getName())
                     .withRemoveInputColumns(false)
                     .withConnection(dataSource.getFinalOutput(), Constants.OUT, Constants.IN));
-            dataSource.setFinalOutput(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.DIMENSION_MAP_NAME));
+            dataSource.setFinalOutput(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.DIMENSION_MAP_NAME));
         }
     }
 }

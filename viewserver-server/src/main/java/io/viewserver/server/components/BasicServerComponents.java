@@ -101,4 +101,8 @@ public class BasicServerComponents implements IBasicServerComponents {
     @Override
     public void start() {
     }
+
+    @Override
+    public void stop() {
+    }
 }

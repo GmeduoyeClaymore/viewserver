@@ -26,7 +26,7 @@ public class OrderItemsDataSource {
                                         new Column("quantity", ContentType.Int)
                                 ))
                                 .withKeyColumns("orderItemId"))
-                        .withOutput(NAME)
+                        .withOutput(DataSource.TABLE_NAME)
                         .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
         }
 }

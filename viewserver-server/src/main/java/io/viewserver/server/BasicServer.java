@@ -39,4 +39,13 @@ public class BasicServer {
         this.initialDataLoaderComponent.start();
         this.controllerComponents.start();
     }
+
+    public void stop(){
+        this.controllerComponents.stop();
+        this.initialDataLoaderComponent.stop();
+        this.reportServerComponents.stop();
+        this.dataSourceServerComponents.stop();
+        this.basicSubscriptionComponent.stop();
+        this.basicServerComponents.stop();
+    }
 }

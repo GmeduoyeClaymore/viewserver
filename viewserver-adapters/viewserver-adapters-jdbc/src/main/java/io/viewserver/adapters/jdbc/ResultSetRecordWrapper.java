@@ -19,13 +19,11 @@ package io.viewserver.adapters.jdbc;
 import io.viewserver.adapters.common.BaseRecordWrapper;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
-import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -106,7 +104,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public short getShort(String columnName) {
+    public Short getShort(String columnName) {
         try {
             return resultSet.getShort(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
@@ -126,32 +124,32 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public long getLong(String columnName) {
+    public Long getLong(String columnName) {
         try {
             return resultSet.getLong(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
             log.trace(String.format("Issue getting column %s",columnName));
-            return -1;
+            return null;
         }
     }
 
     @Override
-    public float getFloat(String columnName) {
+    public Float getFloat(String columnName) {
         try {
             return resultSet.getFloat(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
             log.trace(String.format("Issue getting column %s",columnName));
-            return -1;
+            return null;
         }
     }
 
     @Override
-    public double getDouble(String columnName) {
+    public Double getDouble(String columnName) {
         try {
             return resultSet.getDouble(getDataSourceColumnName(columnName));
         } catch (SQLException e) {
             log.trace(String.format("Issue getting column %s",columnName));
-            return -1;
+            return null;
         }
     }
 

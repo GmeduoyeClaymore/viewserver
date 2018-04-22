@@ -27,12 +27,8 @@ ProductDataSource {
         return new DataSource()
                 .withName(NAME)
                 .withSchema(schema)
-                .withCalculatedColumns(
-                        new CalculatedColumn("dimension_productId", ContentType.String, "productId"),
-                        new CalculatedColumn("prodConstantJoinCol", ContentType.Int, "1")
-                )
-                .withOutput(NAME)
-                .withDimensions(Arrays.asList(new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true)))
+                .withOutput(DataSource.TABLE_NAME)
+                .withDimensions(Arrays.asList(new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

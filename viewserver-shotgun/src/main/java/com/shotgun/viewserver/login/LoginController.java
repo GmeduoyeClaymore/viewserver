@@ -82,6 +82,7 @@ public class LoginController {
     private Observable<Boolean> setUserOnline(User user, KeyedTable table) {
         Record userRecord = new Record()
                 .addValue("userId", user.getUserId())
+                .addValue("online", true)
                 .addValue("userStatus", UserStatus.ONLINE.name());
 
         return iDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
@@ -115,8 +116,8 @@ public class LoginController {
         IRowSequence rows = (output.getAllRows());
 
         while(rows.moveNext()){
-            String email = ((String)ControllerUtils.getColumnValue(userTable, "email", rows.getRowId())).toLowerCase();
-            if(email != null && email.equals(loginEmail)){
+            String email = (String) ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
+            if(email != null && email.toLowerCase().equals(loginEmail)){
                 return rows.getRowId();
             }
         }

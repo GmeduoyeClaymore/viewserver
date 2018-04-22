@@ -31,7 +31,7 @@ DeliveryDataSource {
                                 ))
                                 .withKeyColumns("deliveryId")
                 )
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withDimensions(Arrays.asList(new Dimension("dimension_driverId", Cardinality.Int, ContentType.String, true)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

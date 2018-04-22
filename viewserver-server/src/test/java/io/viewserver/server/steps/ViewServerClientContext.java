@@ -53,12 +53,16 @@ public class ViewServerClientContext {
         for(Map.Entry<String,String> entry: contextParams.entrySet()){
             result = result.replace(String.format("{%s}",entry.getKey()),entry.getValue());
         }
+
+        for(Map.Entry<Object, Object> prop : System.getProperties().entrySet()){
+            result = result.replace(String.format("{%s}",prop.getKey() + ""),prop.getValue() + "");
+        }
         return result;
     }
 
     public ClientConnectionContext create(String name, String url){
         try {
-            TestViewServerClient client = new TestViewServerClient(name, url);
+            TestViewServerClient client = new TestViewServerClient(name, replaceParams(url));
             client.authenticate("open", "cucumber").get();
             ClientConnectionContext result = new ClientConnectionContext(name,client, this);
             this.clientConnectionsByName.put(name,result);
@@ -85,6 +89,7 @@ public class ViewServerClientContext {
             }
         }
         clientConnectionsByName.clear();
+        contextParams.clear();
     }
 
     public Map<String, String> getContextParams() {

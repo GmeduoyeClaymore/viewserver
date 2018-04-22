@@ -30,7 +30,7 @@ public class
                                 ))
                                 .withKeyColumns("vehicleId")
                 )
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

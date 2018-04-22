@@ -135,9 +135,10 @@ public class ViewServerClientSteps {
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
         trySubscribe(clientName,subscribeLatch);
-        subscribeLatch.await(20, TimeUnit.SECONDS);
+        int waitTime = 5;
+        subscribeLatch.await(waitTime, TimeUnit.MINUTES);
 
-        Assert.assertNotNull(clientConnectionContext.getSubscription("report"));
+        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + waitTime + " seconds",clientConnectionContext.getSubscription("report"));
     }
 
     @When("^\"(.*)\" All data sources are built$")

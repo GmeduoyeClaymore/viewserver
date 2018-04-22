@@ -1,0 +1,2 @@
+vehicleId,userId,registrationNumber,colour,make,model,bodyStyle,dimensions
+7da63d73-e564-4605-9c59-7550056485cc,3ABCD,AB17OAR,blue,Ford,Transit,PANEL VAN,"{height:320, width:120, length:300, weight: 100}"

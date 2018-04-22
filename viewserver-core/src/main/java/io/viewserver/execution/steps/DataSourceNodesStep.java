@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by paulg on 31/10/2014.
  */
-public class DataSourceStep implements IExecutionPlanStep<DataSourceExecutionPlanContext> {
-    private static final Logger log = LoggerFactory.getLogger(DataSourceStep.class);
+public class DataSourceNodesStep implements IExecutionPlanStep<DataSourceExecutionPlanContext> {
+    private static final Logger log = LoggerFactory.getLogger(DataSourceNodesStep.class);
 
     @Override
     public void execute(DataSourceExecutionPlanContext dataSourceExecutionPlanContext) {
@@ -47,7 +47,7 @@ public class DataSourceStep implements IExecutionPlanStep<DataSourceExecutionPla
         if (dataSource.getOutput() == null) {
             log.warn("Data source '{}' has no output set - results may be unpredictable!", dataSource);
         } else {
-            dataSource.setFinalOutput(IDataSourceRegistry.getDefaultOperatorPath(dataSource, dataSource.getOutput()));
+            dataSource.setFinalOutput(IDataSourceRegistry.getOperatorPath(dataSource, dataSource.getOutput()));
         }
     }
 }

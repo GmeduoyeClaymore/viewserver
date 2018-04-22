@@ -45,7 +45,7 @@ public class CalculationProjectionStep implements IExecutionPlanStep<ReportExecu
             return;
         }
 
-        String calcsName = IDataSourceRegistry.getDefaultOperatorPath(dataSourceDefinition, DataSource.CALCS_NAME);
+        String calcsName = IDataSourceRegistry.getOperatorPath(dataSourceDefinition, DataSource.CALCS_NAME);
         CalcColNode calcColNode = new CalcColNode(calcsName)
                 .withCalculations(calculations)
                 .withColumnAliases(reportExecutionPlanContext.getCalculationAliases())

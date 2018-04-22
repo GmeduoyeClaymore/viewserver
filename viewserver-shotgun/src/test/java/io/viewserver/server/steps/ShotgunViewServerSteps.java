@@ -1,5 +1,6 @@
 package io.viewserver.server.steps;
 
+import com.shotgun.viewserver.PropertyUtils;
 import com.shotgun.viewserver.ShotgunServerLauncher;
 import cucumber.api.java.en.Given;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
@@ -11,24 +12,24 @@ import java.util.concurrent.TimeUnit;
 
 public class ShotgunViewServerSteps {
 
-    ShotgunServerLauncher launcher = new ShotgunServerLauncher();
+    private ViewServerClientContext clientContext;
+    private ShotgunServerLauncher launcher;
 
-    public ShotgunViewServerSteps() {
+    public ShotgunViewServerSteps(ViewServerClientContext clientContext, ShotgunServerLauncher launcher) {
+        this.clientContext = clientContext;
+        this.launcher = launcher;
     }
 
     @Given("^a running shotgun viewserver$")
     public void a_running_shotgun_viewserver() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        new Thread(() -> {
-            try {
-                launcher.run("it", true);
-                launcher.run("it", false);
-                latch.countDown();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        latch.await(10, TimeUnit.SECONDS);
-
+        clientContext.closeClients();
+        PropertyUtils.loadProperties("cucumber");
+        String env = System.getProperty("env");
+        PropertyUtils.loadProperties(env);
+        launcher.stop();
+        if(Boolean.parseBoolean(System.getProperty("serverShouldBeStarted", "true"))) {
+            launcher.run(env, true);
+            launcher.run(env, false);
+        }
     }
 }

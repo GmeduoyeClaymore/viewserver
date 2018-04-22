@@ -22,7 +22,7 @@ public class UserRelationshipDataSource {
                 )
                 .withDimensions(Arrays.asList(
                         new Dimension("dimension_relationshipType","relationshipType", Cardinality.Int, ContentType.String)))
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

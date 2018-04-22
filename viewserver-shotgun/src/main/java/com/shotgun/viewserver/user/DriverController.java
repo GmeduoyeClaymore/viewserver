@@ -28,6 +28,8 @@ import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
@@ -109,7 +111,13 @@ public class DriverController {
                         }
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
-                    future.set(userId);
+                    Observable.from(loginController.setUserId(userId)).subscribe(
+                            res -> {
+                                log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
+                                future.set(userId);
+                            }
+                    );
+                    //future.set(userId);
                 }catch (Exception ex){
                     log.error("There was a problem registering the driver", ex);
                     future.setException(ex);

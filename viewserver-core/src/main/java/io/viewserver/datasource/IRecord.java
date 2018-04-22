@@ -34,15 +34,15 @@ public interface IRecord {
 
     NullableBool getNullableBool(String columnName);
 
-    short getShort(String columnName);
+    Short getShort(String columnName);
 
     int getInt(String columnName);
 
-    long getLong(String columnName);
+    Long getLong(String columnName);
 
-    float getFloat(String columnName);
+    Float getFloat(String columnName);
 
-    double getDouble(String columnName);
+    Double getDouble(String columnName);
 
     Date getDate(String columnName);
 

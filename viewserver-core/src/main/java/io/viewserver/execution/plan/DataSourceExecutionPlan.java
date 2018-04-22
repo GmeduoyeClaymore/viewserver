@@ -31,8 +31,8 @@ public class DataSourceExecutionPlan implements IExecutionPlan<DataSourceExecuti
     public List<IExecutionPlanStep<DataSourceExecutionPlanContext>> getSteps() {
         return Arrays.asList(
                 new DataSourceParametersStep(),
-                new DataSourceStep(),
                 new TableCreationStep(),
+                new DataSourceNodesStep(),
                 new DataSourceCalculationsStep(),
                 new DataSourceDimensionMappingStep(),
                 new DefaultOutputStep(),

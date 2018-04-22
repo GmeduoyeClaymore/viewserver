@@ -78,7 +78,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
                 } else {
                     throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
                 }
-                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(),dimension.getContentType(), value);
+                mappedValues[j] = dimensionMapper.map(dimension.isGlobal() ? "global" : dataSource.getName(), dimension.getName(),dimension.getContentType(), value);
             }
 
             IndexOperator.QueryHolder queryHolder = dimensionFilter.isExclude()
@@ -87,7 +87,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
             queryHolders[i++] = queryHolder;
         }
 
-        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.INDEX_NAME))
+        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
                 .withQueryHolders(queryHolders);
         /*if (reportExecutionPlanContext.isDistributed()) {
             indexNode.withDistribution();

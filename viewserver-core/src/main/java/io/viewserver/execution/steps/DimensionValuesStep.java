@@ -83,7 +83,7 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
             queryHolders[i++] = queryHolder;
         }
 
-        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getDefaultOperatorPath(dataSource, DataSource.INDEX_NAME))
+        IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
                 .withQueryHolders(queryHolders);
 
         dimensionExecutionPlanContext.addNodes(indexNode);

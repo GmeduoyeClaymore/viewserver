@@ -12,7 +12,7 @@ public class Dimension {
     private Cardinality cardinality;
     private ContentType contentType;
     private boolean global;
-
+    private boolean imported;
 
     public Dimension(String namespace, String name, String label, String group, String plural, Cardinality cardinality, ContentType contentType, boolean global) {
         this.namespace = namespace;
@@ -23,6 +23,14 @@ public class Dimension {
         this.cardinality = cardinality;
         this.contentType = contentType;
         this.global = global;
+    }
+
+    public boolean isImported() {
+        return imported;
+    }
+
+    public void setImported(boolean imported) {
+        this.imported = imported;
     }
 
     public String getNamespace() {

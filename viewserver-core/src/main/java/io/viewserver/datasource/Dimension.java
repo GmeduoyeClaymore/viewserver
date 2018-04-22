@@ -31,6 +31,7 @@ public class Dimension {
     private Cardinality cardinality;
     private ContentType contentType;
     private boolean global;
+    private boolean imported;
 
     public Dimension() {
     }
@@ -83,6 +84,14 @@ public class Dimension {
         return this;
     }
 
+    public boolean isImported() {
+        return imported;
+    }
+
+    public void setImported(boolean imported) {
+        this.imported = imported;
+    }
+
     public Cardinality getCardinality() {
         return cardinality;
     }
@@ -107,6 +116,12 @@ public class Dimension {
         this.label = label;
         return this;
     }
+
+    public Dimension withImported() {
+        this.imported = true;
+        return this;
+    }
+
 
     public String getSourceColumnName() {
         return sourceColumnName;

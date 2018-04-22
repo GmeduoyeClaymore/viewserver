@@ -39,11 +39,15 @@ UserProductDataSource {
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
                                 .withConnection("productsSpread", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right"),
+                        new ProjectionNode("projectionNode")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("product_dimension_productId", "dimension_productId"))
+                                .withConnection("productJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId","product_productId", Cardinality.Int, ContentType.String, true)))
-                .withOutput("productJoin")
+                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true)))
+                .withOutput("projectionNode")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

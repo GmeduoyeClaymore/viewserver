@@ -24,21 +24,20 @@ import java.util.Map;
 
 public class FirebaseApplicationSetup implements IApplicationSetup {
 
-    String firebaseKeyPath;
     private IApplicationGraphDefinitions graphDefinitions;
-    private static final Logger log = LoggerFactory.getLogger(H2ApplicationSetup.class);
+    private static final Logger log = LoggerFactory.getLogger(FirebaseApplicationSetup.class);
     private JacksonSerialiser serialiser = new JacksonSerialiser();
+    private FirebaseConnectionFactory connectionFactory;
 
-    public FirebaseApplicationSetup(String firebaseKeyPath, IApplicationGraphDefinitions graphDefinitions) {
-        this.firebaseKeyPath = firebaseKeyPath;
+    public FirebaseApplicationSetup(FirebaseConnectionFactory connectionFactory, IApplicationGraphDefinitions graphDefinitions) {
+        this.connectionFactory = connectionFactory;
         this.graphDefinitions = graphDefinitions;
     }
 
     @Override
     public void run() {
-        log.info("Bootstrapping local database");
-        FirebaseConnectionFactory firebaseConnectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
-        setup(firebaseConnectionFactory.getConnection());
+        log.info("Bootstrapping firebase database");
+        setup(connectionFactory.getConnection());
     }
 
 

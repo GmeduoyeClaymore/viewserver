@@ -60,7 +60,7 @@ public class UserDataSource {
                                 .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
                                 .withConnection("ratingGroupBy", Constants.OUT, "right")
                 )
-                .withDimensions(Arrays.asList(new Dimension("dimension_userId", Cardinality.Byte, ContentType.String), new Dimension("online", Cardinality.Byte, ContentType.Bool, true)))
+                .withDimensions(Arrays.asList(new Dimension("dimension_userId","userId", Cardinality.Byte, ContentType.String), new Dimension("online", Cardinality.Byte, ContentType.Bool)))
                 .withOutput("ratingJoin")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

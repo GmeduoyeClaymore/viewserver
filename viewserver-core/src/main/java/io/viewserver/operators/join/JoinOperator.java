@@ -263,8 +263,14 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
             }
 
             if (name != null) {
-                ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder, isLeft);
-                output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
+                if(output.getSchema().getColumnHolder(name) != null){
+                    log.warn("Cannot add column \"{}\" as it is already contained in the schema",name);
+                }else{
+                    ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder, isLeft);
+                    output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
+                }
+
+
             }
 
             String[] joinColumns = isLeft ? leftJoinColumns : rightJoinColumns;

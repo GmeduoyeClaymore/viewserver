@@ -83,7 +83,11 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         initialise(8);
     }
 
-    private static Schema getSchema() {
+    public static SchemaConfig getConfig() {
+        return config;
+    }
+
+    public static Schema getSchema() {
         return ColumnHolderUtils.getSchema(config);
     }
 

@@ -10,10 +10,10 @@ import rx.Emitter;
 import rx.Observable;
 
 public class DirectTableUpdater implements IDatabaseUpdater{
-    private final IReactor reactor;
+    private final IExecutionContext executionContext;
 
     public DirectTableUpdater(IExecutionContext executionContext) {
-        this.reactor = executionContext.getReactor();
+        this.executionContext = executionContext;
     }
 
     public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record){
@@ -29,7 +29,7 @@ public class DirectTableUpdater implements IDatabaseUpdater{
     }
 
     public Observable<Boolean> scheduleAddOrUpdateRow(KeyedTable table, String dataSourceName, IRecord record){
-        return Observable.create(subscriber -> reactor.scheduleTask(() -> {
+        return Observable.create(subscriber -> this.executionContext.getReactor().scheduleTask(() -> {
             try{
                 addOrUpdateRow(table,dataSourceName,record);
                 subscriber.onNext(true);

@@ -19,19 +19,15 @@ package io.viewserver.adapters.csv;
 import io.viewserver.adapters.common.BaseRecordWrapper;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
-import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.SchemaConfig;
 import javolution.text.TypeFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -171,7 +167,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public short getShort(String columnName) {
+    public Short getShort(String columnName) {
         String string = getString(columnName);
         return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseShort(string.trim());
     }
@@ -183,19 +179,19 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public long getLong(String columnName) {
+    public Long getLong(String columnName) {
         String string = getString(columnName);
         return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseLong(string.trim());
     }
 
     @Override
-    public float getFloat(String columnName) {
+    public Float getFloat(String columnName) {
         String string = getString(columnName);
         return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseFloat(string.trim());
     }
 
     @Override
-    public double getDouble(String columnName) {
+    public Double getDouble(String columnName) {
         String string = getString(columnName);
         return (string == null || string.trim().equals("")) ? -1 : TypeFormat.parseDouble(string.trim());
     }

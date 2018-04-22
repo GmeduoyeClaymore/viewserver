@@ -26,8 +26,8 @@ public class ClientConnectionContext{
         this.name = name;
         this.client = client;
         this.viewServerClientContext = viewServerClientContext;
-        options.setOffset(-1);
-        options.setLimit(-1);
+        options.setOffset(0);
+        options.setLimit(100);
     }
 
     public String getName() {

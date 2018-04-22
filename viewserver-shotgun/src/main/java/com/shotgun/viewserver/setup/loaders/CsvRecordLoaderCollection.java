@@ -14,8 +14,10 @@ import java.util.Map;
 public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
+    private String dataPath;
 
-    public CsvRecordLoaderCollection() {
+    public CsvRecordLoaderCollection(String dataPath) {
+        this.dataPath = dataPath;
         loaders = new HashMap<>();
         register(UserDataSource.getDataSource().getSchema(), UserDataSource.NAME);
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
@@ -32,7 +34,7 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
     }
 
     private void register(SchemaConfig schema, String operatorName) {
-        loaders.put( getOperatorPath(operatorName),new CsvRecordLoader(schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT)).withFileName(String.format("data/%s.csv", operatorName)));
+        loaders.put( getOperatorPath(operatorName),new CsvRecordLoader(schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT)).withFileName(String.format("%s/%s.csv", dataPath,operatorName)));
     }
 
     static String getOperatorPath(String operatorName) {

@@ -27,12 +27,11 @@ import java.util.Map;
 public class FirebaseTableUpdater implements IDatabaseUpdater {
     private final IReactor reactor;
     private FirebaseConnectionFactory connectionFactory;
-    private String firebaseKeyPath;
     private static final Logger log = LoggerFactory.getLogger(FirebaseTableUpdater.class);
 
-    public FirebaseTableUpdater(IExecutionContext executionContext, String firebaseKeyPath) {
-        this.firebaseKeyPath = firebaseKeyPath;
+    public FirebaseTableUpdater(IExecutionContext executionContext, FirebaseConnectionFactory connectionFactory) {
         this.reactor = executionContext.getReactor();
+        this.connectionFactory = connectionFactory;
     }
 
     @Override
@@ -161,9 +160,6 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
     }
 
     protected Firestore getDb(){
-        if(connectionFactory == null){
-            connectionFactory = new FirebaseConnectionFactory(firebaseKeyPath);
-        }
         return connectionFactory.getConnection();
     }
 

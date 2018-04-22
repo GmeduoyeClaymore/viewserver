@@ -31,7 +31,7 @@ public class DeliveryAddressDataSource {
                                         ))
                                 .withKeyColumns("deliveryAddressId")
                 )
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

@@ -24,11 +24,11 @@ public class RecordUtils{
         String[] elements = new String[tableKeyDefinition.size()];
         int counter = 0;
         for(String col : tableKeyDefinition.getKeys()){
-            String keyElement = rec.getString(col);
+            Object keyElement = rec.getValue(col);
             if(keyElement == null){
                 throw new RuntimeException(String.format("Cannot map record as one of key element %s is empty %s",keyElement, rec));
             }
-            elements[counter++] = keyElement;
+            elements[counter++] = keyElement + "";
         }
         ITableRowUpdater rowUpdater = new ITableRowUpdater() {
             public Object getValue(String columnName) {
@@ -37,7 +37,9 @@ public class RecordUtils{
             @Override
             public void setValues(ITableRow row) {
                 for (ColumnHolder holder : operator.getOutput().getSchema().getColumnHolders()) {
-                    ColumnHolderUtils.setValue(holder, row.getRowId(), rec.getValue(holder.getName()));
+                    if(rec.hasValue(holder.getName())) {
+                        ColumnHolderUtils.setValue(holder, row.getRowId(), rec.getValue(holder.getName()));
+                    }
                 }
             }
         };

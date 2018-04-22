@@ -29,7 +29,7 @@ public class ProductCategoryDataSource {
                         new Dimension("dimension_parentCategoryId","parentCategoryId",Cardinality.Byte, ContentType.String)
                 ))
                 .withSchema(schema)
-                .withOutput(NAME)
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

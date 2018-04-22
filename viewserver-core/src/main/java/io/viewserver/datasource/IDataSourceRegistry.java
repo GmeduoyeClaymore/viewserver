@@ -40,7 +40,7 @@ public interface IDataSourceRegistry{
         return String.format("/%s/%s/%s", TABLE_NAME, dataSourceName, DataSource.DEFAUT_NAME);
     }
 
-    static String getDefaultOperatorPath(IDataSource dataSource, String operatorName) {
+    static String getOperatorPath(IDataSource dataSource, String operatorName) {
         return getOperatorPath(dataSource.getName(), operatorName);
     }
 

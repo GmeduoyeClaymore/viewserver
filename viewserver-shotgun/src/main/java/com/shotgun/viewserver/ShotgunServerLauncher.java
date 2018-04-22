@@ -34,12 +34,17 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.function.Predicate;
 
+import static com.shotgun.viewserver.PropertyUtils.loadProperties;
+
 public class ShotgunServerLauncher{
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
+    private BasicServer server;
 
     public ShotgunServerLauncher(){
         ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForMockEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForRealEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("it_running",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForRealEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
     }
@@ -58,6 +63,19 @@ public class ShotgunServerLauncher{
         container.addComponent(BasicServer.class);
     }
 
+    private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
+        SharedConfig(container);
+        container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
+        container.addComponent(H2ApplicationSetup.class);
+        container.addComponent(RealShotgunControllersComponents.class);
+        container.addComponent(DirectTableUpdater.class);
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new H2RecordLoaderCollection(container.getComponent(JdbcConnectionFactory.class)),
+                () -> new CsvRecordLoaderCollection(get("csv.data.path"))
+        ));
+        return true;
+    }
+
     private static boolean ConfigureForMockEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
@@ -66,7 +84,7 @@ public class ShotgunServerLauncher{
         container.addComponent(DirectTableUpdater.class);
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new H2RecordLoaderCollection(container.getComponent(JdbcConnectionFactory.class)),
-                CsvRecordLoaderCollection::new
+                () -> new CsvRecordLoaderCollection(get("csv.data.path"))
         ));
         return true;
     }
@@ -96,30 +114,39 @@ public class ShotgunServerLauncher{
     }
 
 
-    public void run(String environment, boolean bootstrap) throws IOException {
+    public void run(String environment, boolean bootstrap) {
 
         ExecutionContext.blockThreadAssertion  = true;
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        Properties props = new Properties();
-        try(InputStream resourceStream = loader.getResourceAsStream(String.format("%s.properties",environment))) {
-            props.load(resourceStream);
-            for(String propName : props.stringPropertyNames()){
-                System.setProperty(propName, (String) props.get(propName));
-            }
-        }
+        loadProperties(environment);
 
         MutablePicoContainer container = (new PicoBuilder()).withCaching().withLifecycle().build();
 
-        ENVIRONMENT_CONFIGURATIONS.get(environment).test(container);
+        Predicate<MutablePicoContainer> mutablePicoContainerPredicate = ENVIRONMENT_CONFIGURATIONS.get(environment);
+
+        if(mutablePicoContainerPredicate == null){
+            throw new RuntimeException("Cannot find environment with name " + environment);
+        }
+
+        mutablePicoContainerPredicate.test(container);
 
         if(bootstrap){
             container.getComponent(IApplicationSetup.class).run();
             return;
         }
 
-        BasicServer server = container.getComponent(BasicServer.class);
+        server = container.getComponent(BasicServer.class);
         server.start();
         ExecutionContext.blockThreadAssertion  = false;
     }
+
+    public void stop(){
+        if(server != null){
+            server.stop();
+        }
+    }
+
+
 }
+
+
