@@ -144,7 +144,7 @@ public class LoginController {
     }
 
     private Observable<OperatorEvent> waitForDataSource(String dataSource) {
-        return systemcatalog.getOperator("datasources").getOutput("out").observable().filter(c-> isInitialized(c,dataSource)).take(1);
+        return systemcatalog.getOperatorByPath("datasources").getOutput("out").observable().filter(c-> isInitialized(c,dataSource)).take(1);
     }
 
     private static boolean isInitialized(OperatorEvent ev, String name) {

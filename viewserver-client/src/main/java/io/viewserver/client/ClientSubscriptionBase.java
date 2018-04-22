@@ -29,6 +29,10 @@ public class ClientSubscriptionBase implements AutoCloseable {
         this.deserialiserOperator = deserialiserOperator;
     }
 
+    public DeserialiserOperator getDeserialiserOperator() {
+        return deserialiserOperator;
+    }
+
     @Override
     public void close() throws Exception {
         final DeserialiserOperator tempDeserialiserOperator = deserialiserOperator;

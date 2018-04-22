@@ -78,6 +78,14 @@ public class ViewServerClient implements AutoCloseable {
         run();
     }
 
+    public ExecutionContext getExecutionContext() {
+        return executionContext;
+    }
+
+    public Catalog getCatalog() {
+        return catalog;
+    }
+
     public ViewServerClient(String name, String url) throws URISyntaxException {
         this(name, EndpointFactoryRegistry.createEndpoint(url));
     }
@@ -93,6 +101,7 @@ public class ViewServerClient implements AutoCloseable {
 
     private void run() {
         try {
+            new Message();//force pool to init
             commandHandlerRegistry = new CommandHandlerRegistry();
             registerCommands();
             final NettyNetworkAdapter networkAdapter = new NettyNetworkAdapter();

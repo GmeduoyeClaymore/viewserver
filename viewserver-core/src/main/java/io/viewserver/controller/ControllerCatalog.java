@@ -20,13 +20,12 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.operators.*;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import rx.Observable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -107,15 +106,11 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
     }
 
     private class Output extends OutputBase {
-
-
         public Output(String name, IOperator owner) {
             super(name, owner);
             getSchema().addColumn(ColumnHolderUtils.createColumnHolder(NAME_COLUMN, io.viewserver.schema.column.ColumnType.String));
             getSchema().addColumn(ColumnHolderUtils.createColumnHolder(PATH, io.viewserver.schema.column.ColumnType.String));
         }
-
-
     }
 
     @Override
@@ -129,13 +124,18 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
     }
 
     @Override
-    public void registerOperator(IOperator operator) {
-        catalogHolder.registerOperator(operator);
+    public int registerOperator(IOperator operator) {
+        return catalogHolder.registerOperator(operator);
     }
 
     @Override
     public IOperator getOperator(String name) {
         return catalogHolder.getOperator(name);
+    }
+
+    @Override
+    public IOperator getOperatorByPath(String name) {
+        return catalogHolder.getOperatorByPath(name);
     }
 
     @Override
@@ -164,9 +164,10 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
     }
 
     @Override
-    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
-        return catalogHolder.getRelativeOperator(relativePath,isLocalName);
+    public Observable<IOperator> waitForOperator(String name) {
+        return catalogHolder.waitForOperator(name);
     }
+
 
     @Override
     public Collection<IOperator> getAllOperators() {
@@ -176,6 +177,11 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
     @Override
     public ICatalog getChild(String name) {
         return catalogHolder.getChild(name);
+    }
+
+    @Override
+    public Observable<ICatalog> waitForChild(String name) {
+        return catalogHolder.waitForChild(name);
     }
 
 }

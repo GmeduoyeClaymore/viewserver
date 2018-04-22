@@ -64,7 +64,7 @@ public class TestGroupByOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        GroupByOperator group = (GroupByOperator)catalog.getOperator(operatorName);
+        GroupByOperator group = (GroupByOperator)catalog.getOperatorByPath(operatorName);
         if(group == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

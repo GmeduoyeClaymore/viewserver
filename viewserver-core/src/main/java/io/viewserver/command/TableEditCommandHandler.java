@@ -18,11 +18,6 @@ package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.core.NullableBool;
-import io.viewserver.datasource.Dimension;
-import io.viewserver.datasource.DimensionMapper;
-import io.viewserver.datasource.IDataSource;
-import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.messages.command.ITableEditCommand;
 import io.viewserver.messages.tableevent.IRowEvent;
 import io.viewserver.messages.tableevent.ISchemaChange;
@@ -35,7 +30,6 @@ import io.viewserver.operators.IOperator;
 import io.viewserver.operators.table.*;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import gnu.trove.map.hash.TIntIntHashMap;
@@ -68,14 +62,14 @@ public class TableEditCommandHandler extends CommandHandlerBase<ITableEditComman
             }
             final IOperator operator;
             if (operation == ITableEditCommand.Operation.Create) {
-                IOperator existingOperator = peerSession.getSessionCatalog().getOperator(tableName);
+                IOperator existingOperator = peerSession.getSessionCatalog().getOperatorByPath(tableName);
                 if (existingOperator != null) {
                     throw new Exception(String.format("Operator '%s' already exists - cannot create it again", tableName));
                 }
 
                 operator = createTable(data, peerSession.getSystemCatalog(), peerSession.getExecutionContext());
             } else {
-                operator = peerSession.getSessionCatalog().getOperator(tableName);
+                operator = peerSession.getSessionCatalog().getOperatorByPath(tableName);
                 if (operator == null) {
                     throw new Exception(String.format("Operator '%s' doesn't exist - cannot %s it", tableName, data.getOperation()));
                 }

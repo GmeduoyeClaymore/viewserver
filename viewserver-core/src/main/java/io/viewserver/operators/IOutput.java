@@ -31,6 +31,8 @@ public interface IOutput extends IActiveRowTracker {
 
     String getName();
 
+    String getFullName();
+
     IOperator getOwner();
 
     void handleAdd(int row);

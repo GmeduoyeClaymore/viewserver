@@ -20,8 +20,6 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 
-import java.util.Observable;
-
 /**
  * Created by nickc on 07/10/2014.
  */
@@ -34,9 +32,11 @@ public interface ICatalog {
 
     IExecutionContext getExecutionContext();
 
-    void registerOperator(IOperator operator);
+    int registerOperator(IOperator operator);
 
     IOperator getOperator(String name);
+
+    IOperator getOperatorByPath(String name);
 
     rx.Observable<IOperator> getOperatorObservable(String name);
 
@@ -50,7 +50,9 @@ public interface ICatalog {
 
     void removeChild(ICatalog childCatalog);
 
-    IOperator getRelativeOperator(String relativePath, boolean isLocalName);
+    rx.Observable<IOperator> waitForOperator(String name);
+
+    rx.Observable<ICatalog> waitForChild(String name);
 
     java.util.Collection<IOperator> getAllOperators();
 

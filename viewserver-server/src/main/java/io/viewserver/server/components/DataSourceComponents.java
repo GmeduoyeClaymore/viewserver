@@ -82,7 +82,6 @@ public class DataSourceComponents implements IDataSourceServerComponents{
         IExecutionContext executionContext = this.basicServerComponents.getExecutionContext();
         executionContext.getReactor().scheduleTask(() -> {
             try {
-                getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZING);
                 CommandResult planResult = new CommandResult();
                 planResult.setListener(res -> {
                     if (res.isSuccess()) {

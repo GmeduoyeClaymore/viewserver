@@ -140,7 +140,7 @@ public class NexmoController implements INexmoController {
     }
 
     private void setPhoneNumberStatus(String status, String toNumber, String fromNumber) {
-        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         String toNumberTrim = toNumber.trim();
         String fromNumberTrim = fromNumber.trim();
@@ -160,13 +160,13 @@ public class NexmoController implements INexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                iDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
             }
         }
     }
 
     private HashMap getProxyRoute(String fromNumber, String toNumber, ICatalog systemCatalog) {
-        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperator(TableNames.PHONE_NUMBER_TABLE_NAME);
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         HashMap proxyRoute = new HashMap();
 

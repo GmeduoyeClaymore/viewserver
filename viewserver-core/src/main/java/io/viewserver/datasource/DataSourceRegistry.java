@@ -38,16 +38,12 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
-import rx.subjects.Subject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
-
 
 
 /**
@@ -58,6 +54,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     protected final IExecutionContext executionContext;
     private final IJsonSerialiser serialiser = new JacksonSerialiser();
     private final TIntObjectHashMap<IDataSource> dataSourcesById = new TIntObjectHashMap<>();
+
     private final CatalogHolder catalogHolder;
     private ReplaySubject<IDataSource> registered = ReplaySubject.create();
     private ReplaySubject<IDataSource> statusChanged = ReplaySubject.create();
@@ -78,7 +75,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         this.systemCatalog = systemCatalog;
         this.executionContext = executionContext;
         this.catalogHolder = new CatalogHolder(this);
-
+        log.info("Creating data source registry " + TABLE_NAME);
+        this.isDataResetRequested = false;
 
         setSystemOperator(true);
         setAllowDataReset(true);
@@ -147,13 +145,13 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             public void setValues(ITableRow row) {
                 super.setValues(row);
                 values[0] = (String) super.getValue(ID_COL);
-                row.setString(STATUS_COL, DataSourceStatus.UNINITIALIZED.toString());
+                row.setString(STATUS_COL, DataSourceStatus.INITIALIZING.toString());
                 row.setString(PATH_COL, String.format("%s/%s", getPath(), values[0]));
             }
         });
         new DataSourceCatalog(values[0], new ChunkedColumnStorage(1024));
         IDataSource dataSourceForRow = getDataSourceForRow(row);
-        log.info("Adding data source {} to row {}",dataSourceForRow.getName(),row);
+        log.info(String.format("Added data source %s to row %s active rows are %s",dataSourceForRow.getName(),row, getOutput().getRowTracker()));
         this.registered.onNext(dataSourceForRow);
         return row;
     }
@@ -161,7 +159,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     @Override
     public void setStatus(String name, DataSourceStatus status) {
         int rowId = getRow(new TableKey(name));
-        log.info("Adding data source {} to row {}",name,rowId);
+        log.info("Updating data source {} with row {}",name,rowId);
         updateRow(rowId, row -> row.setString(STATUS_COL, status.toString()));
         this.statusChanged.onNext(get(name));
     }
@@ -224,7 +222,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     @Override
     public void onDataSourceBuilt(DataSourceExecutionPlanContext dataSourceExecutionPlanContext) {
         final String name = dataSourceExecutionPlanContext.getDataSource().getName();
-        final DataSourceCatalog dataSourceCatalog = (DataSourceCatalog) catalogHolder.getOperator(name);
+        final DataSourceCatalog dataSourceCatalog = (DataSourceCatalog) catalogHolder.getOperatorByPath(name);
         dataSourceCatalog.registerNodes(dataSourceExecutionPlanContext);
     }
 
@@ -241,13 +239,18 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     }
 
     @Override
-    public void registerOperator(IOperator operator) {
-        catalogHolder.registerOperator(operator);
+    public int registerOperator(IOperator operator) {
+        return catalogHolder.registerOperator(operator);
     }
 
     @Override
     public IOperator getOperator(String name) {
         return catalogHolder.getOperator(name);
+    }
+
+    @Override
+    public IOperator getOperatorByPath(String name) {
+        return catalogHolder.getOperatorByPath(name);
     }
 
     @Override
@@ -276,9 +279,15 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     }
 
     @Override
-    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
-        return catalogHolder.getRelativeOperator(relativePath, isLocalName);
+    public Observable<IOperator> waitForOperator(String name) {
+        return catalogHolder.waitForOperator(name);
     }
+
+    @Override
+    public Observable<ICatalog> waitForChild(String name) {
+        return catalogHolder.waitForChild(name);
+    }
+
 
     @Override
     public Collection<IOperator> getAllOperators() {
@@ -341,8 +350,6 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         public void registerNodes(DataSourceExecutionPlanContext executionPlanContext) {
             this.executionPlanContext = executionPlanContext;
             // TODO: do something better to get the table in there
-            final String tableName = executionPlanContext.getDataSource().getName();
-            registerNode(new NodeSpec(tableName, "Table"));
             final List<IGraphNode> graphNodes = executionPlanContext.getGraphNodes();
             int count = graphNodes.size();
             for (int i = 0; i < count; i++) {
@@ -360,12 +367,17 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             myTableRow.setString(TYPE_COLUMN,  node.type);
             String operatorName = getOperatorName(node);
             myTableRow.setString(OPNAME_COLUMN, operatorName);
-            IOperator operator = getOperator(operatorName);
+            IOperator operator = getOperatorByPath(operatorName);
             if(operator == null){
                 throw new RuntimeException(String.format("Unable to find operator named \"%s\"",operatorName));
             }
             myTableRow.setString(PATH_COLUMN,  operator.getPath());
             output.handleAdd(rowId);
+        }
+
+        @Override
+        public Observable<ICatalog> waitForChild(String name) {
+            return catalogHolder.waitForChild(name);
         }
 
 
@@ -384,13 +396,18 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         }
 
         @Override
-        public void registerOperator(IOperator operator) {
-            catalogHolder.registerOperator(operator);
+        public int registerOperator(IOperator operator) {
+            return catalogHolder.registerOperator(operator);
         }
 
         @Override
         public IOperator getOperator(String name) {
             return catalogHolder.getOperator(name);
+        }
+
+        @Override
+        public IOperator getOperatorByPath(String name) {
+            return catalogHolder.getOperatorByPath(name);
         }
 
         @Override
@@ -424,8 +441,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         }
 
         @Override
-        public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
-            return catalogHolder.getRelativeOperator(relativePath,isLocalName);
+        public Observable<IOperator> waitForOperator(String name) {
+            return catalogHolder.waitForOperator(name);
         }
 
         @Override

@@ -16,15 +16,16 @@
 
 package io.viewserver.server.steps;
 
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
+import io.viewserver.client.ViewServerClient;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
-import io.viewserver.messages.MessagePool;
-import io.viewserver.messages.command.IGenericJSONCommand;
 import io.viewserver.messages.common.ValueLists;
-import io.viewserver.network.Command;
+import io.viewserver.operators.validator.ValidationOperator;
+import io.viewserver.operators.validator.ValidationUtils;
 import io.viewserver.util.MapReader;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -47,7 +48,9 @@ import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ViewServerClientSteps {
     private ViewServerClientContext clientContext;
@@ -58,21 +61,13 @@ public class ViewServerClientSteps {
 
     @After
     public void afterScenario() {
-        if (clientContext.client != null) {
-            try {
-                clientContext.client.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            clientContext.client = null;
-        }
+                clientContext.closeClients();
+
     }
 
-    @And("^a client connected to \"(.*)\"$")
-    public void a_connected_client(String url) throws Throwable {
-        // TODO: add url parsing
-        clientContext.client = new TestViewServerClient("client", url);
-        clientContext.client.authenticate("open", "cucumber").get();
+    @And("^a client named \"(.*)\" connected to \"(.*)\"$")
+    public void a_connected_client(String name,String url)  {
+        clientContext.create(name, url);
     }
 
     @And("^sleep for (\\d+) millis$")
@@ -84,17 +79,18 @@ public class ViewServerClientSteps {
         }
     }
 
-    @Given("^report parameters$")
-    public void report_parameters(DataTable parameters) throws Throwable {
-        clientContext.reportContext.getParameterValues().clear();
-        setValuesFromDataTable(parameters, (name, valuesList) -> clientContext.reportContext.getParameterValues().put(name, valuesList));
+    @Given("^\"(.*)\" report parameters$")
+    public void report_parameters(String clientName, DataTable parameters) {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        setValuesFromDataTable(parameters, (name, valuesList) -> ctxt.getReportContext().getParameterValues().put(name, valuesList));
     }
 
-    @And("^dimension filters$")
-    public void dimension_filters(DataTable filters) throws Throwable {
-        clientContext.reportContext.getDimensionValues().clear();
+    @And("^\"(.*)\" dimension filters$")
+    public void dimension_filters(String clientName, DataTable filters)  {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        ctxt.getReportContext().getDimensionValues().clear();
         setValuesFromDataTable(filters, (name, valuesList) ->
-                clientContext.reportContext.getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList)));
+                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList)));
     }
 
     private void setValuesFromDataTable(DataTable parameters, IConsumer<String, ValueLists.IValueList> consumer) {
@@ -132,29 +128,32 @@ public class ViewServerClientSteps {
         }
     }
 
-    @When("^I subscribe to report \"([^\"]*)\"$")
-    public void I_subscribe_to_report(String reportId) throws Throwable {
-        assertClientConnected();
-        clientContext.reportContext.setReportName(reportId);
+    @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
+    public void I_subscribe_to_report(String clientName, String reportId) throws InterruptedException {
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+        clientConnectionContext.getReportContext().setReportName(reportId);
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
-        trySubscribe(subscribeLatch);
+        trySubscribe(clientName,subscribeLatch);
         subscribeLatch.await(20, TimeUnit.SECONDS);
 
-        Assert.assertNotNull(clientContext.getSubscription("report"));
+        Assert.assertNotNull(clientConnectionContext.getSubscription("report"));
     }
 
-    @When("^All data sources are built$")
-    public void All_datasources_are_initialized() throws Throwable {
-        assertClientConnected();
+    @When("^\"(.*)\" All data sources are built$")
+    public void All_datasources_are_initialized(String clientName) throws Exception {
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+
         CountDownLatch subscribeLatch = new CountDownLatch(1);
         Options options = new Options();
         options.setOffset(0);
         options.setLimit(100);
-        trySubscribeOperator("/datasources",options,subscribeLatch);
+        trySubscribeOperator(clientName,"/datasources",options,subscribeLatch);
         subscribeLatch.await(20, TimeUnit.SECONDS);
 
-        ClientSubscription subscription = clientContext.getSubscription("/datasources");
+
+
+        ClientSubscription subscription = clientConnectionContext.getSubscription("/datasources");
         Assert.assertNotNull(subscription);
 
         boolean hasUnbuiltDataSource = false;
@@ -185,10 +184,9 @@ public class ViewServerClientSteps {
 
 
 
-    @Given("^controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
-    public void controller_action_invoked_with_data_file(String controllerName, String action, String dataFile) throws Throwable {
-        assertClientConnected();
-        I_Invoke_Action_On_Controller_With_Data_With_Result(controllerName, action, getJsonFromFile(dataFile), null);
+    @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
+    public void controller_action_invoked_with_data_file(String clientName,String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonFromFile(dataFile), null);
     }
 
     private String getJsonFromFile(String dataFile) {
@@ -226,40 +224,35 @@ public class ViewServerClientSteps {
         }
     }
 
-    @When("^Given controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
-    public void I_Invoke_Action_On_Controller_With_Data_With_Result(String controllerName, String action, String data, String result) throws Throwable {
-        assertClientConnected();
+    @When("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
+    public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result) throws InterruptedException, ExecutionException, TimeoutException {
+        ClientConnectionContext connectionContext = clientContext.get(clientName);
 
-        IGenericJSONCommand genericJSONCommand = MessagePool.getInstance().get(IGenericJSONCommand.class)
-                .setAction(action)
-                .setPayload(data)
-                .setPath(controllerName);
-        Command command = new Command("genericJSON", genericJSONCommand);
-        ListenableFuture<CommandResult> future = clientContext.client.sendCommand(command);
+        ListenableFuture<CommandResult> future =  connectionContext.invokeJSONCommand(controllerName, action, data);
 
         CommandResult actual = future.get(20, TimeUnit.SECONDS);
         Assert.assertTrue(actual.isStatus());
+        connectionContext.setResult(controllerName,action,actual.getMessage());
         if(result != null) {
             Assert.assertEquals(result, actual.getMessage());
         }
     }
 
-    private void trySubscribe(CountDownLatch subscribeLatch){
-        ListenableFuture<ClientSubscription> subFuture = clientContext.client.subscribeToReport(
-                clientContext.reportContext,
-                clientContext.options,
-                new TestSubscriptionEventHandler());
+    private void trySubscribe(String clientName,CountDownLatch subscribeLatch){
+        TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToReport(eventHandler);
 
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override
             public void onSuccess(ClientSubscription clientSubscription) {
-                clientContext.addSubscription("report", clientSubscription);
+                clientConnectionContext.addSubscription("report", clientSubscription, eventHandler);
                 subscribeLatch.countDown();
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                    trySubscribe(subscribeLatch);
+                    trySubscribe(clientName,subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -269,20 +262,21 @@ public class ViewServerClientSteps {
         });
     }
 
-    private void trySubscribeOperator(String operatorName,Options options,CountDownLatch subscribeLatch){
-        ListenableFuture<ClientSubscription> subFuture = clientContext.client.subscribe(operatorName, options,
+    private void trySubscribeOperator(String clientName, String operatorName,Options options,CountDownLatch subscribeLatch){
+        ClientConnectionContext connectionContext = clientContext.get(clientName);
+        ListenableFuture<ClientSubscription> subFuture = connectionContext.subscribe(operatorName, options,
                 new TestSubscriptionEventHandler());
 
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override
             public void onSuccess(ClientSubscription clientSubscription) {
-                clientContext.addSubscription(operatorName, clientSubscription);
+                connectionContext.addSubscription(operatorName, clientSubscription, new TestSubscriptionEventHandler());
                 subscribeLatch.countDown();
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                trySubscribe(subscribeLatch);
+                trySubscribe(clientName, subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -292,37 +286,61 @@ public class ViewServerClientSteps {
         });
     }
 
-    @And("^paging from (\\d+) to (\\d+) by \"([^\"]*)\" (ascending|descending)$")
-    public void paging_from_to_by(int offset, int limit, String sortColumn, String direction) throws Throwable {
-        clientContext.options.setOffset(offset);
-        clientContext.options.setLimit(limit);
-        clientContext.options.getColumnsToSort().clear();
-        clientContext.options.addSortColumn(sortColumn, "descending".equals(direction));
+    @And("^\"([^\"]*)\" paging from (\\d+) to (\\d+) by \"([^\"]*)\" (ascending|descending)$")
+    public void paging_from_to_by(String clientName, int offset, int limit, String sortColumn, String direction)  {
+        ClientConnectionContext connectionContext = clientContext.get(clientName);
+        connectionContext.getOptions().setOffset(offset);
+        connectionContext.getOptions().setLimit(limit);
+        connectionContext.getOptions().getColumnsToSort().clear();
+        connectionContext.getOptions().addSortColumn(sortColumn, "descending".equals(direction));
     }
 
-    @Then("^the following data is received$")
-    public void the_following_data_is_received(DataTable expectedData) throws Throwable {
-        assertClientConnected();
-        List<Map<String, Object>> snapshot = new ArrayList<>();
+    @Then("^\"([^\"]*)\" the following data is received eventually$")
+    public void the_following_data_is_received_eventually(String clientName,List<Map<String,String>> records)  {
+        repeat("Receiving data "  + records,() -> the_following_data_is_received(clientName,records),5,500,0 );
 
-        ClientSubscription subscription = clientContext.getSubscription("report");
-        snapshot = subscription.getSnapshot().get();
+    }
+    @Then("^\"([^\"]*)\" the following data is received$")
+    public void the_following_data_is_received(String clientName, List<Map<String,String>> records) {
+        try {
+            ClientConnectionContext connectionContext = clientContext.get(clientName);
+            TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler("report");
 
-        snapshot.sort(new Comparator<Map<String, Object>>() {
-            @Override
-            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                return ((Integer) o1.get("rank")) > ((Integer) o2.get("rank")) ? 1 : -1;
+            ValidationOperator operator = eventHandler.getValidationOperator();
+            List<Object> validationActions = new ArrayList<>();
+            for(Map<String,String> record : records){
+                validationActions.add(ValidationUtils.to(clientContext.replaceParams(record)));
             }
-        });
-        Thread.sleep(10000000);
-        diff(expectedData, snapshot);
-    }
-
-
-    private void assertClientConnected() throws Exception {
-        if (clientContext.client == null) {
-            throw new Exception("Must have a connected client first!");
+            operator.setExpected(validationActions);
+            operator.validate();
+        }catch (Exception ex){
+            throw ex;
         }
+    }
+
+    private void repeat(String scenarioLablel, Runnable assertion, int times,int delay, int counter) {
+        if(times == counter){
+            Assert.fail(scenarioLablel + " failed after " + times + " retries spanning " + (delay*times)/1000 + " seconds");
+        }
+        try{
+            assertion.run();
+        }catch (Throwable ex){
+            if(times-1 == counter){
+                throw ex;
+            }
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            repeat(scenarioLablel,assertion,times, delay, counter+1);
+        }
+
+    }
+
+
+    private void assertClientConnected(String clientName) throws Exception {
+        clientContext.get(clientName);
     }
 
     private void diff(DataTable table, List<Map<String, Object>> snapshot) throws Exception {

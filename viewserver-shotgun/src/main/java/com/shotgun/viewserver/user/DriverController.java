@@ -103,8 +103,10 @@ public class DriverController {
                     user.setStripeAccountId(paymentAccountId);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId", userId);
-                    if(vehicle.getDimensions() != null) {
-                        vehicleController.addOrUpdateVehicle(vehicle);
+                    if(vehicle != null){
+                        if(vehicle.getDimensions() != null) {
+                            vehicleController.addOrUpdateVehicle(vehicle);
+                        }
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     future.set(userId);

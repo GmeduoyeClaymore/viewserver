@@ -57,7 +57,7 @@ public class TestFilterOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        IOperator filter = catalog.getOperator(operatorName);
+        IOperator filter = catalog.getOperatorByPath(operatorName);
         if(filter == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

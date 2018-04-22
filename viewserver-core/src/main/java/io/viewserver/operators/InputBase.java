@@ -258,6 +258,11 @@ public abstract class InputBase implements IInput {
     }
 
     @Override
+    public String getFullName(){
+        return owner.getPath() + "-" + name;
+    }
+
+    @Override
     public void onAfterCommit() {
     }
 

@@ -16,8 +16,12 @@
 
 package io.viewserver.server.steps;
 
+import io.viewserver.Constants;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.SubscriptionEventHandlerBase;
+import io.viewserver.client.ViewServerClient;
+import io.viewserver.operators.validator.ValidationOperator;
 
 import java.util.Map;
 
@@ -25,6 +29,22 @@ import java.util.Map;
  * Created by nick on 10/02/2015.
  */
 public class TestSubscriptionEventHandler extends SubscriptionEventHandlerBase<ClientSubscription> {
+
+    private ValidationOperator operator;
+
+    @Override
+    public void onSubscriptionSuccess(ClientSubscription clientSubscription) {
+        super.onSubscriptionSuccess(clientSubscription);
+        ICatalog catalog = clientSubscription.getDeserialiserOperator().getCatalog();
+        operator = new ValidationOperator(clientSubscription.getDeserialiserOperator().getName() + "_validator", clientSubscription.getDeserialiserOperator().getExecutionContext(), catalog);
+        operator.setValidateOnCommit(false);
+        clientSubscription.getDeserialiserOperator().getOutput().plugIn(operator.getInput(Constants.IN));
+    }
+
+    public ValidationOperator getValidationOperator() {
+        return operator;
+    }
+
     @Override
     public void onSnapshotComplete(ClientSubscription subscription) {
         super.onSnapshotComplete(subscription);

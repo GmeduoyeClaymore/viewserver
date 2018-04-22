@@ -482,6 +482,6 @@ public class IndexOperatorTest {
 
         executionContext.commit();
 
-        Assert.assertNull(catalog.getOperator("rec"));
+        Assert.assertNull(catalog.getOperatorByPath("rec"));
     }
 }

@@ -18,7 +18,6 @@ package io.viewserver.command;
 
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.IExecutionPlanContext;
@@ -54,10 +53,14 @@ public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBa
         OptionsExecutionPlanContext optionsExecutionPlanContext = (OptionsExecutionPlanContext) executionPlanContext;
         optionsExecutionPlanContext.setOptions(options);
         executionPlanRunner.executePlan(userExecutionPlan, optionsExecutionPlanContext, peerSession.getExecutionContext(), peerSession.getSessionCatalog(), commandResult);
+
+        if(!commandResult.isSuccess()){
+            throw new RuntimeException("Problem running data source execution plan");
+        }
     }
 
     protected void createSubscription(IExecutionPlanContext executionPlanContext, int commandId, IPeerSession peerSession, Options options){
-        IOperator operator = peerSession.getSessionCatalog().getOperator(executionPlanContext.getInputOperator());
+        IOperator operator = peerSession.getSessionCatalog().getOperatorByPath(executionPlanContext.getInputOperator());
         if (operator == null) {
             throw new ViewServerException("Invalid output '" + executionPlanContext.getInputOperator() + "' in execution plan");
         }

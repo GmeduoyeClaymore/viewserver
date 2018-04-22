@@ -21,6 +21,8 @@ import io.viewserver.client.ViewServerClient;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,26 +30,65 @@ import java.util.Map;
  * Created by nick on 10/02/2015.
  */
 public class ViewServerClientContext {
-    public ViewServerClient client;
-    public ReportContext reportContext = new ReportContext();
-    public Options options = new Options();
-    public Map<String, ClientSubscription> subscriptions = new HashMap<>();
+    private HashMap<String, ClientConnectionContext> clientConnectionsByName;
+    private Map<String,String> contextParams = new HashMap<>();
 
     public ViewServerClientContext() {
-        options.setOffset(-1);
-        options.setLimit(-1);
+        clientConnectionsByName = new HashMap<>();
     }
 
-    public ClientSubscription addSubscription(String name, ClientSubscription clientSubscription) {
-        subscriptions.put(name, clientSubscription);
-        return clientSubscription;
+    public Map<String, String> replaceParams(Map<String, String> record) {
+        HashMap<String,String> result = new HashMap<>();
+        for(Map.Entry<String,String> entry : record.entrySet()){
+            result.put(entry.getKey(), replaceParams(entry.getValue()));
+        }
+        return result;
     }
 
-    public void removeSubscription(String name){
-        subscriptions.remove(name);
+    private String replaceParams(String value) {
+        if(value == null || "".equals(value)){
+            return value;
+        }
+        String result = value;
+        for(Map.Entry<String,String> entry: contextParams.entrySet()){
+            result = result.replace(String.format("{%s}",entry.getKey()),entry.getValue());
+        }
+        return result;
     }
 
-    public ClientSubscription getSubscription(String name) {
-        return subscriptions.get(name);
+    public ClientConnectionContext create(String name, String url){
+        try {
+            TestViewServerClient client = new TestViewServerClient(name, url);
+            client.authenticate("open", "cucumber").get();
+            ClientConnectionContext result = new ClientConnectionContext(name,client, this);
+            this.clientConnectionsByName.put(name,result);
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ClientConnectionContext get(String name){
+        ClientConnectionContext clientConnectionContext = clientConnectionsByName.get(name);
+        if(clientConnectionContext == null){
+            throw new RuntimeException("Unable to find connected client named " + name);
+        }
+        return clientConnectionContext;
+    }
+
+    public void closeClients() {
+        for(Map.Entry<String,ClientConnectionContext> entry : clientConnectionsByName.entrySet()){
+            try {
+                entry.getValue().getClient().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        clientConnectionsByName.clear();
+    }
+
+    public Map<String, String> getContextParams() {
+        return contextParams;
     }
 }
+

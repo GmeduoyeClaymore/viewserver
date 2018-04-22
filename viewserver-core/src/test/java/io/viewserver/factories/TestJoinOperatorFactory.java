@@ -55,7 +55,7 @@ public class TestJoinOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        IOperator join = catalog.getOperator(operatorName);
+        IOperator join = catalog.getOperatorByPath(operatorName);
         if(join == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

@@ -284,7 +284,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     public boolean receiveMessage(IChannel channel, IMessage message) {
         int connectionId = connectionIds.get(channel);
         IPeerSession peerSession = sessionManager.getSessionById(connectionId);
-
+        log.trace("Received message - {}",message);
         boolean needCommit = false;
         switch (message.getType()) {
             case Heartbeat: {

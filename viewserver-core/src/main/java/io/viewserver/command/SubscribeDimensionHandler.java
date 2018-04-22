@@ -84,7 +84,7 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             //for sorting, paging etc
             String inputOperator = dimensionExecutionPlanContext.getInputOperator();
             if (inputOperator.charAt(0) != '/') {
-                inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();
+                inputOperator = graphNodesCatalog.getOperatorByPath(inputOperator).getPath();
                 dimensionExecutionPlanContext.setInput(inputOperator, dimensionExecutionPlanContext.getInputOutputName());
             }
             this.runUserExecutionPlan(dimensionExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);

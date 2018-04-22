@@ -50,34 +50,34 @@ public class CatalogTests {
         Assert.assertEquals("/child2/filter3", filter3.getPath());
 
         // get immediate children by relative path
-        Assert.assertEquals(filter1, rootCatalog.getOperator("filter1"));
-        Assert.assertEquals(child1, rootCatalog.getOperator("child1"));
+        Assert.assertEquals(filter1, rootCatalog.getOperatorByPath("filter1"));
+        Assert.assertEquals(child1, rootCatalog.getOperatorByPath("child1"));
 
         // get further descendants by relative path
-        Assert.assertEquals(filter2, rootCatalog.getOperator("child1/grandchild1/filter2"));
-        Assert.assertEquals(filter2, child1.getOperator("grandchild1/filter2"));
+        Assert.assertEquals(filter2, rootCatalog.getOperatorByPath("child1/grandchild1/filter2"));
+        Assert.assertEquals(filter2, child1.getOperatorByPath("grandchild1/filter2"));
 
         // get own children before going up the tree
-        Assert.assertEquals(child1filter1, child1.getOperator("filter1"));
+        Assert.assertEquals(child1filter1, child1.getOperatorByPath("filter1"));
 
         // can go up the tree implicitly
-        Assert.assertEquals(child1filter1, grandchild1.getOperator("filter1"));
+        Assert.assertEquals(child1filter1, grandchild1.getOperatorByPath("filter1"));
 
         // can go up the tree explicitly
-        Assert.assertEquals(filter1, child1.getOperator("../filter1"));
-        Assert.assertEquals(filter3, child1.getOperator("../child2/filter3"));
-        Assert.assertEquals(filter1, child1.getOperator("../child2/../filter1"));
+        Assert.assertEquals(filter1, child1.getOperatorByPath("../filter1"));
+        Assert.assertEquals(filter3, child1.getOperatorByPath("../child2/filter3"));
+        Assert.assertEquals(filter1, child1.getOperatorByPath("../child2/../filter1"));
 
         // get root catalog from anywhere
-        Assert.assertEquals(rootCatalog, rootCatalog.getOperator("/"));
-        Assert.assertEquals(rootCatalog, child1.getOperator("/"));
-        Assert.assertEquals(rootCatalog, grandchild1.getOperator("/"));
-        Assert.assertEquals(rootCatalog, child2.getOperator("/"));
+        Assert.assertEquals(rootCatalog, rootCatalog.getOperatorByPath("/"));
+        Assert.assertEquals(rootCatalog, child1.getOperatorByPath("/"));
+        Assert.assertEquals(rootCatalog, grandchild1.getOperatorByPath("/"));
+        Assert.assertEquals(rootCatalog, child2.getOperatorByPath("/"));
 
         // get by absolute path from anywhere
-        Assert.assertEquals(child1filter1, rootCatalog.getOperator("/child1/filter1"));
-        Assert.assertEquals(child1filter1, child1.getOperator("/child1/filter1"));
-        Assert.assertEquals(child1filter1, grandchild1.getOperator("/child1/filter1"));
-        Assert.assertEquals(child1filter1, child2.getOperator("/child1/filter1"));
+        Assert.assertEquals(child1filter1, rootCatalog.getOperatorByPath("/child1/filter1"));
+        Assert.assertEquals(child1filter1, child1.getOperatorByPath("/child1/filter1"));
+        Assert.assertEquals(child1filter1, grandchild1.getOperatorByPath("/child1/filter1"));
+        Assert.assertEquals(child1filter1, child2.getOperatorByPath("/child1/filter1"));
     }
 }

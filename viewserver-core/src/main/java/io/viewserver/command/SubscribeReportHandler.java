@@ -65,22 +65,18 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
             log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
-            final ICatalog graphNodesCatalog = getGraphNodesCatalog(peerSession);
+            ICatalog catalog = reportContextRegistry.getOrCreateCatalogForContext(reportContext);
 
 //            long start = System.nanoTime();
             activeExecutionPlanContext = systemReportExecutor.executeContext(reportContext,
                     peerSession.getExecutionContext(),
-                    graphNodesCatalog,
+                    catalog,
                     systemExecutionPlanResult);
-
-            //converts int values back to strings
-
-            reportContextRegistry.registerContext(activeExecutionPlanContext);
 
             //for sorting, paging etc
             String inputOperator = activeExecutionPlanContext.getInputOperator();
             if (inputOperator.charAt(0) != '/') {
-                inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();
+                inputOperator = catalog.getOperatorByPath(inputOperator).getPath();
                 activeExecutionPlanContext.setInput(inputOperator, activeExecutionPlanContext.getInputOutputName());
             }
             this.runUserExecutionPlan(activeExecutionPlanContext, options, command.getId(), peerSession, userExecutionPlanResult);

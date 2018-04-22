@@ -63,7 +63,7 @@ public class TestCalcColOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        CalcColOperator calc = (CalcColOperator) catalog.getOperator(operatorName);
+        CalcColOperator calc = (CalcColOperator) catalog.getOperatorByPath(operatorName);
         if(calc == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

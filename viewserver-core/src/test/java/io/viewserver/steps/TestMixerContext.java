@@ -96,7 +96,7 @@ public class TestMixerContext {
     }
     public void listenToOutput(String operatorName,String outputName,List<Map<String, String>> records) {
         String name = operatorName + "validator";
-        ValidationOperator operator = (ValidationOperator) catalog.getOperator(name);
+        ValidationOperator operator = (ValidationOperator) catalog.getOperatorByPath(name);
         if(operator == null) {
             operator = new ValidationOperator(name, executionContext, catalog);
             getOutput(operatorName, outputName).plugIn(operator.getInput(Constants.IN));
@@ -147,7 +147,7 @@ public class TestMixerContext {
     }
 
     public IOperator getOperator(String operatorName) {
-        IOperator operator = catalog.getOperator(operatorName);
+        IOperator operator = catalog.getOperatorByPath(operatorName);
         if(operator == null){
             throw new RuntimeException("Unable to find operator named \"" + operatorName + "\" in catalog");
         }
@@ -182,7 +182,7 @@ public class TestMixerContext {
     }
 
     public void resetTable(String tableOperatorName) {
-        ((KeyedTable)catalog.getOperator(tableOperatorName)).resetData();
+        ((KeyedTable)catalog.getOperatorByPath(tableOperatorName)).resetData();
     }
 
     public void configureOperator(String operatorType,String operatorName, HashMap<String, Object> context) {

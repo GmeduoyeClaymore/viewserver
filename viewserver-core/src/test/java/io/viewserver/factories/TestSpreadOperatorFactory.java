@@ -60,7 +60,7 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        IOperator spread = catalog.getOperator(operatorName);
+        IOperator spread = catalog.getOperatorByPath(operatorName);
         if(spread == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

@@ -20,7 +20,6 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.datasource.IDataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
@@ -72,7 +71,7 @@ public class SubscribeDataSourceHandler extends SubscriptionHandlerBase<ISubscri
 
             String inputOperator = optionsExecutionPlanContext.getInputOperator();
             if (inputOperator.charAt(0) != '/') {
-                inputOperator = graphNodesCatalog.getOperator(inputOperator).getPath();
+                inputOperator = graphNodesCatalog.getOperatorByPath(inputOperator).getPath();
                 optionsExecutionPlanContext.setInput(inputOperator, optionsExecutionPlanContext.getInputOutputName());
             }
 

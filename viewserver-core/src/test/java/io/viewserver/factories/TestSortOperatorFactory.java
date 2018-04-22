@@ -59,7 +59,7 @@ public class TestSortOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        IOperator operator = catalog.getOperator(operatorName);
+        IOperator operator = catalog.getOperatorByPath(operatorName);
         if(operator == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

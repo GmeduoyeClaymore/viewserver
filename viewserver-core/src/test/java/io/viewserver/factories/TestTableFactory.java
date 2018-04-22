@@ -102,7 +102,7 @@ public class TestTableFactory implements ITestOperatorFactory {
     public void updateTable(String operatorName,List<Map<String,String>> records){
         executionContext.submit(
                 () -> {
-                    KeyedTable table = (KeyedTable) catalog.getOperator(operatorName);
+                    KeyedTable table = (KeyedTable) catalog.getOperatorByPath(operatorName);
                     if(table == null){
                         throw new RuntimeException("Unable to find table named \"" + operatorName + "\"");
                     }

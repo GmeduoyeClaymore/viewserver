@@ -58,6 +58,8 @@ public interface IInput {
 
     void unplugged(IOutput output);
 
+    String getFullName();
+
     void onAfterCommit();
 
     void onInitialise();

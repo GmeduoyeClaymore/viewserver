@@ -162,6 +162,8 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
             timeUntilNextLoop = timeUntilNextLoop < 0 ? 0 : timeUntilNextLoop;
         }
 
+        log.trace("Scheduling next loop in {} millis",timeUntilNextLoop);
+
         scheduleLoop(timeUntilNextLoop, true);
 
         log.trace("Exited loop()");
@@ -333,6 +335,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     public void onNetworkMessage(IChannel channel, IMessage msg) {
         ListenableFuture<?> future = executor.submit(() -> {
             if (network.receiveMessage(channel, msg)) {
+                log.trace("Waking up reactor because of - {}",msg);
                 EventLoopReactor.this.wakeUp();
             }
             msg.release();

@@ -206,6 +206,14 @@
         </dependency>
 
         <dependency>
+            <groupId>io.viewserver</groupId>
+            <artifactId>viewserver-core</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
             <scope>test</scope>

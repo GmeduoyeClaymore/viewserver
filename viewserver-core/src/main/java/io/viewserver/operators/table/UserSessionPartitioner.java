@@ -44,7 +44,7 @@ public class UserSessionPartitioner extends ConfigurableOperatorBase<IUserSessio
 
     @Override
     protected void processConfig(IUserSessionPartitionerConfig config) {
-        IOperator operator = getCatalog().getOperator(config.getSourceTableName());
+        IOperator operator = getCatalog().getOperatorByPath(config.getSourceTableName());
         if (operator == null || !(operator instanceof Table)) {
             throw new OperatorConfigurationException(this,
                     String.format("Operator '%s' does not exist, or is not a table.", config.getSourceTableName()));

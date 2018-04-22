@@ -18,7 +18,6 @@ package io.viewserver.command;
 
 import io.viewserver.Constants;
 import io.viewserver.configurator.Configurator;
-import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.IExecutionPlanRunner;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
@@ -43,7 +42,7 @@ public class SubscribeHandler extends SubscriptionHandlerBase<ISubscribeCommand>
     @Override
     protected void handleCommand(Command command, ISubscribeCommand data, IPeerSession peerSession, CommandResult commandResult) {
         try {
-            IOperator operator = peerSession.getSessionCatalog().getOperator(data.getOperatorName());
+            IOperator operator = peerSession.getSessionCatalog().getOperatorByPath(data.getOperatorName());
 
             if(operator == null){
                 throw new Exception(String.format("Operator %s does not exist in the catalog", data.getOperatorName()));

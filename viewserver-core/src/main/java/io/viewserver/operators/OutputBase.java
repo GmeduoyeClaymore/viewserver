@@ -42,7 +42,6 @@ import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
  * Created by nickc on 26/09/2014.
  */
 public abstract class OutputBase implements IOutput, IActiveRowTracker {
-    private static final Logger log = LoggerFactory.getLogger(OutputBase.class);
     private final List<IInput> inputs = new ArrayList<>();
     private final String name;
     private final IOperator owner;
@@ -52,12 +51,13 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     private IChangeQueue changeQueue;
     protected TableMetaData metaData;
     private PublishSubject<OperatorEvent> subject;
+    private final Logger log;
 
 
     protected OutputBase(String name, IOperator owner) {
         this.name = name;
         this.owner = owner;
-
+        log = LoggerFactory.getLogger(owner.getName() + "-" + name);
         this.rowTracker = new ActiveRowTracker(this);
         this.changeQueue = new ChangeQueue(this);
         this.schema = new Schema();
@@ -89,6 +89,11 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getFullName(){
+        return owner.getPath() + "-" + name;
     }
 
     public IOperator getOwner() {
@@ -126,7 +131,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     public void handleUpdate(int row) {
         ExecutionContext.AssertUpdateThread();
         if (!getRowTracker().isActive(row)) {
-            throw new IllegalStateException("Cannot handle update for inactive row " + row);
+            throw new IllegalStateException("Cannot handle update for inactive row " + row + " active rows are " + getRowTracker());
         }
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){

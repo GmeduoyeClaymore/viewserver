@@ -61,7 +61,7 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public void configure(String operatorName, Map<String, Object> config){
-        IndexOperator indexOperator = (IndexOperator)catalog.getOperator(operatorName);
+        IndexOperator indexOperator = (IndexOperator)catalog.getOperatorByPath(operatorName);
         if(indexOperator == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }

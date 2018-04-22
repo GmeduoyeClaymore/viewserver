@@ -16,19 +16,24 @@
 
 package io.viewserver.operators;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.BitSet;
 
 /**
  * Created by nickc on 29/09/2014.
  */
 public class ActiveRowTracker implements IActiveRowTracker {
+    private final Logger log;
     private BitSet activeRows;
     private int cardinality;
     private IOutput owner;
-
     public ActiveRowTracker(IOutput owner) {
         this.owner = owner;
         activeRows = new BitSet();
+        log = LoggerFactory.getLogger(owner.getOwner().getName() + "-ActiveRowTracker");
+        log.trace("Creating row tracker");
     }
 
     public void handleAdd(int row) {
@@ -37,6 +42,7 @@ public class ActiveRowTracker implements IActiveRowTracker {
         }
         activeRows.set(row);
         cardinality++;
+        log.trace("Row {} has been marked active",row);
     }
 
     public void handleRemove(int row) {
@@ -45,6 +51,7 @@ public class ActiveRowTracker implements IActiveRowTracker {
         }
         activeRows.clear(row);
         cardinality--;
+        log.trace("Row {} has been removed",row);
     }
 
     public boolean isActive(int row) {
@@ -62,6 +69,7 @@ public class ActiveRowTracker implements IActiveRowTracker {
     }
 
     public void clear() {
+        log.trace("Clearing row tracker");
         activeRows.clear();
         cardinality = 0;
     }
@@ -97,5 +105,13 @@ public class ActiveRowTracker implements IActiveRowTracker {
         public void reset() {
             rowId = -1;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ActiveRowTracker{" +
+                "activeRows=" + activeRows +
+                ", cardinality=" + cardinality +
+                '}';
     }
 }

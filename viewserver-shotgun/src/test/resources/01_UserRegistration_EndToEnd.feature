@@ -2,39 +2,50 @@ Feature: User registration content type feature
 
   Background:
     Given a running shotgun viewserver
-    Given a client connected to "inproc://master"
-    Given All data sources are built
-    Given controller "driverController" action "registerDriver" invoked with data file "driverRegistration.json"
-
+    Given a client named "client1" connected to "inproc://master"
+    Given a client named "client2" connected to "inproc://master"
+    Given a client named "client3" connected to "inproc://master"
+    Given a client named "client4" connected to "inproc://master"
+    Given "client1" All data sources are built
+    Given "client1" controller "driverController" action "registerDriver" invoked with data file "allRounder.json"
+    Given "client2" controller "driverController" action "registerDriver" invoked with data file "brickLayerRegistration.json"
+    Given "client3" controller "driverController" action "registerDriver" invoked with data file "plastererRegistration.json"
+    Given "client4" controller "driverController" action "registerDriver" invoked with data file "groundWorkerRegistration.json"
 
   Scenario: Can see driver for product in userProduct report
-      Given report parameters
+      Given "client1" report parameters
         | Name           | Type    | Value |
-        | showOutOfRange | String | false |
-        | showUnrelated  | String | true  |
+        | showOutOfRange | String  | false |
+        | showUnrelated  | String  | true  |
         | latitude       | Integer | 0     |
         | longitude      | Integer | 0     |
         | userId         | Integer | 0     |
         | maxDistance    | Integer | 0     |
-      Given dimension filters
-        | Name             | Type   | Value      |
+      Given "client1" dimension filters
+        | Name                | Type   | Value      |
         | dimension_productId | String | BrickLayer |
-      And paging from 0 to 100 by "userId" descending
-      When I subscribe to report "usersForProductAll"
-      Then the following data is received
-        | ~Action     | ~Name           | ~ColumnType | ~TEId | day | description | descriptionRank | id | market | notional |
-        | SchemaReset |                 |             |       |     |             |                 |    |        |          |
-        | ColumnAdd   | id              | Int         | 0     |     |             |                 |    |        |          |
-        | ColumnAdd   | market          | Int         | 1     |     |             |                 |    |        |          |
-        | ColumnAdd   | day             | Int         | 2     |     |             |                 |    |        |          |
-        | ColumnAdd   | notional        | Long        | 3     |     |             |                 |    |        |          |
-        | ColumnAdd   | description     | String      | 4     |     |             |                 |    |        |          |
-        | ColumnAdd   | code            | String      | 5     |     |             |                 |    |        |          |
-        | ColumnAdd   | descriptionRank | Int         | 6     |     |             |                 |    |        |          |
-        | DataReset   |                 |             |       |     |             |                 |    |        |          |
-        | RowAdd      |                 |             | 0     | 1   | a           | 5               | 0  | 100    | 20       |
-        | RowAdd      |                 |             | 1     | 2   | f           | 0               | 1  | 100    | 40       |
-        | RowAdd      |                 |             | 2     | 3   | c           | 3               | 2  | 30     | 60       |
-        | RowAdd      |                 |             | 3     | 3   | e           | 1               | 3  | 40     | 60       |
-        | RowAdd      |                 |             | 4     | 5   | d           | 2               | 4  | 40     | 60       |
-        | RowAdd      |                 |             | 5     | 2   | b           | 4               | 5  | 40     | 60       |
+      And "client1" paging from 0 to 100 by "userId" descending
+      When "client1" subscribed to report "usersForProductAll"
+      Then "client1" the following data is received eventually
+| ~TEId | contactNo   | day | description | descriptionRank | distance | email                        | firstName | id | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type   | userId                                   | ~Action     | ~ColumnType  | ~Name                |
+| 1     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | SchemaReset |              |                      |
+| 2     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | relationshipStatus   |
+| 3     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | NullableBool | initiatedByMe        |
+| 4     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | userId               |
+| 5     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | firstName            |
+| 6     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | lastName             |
+| 7     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | contactNo            |
+| 8     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | selectedContentTypes |
+| 9     |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | email                |
+| 10    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | type                 |
+| 11    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Double       | latitude             |
+| 12    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Double       | longitude            |
+| 13    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Int          | range                |
+| 14    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | imageUrl             |
+| 15    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Bool         | online               |
+| 16    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | String       | statusMessage        |
+| 17    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Double       | ratingAvg            |
+| 18    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Double       | distance             |
+| 19    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | ColumnAdd   | Int          | rank                 |
+| 20    |             |     |             |                 |          |                              |           |    |          |               |            |          |           |        |          |        |       |      |           |                    |                                             |               |        |                                          | DataReset   |              |                      |
+| 21    | 07966265016 |     |             |                 | 0.0      | modestasbricklayer@gmail.com | Modestas  |    |          | Null          | BrickLayer | -1.0     | -1.0      |        |          | false  | 50    | 0    | 0.0       |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | driver | {client2_driverController_registerDriver_result} | RowAdd      |              |                      |

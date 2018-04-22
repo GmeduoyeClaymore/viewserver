@@ -31,16 +31,17 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
     @Override
     public void start() {
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
-            RxUtils.subscribeOnExecutionContext(loaderEntry.getValue().getRecords(loaderEntry.getKey()), executionContext, rec-> addRecordToTableOperator(loaderEntry.getKey(),loaderEntry.getValue(),rec), err -> logger.error("Issue loading record", err));
+            IRecordLoader recordLoader = loaderEntry.getValue();
+            SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
+            OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
+            Observable<KeyedTable> operator = getKeyedTable(loaderEntry.getKey(), schemaConfig, creationConfig);
+            operator.subscribe(kt -> RxUtils.subscribeOnExecutionContext(recordLoader.getRecords(loaderEntry.getKey()), executionContext, rec-> addRecordToTableOperator(kt,rec), err -> logger.error("Issue loading record", err)));
         }
     }
 
-    private void addRecordToTableOperator(String tableOperator, IRecordLoader recordLoader, IRecord rec) {
-        SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
-        OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
-        Observable<KeyedTable> operator = getKeyedTable(tableOperator, schemaConfig, creationConfig);
+    private void addRecordToTableOperator(KeyedTable keyedTable, IRecord rec) {
         try{
-            RecordUtils.addRecordToTableOperator(operator, rec);
+            RecordUtils.addRecordToTableOperator(keyedTable, rec);
         }catch (Exception ex){
             logger.error("Problem loading record",ex);
         }
@@ -49,7 +50,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
 
     private Observable<KeyedTable> getKeyedTable(String tableOperator, SchemaConfig schemaConfig, OperatorCreationConfig creationConfig) {
 
-        KeyedTable operator = getOperator(this.serverCatalog.getOperator(tableOperator));
+        KeyedTable operator = getOperator(this.serverCatalog.getOperatorByPath(tableOperator));
         if(operator != null){
             return Observable.just(operator);
         }

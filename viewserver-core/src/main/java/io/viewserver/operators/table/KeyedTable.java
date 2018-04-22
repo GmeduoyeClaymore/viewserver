@@ -44,6 +44,7 @@ public class KeyedTable extends Table {
         if (tableKeyDefinition == null) {
             throw new RuntimeException(String.format("Unable to create a keyed table \"%s\" with a null table key definition", name));
         }
+        this.isDataResetRequested = false;
         this.tableKeyDefinition = tableKeyDefinition;
     }
 

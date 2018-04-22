@@ -132,7 +132,7 @@ const ReportContexts = ({reportContexts = [], loading, icon, loadingErrors}) => 
 );
 
 const ReportContextLink = ({reportName : name, path,dispatch}) => (
-  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=opName&operatorPathPrefix=/graphNodes/`}} className="nav-group-item" >
+  <NavLink to={{pathname : "/operatorGroupView", search: `operatorGroup=${path}&operatorPathField=path&operatorPathPrefix=`}} className="nav-group-item" >
     {name}
   </NavLink> 
 );

@@ -53,6 +53,10 @@ public class DataSourceHelper {
 
         dataSourceRegistry.onDataSourceBuilt(dataSourceExecutionPlanContext);
 
+        if(!commandResult.isSuccess()){
+            throw new RuntimeException("Problem running data source execution plan");
+        }
+
         log.info("Finished execution plan for " + dataSource.getName());
     }
 

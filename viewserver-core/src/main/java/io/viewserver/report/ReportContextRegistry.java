@@ -16,12 +16,12 @@
 
 package io.viewserver.report;
 
+import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.Hasher;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.execution.ReportContext;
-import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -32,6 +32,7 @@ import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.util.*;
 
@@ -73,10 +74,9 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
         return schema;
     }
 
-    public void registerContext(ReportContextExecutionPlanContext executionPlanContext) {
+    public ICatalog getOrCreateCatalogForContext(ReportContext reportContext) {
         long now = new Date().getTime();
 
-        ReportContext reportContext = executionPlanContext.getReportContext();
         String reportContextJson = reportContext.toString();
         String hash = Hasher.SHA1(reportContextJson);
 
@@ -86,10 +86,11 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
             updateRow(rowId, row -> {
                 row.setLong(COL_LAST_RUN, now);
             });
+            return this.getChild(hash);
         } else {
             reportContexts.add(reportContext);
 
-            ReportCatalog reportCatalog = new ReportCatalog(hash, executionPlanContext, this, new ChunkedColumnStorage(1024));
+            Catalog reportCatalog = new Catalog(hash, this);
 
             addRow(tableKey, row -> {
                 row.setString(COL_ID, hash);
@@ -100,6 +101,8 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
                 row.setLong(COL_FIRST_RUN, now);
                 row.setLong(COL_LAST_RUN, now);
             });
+
+            return reportCatalog;
         }
     }
 
@@ -113,13 +116,18 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
     }
 
     @Override
-    public void registerOperator(IOperator operator) {
-        catalogHolder.registerOperator(operator);
+    public int registerOperator(IOperator operator) {
+        return catalogHolder.registerOperator(operator);
     }
 
     @Override
     public IOperator getOperator(String name) {
         return catalogHolder.getOperator(name);
+    }
+
+    @Override
+    public IOperator getOperatorByPath(String name) {
+        return catalogHolder.getOperatorByPath(name);
     }
 
     @Override
@@ -148,8 +156,13 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
     }
 
     @Override
-    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
-        return catalogHolder.getRelativeOperator(relativePath,isLocalName);
+    public Observable<IOperator> waitForOperator(String name) {
+        return catalogHolder.waitForOperator(name);
+    }
+
+    @Override
+    public Observable<ICatalog> waitForChild(String name) {
+        return catalogHolder.waitForChild(name);
     }
 
     @Override

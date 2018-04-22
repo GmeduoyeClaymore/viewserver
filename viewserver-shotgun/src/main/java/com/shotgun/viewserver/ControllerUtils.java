@@ -1,19 +1,12 @@
 package com.shotgun.viewserver;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.user.User;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import io.viewserver.Constants;
-import io.viewserver.catalog.CatalogOutput;
-import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
-import io.viewserver.operators.rx.EventType;
-import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -26,7 +19,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -197,7 +189,7 @@ public class ControllerUtils{
     }
 
     public static ITable getTable(String tableName){
-        IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
+        IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperatorByPath(tableName);
         if(table == null){
             throw new RuntimeException("Table " + tableName + " does not exist");
         }
@@ -209,12 +201,12 @@ public class ControllerUtils{
     }
 
     public static IOperator getOperator(String tableName){
-        IOperator operator = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
+        IOperator operator = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperatorByPath(tableName);
         return operator;
     }
 
     public static KeyedTable getKeyedTable(String tableName){
-        IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperator(tableName);
+        IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperatorByPath(tableName);
         if (!(table instanceof KeyedTable)) {
             throw new RuntimeException("Operator '" + tableName + "' is not a keyed table");
         }

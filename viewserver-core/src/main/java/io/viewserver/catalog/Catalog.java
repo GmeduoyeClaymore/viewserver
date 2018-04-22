@@ -82,7 +82,7 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     }
 
     @Override
-    public void registerOperator(IOperator operator) {
+    public int registerOperator(IOperator operator) {
         catalogHolder.registerOperator(operator);
         int rowId = catalogHolder.getRowIdForOperator(operator);
         storage.ensureCapacity(rowId + 1, output.getSchema());
@@ -92,6 +92,12 @@ public class Catalog extends InputOperatorBase implements ICatalog {
         tableRow.setString(CatalogOutput.TYPE_COLUMN,  operator.getClass().getName() );
         tableRow.setString(CatalogOutput.PATH_COLUMN,  operator.getPath() );
         output.handleAdd(rowId);
+        return rowId;
+    }
+
+    @Override
+    public IOperator getOperator(String name) {
+        return catalogHolder.getOperator(name);
     }
 
     public Observable<IOperator> getOperatorObservable(String name) {
@@ -99,8 +105,8 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     }
 
     @Override
-    public IOperator getOperator(String name) {
-        return catalogHolder.getOperator(name);
+    public IOperator getOperatorByPath(String name) {
+        return catalogHolder.getOperatorByPath(name);
     }
 
     @Override
@@ -130,8 +136,13 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     }
 
     @Override
-    public IOperator getRelativeOperator(String relativePath, boolean isLocalName) {
-        return catalogHolder.getRelativeOperator(relativePath,isLocalName);
+    public Observable<IOperator> waitForOperator(String name) {
+        return catalogHolder.waitForOperator(name);
+    }
+
+    @Override
+    public Observable<ICatalog> waitForChild(String name) {
+        return catalogHolder.waitForChild(name);
     }
 
     @Override

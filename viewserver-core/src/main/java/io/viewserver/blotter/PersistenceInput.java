@@ -190,6 +190,11 @@ public class PersistenceInput implements IInput {
     }
 
     @Override
+    public String getFullName() {
+        return name;
+    }
+
+    @Override
     public void onAfterCommit() {
 
     }

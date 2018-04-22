@@ -79,7 +79,7 @@ public class Configurator implements IConfigurator {
                 continue;
             }
 
-            IOperator operatorToRemove = state.catalog.getOperator(operator.getName());
+            IOperator operatorToRemove = state.catalog.getOperatorByPath(operator.getName());
             if (operatorToRemove != null) {
                 state.operatorsToRemove.add(operatorToRemove);
             }
@@ -103,7 +103,7 @@ public class Configurator implements IConfigurator {
             state.operatorSpec = operatorConfig;
 
             String name = operatorConfig.getName();
-            IOperator operator = state.catalog.getOperator(name);
+            IOperator operator = state.catalog.getOperatorByPath(name);
             if (operator != null) {
                 if (operatorFactory.getOperatorClass() != null &&
                         !operator.getClass().equals(operatorFactory.getOperatorClass())) {
@@ -114,7 +114,7 @@ public class Configurator implements IConfigurator {
                 ICatalog tempCatalog = state.catalog;
                 if (lastSlash != -1) {
                     String parent = lastSlash == 0 ? "/" : name.substring(0, lastSlash);
-                    state.catalog = (ICatalog) state.catalog.getOperator(parent);
+                    state.catalog = (ICatalog) state.catalog.getOperatorByPath(parent);
                     name = name.substring(lastSlash + 1);
                 }
                 operator = operatorFactory.createOperator(name, state,  operatorConfig.getConfig());
@@ -152,13 +152,13 @@ public class Configurator implements IConfigurator {
                 continue;
             }
 
-            IOperator targetOperator = state.catalog.getOperator(operatorConfig.getName());
+            IOperator targetOperator = state.catalog.getOperatorByPath(operatorConfig.getName());
 
             List<IConfiguratorSpec.Connection> connections = operatorConfig.getConnections();
             int connectionsCount = connections.size();
             for (int j = 0; j < connectionsCount; j++) {
                 IConfiguratorSpec.Connection connection = connections.get(j);
-                IOperator sourceOperator = state.catalog.getOperator(connection.getOperator());
+                IOperator sourceOperator = state.catalog.getOperatorByPath(connection.getOperator());
                 if (sourceOperator == null) {
                     throw new ViewServerException("Source operator '" + connection.getOperator() + "' does not exist");
                 }
@@ -187,7 +187,7 @@ public class Configurator implements IConfigurator {
                     }
                 }
 
-                log.debug("connecting output {} to input {}", output.getName(), input.getName());
+                log.debug("connecting output {} to input {}", output.getFullName(), input.getFullName());
 
                 output.plugIn(input);
             }
@@ -205,7 +205,7 @@ public class Configurator implements IConfigurator {
                     continue;
                 }
 
-                IOperator operator = state.catalog.getOperator(operatorConfig.getName());
+                IOperator operator = state.catalog.getOperatorByPath(operatorConfig.getName());
                 IOperatorFactory operatorFactory = operatorFactoryRegistry.get(operatorConfig.getType());
                 if (!(operatorFactory instanceof IConfigurableOperatorFactory)) {
                     continue;

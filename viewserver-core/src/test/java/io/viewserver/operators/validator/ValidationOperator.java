@@ -37,6 +37,7 @@ public class ValidationOperator extends OperatorBase{
     private final Input input;
     private List validationActions = new ArrayList<>();
     private List expectedActions;
+    private boolean validateOnCommit = true;
 
     public ValidationOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
@@ -48,10 +49,22 @@ public class ValidationOperator extends OperatorBase{
         this.expectedActions = expectedActions;
     }
 
+
+    public void setValidateOnCommit(boolean validateOnCommit) {
+        this.validateOnCommit = validateOnCommit;
+    }
+
     @Override
     protected void commit() {
         super.commit();
+        if(validateOnCommit) {
+            validate();
+        }
+    }
+
+    public void validate() {
         if(this.expectedActions != null){
+            System.out.println(this.getName() + " validating");
             String[] expectedKeys = getKeysForActions(expectedActions);
             if (expectedKeys.length > 0) {
                 DataTable dataTable = convertToTable(this.expectedActions, expectedKeys);
