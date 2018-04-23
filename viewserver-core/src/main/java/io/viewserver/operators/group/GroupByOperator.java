@@ -67,6 +67,7 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.UserRelationshipDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -35,7 +36,7 @@ public class UserRelationshipController {
                     .addValue("type", type.name())
                     .addValue("relationshipStatus", UserRelationshipStatus.REQUESTED.name());
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, UserRelationshipDataSource.getDataSource().getSchema(), relationshipRecord);
             return value;
 
         } catch (Exception e) {
@@ -51,7 +52,7 @@ public class UserRelationshipController {
                     .addValue("relationshipId", relationshipId)
                     .addValue("relationshipStatus", status.name());
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, UserRelationshipDataSource.getDataSource().getSchema(), relationshipRecord);
         } catch (Exception e) {
             log.error("There was a problem updating user relationship status", e);
             throw new RuntimeException(e);
@@ -65,7 +66,7 @@ public class UserRelationshipController {
                     .addValue("relationshipId", relationshipId)
                     .addValue("type", type.name());
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", relationshipRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, UserRelationshipDataSource.getDataSource().getSchema(), relationshipRecord);
         } catch (Exception e) {
             log.error("There was a problem updating user relationship type", e);
             throw new RuntimeException(e);

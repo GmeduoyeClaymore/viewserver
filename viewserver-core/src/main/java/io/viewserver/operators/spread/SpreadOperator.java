@@ -16,6 +16,7 @@ import io.viewserver.schema.column.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
 
     private static final Logger log = LoggerFactory.getLogger(SpreadOperator.class);
@@ -44,6 +45,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         addOutput(output);
 
         this.tableStorage.initialise(1024, output.getSchema(), output.getCurrentChanges());
+        register();
     }
 
     @Override
@@ -85,10 +87,9 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             String name = columnHolder.getName();
             if (name != null) {
                 if(name.equals(SpreadOperator.this.sourceColumn)){
-                    spreadColumn = (ColumnHolderString) ColumnHolderUtils.createColumnHolder( SpreadOperator.this.targetColumn , ColumnType.String);
+                    spreadColumn = (ColumnHolderString) new SpreadColumn( SpreadOperator.this.targetColumn);
                     output.getSchema().addColumn(spreadColumn);
                     SpreadOperator.this.tableStorage.initialiseColumn(spreadColumn);
-
                 }
                 if(!(name.equals(SpreadOperator.this.sourceColumn) && removeInputColumn)) {
                     ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder);

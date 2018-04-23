@@ -71,6 +71,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     @Override

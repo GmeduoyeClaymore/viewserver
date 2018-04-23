@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 
 public class NettyBasicServerComponent extends  BasicServerComponents {
@@ -45,6 +47,7 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
     @Override
     public void start() {
         try {
+            CountDownLatch latch = new CountDownLatch(1);
             final NettyNetworkAdapter networkAdapter = new NettyNetworkAdapter();
             final SimpleNetworkMessageWheel networkMessageWheel = new SimpleNetworkMessageWheel(new Encoder(), new Decoder());
             networkAdapter.setNetworkMessageWheel(networkMessageWheel);
@@ -56,8 +59,9 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
                 log.info("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
                         runtime.freeMemory(), runtime.maxMemory());
             }, 1, 3 * 60 * 1000);
-
+            this.getExecutionContext().submit(() -> latch.countDown(),5);
             endpointList.forEach(serverNetwork::listen);
+            latch.await(10, TimeUnit.SECONDS);
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
         }

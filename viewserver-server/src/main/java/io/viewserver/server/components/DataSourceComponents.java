@@ -85,7 +85,8 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                 CommandResult planResult = new CommandResult();
                 planResult.setListener(res -> {
                     if (res.isSuccess()) {
-                        executionContext.submit(() -> getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED),1);
+                        log.error("Successfully built data source " + dataSource.getName(), res.getMessage());
+                       getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.INITIALIZED);
                     } else {
                         log.error("Problem occurred running execution plan for " + dataSource.getName(), res.getMessage());
                         getDataSourceRegistry().setStatus(dataSource.getName(), DataSourceStatus.ERROR);

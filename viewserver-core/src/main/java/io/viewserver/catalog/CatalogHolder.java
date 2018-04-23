@@ -19,6 +19,7 @@ package io.viewserver.catalog;
 import io.viewserver.Constants;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.core.Utils;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.operators.IOutput;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,8 +38,8 @@ import java.util.stream.Collectors;
  */
 public class CatalogHolder implements ICatalog {
     private final HashMap<String, IOperator> operatorsByName = new HashMap<>();
-    private PublishSubject<IOperator> operatorRegistrations = PublishSubject.create();
-    private PublishSubject<ICatalog> childRegistrations = PublishSubject.create();
+    private ReplaySubject<IOperator> operatorRegistrations = ReplaySubject.create();
+    private ReplaySubject<ICatalog> childRegistrations = ReplaySubject.create();
     private final TIntObjectHashMap<IOperator> operatorsByHash = new TIntObjectHashMap<>();
     private final IntHashSet operatorIds = new IntHashSet(8, 0.75f, -1);
     private static final Logger log = LoggerFactory.getLogger(CatalogHolder.class);
@@ -104,17 +106,10 @@ public class CatalogHolder implements ICatalog {
         if (slash == 0) {
             catalog = getRoot();
         }
-        return getFromPath(catalog, getSplit(name), 0);
+        return getFromPath(catalog, Utils.splitIgnoringEmpty(name,"/"), 0);
     }
 
-    private String[] getSplit(String name) {
-        if(name == null || name.isEmpty()){
-            return new String[0];
-        }
-        List<String> result = Arrays.asList(name.split("/"));
-        List<String> collect = result.stream().filter(c -> c != null && !c.isEmpty()).collect(Collectors.toList());
-        return collect.toArray(new String[collect.size()]);
-    }
+
 
     private Observable<IOperator> getFromPath(ICatalog operator,String[] parts, int index){
         String part = parts[index];
@@ -137,7 +132,7 @@ public class CatalogHolder implements ICatalog {
         if (slash == 0) {
             catalog = getRoot();
         }
-        String[] parts = getSplit(name.trim());
+        String[] parts = Utils.splitIgnoringEmpty(name.trim(),"/");
         for(int i = 0;i < parts.length;i++){
             String part = parts[i];
             if("".equals(part)){
@@ -180,7 +175,7 @@ public class CatalogHolder implements ICatalog {
         if(operatorsByName.containsKey(name)){
             return rx.Observable.just(operatorsByName.get(name));
         }
-        return operatorRegistrations.observeOn(RxUtils.executionContextScheduler(this.getExecutionContext(),1)).filter(op -> op.getName().equals(name)).take(1);
+        return operatorRegistrations.filter(op -> op.getName().equals(name)).take(1);
     }
 
     @Override
@@ -188,7 +183,7 @@ public class CatalogHolder implements ICatalog {
         if(children.containsKey(name)){
             return rx.Observable.just(children.get(name));
         }
-        return childRegistrations.observeOn(RxUtils.executionContextScheduler(this.getExecutionContext(),1)).filter(op -> op.getName().equals(name)).take(1);
+        return childRegistrations.filter(op -> op.getName().equals(name)).take(1);
     }
 
 
@@ -218,7 +213,7 @@ public class CatalogHolder implements ICatalog {
         }
 
         ICatalog tempParent = this;
-        String[] components = getSplit(path);
+        String[] components = Utils.splitIgnoringEmpty(path,"/");
         boolean created = false;
         for (String component : components) {
             ICatalog existingCatalog = getChild(component);
@@ -258,7 +253,9 @@ public class CatalogHolder implements ICatalog {
             throw new IllegalArgumentException(String.format("Catalog '%s' already has a child '%s'",
                     owner.getPath(), childCatalog.getName()));
         }
-        childRegistrations.onNext(childCatalog);
+        if(childRegistrations.hasObservers()) {
+            childRegistrations.onNext(childCatalog);
+        }
     }
 
     @Override
@@ -275,7 +272,7 @@ public class CatalogHolder implements ICatalog {
     @Override
     public ICatalog getDescendant(String path) {
         ICatalog tempParent = this;
-        String[] components = getSplit(path);
+        String[] components = Utils.splitIgnoringEmpty(path,"/");
         for (String component : components) {
             if("".equals(component)){
                 continue;

@@ -16,16 +16,20 @@
 
 package io.viewserver.client;
 
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.viewserver.execution.Options;
+import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.OutputPrinter;
 import io.viewserver.operators.deserialiser.DeserialiserEventHandlerBase;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import com.google.common.util.concurrent.SettableFuture;
+import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +43,13 @@ import java.util.concurrent.Future;
 public class ClientSubscription extends ClientSubscriptionBase {
     private Options options;
     private ViewServerClient client;
+    private boolean snapshotComplete;
 
     public ClientSubscription(DeserialiserOperator deserialiserOperator, Options options, ViewServerClient client) {
         super(deserialiserOperator);
         this.options = options;
         this.client = client;
+        deserialiserOperator.getOutput().plugIn(new ChangeRecorder(deserialiserOperator.getName() +"_changeRecorder",deserialiserOperator.getExecutionContext(),deserialiserOperator.getCatalog()).getInput());
     }
 
     public ListenableFuture<io.viewserver.client.CommandResult> update(ISubscriptionOptionsUpdater updater) {
@@ -56,36 +62,55 @@ public class ClientSubscription extends ClientSubscriptionBase {
     }
 
     public Future<List<Map<String, Object>>> getSnapshot() {
+        if(this.snapshotComplete){
+            return Futures.immediateFuture(getCurrentData());
+        }
+        if(deserialiserOperator == null){
+            throw new RuntimeException("You may be trying to get  a snapshot of a closed subscription");
+        }
         SettableFuture<List<Map<String, Object>>> future = SettableFuture.create();
         deserialiserOperator.addEventHandler(new DeserialiserEventHandlerBase() {
             @Override
             public void onSubscriptionError(DeserialiserOperator deserialiserOperator, String msg) {
+                ClientSubscription.this.snapshotComplete = true;
                 future.setException(new ViewServerClientException(msg));
             }
 
             @Override
             public void onSnapshotComplete(DeserialiserOperator deserialiserOperator) {
-                ArrayList<Map<String, Object>> snapshot = new ArrayList<>();
-                Schema schema = deserialiserOperator.getOutput().getSchema();
-                IRowSequence allRows = deserialiserOperator.getOutput().getAllRows();
-                List<ColumnHolder> columnHolders = schema.getColumnHolders();
-                int count = columnHolders.size();
-                while (allRows.moveNext()) {
-                    HashMap<String, Object> row = new HashMap<>();
-                    for (int i = 0; i < count; i++) {
-                        ColumnHolder columnHolder = columnHolders.get(i);
-                        if (columnHolder == null) {
-                            continue;
-                        }
-                        row.put(columnHolder.getName(), ColumnHolderUtils.getValue(columnHolder, allRows.getRowId()));
-                    }
-                    snapshot.add(row);
-                }
+                ArrayList<Map<String, Object>> snapshot = getCurrentData();
+                ClientSubscription.this.snapshotComplete = true;
                 future.set(snapshot);
             }
         });
         return future;
     }
+
+    public Observable<OperatorEvent> dataChangedObservable(){
+        return deserialiserOperator.getOutput().observable();
+    }
+
+    public ArrayList<Map<String, Object>> getCurrentData() {
+        ArrayList<Map<String, Object>> snapshot = new ArrayList<>();
+        Schema schema = deserialiserOperator.getOutput().getSchema();
+        IRowSequence allRows = deserialiserOperator.getOutput().getAllRows();
+        List<ColumnHolder> columnHolders = schema.getColumnHolders();
+        int count = columnHolders.size();
+        while (allRows.moveNext()) {
+            HashMap<String, Object> row = new HashMap<>();
+            for (int i = 0; i < count; i++) {
+                ColumnHolder columnHolder = columnHolders.get(i);
+                if (columnHolder == null) {
+                    continue;
+                }
+                row.put(columnHolder.getName(), ColumnHolderUtils.getValue(columnHolder, allRows.getRowId()));
+            }
+            snapshot.add(row);
+        }
+        return snapshot;
+    }
+
+
 
     public void printSnapshot() {
         OutputPrinter.printOutput(deserialiserOperator.getOutput());

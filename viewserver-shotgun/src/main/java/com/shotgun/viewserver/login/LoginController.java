@@ -2,7 +2,7 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.*;
 import com.shotgun.viewserver.user.User;
@@ -85,7 +85,7 @@ public class LoginController {
                 .addValue("online", true)
                 .addValue("userStatus", UserStatus.ONLINE.name());
 
-        return iDatabaseUpdater.scheduleAddOrUpdateRow(table, "user", userRecord);
+        return iDatabaseUpdater.scheduleAddOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
     private User setupContext(Map<String,Object> userRecord, IPeerSession session) {

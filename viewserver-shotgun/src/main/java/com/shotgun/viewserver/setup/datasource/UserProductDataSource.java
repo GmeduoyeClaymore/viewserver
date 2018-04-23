@@ -46,7 +46,7 @@ UserProductDataSource {
                                 .withConnection("productJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true)))
+                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported()))
                 .withOutput("projectionNode")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

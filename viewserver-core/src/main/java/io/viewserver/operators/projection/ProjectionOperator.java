@@ -51,6 +51,7 @@ public class ProjectionOperator extends ConfigurableOperatorBase<IProjectionConf
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     @Override

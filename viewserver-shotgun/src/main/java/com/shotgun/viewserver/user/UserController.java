@@ -5,7 +5,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.IImageController;
@@ -15,6 +15,8 @@ import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
+import com.shotgun.viewserver.setup.datasource.UserRelationshipDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -100,7 +102,7 @@ public class UserController {
                 .addValue("imageUrl", user.getImageUrl())
                 .addValue("chargePercentage", user.getChargePercentage());
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
         return user.getUserId();
     }
 
@@ -129,7 +131,8 @@ public class UserController {
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("imageUrl", user.getImageUrl());
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema()
+                , userRecord);
 
         log.debug("Updated user: " + user.getEmail() + " with id " + userId);
         return userId;
@@ -144,7 +147,7 @@ public class UserController {
                 .addValue("latitude", latitude)
                 .addValue("longitude", longitude);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME,  UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
     @ControllerAction(path = "setLocationFromPostcode", isSynchronous = false)
@@ -163,7 +166,7 @@ public class UserController {
             @Override
             public void execute() {
                 try{
-                    iDatabaseUpdater.addOrUpdateRow(table, "user", userRecord);
+                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME,  UserDataSource.getDataSource().getSchema(), userRecord);
                     future.set(result);
                 }catch (Exception ex){
                     log.error("There was a problem setting user location from postcode", ex);
@@ -189,7 +192,7 @@ public class UserController {
 
         }
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
     @ControllerAction(path = "updateRelationship", isSynchronous = true)
@@ -203,7 +206,7 @@ public class UserController {
                 .addValue("relationshipStatus", userRelationshipStatus == null ? null : userRelationshipStatus.name())
                 .addValue("relationshipType", relationshipType == null ? null : relationshipType.name());
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, "userRelationship", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, UserRelationshipDataSource.getDataSource().getSchema(), userRecord);
 
         notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
     }
@@ -260,7 +263,7 @@ public class UserController {
                 .addValue("userId", userId)
                 .addValue("range", range);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
     public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){

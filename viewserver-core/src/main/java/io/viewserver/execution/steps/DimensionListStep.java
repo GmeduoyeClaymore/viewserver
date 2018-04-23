@@ -41,6 +41,7 @@ public class DimensionListStep implements IExecutionPlanStep<DataSourceExecution
         //Build the dimensions list table
         Table table = new Table("dimensions", dataSourceExecutionPlanContext.getExecutionContext(), dataSourceExecutionPlanContext.getCatalog(),
                 getDimensionListSchema(), new ChunkedColumnStorage(1024));
+        table.register();
         table.initialise(1024);
 
         for (Dimension dimension : dataSource.getDimensions()) {

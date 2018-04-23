@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.Delivery;
@@ -10,6 +10,8 @@ import com.shotgun.viewserver.delivery.DeliveryController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.RatingDataSource;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
@@ -104,7 +106,7 @@ public class OrderController {
         .addValue("paymentId", paymentId)
         .addValue("deliveryId", deliveryId);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         //add orderItems
         for (OrderItem orderItem : orderItems) {
@@ -162,7 +164,7 @@ public class OrderController {
                 .addValue("userId", orderUserId)
                 .addValue("rating", rating);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, RatingDataSource.getDataSource().getSchema(), ratingRecord);
     }
 
     @ControllerAction(path = "addDriverRating", isSynchronous = true)
@@ -178,7 +180,7 @@ public class OrderController {
                 .addValue("userId", driverId)
                 .addValue("rating", rating);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, "rating", ratingRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, RatingDataSource.getDataSource().getSchema(), ratingRecord);
     }
 
     private int calculatePrice(OrderItem orderItem, Delivery delivery) {

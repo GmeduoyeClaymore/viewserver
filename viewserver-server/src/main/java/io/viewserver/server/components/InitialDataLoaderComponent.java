@@ -12,8 +12,10 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Subscription;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
@@ -21,11 +23,13 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
     private static final Logger logger = LoggerFactory.getLogger(InitialDataLoaderComponent.class);
     private IExecutionContext executionContext;
     private ICatalog serverCatalog;
+    private List<Subscription> subscriptions;
 
     public InitialDataLoaderComponent(IExecutionContext executionContext, ICatalog serverCatalog, IRecordLoaderCollection recordLoaderCollection) {
         this.executionContext = executionContext;
         this.serverCatalog = serverCatalog;
         this.recordLoaderCollection = recordLoaderCollection;
+        subscriptions = new ArrayList<>();
     }
 
     @Override
@@ -35,7 +39,19 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             Observable<KeyedTable> operator = getKeyedTable(loaderEntry.getKey(), schemaConfig, creationConfig);
-            operator.subscribe(kt -> RxUtils.subscribeOnExecutionContext(recordLoader.getRecords(loaderEntry.getKey()), executionContext, rec-> addRecordToTableOperator(kt,rec), err -> logger.error("Issue loading record", err)));
+            this.subscriptions.add(operator.subscribe(kt -> onKeyedTable(kt,loaderEntry.getValue())));
+        }
+    }
+
+    private void onKeyedTable(KeyedTable table, IRecordLoader recordLoader){
+        logger.info("Successfully got table " + table.getPath() + " that we were waiting for");
+        this.subscriptions.add(recordLoader.getRecords(null).subscribeOn(RxUtils.executionContextScheduler(this.executionContext,0)).subscribe(rec-> addRecordToTableOperator(table,rec), err -> logger.error("Issue loading record", err)));
+    }
+
+    @Override
+    public void stop() {
+        for (Subscription sub: subscriptions) {
+            sub.unsubscribe();
         }
     }
 
@@ -52,6 +68,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
 
         KeyedTable operator = getOperator(this.serverCatalog.getOperatorByPath(tableOperator));
         if(operator != null){
+            logger.info("Already got so just returning - " + tableOperator);
             return Observable.just(operator);
         }
         if(creationConfig.getOperator().equals(CreationStrategy.WAIT)){
@@ -62,6 +79,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
             });
         }
         if(creationConfig.getOperator().equals(CreationStrategy.CREATE)){
+            logger.info("Creating table - " + tableOperator);
             int slashIndex = tableOperator.lastIndexOf("/");
             ICatalog serverCatalog = this.serverCatalog;
             String operatorNameToCreate = tableOperator;

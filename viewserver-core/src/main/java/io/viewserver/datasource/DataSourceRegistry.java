@@ -81,6 +81,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         setSystemOperator(true);
         setAllowDataReset(true);
         initialise(8);
+        register();
     }
 
     public static SchemaConfig getConfig() {
@@ -98,12 +99,12 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
 
     @Override
     public Observable<IDataSource> getRegistered() {
-        return registered.observeOn(RxUtils.executionContextScheduler(this.executionContext,1));
+        return registered.observeOn(RxUtils.executionContextScheduler(this.executionContext,0));
     }
 
     @Override
     public Observable<IDataSource> getStatusChanged() {
-        return statusChanged.observeOn(RxUtils.executionContextScheduler(this.executionContext,1));
+        return statusChanged.observeOn(RxUtils.executionContextScheduler(this.executionContext,0));
     }
 
     protected static TableKeyDefinition getTableKeyDefinitions() {
@@ -338,6 +339,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             initialise(1024);
 
             myTableRow = new TableRow(0, output.getSchema());
+
+            register();
         }
 
         public void initialise(int capacity) {
@@ -446,6 +449,9 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
 
         @Override
         public Observable<IOperator> waitForOperator(String name) {
+            if(catalogHolder == null){
+                throw new RuntimeException("How can this be !!!");
+            }
             return catalogHolder.waitForOperator(name);
         }
 

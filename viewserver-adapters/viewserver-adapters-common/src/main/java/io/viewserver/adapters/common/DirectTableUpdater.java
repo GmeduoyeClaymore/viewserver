@@ -1,9 +1,11 @@
 package com.shotgun.viewserver.servercomponents;
 
 import com.shotgun.viewserver.ControllerUtils;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.RecordUtils;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.reactor.IReactor;
 import rx.Emitter;
@@ -11,27 +13,26 @@ import rx.Observable;
 
 public class DirectTableUpdater implements IDatabaseUpdater{
     private final IExecutionContext executionContext;
+    private ICatalog serverCatalog;
 
-    public DirectTableUpdater(IExecutionContext executionContext) {
+    public DirectTableUpdater(IExecutionContext executionContext, ICatalog serverCatalog) {
         this.executionContext = executionContext;
+        this.serverCatalog = serverCatalog;
     }
 
-    public void addOrUpdateRow(String tableName, String dataSourceName, IRecord record){
-        KeyedTable table = ControllerUtils.getKeyedTable(tableName);
-        addOrUpdateRow(table, dataSourceName, record);
-    }
-
-    public void addOrUpdateRow( KeyedTable table, String dataSourceName, IRecord record) {
+    @Override
+    public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
-            throw new RuntimeException("This code is being called from a non reactor thread this is wrong");
+            scheduleAddOrUpdateRow(tableName,schemaConfig,record);
         }
-        RecordUtils.addRecordToTableOperator(table,record);
+        RecordUtils.addRecordToTableOperator((KeyedTable) serverCatalog.getOperator(tableName),record);
     }
 
-    public Observable<Boolean> scheduleAddOrUpdateRow(KeyedTable table, String dataSourceName, IRecord record){
+    @Override
+    public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         return Observable.create(subscriber -> this.executionContext.getReactor().scheduleTask(() -> {
             try{
-                addOrUpdateRow(table,dataSourceName,record);
+                addOrUpdateRow(tableName,schemaConfig,record);
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }catch (Exception ex){

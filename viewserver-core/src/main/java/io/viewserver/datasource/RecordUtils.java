@@ -21,15 +21,7 @@ public class RecordUtils{
         if(tableKeyDefinition == null ){
             throw new RuntimeException(String.format("Cannot map record as no key columns are defined on schema - %s", rec));
         }
-        String[] elements = new String[tableKeyDefinition.size()];
-        int counter = 0;
-        for(String col : tableKeyDefinition.getKeys()){
-            Object keyElement = rec.getValue(col);
-            if(keyElement == null){
-                throw new RuntimeException(String.format("Cannot map record as one of key element %s is empty %s",keyElement, rec));
-            }
-            elements[counter++] = keyElement + "";
-        }
+        TableKey key = getTableKey(rec, tableKeyDefinition);
         ITableRowUpdater rowUpdater = new ITableRowUpdater() {
             public Object getValue(String columnName) {
                 return rec.getValue(columnName);
@@ -43,7 +35,7 @@ public class RecordUtils{
                 }
             }
         };
-        int row = operator.getRow(new TableKey(elements));
+        int row = operator.getRow(key);
         if(row == -1){
             operator.addRow(rowUpdater);
         }else{
@@ -51,4 +43,18 @@ public class RecordUtils{
         }
 
     }
+
+    public static TableKey getTableKey(IRecord rec, TableKeyDefinition tableKeyDefinition) {
+        String[] elements = new String[tableKeyDefinition.size()];
+        int counter = 0;
+        for(String col : tableKeyDefinition.getKeys()){
+            Object keyElement = rec.getValue(col);
+            if(keyElement == null){
+                throw new RuntimeException(String.format("Cannot map record as one of key element %s is empty %s",keyElement, rec));
+            }
+            elements[counter++] = keyElement + "";
+        }
+        return new TableKey(elements);
+    }
+
 }

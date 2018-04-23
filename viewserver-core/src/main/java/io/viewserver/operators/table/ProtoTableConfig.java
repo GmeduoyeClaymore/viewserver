@@ -18,6 +18,11 @@ public class ProtoTableConfig implements ISchemaConfig{
 
 
     @Override
+    public TableKeyDefinition getTableKeyDefinition() {
+        return new TableKeyDefinition(keycolumns.toArray(new String[keycolumns.size()]));
+    }
+
+    @Override
     public List<Column> getColumns() {
         return columns;
     }

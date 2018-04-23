@@ -49,6 +49,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
         input = new Input(Constants.IN, this);
         addInput(input);
+        register();
     }
 
     public IInput getInput() {

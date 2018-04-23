@@ -5,9 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.PhoneNumberDataSource;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -160,7 +161,7 @@ public class NexmoController implements INexmoController {
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
-                iDatabaseUpdater.addOrUpdateRow((KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME), "phoneNumber", phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
             }
         }
     }

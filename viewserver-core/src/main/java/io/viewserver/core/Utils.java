@@ -21,10 +21,13 @@ import com.sun.deploy.Environment;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.SystemConfiguration;
 
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by nick on 10/09/15.
@@ -78,6 +81,15 @@ public class Utils {
 
     public static String serialise(String value) {
         return new String(Base64.getEncoder().encode(getBytes(value.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
+    }
+
+    public static String[] splitIgnoringEmpty(String name, String delimiter) {
+        if(name == null || name.isEmpty()){
+            return new String[0];
+        }
+        List<String> result = Arrays.asList(name.split(delimiter));
+        List<String> collect = result.stream().filter(c -> c != null && !c.isEmpty()).collect(Collectors.toList());
+        return collect.toArray(new String[collect.size()]);
     }
 
 

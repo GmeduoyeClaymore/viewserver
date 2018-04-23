@@ -17,6 +17,7 @@ import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.NexmoController;
 import com.shotgun.viewserver.user.NexmoControllerKey;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.server.components.IBasicServerComponents;
 
 public class RealShotgunControllersComponents extends ShotgunControllersComponents {

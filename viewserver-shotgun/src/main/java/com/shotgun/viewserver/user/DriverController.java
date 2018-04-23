@@ -2,7 +2,7 @@ package com.shotgun.viewserver.user;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatuses;
 import com.shotgun.viewserver.ControllerUtils;
@@ -16,6 +16,8 @@ import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.setup.datasource.DeliveryDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -93,8 +95,6 @@ public class DriverController {
             user.setImageUrl(imageUrl);
         }
 
-        user.setContactNo((String)nexmoController.getInternationalFormatNumber(user.getContactNo()));
-
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
         reactor.scheduleTask(new ITask() {
@@ -115,7 +115,8 @@ public class DriverController {
                             res -> {
                                 log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
                                 future.set(userId);
-                            }
+                            },
+                            err -> log.error("Problem logging in user",err)
                     );
                     //future.set(userId);
                 }catch (Exception ex){
@@ -143,10 +144,10 @@ public class DriverController {
         }
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.ACCEPTED.name());
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", driverId);
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, DeliveryDataSource.getDataSource().getSchema(), deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.ACCEPTED.name());
         return orderId;
@@ -163,7 +164,7 @@ public class DriverController {
         String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.INPROGRESS.name());
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.INPROGRESS.name());
 
@@ -193,7 +194,7 @@ public class DriverController {
         String chargeDescription = String.format("%s (%s)", contentTypeName, productName);
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETED.name());
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatuses.COMPLETED.name());
         paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId, chargeDescription);
@@ -210,10 +211,10 @@ public class DriverController {
         String orderUserId = (String)ControllerUtils.getColumnValue(orderTable, "userId", currentOrderRow);
 
         IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, "order", orderRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, DeliveryDataSource.getDataSource().getSchema(), deliveryRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, "cancelled");
         return orderId;

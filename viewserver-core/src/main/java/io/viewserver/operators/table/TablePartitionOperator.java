@@ -43,6 +43,7 @@ public class TablePartitionOperator extends FilterOperator implements ITable {
         this.partitionValue = partitionValue;
 
         setMode(FilterMode.Filter);
+        register();
     }
 
     @Override

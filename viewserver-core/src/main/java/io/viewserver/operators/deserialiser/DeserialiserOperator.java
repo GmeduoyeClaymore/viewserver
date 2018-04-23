@@ -76,6 +76,7 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
         addOutput(output);
 
         peerSession.registerDeserialiser(this);
+        register();
     }
 
     public void connect() {

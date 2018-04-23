@@ -37,6 +37,7 @@ public class ChangeRecorder extends OperatorBase {
 
         input = new Input(Constants.IN, this);
         addInput(input);
+        register();
     }
 
     public IInput getInput() {

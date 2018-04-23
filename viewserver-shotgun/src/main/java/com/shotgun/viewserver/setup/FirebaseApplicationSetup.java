@@ -3,11 +3,19 @@ package com.shotgun.viewserver.setup;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
+import com.shotgun.viewserver.setup.datasource.ContentTypeDataSource;
+import com.shotgun.viewserver.setup.datasource.ProductCategoryDataSource;
+import com.shotgun.viewserver.setup.datasource.ProductDataSource;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
+import io.viewserver.adapters.firebase.FirebaseCsvDataLoader;
 import io.viewserver.adapters.firebase.FirebaseUtils;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.DataSourceRegistry;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.report.ReportDefinition;
+import io.viewserver.report.ReportRegistry;
 import io.viewserver.server.setup.H2ApplicationSetup;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
 import io.viewserver.server.setup.IApplicationSetup;
@@ -25,13 +33,15 @@ import java.util.Map;
 public class FirebaseApplicationSetup implements IApplicationSetup {
 
     private IApplicationGraphDefinitions graphDefinitions;
+    private String csvDataPath;
     private static final Logger log = LoggerFactory.getLogger(FirebaseApplicationSetup.class);
     private JacksonSerialiser serialiser = new JacksonSerialiser();
     private FirebaseConnectionFactory connectionFactory;
 
-    public FirebaseApplicationSetup(FirebaseConnectionFactory connectionFactory, IApplicationGraphDefinitions graphDefinitions) {
+    public FirebaseApplicationSetup(FirebaseConnectionFactory connectionFactory, IApplicationGraphDefinitions graphDefinitions, String csvDataPath) {
         this.connectionFactory = connectionFactory;
         this.graphDefinitions = graphDefinitions;
+        this.csvDataPath = csvDataPath;
     }
 
     @Override
@@ -41,9 +51,21 @@ public class FirebaseApplicationSetup implements IApplicationSetup {
     }
 
 
-    private void setup(Firestore db) {
+    protected void setup(Firestore db) {
         setupDataSources(db);
         setupReports(db);
+        recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
+        recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
+        recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
+        recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
+    }
+
+    private void recreate(Firestore db, String operatorName, SchemaConfig schema) {
+        CollectionReference collection = db.collection(operatorName);
+        FirebaseUtils.deleteCollection(collection);
+        FirebaseCsvDataLoader loader = new FirebaseCsvDataLoader(String.format("%s/%s.csv", csvDataPath,operatorName), operatorName, schema,connectionFactory);
+        int noRecords = loader.load();
+        log.info("{} records loading into firebase table {}",noRecords,operatorName);
     }
 
     private void setupDataSources(Firestore db) {
@@ -52,7 +74,7 @@ public class FirebaseApplicationSetup implements IApplicationSetup {
 
         try{
             //clear the datasources collection
-            CollectionReference collection = db.collection("datasources");
+            CollectionReference collection = db.collection(DataSourceRegistry.TABLE_NAME);
             FirebaseUtils.deleteCollection(collection);
             WriteBatch batch = db.batch();
 
@@ -83,7 +105,7 @@ public class FirebaseApplicationSetup implements IApplicationSetup {
 
         try{
             //clear the datasources collection
-            CollectionReference collection = db.collection("reports");
+            CollectionReference collection = db.collection(ReportRegistry.TABLE_NAME);
             FirebaseUtils.deleteCollection(collection);
             WriteBatch batch = db.batch();
 

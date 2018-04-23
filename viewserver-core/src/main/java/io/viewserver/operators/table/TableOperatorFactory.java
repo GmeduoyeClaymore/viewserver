@@ -49,7 +49,7 @@ public class TableOperatorFactory extends ConfigurableOperatorFactoryBase<ISchem
     @Override
     public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
         ISchemaConfig schemaConfig = (ISchemaConfig) config;
-        KeyedTable operator = new KeyedTable(name, state.executionContext, state.catalog, ColumnHolderUtils.getSchema(schemaConfig),tableStorageFactory.createStorage(), ColumnHolderUtils.getKey(schemaConfig));
+        KeyedTable operator = new KeyedTable(name, state.executionContext, state.catalog, ColumnHolderUtils.getSchema(schemaConfig),tableStorageFactory.createStorage(), schemaConfig.getTableKeyDefinition());
         operator.initialise(8);
         return operator;
     }

@@ -62,6 +62,7 @@ public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     protected IInput createInput() {

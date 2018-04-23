@@ -63,6 +63,7 @@ public class UnionOperator extends ConfigurableOperatorBase<IUnionConfig> {
         addOutput(output);
 
         tableStorage.initialise(1024, output.getSchema(), output.getCurrentChanges());
+        register();
     }
 
     public IInput getOrCreateInput(String name, int sourceId) {

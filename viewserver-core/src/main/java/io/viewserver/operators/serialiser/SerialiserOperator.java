@@ -72,6 +72,7 @@ public class SerialiserOperator extends OperatorBase {
         subscriptionManager.registerSubscription(connectionId, commandId, this);
 
         isSnapshotOnly = options != null && options.hasFlag(SubscriptionFlags.SnapshotOnly);
+        register();
     }
 
     public IInput getInput() {

@@ -91,9 +91,7 @@ public class CsvRecordLoader implements IRecordLoader {
                         recordWrapper.setRecord(record);
                         consumer.accept(recordWrapper);
                         recordsLoaded++;
-                        if (recordsLoaded % 100000 == 0) {
-                            log.debug("{} records loaded", recordsLoaded);
-                        }
+                        log.debug("{} records loaded", recordsLoaded);
                     }
                 }
             } finally {

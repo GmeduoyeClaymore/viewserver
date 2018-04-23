@@ -40,6 +40,8 @@ public class ControllerActionCatalog extends InputOperatorBase {
         initialise(1024);
 
         myTableRow = new TableRow(0, output.getSchema());
+
+        register();
     }
 
     public void initialise(int capacity) {

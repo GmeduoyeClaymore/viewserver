@@ -66,6 +66,7 @@ public class CalcColOperator extends ConfigurableOperatorBase<ICalcColConfig> {
         calcColumnHolders = new ColumnHolder[8];
 
         this.tableStorage.initialise(1024, output.getSchema(), output.getCurrentChanges());
+        register();
     }
 
     public IInput getInput() {

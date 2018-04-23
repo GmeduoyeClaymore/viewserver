@@ -23,6 +23,7 @@ public class FirebaseRecordLoader implements IRecordLoader{
     private SchemaConfig config;
     private OperatorCreationConfig creationConfig;
     boolean snapshotComplete;
+    private CollectionReference collection;
 
     public FirebaseRecordLoader(FirebaseConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.connectionFactory = connectionFactory;
@@ -113,7 +114,10 @@ public class FirebaseRecordLoader implements IRecordLoader{
     }
 
     protected CollectionReference getCollection(){
-        return getDb().collection(tableName);
+        if(this.collection == null){
+            this.collection = getDb().collection(tableName);
+        }
+        return this.collection;
     }
 
     protected Firestore getDb(){

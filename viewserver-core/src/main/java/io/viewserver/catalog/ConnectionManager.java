@@ -60,6 +60,8 @@ public class ConnectionManager extends InputOperatorBase implements IMetadataLis
         initialise(1024);
 
         tableRow = new TableRow(0, output.getSchema());
+
+        register();
     }
 
     public void initialise(int capacity) {

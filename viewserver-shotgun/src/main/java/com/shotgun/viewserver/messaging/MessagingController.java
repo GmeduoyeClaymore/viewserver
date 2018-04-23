@@ -2,8 +2,9 @@ package com.shotgun.viewserver.messaging;
 
 import com.google.common.util.concurrent.*;
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -77,7 +78,7 @@ public class MessagingController implements IMessagingController {
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
             return userRecord;
         }));
     }

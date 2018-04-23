@@ -43,6 +43,7 @@ public class ValidationOperator extends OperatorBase{
         super(name, executionContext, catalog);
         input = new Input(Constants.IN, this);
         addInput(input);
+        register();
     }
 
     public void setExpected(List expectedActions) {

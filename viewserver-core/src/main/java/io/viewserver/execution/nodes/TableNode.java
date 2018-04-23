@@ -22,6 +22,7 @@ import io.viewserver.execution.ParameterHelper;
 import io.viewserver.messages.MessagePool;
 import io.viewserver.messages.config.IOperatorConfig;
 import io.viewserver.operators.table.ISchemaConfig;
+import io.viewserver.operators.table.TableKeyDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,11 @@ public class TableNode extends GraphNodeBase<TableNode> {
     @Override
     public Object getConfig(final ParameterHelper parameterHelper) {
         return new ISchemaConfig() {
+
+            @Override
+            public TableKeyDefinition getTableKeyDefinition() {
+                return new TableKeyDefinition(getKeyColumns().toArray(new String[getKeyColumns().size()]));
+            }
 
             @Override
             public List<Column> getColumns() {

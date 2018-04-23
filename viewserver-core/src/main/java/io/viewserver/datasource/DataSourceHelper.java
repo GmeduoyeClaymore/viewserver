@@ -77,11 +77,5 @@ public class DataSourceHelper {
         return columnHolder;
     }
 
-    public static TableKeyDefinition getTableKeyDefinition(DataSource dataSource) {
-        List<String> keyColumns = dataSource.getSchema().getKeyColumns();
-        if (keyColumns == null || keyColumns.isEmpty()) {
-            throw new IllegalArgumentException("Cannot get table key definition from datasource - no key columns are provided");
-        }
-        return new TableKeyDefinition(keyColumns.toArray(new String[keyColumns.size()]));
-    }
+
 }

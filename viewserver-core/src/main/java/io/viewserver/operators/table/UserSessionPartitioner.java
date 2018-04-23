@@ -40,6 +40,7 @@ public class UserSessionPartitioner extends ConfigurableOperatorBase<IUserSessio
 
         input = new Input(Constants.IN, this);
         addInput(input);
+        register();
     }
 
     @Override

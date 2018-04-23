@@ -62,6 +62,7 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
         addOutput(output);
 
         tableStorage.initialise(128, output.getSchema(), output.getCurrentChanges());
+        register();
     }
 
     @Override

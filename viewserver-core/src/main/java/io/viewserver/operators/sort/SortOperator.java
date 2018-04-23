@@ -61,6 +61,7 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     public IInput getInput() {

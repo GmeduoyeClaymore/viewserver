@@ -47,6 +47,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
         output = new Output(Constants.OUT, this);
         addOutput(output);
+        register();
     }
 
     public IInput getInput() {

@@ -10,7 +10,7 @@ public class MockNexmoController implements INexmoController {
     @Override
     @ControllerAction(path = "getInternationalFormatNumber", isSynchronous = false)
     public String getInternationalFormatNumber(String phoneNumber) {
-        return phoneNumber;
+        return "44" + phoneNumber.substring(1);
     }
 
 }

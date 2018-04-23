@@ -1,8 +1,9 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -51,7 +52,7 @@ public class DeliveryAddressController {
                 .addValue("latitude", deliveryAddress.getLatitude())
                 .addValue("longitude", deliveryAddress.getLongitude());
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, DeliveryAddressDataSource.getDataSource().getSchema(), deliveryAddressRecord);
 
         return deliveryAddress.getDeliveryAddressId();
     }

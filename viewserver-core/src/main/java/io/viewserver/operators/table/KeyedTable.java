@@ -64,6 +64,7 @@ public class KeyedTable extends Table {
         }
 
         super.initialise(capacity);
+        register();
     }
 
     @Override

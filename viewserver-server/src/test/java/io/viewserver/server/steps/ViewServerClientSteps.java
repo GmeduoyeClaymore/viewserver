@@ -41,6 +41,7 @@ import org.h2.util.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,23 +56,24 @@ import java.util.concurrent.TimeoutException;
 public class ViewServerClientSteps {
     private ViewServerClientContext clientContext;
     private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
+
     public ViewServerClientSteps(ViewServerClientContext clientContext) {
         this.clientContext = clientContext;
     }
 
     @After
     public void afterScenario() {
-                clientContext.closeClients();
+        clientContext.closeClients();
 
     }
 
     @And("^a client named \"(.*)\" connected to \"(.*)\"$")
-    public void a_connected_client(String name,String url)  {
+    public void a_connected_client(String name, String url) {
         clientContext.create(name, url);
     }
 
     @And("^sleep for (\\d+) millis$")
-    public void sleep_for_millis(int millis){
+    public void sleep_for_millis(int millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -86,7 +88,7 @@ public class ViewServerClientSteps {
     }
 
     @And("^\"(.*)\" dimension filters$")
-    public void dimension_filters(String clientName, DataTable filters)  {
+    public void dimension_filters(String clientName, DataTable filters) {
         ClientConnectionContext ctxt = clientContext.get(clientName);
         ctxt.getReportContext().getDimensionValues().clear();
         setValuesFromDataTable(filters, (name, valuesList) ->
@@ -119,7 +121,7 @@ public class ViewServerClientSteps {
                         typedValues[j] = values[j];
                         break;
                     }
-                    default:{
+                    default: {
                         throw new RuntimeException(String.format("Unrecognised type \"%s\"", type));
                     }
                 }
@@ -134,11 +136,11 @@ public class ViewServerClientSteps {
         clientConnectionContext.getReportContext().setReportName(reportId);
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
-        trySubscribe(clientName,subscribeLatch);
+        trySubscribe(clientName, subscribeLatch);
         int waitTime = 5;
         subscribeLatch.await(waitTime, TimeUnit.MINUTES);
 
-        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + waitTime + " seconds",clientConnectionContext.getSubscription("report"));
+        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + waitTime + " seconds", clientConnectionContext.getSubscription("report"));
     }
 
     @When("^\"(.*)\" All data sources are built$")
@@ -149,58 +151,76 @@ public class ViewServerClientSteps {
         Options options = new Options();
         options.setOffset(0);
         options.setLimit(100);
-        trySubscribeOperator(clientName,"/datasources",options,subscribeLatch);
+        trySubscribeOperator(clientName, "/datasources", options, subscribeLatch);
         subscribeLatch.await(20, TimeUnit.SECONDS);
 
 
-
         ClientSubscription subscription = clientConnectionContext.getSubscription("/datasources");
-        Assert.assertNotNull(subscription);
 
-        boolean hasUnbuiltDataSource = false;
-        int counter = 0;
-        do{
-            System.out.println("------------------ CHECKING DATA SOURCES --------------------");
-            List<Map<String, Object>> snapshot = subscription.getSnapshot().get();
-            for(Map<String,Object> snap :snapshot){
+        final String[] waitingFor = {getUnbuiltDataSourceNames(subscription)};
+
+        if(waitingFor[0] != null){
+            System.out.println("Waiting for data sources " + waitingFor[0]);
+            subscription.dataChangedObservable().map(c-> {
+                System.out.println("Received operator event " + c.getEventType() + " data is " + c.getEventData());
+                waitingFor[0] = getUnbuiltDataSourceNames(subscription);
+                return waitingFor[0];
+            }).filter(res -> res == null).take(1).timeout(30, TimeUnit.SECONDS).toBlocking().toIterable().iterator().next();
+        }
+        Assert.assertNull("Some data sources still not built \n" + waitingFor[0], waitingFor[0]);
+    }
+
+    public String getUnbuiltDataSourceNames(ClientSubscription subscription) {
+        try {
+            Assert.assertNotNull(subscription);
+            System.out.println("------------------ CHECKING DATA SOURCES - WAITING FOR SNAPSHOT --------------------");
+            List<Map<String, Object>> snapshot = subscription.getSnapshot().get(10, TimeUnit.SECONDS);
+            String waitingFor = null;
+            boolean hasUnbuiltDataSource = snapshot.isEmpty();
+            if (snapshot.isEmpty()) {
+                waitingFor = "ALL";
+                System.out.println("No data sources found. Waiting !!!");
+            }
+            StringBuilder sb = new StringBuilder();
+            for (Map<String, Object> snap : snapshot) {
                 String status = (String) snap.get("status");
-                if(!"INITIALIZED".equals(status)){
+                if (!"INITIALIZED".equals(status)) {
+                    if (sb.length() > 0) {
+                        sb.append(",");
+                    }
                     hasUnbuiltDataSource = true;
-                    System.out.println(String.format("Waiting for data source %s which is in state %s",snap.get("name"),status));
+                    sb.append(snap.get("name"));
+                    System.out.println(String.format("Waiting for data source %s which is in state %s", snap.get("name"), status));
                 }
             }
-            if(hasUnbuiltDataSource){
+            if (hasUnbuiltDataSource) {
                 System.out.println("------------------ WAITING ON DATA SOURCES --------------------");
                 Thread.sleep(1000);
+                waitingFor = sb.toString();
             }
-            counter++;
-        }while (hasUnbuiltDataSource && counter < 200);
-
-        Assert.assertFalse("Some data sources still not built",hasUnbuiltDataSource);
-        subscription.close();
-
-
-
+            return waitingFor;
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
 
-
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
-    public void controller_action_invoked_with_data_file(String clientName,String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
+    public void controller_action_invoked_with_data_file(String clientName, String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonFromFile(dataFile), null);
     }
 
     private String getJsonFromFile(String dataFile) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dataFile);
-        if(inputStream == null){
+        if (inputStream == null) {
             throw new RuntimeException("Unable to find resource at at " + dataFile);
         }
         Reader reader = IOUtils.getBufferedReader(inputStream);
         try {
-            String json = IOUtils.readStringAndClose(reader,0);
+            String json = IOUtils.readStringAndClose(reader, 0);
             return parseReferencesInJSONFile(json);
         } catch (IOException e) {
-            throw  new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -211,13 +231,12 @@ public class ViewServerClientSteps {
     }
 
     private void replaceReferences(HashMap<String, Object> result) {
-        for (Map.Entry<String,Object> entry : result.entrySet()){
-            if(entry.getValue() instanceof HashMap){
-                replaceReferences((HashMap)entry.getValue());
-            }
-            else if(entry.getValue() instanceof String){
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            if (entry.getValue() instanceof HashMap) {
+                replaceReferences((HashMap) entry.getValue());
+            } else if (entry.getValue() instanceof String) {
                 String value = (String) entry.getValue();
-                if(value.startsWith("ref://")){
+                if (value.startsWith("ref://")) {
                     String fileReference = value.substring(6);
                     entry.setValue(getJsonFromFile(fileReference));
                 }
@@ -229,17 +248,17 @@ public class ViewServerClientSteps {
     public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result) throws InterruptedException, ExecutionException, TimeoutException {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
 
-        ListenableFuture<CommandResult> future =  connectionContext.invokeJSONCommand(controllerName, action, data);
+        ListenableFuture<CommandResult> future = connectionContext.invokeJSONCommand(controllerName, action, data);
 
         CommandResult actual = future.get(20, TimeUnit.SECONDS);
         Assert.assertTrue(actual.isStatus());
-        connectionContext.setResult(controllerName,action,actual.getMessage());
-        if(result != null) {
+        connectionContext.setResult(controllerName, action, actual.getMessage());
+        if (result != null) {
             Assert.assertEquals(result, actual.getMessage());
         }
     }
 
-    private void trySubscribe(String clientName,CountDownLatch subscribeLatch){
+    private void trySubscribe(String clientName, CountDownLatch subscribeLatch) {
         TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToReport(eventHandler);
@@ -253,7 +272,7 @@ public class ViewServerClientSteps {
 
             @Override
             public void onFailure(Throwable throwable) {
-                    trySubscribe(clientName,subscribeLatch);
+                trySubscribe(clientName, subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -263,7 +282,7 @@ public class ViewServerClientSteps {
         });
     }
 
-    private void trySubscribeOperator(String clientName, String operatorName,Options options,CountDownLatch subscribeLatch){
+    private void trySubscribeOperator(String clientName, String operatorName, Options options, CountDownLatch subscribeLatch) {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
         ListenableFuture<ClientSubscription> subFuture = connectionContext.subscribe(operatorName, options,
                 new TestSubscriptionEventHandler());
@@ -288,7 +307,7 @@ public class ViewServerClientSteps {
     }
 
     @And("^\"([^\"]*)\" paging from (\\d+) to (\\d+) by \"([^\"]*)\" (ascending|descending)$")
-    public void paging_from_to_by(String clientName, int offset, int limit, String sortColumn, String direction)  {
+    public void paging_from_to_by(String clientName, int offset, int limit, String sortColumn, String direction) {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
         connectionContext.getOptions().setOffset(offset);
         connectionContext.getOptions().setLimit(limit);
@@ -297,36 +316,37 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following data is received eventually$")
-    public void the_following_data_is_received_eventually(String clientName,List<Map<String,String>> records)  {
-        repeat("Receiving data "  + records,() -> the_following_data_is_received(clientName,records),5,500,0 );
+    public void the_following_data_is_received_eventually(String clientName, List<Map<String, String>> records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName, records), 5, 500, 0);
 
     }
+
     @Then("^\"([^\"]*)\" the following data is received$")
-    public void the_following_data_is_received(String clientName, List<Map<String,String>> records) {
+    public void the_following_data_is_received(String clientName, List<Map<String, String>> records) {
         try {
             ClientConnectionContext connectionContext = clientContext.get(clientName);
             TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler("report");
 
             ValidationOperator operator = eventHandler.getValidationOperator();
             List<Object> validationActions = new ArrayList<>();
-            for(Map<String,String> record : records){
+            for (Map<String, String> record : records) {
                 validationActions.add(ValidationUtils.to(clientContext.replaceParams(record)));
             }
             operator.setExpected(validationActions);
             operator.validate();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw ex;
         }
     }
 
-    private void repeat(String scenarioLablel, Runnable assertion, int times,int delay, int counter) {
-        if(times == counter){
-            Assert.fail(scenarioLablel + " failed after " + times + " retries spanning " + (delay*times)/1000 + " seconds");
+    private void repeat(String scenarioLablel, Runnable assertion, int times, int delay, int counter) {
+        if (times == counter) {
+            Assert.fail(scenarioLablel + " failed after " + times + " retries spanning " + (delay * times) / 1000 + " seconds");
         }
-        try{
+        try {
             assertion.run();
-        }catch (Throwable ex){
-            if(times-1 == counter){
+        } catch (Throwable ex) {
+            if (times - 1 == counter) {
                 throw ex;
             }
             try {
@@ -334,7 +354,7 @@ public class ViewServerClientSteps {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            repeat(scenarioLablel,assertion,times, delay, counter+1);
+            repeat(scenarioLablel, assertion, times, delay, counter + 1);
         }
 
     }
@@ -364,8 +384,7 @@ public class ViewServerClientSteps {
             Object value = entry.getValue();
             if (value == null) {
                 mapped.put(key, "");
-            }
-            else if (value instanceof Double) {
+            } else if (value instanceof Double) {
                 Double aDouble = reader.readDouble(key);
                 DecimalFormat df = new DecimalFormat("#");
                 df.setMaximumFractionDigits(4);

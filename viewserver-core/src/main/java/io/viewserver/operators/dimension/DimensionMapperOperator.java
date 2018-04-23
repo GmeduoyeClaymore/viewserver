@@ -42,6 +42,7 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
         addOutput(output);
 
         this.tableStorage.initialise(1024, output.getSchema(), output.getCurrentChanges());
+        register();
     }
 
     @Override

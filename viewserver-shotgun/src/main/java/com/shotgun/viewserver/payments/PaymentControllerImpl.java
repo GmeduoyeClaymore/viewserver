@@ -11,6 +11,7 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.network.IChannel;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.netty.NettyChannel;
 import org.slf4j.Logger;
@@ -73,7 +74,11 @@ public class PaymentControllerImpl implements PaymentController {
             Map<String, Object> tosAcceptance = new HashMap<>();
             tosAcceptance.put("date", (long) System.currentTimeMillis() / 1000L);
             IPeerSession session = ControllerContext.Current().getPeerSession();
-            String ip = ((NioSocketChannel) ((NettyChannel) session.getChannel()).getChannel()).remoteAddress().getAddress().toString().substring(1);
+            IChannel channel = session.getChannel();
+            String ip = "0.0.0.0";
+            if(channel instanceof NioSocketChannel){
+                ip = ((NioSocketChannel) ((NettyChannel) channel).getChannel()).remoteAddress().getAddress().toString().substring(1);
+            }
             tosAcceptance.put("ip", ip);
 
             Map<String, Object> dob = new HashMap<>();

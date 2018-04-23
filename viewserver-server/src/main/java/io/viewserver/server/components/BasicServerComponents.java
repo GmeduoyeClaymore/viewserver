@@ -47,7 +47,6 @@ public class BasicServerComponents implements IBasicServerComponents {
         subscriptionManager = new SubscriptionManager();
         connectionManager = new ConnectionManager(serverExecutionContext, getServerCatalog(), new ChunkedColumnStorage(1024));
         tableFactoryRegistry = new TableFactoryRegistry();
-        new Catalog("graphNodes", getServerCatalog());
 
     }
 
@@ -100,6 +99,7 @@ public class BasicServerComponents implements IBasicServerComponents {
 
     @Override
     public void start() {
+        new Catalog("graphNodes", getServerCatalog());
     }
 
     @Override

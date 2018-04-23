@@ -16,7 +16,9 @@
 
 package io.viewserver.datasource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.viewserver.operators.table.ISchemaConfig;
+import io.viewserver.operators.table.TableKeyDefinition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,12 @@ public class SchemaConfig implements ISchemaConfig {
     public SchemaConfig() {
         columns = new ArrayList<>();
         keyColumns = new ArrayList<>();
+    }
+
+    @JsonIgnore
+    @Override
+    public TableKeyDefinition getTableKeyDefinition(){
+        return new TableKeyDefinition(getKeyColumns().toArray(new String[getKeyColumns().size()]));
     }
 
     @Override

@@ -31,10 +31,10 @@ public class FirebaseCsvDataLoader implements ILoader {
     private TableKeyDefinition tableKey;
     private FirebaseConnectionFactory firebaseConnectionFactory;
 
-    public FirebaseCsvDataLoader(String fileName, String tableName, SchemaConfig config,TableKeyDefinition tableKey, FirebaseConnectionFactory firebaseConnectionFactory) {
+    public FirebaseCsvDataLoader(String fileName, String tableName, SchemaConfig config, FirebaseConnectionFactory firebaseConnectionFactory) {
         this.fileName = fileName;
         this.tableName = tableName;
-        this.tableKey = tableKey;
+        this.tableKey = config.getTableKeyDefinition();
         this.firebaseConnectionFactory = firebaseConnectionFactory;
         this.recordWrapper = new CsvRecordWrapper(new DateTime(DateTimeZone.UTC),config);
     }

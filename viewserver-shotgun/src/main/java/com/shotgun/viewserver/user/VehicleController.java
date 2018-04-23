@@ -1,12 +1,13 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.constants.VanProducts;
 import com.shotgun.viewserver.constants.VanVolumes;
 import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.Vehicle;
+import com.shotgun.viewserver.setup.datasource.VehicleDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -54,7 +55,7 @@ public class VehicleController {
                 vehicleRecord.addValue("numAvailableForOffload", vehicle.getNumAvailableForOffload());
             }
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, "vehicle", vehicleRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, VehicleDataSource.getDataSource().getSchema(), vehicleRecord);
             return vehicle.getVehicleId();
 
         } catch (Exception e) {

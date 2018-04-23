@@ -1,8 +1,9 @@
 package com.shotgun.viewserver.delivery;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.DeliveryDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -51,7 +52,7 @@ public class DeliveryController {
             deliveryRecord.addValue("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());
         }
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, DeliveryDataSource.getDataSource().getSchema(), deliveryRecord);
 
         return delivery.getDeliveryId();
     }
@@ -62,7 +63,7 @@ public class DeliveryController {
                 .addValue("deliveryId", deliveryId)
                 .addValue("customerRating", rating);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, "delivery", deliveryRecord);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_TABLE_NAME, DeliveryDataSource.getDataSource().getSchema(), deliveryRecord);
         return deliveryId;
     }
 }

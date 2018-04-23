@@ -61,6 +61,8 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
         initialise(1024);
 
         myTableRow = new TableRow(0, output.getSchema());
+
+        register();
     }
 
 

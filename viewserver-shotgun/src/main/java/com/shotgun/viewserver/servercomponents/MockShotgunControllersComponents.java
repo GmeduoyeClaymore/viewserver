@@ -12,6 +12,7 @@ import com.shotgun.viewserver.payments.MockPaymentController;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.MockNexmoController;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.server.components.IBasicServerComponents;
 
 public class MockShotgunControllersComponents extends ShotgunControllersComponents {

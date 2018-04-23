@@ -46,13 +46,17 @@ public class TableKey {
     }
 
     @Override
-    public String toString() {
+    public String toString(){
+        return toString(",");
+    }
+
+    public String toString(String delimiter) {
 
         List<String> result  = new ArrayList<String>();
         for(Object obj : keyValues){
             result.add(printParam(obj));
         }
-        return StringUtils.join(keyValues, ",");
+        return StringUtils.join(keyValues, delimiter);
     }
 
     private String printParam(Object obj) {

@@ -30,6 +30,7 @@ public class RxUtils {
         return Schedulers.from(new Executor() {
             @Override
             public void execute(Runnable command) {
+
                 context.submit(command,delay);
             }
         });

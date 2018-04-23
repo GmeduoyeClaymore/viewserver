@@ -55,6 +55,7 @@ public abstract class OperatorBase implements IOperator {
     protected Throwable lastConfigError;
     protected Throwable lastSchemaError;
     private Throwable lastDataError;
+    private boolean isRegistered;
 
     protected OperatorBase(String name, IExecutionContext executionContext, ICatalog catalog) {
         if (name.contains("/") && catalog != null) {
@@ -65,10 +66,16 @@ public abstract class OperatorBase implements IOperator {
         this.catalog = catalog;
 
         setPath();
+    }
 
-        executionContext.register(this);
-        if (catalog != null) {
-            catalog.registerOperator(this);
+    public void register() {
+        if(this.isRegistered){
+            return;
+        }
+        this.isRegistered = true;
+        this.executionContext.register(this);
+        if (this.catalog != null) {
+            this.catalog.registerOperator(this);
         }
     }
 

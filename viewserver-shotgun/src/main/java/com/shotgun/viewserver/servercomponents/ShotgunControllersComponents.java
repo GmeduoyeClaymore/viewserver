@@ -12,6 +12,7 @@ import com.shotgun.viewserver.order.OrderItemController;
 import com.shotgun.viewserver.order.PricingStrategyResolver;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.user.*;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.server.components.ControllerComponents;
 import io.viewserver.server.components.IBasicServerComponents;

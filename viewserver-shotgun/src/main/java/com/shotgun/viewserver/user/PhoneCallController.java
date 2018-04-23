@@ -1,9 +1,10 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.servercomponents.IDatabaseUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.PhoneNumberDataSource;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -79,7 +80,7 @@ public class PhoneCallController {
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", customerVirtualNumber);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), customerVirtualNumber);
 
         Record driverVirtualNumber = new Record()
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
@@ -88,7 +89,7 @@ public class PhoneCallController {
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, "phoneNumber", driverVirtualNumber);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), driverVirtualNumber);
 
         return availablePhoneNumbers;
     }
