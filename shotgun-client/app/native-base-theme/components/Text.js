@@ -9,6 +9,10 @@ export default (variables = variable) => {
       color: variables.brandLight,
       fontSize: variables.noteFontSize
     },
+    '.smallText': {
+      color: variables.brandLight,
+      fontSize: 12
+    },
     '.bold': {
       fontWeight: 'bold'
     },

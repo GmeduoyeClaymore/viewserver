@@ -8,6 +8,11 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.operators.IOutput;
+import io.viewserver.operators.IRowSequence;
+import io.viewserver.operators.table.ITable;
+import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +38,14 @@ public class DeliveryAddressController {
         }
 
         if (deliveryAddress.getDeliveryAddressId() == null) {
-            deliveryAddress.setDeliveryAddressId(ControllerUtils.generateGuid());
-            deliveryAddress.setCreated(now);
+            String deliveryAddressId = getDeliveryAddressIdFromGooglePlaceId(userId, deliveryAddress.getGooglePlaceId());
+
+            if(deliveryAddressId != null){
+                deliveryAddress.setDeliveryAddressId(deliveryAddressId);
+            }else{
+                deliveryAddress.setDeliveryAddressId(ControllerUtils.generateGuid());
+                deliveryAddress.setCreated(now);
+            }
         }
 
         Record deliveryAddressRecord = new Record()
@@ -54,6 +65,16 @@ public class DeliveryAddressController {
         iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, "deliveryAddress", deliveryAddressRecord);
 
         return deliveryAddress.getDeliveryAddressId();
+    }
+
+    public String getDeliveryAddressIdFromGooglePlaceId(String userId, String googlePlaceId){
+        if(googlePlaceId == null || googlePlaceId.trim().equals("")){
+            return null;
+        }
+
+        KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
+        int rowId = deliveryAddressTable.getRow(new TableKey(userId, googlePlaceId));
+        return rowId != -1 ? ((String) ControllerUtils.getColumnValue(deliveryAddressTable, "deliveryAddressId", rowId)).toLowerCase() : null;
     }
 }
 

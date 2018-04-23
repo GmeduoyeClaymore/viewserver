@@ -14,7 +14,7 @@ export default class DeliveryAddressDao{
       offset: 0,
       limit: 100,
       columnName: undefined,
-      columnsToSort: undefined,
+      columnsToSort: [{name: 'lastUsed', direction: 'desc'}],
       filterMode: 2, //Filtering
       flags: undefined
     };

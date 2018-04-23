@@ -37,7 +37,7 @@ public class DeliveryAddressDataSource {
                                         new Column("longitude", "longitude", ColumnType.Double),
                                         new Column("googlePlaceId", "googlePlaceId", ColumnType.String)
                                         ))
-                                .withKeyColumns("deliveryAddressId")
+                                .withKeyColumns("userId", "googlePlaceId")
                 )
                 .withOutput(NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

@@ -4,7 +4,7 @@ import {Grid, Row, Text} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {addressToText} from 'common/utils';
+import {addressToText} from 'common/components/maps/MapUtils';
 
 export class OriginDestinationSummary extends Component{
   constructor(){

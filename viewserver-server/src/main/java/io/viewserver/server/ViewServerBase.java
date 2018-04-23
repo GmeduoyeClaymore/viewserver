@@ -109,7 +109,7 @@ public abstract class ViewServerBase<TDataSource extends IDataSource> {
                 @Override
                 public void execute() {
                     Runtime runtime = Runtime.getRuntime();
-                    log.info("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
+                    log.trace("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
                             runtime.freeMemory(), runtime.maxMemory());
                 }
             }, 1, 3 * 60 * 1000);

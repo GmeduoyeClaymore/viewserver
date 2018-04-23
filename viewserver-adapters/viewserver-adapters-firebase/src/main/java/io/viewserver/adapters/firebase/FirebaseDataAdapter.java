@@ -38,9 +38,20 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
     private int addFirebaseListener(Consumer<IRecord> consumer){
         CompletableFuture<Integer> ss = new CompletableFuture<>();
 
+        int[] counter = {0};
+
         try {
             logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
             fireBaseListener = getCollection().addSnapshotListener((snapshot, e) -> {
+                if(snapshotComplete) {
+                    counter[0]++;
+                }
+
+                if(counter[0]==2){
+                    onFirebaseListenerError(e, consumer);
+                    return;
+                }
+
                 if (e != null) {
                     onFirebaseListenerError(e, consumer);
                     return;

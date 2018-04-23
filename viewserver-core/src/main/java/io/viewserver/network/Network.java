@@ -191,7 +191,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
 //        }
 
         if (peerSession.shouldLog()) {
-            log.info("Received command {}.{} - {}", peerSession.getConnectionId(), command.getId(), command.getCommand());
+            log.trace("Received command {}.{} - {}", peerSession.getConnectionId(), command.getId(), command.getCommand());
         }
         commandHandler.handleCommand(command, peerSession);
     }

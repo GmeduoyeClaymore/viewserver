@@ -6,7 +6,7 @@ import { getDaoState } from 'common/dao';
 import {TextInput, Dimensions} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
-import {addressToText} from 'common/utils';
+import {addressToText} from 'common/components/maps/MapUtils';
 import {UserRelationshipsControl} from 'common/components/relationships/UserRelationships';
 const {width} = Dimensions.get('window');
 const contentWidth = width - 20;
