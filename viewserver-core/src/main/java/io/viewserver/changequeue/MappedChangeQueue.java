@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by nickc on 18/10/2014.
+ * Created by bemm on 18/10/2014.
  */
 public class MappedChangeQueue extends ChangeQueue implements IMappedChangeQueue {
     private static final Logger log = LoggerFactory.getLogger(MappedChangeQueue.class);

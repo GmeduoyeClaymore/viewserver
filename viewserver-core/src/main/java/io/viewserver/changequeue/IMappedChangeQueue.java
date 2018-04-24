@@ -19,7 +19,7 @@ package io.viewserver.changequeue;
 import io.viewserver.schema.column.ColumnHolder;
 
 /**
- * Created by nickc on 29/09/2014.
+ * Created by bemm on 29/09/2014.
  */
 public interface IMappedChangeQueue extends IChangeQueue {
     void mapColumn(ColumnHolder inboundColumn, ColumnHolder outboundColumn, IChangeQueue sourceChangeQueue);

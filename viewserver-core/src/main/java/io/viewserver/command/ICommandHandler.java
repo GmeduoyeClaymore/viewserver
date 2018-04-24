@@ -20,7 +20,7 @@ import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public interface ICommandHandler {
     void handleCommand(Command command, IPeerSession peerSession);

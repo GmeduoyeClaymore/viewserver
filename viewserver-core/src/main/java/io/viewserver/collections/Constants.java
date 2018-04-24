@@ -19,7 +19,7 @@ package io.viewserver.collections;
 import io.viewserver.core._KeyType_;
 
 /**
- * Created by nickc on 13/10/2014.
+ * Created by bemm on 13/10/2014.
  */
 public class Constants {
     public static _KeyType_ Default_KeyName_NoEntryValue;

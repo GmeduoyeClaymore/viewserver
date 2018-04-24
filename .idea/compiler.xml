@@ -37,6 +37,7 @@
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName__ValueName_HashMap.java" />
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName_Array.java" />
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/offheap/OffHeapColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnMetadata_KeyName_.java" />
     </excludeFromCompile>
     <wildcardResourcePatterns>
       <entry name="!?*.java" />

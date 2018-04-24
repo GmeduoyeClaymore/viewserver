@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nickc on 05/12/2014.
+ * Created by bemm on 05/12/2014.
  */
 public class MultiCommandResult extends CommandResult {
     private static final Logger log = LoggerFactory.getLogger(MultiCommandResult.class);

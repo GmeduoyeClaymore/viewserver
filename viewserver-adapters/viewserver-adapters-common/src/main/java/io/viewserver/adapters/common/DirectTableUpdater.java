@@ -1,13 +1,12 @@
-package com.shotgun.viewserver.servercomponents;
+package io.viewserver.adapters.common;
 
-import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.RecordUtils;
 import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.reactor.IReactor;
 import rx.Emitter;
 import rx.Observable;
 
@@ -25,7 +24,11 @@ public class DirectTableUpdater implements IDatabaseUpdater{
         if(!Thread.currentThread().getName().startsWith("reactor-")){
             scheduleAddOrUpdateRow(tableName,schemaConfig,record);
         }
-        RecordUtils.addRecordToTableOperator((KeyedTable) serverCatalog.getOperator(tableName),record);
+        IOperator operator = serverCatalog.getOperatorByPath(tableName);
+        if(operator == null){
+            throw new RuntimeException("Unable to find operator named " + tableName);
+        }
+        RecordUtils.addRecordToTableOperator((KeyedTable) operator,record);
     }
 
     @Override

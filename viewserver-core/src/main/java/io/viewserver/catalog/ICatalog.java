@@ -21,7 +21,7 @@ import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public interface ICatalog {
     String getName();

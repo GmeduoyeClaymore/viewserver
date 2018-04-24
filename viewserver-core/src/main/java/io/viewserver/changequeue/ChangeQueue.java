@@ -30,7 +30,7 @@ import java.util.BitSet;
 import java.util.List;
 
 /**
- * Created by nickc on 30/09/2014.
+ * Created by bemm on 30/09/2014.
  */
 public class ChangeQueue implements IChangeQueue {
     private IntHashSet rows;

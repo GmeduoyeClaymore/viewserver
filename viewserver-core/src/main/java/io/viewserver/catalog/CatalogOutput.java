@@ -21,9 +21,7 @@ import io.viewserver.operators.OutputBase;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnStringBase;
 
-/**
- * Created by nick on 14/10/15.
- */
+
 public class CatalogOutput extends OutputBase {
     public static final String NAME_COLUMN = "name";
     public static final String TYPE_COLUMN = "type";

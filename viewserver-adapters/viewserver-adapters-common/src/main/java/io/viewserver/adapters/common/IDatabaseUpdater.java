@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.servercomponents;
+package io.viewserver.adapters.common;
 
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.SchemaConfig;

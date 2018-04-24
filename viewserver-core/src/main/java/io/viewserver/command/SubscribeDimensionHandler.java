@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDimensionCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeDimensionHandler.class);

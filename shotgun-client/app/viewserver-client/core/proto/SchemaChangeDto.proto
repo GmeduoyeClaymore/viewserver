@@ -29,6 +29,7 @@ enum DataType {
     NULLABLEBOOLEAN = 9;
     DATE = 10;
     DATETIME = 11;
+    JSON = 12;
 }
 
 message SchemaChangeDto {

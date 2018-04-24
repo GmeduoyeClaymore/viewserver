@@ -23,7 +23,7 @@ import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class ConfigurateCommandHandler extends CommandHandlerBase<IConfigurateCommand> {
     public ConfigurateCommandHandler() {

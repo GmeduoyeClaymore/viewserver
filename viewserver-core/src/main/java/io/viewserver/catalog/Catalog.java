@@ -29,7 +29,7 @@ import rx.Observable;
 import java.util.Collection;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public class Catalog extends InputOperatorBase implements ICatalog {
     private final CatalogOutput output;
@@ -90,7 +90,8 @@ public class Catalog extends InputOperatorBase implements ICatalog {
         storage.ensureCapacity(rowId + 1, output.getSchema());
 
         tableRow.setRowId(rowId);
-        tableRow.setString(CatalogOutput.NAME_COLUMN,  operator.getName() );
+        String name = operator.getName();
+        tableRow.setString(CatalogOutput.NAME_COLUMN, name);
         tableRow.setString(CatalogOutput.TYPE_COLUMN,  operator.getClass().getName() );
         tableRow.setString(CatalogOutput.PATH_COLUMN,  operator.getPath() );
         output.handleAdd(rowId);

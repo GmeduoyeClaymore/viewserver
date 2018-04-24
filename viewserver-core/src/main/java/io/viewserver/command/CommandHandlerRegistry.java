@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public class CommandHandlerRegistry implements ICommandHandlerRegistry {
     private static final Logger log = LoggerFactory.getLogger(CommandHandlerRegistry.class);

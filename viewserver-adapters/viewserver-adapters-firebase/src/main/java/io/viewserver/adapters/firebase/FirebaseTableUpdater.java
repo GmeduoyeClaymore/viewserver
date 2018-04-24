@@ -1,24 +1,17 @@
-package com.shotgun.viewserver.servercomponents;
+package io.viewserver.adapters.firebase;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-import com.shotgun.viewserver.ControllerUtils;
-import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
-import io.viewserver.adapters.firebase.FirebaseUtils;
-import io.viewserver.core.IExecutionContext;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.SetOptions;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.datasource.*;
-import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
-import io.viewserver.reactor.IReactor;
-import io.viewserver.schema.Schema;
-import io.viewserver.schema.column.ColumnHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Emitter;
 import rx.Observable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +28,16 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
     @Override
     public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
         try {
-            DataSourceTableName dataSourceTableName = new DataSourceTableName(tableName);
-            TableKeyDefinition definition = new TableKeyDefinition(schemaConfig.getKeyColumns().toArray(new String[schemaConfig.getKeyColumns().size()]));
+            log.info("Writing to table \"" + tableName + "\"");
+            TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
             TableKey tableKey = RecordUtils.getTableKey(record,definition);
             String documentId = tableKey.toString("_");
             Map<String, Object> docData = getDocumentData(record, schemaConfig);
-            DocumentReference document = getCollection(dataSourceTableName.getDataSourceName()).document(documentId);
+            DocumentReference document = getCollection(tableName).document(documentId);
             document.set(docData, SetOptions.merge());
+            log.info("Finished Writing to table \"" + tableName + "\"");
         }catch (Exception ex){
+            log.error("Writing to \"" + tableName + "\" failed exception is",ex);
             throw new RuntimeException(ex);
         }
     }

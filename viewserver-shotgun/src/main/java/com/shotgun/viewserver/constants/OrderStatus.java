@@ -5,8 +5,6 @@ public enum OrderStatuses {
     ACCEPTED,
     INPROGRESS,
     COMPLETED,
-    COMPLETEDBYDRIVER,
-    COMPLETEDBYCUSTOMER,
     CANCELLED
 }
 

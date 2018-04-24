@@ -108,6 +108,13 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
                 }*/
                 return value;
             }
+            case Json: {
+                String value = getString(columnName);
+                /*if(columnName.equals("productId") ){
+                    return  UUID.randomUUID().toString() + "_" + value;
+                }*/
+                return value;
+            }
             case Date: {
                 return getDate(columnName);
             }

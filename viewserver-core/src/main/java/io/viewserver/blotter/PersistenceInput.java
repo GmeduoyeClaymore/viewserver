@@ -25,7 +25,7 @@ import io.viewserver.persistence.IPersistentStore;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nickc on 27/11/2014.
+ * Created by bemm on 27/11/2014.
  */
 public class PersistenceInput implements IInput {
     private IOutput producer;

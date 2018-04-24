@@ -17,6 +17,8 @@
 package io.viewserver.adapters.jdbc;
 
 import io.viewserver.adapters.common.BaseRecordWrapper;
+import io.viewserver.controller.ControllerUtils;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.SchemaConfig;
@@ -216,6 +218,9 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
             }
             case String: {
                 return getString(columnName);
+            }
+            case Json: {
+                return ControllerUtils.mapDefault(getString(columnName));
             }
             case Date: {
                 return getDate(columnName);
