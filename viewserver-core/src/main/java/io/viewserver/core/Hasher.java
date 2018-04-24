@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.security.MessageDigest.getInstance;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class Hasher {
     private static Logger log = LoggerFactory.getLogger(Hasher.class);

@@ -24,7 +24,7 @@ import io.viewserver.schema.column.IColumnWatcher;
 import gnu.trove.procedure.TIntProcedure;
 
 /**
- * Created by nickc on 02/10/2014.
+ * Created by bemm on 02/10/2014.
  */
 public interface ISummaryContext {
     Schema getInboundSchema();

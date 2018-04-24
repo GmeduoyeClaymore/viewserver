@@ -17,7 +17,6 @@
 package io.viewserver.core;
 
 import com.google.common.base.Charsets;
-import com.sun.deploy.Environment;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.SystemConfiguration;
 

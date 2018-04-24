@@ -17,7 +17,7 @@
 package io.viewserver.expression.tree;
 
 /**
- * Created by nickc on 14/10/2014.
+ * Created by bemm on 14/10/2014.
  */
 
 public interface IExpressionColumn extends IExpression {

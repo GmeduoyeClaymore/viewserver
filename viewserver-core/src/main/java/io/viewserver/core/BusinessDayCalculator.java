@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.TimeZone;
 
 /**
- * Created by nickc on 21/10/2014.
+ * Created by bemm on 21/10/2014.
  */
 public class BusinessDayCalculator {
 

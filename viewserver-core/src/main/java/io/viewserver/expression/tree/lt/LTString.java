@@ -21,7 +21,7 @@ import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 22/10/2014.
+ * Created by bemm on 22/10/2014.
  */
 public class LTString implements IExpressionBool {
     private final IExpressionString lhs;

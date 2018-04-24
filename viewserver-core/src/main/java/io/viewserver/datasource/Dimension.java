@@ -19,7 +19,7 @@ package io.viewserver.datasource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Created by nickc on 13/10/2014.
+ * Created by bemm on 13/10/2014.
  */
 @JsonIgnoreProperties({ "type" })
 public class Dimension {

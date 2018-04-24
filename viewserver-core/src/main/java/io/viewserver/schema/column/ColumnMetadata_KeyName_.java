@@ -19,11 +19,17 @@
 package io.viewserver.schema.column;
 
 import io.viewserver.core._KeyType_;
+import io.viewserver.datasource.ContentType;
 
 /**
- * Created by nickc on 16/01/2015.
+ * Created by bemm on 16/01/2015.
  */
 public class ColumnMetadata_KeyName_ extends ColumnMetadata {
+
+    public ColumnMetadata_KeyName_() {
+        this.setDataType(ContentType._KeyName_);
+    }
+
     private _KeyType_ nullValue = (_KeyType_)ColumnType._KeyName_.getNullValue();
 
     public _KeyType_ getNullValue() {

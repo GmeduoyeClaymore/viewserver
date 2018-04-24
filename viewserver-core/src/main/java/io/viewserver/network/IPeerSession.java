@@ -24,7 +24,7 @@ import io.viewserver.messages.IMessage;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public interface IPeerSession {
     void sendCommand(Command command);

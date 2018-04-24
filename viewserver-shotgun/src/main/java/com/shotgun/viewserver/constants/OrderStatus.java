@@ -1,6 +1,6 @@
 package com.shotgun.viewserver.constants;
 
-public enum OrderStatuses {
+public enum OrderStatus {
     PLACED,
     ACCEPTED,
     INPROGRESS,

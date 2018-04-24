@@ -19,7 +19,7 @@ package io.viewserver.schema.column;
 import io.viewserver.schema.ITableStorage;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public abstract class ColumnFactoryBase implements IColumnFactory {
     private ITableStorage tableStorage;

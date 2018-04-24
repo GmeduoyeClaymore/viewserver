@@ -27,7 +27,7 @@ import io.viewserver.schema.column.IRowFlags;
 import java.util.List;
 
 /**
- * Created by nickc on 30/09/2014.
+ * Created by bemm on 30/09/2014.
  */
 public class ChangeRecorder extends OperatorBase {
     private Input input;

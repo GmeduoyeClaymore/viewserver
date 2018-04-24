@@ -20,7 +20,7 @@ import io.viewserver.schema.column.IColumn;
 import io.viewserver.schema.column.IRowMapper;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public interface IUnionColumnHolder {
     void mapSource(int source, IColumn column, IRowMapper upstreamMapper);

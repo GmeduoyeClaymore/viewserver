@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nickc on 20/10/2014.
+ * Created by bemm on 20/10/2014.
  */
 public abstract class ConfigurableOperatorBase<TConfig> extends OperatorBase implements IConfigurableOperator<TConfig> {
     protected TConfig config;

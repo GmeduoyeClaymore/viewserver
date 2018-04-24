@@ -23,7 +23,7 @@ import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public class ChunkedColumn_KeyName_ extends Column_KeyName_Base implements IWritableColumn_KeyName_, IGrowableColumn {
     private static final ColumnType columnType = ColumnType._KeyName_;

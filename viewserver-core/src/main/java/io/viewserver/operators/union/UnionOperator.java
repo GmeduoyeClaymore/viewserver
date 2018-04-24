@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by nickc on 06/10/2014.
+ * Created by bemm on 06/10/2014.
  */
 public class UnionOperator extends ConfigurableOperatorBase<IUnionConfig> {
     private static final Logger log = LoggerFactory.getLogger(UnionOperator.class);

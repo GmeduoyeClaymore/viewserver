@@ -25,7 +25,7 @@ import io.viewserver.operators.group.summary.ISummaryContext;
 import io.viewserver.schema.column.*;
 
 /**
- * Created by nickc on 02/10/2014.
+ * Created by bemm on 02/10/2014.
  */
 public class Sum_KeyName__SumName_ implements ISummary {
     private final String name;

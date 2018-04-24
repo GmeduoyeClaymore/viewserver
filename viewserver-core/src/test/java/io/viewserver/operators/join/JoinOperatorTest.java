@@ -29,7 +29,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.junit.Test;
 
 /**
- * Created by nickc on 27/10/2014.
+ * Created by bemm on 27/10/2014.
  */
 public class JoinOperatorTest {
     @Test

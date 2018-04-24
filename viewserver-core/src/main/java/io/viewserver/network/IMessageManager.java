@@ -19,7 +19,7 @@ package io.viewserver.network;
 import io.viewserver.messages.IMessage;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public interface IMessageManager {
     void setPeerSession(IPeerSession peerSession);

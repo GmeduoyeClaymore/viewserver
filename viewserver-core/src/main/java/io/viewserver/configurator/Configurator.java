@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Created by nickc on 20/10/2014.
+ * Created by bemm on 20/10/2014.
  */
 public class Configurator implements IConfigurator {
     private static final Logger log = LoggerFactory.getLogger(Configurator.class);

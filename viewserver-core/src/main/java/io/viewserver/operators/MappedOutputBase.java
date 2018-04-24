@@ -24,7 +24,7 @@ import io.viewserver.schema.column.ColumnHolder;
 import java.util.HashMap;
 
 /**
- * Created by nickc on 18/10/2014.
+ * Created by bemm on 18/10/2014.
  */
 public abstract class MappedOutputBase extends OutputBase {
     private IMappedChangeQueue mappedChangeQueue;

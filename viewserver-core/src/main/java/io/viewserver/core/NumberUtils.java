@@ -17,7 +17,7 @@
 package io.viewserver.core;
 
 /**
- * Created by nickc on 06/10/2014.
+ * Created by bemm on 06/10/2014.
  */
 public class NumberUtils {
     public static long packLong(int hi, int lo) {

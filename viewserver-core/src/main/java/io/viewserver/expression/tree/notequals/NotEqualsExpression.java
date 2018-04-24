@@ -20,7 +20,7 @@ import io.viewserver.expression.tree.*;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 14/10/2014.
+ * Created by bemm on 14/10/2014.
  */
 public class NotEqualsExpression {
     public static IExpression createNotEquals(ColumnType type, IExpression lhs, IExpression rhs) {

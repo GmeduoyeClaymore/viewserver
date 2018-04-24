@@ -19,7 +19,7 @@ package io.viewserver.operators.sort;
 import io.viewserver.schema.column.IColumnString;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public class ComparerString implements IComparer {
     private IColumnString column;

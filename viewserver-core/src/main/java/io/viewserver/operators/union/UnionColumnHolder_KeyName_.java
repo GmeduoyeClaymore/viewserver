@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public class UnionColumnHolder_KeyName_ extends ColumnHolder_KeyName_ implements IUnionColumnHolder, IRowMapper {
     private static final Logger log = LoggerFactory.getLogger(UnionColumnHolder_KeyName_.class);

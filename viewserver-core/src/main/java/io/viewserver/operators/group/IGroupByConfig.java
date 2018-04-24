@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nickc on 21/10/2014.
+ * Created by bemm on 21/10/2014.
  */
 public interface IGroupByConfig {
     List<String> getGroupBy();

@@ -27,7 +27,7 @@ import io.viewserver.expression.IExpressionParser;
 import java.util.*;
 
 /**
- * Created by nickc on 01/11/2014.
+ * Created by bemm on 01/11/2014.
  */
 public abstract class ExecutionPlanContextBase implements IExecutionPlanContext {
     private ICatalog catalog;

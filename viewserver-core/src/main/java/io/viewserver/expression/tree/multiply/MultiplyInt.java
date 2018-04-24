@@ -21,7 +21,7 @@ import io.viewserver.expression.tree.IExpressionLong;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 11/12/2014.
+ * Created by bemm on 11/12/2014.
  */
 public class MultiplyInt implements IExpressionLong {
     private final IExpressionInt lhs;

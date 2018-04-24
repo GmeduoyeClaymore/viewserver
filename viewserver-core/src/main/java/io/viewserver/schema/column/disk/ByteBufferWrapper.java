@@ -21,7 +21,7 @@ import io.viewserver.core._KeyType_;
 import java.nio.ByteBuffer;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public class ByteBufferWrapper {
     private ByteBuffer buffer;

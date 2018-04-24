@@ -31,11 +31,11 @@ import io.viewserver.schema.column.*;
 public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn, IUnEnumColumn {
     private ColumnHolder sourceHolder;
     private ColumnHolder outHolder;
-    private IDataSource dataSource;
+    private String dataSource;
     private Dimension dimension;
     private IDimensionMapper dimensionMapper;
 
-    public UnEnumColumn_KeyName_(ColumnHolder sourceHolder, ColumnHolder outHolder, IDataSource dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
+    public UnEnumColumn_KeyName_(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
         this.sourceHolder = sourceHolder;
         this.outHolder = outHolder;
         this.dataSource = dataSource;
@@ -67,13 +67,13 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
             return metadata != null ?((ColumnMetadata_KeyName_)metadata).getNullValue() : (_KeyType_)ColumnType._KeyName_.getDefaultValue();
         }
 
-        return dimensionMapper.lookup_KeyName_(dataSource, dimension, id);
+        return dimensionMapper.lookup_KeyName_(dataSource, dimension.getName(), id);
     }
 
     @Override
     public _KeyType_ getPrevious_KeyName_(int row) {
         int id = getPreviousLookupId(row);
-        return dimensionMapper.lookup_KeyName_(dataSource, dimension, id);
+        return dimensionMapper.lookup_KeyName_(dataSource, dimension.getName(), id);
     }
 
     private int getPreviousLookupId(int row) {

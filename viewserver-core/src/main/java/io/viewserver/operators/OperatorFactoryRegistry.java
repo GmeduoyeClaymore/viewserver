@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class OperatorFactoryRegistry {
     private final Map<String, IOperatorFactory> factories = new HashMap<>();

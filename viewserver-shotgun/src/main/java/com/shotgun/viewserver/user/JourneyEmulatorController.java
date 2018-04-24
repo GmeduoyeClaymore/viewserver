@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 
 @Controller(name = "journeyEmulatorController")
 public class JourneyEmulatorController {
-    private static final Logger log = LoggerFactory.getLogger(DriverController.class);
+    private static final Logger log = LoggerFactory.getLogger(PartnerController.class);
     private IMapsController IMapsController;
 
     public JourneyEmulatorController(IMapsController IMapsController) {

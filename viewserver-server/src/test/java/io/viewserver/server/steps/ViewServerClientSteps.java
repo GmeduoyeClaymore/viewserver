@@ -16,10 +16,8 @@
 
 package io.viewserver.server.steps;
 
-import io.viewserver.catalog.ICatalog;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
-import io.viewserver.client.ViewServerClient;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
@@ -41,7 +39,6 @@ import org.h2.util.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Subscription;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +51,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ViewServerClientSteps {
+    private final int timeout = 20;
+    private final TimeUnit timeUnit = TimeUnit.MINUTES;
     private ViewServerClientContext clientContext;
     private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
 
@@ -137,10 +136,9 @@ public class ViewServerClientSteps {
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
         trySubscribe(clientName, subscribeLatch);
-        int waitTime = 5;
-        subscribeLatch.await(waitTime, TimeUnit.MINUTES);
+        subscribeLatch.await(timeout, timeUnit);
 
-        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + waitTime + " seconds", clientConnectionContext.getSubscription("report"));
+        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report"));
     }
 
     @When("^\"(.*)\" All data sources are built$")
@@ -152,20 +150,20 @@ public class ViewServerClientSteps {
         options.setOffset(0);
         options.setLimit(100);
         trySubscribeOperator(clientName, "/datasources", options, subscribeLatch);
-        subscribeLatch.await(20, TimeUnit.SECONDS);
+        subscribeLatch.await(timeout, timeUnit);
 
 
         ClientSubscription subscription = clientConnectionContext.getSubscription("/datasources");
 
         final String[] waitingFor = {getUnbuiltDataSourceNames(subscription)};
 
-        if(waitingFor[0] != null){
+        if (waitingFor[0] != null) {
             System.out.println("Waiting for data sources " + waitingFor[0]);
-            subscription.dataChangedObservable().map(c-> {
+            subscription.dataChangedObservable().map(c -> {
                 System.out.println("Received operator event " + c.getEventType() + " data is " + c.getEventData());
                 waitingFor[0] = getUnbuiltDataSourceNames(subscription);
                 return waitingFor[0];
-            }).filter(res -> res == null).take(1).timeout(30, TimeUnit.SECONDS).toBlocking().toIterable().iterator().next();
+            }).filter(res -> res == null).take(1).timeout(timeout, timeUnit).toBlocking().toIterable().iterator().next();
         }
         Assert.assertNull("Some data sources still not built \n" + waitingFor[0], waitingFor[0]);
     }
@@ -174,7 +172,7 @@ public class ViewServerClientSteps {
         try {
             Assert.assertNotNull(subscription);
             System.out.println("------------------ CHECKING DATA SOURCES - WAITING FOR SNAPSHOT --------------------");
-            List<Map<String, Object>> snapshot = subscription.getSnapshot().get(10, TimeUnit.SECONDS);
+            List<Map<String, Object>> snapshot = subscription.getSnapshot().get(timeout, timeUnit);
             String waitingFor = null;
             boolean hasUnbuiltDataSource = snapshot.isEmpty();
             if (snapshot.isEmpty()) {
@@ -199,7 +197,7 @@ public class ViewServerClientSteps {
                 waitingFor = sb.toString();
             }
             return waitingFor;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -207,10 +205,23 @@ public class ViewServerClientSteps {
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
     public void controller_action_invoked_with_data_file(String clientName, String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
-        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonFromFile(dataFile), null);
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile), null);
     }
 
-    private String getJsonFromFile(String dataFile) {
+    @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\" with parameters$")
+    public void controller_action_invoked_with_data_file_with_parameters(String clientName, String controllerName, String action, String dataFile, List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile, records), null);
+    }
+
+    private Object getJsonObjectFromFile(String dataFile) {
+        String jsonStringFromFile = getJsonStringFromFile(dataFile, null);
+        return ControllerUtils.mapDefault(jsonStringFromFile);
+    }
+    private String getJsonStringFromFile(String dataFile) {
+        return getJsonStringFromFile(dataFile, null);
+    }
+
+    private String getJsonStringFromFile(String dataFile, List<Map<String, String>> records) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dataFile);
         if (inputStream == null) {
             throw new RuntimeException("Unable to find resource at at " + dataFile);
@@ -218,7 +229,14 @@ public class ViewServerClientSteps {
         Reader reader = IOUtils.getBufferedReader(inputStream);
         try {
             String json = IOUtils.readStringAndClose(reader, 0);
-            return parseReferencesInJSONFile(json);
+            json = parseReferencesInJSONFile(json);
+            if (records != null) {
+                for (Map<String, String> record : records) {
+                    Map<String, String> params = clientContext.replaceParams(record);
+                    json = ViewServerClientContext.replaceParams(json, params);
+                }
+            }
+            return json;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -238,7 +256,11 @@ public class ViewServerClientSteps {
                 String value = (String) entry.getValue();
                 if (value.startsWith("ref://")) {
                     String fileReference = value.substring(6);
-                    entry.setValue(getJsonFromFile(fileReference));
+                    entry.setValue(getJsonStringFromFile(fileReference));
+                }
+                if (value.startsWith("objref://")) {
+                    String fileReference = value.substring(9);
+                    entry.setValue(getJsonObjectFromFile(fileReference));
                 }
             }
         }
@@ -250,7 +272,7 @@ public class ViewServerClientSteps {
 
         ListenableFuture<CommandResult> future = connectionContext.invokeJSONCommand(controllerName, action, data);
 
-        CommandResult actual = future.get(20, TimeUnit.SECONDS);
+        CommandResult actual = future.get(timeout, timeUnit);
         Assert.assertTrue(actual.isStatus());
         connectionContext.setResult(controllerName, action, actual.getMessage());
         if (result != null) {
@@ -329,11 +351,16 @@ public class ViewServerClientSteps {
 
             ValidationOperator operator = eventHandler.getValidationOperator();
             List<Object> validationActions = new ArrayList<>();
+            int counter = 0;
             for (Map<String, String> record : records) {
-                validationActions.add(ValidationUtils.to(clientContext.replaceParams(record)));
+                Map<String, String> row = clientContext.replaceParams(record);
+                replaceReferences((HashMap)row);
+                row.put(ValidationUtils.ID_NAME,counter + "");
+                validationActions.add(ValidationUtils.to(row));
+                counter++;
             }
             operator.setExpected(validationActions);
-            operator.validate();
+            operator.validate(clientContext::replaceParams);
         } catch (Exception ex) {
             throw ex;
         }

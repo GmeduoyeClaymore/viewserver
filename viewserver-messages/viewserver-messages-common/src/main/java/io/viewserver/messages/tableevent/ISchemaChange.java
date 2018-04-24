@@ -84,6 +84,7 @@ public interface ISchemaChange<T> extends IPoolableMessage<T> {
         Double,
         String,
         Date,
+        Json,
         DateTime
     }
 }

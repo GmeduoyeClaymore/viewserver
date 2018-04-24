@@ -20,7 +20,7 @@ import io.viewserver.expression.tree.*;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 22/10/2014.
+ * Created by bemm on 22/10/2014.
  */
 public class LiteralBool implements IExpressionBool, IExpressionByte, IExpressionShort, IExpressionInt, IExpressionLong, IExpressionFloat, IExpressionDouble {
     private boolean value;

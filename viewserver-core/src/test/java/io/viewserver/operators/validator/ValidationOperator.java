@@ -18,7 +18,10 @@ package io.viewserver.operators.validator;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
+import io.viewserver.controller.Controller;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.InputBase;
 import io.viewserver.operators.OperatorBase;
@@ -28,6 +31,7 @@ import io.viewserver.schema.column.IRowFlags;
 import cucumber.api.DataTable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Created by bemm on 01/12/2014.
@@ -38,10 +42,16 @@ public class ValidationOperator extends OperatorBase{
     private List validationActions = new ArrayList<>();
     private List expectedActions;
     private boolean validateOnCommit = true;
+    private HashMap<String,ValidationOperatorColumn> columnsByName;
+
+    public interface ITransform{
+        String call(String param);
+    }
 
     public ValidationOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
         input = new Input(Constants.IN, this);
+        columnsByName = new HashMap<>();
         addInput(input);
         register();
     }
@@ -64,18 +74,31 @@ public class ValidationOperator extends OperatorBase{
     }
 
     public void validate() {
+        validate(c->c);
+    }
+
+
+    public void validate(ITransform transform) {
         if(this.expectedActions != null){
             System.out.println(this.getName() + " validating");
             String[] expectedKeys = getKeysForActions(expectedActions);
             if (expectedKeys.length > 0) {
-                DataTable dataTable = convertToTable(this.expectedActions, expectedKeys);
-                DataTable other = convertToTable(this.validationActions, expectedKeys);
-                dataTable.diff(other);
+                DataTable dataTable = convertToTable(transform,this.expectedActions, expectedKeys, null);
+                DataTable other = convertToTable(transform, this.validationActions, expectedKeys, this.expectedActions);
+                try {
+                    dataTable.diff(other);
+                }catch (Throwable throwable){
+                    DataTable actualActions = convertToTable(transform, this.validationActions, null, null);
+                    System.out.println("Actual actions are \n" + actualActions);
+                    throw throwable;
+                }
             }
         }
     }
 
+
     public void clearRecordedEvents(){
+        columnsByName.clear();
         validationActions.clear();
     }
 
@@ -84,32 +107,79 @@ public class ValidationOperator extends OperatorBase{
         return getKeys(expectedRows);
     }
 
-    private DataTable convertToTable(List expectedActions,String[] keys) {
-        List<HashMap<String,Object>> rows = getRows(expectedActions);
+
+
+    private DataTable convertToTable(ITransform transform,List actionsToConvert,String[] keys, List referenceActions) {
+        List<HashMap<String,Object>> rows = getRows(actionsToConvert);
         List<List<String>>tableData = new ArrayList<>();
-        List<String> keysList = ValidationUtils.getKeys(keys);
+        List<String> keysList = null;
+        if(keys != null){
+            keysList = ValidationUtils.getKeys(keys);
+        }else{
+            if(rows.size() > 0){
+                keysList = new ArrayList<>(rows.get(0).keySet());
+            }else{
+                keysList = new ArrayList<>();
+            }
+        };
         tableData.add(keysList);
+        int rowCounter = 0;
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
             for(String key : keysList){
+
                 Object val = row.get(key);
-                if(val == null){
+                if(val == null || "".equals(val)){
                     result.add("");
                 }
                 else{
-                    result.add(val + "");
+                    ValidationOperatorColumn out = columnsByName.get(key);
+                    if(referenceActions != null && out!= null && out.getType().equals(ContentType.Json)){//basically if it is JSON then look at the reference row and only compare properties found in the source row
+                        HashMap<String,Object> me =  (HashMap<String, Object>) val;
+                        ValidationOperatorRow referenceAction = (ValidationOperatorRow) referenceActions.get(rowCounter);
+                        if(referenceAction == null){
+                            result.add(transform.call(val + ""));
+                            continue;
+                        }
+                        HashMap<String,Object> reference = ControllerUtils.mapDefault((String) referenceAction.getValues().get(key));
+                        if(reference == null){
+                            result.add(transform.call(val + ""));
+                            continue;
+                        }
+                        HashMap<String, Object> propsToCompare = filterForReferenceProps(me, reference);
+                        result.add(transform.call(ControllerUtils.toConsistentString(propsToCompare)));
+                    }else{
+                        result.add(transform.call(out == null ? val + "" : ControllerUtils.toConsistentString(out.getType().convertToContentType(val))));
+                    }
                 }
 
             }
             tableData.add(result);
+            rowCounter++;
         }
         return DataTable.create(tableData);
+    }
+
+    private HashMap<String, Object> filterForReferenceProps(HashMap<String, Object> me, HashMap<String, Object> reference) {
+        HashMap<String,Object> propsToCompare = new HashMap<>();
+        for(Map.Entry<String,Object> referenceEntry : reference.entrySet()){
+            Object value = me.get(referenceEntry.getKey());
+            if(value == null){
+                continue;
+            }
+            if(referenceEntry.getValue() instanceof HashMap && value instanceof HashMap) {
+                propsToCompare.put(referenceEntry.getKey(), filterForReferenceProps((HashMap)value,(HashMap) referenceEntry.getValue()));
+            }else{
+                propsToCompare.put(referenceEntry.getKey(), value);
+            }
+        }
+        return propsToCompare;
     }
 
     private List<HashMap<String, Object>> getRows(List expectedActions) {
         List<HashMap<String,Object>> result = new ArrayList<>();
         for(Object expected : expectedActions){
-            result.add(ValidationUtils.from(expected));
+            result.add(ValidationUtils.from(expected, this.columnsByName));
         }
         String[] keys = getKeys(result);
         for(Map<String,Object> entry : result){
@@ -202,7 +272,9 @@ public class ValidationOperator extends OperatorBase{
         }
 
         private ValidationOperatorColumn createValidationColumn(ColumnHolder columnHolder, ValidationAction remove) {
-            return new ValidationOperatorColumn(columnHolder.getName(), columnHolder.getType(), columnHolder.getColumnId(), remove);
+            ValidationOperatorColumn validationOperatorColumn = new ValidationOperatorColumn(columnHolder.getName(), columnHolder.getMetadata().getDataType(), columnHolder.getColumnId(), remove);
+            ValidationOperator.this.columnsByName.put(columnHolder.getName(), validationOperatorColumn);
+            return validationOperatorColumn;
         }
 
         private ValidationOperatorRow getValidationOperatorRow(int row, ValidationAction action) {

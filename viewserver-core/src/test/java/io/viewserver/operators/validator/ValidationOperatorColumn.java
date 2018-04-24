@@ -16,6 +16,8 @@
 
 package io.viewserver.operators.validator;
 
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.DataType;
 import io.viewserver.schema.column.ColumnType;
 
 /**
@@ -23,11 +25,11 @@ import io.viewserver.schema.column.ColumnType;
  */
 public class ValidationOperatorColumn {
     private String name;
-    private ColumnType type;
+    private ContentType type;
     private int columnId;
     private ValidationAction validationAction;
 
-    public ValidationOperatorColumn(String name, ColumnType type, int columnId,ValidationAction validationAction) {
+    public ValidationOperatorColumn(String name, ContentType type, int columnId, ValidationAction validationAction) {
         this.name = name;
         this.type = type;
         this.columnId = columnId;
@@ -38,7 +40,7 @@ public class ValidationOperatorColumn {
         return name;
     }
 
-    public ColumnType getType() {
+    public ContentType getType() {
         return type;
     }
 

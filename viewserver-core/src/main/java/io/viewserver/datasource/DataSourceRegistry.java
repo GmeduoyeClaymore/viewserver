@@ -20,6 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
@@ -64,7 +65,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     static SchemaConfig config = new SchemaConfig()
             .withColumns(Arrays.asList(
                     new Column(ID_COL, ContentType.String),
-                    new Column(JSON_COL, ContentType.String),
+                    new Column(JSON_COL, ContentType.Json),
                     new Column(STATUS_COL, ContentType.String),
                     new Column(PATH_COL, ContentType.String)
 
@@ -196,7 +197,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             return dataSource;
         }
         ColumnHolder jsonColHolder = getOutput().getSchema().getColumnHolder(JSON_COL);
-        String dataSourceJson = (String)ColumnHolderUtils.getValue(jsonColHolder, rowId);
+        String dataSourceJson = (String) ControllerUtils.toString(ColumnHolderUtils.getValue(jsonColHolder, rowId));
         dataSource = deserialise(dataSourceJson);
         dataSourcesById.put(rowId, dataSource);
         return dataSource;

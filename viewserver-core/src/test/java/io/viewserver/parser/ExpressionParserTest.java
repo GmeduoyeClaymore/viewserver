@@ -34,7 +34,7 @@ import org.junit.Test;
 import java.util.HashMap;
 
 /**
- * Created by nickc on 14/10/2014.
+ * Created by bemm on 14/10/2014.
  */
 public class ExpressionParserTest {
     private FunctionRegistry functionRegistry;

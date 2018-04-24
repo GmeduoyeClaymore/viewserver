@@ -19,7 +19,7 @@ package io.viewserver.operators.serialiser;
 import io.viewserver.messages.tableevent.ITableEvent;
 
 /**
- * Created by nickc on 28/10/2014.
+ * Created by bemm on 28/10/2014.
  */
 public enum TableEventFlags {
     SnapshotComplete(ITableEvent.Flags.SnapshotComplete);

@@ -1,4 +1,5 @@
 package com.shotgun.viewserver.delivery;
 
-public class UserKey {
+public class UserKey{
+    private String key;
 }

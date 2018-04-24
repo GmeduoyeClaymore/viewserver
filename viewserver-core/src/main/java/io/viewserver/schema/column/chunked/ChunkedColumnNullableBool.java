@@ -24,7 +24,7 @@ import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public class ChunkedColumnNullableBool extends ColumnNullableBoolBase implements IWritableColumnNullableBool, IGrowableColumn {
     private static final ColumnType columnType = ColumnType.NullableBool;

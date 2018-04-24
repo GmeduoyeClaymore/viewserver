@@ -22,7 +22,7 @@ import io.viewserver.schema.column.IColumn;
 import io.viewserver.schema.column.IColumnWatcher;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class ChunkedColumnFactory extends ColumnFactoryBase {
     private int capacity;

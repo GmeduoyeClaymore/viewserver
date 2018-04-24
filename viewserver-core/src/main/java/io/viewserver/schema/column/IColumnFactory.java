@@ -19,7 +19,7 @@ package io.viewserver.schema.column;
 import io.viewserver.schema.ITableStorage;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public interface IColumnFactory {
     void initialise(int capacity);

@@ -17,7 +17,7 @@
 package io.viewserver.execution;
 
 /**
- * Created by nickc on 19/12/2014.
+ * Created by bemm on 19/12/2014.
  */
 public class InvalidReportContextException extends RuntimeException {
     public InvalidReportContextException(String message) {

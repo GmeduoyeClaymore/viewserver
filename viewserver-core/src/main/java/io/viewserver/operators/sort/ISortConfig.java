@@ -17,7 +17,7 @@
 package io.viewserver.operators.sort;
 
 /**
- * Created by nickc on 21/10/2014.
+ * Created by bemm on 21/10/2014.
  */
 public interface ISortConfig {
     SortOperator.SortDescriptor getSortDescriptor();

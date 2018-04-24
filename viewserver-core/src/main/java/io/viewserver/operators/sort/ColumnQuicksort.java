@@ -17,7 +17,7 @@
 package io.viewserver.operators.sort;
 
 /**
- * Created by nickc on 16/10/2014.
+ * Created by bemm on 16/10/2014.
  */
 public class ColumnQuicksort {
     public static void quicksort(int[] array, int low, int high, IComparer comparer) {

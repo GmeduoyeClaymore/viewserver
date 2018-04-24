@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class CalculationsStep extends CalculationStepBase<ICalculatingGraphDefinition> {
     private final List<CalculationDefinition> calculations = new ArrayList<>();

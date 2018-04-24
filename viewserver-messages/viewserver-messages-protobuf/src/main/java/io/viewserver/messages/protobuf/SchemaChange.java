@@ -287,6 +287,9 @@ public class SchemaChange extends PoolableMessage<SchemaChange> implements ISche
                 case DATETIME: {
                     return DataType.DateTime;
                 }
+                case JSON: {
+                    return DataType.Json;
+                }
                 default: {
                     throw new UnsupportedOperationException(String.format("Unknown column type '%s'", dataType));
                 }
@@ -338,6 +341,10 @@ public class SchemaChange extends PoolableMessage<SchemaChange> implements ISche
                 }
                 case DateTime: {
                     getAddColumnDtoBuilder().setDataType(SchemaChangeMessage.DataType.DATETIME);
+                    break;
+                }
+                case Json: {
+                    getAddColumnDtoBuilder().setDataType(SchemaChangeMessage.DataType.JSON);
                     break;
                 }
                 default: {

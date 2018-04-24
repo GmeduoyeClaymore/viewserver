@@ -21,7 +21,7 @@ import io.viewserver.execution.ParameterHelper;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public class UserSortNode extends SortNode implements IContextNode {
     public UserSortNode() {

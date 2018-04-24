@@ -16,10 +16,10 @@
 
 package io.viewserver.schema.column;
 
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
-import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.operators.table.ISchemaConfig;
 import io.viewserver.operators.table.TableKeyDefinition;
 
@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class ColumnHolderUtils {
     public static ColumnHolder createColumnHolder(String name, ColumnType type) {
@@ -135,7 +135,14 @@ public class ColumnHolderUtils {
                 return ((IColumnDouble)columnHolder).getDouble(row);
             }
             case String: {
-                return ((IColumnString)columnHolder).getString(row);
+                String string = ((IColumnString) columnHolder).getString(row);
+                if(string == null){
+                    return null;
+                }
+                if(columnHolder.getMetadata().getDataType().equals(ContentType.Json)){
+                    return ControllerUtils.mapDefault(string);
+                }
+                return string;
             }
             default: {
                 return "?";
@@ -326,7 +333,7 @@ public class ColumnHolderUtils {
                 break;
             }
             case String: {
-                ((IWritableColumnString)columnHolder.getColumn()).setString(row, (String) value);
+                ((IWritableColumnString)columnHolder.getColumn()).setString(row, (String) columnHolder.getMetadata().getDataType().convertToDataType(value));
                 break;
             }
             default: {

@@ -22,7 +22,7 @@ import io.viewserver.core._KeyType_;
 import io.viewserver.schema.column.IColumn_KeyName_;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public class Comparer_KeyName_ implements IComparer {
     private IColumn_KeyName_ column;

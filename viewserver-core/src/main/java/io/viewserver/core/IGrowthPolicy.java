@@ -17,7 +17,7 @@
 package io.viewserver.core;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public interface IGrowthPolicy {
     int getNewSize(int currentSize, int minimumNewSize);

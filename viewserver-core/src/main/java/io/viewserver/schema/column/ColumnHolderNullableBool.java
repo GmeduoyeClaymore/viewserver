@@ -20,7 +20,7 @@ import io.viewserver.core.NullableBool;
 import io.viewserver.schema.column.chunked.ChunkedColumnNullableBool;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class ColumnHolderNullableBool extends ColumnHolder implements IColumnNullableBool {
     public ColumnHolderNullableBool(String name) {

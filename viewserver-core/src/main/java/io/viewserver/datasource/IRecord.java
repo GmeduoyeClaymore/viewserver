@@ -21,7 +21,7 @@ import io.viewserver.core.NullableBool;
 import java.util.Date;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public interface IRecord {
     String[] getColumnNames();

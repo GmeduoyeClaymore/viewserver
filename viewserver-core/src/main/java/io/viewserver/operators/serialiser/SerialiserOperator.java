@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by nickc on 06/10/2014.
+ * Created by bemm on 06/10/2014.
  */
 public class SerialiserOperator extends OperatorBase {
     private static final Logger log = LoggerFactory.getLogger(SerialiserOperator.class);
@@ -218,6 +218,9 @@ public class SerialiserOperator extends OperatorBase {
                 }
                 case DateTime: {
                     return ISchemaChange.DataType.DateTime;
+                }
+                case Json: {
+                    return ISchemaChange.DataType.Json;
                 }
                 default: {
                     throw new IllegalArgumentException("Unknown data type '" + dataType + "'");

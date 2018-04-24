@@ -21,7 +21,7 @@ import io.viewserver.datasource.IDataSource;
 import java.util.List;
 
 /**
- * Created by nickc on 03/11/2014.
+ * Created by bemm on 03/11/2014.
  */
 public interface IUnEnumConfig {
     IDataSource getDataSource();

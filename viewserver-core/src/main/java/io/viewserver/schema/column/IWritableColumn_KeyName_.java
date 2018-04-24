@@ -21,7 +21,7 @@ package io.viewserver.schema.column;
 import io.viewserver.core._KeyType_;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public interface IWritableColumn_KeyName_ extends IColumn_KeyName_, IWritableColumn {
     void set_KeyName_(int row, _KeyType_ value);

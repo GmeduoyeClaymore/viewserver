@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public class DiskColumn_KeyName_ extends Column_KeyName_Base implements IDiskColumn, IWritableColumn_KeyName_ {
     private static final ColumnType columnType = ColumnType._KeyName_;

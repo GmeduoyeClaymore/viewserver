@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public abstract class PeerSession implements IPeerSession {
     private static final Logger log = LoggerFactory.getLogger(PeerSession.class);

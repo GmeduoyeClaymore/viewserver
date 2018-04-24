@@ -17,7 +17,7 @@
 package io.viewserver.schema.column.disk;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public interface IDiskColumn {
     void unloadAll();

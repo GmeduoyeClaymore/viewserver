@@ -21,7 +21,7 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public interface IConfigurator {
     void process(IConfiguratorSpec configurator, IExecutionContext executionContext, ICatalog catalog, CommandResult commandResult);

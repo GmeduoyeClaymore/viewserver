@@ -17,7 +17,7 @@
 package io.viewserver.operators.join;
 
 /**
- * Created by nickc on 27/10/2014.
+ * Created by bemm on 27/10/2014.
  */
 public interface IJoinConfig {
     String[] getLeftJoinColumns();

@@ -19,7 +19,7 @@ package io.viewserver.operators.table;
 import io.viewserver.core.NullableBool;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public interface ITableRow {
     int getRowId();

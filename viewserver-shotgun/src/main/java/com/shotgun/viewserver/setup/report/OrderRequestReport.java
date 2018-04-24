@@ -17,8 +17,8 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("driverLatitude", "Driver Latitude Override", double[].class)
-                        .withParameter("driverLongitude", "Driver Longitude Override", double[].class)
+                        .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
+                        .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
                         .withParameter("maxDistance", "Maximum Distance Override", String[].class)
                         .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                         .withNodes(
@@ -30,7 +30,7 @@ public class OrderRequestReport {
                                         .withRightJoinColumns("userId")
                                         .withConnection("orderFilter", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right")
-                                        .withColumnPrefixes("", "driver_")
+                                        .withColumnPrefixes("", "partner_")
                                         .withAlwaysResolveNames(),
                                 new JoinNode("originDeliveryAddressJoin")
                                         .withLeftJoinColumns("originDeliveryAddressId")
@@ -49,11 +49,11 @@ public class OrderRequestReport {
                                         .withConnection(IDataSourceRegistry.getDefaultOperatorPath(DeliveryAddressDataSource.NAME), Constants.OUT, "right"),
                                 new CalcColNode("distanceCalcCol")
                                         .withCalculations(
-                                                new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, isNull({driverLatitude},driver_latitude), isNull({driverLongitude},driver_longitude), \"M\")"),
-                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(origin_latitude, origin_longitude, isNull({driverLatitude},driver_latitude), isNull({driverLongitude},driver_longitude), \"M\"))"))
+                                                new CalcColOperator.CalculatedColumn("currentDistance", "distance(origin_latitude, origin_longitude, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"),
+                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(origin_latitude, origin_longitude, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
                                         .withConnection("destinationDeliveryAddressJoin"),
                                 new FilterNode("distanceFilter")
-                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},driver_range)")
+                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
                                         .withConnection("distanceCalcCol"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

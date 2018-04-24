@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by nickc on 27/10/2014.
+ * Created by bemm on 27/10/2014.
  */
 public class JsonSummary implements ISummary {
     private String name;

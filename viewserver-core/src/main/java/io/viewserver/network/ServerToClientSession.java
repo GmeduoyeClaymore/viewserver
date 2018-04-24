@@ -22,7 +22,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 
 /**
- * Created by nickc on 04/11/2014.
+ * Created by bemm on 04/11/2014.
  */
 public class ServerToClientSession extends PeerSession {
     private ICatalog sessionCatalog;

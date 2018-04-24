@@ -1,8 +1,10 @@
 package com.shotgun.viewserver.servercomponents;
 
+import com.fasterxml.jackson.databind.Module;
 import com.shotgun.viewserver.ContainsProduct;
 import com.shotgun.viewserver.user.CategorySpreadFunction;
 import com.shotgun.viewserver.user.ProductSpreadFunction;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.network.IEndpoint;
 import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.server.components.BasicServerComponents;
@@ -14,6 +16,11 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
     public ShotgunBasicServerComponents(List<IEndpoint> endpointList) {
         super(endpointList);
+        JacksonSerialiser.getInstance().registerModules(
+                new Module[]{
+                        new OrderSerializationModule()
+                }
+        );
     }
 
     @Override

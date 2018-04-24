@@ -25,7 +25,7 @@ import io.viewserver.schema.column.IRowFlags;
 import java.util.List;
 
 /**
- * Created by nickc on 29/09/2014.
+ * Created by bemm on 29/09/2014.
  */
 public abstract class InputBase implements IInput {
     private String name;

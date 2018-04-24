@@ -17,7 +17,7 @@
 package io.viewserver.expression.function;
 
 /**
- * Created by nickc on 14/10/2014.
+ * Created by bemm on 14/10/2014.
  */
 public interface IRetypeableUserDefinedFunction extends IUserDefinedFunction {
     io.viewserver.expression.tree.IExpression retype();

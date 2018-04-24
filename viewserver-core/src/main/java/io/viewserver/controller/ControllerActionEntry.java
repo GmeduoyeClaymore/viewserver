@@ -158,7 +158,7 @@ public class ControllerActionEntry{
                                     args[paramEntry.index] = mapper.readValue(getParameter(parameter),paramEntry.getType());
                                 }
                             }catch (Exception ex){
-                                throw new RuntimeException(String.format("Problem deserializing parameter named \"%s\"",paramEntry.getName()));
+                                throw new RuntimeException(String.format("Problem deserializing parameter named \"%s\" ",paramEntry.getName())  + ex, ex);
                             }
 
                         }

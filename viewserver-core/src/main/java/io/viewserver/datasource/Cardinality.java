@@ -19,7 +19,7 @@ package io.viewserver.datasource;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 13/10/2014.
+ * Created by bemm on 13/10/2014.
  */
 public enum Cardinality {
     Boolean(ColumnType.Bool),

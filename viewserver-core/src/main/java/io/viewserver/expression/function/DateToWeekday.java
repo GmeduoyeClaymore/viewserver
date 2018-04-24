@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by nickc on 21/10/2014.
+ * Created by bemm on 21/10/2014.
  */
 public class DateToWeekday implements IUserDefinedFunction, IExpressionInt {
     private static final Logger log = LoggerFactory.getLogger(DateToWeekday.class);

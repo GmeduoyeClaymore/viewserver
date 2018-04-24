@@ -22,7 +22,7 @@ import io.viewserver.core._KeyType_;
 import io.viewserver.expression.tree.IExpression_KeyName_;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public interface IColumn_KeyName_ extends IColumn, IExpression_KeyName_ {
     _KeyType_ get_KeyName_(int row);

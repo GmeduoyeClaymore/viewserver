@@ -21,7 +21,7 @@ import io.viewserver.command.ICommandResultListener;
 import io.viewserver.messages.IPoolableMessage;
 
 /**
- * Created by nickc on 08/10/2014.
+ * Created by bemm on 08/10/2014.
  */
 public class Command {
     private IPoolableMessage message;

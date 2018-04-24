@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 /**
- * Created by nickc on 29/09/2014.
+ * Created by bemm on 29/09/2014.
  */
 public interface ITableRowUpdater {
     default Object getValue(String columnName) {

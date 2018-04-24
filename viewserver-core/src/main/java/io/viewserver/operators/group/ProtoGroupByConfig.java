@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class ProtoGroupByConfig implements IGroupByConfig {
     private final List<String> groupBy;

@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by nickc on 03/11/2014.
+ * Created by bemm on 03/11/2014.
  */
 public class SortNode extends GraphNodeBase<SortNode> {
     private final List<SortOperator.SortColumn> columnsToSort = new ArrayList<>();

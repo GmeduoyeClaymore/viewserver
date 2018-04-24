@@ -45,4 +45,9 @@ public class MockMapsController implements IMapsController{
     public HashMap<String, Object> makeAutoCompleteRequest(MapRequest request) {
         return null;
     }
+
+    @Override
+    public DistanceAndDuration getDistanceAndDuration(DirectionRequest driving) {
+        return new DistanceAndDuration(10,10);
+    }
 }

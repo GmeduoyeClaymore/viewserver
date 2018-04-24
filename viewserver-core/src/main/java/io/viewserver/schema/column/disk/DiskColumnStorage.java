@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public class DiskColumnStorage extends ColumnStorageBase {
     private Path schemaDirectory;

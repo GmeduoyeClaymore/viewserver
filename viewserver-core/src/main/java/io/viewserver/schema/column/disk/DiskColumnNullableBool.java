@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Created by nickc on 02/12/2014.
+ * Created by bemm on 02/12/2014.
  */
 public class DiskColumnNullableBool extends ColumnNullableBoolBase implements IDiskColumn, IWritableColumnNullableBool {
     private static final ColumnType columnType = ColumnType.NullableBool;

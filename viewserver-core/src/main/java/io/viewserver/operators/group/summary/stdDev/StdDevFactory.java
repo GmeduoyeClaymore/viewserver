@@ -23,7 +23,7 @@ import io.viewserver.operators.group.summary.MultiTypeSummaryBase;
 import io.viewserver.schema.column.ColumnHolder;
 
 /**
- * Created by nickc on 01/11/2014.
+ * Created by bemm on 01/11/2014.
  */
 
 public class StdDevFactory implements ISummaryFactory {

@@ -17,7 +17,7 @@
 package io.viewserver.schema.column;
 
 /**
- * Created by nickc on 03/10/2014.
+ * Created by bemm on 03/10/2014.
  */
 public interface IRowMapper {
     int getSourceRow(int row);

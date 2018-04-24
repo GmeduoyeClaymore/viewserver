@@ -23,7 +23,7 @@ import io.viewserver.core._KeyType_;
 import java.util.Arrays;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public class ChunkedArray_KeyName_ {
     private String name;

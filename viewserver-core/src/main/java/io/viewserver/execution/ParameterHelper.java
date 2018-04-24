@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class ParameterHelper {
     public static ParameterHelper NO_PARAM_HELPER = new ParameterHelper();

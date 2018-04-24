@@ -50,6 +50,7 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         addOutput(output);
 
         setSystemOperator(true);
+        register();
     }
 
     public IPeerSession getSessionById(int id) {

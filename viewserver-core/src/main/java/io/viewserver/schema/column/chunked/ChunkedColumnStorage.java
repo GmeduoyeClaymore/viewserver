@@ -19,7 +19,7 @@ package io.viewserver.schema.column.chunked;
 import io.viewserver.schema.column.ColumnStorageBase;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class ChunkedColumnStorage extends ColumnStorageBase {
     public ChunkedColumnStorage(int chunkSize) {

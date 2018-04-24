@@ -17,7 +17,7 @@
 package io.viewserver.operators.sort;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public interface IComparer {
     int compare(int row);

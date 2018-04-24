@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class ProtoCalcColConfig implements ICalcColConfig {
     private final boolean doesDataRefreshOnColumnAdd;

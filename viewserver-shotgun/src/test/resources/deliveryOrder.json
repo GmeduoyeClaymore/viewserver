@@ -1,0 +1,15 @@
+{
+  "origin": "objref://deliveryOrderLocation.json",
+  "destination": {
+    "line1": "129 Drakefield Road",
+    "city": "London",
+    "postCode": "W6",
+    "country": "United Kingdom",
+    "googlePlaceId": "EhwxMiBLaW5ub3VsIFJkLCBMb25kb24gVzYsIFVL",
+    "latitude": 51.4341614,
+    "longitude": -0.1523323
+  },
+  "customerId": "{param_customerId}",
+  "requiredVehicleType": "1SmallVan",
+  "requiredDate": "{now_date+1}"
+}

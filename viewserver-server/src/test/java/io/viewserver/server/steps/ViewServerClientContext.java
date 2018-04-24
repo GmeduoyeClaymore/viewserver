@@ -20,9 +20,11 @@ import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +34,7 @@ import java.util.Map;
 public class ViewServerClientContext {
     private HashMap<String, ClientConnectionContext> clientConnectionsByName;
     private Map<String,String> contextParams = new HashMap<>();
-
+    private static DateTime nowDate = new DateTime();
     public ViewServerClientContext() {
         clientConnectionsByName = new HashMap<>();
     }
@@ -45,18 +47,27 @@ public class ViewServerClientContext {
         return result;
     }
 
-    private String replaceParams(String value) {
+    public String replaceParams(String value) {
         if(value == null || "".equals(value)){
             return value;
         }
         String result = value;
-        for(Map.Entry<String,String> entry: contextParams.entrySet()){
-            result = result.replace(String.format("{%s}",entry.getKey()),entry.getValue());
-        }
+        Map<String, String> contextParams = this.contextParams;
+        result = replaceParams(result, contextParams);
 
         for(Map.Entry<Object, Object> prop : System.getProperties().entrySet()){
             result = result.replace(String.format("{%s}",prop.getKey() + ""),prop.getValue() + "");
         }
+        return result;
+    }
+
+    public static String replaceParams(String result, Map<String, String> contextParams) {
+        for(Map.Entry<String,String> entry: contextParams.entrySet()){
+            result = result.replace(String.format("{%s}",entry.getKey()),entry.getValue());
+        }
+        result = result.replace("{now_date}",nowDate.toString());
+        result = result.replace("{now_date+1}",nowDate.plusDays(1).toString());
+        result = result.replace("{now_date+2}",nowDate.plusDays(2).toString());
         return result;
     }
 

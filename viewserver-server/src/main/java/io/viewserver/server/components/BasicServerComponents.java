@@ -18,7 +18,7 @@ import io.viewserver.operators.table.TableFactoryRegistry;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 
 

@@ -19,7 +19,7 @@ package io.viewserver.execution.nodes;
 import io.viewserver.execution.context.OptionsExecutionPlanContext;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public interface IContextNode {
     void configureForContext(OptionsExecutionPlanContext context);

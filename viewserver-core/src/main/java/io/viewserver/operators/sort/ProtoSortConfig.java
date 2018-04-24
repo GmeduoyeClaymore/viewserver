@@ -19,7 +19,7 @@ package io.viewserver.operators.sort;
 import java.util.List;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class ProtoSortConfig implements ISortConfig {
     private final SortOperator.SortDescriptor sortDescriptor;

@@ -19,7 +19,7 @@ package io.viewserver.schema.column;
 import io.viewserver.core.NullableBool;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public interface IWritableColumnNullableBool extends IColumnNullableBool, IWritableColumn {
     void setNullableBool(int row, NullableBool value);

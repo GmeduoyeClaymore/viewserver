@@ -20,7 +20,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nickc on 27/11/2014.
+ * Created by bemm on 27/11/2014.
  */
 public interface IPersistentStore {
     void createTable(String name, Schema schema);

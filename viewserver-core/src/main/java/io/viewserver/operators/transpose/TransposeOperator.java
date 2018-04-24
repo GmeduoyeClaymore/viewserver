@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nickc on 28/10/2014.
+ * Created by bemm on 28/10/2014.
  */
 public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig> {
     private static final Logger log = LoggerFactory.getLogger(TransposeOperator.class);

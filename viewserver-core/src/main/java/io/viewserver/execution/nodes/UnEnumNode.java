@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by nickc on 03/11/2014.
+ * Created by bemm on 03/11/2014.
  */
 public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
     private IDataSource dataSource;

@@ -5,7 +5,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.adapters.common.IDatabaseUpdater;
-import com.shotgun.viewserver.constants.OrderStatuses;
+import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
@@ -82,21 +82,9 @@ public class CustomerController {
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     public String cancelOrder(String orderId){
-        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.CANCELLED.name());
+        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatus.CANCELLED.name());
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
         rejectDriver(orderId);
-        return orderId;
-    }
-
-    @ControllerAction(path = "customerCompleteOrder", isSynchronous = true)
-    public String customerCompleteOrder(String orderId){
-        IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.COMPLETEDBYCUSTOMER.name());
-        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
-        String deliveryId = (String)ControllerUtils.getColumnValue(orderTable, "deliveryId", orderId);
-        String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
-        notifyStatusChanged(orderId, driverId, "completed");
         return orderId;
     }
 
@@ -119,7 +107,7 @@ public class CustomerController {
                 .addValue("totalPrice", price)
                 .addValue("lastModified", now);
 
-        if(currentStatus != OrderStatuses.PLACED.name() && currentStatus != OrderStatuses.ACCEPTED.name() ){
+        if(currentStatus != OrderStatus.PLACED.name() && currentStatus != OrderStatus.ACCEPTED.name() ){
             throw new RuntimeException("Price can only be updated if the order has not yet been started");
         }
 
@@ -137,7 +125,7 @@ public class CustomerController {
         String driverId = (String)ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
 
         if(driverId != null && driverId != "") {
-            IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatuses.PLACED.name());
+            IRecord orderRecord = new Record().addValue("orderId", orderId).addValue("status", OrderStatus.PLACED.name());
             iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
             IRecord deliveryRecord = new Record().addValue("deliveryId", deliveryId).addValue("driverId", "");

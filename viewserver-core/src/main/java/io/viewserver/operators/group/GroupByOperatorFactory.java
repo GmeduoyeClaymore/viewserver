@@ -23,7 +23,7 @@ import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.schema.ITableStorage;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class GroupByOperatorFactory extends ConfigurableOperatorFactoryBase<IGroupByConfig> {
     private final ITableStorage.Factory tableStorageFactory;

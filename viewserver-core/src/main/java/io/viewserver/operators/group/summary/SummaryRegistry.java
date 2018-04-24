@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nickc on 01/11/2014.
+ * Created by bemm on 01/11/2014.
  */
 public class SummaryRegistry {
     private final Map<String, ISummaryFactory> factories = new HashMap<>();

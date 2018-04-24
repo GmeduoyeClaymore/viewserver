@@ -1,10 +1,21 @@
 package com.shotgun.viewserver.delivery;
 
-public  enum OrderType{
-    Delivery,
-    Personell,
-    Product,
-    Hire,
-    Rubbish,
+public  enum OrderContentType {
+    Delivery(1),
+    Personell(5),
+    Product(6),
+    Hire(3),
+    Rubbish(2);
+
+    private int contentTypeId;
+
+    OrderContentType(int contentTypeId) {
+        this.contentTypeId = contentTypeId;
+    }
+
+    public int getContentTypeId() {
+        return contentTypeId;
+    }
 }
+
 

@@ -82,7 +82,7 @@ public class DimensionMapper extends DimensionMapperBase {
                 }
             }
             default:{
-                throw new RuntimeException("Attempting to map unhandled type");
+                throw new RuntimeException("Attempting to map unhandled type "  + dimensionContentType);
             }
         }
     }

@@ -23,7 +23,7 @@ import io.viewserver.schema.Schema;
 import rx.Observable;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public interface IOutput extends IActiveRowTracker {
     //be careful when using this it will start spamming alot of objects if you subscribe

@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class TableEditCommandHandler extends CommandHandlerBase<ITableEditCommand> {
     private static final Logger log = LoggerFactory.getLogger(TableEditCommandHandler.class);

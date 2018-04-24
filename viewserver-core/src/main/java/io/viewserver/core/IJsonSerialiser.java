@@ -19,7 +19,7 @@ package io.viewserver.core;
 import java.util.Collection;
 
 /**
- * Created by nickc on 09/12/2014.
+ * Created by bemm on 09/12/2014.
  */
 public interface IJsonSerialiser {
     String serialise(Object object);

@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nickc on 03/11/2014.
+ * Created by bemm on 03/11/2014.
  */
 public class TransposeNode extends GraphNodeBase<TransposeNode> {
     private List<String> keyColumns = new ArrayList<>();

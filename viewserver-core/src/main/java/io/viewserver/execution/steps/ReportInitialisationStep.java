@@ -28,7 +28,7 @@ import io.viewserver.report.ReportRegistry;
 import java.util.List;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public class ReportInitialisationStep implements IExecutionPlanStep<ReportExecutionPlanContext> {
     private ReportRegistry reportRegistry;

@@ -24,7 +24,7 @@ import io.viewserver.schema.column.IColumnWatcher;
 import java.io.IOException;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class MemoryMappedColumnFactory extends ColumnFactoryBase {
     private int capacity = Integer.MAX_VALUE / 8;

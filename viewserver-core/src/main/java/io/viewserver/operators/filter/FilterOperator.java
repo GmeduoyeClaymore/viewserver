@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created by nickc on 03/10/2014.
+ * Created by bemm on 03/10/2014.
  */
 public class FilterOperator extends ConfigurableOperatorBase<IFilterConfig> {
     private IInput input;

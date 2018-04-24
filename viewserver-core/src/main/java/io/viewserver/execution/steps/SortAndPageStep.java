@@ -22,7 +22,7 @@ import io.viewserver.execution.context.OptionsExecutionPlanContext;
 import io.viewserver.execution.nodes.UserSortNode;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 public class SortAndPageStep implements IExecutionPlanStep<OptionsExecutionPlanContext> {
     private int commandId;

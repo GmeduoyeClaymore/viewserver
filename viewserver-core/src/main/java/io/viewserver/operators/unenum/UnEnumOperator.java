@@ -29,7 +29,7 @@ import io.viewserver.schema.column.*;
 import java.util.List;
 
 /**
- * Created by nickc on 22/10/2014.
+ * Created by bemm on 22/10/2014.
  */
 public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
     private IDataSource dataSource;

@@ -19,7 +19,7 @@ package io.viewserver.operators.index;
 import java.util.List;
 
 /**
- * Created by nickc on 25/11/2014.
+ * Created by bemm on 25/11/2014.
  */
 public class ProtoIndexConfig implements IIndexConfig {
     private Output[] outputs;

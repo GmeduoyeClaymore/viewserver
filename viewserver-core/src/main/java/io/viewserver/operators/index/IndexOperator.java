@@ -17,6 +17,8 @@
 package io.viewserver.operators.index;
 
 import io.viewserver.Constants;
+import io.viewserver.catalog.Catalog;
+import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.collections.IntHashSet;
@@ -35,20 +37,28 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+
+
 /**
- * Created by nickc on 02/10/2014.
+ * Created by bemm on 02/10/2014.
  */
 public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     private static final Logger log = LoggerFactory.getLogger(IndexOperator.class);
     private final Input input;
     private final Set<String> indexedColumns = new HashSet<>();
+    private final IndexSummaryOutput output;
     private EWAHCompressedBitmap allRows = new EWAHCompressedBitmap();
+    private final TIntObjectHashMap outputsByRowKey = new TIntObjectHashMap();
+
 
     public IndexOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
 
         input = new Input(Constants.IN, this);
         addInput(input);
+        output = new IndexSummaryOutput(Constants.OUT, this);
+        super.addOutput(output);
         register();
     }
 
@@ -98,6 +108,8 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         Output output = (Output) getOutput(name);
         if (output == null) {
             output = new Output(name, this, queryHolders);
+            int rowId = getIndexOutputs().size();
+            outputsByRowKey.put(rowId,output);
             addOutput(output);
             if (input.getProducer() != null) {
                 int count = queryHolders.length;
@@ -105,8 +117,19 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     queryHolders[i].setSchema(input.getProducer().getSchema());
                 }
             }
+            this.output.handleAdd(rowId);
         }
         return output;
+    }
+
+    private List<Output> getIndexOutputs() {
+        List<Output> result = new ArrayList<>();
+        for(IOutput output: this.getOutputs()){
+            if(output instanceof Output){
+                result.add((Output) output);
+            }
+        }
+        return result;
     }
 
     private class Input extends InputBase {
@@ -124,10 +147,13 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         public void onInitialise() {
             super.onInitialise();
 
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             int count = outputs.size();
             for (int i = 0; i < count; i++) {
                 IOutput output = outputs.get(i);
+                if(!(output instanceof Output)){
+                    continue;
+                }
                 for (QueryHolder queryHolder : ((Output) output).queryHolders) {
                     queryHolder.setSchema(getProducer().getSchema());
                 }
@@ -138,10 +164,13 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         public void onSchema() {
             // for outputs that were created after the initial commit, we need to fire
             // the schema and snapshot
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             int count = outputs.size();
             for (int i = 0; i < count; i++) {
                 IOutput output = outputs.get(i);
+                if(!(output instanceof Output)){
+                    continue;
+                }
                 if (!((Output) output).initialised) {
                     ((Output) output).buildSchema();
                 }
@@ -152,7 +181,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
         @Override
         protected void onColumnAdd(ColumnHolder columnHolder) {
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             int count = outputs.size();
             for (int i = 0; i < count; i++) {
                 IOutput output = outputs.get(i);
@@ -173,7 +202,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         protected void onColumnRemove(ColumnHolder columnHolder) {
             boolean wasIndexed = indexedColumns.contains(columnHolder.getName());
 
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             int count = outputs.size();
             for (int i = 0; i < count; i++) {
                 IOutput output = outputs.get(i);
@@ -203,7 +232,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             // for outputs that were created after the initial commit, we need to fire
             // the schema and snapshot
             long start = System.nanoTime();
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             int count = outputs.size();
             for (int i = 0; i < count; i++) {
                 IOutput output = outputs.get(i);
@@ -274,7 +303,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 indexHolder.updateIndex(row, true);
             }
 
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             count = outputs.size();
             for (int i = 0; i < count; i++) {
                 Output output = (Output) outputs.get(i);
@@ -304,7 +333,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
             // TODO: check dirty flags (efficiently!)
             int outputRow;
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             count = outputs.size();
             for (int j = 0; j < count; j++) {
                 Output output = (Output) outputs.get(j);
@@ -335,7 +364,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 indexHolder.markRowForRemoval(row);
             }
 
-            List<IOutput> outputs = getOutputs();
+            List<Output> outputs = getIndexOutputs();
             count = outputs.size();
             for (int i = 0; i < count; i++) {
                 Output output = (Output) outputs.get(i);
@@ -432,6 +461,10 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
             rows = new IntHashSet(128, 0.75f, -1);
             columnHolderFactory = new MappedColumnHolderFactory(rows);
+        }
+
+        public IntHashSet getRows() {
+            return rows;
         }
 
         @Override
@@ -647,6 +680,76 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                 default: {
                     throw new RuntimeException("Invalid column type for index " + columnHolder.getType() + " name " + columnHolder.getName());
                 }
+            }
+        }
+    }
+
+
+    public class IndexSummaryOutput extends OutputBase {
+        public static final String NAME_COLUMN = "name";
+        public static final String VALUES = "values";
+        private CatalogHolder catalogHolder;
+
+        public IndexSummaryOutput(String name, IOperator owner) {
+            super(name, owner);
+            ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(NAME_COLUMN, ColumnType.String);
+            columnHolder.setColumn(new NameColumn());
+            getSchema().addColumn(columnHolder);
+            ColumnHolder columnHolder1 = ColumnHolderUtils.createColumnHolder(VALUES, ColumnType.String);
+            columnHolder1.setColumn(new ValuesColumn());
+            getSchema().addColumn(columnHolder1);
+        }
+
+        @Override
+        public void clearSchema() {
+        }
+
+        @Override
+        public void clearData() {
+        }
+
+        private class NameColumn extends ColumnStringBase {
+            public NameColumn() {
+                super(NAME_COLUMN);
+            }
+
+            @Override
+            public String getString(int row) {
+                IOutput operator = (IOutput)outputsByRowKey.get(row);
+                return operator.getName();
+            }
+
+            @Override
+            public String getPreviousString(int row) {
+                return null;
+            }
+
+            @Override
+            public boolean supportsPreviousValues() {
+                return false;
+            }
+        }
+
+
+        private class ValuesColumn extends ColumnStringBase {
+            private ValuesColumn() {
+                super(VALUES);
+            }
+
+            @Override
+            public String getString(int row) {
+                Output operator = (Output)outputsByRowKey.get(row);
+                return operator.getRows().toString();
+            }
+
+            @Override
+            public String getPreviousString(int row) {
+                return null;
+            }
+
+            @Override
+            public boolean supportsPreviousValues() {
+                return false;
             }
         }
     }

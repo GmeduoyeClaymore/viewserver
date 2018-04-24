@@ -37,7 +37,7 @@ import org.junit.Test;
 import java.util.*;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test

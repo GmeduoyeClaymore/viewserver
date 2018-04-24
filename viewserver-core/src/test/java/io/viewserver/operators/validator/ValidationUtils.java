@@ -16,7 +16,7 @@
 
 package io.viewserver.operators.validator;
 
-import io.viewserver.schema.column.ColumnType;
+import io.viewserver.datasource.ContentType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,14 +55,14 @@ public class ValidationUtils {
 
     }
 
-    public static HashMap<String,Object> from(Object obj){
+    public static HashMap<String,Object> from(Object obj, HashMap<String, ValidationOperatorColumn> columnsByName){
         HashMap<String,Object> result = new HashMap<>();
         String actionName = getObjectName(obj);
         result.put(ACTION_NAME,actionName);
         result.put(ID_NAME,getId(obj));
         result.put(NAME_NAME,getName(obj));
         result.put(COLUMN_TYPE_NAME,getType(obj));
-        populateValues(obj,result);
+        populateValues(obj,result, columnsByName);
         return result;
     }
     public static  Object to(Map<String,String> row){
@@ -108,7 +108,7 @@ public class ValidationUtils {
             if(s == null || "".equals(s)){
                 throw new RuntimeException("No column type specified in event" + row);
             }
-            ColumnType columnType = ColumnType.valueOf(s + "");
+            ContentType columnType = ContentType.valueOf(s + "");
             return new ValidationOperatorColumn(columnName,columnType,id,valAction);
         }
         throw new RuntimeException("Unrecognised validation action " + actionName);
@@ -169,7 +169,7 @@ public class ValidationUtils {
         }
         return null;
     }
-    private static void populateValues(Object obj,HashMap<String,Object> row) {
+    private static void populateValues(Object obj, HashMap<String, Object> row, HashMap<String, ValidationOperatorColumn> columnsByName) {
 
         if(obj instanceof ValidationOperatorRow){
             HashMap<String, Object> values = ((ValidationOperatorRow) obj).getValues();
@@ -186,12 +186,13 @@ public class ValidationUtils {
                 if(IGNORED_COLUMNS.contains(key)){
                     continue;
                 }
+                ValidationOperatorColumn column = columnsByName.get(key);
                 Object val = values.get(key);
-                String currentStr = null;
+                Object currentStr = null;
                 if(val == null){
                     currentStr = "";
                 }else{
-                    currentStr = val + "";
+                    currentStr = column == null ? val + "" :  column.getType().convertToContentType(val);
                 }
 
                 if(!row.containsKey(key)) {

@@ -1,20 +1,20 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shotgun.viewserver.delivery.Vehicle;
-import com.shotgun.viewserver.user.DriverController;
+import com.shotgun.viewserver.user.PartnerController;
 import io.viewserver.controller.ControllerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public class DriverControllerTest {
+public class PartnerControllerTest {
 
-    private DriverController sut;
+    private PartnerController sut;
 
 
     @Before
     public void createSut(){
-        sut = new DriverController(null,null,null,null,null,null, null, null, null);
+        sut = new PartnerController(null,null,null,null,null,null, null, null, null);
     }
 
     @Test

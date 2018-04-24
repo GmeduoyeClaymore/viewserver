@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Created by nickc on 01/11/2014.
+ * Created by bemm on 01/11/2014.
  */
 public class CalculationProjectionStep implements IExecutionPlanStep<ReportExecutionPlanContext> {
     private final Map<String, IProjectionConfig.ProjectionColumn> projectionColumns = new HashMap<>();

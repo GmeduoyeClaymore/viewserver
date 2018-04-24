@@ -24,4 +24,7 @@ public interface IMapsController {
 
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)
     HashMap<String,Object> makeAutoCompleteRequest(MapRequest request);
+
+    @ControllerAction(path = "getDistanceAndDuration", isSynchronous = false)
+    DistanceAndDuration getDistanceAndDuration(DirectionRequest driving);
 }

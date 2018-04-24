@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by nickc on 01/11/2014.
+ * Created by bemm on 01/11/2014.
  */
 public class GroupByNode extends GraphNodeBase<GroupByNode> implements ICoalesceableGraphNode {
     private List<String> groupByColumns = new ArrayList<>();

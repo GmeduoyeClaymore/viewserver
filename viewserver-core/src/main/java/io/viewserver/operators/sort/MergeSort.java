@@ -17,7 +17,7 @@
 package io.viewserver.operators.sort;
 
 /**
- * Created by nickc on 22/01/2015.
+ * Created by bemm on 22/01/2015.
  */
 public class MergeSort {
     public static void mergeSort(Comparable [ ] a)

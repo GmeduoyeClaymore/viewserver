@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Created by nickc on 07/10/2014.
+ * Created by bemm on 07/10/2014.
  */
 public class DeserialiserOperator extends InputOperatorBase implements IDataHandler, ICommandResultListener {
     private static final Logger log = LoggerFactory.getLogger(DeserialiserOperator.class);
@@ -334,6 +334,7 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
             case Double: { return ContentType.Double; }
             case String: { return ContentType.String; }
             case Date: { return ContentType.Date; }
+            case Json: { return ContentType.Json; }
             case DateTime: { return ContentType.DateTime; }
             default: { throw new IllegalArgumentException("Unknown data type '" + dataType + "'"); }
         }

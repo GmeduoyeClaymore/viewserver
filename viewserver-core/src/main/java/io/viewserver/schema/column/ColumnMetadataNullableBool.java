@@ -19,7 +19,7 @@ package io.viewserver.schema.column;
 import io.viewserver.core.NullableBool;
 
 /**
- * Created by nickc on 16/01/2015.
+ * Created by bemm on 16/01/2015.
  */
 public class ColumnMetadataNullableBool extends ColumnMetadata {
     private NullableBool nullValue = NullableBool.Null;

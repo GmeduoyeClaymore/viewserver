@@ -40,7 +40,7 @@ public class ShotgunServerLauncher{
     private BasicServer server;
 
     public ShotgunServerLauncher(){
-        ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForMockEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("integration_running",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockEnvironment);
@@ -65,6 +65,12 @@ public class ShotgunServerLauncher{
 
     private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
+        container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
+        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
+        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new MessagingApiKey(get("messaging.api.key")));
+        container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
+        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey"),false));
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(RealShotgunControllersComponents.class);

@@ -21,7 +21,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.*;
 
 /**
- * Created by nickc on 29/09/2014.
+ * Created by bemm on 29/09/2014.
  */
 public class TableRow implements ITableRow {
     private int rowId;

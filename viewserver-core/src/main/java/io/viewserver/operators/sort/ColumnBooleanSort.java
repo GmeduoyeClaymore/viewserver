@@ -19,7 +19,7 @@ package io.viewserver.operators.sort;
 import io.viewserver.schema.column.ColumnHolderBool;
 
 /**
- * Created by nickc on 16/10/2014.
+ * Created by bemm on 16/10/2014.
  */
 public class ColumnBooleanSort {
     public static void sort(int[] rowIds, ColumnHolderBool columnHolder, boolean descending) {

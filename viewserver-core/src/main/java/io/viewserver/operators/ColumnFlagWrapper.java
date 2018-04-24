@@ -20,7 +20,7 @@ import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nickc on 28/10/2014.
+ * Created by bemm on 28/10/2014.
  */
 public class ColumnFlagWrapper implements IRowFlags {
     private IChangeQueue changeQueue;

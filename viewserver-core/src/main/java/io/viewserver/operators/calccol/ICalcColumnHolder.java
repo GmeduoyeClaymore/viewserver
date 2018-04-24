@@ -19,7 +19,7 @@ package io.viewserver.operators.calccol;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public interface ICalcColumnHolder {
     void clearCalculated(int row);

@@ -20,7 +20,7 @@ import io.viewserver.core.NullableBool;
 import io.viewserver.expression.tree.IExpressionNullableBool;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public interface IColumnNullableBool extends IColumn, IExpressionNullableBool {
     NullableBool getNullableBool(int row);

@@ -17,7 +17,7 @@
 package io.viewserver.schema.column;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public enum ColumnType {
     Bool(false, false, 0, false, 1, false),

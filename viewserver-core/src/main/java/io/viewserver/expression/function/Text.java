@@ -20,7 +20,7 @@ import io.viewserver.expression.tree.*;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nickc on 28/10/2014.
+ * Created by bemm on 28/10/2014.
  */
 public class Text implements IUserDefinedFunction, IExpressionString {
     private IExpression parameter;

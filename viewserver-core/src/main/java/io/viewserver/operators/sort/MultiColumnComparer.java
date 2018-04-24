@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nickc on 21/01/2015.
+ * Created by bemm on 21/01/2015.
  */
 public class MultiColumnComparer implements IComparer {
     private final List<IComparer> columnComparers = new ArrayList<>();

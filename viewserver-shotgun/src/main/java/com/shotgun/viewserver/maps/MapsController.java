@@ -1,7 +1,6 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.delivery.Delivery;
 import com.shotgun.viewserver.delivery.DeliveryAddress;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -11,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static com.shotgun.viewserver.ControllerUtils.getUser;
 
 
 @Controller(name = "mapsController")
@@ -61,8 +58,6 @@ public class MapsController implements IMapsController {
         return results;
     }
 
-
-
     @Override
     @ControllerAction(path = "mapDirectionRequest", isSynchronous = false)
     public HashMap<String,Object> mapDirectionRequest(DirectionRequest request){
@@ -72,6 +67,12 @@ public class MapsController implements IMapsController {
             throw new RuntimeException("No routes found");
         }
         return get;
+    }
+
+    @ControllerAction(path = "getDistanceAndDuration", isSynchronous = false)
+    public DistanceAndDuration getDistanceAndDuration(DirectionRequest request){
+        HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", DIRECTION_URL, request.toQueryString(controllerKey.getKey())),false);
+        return new DistanceAndDuration(get);
     }
     @Override
     @ControllerAction(path = "getLocationFromPostcode", isSynchronous = false)

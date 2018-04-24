@@ -22,7 +22,7 @@ import io.viewserver.datasource.ContentType;
 import java.util.BitSet;
 
 /**
- * Created by nickc on 16/01/2015.
+ * Created by bemm on 16/01/2015.
  */
 public abstract class ColumnMetadata {
     private ContentType dataType;

@@ -22,19 +22,22 @@ import io.viewserver.core._KeyType_;
 import io.viewserver.schema.column.chunked.ChunkedColumn_KeyName_;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public class ColumnHolder_KeyName_ extends ColumnHolder implements IColumn_KeyName_ {
     public ColumnHolder_KeyName_(String name) {
         super(name);
+        setMetadata(new ColumnMetadata_KeyName_());
     }
 
     public ColumnHolder_KeyName_(String name, IRowMapper rowMapper) {
         super(name, rowMapper);
+        setMetadata(new ColumnMetadata_KeyName_());
     }
 
     public ColumnHolder_KeyName_(IColumn column, IRowMapper rowMapper) {
         super(column, rowMapper);
+        setMetadata(new ColumnMetadata_KeyName_());
     }
 
     @Override

@@ -21,7 +21,7 @@ import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 
 /**
- * Created by nickc on 27/10/2014.
+ * Created by bemm on 27/10/2014.
  */
 public class OutputPrinter {
     public static void printOutput(IOutput output) {

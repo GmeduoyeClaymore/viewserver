@@ -21,7 +21,7 @@ import io.viewserver.operators.serialiser.SerialiserOperator;
 import gnu.trove.map.hash.TLongObjectHashMap;
 
 /**
- * Created by nickc on 04/11/2014.
+ * Created by bemm on 04/11/2014.
  */
 public class SubscriptionManager {
     private final TLongObjectHashMap<SerialiserOperator> subscriptions = new TLongObjectHashMap<>();

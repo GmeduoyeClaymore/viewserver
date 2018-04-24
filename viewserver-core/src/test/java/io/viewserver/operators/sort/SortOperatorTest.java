@@ -39,7 +39,7 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public class SortOperatorTest extends BenchmarkTestBase {
     @Test

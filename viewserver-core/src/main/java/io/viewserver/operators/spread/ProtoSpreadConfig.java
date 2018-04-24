@@ -22,7 +22,7 @@ import io.viewserver.operators.filter.IFilterConfig;
 import java.util.Map;
 
 /**
- * Created by nickc on 20/10/2014.
+ * Created by bemm on 20/10/2014.
  */
 
 public class ProtoSpreadConfig implements ISpreadConfig {

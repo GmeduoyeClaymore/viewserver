@@ -20,7 +20,7 @@ import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.IColumnWatcher;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public interface ITableStorage {
     void initialise(int capacity, Schema schema, IColumnWatcher columnWatcher);

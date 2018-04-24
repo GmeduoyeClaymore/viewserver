@@ -22,7 +22,7 @@ import io.viewserver.report.MeasureDefinition;
 import java.util.Map;
 
 /**
- * Created by nickc on 03/11/2014.
+ * Created by bemm on 03/11/2014.
  */
 public interface IMeasureNode {
     void configureMeasures(ValueLists.IStringList measureNames, Map<String, MeasureDefinition> measures);

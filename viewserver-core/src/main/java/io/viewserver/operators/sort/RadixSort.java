@@ -19,7 +19,7 @@ package io.viewserver.operators.sort;
 import java.util.Arrays;
 
 /**
- * Created by nickc on 16/10/2014.
+ * Created by bemm on 16/10/2014.
  */
 public class RadixSort {
     public static int[] sort(int[] old) {

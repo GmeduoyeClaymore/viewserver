@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by nickc on 23/09/2014.
+ * Created by bemm on 23/09/2014.
  */
 public class Schema {
     private final List<ColumnHolder> columnHolders = new ArrayList<ColumnHolder>();

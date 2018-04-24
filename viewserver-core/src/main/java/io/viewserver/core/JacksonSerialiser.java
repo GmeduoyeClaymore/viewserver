@@ -18,10 +18,7 @@ package io.viewserver.core;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
@@ -35,20 +32,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nickc on 09/12/2014.
+ * Created by bemm on 09/12/2014.
  */
 public class JacksonSerialiser implements IJsonSerialiser {
     private static final Logger log = LoggerFactory.getLogger(JacksonSerialiser.class);
     private final ObjectMapper mapper = new ObjectMapper();
     private final Map<JavaType, ObjectReader> readers = new HashMap<>();
+    private static JacksonSerialiser instance;
+
+    public static JacksonSerialiser getInstance(){
+        if(instance == null){
+            instance = new JacksonSerialiser();
+        }
+        return instance;
+    }
 
     public JacksonSerialiser() {
-        mapper.registerModules(
-                new AfterburnerModule(),
+        registerModules(new Module[]{new AfterburnerModule(),
                 new ParameterNamesModule(),
-                new ValueListSerialisationModule()
-        );
+                new ValueListSerialisationModule()});
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+    public void registerModules(Module[] modules) {
+        mapper.registerModules(
+                modules
+        );
     }
 
     @Override

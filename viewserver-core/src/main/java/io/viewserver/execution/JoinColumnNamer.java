@@ -3,7 +3,7 @@ package io.viewserver.execution;
 import io.viewserver.operators.join.IColumnNameResolver;
 
 /**
- * Created by nickc on 31/10/2014.
+ * Created by bemm on 31/10/2014.
  */
 
 public class JoinColumnNamer implements IColumnNameResolver {

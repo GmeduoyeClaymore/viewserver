@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * Created by nickc on 03/12/2014.
+ * Created by bemm on 03/12/2014.
  */
 public class UnionColumnHolderNullableBool extends ColumnHolderNullableBool implements IUnionColumnHolder, IRowMapper {
     private static final Logger log = LoggerFactory.getLogger(UnionColumnHolderNullableBool.class);

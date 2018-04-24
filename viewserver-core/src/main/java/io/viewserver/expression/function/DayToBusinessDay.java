@@ -24,7 +24,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
 
 /**
- * Created by nickc on 21/10/2014.
+ * Created by bemm on 21/10/2014.
  */
 public class  DayToBusinessDay implements IUserDefinedFunction, IExpressionInt {
     private final BusinessDayCalculator businessDayCalculator = new BusinessDayCalculator();

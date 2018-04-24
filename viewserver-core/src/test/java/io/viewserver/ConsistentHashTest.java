@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by nickc on 22/11/2014.
+ * Created by bemm on 22/11/2014.
  */
 public class ConsistentHashTest extends BenchmarkTestBase {
     @Test

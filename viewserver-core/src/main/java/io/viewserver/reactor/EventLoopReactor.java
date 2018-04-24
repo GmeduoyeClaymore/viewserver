@@ -29,7 +29,7 @@ import java.util.Comparator;
 import java.util.concurrent.*;
 
 /**
- * Created by nickc on 06/10/2014.
+ * Created by bemm on 06/10/2014.
  */
 public class EventLoopReactor implements IReactor, IReactorCommandListener, INetworkMessageListener {
     private static final Logger log = LoggerFactory.getLogger(EventLoopReactor.class);

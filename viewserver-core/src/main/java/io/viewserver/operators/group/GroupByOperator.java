@@ -41,7 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by nickc on 02/10/2014.
+ * Created by bemm on 02/10/2014.
  */
 public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
     private static final Logger log = LoggerFactory.getLogger(GroupByOperator.class);

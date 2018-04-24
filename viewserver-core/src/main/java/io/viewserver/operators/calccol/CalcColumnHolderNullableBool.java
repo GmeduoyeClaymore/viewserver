@@ -23,7 +23,7 @@ import io.viewserver.schema.column.*;
 import java.util.BitSet;
 
 /**
- * Created by nickc on 15/10/2014.
+ * Created by bemm on 15/10/2014.
  */
 public class CalcColumnHolderNullableBool extends ColumnHolderNullableBool implements ICalcColumnHolder, IColumnNullableBool, IWritableColumn {
     private final IExpressionNullableBool expression;

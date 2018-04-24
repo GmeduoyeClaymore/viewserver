@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.BitSet;
 
 /**
- * Created by nickc on 29/09/2014.
+ * Created by bemm on 29/09/2014.
  */
 public class ActiveRowTracker implements IActiveRowTracker {
     private final Logger log;

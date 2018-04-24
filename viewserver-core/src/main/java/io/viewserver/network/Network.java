@@ -40,9 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nickc on 07/10/2014.
- */
+
 public class Network implements PeerSession.IDisconnectionHandler {
     private static final Logger log = LoggerFactory.getLogger(Network.class);
     private final ICatalog catalog;

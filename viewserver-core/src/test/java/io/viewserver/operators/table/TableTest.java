@@ -38,7 +38,7 @@ import java.util.Date;
 import java.util.Random;
 
 /**
- * Created by nickc on 30/09/2014.
+ * Created by bemm on 30/09/2014.
  */
 public class TableTest extends BenchmarkTestBase {
     @Before

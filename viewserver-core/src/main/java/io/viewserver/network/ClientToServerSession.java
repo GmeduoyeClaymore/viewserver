@@ -20,7 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 
 /**
- * Created by nickc on 04/11/2014.
+ * Created by bemm on 04/11/2014.
  */
 public class ClientToServerSession extends PeerSession {
     public ClientToServerSession(IChannel channel, IExecutionContext executionContext, ICatalog systemCatalog, Network network,

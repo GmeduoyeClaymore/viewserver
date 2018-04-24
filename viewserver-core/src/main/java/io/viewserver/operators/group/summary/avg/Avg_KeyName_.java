@@ -25,7 +25,7 @@ import io.viewserver.schema.column.*;
 import gnu.trove.list.array.TDoubleArrayList;
 
 /**
- * Created by nickc on 02/10/2014.
+ * Created by bemm on 02/10/2014.
  */
 public class Avg_KeyName_ implements ISummary {
     private final String name;

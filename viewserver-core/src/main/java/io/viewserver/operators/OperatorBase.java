@@ -16,6 +16,7 @@
 
 package io.viewserver.operators;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ import rx.Observable;
 import java.util.*;
 
 /**
- * Created by nickc on 26/09/2014.
+ * Created by bemm on 26/09/2014.
  */
 public abstract class OperatorBase implements IOperator {
     static final Logger log = LoggerFactory.getLogger(OperatorBase.class);
@@ -160,7 +161,6 @@ public abstract class OperatorBase implements IOperator {
         if (outputsByName.containsKey(output.getName())) {
             throw new RuntimeException("Output " + output.getName() + " already exists");
         }
-
         outputsByName.put(output.getName(), output);
         outputs.add(output);
     }

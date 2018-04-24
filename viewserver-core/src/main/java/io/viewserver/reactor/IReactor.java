@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.Executor;
 
 /**
- * Created by nickc on 06/10/2014.
+ * Created by bemm on 06/10/2014.
  */
 public interface IReactor {
     String getName();
