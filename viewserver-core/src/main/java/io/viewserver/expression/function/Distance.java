@@ -17,20 +17,26 @@
 package io.viewserver.expression.function;
 
 import io.viewserver.controller.ControllerUtils;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.expression.tree.IExpression;
+import io.viewserver.expression.tree.IExpressionBool;
 import io.viewserver.expression.tree.IExpressionDouble;
 import io.viewserver.expression.tree.IExpressionString;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Paul on 19/11/2015.
  */
+
 public class Distance implements IUserDefinedFunction, IExpressionDouble {
-    private static final Logger log = LoggerFactory.getLogger(Serialize.class);
+    private static final Logger log = LoggerFactory.getLogger(Distance.class);
     private IExpressionDouble lat1, lat2, lng1, lng2;
     private IExpressionString unit;
 

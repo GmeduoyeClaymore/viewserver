@@ -28,4 +28,5 @@ public interface ISpreadConfig<T> extends IOperatorConfig<T> {
     ISpreadConfig setOutputColumnName(String outputColumnName);
     ISpreadConfig setSpreadFunctionName(String spreadFunctionName);
     ISpreadConfig removeInputColumn(boolean removeInputcolumn);
+    boolean retainSourceRow();
 }

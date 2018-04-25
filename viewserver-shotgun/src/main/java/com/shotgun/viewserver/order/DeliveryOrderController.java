@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
@@ -132,7 +133,7 @@ public class DeliveryOrderController {
             return;
         }
 
-        order.responses.add(new DeliveryOrder.DeliveryOrderFill(partnerId,estimatedDate));
+        order.responses.add(new DeliveryOrder.DeliveryOrderFill(partnerId,estimatedDate, DeliveryOrder.DeliveryOrderFill.DeliveryOrderFillStatus.RESPONDED));
         Date now = new Date();
 
         IRecord orderRecord = new Record().
@@ -144,6 +145,95 @@ public class DeliveryOrderController {
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         notifyJobResponded(orderId, orderUserId);
+    }
+
+
+    @ControllerAction(path = "acceptResponse", isSynchronous = true)
+    public void respondTacceptResponseoOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+
+        if(currentRow == -1){
+            throw new RuntimeException("Unable to find order for key:" + orderId);
+        }
+
+        String orderDetailsString = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow).toString();
+        String orderStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
+        String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
+
+
+        if(!OrderStatus.valueOf(orderStatus).equals(OrderStatus.PLACED)){
+            throw new RuntimeException("Can only accept response for an order in status placed");
+        }
+
+        DeliveryOrder order = JacksonSerialiser.getInstance().deserialise(orderDetailsString, DeliveryOrder.class);
+
+        if(order == null){
+            throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
+        }
+
+        if(order.responses == null){
+            throw new RuntimeException("Unable to find responses from " + partnerId + " to orderId " + partnerId);
+        }
+
+        Optional<DeliveryOrder.DeliveryOrderFill> first = order.responses.stream().filter(c -> c.partnerId.equals(partnerId)).findFirst();
+        if(!first.isPresent()){
+            throw new RuntimeException("Unable to find responses from " + partnerId + " to orderId " + partnerId);
+        }
+
+        order.assignedPartner = first.get();
+        for(DeliveryOrder.DeliveryOrderFill fill : order.responses){
+            if(!fill.partnerId.equals(partnerId)){
+                fill.fillStatus = DeliveryOrder.DeliveryOrderFill.DeliveryOrderFillStatus.DECLINED;
+                notifyJobRejected(orderId,fill.partnerId);
+            }else{
+                fill.fillStatus = DeliveryOrder.DeliveryOrderFill.DeliveryOrderFillStatus.ACCEPTED;
+                notifyJobAccepted(orderId,fill.partnerId);
+            }
+        }
+        Date now = new Date();
+
+        IRecord orderRecord = new Record().
+                addValue("orderId", orderId).
+                addValue("lastModified", now).
+                addValue("orderDetails", order);
+
+
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
+
+
+    }
+
+    private void notifyJobAccepted(String orderId, String customerId) {
+        try {
+            User user = (User) ControllerContext.get("user");
+
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(orderId))
+                    .message(String.format("Shotgun job assigned to you"), String.format("%s has  just accepted your offer", user.getFirstName() + " " + user.getLastName()))
+                    .withFromTo(user.getUserId(),customerId)
+                    .build();
+            messagingController.sendMessageToUser(builder);
+        }catch (Exception ex){
+            logger.error("There was a problem sending the notification", ex);
+        }
+    }
+
+    private void notifyJobRejected(String orderId, String customerId) {
+        try {
+            User user = (User) ControllerContext.get("user");
+
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(orderId))
+                    .message(String.format("Shotgun offer rejected"), String.format("%s has  just rejected your offer", user.getFirstName() + " " + user.getLastName()))
+                    .withFromTo(user.getUserId(),customerId)
+                    .build();
+            messagingController.sendMessageToUser(builder);
+        }catch (Exception ex){
+            logger.error("There was a problem sending the notification", ex);
+        }
     }
 
 

@@ -50,5 +50,10 @@ public class ProtoSpreadConfig implements ISpreadConfig {
     public boolean removeInputColumn() {
         return spreadConfig.removeInputColumn();
     }
+
+    @Override
+    public boolean retainSourceRow() {
+        return spreadConfig.retainSourceRow();
+    }
 }
 

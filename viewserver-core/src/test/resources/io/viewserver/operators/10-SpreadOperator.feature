@@ -13,6 +13,7 @@ Feature: Spread operator fixture
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
 	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread1" input "in"
 	And commit
 
@@ -22,24 +23,76 @@ Feature: Spread operator fixture
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
 	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread2" input "in"
 	And commit
 	Then schema for "spread2" is
-	  | ~Action     | ~Name       | ~ColumnType |
-	  | ColumnAdd   | id          | Int         |
-	  | ColumnAdd   | market      | String      |
-	  | ColumnAdd   | product     | String      |
-	  | ColumnAdd   | product_csv | String      |
+	  | ~Action   | ~Name       | ~ColumnType |
+	  | ColumnAdd | id          | Int         |
+	  | ColumnAdd | market      | String      |
+	  | ColumnAdd | product     | String      |
+	  | ColumnAdd | product_csv | String      |
 	Then data for "spread2" is
-	  | ~Action     | id | market  | product_csv |
-	  | RowAdd      | 0  | Market1 | Product1    |
-	  | RowAdd      | 0  | Market1 | Product2    |
-	  | RowAdd      | 1  | Market1 | Product2    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 3  | Market1 | Product1    |
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
 	And commit
 
+  Scenario: Can retain source row in CSV spread
+	When operator type "spread" named "spread2" created
+	  | field             | value   |
+	  | inputColumn       | product |
+	  | spreadFunction    | csv     |
+	  | removeInputColumn | false   |
+	  | retainSourceRow   | true   |
+	And operator "source" output "out" plugged into "spread2" input "in"
+	And commit
+	Then schema for "spread2" is
+	  | ~Action   | ~Name       | ~ColumnType |
+	  | ColumnAdd | id          | Int         |
+	  | ColumnAdd | market      | String      |
+	  | ColumnAdd | product     | String      |
+	  | ColumnAdd | product_csv | String      |
+	Then data for "spread2" is
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 |             |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 |             |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 |             |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 |             |
+	  | RowAdd  | 3  | Market1 | Product1    |
+
+  Scenario: Can retain source column in CSV spread
+	When operator type "spread" named "spread2" created
+	  | field             | value   |
+	  | inputColumn       | product |
+	  | spreadFunction    | csv     |
+	  | removeInputColumn | true   |
+	  | retainSourceRow   | false   |
+	And operator "source" output "out" plugged into "spread2" input "in"
+	And commit
+	Then schema for "spread2" is
+	  | ~Action   | ~Name       | ~ColumnType |
+	  | ColumnAdd | id          | Int         |
+	  | ColumnAdd | market      | String      |
+	  | ColumnAdd | product_csv | String      |
+	Then data for "spread2" is
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
+	And commit
 
   Scenario: Updated row is correctly reflected in spread operator
 	When operator type "spread" named "spread2" created
@@ -47,16 +100,17 @@ Feature: Spread operator fixture
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
 	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread2" input "in"
 	And commit
 	Then data for "spread2" is
-	  | ~Action     | id | market  | product_csv |
-	  | RowAdd      | 0  | Market1 | Product1    |
-	  | RowAdd      | 0  | Market1 | Product2    |
-	  | RowAdd      | 1  | Market1 | Product2    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 3  | Market1 | Product1    |
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
 	When table "source" updated to
 	  | id~Int | product~String |
 	  | 2      |                |
@@ -75,16 +129,17 @@ Feature: Spread operator fixture
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
 	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread2" input "in"
 	And commit
 	Then data for "spread2" is
-	  | ~Action     | id | market  | product_csv |
-	  | RowAdd      | 0  | Market1 | Product1    |
-	  | RowAdd      | 0  | Market1 | Product2    |
-	  | RowAdd      | 1  | Market1 | Product2    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 3  | Market1 | Product1    |
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
 	When rows "1,2" removed from table "source"
 	And commit
 	Then data for "spread2" is
@@ -101,17 +156,18 @@ Feature: Spread operator fixture
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
 	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread2" input "in"
 	And listen for changes on "spread2" output "out"
 	And commit
 	Then data for "spread2" is
-	  | ~Action     | id | market  | product_csv |
-	  | RowAdd      | 0  | Market1 | Product1    |
-	  | RowAdd      | 0  | Market1 | Product2    |
-	  | RowAdd      | 1  | Market1 | Product2    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 2  | Market1 | Product3    |
-	  | RowAdd      | 3  | Market1 | Product1    |
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
 	When table "source" updated to
 	  | id~Int | product~String |
 	  | 4      | foo1,foo2      |

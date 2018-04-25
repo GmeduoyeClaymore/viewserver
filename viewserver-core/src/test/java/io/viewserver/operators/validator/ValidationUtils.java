@@ -70,7 +70,7 @@ public class ValidationUtils {
 
     public static  ValidationOperatorRow toRow(Map<String,String> row, String keyColumnName){
         String actionName = row.get(ACTION_NAME);
-        if(!actionName.startsWith("Row")){
+        if(actionName == null || !actionName.startsWith("Row")){
             throw new RuntimeException("Row must have a field named " + ACTION_NAME + " that starts with Row.. current row has action " + actionName + " row is " + row);
         }
 

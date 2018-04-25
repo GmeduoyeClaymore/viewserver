@@ -4,4 +4,5 @@ public interface ISpreadConfig {
     String getInputColumnName();
     String spreadFunctionName();
     boolean removeInputColumn();
+    boolean retainSourceRow();
 }

@@ -87,15 +87,15 @@ public class ValidationOperator extends OperatorBase{
 
     public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName) {
         System.out.println(this.getName() + " validating rows");
-        DataTable dataTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName);
-        DataTable other = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName);
+        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName);
+        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName);
         try {
-            other.diff(dataTable);
+            expectedTable.diff(actual);
         }catch (Throwable throwable){
 
             throw throwable;
         }finally {
-            System.out.println("Actual actions are \n" + dataTable);
+            System.out.println("Actual actions are \n" + expectedTable);
         }
     }
 
@@ -170,12 +170,12 @@ public class ValidationOperator extends OperatorBase{
                     if(referenceActions != null && out!= null && out.getType().equals(ContentType.Json)){//basically if it is JSON then look at the reference row and only compare properties found in the source row
                         HashMap<String,Object> me =  val instanceof HashMap ? (HashMap)val : ControllerUtils.mapDefault(val + "");
                         Integer id = (Integer) row.get(ValidationUtils.ID_NAME);
-                        HashMap<String, Object> referenceAction = referenceActionsRows.stream().filter(c -> isRowWithId(id,c)).findFirst().get();
+                        HashMap<String, Object> referenceAction = referenceActionsRows.stream().filter(c -> isRowWithId(id,c)).findFirst().orElse(null);
                         if(referenceAction == null){
                             result.add(transform.call(val + ""));
                             continue;
                         }
-                        HashMap<String,Object> reference = ControllerUtils.mapDefault((String) referenceAction.get(key));
+                        HashMap<String,Object> reference = (HashMap<String, Object>) referenceAction.get(key);
                         if(reference == null){
                             result.add(transform.call(val + ""));
                             continue;

@@ -4,9 +4,14 @@ import com.shotgun.viewserver.delivery.DeliveryOrder;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
+import io.viewserver.expression.function.IUserDefinedFunction;
+import io.viewserver.expression.tree.IExpression;
+import io.viewserver.expression.tree.IExpressionBool;
+import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.operators.spread.ISpreadFunction;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,14 +65,14 @@ public class DeliveryCustomerResponseSpreadFunction implements ISpreadFunction {
             customerIds[i] = deliveryOrderFill.partnerId;
             customerResponseDates[i] = deliveryOrderFill.estimatedDate;
             orderDetails[i] = JacksonSerialiser.getInstance().serialise(order);
-            statuses[i] = DeliveryOrder.DeliveryOrderStatus.RESPONDED.name();
+            statuses[i] = deliveryOrderFill.fillStatus.name();
         }
 
 
         List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
         result.add(new HashMap.SimpleEntry(partnerId, customerIds));
         result.add(new HashMap.SimpleEntry(estimatedDate, customerResponseDates));
-        result.add(new HashMap.SimpleEntry(orderDetailWithoutResponses, customerResponseDates));
+        result.add(new HashMap.SimpleEntry(orderDetailWithoutResponses, orderDetails));
         result.add(new HashMap.SimpleEntry(orderResponseStatus, statuses));
         return result;
     }

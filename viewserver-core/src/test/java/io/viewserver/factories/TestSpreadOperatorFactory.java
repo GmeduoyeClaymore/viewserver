@@ -39,6 +39,7 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
     public static String OUTPUT_COLUMN_PARAM_NAME = "outputColumn";
     public static String SPREAD_FUNCTION_PARAM_NAME = "spreadFunction";
     public static String REMOVE_INPUT_COLUMN_PARAM_NAME = "removeInputColumn";
+    public static String RETAIN_SOURCE_ROW = "retainSourceRow";
 
     public TestSpreadOperatorFactory(IExecutionContext executionContext, ICatalog catalog, ISpreadFunctionRegistry registry) {
         this.executionContext = executionContext;
@@ -67,6 +68,7 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
         String inputOperator =  ITestOperatorFactory.getParam(INPUT_COLUMN_PARAM_NAME, config, String.class);
         String spreadFunction =  ITestOperatorFactory.getParam(SPREAD_FUNCTION_PARAM_NAME, config, String.class);
         boolean removeInputColumn =  ITestOperatorFactory.getParam(REMOVE_INPUT_COLUMN_PARAM_NAME, config, boolean.class);
+        boolean retainSourceRow =  ITestOperatorFactory.getParam(RETAIN_SOURCE_ROW, config, boolean.class);
         ((SpreadOperator) spread).configure(new ISpreadConfig() {
             @Override
             public String getInputColumnName() {
@@ -82,6 +84,11 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
             @Override
             public boolean removeInputColumn() {
                 return removeInputColumn;
+            }
+
+            @Override
+            public boolean retainSourceRow() {
+                return retainSourceRow;
             }
         }, new CommandResult());
     }

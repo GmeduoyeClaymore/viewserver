@@ -34,6 +34,7 @@ public class SpreadNode extends GraphNodeBase<SpreadNode> {
     private String outputColumn;
     private String spreadFunction;
     private boolean removeInputColumn;
+    private boolean retainSourceRow;
 
     public SpreadNode(){
         super();
@@ -51,6 +52,10 @@ public class SpreadNode extends GraphNodeBase<SpreadNode> {
 
     public SpreadNode withRemoveInputColumn(){
         removeInputColumn = true;
+        return this;
+    }
+    public SpreadNode withRetainSourceRow(){
+        retainSourceRow = true;
         return this;
     }
 
@@ -75,6 +80,11 @@ public class SpreadNode extends GraphNodeBase<SpreadNode> {
             @Override
             public boolean removeInputColumn() {
                 return removeInputColumn;
+            }
+
+            @Override
+            public boolean retainSourceRow() {
+                return retainSourceRow;
             }
 
         };

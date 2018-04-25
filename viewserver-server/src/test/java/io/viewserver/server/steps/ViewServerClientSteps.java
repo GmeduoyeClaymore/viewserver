@@ -16,6 +16,7 @@
 
 package io.viewserver.server.steps;
 
+import cucumber.api.PendingException;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
 import io.viewserver.controller.ControllerUtils;
@@ -53,17 +54,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-
-interface IDimensionConsumer{
-    void call(String valueName, ValueLists.IValueList values, Boolean exclude);
-}
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ViewServerClientSteps {
     private final int timeout = 20;
     private final TimeUnit timeUnit = TimeUnit.MINUTES;
     private ViewServerClientContext clientContext;
     private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
+    private String keyColumn;
 
     public ViewServerClientSteps(ViewServerClientContext clientContext) {
         this.clientContext = clientContext;
@@ -89,26 +88,19 @@ public class ViewServerClientSteps {
         }
     }
 
-    @Given("^\"(.*)\" report parameters$")
-    public void report_parameters(String clientName, DataTable parameters) {
-        ClientConnectionContext ctxt = clientContext.get(clientName);
-        setValuesFromDataTable(parameters, (name, valuesList, excluded) -> ctxt.getReportContext().getParameterValues().put(name, valuesList));
-    }
 
-    @And("^\"(.*)\" dimension filters$")
-    public void dimension_filters(String clientName, DataTable filters) {
-        ClientConnectionContext ctxt = clientContext.get(clientName);
-        ctxt.getReportContext().getDimensionValues().clear();
-        setValuesFromDataTable(filters, (name, valuesList, excluded) ->
-                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList,excluded)));
-    }
-
-    private void setValuesFromDataTable(DataTable parameters, IDimensionConsumer consumer) {
-        List<DataTableRow> rows = parameters.getGherkinRows();
-        for (int i = 1; i < rows.size(); i++) {
+    private void setValuesFromDataTable(DataTable parameters, IDimensionConsumer consumer, Predicate<DataTableRow> filter) {
+        List<DataTableRow> rows = parameters.getGherkinRows().stream().filter(filter).collect(Collectors.toList());
+        for (int i = 0; i < rows.size(); i++) {
             List<String> cells = rows.get(i).getCells();
             String name = cells.get(0);
+            if("Name".equals(name)){
+                continue;
+            }
             String type = cells.get(1);
+            if("Type".equals(name)){
+                continue;
+            }
             String[] values = cells.get(2).split(",");
             Object[] typedValues = new Object[values.length];
             for (int j = 0; j < values.length; j++) {
@@ -140,7 +132,7 @@ public class ViewServerClientSteps {
     }
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
-    public void I_subscribe_to_report(String clientName, String reportId, String rowKey) throws InterruptedException {
+    public void I_subscribe_to_report(String clientName, String reportId) throws InterruptedException {
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
@@ -151,6 +143,28 @@ public class ViewServerClientSteps {
         Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
     }
 
+    @When("^\"([^\"]*)\" subscribed to report \"([^\"]*)\" with parameters$")
+    public void subscribedToReportWithParameters(String clientName, String reportName, DataTable parameters) throws Throwable {
+        report_parameters(clientName,parameters);
+        dimension_filters(clientName,parameters);
+        I_subscribe_to_report(clientName,reportName);
+    }
+
+    @Given("^\"(.*)\" report parameters$")
+    public void report_parameters(String clientName, DataTable parameters) {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        setValuesFromDataTable(parameters, (name, valuesList, excluded) -> ctxt.getReportContext().getParameterValues().put(name, valuesList), c->!c.getCells().get(0).startsWith("dimension_"));
+    }
+
+    @And("^\"(.*)\" dimension filters$")
+    public void dimension_filters(String clientName, DataTable filters) {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        ctxt.getReportContext().getDimensionValues().clear();
+        setValuesFromDataTable(filters, (name, valuesList, excluded) ->
+                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList,excluded)), c-> c.getCells().get(0).startsWith("dimension_"));
+    }
+
+
     @When("^\"(.*)\" All data sources are built$")
     public void All_datasources_are_initialized(String clientName) throws Exception {
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
@@ -159,7 +173,7 @@ public class ViewServerClientSteps {
         Options options = new Options();
         options.setOffset(0);
         options.setLimit(100);
-        trySubscribeOperator(clientName, "/datasources", DataSourceRegistry.ID_COL,options, subscribeLatch);
+        trySubscribeOperator(clientName, "/datasources",options, subscribeLatch);
         subscribeLatch.await(timeout, timeUnit);
 
 
@@ -325,7 +339,7 @@ public class ViewServerClientSteps {
         });
     }
 
-    private void trySubscribeOperator(String clientName, String operatorName, String rowKey, Options options, CountDownLatch subscribeLatch) {
+    private void trySubscribeOperator(String clientName, String operatorName,Options options, CountDownLatch subscribeLatch) {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
         ListenableFuture<ClientSubscription> subFuture = connectionContext.subscribe(operatorName, options,
                 new TestSubscriptionEventHandler());
@@ -358,14 +372,19 @@ public class ViewServerClientSteps {
         connectionContext.getOptions().addSortColumn(sortColumn, "descending".equals(direction));
     }
 
-    @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
-    public void the_following_data_is_received_eventually(String clientName, String reportId,String rowKey, List<Map<String, String>> records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,rowKey,records), 5, 500, 0);
+    @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\"$")
+    public void the_following_data_is_received_eventually(String clientName, String reportId, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 500, 0,false);
     }
 
-    @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    @Then("^\"([^\"]*)\" the following data is received terminally on report \"([^\"]*)\"$")
+    public void the_following_data_is_received_terminally(String clientName, String reportId, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 200, 0, true);
+    }
+
+    @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\"$")
     public void the_following_schema_is_received_eventually(String clientName, String reportId, List<Map<String, String>> records) {
-        repeat("Receiving schema " + records, () -> the_following_schema_is_received(clientName,reportId,records), 5, 500, 0);
+        repeat("Receiving schema " + records, () -> the_following_schema_is_received(clientName,reportId,records), 5, 500, 0, false);
     }
 
     @Then("^\"([^\"]*)\" the following schema is received on report \"([^\"]*)\"$")
@@ -396,20 +415,20 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following data is received on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
-    public void the_following_data_is_received(String clientName,String reportId,String rowKey, List<Map<String, String>> records) {
+    public void the_following_data_is_received(String clientName,String reportId,String rowKey, DataTable records) {
         try {
             ClientConnectionContext connectionContext = clientContext.get(clientName);
             String name = "report" + reportId;
             TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
 
             if(eventHandler == null){
-                throw new RuntimeException("Unable to find report for id " + name);
+                throw new RuntimeException("Unable to find subscription to report id " + name + " for client " + clientName);
             }
 
             ValidationOperator operator = eventHandler.getValidationOperator();
             List<ValidationOperatorRow> validationRows = new ArrayList<>();
-            List<String> columns = null;
-            for (Map<String, String> record : records) {
+            List<String> columns = records.topCells();
+            for (Map<String, String> record : records.asMaps(String.class,String.class)) {
                 if(columns == null) {
                     columns = new ArrayList<>(record.keySet());
                 }
@@ -424,12 +443,19 @@ public class ViewServerClientSteps {
     }
 
 
-    private void repeat(String scenarioLablel, Runnable assertion, int times, int delay, int counter) {
-        if (times == counter) {
+    private void repeat(String scenarioLablel, Runnable assertion, int times, int delay, int counter, boolean continueIfPass) {
+        if (times == counter && !continueIfPass) {
             Assert.fail(scenarioLablel + " failed after " + times + " retries spanning " + (delay * times) / 1000 + " seconds");
         }
         try {
             assertion.run();
+            if(continueIfPass){
+                if(times == counter -1){
+                    Assert.assertTrue("Passed on the final time this is a pass", true);
+                    return;
+                }
+                repeat(scenarioLablel, assertion, times, delay, counter + 1, continueIfPass);
+            }
         } catch (Throwable ex) {
             if (times - 1 == counter) {
                 throw ex;
@@ -439,8 +465,19 @@ public class ViewServerClientSteps {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            repeat(scenarioLablel, assertion, times, delay, counter + 1);
+            repeat(scenarioLablel, assertion, times, delay, counter + 1, continueIfPass);
         }
-
     }
+
+    @Given("^keyColumn is \"([^\"]*)\"$")
+    public void keycolumnIs(String arg0) throws Throwable {
+        this.keyColumn = arg0;
+    }
+
+
+}
+
+
+interface IDimensionConsumer{
+    void call(String valueName, ValueLists.IValueList values, Boolean exclude);
 }

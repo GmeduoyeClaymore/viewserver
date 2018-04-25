@@ -94,10 +94,17 @@ public class DeliveryOrder {
     public static class DeliveryOrderFill{
         public String partnerId;
         public Date estimatedDate;
+        public DeliveryOrderFillStatus fillStatus;
+        public enum DeliveryOrderFillStatus{
+            RESPONDED,
+            DECLINED,
+            ACCEPTED,
+        }
 
-        public DeliveryOrderFill(String partnerId, Date estimatedDate) {
+        public DeliveryOrderFill(String partnerId, Date estimatedDate, DeliveryOrderFillStatus fillStatus) {
             this.partnerId = partnerId;
             this.estimatedDate = estimatedDate;
+            this.fillStatus = fillStatus;
         }
     }
 

@@ -34,6 +34,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
     private ISpreadFunction spreadFunction;
     private String sourceColumn;
     private boolean removeInputColumn;
+    private boolean retainSourceRow;
 
     public SpreadOperator(String name, IExecutionContext executionContext, ITableStorage tableStorage, ICatalog catalog, ISpreadFunctionRegistry spreadColumnRegistry) {
         super(name, executionContext, catalog);
@@ -60,6 +61,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         }
         this.spreadFunction = this.spreadColumnRegistry.resolve(config.spreadFunctionName());
         this.sourceColumn = config.getInputColumnName();
+        this.retainSourceRow = config.retainSourceRow();
         this.removeInputColumn = config.removeInputColumn();
         for(Map.Entry<String,ColumnHolder> entry : spreadColumnsByName.entrySet()){
             output.getSchema().removeColumn(entry.getValue().getColumnId());
@@ -175,6 +177,9 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         private void addSpreadValues(int row, TIntHashSet ourRows) {
             List<Map.Entry<Column, Object[]>> values = getSpreadValues(row);
             int maximimumRowIndex = getMaxRowIndex(values);
+            if(retainSourceRow) {
+                mapRow(row, ourRows, associationCounter++);
+            }
             for(int i = 0;i< maximimumRowIndex;i++){
                 int outputRow  = associationCounter++;
                 log.info("Row {} has just been added in {}",outputRow,"add");
@@ -182,12 +187,16 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                     ColumnHolder spreadColumn = getOrCreateSpreadColumn(val.getKey());
                     Object[] value = val.getValue();
                     Object result = i < value.length ? value[i] : null;
-                    ourRows.add(outputRow);
                     ColumnHolderUtils.setValue(spreadColumn,outputRow, result);
                 }
-                inputToOutputMappings.put(outputRow,row);
-                output.handleAdd(outputRow);
+                mapRow(row, ourRows, outputRow);
             }
+        }
+
+        private void mapRow(int row, TIntHashSet ourRows, int outputRow) {
+            ourRows.add(outputRow);
+            inputToOutputMappings.put(outputRow,row);
+            output.handleAdd(outputRow);
         }
 
         @Override

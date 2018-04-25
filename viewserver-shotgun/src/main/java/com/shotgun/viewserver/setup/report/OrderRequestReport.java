@@ -20,6 +20,7 @@ public class OrderRequestReport {
                         .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
                         .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
                         .withParameter("maxDistance", "Maximum Distance Override", String[].class)
+                        .withParameter("@userId", "User Id", String[].class)
                         .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                         .withNodes(
                                 new CalcColNode("distanceCalcCol")
@@ -30,6 +31,9 @@ public class OrderRequestReport {
                                 new FilterNode("distanceFilter")
                                         .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
                                         .withConnection("distanceCalcCol"),
+                                new FilterNode("hasResponded")
+                                        .withExpression("!hasResponded(\"{@userId}\",orderDetails)")
+                                        .withConnection("distanceFilter"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -50,7 +54,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                        .withConnection("distanceFilter")
+                                        .withConnection("hasResponded")
                         )
                         .withOutput("orderRequestProjection");
         }
