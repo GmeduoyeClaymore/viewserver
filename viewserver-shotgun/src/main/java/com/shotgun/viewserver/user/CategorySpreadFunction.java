@@ -1,6 +1,8 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.spread.ISpreadFunction;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -17,8 +19,8 @@ public class CategorySpreadFunction implements ISpreadFunction {
     private static final Logger log = LoggerFactory.getLogger(CategorySpreadFunction.class);
 
     @Override
-    public String[] getValues(int row, ColumnHolder columnHolder) {
-        List<String> result = new ArrayList<>();
+    public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
+        List<Object> results = new ArrayList<>();
         String contentTypeJSONString = (String) ColumnHolderUtils.getValue(columnHolder, row);
         HashMap<String, Object> contentTypeConfiguration = ControllerUtils.mapDefault(contentTypeJSONString);
         for(Map.Entry<String, Object> str : contentTypeConfiguration.entrySet()){
@@ -34,13 +36,15 @@ public class CategorySpreadFunction implements ISpreadFunction {
 
                         for (Map<String, Object> entry : nonImplicitCategories) {
                             String path = getPath(entry);
-                            result.add(path);
+                            results.add(path);
                         }
                     }
                 }
             }
         }
-        return result.toArray(new String[0]);
+        List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
+        result.add(new HashMap.SimpleEntry(new Column("categoryIds",ContentType.String), result));
+        return result;
     }
 
     boolean isImplicit(Map<String,Object> category, List<Map<String,Object>> categories){

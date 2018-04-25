@@ -19,10 +19,14 @@ package io.viewserver.server.steps;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
 import io.viewserver.controller.ControllerUtils;
+import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.datasource.DataSourceRegistry;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.validator.ValidationOperator;
+import io.viewserver.operators.validator.ValidationOperatorColumn;
+import io.viewserver.operators.validator.ValidationOperatorRow;
 import io.viewserver.operators.validator.ValidationUtils;
 import io.viewserver.util.MapReader;
 import com.google.common.util.concurrent.FutureCallback;
@@ -49,6 +53,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+
+interface IDimensionConsumer{
+    void call(String valueName, ValueLists.IValueList values, Boolean exclude);
+}
 
 public class ViewServerClientSteps {
     private final int timeout = 20;
@@ -83,18 +92,18 @@ public class ViewServerClientSteps {
     @Given("^\"(.*)\" report parameters$")
     public void report_parameters(String clientName, DataTable parameters) {
         ClientConnectionContext ctxt = clientContext.get(clientName);
-        setValuesFromDataTable(parameters, (name, valuesList) -> ctxt.getReportContext().getParameterValues().put(name, valuesList));
+        setValuesFromDataTable(parameters, (name, valuesList, excluded) -> ctxt.getReportContext().getParameterValues().put(name, valuesList));
     }
 
     @And("^\"(.*)\" dimension filters$")
     public void dimension_filters(String clientName, DataTable filters) {
         ClientConnectionContext ctxt = clientContext.get(clientName);
         ctxt.getReportContext().getDimensionValues().clear();
-        setValuesFromDataTable(filters, (name, valuesList) ->
-                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList)));
+        setValuesFromDataTable(filters, (name, valuesList, excluded) ->
+                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList,excluded)));
     }
 
-    private void setValuesFromDataTable(DataTable parameters, IConsumer<String, ValueLists.IValueList> consumer) {
+    private void setValuesFromDataTable(DataTable parameters, IDimensionConsumer consumer) {
         List<DataTableRow> rows = parameters.getGherkinRows();
         for (int i = 1; i < rows.size(); i++) {
             List<String> cells = rows.get(i).getCells();
@@ -125,20 +134,21 @@ public class ViewServerClientSteps {
                     }
                 }
             }
-            consumer.consume(name, ValueLists.valueListOf(typedValues));
+            String exclude = cells.size() > 3 ? cells.get(3).trim() : null;
+            consumer.call(name, ValueLists.valueListOf(typedValues), "exclude".equals(exclude) );
         }
     }
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
-    public void I_subscribe_to_report(String clientName, String reportId) throws InterruptedException {
+    public void I_subscribe_to_report(String clientName, String reportId, String rowKey) throws InterruptedException {
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
-        trySubscribe(clientName, subscribeLatch);
+        trySubscribe(clientName,reportId, subscribeLatch);
         subscribeLatch.await(timeout, timeUnit);
 
-        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report"));
+        Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
     }
 
     @When("^\"(.*)\" All data sources are built$")
@@ -149,7 +159,7 @@ public class ViewServerClientSteps {
         Options options = new Options();
         options.setOffset(0);
         options.setLimit(100);
-        trySubscribeOperator(clientName, "/datasources", options, subscribeLatch);
+        trySubscribeOperator(clientName, "/datasources", DataSourceRegistry.ID_COL,options, subscribeLatch);
         subscribeLatch.await(timeout, timeUnit);
 
 
@@ -211,6 +221,17 @@ public class ViewServerClientSteps {
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\" with parameters$")
     public void controller_action_invoked_with_data_file_with_parameters(String clientName, String controllerName, String action, String dataFile, List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile, records), null);
+    }
+
+    @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with parameters$")
+    public void controller_action_invoked_with_data(String clientName, String controllerName, String action, List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
+        HashMap<String,Object> result = new HashMap<>();
+        for(Map<String,String> record : records){
+            String paramName = record.get("Name");
+            String paramValue = record.get("Value");
+            result.put(paramName, clientContext.replaceParams(paramValue));
+        }
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);
     }
 
     private Object getJsonObjectFromFile(String dataFile) {
@@ -280,7 +301,7 @@ public class ViewServerClientSteps {
         }
     }
 
-    private void trySubscribe(String clientName, CountDownLatch subscribeLatch) {
+    private void trySubscribe(String clientName, String reportId, CountDownLatch subscribeLatch) {
         TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToReport(eventHandler);
@@ -288,13 +309,13 @@ public class ViewServerClientSteps {
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override
             public void onSuccess(ClientSubscription clientSubscription) {
-                clientConnectionContext.addSubscription("report", clientSubscription, eventHandler);
+                clientConnectionContext.addSubscription("report" + reportId, clientSubscription, eventHandler);
                 subscribeLatch.countDown();
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                trySubscribe(clientName, subscribeLatch);
+                trySubscribe(clientName,reportId,subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -304,7 +325,7 @@ public class ViewServerClientSteps {
         });
     }
 
-    private void trySubscribeOperator(String clientName, String operatorName, Options options, CountDownLatch subscribeLatch) {
+    private void trySubscribeOperator(String clientName, String operatorName, String rowKey, Options options, CountDownLatch subscribeLatch) {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
         ListenableFuture<ClientSubscription> subFuture = connectionContext.subscribe(operatorName, options,
                 new TestSubscriptionEventHandler());
@@ -318,7 +339,7 @@ public class ViewServerClientSteps {
 
             @Override
             public void onFailure(Throwable throwable) {
-                trySubscribe(clientName, subscribeLatch);
+                trySubscribe(clientName, operatorName,subscribeLatch);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -337,34 +358,71 @@ public class ViewServerClientSteps {
         connectionContext.getOptions().addSortColumn(sortColumn, "descending".equals(direction));
     }
 
-    @Then("^\"([^\"]*)\" the following data is received eventually$")
-    public void the_following_data_is_received_eventually(String clientName, List<Map<String, String>> records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName, records), 5, 500, 0);
-
+    @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    public void the_following_data_is_received_eventually(String clientName, String reportId,String rowKey, List<Map<String, String>> records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,rowKey,records), 5, 500, 0);
     }
 
-    @Then("^\"([^\"]*)\" the following data is received$")
-    public void the_following_data_is_received(String clientName, List<Map<String, String>> records) {
+    @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    public void the_following_schema_is_received_eventually(String clientName, String reportId, List<Map<String, String>> records) {
+        repeat("Receiving schema " + records, () -> the_following_schema_is_received(clientName,reportId,records), 5, 500, 0);
+    }
+
+    @Then("^\"([^\"]*)\" the following schema is received on report \"([^\"]*)\"$")
+    public void the_following_schema_is_received(String clientName,String reportId, List<Map<String, String>> records) {
         try {
             ClientConnectionContext connectionContext = clientContext.get(clientName);
-            TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler("report");
+            String name = "report" + reportId;
+            TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
+
+            if(eventHandler == null){
+                throw new RuntimeException("Unable to find report for id " + name);
+            }
 
             ValidationOperator operator = eventHandler.getValidationOperator();
-            List<Object> validationActions = new ArrayList<>();
-            int counter = 0;
+            List<ValidationOperatorColumn> expectedColumns = new ArrayList<>();
+            List<String> columns = null;
             for (Map<String, String> record : records) {
+                if(columns == null) {
+                    columns = new ArrayList<>(record.keySet());
+                }
                 Map<String, String> row = clientContext.replaceParams(record);
-                replaceReferences((HashMap)row);
-                row.put(ValidationUtils.ID_NAME,counter + "");
-                validationActions.add(ValidationUtils.to(row));
-                counter++;
+                expectedColumns.add(ValidationUtils.toColumn(row));
             }
-            operator.setExpected(validationActions);
-            operator.validate(clientContext::replaceParams);
+            operator.validateColumns(expectedColumns);
         } catch (Exception ex) {
             throw ex;
         }
     }
+
+    @Then("^\"([^\"]*)\" the following data is received on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    public void the_following_data_is_received(String clientName,String reportId,String rowKey, List<Map<String, String>> records) {
+        try {
+            ClientConnectionContext connectionContext = clientContext.get(clientName);
+            String name = "report" + reportId;
+            TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
+
+            if(eventHandler == null){
+                throw new RuntimeException("Unable to find report for id " + name);
+            }
+
+            ValidationOperator operator = eventHandler.getValidationOperator();
+            List<ValidationOperatorRow> validationRows = new ArrayList<>();
+            List<String> columns = null;
+            for (Map<String, String> record : records) {
+                if(columns == null) {
+                    columns = new ArrayList<>(record.keySet());
+                }
+                Map<String, String> row = clientContext.replaceParams(record);
+                replaceReferences((HashMap)row);
+                validationRows.add(ValidationUtils.toRow(row, rowKey));
+            }
+            operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, rowKey);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
 
     private void repeat(String scenarioLablel, Runnable assertion, int times, int delay, int counter) {
         if (times == counter) {
@@ -384,50 +442,5 @@ public class ViewServerClientSteps {
             repeat(scenarioLablel, assertion, times, delay, counter + 1);
         }
 
-    }
-
-
-    private void assertClientConnected(String clientName) throws Exception {
-        clientContext.get(clientName);
-    }
-
-    private void diff(DataTable table, List<Map<String, Object>> snapshot) throws Exception {
-        if (snapshot.isEmpty()) throw new Exception("Snapshot was empty.");
-
-        List<Map<String, String>> rows = new ArrayList<>();
-        for (Map<String, Object> row : snapshot) {
-            Map<String, String> r = mapRow(row);
-            rows.add(r);
-        }
-
-        table.diff(rows);
-    }
-
-    private Map<String, String> mapRow(Map<String, Object> row) {
-        Map<String, String> mapped = new TreeMap<>();
-        MapReader reader = new MapReader(row);
-        for (Map.Entry<String, Object> entry : row.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            if (value == null) {
-                mapped.put(key, "");
-            } else if (value instanceof Double) {
-                Double aDouble = reader.readDouble(key);
-                DecimalFormat df = new DecimalFormat("#");
-                df.setMaximumFractionDigits(4);
-                df.setMinimumIntegerDigits(1);
-                mapped.put(key, aDouble == null ? "" : df.format(aDouble));
-            } else if (value instanceof Integer) {
-                Integer anInteger = reader.readInteger(key);
-                mapped.put(key, anInteger == null ? "" : anInteger.toString());
-            } else {
-                mapped.put(key, value.toString());
-            }
-        }
-        return mapped;
-    }
-
-    private interface IConsumer<T1, T2> {
-        void consume(T1 t1, T2 t2);
     }
 }

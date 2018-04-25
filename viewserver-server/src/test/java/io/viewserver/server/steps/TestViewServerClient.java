@@ -42,7 +42,6 @@ public class TestViewServerClient extends ViewServerClient {
 
     public Future<Boolean> resetServer() {
         SettableFuture<Boolean> future = SettableFuture.create();
-
         Command reset = new Command("reset");
         reset.setCommandResultListener(commandResult -> {
             if (commandResult.isSuccess()) {

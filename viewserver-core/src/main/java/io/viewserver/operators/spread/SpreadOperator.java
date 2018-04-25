@@ -1,20 +1,22 @@
 package io.viewserver.operators.spread;
 
-import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.collections.LongHashSet;
 import io.viewserver.core.IExecutionContext;
-import io.viewserver.core.NumberUtils;
+import io.viewserver.datasource.Column;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
@@ -24,14 +26,13 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
     private final Output output;
     private final ITableStorage tableStorage;
     private ISpreadFunctionRegistry spreadColumnRegistry;
-    private ColumnHolderString spreadColumn;
     private TIntObjectHashMap<TIntHashSet> spreadAssociations = new TIntObjectHashMap<>(8, 0.75f, -1);
     private TIntIntMap inputToOutputMappings = new TIntIntHashMap();
     private int associationCounter = 0;
 
+    private HashMap<String,ColumnHolder> spreadColumnsByName = new HashMap<>();
     private ISpreadFunction spreadFunction;
     private String sourceColumn;
-    private String targetColumn;
     private boolean removeInputColumn;
 
     public SpreadOperator(String name, IExecutionContext executionContext, ITableStorage tableStorage, ICatalog catalog, ISpreadFunctionRegistry spreadColumnRegistry) {
@@ -57,17 +58,13 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         if(config.getInputColumnName() == null){
             throw new RuntimeException("Input column should be defined");
         }
-        if(config.getOutputColumnName() == null){
-            throw new RuntimeException("Output column should be defined");
-        }
         this.spreadFunction = this.spreadColumnRegistry.resolve(config.spreadFunctionName());
         this.sourceColumn = config.getInputColumnName();
-        this.targetColumn = config.getOutputColumnName();
         this.removeInputColumn = config.removeInputColumn();
-        if(spreadColumn != null){
-            output.getSchema().removeColumn(spreadColumn.getColumnId());
+        for(Map.Entry<String,ColumnHolder> entry : spreadColumnsByName.entrySet()){
+            output.getSchema().removeColumn(entry.getValue().getColumnId());
         }
-
+        spreadColumnsByName.clear();
     }
 
 
@@ -86,17 +83,23 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         protected void onColumnAdd(ColumnHolder columnHolder) {
             String name = columnHolder.getName();
             if (name != null) {
-                if(name.equals(SpreadOperator.this.sourceColumn)){
-                    spreadColumn = (ColumnHolderString) new SpreadColumn( SpreadOperator.this.targetColumn);
-                    output.getSchema().addColumn(spreadColumn);
-                    SpreadOperator.this.tableStorage.initialiseColumn(spreadColumn);
-                }
                 if(!(name.equals(SpreadOperator.this.sourceColumn) && removeInputColumn)) {
                     ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder);
                     output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
                 }
 
             }
+        }
+
+        private ColumnHolder getOrCreateSpreadColumn(Column configColumn) {
+            if(spreadColumnsByName.containsKey(configColumn.getName())){
+                return spreadColumnsByName.get(configColumn.getName());
+            }
+            ColumnHolder holder = ColumnHolderUtils.createColumnHolder(configColumn);
+            output.getSchema().addColumn(holder);
+            SpreadOperator.this.tableStorage.initialiseColumn(holder);
+            spreadColumnsByName.put(holder.getName(),holder);
+            return holder;
         }
 
         @Override
@@ -109,7 +112,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             spreadAssociations.clear();
         }
 
-        private String[] getSpreadValues(int row) {
+        private List<Map.Entry<Column, Object[]>> getSpreadValues(int row) {
             ISpreadFunction spreadFunction = SpreadOperator.this.spreadFunction;
             if(spreadFunction == null){
                 throw new RuntimeException("No spread function has been defined");
@@ -136,20 +139,17 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                 spreadAssociations.put(row, ourRows);
             }
 
-            String[] values = getSpreadValues(row);
-            for(String val : values){
-                int outputRow = addSpreadValue(ourRows, val, "add");
-                inputToOutputMappings.put(outputRow,row);
-                output.handleAdd(outputRow);
-            }
+            addSpreadValues(row, ourRows);
         }
 
-        private int addSpreadValue(TIntHashSet ourRows, String val, String operation) {
-            int outputRow  = associationCounter++;
-            log.info("Row {} has just been added in {}",outputRow, operation);
-            ourRows.add(outputRow);
-            ((IWritableColumnString)spreadColumn.getColumn()).setString(outputRow, val);
-            return outputRow;
+        private int getMaxRowIndex(List<Map.Entry<Column, Object[]>> values) {
+            int maxRowIndex = 0;
+            for(Map.Entry<Column, Object[]> val : values){
+                if(val.getValue().length > maxRowIndex){
+                    maxRowIndex = val.getValue().length;
+                }
+            }
+            return maxRowIndex;
         }
 
 
@@ -160,43 +160,34 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             if (ourRows == null) {
                 throw new RuntimeException("Attempting to update a row that doesnt exist");
             }
-            String[] values = getSpreadValues(row);
-            String[] existingValues = new String[ourRows.size()];
-
 
             for(int i : ourRows.toArray()){
-                boolean valueHasBeenRemoved = true;
-                String string = spreadColumn.getString(i);
-                for(String str: values){
-                    if(str == string){
-                        valueHasBeenRemoved = false;
-                        break;
-                    }
-                }
-                if(valueHasBeenRemoved){
-                    log.info("Row {} has just been removed in update",i);
-                    output.handleRemove(i);
-                    ourRows.remove(i);
-                }
+                log.info("Row {} has just been removed in update",i);
+                output.handleRemove(i);
+                ourRows.remove(i);
+                inputToOutputMappings.remove(i);
             }
 
-            for(String  str : existingValues){
-                boolean valueAlreadyExists = false;
-                for(int i : ourRows.toArray()){
-                    String string = spreadColumn.getString(i);
-                    if(str == string){
-                        valueAlreadyExists = true;
-                        break;
-                    }
+            addSpreadValues(row, ourRows);
+
+        }
+
+        private void addSpreadValues(int row, TIntHashSet ourRows) {
+            List<Map.Entry<Column, Object[]>> values = getSpreadValues(row);
+            int maximimumRowIndex = getMaxRowIndex(values);
+            for(int i = 0;i< maximimumRowIndex;i++){
+                int outputRow  = associationCounter++;
+                log.info("Row {} has just been added in {}",outputRow,"add");
+                for(Map.Entry<Column, Object[]> val : values){
+                    ColumnHolder spreadColumn = getOrCreateSpreadColumn(val.getKey());
+                    Object[] value = val.getValue();
+                    Object result = i < value.length ? value[i] : null;
+                    ourRows.add(outputRow);
+                    ColumnHolderUtils.setValue(spreadColumn,outputRow, result);
                 }
-                if(!valueAlreadyExists){
-                    int addedRow = addSpreadValue(ourRows,str, "update");
-                    output.handleAdd(addedRow);
-                }
+                inputToOutputMappings.put(outputRow,row);
+                output.handleAdd(outputRow);
             }
-
-
-
         }
 
         @Override

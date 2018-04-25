@@ -19,20 +19,26 @@ package io.viewserver.operators.validator;
 import java.util.HashMap;
 
 public class ValidationOperatorRow {
-    private int rowId;
     private HashMap<String,Object> values;
     private HashMap<String, Object> previousValue;
     private ValidationAction action;
 
-    public ValidationOperatorRow(int rowId, HashMap<String, Object> values,HashMap<String, Object> previousValue, ValidationAction action) {
-        this.rowId = rowId;
+    public ValidationOperatorRow(HashMap<String, Object> values,HashMap<String, Object> previousValue, ValidationAction action) {
         this.values = values;
         this.previousValue = previousValue;
         this.action = action;
     }
 
-    public int getRowId() {
-        return rowId;
+    public ValidationOperatorRow clone(ValidationAction newAction){
+        return new ValidationOperatorRow(new HashMap<>(values),new HashMap<>(previousValue),newAction);
+    }
+
+    public int getRowId(String rowKeyField) {
+        Object val = values.get(rowKeyField);
+        if(val == null){
+            throw new RuntimeException("Unable to find key field " + rowKeyField + " in row " + values);
+        }
+        return ValidationUtils.rowKeyHash(val + "_" + action.name());
     }
 
     public HashMap<String, Object> getValues() {

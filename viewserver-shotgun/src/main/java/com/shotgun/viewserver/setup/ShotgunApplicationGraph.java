@@ -33,6 +33,8 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(UserRelationshipDataSource.getDataSource());
         dataSources.add(OrderItemsDataSource.getDataSource());
+        dataSources.add(OrderWithResponseDataSource.getDataSource());
+        dataSources.add(OrderWithPartnerDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());
 
         return dataSources;
@@ -47,6 +49,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(OperatorAndConnectionReport.ID, OperatorAndConnectionReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
+        reportDefinitions.put(OrderResponseReport.ID, OrderResponseReport.getReportDefinition());
         reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS, UserRelationshipReport.getReportDefinition(false));
         reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS + "All", UserRelationshipReport.getReportDefinition(true));
         reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, UserRelationshipReport.getUsersForProductReportDefinition(false));

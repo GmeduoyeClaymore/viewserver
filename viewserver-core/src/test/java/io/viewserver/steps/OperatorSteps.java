@@ -16,6 +16,7 @@
 
 package io.viewserver.steps;
 
+import cucumber.api.PendingException;
 import io.viewserver.factories.ITestOperatorFactory;
 import io.viewserver.factories.TestTableFactory;
 import io.viewserver.operators.filter.FilterOperator;
@@ -40,6 +41,8 @@ public class OperatorSteps {
 
 
     private TestMixerContext testMixerContext;
+    private String idField = "id";
+    private String outputName = "out";
 
     public OperatorSteps(TestMixerContext context) {
         ITestOperatorFactory.register(param -> {
@@ -76,19 +79,35 @@ public class OperatorSteps {
         context.put(TestTableFactory.RECORDS_PARAM_NAME,new ArrayList<>(records));
         testMixerContext.createOperator("table",tableName,context);
     }
-    @Then("^operator \"([^\"]*)\" output \"([^\"]*)\" is$")
-    public void output_on_operator_contains(String operatorName,String outputName,List<Map<String,String>> records) throws Throwable {
-        testMixerContext.listenToOutput(operatorName, outputName, records);
+    @Then("^operator \"([^\"]*)\" output \"([^\"]*)\" is monitored$")
+    public void output_on_operator_contains(String operatorName,String outputName) throws Throwable {
+        testMixerContext.listenToOutput(operatorName, outputName);
     }
     @Then("^commit$")
-    public void output_on_operator_contains() throws Throwable {
+    public void commit() throws Throwable {
         testMixerContext.commit();
+    }
+
+    @Then("^schema for \"([^\"]*)\" is$")
+    public void Schema_on_operator_output_is(String operatorName,List<Map<String,String>> records) throws Throwable {
+        testMixerContext.validateSchema(operatorName,records);
+    }
+
+    @Then("^data for \"([^\"]*)\" is$")
+    public void Data_on_operator_output_is(String operatorName,List<Map<String,String>> records) throws Throwable {
+        testMixerContext.validateData(operatorName,idField,records);
+    }
+
+    @Then("^data for \"([^\"]*)\" with keyColumn \"([^\"]*)\" is$")
+    public void Data_on_operator_output_is(String operatorName,String keyColumnName,List<Map<String,String>> records) throws Throwable {
+        testMixerContext.validateData(operatorName,keyColumnName,records);
     }
 
     @Given("^operator type \"([^\"]*)\" named \"([^\"]*)\" created$")
     public void operator(String type,String name,List<Map<String,String>> context) throws Throwable {
         HashMap<String, Object> result = getStringObjectHashMap(context);
         testMixerContext.createOperator(type, name, result);
+        testMixerContext.listenToOutput(name, outputName);
     }
 
     @Given("^operator \"([^\"]*)\" output \"([^\"]*)\" plugged into \"([^\"]*)\" input \"([^\"]*)\"")
@@ -173,5 +192,17 @@ public class OperatorSteps {
     @And("^reset data on operator \"([^\"]*)\"$")
     public void reset_data_on_operator(String operatorName) throws Throwable {
         testMixerContext.getOperator(operatorName).resetData();
+    }
+
+    @Given("^id field is \"([^\"]*)\"$")
+    public void idFieldIs(String fieldName) throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        this.idField = fieldName;
+    }
+
+    @And("^output is \"([^\"]*)\"$")
+    public void outputIs(String outputName) throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        this.outputName = outputName;
     }
 }

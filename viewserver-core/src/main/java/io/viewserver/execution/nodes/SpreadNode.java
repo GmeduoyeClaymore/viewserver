@@ -49,8 +49,8 @@ public class SpreadNode extends GraphNodeBase<SpreadNode> {
         return this;
     }
 
-    public SpreadNode withOutputColumn(String outputColumn) {
-        this.outputColumn = outputColumn;
+    public SpreadNode withRemoveInputColumn(){
+        removeInputColumn = true;
         return this;
     }
 
@@ -65,11 +65,6 @@ public class SpreadNode extends GraphNodeBase<SpreadNode> {
             @Override
             public String getInputColumnName() {
                 return parameterHelper.substituteParameterValues(inputColumn);
-            }
-
-            @Override
-            public String getOutputColumnName() {
-                return parameterHelper.substituteParameterValues(outputColumn);
             }
 
             @Override

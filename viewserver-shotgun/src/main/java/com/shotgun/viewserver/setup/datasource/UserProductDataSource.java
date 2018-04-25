@@ -30,7 +30,6 @@ UserProductDataSource {
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME)),
                         new SpreadNode("productsSpread")
                                 .withInputColumn("selectedContentTypes")
-                                .withOutputColumn("spreadProductId")
                                 .withSpreadFunction("getProductIdsFromContentTypeJSON")
                                 .withConnection("userProjection", Constants.OUT, Constants.IN),
                         new JoinNode("productJoin")

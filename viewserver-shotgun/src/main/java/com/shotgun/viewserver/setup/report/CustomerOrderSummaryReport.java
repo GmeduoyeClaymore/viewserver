@@ -13,22 +13,8 @@ public class CustomerOrderSummaryReport {
 
     public static ReportDefinition getReportDefinition() {
         return new ReportDefinition(ID, "customerOrderSummary")
-                .withDataSource(OrderDataSource.NAME)
+                .withDataSource(OrderWithPartnerDataSource.NAME)
                 .withNodes(
-                        new JoinNode("partnerJoin")
-                                .withLeftJoinColumns("assignedPartnerUserId")
-                                .withLeftJoinOuter()
-                                .withRightJoinColumns("userId")
-                                .withColumnPrefixes("", "partner_")
-                                .withAlwaysResolveNames()
-                                .withConnection("#input", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin"), Constants.OUT, "right"),
-                        new JoinNode("ratingJoin")
-                                .withLeftJoinColumns("orderId", "assignedPartnerUserId")
-                                .withLeftJoinOuter()
-                                .withRightJoinColumns("orderId", "userId")
-                                .withConnection("partnerJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
@@ -48,7 +34,7 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("orderDetails"),
                                         new IProjectionConfig.ProjectionColumn("orderId"),
                                         new IProjectionConfig.ProjectionColumn("status")
-                                ).withConnection("ratingJoin")
+                                ).withConnection("#input")
 
 
                 )

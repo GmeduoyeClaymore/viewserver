@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.order;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryOrder;
@@ -9,6 +10,7 @@ import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.setup.datasource.DeliveryDataSource;
 import com.shotgun.viewserver.setup.datasource.OrderDataSource;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -17,13 +19,19 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 @Controller(name = "deliveryOrderController")
 public class DeliveryOrderController {
@@ -87,6 +95,71 @@ public class DeliveryOrderController {
         }
 
         return orderId;
+    }
+
+    @ControllerAction(path = "respondToOrder", isSynchronous = true)
+    public void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "estimatedDate")Date estimatedDate){
+        String partnerId = getUserId();
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+
+        if(currentRow == -1){
+            throw new RuntimeException("Unable to find order for key:" + orderId);
+        }
+
+        String orderDetailsString = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow).toString();
+        String orderStatus = ControllerUtils.getColumnValue(orderTable, "status", currentRow).toString();
+        String orderUserId = ControllerUtils.getColumnValue(orderTable, "userId", currentRow).toString();
+
+
+        if(!OrderStatus.valueOf(orderStatus).equals(OrderStatus.PLACED)){
+            throw new RuntimeException("Can only respond to an order which is in placed status");
+        }
+
+        DeliveryOrder order = JacksonSerialiser.getInstance().deserialise(orderDetailsString, DeliveryOrder.class);
+
+        if(order == null){
+            throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
+        }
+
+        if(order.responses == null){
+            order.responses = new ArrayList<>();
+        }
+
+        if(order.responses.stream().anyMatch(c->c.partnerId.equals(partnerId))){
+            logger.info(partnerId + "Has already responded to this order aborting");
+            return;
+        }
+
+        order.responses.add(new DeliveryOrder.DeliveryOrderFill(partnerId,estimatedDate));
+        Date now = new Date();
+
+        IRecord orderRecord = new Record().
+                addValue("orderId", orderId).
+                addValue("lastModified", now).
+                addValue("orderDetails", order);
+
+
+        iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
+
+        notifyJobResponded(orderId, orderUserId);
+    }
+
+
+    private void notifyJobResponded(String orderId, String customerId) {
+        try {
+            User user = (User) ControllerContext.get("user");
+
+            AppMessage builder = new AppMessageBuilder().withDefaults()
+                    .withAction(createActionUri(orderId))
+                    .message(String.format("Shotgun job assigned to you"), String.format("%s has  just responded to a job that you posted", user.getFirstName() + " " + user.getLastName()))
+                    .withFromTo(user.getUserId(),customerId)
+                    .build();
+            messagingController.sendMessageToUser(builder);
+        }catch (Exception ex){
+            logger.error("There was a problem sending the notification", ex);
+        }
     }
 
     private void notifyJobAssigned(String orderId, String driverId) {

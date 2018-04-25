@@ -32,6 +32,9 @@ public class TestSubscriptionEventHandler extends SubscriptionEventHandlerBase<C
 
     private ValidationOperator operator;
 
+    public TestSubscriptionEventHandler() {
+    }
+
     @Override
     public void onSubscriptionSuccess(ClientSubscription clientSubscription) {
         super.onSubscriptionSuccess(clientSubscription);

@@ -33,11 +33,11 @@ public class OrderDataSource {
                 .withSchema(schema)
                 .withOutput(DataSource.TABLE_NAME)
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String),
-                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_assignedPartnerUserId","assignedPartnerUserId", Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int)
+                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String,true),
+                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_assignedPartnerUserId","assignedPartnerUserId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int, true)
                 ))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

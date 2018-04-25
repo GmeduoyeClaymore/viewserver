@@ -21,6 +21,7 @@ public class OrderSerializationModule extends SimpleModule {
         addSerializer(new ProductKeySerialiser());
         addSerializer(new DateSerialiser());
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
+        addDeserializer(Date.class, new DateDesSerialiser());
     }
 
     public static class ProductKeySerialiser extends StdSerializer<ProductKey> {
@@ -55,6 +56,18 @@ public class OrderSerializationModule extends SimpleModule {
             final ObjectMapper mapper = (ObjectMapper) p.getCodec();
             final String node = mapper.readValue(p, String.class);
             return new ProductKey(node);
+        }
+    }
+    public static class DateDesSerialiser extends StdDeserializer<Date> {
+        public DateDesSerialiser() {
+            super(Date.class);
+        }
+
+        @Override
+        public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            final ObjectMapper mapper = (ObjectMapper) p.getCodec();
+            final String node = mapper.readValue(p, String.class);
+            return new DateTime(node).toDate();
         }
     }
 }

@@ -26,6 +26,8 @@ public class DeliveryOrder {
     public DeliveryOrderFill assignedPartner;
     public DeliveryOrderStatus status;
 
+    public DeliveryOrder() {
+    }
 
     public enum DeliveryOrderStatus {
 
@@ -89,9 +91,14 @@ public class DeliveryOrder {
         }
     }
 
-    public class DeliveryOrderFill{
+    public static class DeliveryOrderFill{
         public String partnerId;
         public Date estimatedDate;
+
+        public DeliveryOrderFill(String partnerId, Date estimatedDate) {
+            this.partnerId = partnerId;
+            this.estimatedDate = estimatedDate;
+        }
     }
 
 }

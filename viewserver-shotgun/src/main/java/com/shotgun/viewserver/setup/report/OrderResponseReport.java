@@ -1,35 +1,24 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.*;
+import com.shotgun.viewserver.setup.datasource.OrderWithPartnerDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
+import com.shotgun.viewserver.user.DeliveryCustomerResponseSpreadFunction;
 import io.viewserver.Constants;
-import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.execution.nodes.SpreadNode;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
-public class OrderRequestReport {
-        public static final String ID = "orderRequest";
+public class OrderResponseReport {
+        public static final String ID = "orderResponses";
 
         public static ReportDefinition getReportDefinition() {
-                return new ReportDefinition(ID, "orderRequest")
-                        .withDataSource(OrderWithPartnerDataSource.NAME)
-                        .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
-                        .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
-                        .withParameter("maxDistance", "Maximum Distance Override", String[].class)
-                        .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
+                return new ReportDefinition(ID, "orderResponses")
+                        .withDataSource(OrderWithResponseDataSource.NAME)
                         .withNodes(
-                                new CalcColNode("distanceCalcCol")
-                                        .withCalculations(
-                                                new CalcColOperator.CalculatedColumn("currentDistance", "distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"),
-                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
-                                        .withConnection("#input"),
-                                new FilterNode("distanceFilter")
-                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
-                                        .withConnection("distanceCalcCol"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -48,9 +37,9 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
-                                                new IProjectionConfig.ProjectionColumn("status")
+                                                new IProjectionConfig.ProjectionColumn("partnerOrderStatus")
                                         )
-                                        .withConnection("distanceFilter")
+                                        .withConnection("#input")
                         )
                         .withOutput("orderRequestProjection");
         }

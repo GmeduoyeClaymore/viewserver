@@ -17,15 +17,13 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
-import io.viewserver.expression.function.IUserDefinedFunction;
-import io.viewserver.expression.function.Serialize;
-import io.viewserver.expression.tree.IExpression;
-import io.viewserver.expression.tree.IExpressionBool;
-import io.viewserver.expression.tree.IExpressionString;
+import com.shotgun.viewserver.delivery.DeliveryOrder;
+import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.datasource.Column;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.spread.ISpreadFunction;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -44,11 +41,11 @@ public class ProductSpreadFunction implements ISpreadFunction {
 
 
     @Override
-    public String[] getValues(int row, ColumnHolder columnHolder) {
-        List<String> result = new ArrayList<>();
+    public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
+        List<String> productIdsList = new ArrayList<>();
         String contentTypeJSONString = (String) ColumnHolderUtils.getValue(columnHolder, row);
         if(contentTypeJSONString ==null || "".equals(contentTypeJSONString)){
-            return new String[0];
+            return new ArrayList<>();
         }
         HashMap<String, Object> contentTypeConfiguration = ControllerUtils.mapDefault(contentTypeJSONString);
         for(Map.Entry<String, Object> str : contentTypeConfiguration.entrySet()){
@@ -58,14 +55,16 @@ public class ProductSpreadFunction implements ISpreadFunction {
                 Object productIdsForContentType = config.get("selectedProductIds");
                 if(productIdsForContentType != null){
                     List<String> productIds = (List<String>) productIdsForContentType;
-                    result.addAll(productIds);
+                    productIdsList.addAll(productIds);
                 }
             }
         }
-        return result.toArray(new String[0]);
+        List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
+        result.add(new HashMap.SimpleEntry(new Column("spreadProductId", ContentType.String), productIdsList.toArray()));
+        return result;
     }
 
-
-
-
 }
+
+
+

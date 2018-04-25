@@ -197,8 +197,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             return dataSource;
         }
         ColumnHolder jsonColHolder = getOutput().getSchema().getColumnHolder(JSON_COL);
-        String dataSourceJson = (String) ControllerUtils.toString(ColumnHolderUtils.getValue(jsonColHolder, rowId));
-        dataSource = deserialise(dataSourceJson);
+        dataSource = deserialise((String) ColumnHolderUtils.getValue(jsonColHolder, rowId));
         dataSourcesById.put(rowId, dataSource);
         return dataSource;
     }

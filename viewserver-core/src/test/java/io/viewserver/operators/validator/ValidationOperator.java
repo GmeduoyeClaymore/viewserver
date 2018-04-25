@@ -18,7 +18,6 @@ package io.viewserver.operators.validator;
 
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.ContentType;
@@ -31,7 +30,6 @@ import io.viewserver.schema.column.IRowFlags;
 import cucumber.api.DataTable;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Created by bemm on 01/12/2014.
@@ -39,16 +37,21 @@ import java.util.function.Predicate;
 public class ValidationOperator extends OperatorBase{
 
     private final Input input;
-    private List validationActions = new ArrayList<>();
-    private List expectedActions;
+    private List<ValidationOperatorRow> validationRows = new ArrayList<>();
+    private HashMap<Integer,ValidationOperatorRow> rowMapSoWeKnowValuesOnARemovedRow = new HashMap<>();
+    private List<ValidationOperatorColumn> validationColumns = new ArrayList<>();
+    private List<ValidationControlEvent> validationControlEvents = new ArrayList<>();
+
     private boolean validateOnCommit = true;
     private HashMap<String,ValidationOperatorColumn> columnsByName;
 
-    public interface ITransform{
-        String call(String param);
+
+
+    public interface ITransform<T>{
+        T call(Object param);
     }
 
-    public ValidationOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
+    public ValidationOperator(String name,  IExecutionContext executionContext, ICatalog catalog) {
         super(name, executionContext, catalog);
         input = new Input(Constants.IN, this);
         columnsByName = new HashMap<>();
@@ -56,9 +59,6 @@ public class ValidationOperator extends OperatorBase{
         register();
     }
 
-    public void setExpected(List expectedActions) {
-        this.expectedActions = expectedActions;
-    }
 
 
     public void setValidateOnCommit(boolean validateOnCommit) {
@@ -68,66 +68,99 @@ public class ValidationOperator extends OperatorBase{
     @Override
     protected void commit() {
         super.commit();
-        if(validateOnCommit) {
-            validate();
+    }
+
+
+    public void validateColumns(List<ValidationOperatorColumn> expectedColumns) {
+        System.out.println(this.getName() + " validating columns");
+        DataTable dataTable = convertColumnsToTable(expectedColumns);
+        DataTable other = convertColumnsToTable(this.validationColumns);
+        try {
+            dataTable.diff(other);
+        }catch (Throwable throwable){
+
+            throw throwable;
+        }finally {
+            System.out.println("Actual actions are \n" + dataTable);
         }
     }
 
-    public void validate() {
-        validate(c->c);
-    }
+    public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName) {
+        System.out.println(this.getName() + " validating rows");
+        DataTable dataTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName);
+        DataTable other = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName);
+        try {
+            other.diff(dataTable);
+        }catch (Throwable throwable){
 
-
-    public void validate(ITransform transform) {
-        if(this.expectedActions != null){
-            System.out.println(this.getName() + " validating");
-            String[] expectedKeys = getKeysForActions(expectedActions);
-            if (expectedKeys.length > 0) {
-                DataTable dataTable = convertToTable(transform,this.expectedActions, expectedKeys, null);
-                DataTable other = convertToTable(transform, this.validationActions, expectedKeys, this.expectedActions);
-                try {
-                    dataTable.diff(other);
-                }catch (Throwable throwable){
-                    DataTable actualActions = convertToTable(transform, this.validationActions, null, null);
-                    System.out.println("Actual actions are \n" + actualActions);
-                    throw throwable;
-                }
-            }
+            throw throwable;
+        }finally {
+            System.out.println("Actual actions are \n" + dataTable);
         }
     }
 
 
     public void clearRecordedEvents(){
         columnsByName.clear();
-        validationActions.clear();
-    }
-
-    private String[] getKeysForActions(List expectedActions1) {
-        List<HashMap<String,Object>> expectedRows = getRows(expectedActions1);
-        return getKeys(expectedRows);
+        validationRows.clear();
+        validationColumns.clear();
     }
 
 
+    private DataTable convertColumnsToTable(List<ValidationOperatorColumn> actionsToConvert) {
 
-    private DataTable convertToTable(ITransform transform,List actionsToConvert,String[] keys, List referenceActions) {
-        List<HashMap<String,Object>> rows = getRows(actionsToConvert);
-        List<List<String>>tableData = new ArrayList<>();
-        List<String> keysList = null;
-        if(keys != null){
-            keysList = ValidationUtils.getKeys(keys);
-        }else{
-            if(rows.size() > 0){
-                keysList = new ArrayList<>(rows.get(0).keySet());
-            }else{
-                keysList = new ArrayList<>();
+        List<HashMap<String,Object>> columns = new ArrayList<>();
+        for(ValidationOperatorColumn column : actionsToConvert){
+            columns.add(ValidationUtils.getColumnValues(column));
+        }
+
+        columns.sort((o1, o2) -> {
+            Integer id1 = (Integer) o1.get(ValidationUtils.ID_NAME);
+            Integer id2 = (Integer) o2.get(ValidationUtils.ID_NAME);
+            if(id1 == null && id2 != null){
+                return -1;
             }
-        };
-        tableData.add(keysList);
-        int rowCounter = 0;
+            if(id2 == null && id1 != null){
+                return 1;
+            }
+
+            if(id1 == null && id2 == null){
+                return 0;
+            }
+            return id1.compareTo(id2);
+        });
+        return DataTable.create(columns);
+    }
+
+    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn) {
+
+        for(ValidationOperatorRow row : actionsToConvert){
+            if(ValidationAction.Remove.equals(row.getValidationAction())){
+                for(Map.Entry entry : row.getValues().entrySet()){
+                    if(entry.getKey().equals(keyColumn)){
+                        continue;
+                    }
+                    entry.setValue(null);
+                }
+                for(Map.Entry entry : row.getValues().entrySet()){
+                    if(entry.getKey().equals(keyColumn)){
+                        continue;
+                    }
+                    entry.setValue(null);
+                }
+            }
+        }
+
+        List<HashMap<String,Object>> rows = getRows(actionsToConvert, c-> ((ValidationOperatorRow)c).getRowId(keyColumn));
+        if(columns == null){
+            columns = rows.size() > 0 ? new ArrayList<>(rows.get(0).keySet()) : new ArrayList<>();
+        }
+        List<HashMap<String,Object>> referenceActionsRows = referenceActions == null ? null : getRows(referenceActions, c-> ((ValidationOperatorRow)c).getRowId(keyColumn));
+        List<List<String>>tableData = new ArrayList<>();
+        tableData.add(columns);
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
-            for(String key : keysList){
-
+            for(String key : columns){
                 Object val = row.get(key);
                 if(val == null || "".equals(val)){
                     result.add("");
@@ -135,13 +168,14 @@ public class ValidationOperator extends OperatorBase{
                 else{
                     ValidationOperatorColumn out = columnsByName.get(key);
                     if(referenceActions != null && out!= null && out.getType().equals(ContentType.Json)){//basically if it is JSON then look at the reference row and only compare properties found in the source row
-                        HashMap<String,Object> me =  (HashMap<String, Object>) val;
-                        ValidationOperatorRow referenceAction = (ValidationOperatorRow) referenceActions.get(rowCounter);
+                        HashMap<String,Object> me =  val instanceof HashMap ? (HashMap)val : ControllerUtils.mapDefault(val + "");
+                        Integer id = (Integer) row.get(ValidationUtils.ID_NAME);
+                        HashMap<String, Object> referenceAction = referenceActionsRows.stream().filter(c -> isRowWithId(id,c)).findFirst().get();
                         if(referenceAction == null){
                             result.add(transform.call(val + ""));
                             continue;
                         }
-                        HashMap<String,Object> reference = ControllerUtils.mapDefault((String) referenceAction.getValues().get(key));
+                        HashMap<String,Object> reference = ControllerUtils.mapDefault((String) referenceAction.get(key));
                         if(reference == null){
                             result.add(transform.call(val + ""));
                             continue;
@@ -155,9 +189,12 @@ public class ValidationOperator extends OperatorBase{
 
             }
             tableData.add(result);
-            rowCounter++;
         }
         return DataTable.create(tableData);
+    }
+
+    private boolean isRowWithId(Integer id, HashMap<String, Object> c) {
+        return c.get(ValidationUtils.ID_NAME).equals(id);
     }
 
     private HashMap<String, Object> filterForReferenceProps(HashMap<String, Object> me, HashMap<String, Object> reference) {
@@ -176,12 +213,12 @@ public class ValidationOperator extends OperatorBase{
         return propsToCompare;
     }
 
-    private List<HashMap<String, Object>> getRows(List expectedActions) {
+    private List<HashMap<String, Object>> getRows(List<ValidationOperatorRow> expectedActions,ITransform<Integer> getValueKey) {
         List<HashMap<String,Object>> result = new ArrayList<>();
-        for(Object expected : expectedActions){
-            result.add(ValidationUtils.from(expected, this.columnsByName));
+        for(ValidationOperatorRow expected : expectedActions){
+            result.add(ValidationUtils.getRowValues(expected, this.columnsByName, getValueKey));
         }
-        String[] keys = getKeys(result);
+        String[] keys = getKeys(expectedActions);
         for(Map<String,Object> entry : result){
             for(String key : keys){
                 if(ValidationUtils.IGNORED_COLUMNS.contains(key))
@@ -191,31 +228,28 @@ public class ValidationOperator extends OperatorBase{
                 }
             }
         }
-        result.sort(new Comparator<HashMap<String, Object>>() {
-            @Override
-            public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-                Object id1 = o1.get("id");
-                Object id2 = o2.get("id");
-                if(id1 == null && id2 != null){
-                    return -1;
-                }
-                if(id2 == null && id1 != null){
-                    return 1;
-                }
-
-                if(id1 == null && id2 == null){
-                    return 0;
-                }
-                return id1.toString().compareTo(id2.toString());
+        result.sort((o1, o2) -> {
+            Integer id1 = (Integer) o1.get(ValidationUtils.ID_NAME);
+            Integer id2 = (Integer) o2.get(ValidationUtils.ID_NAME);
+            if(id1 == null && id2 != null){
+                return -1;
             }
+            if(id2 == null && id1 != null){
+                return 1;
+            }
+
+            if(id1 == null && id2 == null){
+                return 0;
+            }
+            return id1.compareTo(id2);
         });
         return result;
     }
 
-    private String[] getKeys(List<HashMap<String, Object>> result) {
+    private String[] getKeys(List<ValidationOperatorRow> result) {
         List<String> keys = new ArrayList<>();
-        for(Map<String,Object> entry : result){
-            for(String key : entry.keySet()){
+        for(ValidationOperatorRow entry : result){
+            for(String key : entry.getValues().keySet()){
                 if(!keys.contains(key)){
                     keys.add(key);
                 }
@@ -232,47 +266,52 @@ public class ValidationOperator extends OperatorBase{
 
         @Override
         protected void onColumnAdd(ColumnHolder columnHolder) {
-            validationActions.add(createValidationColumn(columnHolder, ValidationAction.Add));
+            validationColumns.add(createValidationColumn(columnHolder, ValidationAction.Add));
             super.onColumnAdd(columnHolder);
         }
 
         @Override
         protected void onColumnRemove(ColumnHolder columnHolder) {
-            validationActions.add(createValidationColumn(columnHolder, ValidationAction.Remove));
+            validationColumns.add(createValidationColumn(columnHolder, ValidationAction.Remove));
             super.onColumnRemove(columnHolder);
         }
 
         @Override
         protected void onRowAdd(int row) {
-            validationActions.add(getValidationOperatorRow(row, ValidationAction.Add));
+            ValidationOperatorRow validationOperatorRow = getValidationOperatorRow(row, ValidationAction.Add);
+            rowMapSoWeKnowValuesOnARemovedRow.put(row,validationOperatorRow);
+            validationRows.add(validationOperatorRow);
             super.onRowAdd(row);
         }
 
         @Override
         protected void onRowUpdate(int row, IRowFlags rowFlags) {
-            validationActions.add(getValidationOperatorRow(row, ValidationAction.Update));
+            ValidationOperatorRow validationOperatorRow = getValidationOperatorRow(row, ValidationAction.Update);
+            rowMapSoWeKnowValuesOnARemovedRow.put(row,validationOperatorRow);
+            validationRows.add(validationOperatorRow);
             super.onRowUpdate(row, rowFlags);
         }
 
         @Override
         protected void onRowRemove(int row) {
-            validationActions.add(getValidationOperatorRow(row, ValidationAction.Remove));
+            ValidationOperatorRow addedRow = rowMapSoWeKnowValuesOnARemovedRow.get(row);
+            validationRows.add(addedRow.clone(ValidationAction.Remove));
             super.onRowRemove(row);
         }
 
         @Override
         protected void onDataReset() {
-            validationActions.add(new ValidationDataReset());
+            validationControlEvents.add(new ValidationControlEvent("DataReset"));
             super.onDataReset();
         }
         @Override
         protected void onSchemaReset() {
-            validationActions.add(new ValidationSchemaReset());
+            validationControlEvents.add(new ValidationControlEvent("SchemaReset"));
             super.onSchemaReset();
         }
 
         private ValidationOperatorColumn createValidationColumn(ColumnHolder columnHolder, ValidationAction remove) {
-            ValidationOperatorColumn validationOperatorColumn = new ValidationOperatorColumn(columnHolder.getName(), columnHolder.getMetadata().getDataType(), columnHolder.getColumnId(), remove);
+            ValidationOperatorColumn validationOperatorColumn = new ValidationOperatorColumn(columnHolder.getName(), columnHolder.getMetadata().getDataType(), remove);
             ValidationOperator.this.columnsByName.put(columnHolder.getName(), validationOperatorColumn);
             return validationOperatorColumn;
         }
@@ -292,7 +331,8 @@ public class ValidationOperator extends OperatorBase{
                     }
                 }
             }
-            return new ValidationOperatorRow(row, values, previous, action);
+
+            return new ValidationOperatorRow(values, previous, action);
         }
 
 

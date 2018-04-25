@@ -65,7 +65,6 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }
         String inputOperator =  ITestOperatorFactory.getParam(INPUT_COLUMN_PARAM_NAME, config, String.class);
-        String outputOperator =  ITestOperatorFactory.getParam(OUTPUT_COLUMN_PARAM_NAME, config, String.class);
         String spreadFunction =  ITestOperatorFactory.getParam(SPREAD_FUNCTION_PARAM_NAME, config, String.class);
         boolean removeInputColumn =  ITestOperatorFactory.getParam(REMOVE_INPUT_COLUMN_PARAM_NAME, config, boolean.class);
         ((SpreadOperator) spread).configure(new ISpreadConfig() {
@@ -74,10 +73,6 @@ public class TestSpreadOperatorFactory implements ITestOperatorFactory{
                 return inputOperator;
             }
 
-            @Override
-            public String getOutputColumnName() {
-                return outputOperator;
-            }
 
             @Override
             public String spreadFunctionName() {

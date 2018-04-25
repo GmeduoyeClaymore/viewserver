@@ -29,6 +29,8 @@ import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.union.UnionOperator;
 import io.viewserver.operators.validator.ValidationOperator;
+import io.viewserver.operators.validator.ValidationOperatorColumn;
+import io.viewserver.operators.validator.ValidationOperatorRow;
 import io.viewserver.operators.validator.ValidationUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by bemm on 27/11/2014.
@@ -89,12 +92,14 @@ public class TestMixerContext {
 
     public void configureChangeRecorderForOperator(String operatorName,String outputName){
         IOutput out = getOutput(operatorName, outputName);
-        out.plugIn(new ChangeRecorder(operatorName + "_rec", executionContext, catalog).getInput());
+        if(safeGetOperator(operatorName + "_rec") == null){
+            out.plugIn(new ChangeRecorder(operatorName + "_rec", executionContext, catalog).getInput());
+        }
     }
     public void pluginOperator(String outputOperator,String outputName,String inputOperator,String inputName){
         getOutput(outputOperator,outputName).plugIn(getInput(inputOperator, inputName));;
     }
-    public void listenToOutput(String operatorName,String outputName,List<Map<String, String>> records) {
+    public void listenToOutput(String operatorName,String outputName) {
         String name = operatorName + "validator";
         ValidationOperator operator = (ValidationOperator) catalog.getOperatorByPath(name);
         if(operator == null) {
@@ -102,14 +107,9 @@ public class TestMixerContext {
             getOutput(operatorName, outputName).plugIn(operator.getInput(Constants.IN));
 
         }
-        List<Object> validationActions = new ArrayList<>();
-        for(Map<String,String> record : records){
-            validationActions.add(ValidationUtils.to(record));
-        }
-        operator.setExpected(validationActions);
         operator.clearRecordedEvents();
-
     }
+
     private void register(ITestOperatorFactory testOperatorFactory) {
         operatorFactories.put(testOperatorFactory.getOperatorType(), testOperatorFactory);
     }
@@ -135,7 +135,7 @@ public class TestMixerContext {
                 }
                 holders.add(new IndexOperator.QueryHolder(indexParts[0], indexValues));
             }
-            out = ((IndexOperator)operator).getOrCreateOutput(Constants.OUT,holders.toArray(new IndexOperator.QueryHolder[holders.size()]) );
+            out = ((IndexOperator)operator).getOrCreateOutput(Constants.OUT + "_",holders.toArray(new IndexOperator.QueryHolder[holders.size()]) );
         }else{
             out = operator.getOutput(outputName);
         }
@@ -153,6 +153,11 @@ public class TestMixerContext {
         }
         return operator;
     }
+
+    public IOperator safeGetOperator(String operatorName) {
+        return  catalog.getOperatorByPath(operatorName);
+    }
+
 
     private IInput getInput(String operatorName, String inputName) {
         IOperator operator = getOperator(operatorName);
@@ -173,6 +178,11 @@ public class TestMixerContext {
     }
 
     public void commit() {
+        for(IOperator op : catalog.getAllOperators()){
+            if(op instanceof ValidationOperator){
+                ((ValidationOperator)op).clearRecordedEvents();
+            }
+        }
         executionContext.commit();
     }
 
@@ -190,4 +200,27 @@ public class TestMixerContext {
         factory.configure(operatorName,context);
 
     }
+
+    public void validateSchema(String operatorName,List<Map<String, String>> records) {
+        String name = operatorName + "validator";
+        ValidationOperator operator = (ValidationOperator) catalog.getOperatorByPath(name);
+        if(operator == null){
+            throw new RuntimeException("Unable to find validator for operator named" + operatorName);
+        }
+        List<ValidationOperatorColumn> columns = records.stream().map(c -> ValidationUtils.toColumn(c)).collect(Collectors.toList());
+        operator.validateColumns(columns);
+    }
+
+    public void validateData(String operatorName, String keyColumnName, List<Map<String, String>> records) {
+        String name = operatorName + "validator";
+        ValidationOperator operator = (ValidationOperator) catalog.getOperatorByPath(name);
+        if(operator == null){
+            throw new RuntimeException("Unable to find validator for operator named ∂" + operatorName);
+        }
+        List<ValidationOperatorRow> rows = records.stream().map(c -> ValidationUtils.toRow(c, keyColumnName)).collect(Collectors.toList());
+        List<String> columns = records.size() > 0 ? new ArrayList<>(records.get(0).keySet()) : null;
+
+        operator.validateRows(c-> (String) c, rows, columns, keyColumnName);
+    }
+
 }

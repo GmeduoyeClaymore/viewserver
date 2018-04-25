@@ -47,6 +47,7 @@ public class FunctionRegistry {
         functions.put("hash", Hash.class);
         functions.put("serialize", Serialize.class);
         functions.put("distance", Distance.class);
+        functions.put("distanceJson", DistanceJson.class);
     }
 
     public void register(String name, Class<? extends IUserDefinedFunction> clazz) {

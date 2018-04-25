@@ -31,23 +31,22 @@ Feature: Multiple operators
     And operator "source1" output "out" plugged into "Filter1" input "in"
     And operator "Filter1" output "out" plugged into "Filter2" input "in"
     And operator "Filter2" output "out" plugged into "Filter3" input "in"
-    And listen for changes on "Filter3" output "out"
     And commit
-    Then operator "Filter3" output "out" is
-      | ~Action     | ~Name     | ~ColumnType | ~TEId | byteVal | calcCol1 | code  | doubleVal           | floatVal   | id | market  | product  | shortVal | tied  | time             |
-      | SchemaReset |           |             |       |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | id        | Int         | 0     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | market    | String      | 1     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | product   | String      | 2     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | time      | Long        | 3     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | code      | Int         | 4     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | tied      | Bool        | 5     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | byteVal   | Byte        | 6     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | shortVal  | Short       | 7     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | floatVal  | Float       | 8     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | ColumnAdd   | doubleVal | Double      | 9     |         |          |       |                     |            |    |         |          |          |       |                  |
-      | DataReset   |           |             |       |         |          |       |                     |            |    |         |          |          |       |                  |
-      | RowAdd      |           |             | 0     | 0       |          | 44444 | -54874.247687687486 | -35.187397 | 3  | Market1 | Product1 | 23230    | false | 7223372036775806 |
+    Then schema for "Filter3" is
+      | ~Action     | ~Name     | ~ColumnType |
+      | ColumnAdd   | id        | Int         |
+      | ColumnAdd   | market    | String      |
+      | ColumnAdd   | product   | String      |
+      | ColumnAdd   | time      | Long        |
+      | ColumnAdd   | code      | Int         |
+      | ColumnAdd   | tied      | Bool        |
+      | ColumnAdd   | byteVal   | Byte        |
+      | ColumnAdd   | shortVal  | Short       |
+      | ColumnAdd   | floatVal  | Float       |
+      | ColumnAdd   | doubleVal | Double      |
+    Then data for "Filter3" is
+      | ~Action     | byteVal | calcCol1 | code  | doubleVal           | floatVal   | id | market  | product  | shortVal | tied  | time             |
+      | RowAdd      | 0       |          | 44444 | -54874.247687687486 | -35.187397 | 3  | Market1 | Product1 | 23230    | false | 7223372036775806 |
     And commit
 
   Scenario: Multiple CalcCol operator output
@@ -66,31 +65,29 @@ Feature: Multiple operators
     And operator "source1" output "out" plugged into "CalculatedCol1" input "in"
   #  And operator "CalcCol1" output "out" plugged into "CalcCol2" input "in"
   #  And operator "CalcCol2" output "out" plugged into "CalcCol3" input "in"
-    And listen for changes on "CalculatedCol1" output "out"
     And commit
-    Then operator "CalculatedCol1" output "out" is
-      | ~Action     | ~Name     | ~ColumnType | ~TEId | calcCol1    | byteVal | code   | doubleVal           | floatVal   | id | market  | product  | shortVal | tied  | time                 |
-      | SchemaReset |           |             |       |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | id        | Int         | 0     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | market    | String      | 1     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | product   | String      | 2     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | time      | Long        | 3     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | code      | Int         | 4     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | tied      | Bool        | 5     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | byteVal   | Byte        | 6     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | shortVal  | Short       | 7     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | floatVal  | Float       | 8     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | doubleVal | Double      | 9     |             |         |        |                     |            |    |         |          |          |       |                      |
-      | ColumnAdd   | calcCol1  | Long        | 10    |             |         |        |                     |            |    |         |          |          |       |                      |
-      | DataReset   |           |             |       |             |         |        |                     |            |    |         |          |          |       |                      |
-      | RowAdd      |           |             | 0     | 123454321   | -127    | 11111  | 34.238476924128584  | 3.878476   | 0  | Market1 | Product1 | -32768   | true  | -9223372036854775808 |
-      | RowAdd      |           |             | 1     | 493817284   | 127     | 22222  | -32.45682768726487  | -4.234897  | 1  | Market1 | Product2 | 32767    | false | 9223372036854775806  |
-      | RowAdd      |           |             | 2     | 1111088889  | 10      | 33333  | 4444.556350097544   | 5.1873984  | 2  | Market1 | Product3 | 234      | true  | -822337203477580     |
-      | RowAdd      |           |             | 3     | 1975269136  | 0       | 44444  | -54874.247687687486 | -35.187397 | 3  | Market1 | Product1 | 23230    | false | 7223372036775806     |
-      | RowAdd      |           |             | 4     | 3086358025  | 120     | 55555  | 478.345             | 65.64235   | 4  | Market1 | Product4 | -6540    | true  | 8223372036775805     |
-      | RowAdd      |           |             | 5     | 4444355556  | -20     | 66666  | -33567.247687687486 | 55.818733  | 5  | Market2 | Product1 | 304      | false | 7223372036775807     |
-      | RowAdd      |           |             | 6     | 6049261729  | -30     | 77777  | -5683.6456645688    | 54.21874   | 6  | Market2 | Product2 | -404     | true  | -6223372054775807    |
-      | RowAdd      |           |             | 7     | 7901076544  | 29      | 88888  | 33679.247687687486  | -54.2198   | 7  | Market2 | Product3 | -503     | false | 5223372034775807     |
-      | RowAdd      |           |             | 8     | 9999800001  | 23      | 99999  | 245.88999538835     | -565.182   | 8  | Market2 | Product4 | 0        | true  | 4223372054775807     |
-      | RowAdd      |           |             | 9     | 10203020100 | -120    | 101010 | 2567.5683222458865  | 98.145226  | 9  | Market2 | Product1 | 770      | false | 123376854775807      |
-    And commit
+    Then schema for "CalculatedCol1" is
+      | ~Action     | ~Name     | ~ColumnType |
+      | ColumnAdd   | id        | Int         |
+      | ColumnAdd   | market    | String      |
+      | ColumnAdd   | product   | String      |
+      | ColumnAdd   | time      | Long        |
+      | ColumnAdd   | code      | Int         |
+      | ColumnAdd   | tied      | Bool        |
+      | ColumnAdd   | byteVal   | Byte        |
+      | ColumnAdd   | shortVal  | Short       |
+      | ColumnAdd   | floatVal  | Float       |
+      | ColumnAdd   | doubleVal | Double      |
+      | ColumnAdd   | calcCol1  | Long        |
+    Then data for "CalculatedCol1" is
+      | ~Action     |  calcCol1    | byteVal | code   | doubleVal           | floatVal   | id | market  | product  | shortVal | tied  | time                 |
+      | RowAdd      |  123454321   | -127    | 11111  | 34.238476924128584  | 3.878476   | 0  | Market1 | Product1 | -32768   | true  | -9223372036854775808 |
+      | RowAdd      |  493817284   | 127     | 22222  | -32.45682768726487  | -4.234897  | 1  | Market1 | Product2 | 32767    | false | 9223372036854775806  |
+      | RowAdd      |  1111088889  | 10      | 33333  | 4444.556350097544   | 5.1873984  | 2  | Market1 | Product3 | 234      | true  | -822337203477580     |
+      | RowAdd      |  1975269136  | 0       | 44444  | -54874.247687687486 | -35.187397 | 3  | Market1 | Product1 | 23230    | false | 7223372036775806     |
+      | RowAdd      |  3086358025  | 120     | 55555  | 478.345             | 65.64235   | 4  | Market1 | Product4 | -6540    | true  | 8223372036775805     |
+      | RowAdd      |  4444355556  | -20     | 66666  | -33567.247687687486 | 55.818733  | 5  | Market2 | Product1 | 304      | false | 7223372036775807     |
+      | RowAdd      |  6049261729  | -30     | 77777  | -5683.6456645688    | 54.21874   | 6  | Market2 | Product2 | -404     | true  | -6223372054775807    |
+      | RowAdd      |  7901076544  | 29      | 88888  | 33679.247687687486  | -54.2198   | 7  | Market2 | Product3 | -503     | false | 5223372034775807     |
+      | RowAdd      |  9999800001  | 23      | 99999  | 245.88999538835     | -565.182   | 8  | Market2 | Product4 | 0        | true  | 4223372054775807     |
+      | RowAdd      |  10203020100 | -120    | 101010 | 2567.5683222458865  | 98.145226  | 9  | Market2 | Product1 | 770      | false | 123376854775807      |

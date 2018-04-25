@@ -26,13 +26,11 @@ import io.viewserver.schema.column.ColumnType;
 public class ValidationOperatorColumn {
     private String name;
     private ContentType type;
-    private int columnId;
     private ValidationAction validationAction;
 
-    public ValidationOperatorColumn(String name, ContentType type, int columnId, ValidationAction validationAction) {
+    public ValidationOperatorColumn(String name, ContentType type, ValidationAction validationAction) {
         this.name = name;
         this.type = type;
-        this.columnId = columnId;
         this.validationAction = validationAction;
     }
 
@@ -45,7 +43,7 @@ public class ValidationOperatorColumn {
     }
 
     public int getColumnId() {
-        return columnId;
+        return ValidationUtils.columnHash(name);
     }
 
     public ValidationAction getValidationAction() {

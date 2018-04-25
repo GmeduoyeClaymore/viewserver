@@ -16,5 +16,14 @@
 
 package io.viewserver.operators.validator;
 
-public class ValidationSchemaReset {
+public class ValidationControlEvent {
+    private String eventName;
+
+    public ValidationControlEvent(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
 }

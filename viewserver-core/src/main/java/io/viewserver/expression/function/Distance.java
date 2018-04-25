@@ -16,12 +16,15 @@
 
 package io.viewserver.expression.function;
 
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionDouble;
 import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 /**
  * Created by Paul on 19/11/2015.
@@ -54,7 +57,7 @@ public class Distance implements IUserDefinedFunction, IExpressionDouble {
         return distance(lat1.getDouble(row), lng1.getDouble(row), lat2.getDouble(row), lng2.getDouble(row), unit.getString(row));
     }
 
-    private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+    static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
@@ -76,5 +79,6 @@ public class Distance implements IUserDefinedFunction, IExpressionDouble {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
-
 }
+
+

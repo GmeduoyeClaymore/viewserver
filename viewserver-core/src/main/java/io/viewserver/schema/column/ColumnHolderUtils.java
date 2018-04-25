@@ -139,9 +139,6 @@ public class ColumnHolderUtils {
                 if(string == null){
                     return null;
                 }
-                if(columnHolder.getMetadata().getDataType().equals(ContentType.Json)){
-                    return ControllerUtils.mapDefault(string);
-                }
                 return string;
             }
             default: {
@@ -333,7 +330,8 @@ public class ColumnHolderUtils {
                 break;
             }
             case String: {
-                ((IWritableColumnString)columnHolder.getColumn()).setString(row, (String) columnHolder.getMetadata().getDataType().convertToDataType(value));
+                Object o = columnHolder.getMetadata().getDataType().convertToDataType(value);
+                ((IWritableColumnString)columnHolder.getColumn()).setString(row, (String) o);
                 break;
             }
             default: {
@@ -361,12 +359,18 @@ public class ColumnHolderUtils {
         int count = columns.size();
         for (int i = 0; i < count; i++) {
             Column column = columns.get(i);
-            ColumnHolder columnHolder = createColumnHolder(column.getName(), column.getType().getColumnType());
-            ColumnMetadata columnMetadata = createColumnMetadata(columnHolder.getType());
-            columnMetadata.setDataType(column.getType());
-            columnHolder.setMetadata(columnMetadata);
+            Column column1 = column;
+            ColumnHolder columnHolder = createColumnHolder(column1);
             schema.addColumn(columnHolder);
         }
         return schema;
+    }
+
+    public static ColumnHolder createColumnHolder(Column column1) {
+        ColumnHolder columnHolder = createColumnHolder(column1.getName(), column1.getType().getColumnType());
+        ColumnMetadata columnMetadata = createColumnMetadata(columnHolder.getType());
+        columnMetadata.setDataType(column1.getType());
+        columnHolder.setMetadata(columnMetadata);
+        return columnHolder;
     }
 }

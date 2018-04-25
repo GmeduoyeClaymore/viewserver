@@ -3,6 +3,7 @@
 Feature: Transpose operator fixture
 
   Background:
+    Given id field is "market"
     Given table named "source" with data
       | id~Int | market~Int | bucket~Int | notional~Long |
       | 0      | 100        | 1          | 20            |
@@ -20,17 +21,17 @@ Feature: Transpose operator fixture
       | pivotColumns | bucket |
       | pivotValues  | 1,2    |
     And operator "source" output "out" plugged into "transpose1" input "in"
-    Then operator "transpose1" output "out" is
-      | ~Action     | ~Name            | ~ColumnType | ~TEId | market | bucket1_notional | bucket2_notional | bucket1_id | bucket2_id |
-      | SchemaReset |                  |             |       |        |                  |                  |            |            |
-      | ColumnAdd   | bucket1_id       | Int         | 1     |        |                  |                  |            |            |
-      | ColumnAdd   | bucket2_id       | Int         | 3     |        |                  |                  |            |            |
-      | ColumnAdd   | market           | Int         | 0     |        |                  |                  |            |            |
-      | ColumnAdd   | bucket1_notional | Long        | 2     |        |                  |                  |            |            |
-      | ColumnAdd   | bucket2_notional | Long        | 4     |        |                  |                  |            |            |
-      | DataReset   |                  |             |       |        |                  |                  |            |            |
-      | RowAdd      |                  |             | 5     | 100    | 20               | 40               | 0          | 1          |
-      | RowAdd      |                  |             | 6     | 30     | 60               | 0                | 2          | 0          |
-      | RowAdd      |                  |             | 7     | 40     | 60               | 60               | 4          | 5          |
     And commit
+    Then schema for "transpose1" is
+      | ~Action     | ~Name            | ~ColumnType |
+      | ColumnAdd   | bucket1_id       | Int         |
+      | ColumnAdd   | bucket2_id       | Int         |
+      | ColumnAdd   | market           | Int         |
+      | ColumnAdd   | bucket1_notional | Long        |
+      | ColumnAdd   | bucket2_notional | Long        |
+    Then data for "transpose1" is
+      | ~Action     |  market | bucket1_notional | bucket2_notional | bucket1_id | bucket2_id |
+      | RowAdd      |  100    | 20               | 40               | 0          | 1          |
+      | RowAdd      |  30     | 60               | 0                | 2          | 0          |
+      | RowAdd      |  40     | 60               | 60               | 4          | 5          |
 

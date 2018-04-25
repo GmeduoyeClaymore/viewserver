@@ -320,9 +320,10 @@ public class ReportContext implements IParameterHolder {
         private ValueLists.IValueList values;
         private boolean exclude;
 
-        public DimensionValue(String name, ValueLists.IValueList values) {
+        public DimensionValue(String name, ValueLists.IValueList values, boolean exclude) {
             this.name = name;
             this.values = values;
+            this.exclude = exclude;
         }
 
         @JsonCreator
