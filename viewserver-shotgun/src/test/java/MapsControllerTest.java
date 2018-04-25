@@ -17,7 +17,7 @@ public class MapsControllerTest {
 
     @Before
     public void createSut(){
-        sut = new MapsController(new MapsControllerKey("AIzaSyBauRixXaHVHwj87XPPbjwsiL3KYyaurE8",false));
+        sut = new MapsController(new MapsControllerKey("AIzaSyBauRixXaHVHwj87XPPbjwsiL3KYyaurE8"));
         TestControllerUtils.getControllerContext("foo");
     }
 

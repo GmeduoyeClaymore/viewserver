@@ -98,17 +98,17 @@ export default class OrderRequestDaoContext{
         productId: orderRequest.productId,
         notes: orderRequest.notes,
         imageUrl: orderRequest.imageUrl,
-        fixedPrice: orderSummary.fixedPrice == -1 ? undefined : orderSummary.fixedPrice,
-        startTime: orderSummary.start,
-        endTime: orderSummary.endTime
+        fixedPrice: orderRequest.fixedPrice == -1 ? undefined : orderRequest.fixedPrice,
+        startTime: orderRequest.start,
+        endTime: orderRequest.endTime
       },
       contentType: {
         contentTypeId: orderRequest.contentTypeContentTypeId,
         name: orderRequest.contentTypeName,
-        hasOrigin: orderSummary.contentTypeHasOrigin,
-        hasDestination: orderSummary.contentTypeHasDestination,
-        hasStartTime: orderSummary.contentTypeHasStartTime,
-        hasEndTime: orderSummary.contentTypeHasEndTime,
+        hasOrigin: orderRequest.contentTypeHasOrigin,
+        hasDestination: orderRequest.contentTypeHasDestination,
+        hasStartTime: orderRequest.contentTypeHasStartTime,
+        hasEndTime: orderRequest.contentTypeHasEndTime,
         rootProductCategory: orderRequest.contentTypeRootProductCategory,
         pricingStrategy: orderRequest.contentTypePricingStrategy
       },

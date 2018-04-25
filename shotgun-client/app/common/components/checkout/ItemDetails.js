@@ -98,7 +98,6 @@ const validationSchema = {
 
 const styles = {
   detailsInput: {
-    flex: 1,
     height: 120,
     marginTop: 15,
     textAlignVertical: 'top'

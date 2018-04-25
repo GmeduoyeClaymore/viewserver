@@ -38,9 +38,8 @@ public class NearbyPlaceRequest{
         this.rankby = rankby;
     }
 
-    public String toQueryString(String key,boolean advanced){
-        String locationParam = advanced ? "latlng" : "location";
-        return String.format("%s=%s,%s&key=%s&rankby=%s&result_type=street_address",locationParam,this.latitude,this.longitude,key,this.rankby);
+    public String toQueryString(String key){
+        return String.format("location=%s,%s&key=%s&rankby=%s&result_type=street_address",this.latitude,this.longitude,key,this.rankby);
     }
 
     @Override

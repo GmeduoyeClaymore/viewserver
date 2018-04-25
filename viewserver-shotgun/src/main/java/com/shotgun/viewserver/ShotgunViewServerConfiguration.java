@@ -44,7 +44,7 @@ public class ShotgunViewServerConfiguration extends XmlViewServerConfiguration i
 
     @Override
     public MapsControllerKey getMapsKey() {
-        return new MapsControllerKey(configuration.getString(VIEWSERVER_MAPS_KEY), false);
+        return new MapsControllerKey(configuration.getString(VIEWSERVER_MAPS_KEY));
     }
 
     @Override

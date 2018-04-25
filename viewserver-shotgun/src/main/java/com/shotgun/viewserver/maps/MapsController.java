@@ -22,7 +22,6 @@ public class MapsController {
     private static final Logger logger = LoggerFactory.getLogger(MapsController.class);
 
     String NEARBY_URL_DEFAULT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-    String NEARBY_URL_REVERSE_GEOCODING = "https://maps.googleapis.com/maps/api/geocode/json";
     String REVERSE_GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
     String PLACE_URL = "https://maps.googleapis.com/maps/api/place/details/json";
@@ -35,8 +34,7 @@ public class MapsController {
 
     @ControllerAction(path = "requestNearbyPlaces", isSynchronous = false)
     public HashMap<String,Object> requestNearbyPlaces(NearbyPlaceRequest request){
-        String url = this.controllerKey.isSupportsReverseGeocoding() ? NEARBY_URL_REVERSE_GEOCODING : NEARBY_URL_DEFAULT_URL;
-        return getResponse(request, ControllerUtils.execute("GET", url, request.toQueryString(controllerKey.getKey(), controllerKey.isSupportsReverseGeocoding())),true);
+        return getResponse(request, ControllerUtils.execute("GET", NEARBY_URL_DEFAULT_URL, request.toQueryString(controllerKey.getKey())),true);
     }
 
     @ControllerAction(path = "mapPlaceRequest", isSynchronous = false)

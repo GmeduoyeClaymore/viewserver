@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text} from 'react-native';
+import {Text} from 'native-base';
 
 export class Currency extends Component{
   render(){

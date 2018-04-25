@@ -137,7 +137,7 @@ class DeliveryMap extends Component{
           </Row>
           {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> :
             <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap} initialRegion={initialRegion}
-              showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+              showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
               {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={this.setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}

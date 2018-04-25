@@ -48,9 +48,6 @@ public class OrderItemController {
             .addValue("contentTypeId", orderItem.getContentTypeId())
             .addValue("notes", orderItem.getNotes())
             .addValue("imageUrl", orderItem.getImageUrl())
-            .addValue("fixedPrice", orderItem.getFixedPrice())
-            .addValue("fixedPrice", orderItem.getFixedPrice())
-            .addValue("fixedPrice", orderItem.getFixedPrice())
             .addValue("quantity", orderItem.getQuantity());
 
         if (orderItem.getStartTime() != null) {
@@ -59,6 +56,10 @@ public class OrderItemController {
 
         if (orderItem.getEndTime() != null) {
             orderItemRecord.addValue("endTime", orderItem.getEndTime());
+        }
+
+        if(orderItem.getFixedPrice() != null){
+            orderItemRecord.addValue("fixedPrice", orderItem.getFixedPrice());
         }
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);

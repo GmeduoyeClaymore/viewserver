@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {Picker} from 'react-native';
-import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content, Item, Label, Input} from 'native-base';
+import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
 import {getDaoState, getOperationError} from 'common/dao';
-import {Currency, ValidatingButton, ValidatingInput, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
+import {Currency, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
@@ -114,7 +114,7 @@ class DeliveryOptions extends Component {
     return <Container>
       <Header withButton>
         <Left>
-          <Button onPress={history.goBack}>
+          <Button onPress={() => history.goBack()}>
             <Icon name='back-arrow'/>
           </Button>
         </Left>
@@ -235,8 +235,7 @@ const styles = {
   calculatedPrice: {
     marginTop: 12,
     fontSize: 18,
-    fontWeight: 'bold',
-    color: shotgun.brandDark
+    fontWeight: 'bold'
   },
   calculatedPricePlaceholder: {
     color: shotgun.coolGrey,

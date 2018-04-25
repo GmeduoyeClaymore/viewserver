@@ -190,7 +190,7 @@ public class OrderController {
 
         PriceStrategy strategy = getPriceStrategy(orderItem);
         if(strategy == null){
-            throw  new RuntimeException(String.format("Unable to get pricing strategy for order item %s. There is some convuluted method of doing this maybe it could be simplified",orderItem));
+            throw  new RuntimeException(String.format("Unable to get pricing strategy for order item %s. There is some convoluted method of doing this maybe it could be simplified",orderItem));
         }
         Product product = getProduct(orderItem.getProductId());
         switch (strategy){
