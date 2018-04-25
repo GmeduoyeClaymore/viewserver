@@ -32,20 +32,10 @@ public class DeliveryController {
                 .addValue("lastModified", now)
                 .addValue("distance", delivery.getDistance())
                 .addValue("driverId", delivery.getDriverId())
-                .addValue("isFixedPrice", delivery.getIsFixedPrice())
-                .addValue("fixedPriceValue", delivery.getFixedPriceValue())
                 .addValue("duration", delivery.getDuration())
                 .addValue("originDeliveryAddressId", delivery.getOrigin().getDeliveryAddressId())
                 .addValue("customerId", customerId);
 
-
-        if (delivery.getFrom() != null) {
-            deliveryRecord.addValue("from", delivery.getFrom());
-        }
-
-        if (delivery.getTill() != null) {
-            deliveryRecord.addValue("till", delivery.getTill());
-        }
 
         if (delivery.getDestination() != null) {//can happen with rubbish collection
             deliveryRecord.addValue("destinationDeliveryAddressId", delivery.getDestination().getDeliveryAddressId());

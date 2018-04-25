@@ -44,11 +44,11 @@ export default class ContentTypeDaoContext{
   }
 
   createContentType(row){
-    const {contentTypeId, name, origin, destination, noPeople, fromTime, tillTime, noItems, pricingStrategy, description, rootProductCategory} = row;
+    const {contentTypeId, name, hasOrigin, hasDestination, hasStartTime, hasEndTime, pricingStrategy, description, rootProductCategory} = row;
     const {categoryId, category, parentCategoryId, isLeaf, level, path} = row;
     const productCategory = {categoryId, category, parentCategoryId, isLeaf, level, path};
     return {
-      contentTypeId, name, origin, destination, noPeople, fromTime, tillTime, noItems, rootProductCategory, pricingStrategy, description, productCategory
+      contentTypeId, name, hasOrigin, hasDestination, hasStartTime, hasEndTime, rootProductCategory, pricingStrategy, description, productCategory
     };
   }
 

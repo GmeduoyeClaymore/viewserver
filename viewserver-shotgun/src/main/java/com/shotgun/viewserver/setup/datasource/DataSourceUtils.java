@@ -16,7 +16,7 @@ public class DataSourceUtils {
         if (!shotgunConfiguration.isTest() && !shotgunConfiguration.isMock()) {
             dataAdapter = new FirebaseDataAdapter(shotgunConfiguration.getFirebaseKeyPath(), name);
         } else {
-            dataAdapter = getCsvDataAdapter(shotgunConfiguration, name, dataPath, false);
+            dataAdapter = getCsvDataAdapter(shotgunConfiguration, name, dataPath, true);
         }
 
         return new DataLoader(name, dataAdapter, null);

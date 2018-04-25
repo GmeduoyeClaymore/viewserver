@@ -3,18 +3,9 @@ import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import {OrderStatuses, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Icon, OriginDestinationSummary} from 'common/components';
+import {Icon, OriginDestinationSummary, Currency} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {connect} from 'custom-redux';
-
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('OrderStatusResolver', getProductBasedFriendlyOrderStatusName).
-    delivery(getDeliveryFriendlyOrderStatusName).
-    rubbish(getRubbishFriendlyOrderStatusName);
-
-/*eslint-enable */
 
 class OrderRequest extends Component {
   constructor(props) {
@@ -27,12 +18,12 @@ class OrderRequest extends Component {
   }
 
   render() {
-    const {resources} = this;
     const {orderSummary, history, next, isLast, isFirst} = this.props;
-    const {delivery, contentType, quantity: noRequiredForOffload} = orderSummary;
+    const {delivery, contentType, orderItem} = orderSummary;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
 
-    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]} onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
+    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
+      onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={70}>
@@ -40,23 +31,28 @@ class OrderRequest extends Component {
           </Col>
           <Col size={30} style={styles.priceRow}>
             <Text style={{...styles.price, marginBottom: 5}}>{orderSummary.product.name }</Text>
-            <Text style={styles.price}>£{(orderSummary.totalPrice / 100).toFixed(2)} <Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
-            <Text note style={styles.orderStatus}>{resources.OrderStatusResolver(orderSummary)}</Text>
+            <Text><Currency value={orderSummary.totalPrice} style={styles.price}/><Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
+            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderSummary)}</Text>
           </Col>
         </Row>
         <Row size={25}>
           <Col size={70}>
-            {!delivery.isFixedPrice && contentType.fromTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('Do MMM, h:mma')}</Text></Row> : null}
-            {!delivery.isFixedPrice && contentType.tillTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('Do MMM, h:mma')}</Text></Row> : null}
+            {!orderItem.fixedPrice && contentType.hasStartTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.startTime).format('Do MMM, h:mma')}</Text></Row> : null}
+            {!orderItem.fixedPrice && contentType.hasEndTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.endTime).format('Do MMM, h:mma')}</Text></Row> : null}
           </Col>
-          {noRequiredForOffload > 0 ?
-            <Col size={30} style={styles.noRequiredForOffloadCol}><Row>{noRequiredForOffload > 0 ? [<Icon key='icon' paddedIcon name="one-person"/>, <Text key='text' style={{alignSelf: 'flex-start'}}>{`${noRequiredForOffload} ${noRequiredForOffload > 1 ? 'people' : 'person'}  required`}</Text>] : null}</Row></Col> : null
-          }
         </Row>
       </Grid>
     </ListItem>;
   }
 }
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+property('OrderStatusResolver', getProductBasedFriendlyOrderStatusName).
+delivery(getDeliveryFriendlyOrderStatusName).
+rubbish(getRubbishFriendlyOrderStatusName);
+/*eslint-enable */
 
 const styles = {
   orderRequest: {
@@ -107,7 +103,6 @@ const styles = {
     fontSize: 14,
   }
 };
-
 
 const mapStateToProps = (state, initialProps) => {
   const {orderSummary = {}} = initialProps;

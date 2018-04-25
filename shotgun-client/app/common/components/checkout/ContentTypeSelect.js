@@ -3,42 +3,20 @@ import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
-import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
 
-const withFixedPice = (state) => {
-  const delivery = {...state.delivery, isFixedPrice: true};
-  return {...state, delivery};
-};
-
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-/*eslint-disable */
-resourceDictionary.
-  property('InitialState', INITIAL_STATE).
-    personell(withFixedPice(INITIAL_STATE))
-/*eslint-enable */
-
 class ContentTypeSelect extends Component{
-  constructor(props){
-    super(props);
-    this.startOrder = this.startOrder.bind(this);
-    this.selectContentType = this.selectContentType.bind(this);
-  }
-  
   beforeNavigateTo(){
-    const {resetParentComponentState} = this.props;
-    resetParentComponentState();
+    this.props.resetParentComponentState();
   }
   
-  selectContentType(selectedContentType){
-    const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
-    const initialState = resources.InitialState;
-    const orderItem = {...initialState.orderItem, contentTypeId: selectedContentType.contentTypeId};
+  selectContentType = (selectedContentType) => {
     const {resetParentComponentState} = this.props;
-    resetParentComponentState(() => this.setState({...initialState, selectedContentType, orderItem, selectedCategory: selectedContentType.productCategory}));
+    const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
+    resetParentComponentState(() => this.setState({...INITIAL_STATE, selectedContentType, orderItem, selectedCategory: selectedContentType.productCategory}));
   }
 
-  startOrder(){
+  startOrder = () => {
     const {history, next} = this.props;
     history.push(next);
   }
@@ -66,7 +44,7 @@ class ContentTypeSelect extends Component{
           </Grid>
           <Text note style={{marginTop: 20}}>{selectedContentType !== undefined ? selectedContentType.description : null}</Text>
         </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => this.startOrder()}
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={this.startOrder}
           validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedContentType}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>

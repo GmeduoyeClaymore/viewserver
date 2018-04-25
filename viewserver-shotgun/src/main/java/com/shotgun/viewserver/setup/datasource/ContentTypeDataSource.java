@@ -20,16 +20,13 @@ public class
             .withColumns(Arrays.asList(
                     new Column("contentTypeId", "contentTypeId", ColumnType.Int),
                     new Column("name", "name", ColumnType.String),
-                    new Column("origin", "origin", ColumnType.Bool),
-                    new Column("destination", "destination", ColumnType.Bool),
-                    new Column("noPeople", "noPeople", ColumnType.Bool),
-                    new Column("fromTime", "fromTime", ColumnType.Bool),
-                    new Column("tillTime", "tillTime", ColumnType.Bool),
-                    new Column("noItems", "noItems", ColumnType.Bool),
-                    new Column("rootProductCategory", "rootProductCategory", ColumnType.String),
-                                        new Column("description", "description", ColumnType.String),
+                    new Column("hasOrigin", "hasOrigin", ColumnType.Bool),
+                    new Column("hasDestination", "hasDestination", ColumnType.Bool),
+                    new Column("hasStartTime", "hasStartTime", ColumnType.Bool),
+                    new Column("hasEndTime", "hasEndTime", ColumnType.Bool),
+                    new Column("rootProductCategory", "rootProductCategory", ColumnType.String), new Column("description", "description", ColumnType.String),
                     new Column("pricingStrategy", "pricingStrategy", ColumnType.String)
-            ))
+                    ))
             .withKeyColumns("contentTypeId");
 
     public static DataSource getDataSource(IShotgunViewServerConfiguration shotgunConfiguration) {

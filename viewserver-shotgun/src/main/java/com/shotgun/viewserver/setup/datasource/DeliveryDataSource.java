@@ -1,9 +1,6 @@
 package com.shotgun.viewserver.setup.datasource;
 
 import com.shotgun.viewserver.IShotgunViewServerConfiguration;
-import io.viewserver.adapters.common.DataLoader;
-import io.viewserver.adapters.csv.CsvDataAdapter;
-import io.viewserver.adapters.firebase.FirebaseCsvDataAdapter;
 import io.viewserver.datasource.*;
 
 import java.util.Arrays;
@@ -28,12 +25,8 @@ DeliveryDataSource {
                                         new Column("driverId", "driverId", ColumnType.String),
                                         new Column("originDeliveryAddressId", "originDeliveryAddressId", ColumnType.String),
                                         new Column("destinationDeliveryAddressId", "destinationDeliveryAddressId", ColumnType.String),
-                                        new Column("from", "from", ColumnType.DateTime),
-                                        new Column("till", "till", ColumnType.DateTime),
                                         new Column("distance", "distance", ColumnType.Int),
-                                        new Column("duration", "duration", ColumnType.Int),
-                                        new Column("fixedPriceValue", "fixedPriceValue", ColumnType.Int),
-                                        new Column("isFixedPrice", "isFixedPrice", ColumnType.Bool)
+                                        new Column("duration", "duration", ColumnType.Int)
                                 ))
                                 .withKeyColumns("deliveryId")
                 )

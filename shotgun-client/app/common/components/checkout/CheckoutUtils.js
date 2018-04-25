@@ -6,3 +6,4 @@ const stripImageData = (item) => {
   const {imageData, ...rest} = item;
   return rest;
 };
+

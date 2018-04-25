@@ -33,11 +33,11 @@ class ProductList extends Component{
 
   constructor(props){
     super(props);
-
-    this.search = this.search.bind(this);
-    this.setState = this.setState.bind(this);
-    this.goBack = this.goBack.bind(this);
     ContentTypes.resolveResourceFromProps(this.props, resourceDictionary, this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
   rowView({item: p, ...rest}){
@@ -51,19 +51,15 @@ class ProductList extends Component{
     </Col> : null;
   }
 
-  search(searchText) {
+  search = (searchText) => {
     const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('productDao', {searchText}));
   }
 
-  goBack(){
+  goBack = () => {
     const {parentSelectedCategory, history} = this.props;
     history.goBack();
     this.setState({selectedCategory: parentSelectedCategory});
-  }
-
-  componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
   render(){
@@ -135,5 +131,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const ConnectedProductList =  withExternalState(mapStateToProps)(ProductList);
-export default ConnectedProductList;
+export default withExternalState(mapStateToProps)(ProductList);

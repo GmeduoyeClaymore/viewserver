@@ -51,17 +51,6 @@ export const getPaymentCards = (continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', continueWith);
 };
 
-export const getPaymentCardsIfNotAlreadySucceeded =  (continueWith) =>  async (dispatch, getState) => {
-  const paymentCardCommandStatus = getDaoCommandStatus(getState(), 'getCustomerPaymentCards', 'paymentDao' );
-  const succeededInGettingCards =  paymentCardCommandStatus === 'success';
-  const getPaymentCardsCommandInFlight = paymentCardCommandStatus === 'start';
-  if (!succeededInGettingCards && !getPaymentCardsCommandInFlight){
-    dispatch(getPaymentCards());
-  } else if (continueWith){
-    continueWith();
-  }
-};
-
 export const cancelOrder = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'cancelOrder', {orderId}, continueWith);
 };

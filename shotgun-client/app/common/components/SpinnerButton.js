@@ -3,6 +3,7 @@ import {Button, Spinner} from 'native-base';
 import { Platform } from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 const IS_ANDROID = Platform.OS === 'android';
+
 export class SpinnerButton extends Component {
   constructor(){
     super();

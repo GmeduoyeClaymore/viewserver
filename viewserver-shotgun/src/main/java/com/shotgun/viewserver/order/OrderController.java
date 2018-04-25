@@ -41,7 +41,6 @@ public class OrderController {
     private boolean isTest;
     private KeyedTable productTable;
     private IDatabaseUpdater iDatabaseUpdater;
-    private Integer labourerRate;
 
     public OrderController(IDatabaseUpdater iDatabaseUpdater,
                            DeliveryAddressController deliveryAddressController,
@@ -142,16 +141,13 @@ public class OrderController {
 
     @ControllerAction(path = "calculateTotalPrice", isSynchronous = true)
     public int calculateTotalPrice(@ActionParam(name = "delivery")Delivery delivery,@ActionParam(name = "orderItems")OrderItem[] orderItems){
-        if(this.isTest){
+      /*  if(this.isTest){
             return 30;
-        }
+        }*/
 
-        if(delivery.getIsFixedPrice()){
-            return delivery.getFixedPriceValue();
-        }
         int result = 0;
         for(OrderItem orderItem : orderItems){
-            result += calculatePrice(orderItem,delivery);
+            result += calculatePrice(orderItem, delivery);
         }
         return result;
     }
@@ -188,67 +184,67 @@ public class OrderController {
     }
 
     private int calculatePrice(OrderItem orderItem, Delivery delivery) {
-        if(delivery.getIsFixedPrice()){
-            return delivery.getFixedPriceValue();
+        if(orderItem.getFixedPrice() != null){
+            return orderItem.getFixedPrice();
         }
+
         PriceStrategy strategy = getPriceStrategy(orderItem);
         if(strategy == null){
             throw  new RuntimeException(String.format("Unable to get pricing strategy for order item %s. There is some convuluted method of doing this maybe it could be simplified",orderItem));
         }
         Product product = getProduct(orderItem.getProductId());
-        switch (strategy){//TODO this will need some refining
+        switch (strategy){
             case JOURNEY_DISTANCE:
-                return (calculatePricePerDistance(delivery)) + product.getPrice() + (calculateAdditionalLabour(orderItem) / 18 /* labourers cost is a day rate 9hrs we want to see what that costs for 30 mins */);
+                //£1 per km + fixed price based on van size
+                return (calculatePriceForDistance(delivery)) + product.getPrice();
             case FIXED:
-                return getQuantity(orderItem) * product.getPrice();
+                //quantity * product price
+                return orderItem.getQuantity() * product.getPrice();
             case DURATION:
-                return getQuantity(orderItem) * product.getPrice() * calculateDays(delivery);
+                //quantity * product price * number of days
+                return orderItem.getQuantity() * product.getPrice() * calculateDays(orderItem);
             case JOB_DURATION:
-                return (product.getPrice() / 9) * calculateHours(delivery) + calculateAdditionalLabour(orderItem);
+                // product/tradesman day rate * number of days
+                // OR
+                // (product/trademans day rate / 9) * number of hours
+                int days = calculateDays(orderItem);
+                if(days >= 1){ //this job is at least on day
+                    return product.getPrice() * days;
+                }
+
+                return (product.getPrice() / 9) * calculateHours(orderItem);
             default:
                 throw new RuntimeException(String.format("Couldn't find a pricing strategy for product \"%s\"",orderItem.getProductId()));
         }
     }
 
-    private int calculateAdditionalLabour(OrderItem item) {
-        if(item.getQuantity() > 1){
-            return (item.getQuantity() - 1) * getLabourerRate();
-    }
-        return 0;
-    }
-
-    private int getLabourerRate() {
-        if(this.labourerRate == null) {
-            Product product = getProduct("Labourer");
-            this.labourerRate = product.getPrice();
+    private int calculateDays(OrderItem orderItem) {
+        if(orderItem.getStartTime() == null){
+            throw new RuntimeException("Start time must be specified");
         }
-        return this.labourerRate;
+        if(orderItem.getEndTime() == null){
+            throw new RuntimeException("End time must be specified");
+        }
+       return Days.daysBetween(new LocalDate(orderItem.getStartTime()), new LocalDate(orderItem.getEndTime())).getDays();
     }
 
 
-    private int calculateDays(Delivery delivery) {
-        if(delivery.getFrom() == null){
-            throw new RuntimeException("From date must be specified");
+    private int calculateHours(OrderItem orderItem) {
+        if (orderItem.getStartTime() == null) {
+            throw new RuntimeException("Start time must be specified");
         }
-        if(delivery.getTill() == null){
-            throw new RuntimeException("Till date must be specified");
+        if (orderItem.getEndTime() == null) {
+            throw new RuntimeException("End time must be specified");
         }
-       return Days.daysBetween(new LocalDate(delivery.getFrom()), new LocalDate(delivery.getTill())).getDays();
+        return Hours.hoursBetween(new LocalDateTime(orderItem.getStartTime()), new LocalDateTime(orderItem.getEndTime())).getHours();
     }
 
-
-    private int calculateHours(Delivery delivery) {
-        if(delivery.getFrom() == null){
-            throw new RuntimeException("From date must be specified");
+    private int calculatePriceForDistance(Delivery delivery) {
+        if(delivery.getDistance() == 0){
+            throw new RuntimeException("Zero delivery distance found for delivery");
         }
-        if(delivery.getTill() == null){
-            throw new RuntimeException("Till date must be specified");
-        }
-        return Hours.hoursBetween(new LocalDateTime(delivery.getFrom()), new LocalDateTime(delivery.getTill())).getHours();
-    }
-
-    private int getQuantity(OrderItem orderItem) {
-        return orderItem.getQuantity() == 0 ? 1 : orderItem.getQuantity();
+        //Currently set to £1 per km
+        return (delivery.getDistance() / 1000) * 100;
     }
 
     private Product getProduct(String productId) {
@@ -264,21 +260,6 @@ public class OrderController {
         result.setPrice((int) ControllerUtils.getColumnValue(this.productTable, "price", row));
         result.setProductId((String)ControllerUtils.getColumnValue(this.productTable,"productId",row));
         return result;
-    }
-
-    private int calculatePricePerDistance(Delivery delivery) {
-        if(delivery.getDistance() == 0){
-            throw new RuntimeException("Zero delivery distance found for delivery");
-        }
-        //Currently set to £1 per km
-        return (delivery.getDistance() / 1000) * 100;
-    }
-
-    private int calculateDuration(Delivery delivery) {
-        if(delivery.getDuration() == 0){
-            throw new RuntimeException("Zero duration found for delivery");
-        }
-        return delivery.getDuration();
     }
 
     private PriceStrategy getPriceStrategy(OrderItem orderItem) {

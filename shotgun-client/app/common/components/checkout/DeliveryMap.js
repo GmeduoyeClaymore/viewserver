@@ -206,15 +206,23 @@ const mapStateToProps = (state, initialProps) => {
   const {delivery, selectedContentType, selectedProduct} = initialProps;
   const {destination, origin, distance, duration} = delivery;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
-  const supportsDestination = selectedContentType.destination;
-  const supportsOrigin = selectedContentType.origin;
+  const supportsDestination = selectedContentType.hasDestination;
+  const supportsOrigin = selectedContentType.hasOrigin;
   const disableDoneButton = origin.line1 == undefined || !distance || !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   return {
     ...initialProps,
     state,
     me: getDaoState(state, ['user'], 'userDao'),
-    delivery, selectedProduct, selectedContentType, destination, origin, showDirections, supportsDestination, supportsOrigin, disableDoneButton,
+    delivery,
+    selectedProduct,
+    selectedContentType,
+    destination,
+    origin,
+    showDirections,
+    supportsDestination,
+    supportsOrigin,
+    disableDoneButton,
     usersWithProduct: getDaoState(state, ['users'], 'userRelationshipDao') || []
   };
 };

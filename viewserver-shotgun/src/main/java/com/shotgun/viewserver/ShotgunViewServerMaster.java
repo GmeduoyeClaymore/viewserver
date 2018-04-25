@@ -41,8 +41,8 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         MessagingController messagingController = new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
         MapsController mapsController = new MapsController(configuration.getMapsKey());
         NexmoController nexmoController = new NexmoController(9000, this.getServerCatalog(), configuration.getNexmoKey(), getDatabaseUpdater());
-        PaymentController paymentController = configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
-        //TODO need to test live stripe payments - StripeApiKey apiKey = isOfflineDb ? new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4") : new StripeApiKey("pk_live_7zCPIyqeDeEnLvwzPeS4vXQv", "sk_live_ZZXR0KcIO0s4CswZC3eQrewL");
+      //  PaymentController paymentController = configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
+        PaymentController paymentController = new PaymentControllerImpl(configuration.getStripeKey());
 
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(getDatabaseUpdater());
         DeliveryController deliveryController = new DeliveryController(getDatabaseUpdater());

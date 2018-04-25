@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import {Text, Spinner, Row} from 'native-base';
-import {LoadingScreen, PagingListView} from 'common/components';
-import {CheckBox} from 'common/components/basic';
+import {LoadingScreen, PagingListView, CheckBox} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {withExternalState} from 'custom-redux';
 import yup from 'yup';

@@ -8,30 +8,15 @@ import java.util.Date;
 public class Delivery {
     private String deliveryId;
     private String driverId;
-    private Date from;
-    private Date till;
     private Date created;
     private int distance;
     private int duration;
     private DeliveryAddress origin;
     private DeliveryAddress destination;
-    private int numRequiredForOffload;
-    private boolean isFixedPrice;
-    private int fixedPriceValue;
 
     public Delivery() {
         origin = new DeliveryAddress();
         destination = new DeliveryAddress();
-    }
-
-
-
-    public Date getFrom() {
-        return from;
-    }
-
-    public Date getTill() {
-        return till;
     }
 
     public int getDistance() {
@@ -48,14 +33,6 @@ public class Delivery {
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    public void setTill(Date till) {
-        this.till = till;
-    }
-
-    public void setFrom(Date from) {
-        this.from = from;
     }
 
     public Date getCreated() {
@@ -96,29 +73,5 @@ public class Delivery {
 
     public void setDriverId(String driverId) {
         this.driverId = driverId;
-    }
-
-    public int getNumRequiredForOffload() {
-        return numRequiredForOffload;
-    }
-
-    public void setNumRequiredForOffload(int numRequiredForOffload) {
-        this.numRequiredForOffload = numRequiredForOffload;
-    }
-
-    public boolean getIsFixedPrice() {
-        return isFixedPrice;
-    }
-
-    public void setIsFixedPrice(boolean fixedPrice) {
-        isFixedPrice = fixedPrice;
-    }
-
-    public int getFixedPriceValue() {
-        return fixedPriceValue;
-    }
-
-    public void setFixedPriceValue(int fixedPriceValue) {
-        this.fixedPriceValue = fixedPriceValue;
     }
 }

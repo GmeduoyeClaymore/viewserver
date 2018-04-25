@@ -17,7 +17,7 @@ export default class OrderRequestDaoContext{
   };
 
   static DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
     reportId: 'driverOrderRequest'
   };
 
@@ -98,16 +98,17 @@ export default class OrderRequestDaoContext{
         productId: orderRequest.productId,
         notes: orderRequest.notes,
         imageUrl: orderRequest.imageUrl,
+        fixedPrice: orderSummary.fixedPrice == -1 ? undefined : orderSummary.fixedPrice,
+        startTime: orderSummary.start,
+        endTime: orderSummary.endTime
       },
       contentType: {
         contentTypeId: orderRequest.contentTypeContentTypeId,
         name: orderRequest.contentTypeName,
-        origin: orderRequest.contentTypeOrigin,
-        destination: orderRequest.contentTypeDestination,
-        noPeople: orderRequest.contentTypeNoPeople,
-        fromTime: orderRequest.contentTypeFromTime,
-        tillTime: orderRequest.contentTypeTillTime,
-        noItems: orderRequest.contentTypeNoItems,
+        hasOrigin: orderSummary.contentTypeHasOrigin,
+        hasDestination: orderSummary.contentTypeHasDestination,
+        hasStartTime: orderSummary.contentTypeHasStartTime,
+        hasEndTime: orderSummary.contentTypeHasEndTime,
         rootProductCategory: orderRequest.contentTypeRootProductCategory,
         pricingStrategy: orderRequest.contentTypePricingStrategy
       },
@@ -117,14 +118,9 @@ export default class OrderRequestDaoContext{
         imageUrl: orderRequest.productImageUrl
       },
       delivery: {
-        from: orderRequest.from,
-        till: orderRequest.till,
+        deliveryId: orderRequest.deliveryId,
         distance: orderRequest.distance,
         duration: orderRequest.duration,
-        isFixedPrice: orderRequest.isFixedPrice,
-        fixedPriceValue: orderRequest.fixedPriceValue,
-        noRequiredForOffload: orderRequest.noRequiredForOffload,
-        deliveryId: orderRequest.deliveryId,
         origin: {
           flatNumber: orderRequest.originFlatNumber,
           line1: orderRequest.originLine1,

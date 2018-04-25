@@ -41,14 +41,25 @@ public class OrderItemController {
         }
 
         Record orderItemRecord = new Record()
-        .addValue("userId", userId)
-        .addValue("orderId", orderItem.getOrderId())
-        .addValue("productId", orderItem.getProductId())
-        .addValue("contentTypeId", orderItem.getContentTypeId())
-        .addValue("notes", orderItem.getNotes())
-        .addValue("imageUrl", orderItem.getImageUrl())
-        .addValue("quantity", orderItem.getQuantity())
-        .addValue("orderItemId", orderItem.getOrderItemId());
+            .addValue("orderItemId", orderItem.getOrderItemId())
+            .addValue("userId", userId)
+            .addValue("orderId", orderItem.getOrderId())
+            .addValue("productId", orderItem.getProductId())
+            .addValue("contentTypeId", orderItem.getContentTypeId())
+            .addValue("notes", orderItem.getNotes())
+            .addValue("imageUrl", orderItem.getImageUrl())
+            .addValue("fixedPrice", orderItem.getFixedPrice())
+            .addValue("fixedPrice", orderItem.getFixedPrice())
+            .addValue("fixedPrice", orderItem.getFixedPrice())
+            .addValue("quantity", orderItem.getQuantity());
+
+        if (orderItem.getStartTime() != null) {
+            orderItemRecord.addValue("startTime", orderItem.getStartTime());
+        }
+
+        if (orderItem.getEndTime() != null) {
+            orderItemRecord.addValue("endTime", orderItem.getEndTime());
+        }
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_ITEM_TABLE_NAME, "orderItem", orderItemRecord);
 

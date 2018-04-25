@@ -28,7 +28,7 @@ class DriverCapabilityDetails extends Component{
   }
 
   render(){
-    const {errors, vehicle, busy, registrationNumber, numAvailableForOffload} = this.props;
+    const {errors, vehicle = {}, busy, registrationNumber, numAvailableForOffload} = this.props;
     const peopleVisible = numAvailableForOffload > 0;
 
     return <Content><Grid>

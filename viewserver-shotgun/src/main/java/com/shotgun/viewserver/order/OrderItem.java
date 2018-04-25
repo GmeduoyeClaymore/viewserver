@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.order;
 
+import java.util.Date;
+
 public class OrderItem{
     private String orderItemId;
     private String orderId;
@@ -9,6 +11,9 @@ public class OrderItem{
     private String imageData;
     private int quantity;
     private Integer contentTypeId;
+    private Integer fixedPrice;
+    private Date startTime;
+    private Date endTime;
 
     public OrderItem() {
     }
@@ -69,12 +74,32 @@ public class OrderItem{
         this.quantity = quantity;
     }
 
+    public Integer getFixedPrice() {return fixedPrice;}
+
+    public void setFixedPrice(Integer fixedPrice) { this.fixedPrice = fixedPrice;}
+
     public String getImageData() {
         return imageData;
     }
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     @Override

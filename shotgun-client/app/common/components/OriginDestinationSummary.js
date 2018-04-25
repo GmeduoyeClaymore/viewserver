@@ -7,10 +7,6 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/components/maps/MapUtils';
 
 export class OriginDestinationSummary extends Component{
-  constructor(){
-    super();
-  }
-
   render(){
     const {contentType, delivery} = this.props;
     const {origin, destination = {}, distance, duration} = delivery;
@@ -21,16 +17,16 @@ export class OriginDestinationSummary extends Component{
     };
 
     return <Grid>
-      {contentType.origin ? <Row>
+      {contentType.hasOrigin ? <Row>
         <Icon name="pin" paddedIcon originPin/>
         <Text style={{alignSelf: 'flex-start'}}>{addressToText(origin)}</Text>
       </Row> : null}
-      {contentType.destination ? <Row style={styles.timeRow}>
+      {contentType.hasDestination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
         </Text>
       </Row> : null}
-      {contentType.destination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
+      {contentType.hasDestination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
     </Grid>;
   }
 }
