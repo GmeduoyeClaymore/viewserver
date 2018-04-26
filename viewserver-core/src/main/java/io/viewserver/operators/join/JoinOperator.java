@@ -391,6 +391,9 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
             int previousJoinKey = getJoinKey(row, isLeft, true);
             TIntObjectHashMap<TIntHashSet> ourAssociations = isLeft ? leftAssociations : rightAssociations;
             TIntHashSet ourRows = ourAssociations.get(previousJoinKey);
+            if(ourRows == null){
+                throw new RuntimeException("Unable to find association for key " + previousJoinKey);
+            }
             ourRows.remove(row);
             boolean isOuterJoin = isLeft ? isRightJoinOuter : isLeftJoinOuter;
 

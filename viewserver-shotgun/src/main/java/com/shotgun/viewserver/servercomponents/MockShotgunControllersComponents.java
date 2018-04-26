@@ -28,7 +28,7 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected PaymentController getPaymentController() {
-        return new MockPaymentController();
+        return new MockPaymentController(databaseUpdater);
     }
 
     @Override

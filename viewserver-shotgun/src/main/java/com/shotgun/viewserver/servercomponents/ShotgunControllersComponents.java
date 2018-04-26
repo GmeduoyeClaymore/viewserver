@@ -30,34 +30,34 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
     @Override
     public void start() {
         super.start();
-        IImageController IImageController = getImageController();
+        IImageController iImageController = getImageController();
         IMessagingController messagingController = getMessagingController(); //new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
-        IMapsController IMapsController = getMapsController();
+        IMapsController mapsController = getMapsController();
         INexmoController nexmoController = getNexmoController();
         PaymentController paymentController = getPaymentController(); //configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
 
 
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(getDatabaseUpdater());
         DeliveryController deliveryController = new DeliveryController(getDatabaseUpdater());
-        OrderItemController orderItemController = new OrderItemController(getDatabaseUpdater(), IImageController);
+        OrderItemController orderItemController = new OrderItemController(getDatabaseUpdater(), iImageController);
         VehicleController vehicleController = new VehicleController(getDatabaseUpdater());
         LoginController loginController = new LoginController(getDatabaseUpdater(), basicServerComponents.getServerCatalog());
-        UserController userController = new UserController(getDatabaseUpdater(), loginController, IImageController, nexmoController, messagingController, IMapsController, getServerReactor());
+        UserController userController = new UserController(getDatabaseUpdater(), loginController, iImageController, nexmoController, messagingController, mapsController, getServerReactor());
 
         this.registerController(paymentController);
-        this.registerController(IMapsController);
+        this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new PartnerController(getDatabaseUpdater(), paymentController, messagingController, userController, vehicleController, loginController, IImageController, nexmoController, this.getServerReactor()));
+        this.registerController(new PartnerController(getDatabaseUpdater(), paymentController, messagingController, userController, vehicleController, loginController, iImageController, nexmoController, this.getServerReactor()));
         this.registerController(new CustomerController(getDatabaseUpdater(), paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(new OrderController(getDatabaseUpdater(), deliveryAddressController, deliveryController, orderItemController, new PricingStrategyResolver(), messagingController));
-        this.registerController(new DeliveryOrderController(getDatabaseUpdater(), messagingController, getMapsController(), deliveryAddressController));
+        this.registerController(new DeliveryOrderController(getDatabaseUpdater(), messagingController,paymentController,mapsController, deliveryAddressController));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
         this.registerController(messagingController);
         this.registerController(deliveryAddressController);
         this.registerController(orderItemController);
-        this.registerController(IImageController);
+        this.registerController(iImageController);
         this.registerController(new PhoneCallController(getDatabaseUpdater()));
         this.registerController(nexmoController);
         this.registerController(getVehicleDetailsController());

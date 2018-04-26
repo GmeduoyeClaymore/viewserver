@@ -172,7 +172,10 @@ public class ExecutionContext implements IExecutionContext{
         long start = System.nanoTime();
         int count = operators.size();
         for (int i = 0; i < count; i++) {
-            operators.get(i).onAfterCommit();
+            IOperator operator = operators.get(i);
+            if(operator != null) {
+                operator.onAfterCommit();
+            }
         }
         if (log.isTraceEnabled()) {
             log.trace("Spent {}ms in onAfterCommit()", (System.nanoTime() - start) / 1000000f);

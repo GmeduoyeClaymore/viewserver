@@ -21,7 +21,7 @@ public class OrderDataSource {
                         new Column("orderLocation", ContentType.Json),
                         new Column("userId", ContentType.String),
                         new Column("assignedPartnerUserId", ContentType.String),
-                        new Column("paymentId", ContentType.String),
+                        new Column("paymentMethodId", ContentType.String),
                         new Column("orderContentTypeId", ContentType.Int),
                         new Column("orderDetails", ContentType.Json),
                         new Column("totalPrice", ContentType.Int)

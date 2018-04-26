@@ -370,6 +370,12 @@ public class ExpressionParserTest {
     }
 
     @Test
+    public void testNull() {
+        IExpressionBool expr = (IExpressionBool) getExpression("null == null");
+        Assert.assertTrue(expr.getBool(0));
+    }
+
+    @Test
     public void testIf() {
         IExpressionInt expr = (IExpressionInt) getExpression("if(true,1,2)");
         Assert.assertEquals(1, expr.getInt(0));

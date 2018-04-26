@@ -1,11 +1,16 @@
 import com.shotgun.viewserver.payments.*;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.Card;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
+import io.viewserver.datasource.SchemaConfig;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import rx.Observable;
+
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
@@ -24,7 +29,17 @@ public class PaymentControllerTest {
 
     @Before
     public void createSut(){
-        sut = new PaymentControllerImpl(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"));
+        sut = new PaymentControllerImpl(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"), new IDatabaseUpdater() {
+            @Override
+            public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
+
+            }
+
+            @Override
+            public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
+                return null;
+            }
+        });
         TestControllerUtils.getControllerContext("foo");
         User user = (User) ControllerContext.get("user");
         user.setStripeCustomerId(this.customerId);

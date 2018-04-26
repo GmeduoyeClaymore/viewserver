@@ -58,7 +58,6 @@ public class DeliveryCustomerResponseSpreadFunction implements ISpreadFunction {
         Object[] statuses = new Object[responses.size()];
 
         order.responses = null;
-        order.status = DeliveryOrder.DeliveryOrderStatus.RESPONDED;
 
         for(int i = 0; i< responses.size(); i++){
             DeliveryOrder.DeliveryOrderFill deliveryOrderFill = responses.get(i);

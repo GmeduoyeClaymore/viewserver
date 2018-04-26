@@ -42,40 +42,40 @@ Feature: Spread operator fixture
 	  | RowAdd  | 3  | Market1 | Product1    |
 	And commit
 
-  Scenario: Can retain source row in CSV spread
-	When operator type "spread" named "spread2" created
-	  | field             | value   |
-	  | inputColumn       | product |
-	  | spreadFunction    | csv     |
-	  | removeInputColumn | false   |
-	  | retainSourceRow   | true   |
-	And operator "source" output "out" plugged into "spread2" input "in"
-	And commit
-	Then schema for "spread2" is
-	  | ~Action   | ~Name       | ~ColumnType |
-	  | ColumnAdd | id          | Int         |
-	  | ColumnAdd | market      | String      |
-	  | ColumnAdd | product     | String      |
-	  | ColumnAdd | product_csv | String      |
-	Then data for "spread2" is
-	  | ~Action | id | market  | product_csv |
-	  | RowAdd  | 0  | Market1 |             |
-	  | RowAdd  | 0  | Market1 | Product1    |
-	  | RowAdd  | 0  | Market1 | Product2    |
-	  | RowAdd  | 1  | Market1 |             |
-	  | RowAdd  | 1  | Market1 | Product2    |
-	  | RowAdd  | 2  | Market1 |             |
-	  | RowAdd  | 2  | Market1 | Product3    |
-	  | RowAdd  | 2  | Market1 | Product3    |
-	  | RowAdd  | 3  | Market1 |             |
-	  | RowAdd  | 3  | Market1 | Product1    |
+#  Scenario: Can retain source row in CSV spread
+#	When operator type "spread" named "spread2" created
+#	  | field             | value   |
+#	  | inputColumn       | product |
+#	  | spreadFunction    | csv     |
+#	  | removeInputColumn | false   |
+#	  | retainSourceRow   | true    |
+#	And operator "source" output "out" plugged into "spread2" input "in"
+#	And commit
+#	Then schema for "spread2" is
+#	  | ~Action   | ~Name       | ~ColumnType |
+#	  | ColumnAdd | id          | Int         |
+#	  | ColumnAdd | market      | String      |
+#	  | ColumnAdd | product     | String      |
+#	  | ColumnAdd | product_csv | String      |
+#	Then data for "spread2" is
+#	  | ~Action | id | market  | product_csv |
+#	  | RowAdd  | 0  | Market1 |             |
+#	  | RowAdd  | 0  | Market1 | Product1    |
+#	  | RowAdd  | 0  | Market1 | Product2    |
+#	  | RowAdd  | 1  | Market1 |             |
+#	  | RowAdd  | 1  | Market1 | Product2    |
+#	  | RowAdd  | 2  | Market1 |             |
+#	  | RowAdd  | 2  | Market1 | Product3    |
+#	  | RowAdd  | 2  | Market1 | Product3    |
+#	  | RowAdd  | 3  | Market1 |             |
+#	  | RowAdd  | 3  | Market1 | Product1    |
 
   Scenario: Can retain source column in CSV spread
 	When operator type "spread" named "spread2" created
 	  | field             | value   |
 	  | inputColumn       | product |
 	  | spreadFunction    | csv     |
-	  | removeInputColumn | true   |
+	  | removeInputColumn | true    |
 	  | retainSourceRow   | false   |
 	And operator "source" output "out" plugged into "spread2" input "in"
 	And commit
@@ -119,7 +119,34 @@ Feature: Spread operator fixture
 	  | ~Action   | id | market  | product_csv |
 	  | RowRemove | 2  | Market1 | Product3    |
 	  | RowRemove | 2  | Market1 | Product3    |
-	  | RowAdd    | 2  | Market1 |             |
+	And commit
+
+
+  Scenario: Updated row is correctly reflected in spread operator
+	When operator type "spread" named "spread2" created
+	  | field             | value   |
+	  | inputColumn       | product |
+	  | spreadFunction    | csv     |
+	  | removeInputColumn | false   |
+	  | retainSourceRow   | false   |
+	And operator "source" output "out" plugged into "spread2" input "in"
+	And commit
+	Then data for "spread2" is
+	  | ~Action | id | market  | product_csv |
+	  | RowAdd  | 0  | Market1 | Product1    |
+	  | RowAdd  | 0  | Market1 | Product2    |
+	  | RowAdd  | 1  | Market1 | Product2    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 2  | Market1 | Product3    |
+	  | RowAdd  | 3  | Market1 | Product1    |
+	When table "source" updated to
+	  | id~Int | product~String     |
+	  | 2      | prooduct5,product6 |
+	And commit
+	Then data for "spread2" is
+	  | ~Action   | id | market  | product_csv |
+	  | RowUpdate | 2  | Market1 | prooduct5   |
+	  | RowUpdate | 2  | Market1 | product6    |
 	And commit
 
 

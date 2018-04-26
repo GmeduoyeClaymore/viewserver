@@ -16,6 +16,7 @@
 
 package io.viewserver.operators.index;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import io.viewserver.Constants;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.catalog.CatalogHolder;
@@ -50,6 +51,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     private final IndexSummaryOutput output;
     private EWAHCompressedBitmap allRows = new EWAHCompressedBitmap();
     private final TIntObjectHashMap outputsByRowKey = new TIntObjectHashMap();
+    private final TObjectIntHashMap rowKeysByOutput = new TObjectIntHashMap();
 
 
     public IndexOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
@@ -110,6 +112,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             output = new Output(name, this, queryHolders);
             int rowId = getIndexOutputs().size();
             outputsByRowKey.put(rowId,output);
+            rowKeysByOutput.put(output,rowId);
             addOutput(output);
             if (input.getProducer() != null) {
                 int count = queryHolders.length;
@@ -312,7 +315,11 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
                     output.handleAdd(getOutputRow(output, row));
                     log.info("!!! Matched a row on add " + sb);
                 }
-
+                int summaryRowKey = rowKeysByOutput.get(output);
+                for(ColumnHolder holder : IndexOperator.this.output.getSchema().getColumnHolders()){
+                    IndexOperator.this.output.getCurrentChanges().markDirty(summaryRowKey,holder.getColumnId());
+                    IndexOperator.this.output.handleUpdate(summaryRowKey);
+                }
             }
 
             addedRows.add(row);
@@ -598,12 +605,8 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             if (!isNewRow) {
                 int previousValue = getValue(row, true);
                 if (previousValue != value) {
-                    TIntArrayList rows = rowsForAdding.get(previousValue);
-                    if (rows == null) {
-                        rows = new TIntArrayList();
-                        rowsForAdding.put(previousValue, rows);
-                    }
-                    rows.add(row);
+                    markRowForRemoval(row);
+                    //rows.add(row);
                 }
             }
 

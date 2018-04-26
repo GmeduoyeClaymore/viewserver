@@ -197,7 +197,7 @@ public class PartnerController {
         iDatabaseUpdater.addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
 
         notifyStatusChanged(orderId, driverId, orderUserId, OrderStatus.COMPLETED.name());
-        paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId, chargeDescription);
+        //paymentController.createCharge(totalPrice, chargePercentage, paymentId, stripeCustomerId, accountId, chargeDescription);
         return orderId;
     }
 

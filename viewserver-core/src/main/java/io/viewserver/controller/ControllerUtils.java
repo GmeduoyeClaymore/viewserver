@@ -33,6 +33,13 @@ public class ControllerUtils {
         if (ser == null) {
             return null;
         }
+        if(ser instanceof String){
+            return (String) ser;
+        }
+
+        if (ser.getClass().isEnum()){
+            return ((Enum)ser).name();
+        }
         return JacksonSerialiser.getInstance().serialise(ser);
     }
 

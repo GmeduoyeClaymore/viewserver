@@ -32,7 +32,7 @@ public class OrderRequestReport {
                                         .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
                                         .withConnection("distanceCalcCol"),
                                 new FilterNode("hasResponded")
-                                        .withExpression("!hasResponded(\"{@userId}\",orderDetails)")
+                                        .withExpression("getResponseField(\"{@userId}\",\"fillStatus\",orderDetails) == null")
                                         .withConnection("distanceFilter"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

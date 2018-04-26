@@ -163,25 +163,29 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                 throw new RuntimeException("Attempting to update a row that doesnt exist");
             }
 
-            for(int i : ourRows.toArray()){
-                log.info("Row {} has just been removed in update",i);
-                output.handleRemove(i);
-                ourRows.remove(i);
-                inputToOutputMappings.remove(i);
-            }
-
             addSpreadValues(row, ourRows);
 
         }
 
         private void addSpreadValues(int row, TIntHashSet ourRows) {
+
+            int[] ints = ourRows.toArray();
+
             List<Map.Entry<Column, Object[]>> values = getSpreadValues(row);
             int maximimumRowIndex = getMaxRowIndex(values);
-            if(retainSourceRow) {
-                mapRow(row, ourRows, associationCounter++);
-            }
+/*            if(retainSourceRow) {
+                mapRow(row, ourRows, associationCounter++, isAdd);
+            }*/
             for(int i = 0;i< maximimumRowIndex;i++){
-                int outputRow  = associationCounter++;
+                boolean isAdd;
+                int outputRow;
+                if(i < ints.length){
+                    isAdd = false;
+                    outputRow = ints[i];
+                }else{
+                    isAdd = true;
+                    outputRow = associationCounter++;
+                }
                 log.info("Row {} has just been added in {}",outputRow,"add");
                 for(Map.Entry<Column, Object[]> val : values){
                     ColumnHolder spreadColumn = getOrCreateSpreadColumn(val.getKey());
@@ -189,14 +193,26 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                     Object result = i < value.length ? value[i] : null;
                     ColumnHolderUtils.setValue(spreadColumn,outputRow, result);
                 }
-                mapRow(row, ourRows, outputRow);
+                mapRow(row, ourRows, outputRow, isAdd);
+            }
+            if(ints.length > maximimumRowIndex){
+                for(int i=maximimumRowIndex-1;i<ints.length;i++){
+                    int intRowToRemove = ints[i];
+                    inputToOutputMappings.remove(intRowToRemove);
+                    ourRows.remove(intRowToRemove);
+                    output.handleRemove(intRowToRemove);
+                }
             }
         }
 
-        private void mapRow(int row, TIntHashSet ourRows, int outputRow) {
-            ourRows.add(outputRow);
-            inputToOutputMappings.put(outputRow,row);
-            output.handleAdd(outputRow);
+        private void mapRow(int row, TIntHashSet ourRows, int outputRow, boolean isAdd) {
+            if(isAdd) {
+                ourRows.add(outputRow);
+                inputToOutputMappings.put(outputRow, row);
+                output.handleAdd(outputRow);
+            }else{
+                output.handleUpdate(outputRow);
+            }
         }
 
         @Override
@@ -207,6 +223,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             }
             for(int i : ourRows.toArray()){
                 log.info("Row {} has just been removed in remove",i);
+                inputToOutputMappings.remove(i);
                 output.handleRemove(i);
                 ourRows.remove(i);
             }

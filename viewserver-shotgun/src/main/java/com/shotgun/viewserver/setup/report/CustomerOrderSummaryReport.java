@@ -3,8 +3,10 @@ package com.shotgun.viewserver.setup.report;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
+import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -15,6 +17,10 @@ public class CustomerOrderSummaryReport {
         return new ReportDefinition(ID, "customerOrderSummary")
                 .withDataSource(OrderWithPartnerDataSource.NAME)
                 .withNodes(
+                        new CalcColNode("orderFieldsCalc")
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("internalOrderStatus", "getOrderField(\"status\", orderDetails)"))
+                                .withConnection("#input"),
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
@@ -29,12 +35,13 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                         new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("orderLocation"),
+                                        new IProjectionConfig.ProjectionColumn("internalOrderStatus"),
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                         new IProjectionConfig.ProjectionColumn("orderDetails"),
                                         new IProjectionConfig.ProjectionColumn("orderId"),
                                         new IProjectionConfig.ProjectionColumn("status")
-                                ).withConnection("#input")
+                                ).withConnection("orderFieldsCalc")
 
 
                 )

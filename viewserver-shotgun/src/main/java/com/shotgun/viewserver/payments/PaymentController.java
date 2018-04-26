@@ -19,12 +19,11 @@ public interface PaymentController {
                                 @ActionParam(name = "deliveryAddress") DeliveryAddress address,
                                 @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
 
-    void createCharge(int totalPrice,
-                      int chargePercentage,
-                      String paymentId,
-                      String customerId,
-                      String accountId,
-                      String description);
+    String createCharge(int totalPrice,
+                        String paymentMethodId,
+                        String fromCustomerUserId,
+                        String toCustomerUserId,
+                        String description);
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
     String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard);

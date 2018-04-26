@@ -10,6 +10,6 @@
     "longitude": -0.1523323
   },
   "customerId": "{param_customerId}",
-  "requiredVehicleType": "1SmallVan",
+  "orderProduct": "1SmallVan",
   "requiredDate": "{now_date+1}"
 }

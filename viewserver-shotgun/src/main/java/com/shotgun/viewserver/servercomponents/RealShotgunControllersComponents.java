@@ -54,7 +54,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected PaymentController getPaymentController() {
-        return new PaymentControllerImpl(stripeApiKey);
+        return new PaymentControllerImpl(stripeApiKey, databaseUpdater);
     }
 
     @Override

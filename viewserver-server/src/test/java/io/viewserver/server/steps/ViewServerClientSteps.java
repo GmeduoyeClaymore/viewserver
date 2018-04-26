@@ -104,20 +104,20 @@ public class ViewServerClientSteps {
             String[] values = cells.get(2).split(",");
             Object[] typedValues = new Object[values.length];
             for (int j = 0; j < values.length; j++) {
-                switch (type) {
-                    case "Integer": {
+                switch (type.toLowerCase()) {
+                    case "integer": {
                         typedValues[j] = Integer.parseInt(values[j]);
                         break;
                     }
-                    case "Double": {
+                    case "double": {
                         typedValues[j] = Double.parseDouble(values[j]);
                         break;
                     }
-                    case "Boolean": {
+                    case "boolean": {
                         typedValues[j] = Boolean.parseBoolean(values[j]);
                         break;
                     }
-                    case "String": {
+                    case "string": {
                         typedValues[j] = values[j];
                         break;
                     }
@@ -379,7 +379,7 @@ public class ViewServerClientSteps {
 
     @Then("^\"([^\"]*)\" the following data is received terminally on report \"([^\"]*)\"$")
     public void the_following_data_is_received_terminally(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 200, 0, true);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 400, 0, true);
     }
 
     @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\"$")
@@ -450,7 +450,7 @@ public class ViewServerClientSteps {
         try {
             assertion.run();
             if(continueIfPass){
-                if(times == counter -1){
+                if(counter >= times -1){
                     Assert.assertTrue("Passed on the final time this is a pass", true);
                     return;
                 }

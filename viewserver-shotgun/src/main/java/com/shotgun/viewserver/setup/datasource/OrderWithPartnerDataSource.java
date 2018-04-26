@@ -60,10 +60,10 @@ public class OrderWithPartnerDataSource {
                                 ).withConnection("ratingJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String, true).withImported(),
-                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String,true).withImported(),
-                        new Dimension("dimension_assignedPartnerUserId","assignedPartnerUserId", Cardinality.Int, ContentType.String, true).withImported(),
-                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String, true).withImported(),
+                        new Dimension("dimension_orderId", Cardinality.Byte, ContentType.String, true).withImported(),
+                        new Dimension("dimension_customerUserId", Cardinality.Int, ContentType.String,true).withImported(),
+                        new Dimension("dimension_assignedPartnerUserId", Cardinality.Int, ContentType.String, true).withImported(),
+                        new Dimension("dimension_status",Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int, true).withImported(),
                         new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported()))
                 .withOutput("orderSummaryProjection")
