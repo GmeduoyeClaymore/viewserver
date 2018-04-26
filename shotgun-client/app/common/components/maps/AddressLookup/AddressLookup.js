@@ -9,6 +9,7 @@ import SuggestedAddresses from './SuggestedAddresses';
 import RecentAddresses from './RecentAddresses';
 import ReverseGeoAddresses from './ReverseGeoAddresses';
 import {Keyboard} from 'react-native';
+import {debounce} from 'lodash';
 
 class AddressLookup extends Component {
   constructor(props) {
@@ -39,11 +40,11 @@ class AddressLookup extends Component {
   goToTabNamed = (name, propOverride) => {
     const {history, path, addressLabel, addressPath} = propOverride || this.props;
     if (!history.location.pathname.endsWith(name)) {
-      history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}});
+      history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}, dismissKeyboard: false});
     }
   }
 
-  searchAutoCompleteSuggestions = async (value, continueWith) => {
+  searchAutoCompleteSuggestions = debounce(async (value, continueWith) => {
     const {client, me = {}} = this.props;
     try {
       if (this.pendingAutoCompletePromise) {
@@ -78,7 +79,7 @@ class AddressLookup extends Component {
     } catch (error) {
       this.setState({error});
     }
-  }
+  }, 300)
 
   onAddressSelected = async (value) => {
     const {addressPath, setStateWithPath, history, dispatch} = this.props;
@@ -114,7 +115,7 @@ class AddressLookup extends Component {
             onAddressSelected={this.onAddressSelected} path={path} name="AddressLookupRouter"
             height={height - shotgun.tabHeight} width={width}
             defaultRoute={{pathname: `${tabs[0]}`, state: {addressLabel, addressPath}}}>
-            <Route path={'Recent'} component={RecentAddresses} homeAddress={homeAddress} {...{deliveryAddresses}}/>
+            <Route path={'Recent'} component={RecentAddresses} homeAddress={homeAddress} deliveryAddresses={deliveryAddresses}/>
             <Route path={'Suggested'} component={SuggestedAddresses} {...{hasLookedUpAddresses, suggestedPlaces, addressSearchText, busy}}/>
             <Route path={'Nearby Places'} component={ReverseGeoAddresses}/>
           </ReduxRouter> : null}
@@ -134,37 +135,24 @@ const styles = {
   },
   searchContainer: {
     backgroundColor: shotgun.brandPrimary,
-    marginLeft: 10,
-    marginRight: 10,
     paddingLeft: shotgun.contentPadding,
-  },
-  resultsContainer: {
-    borderTopWidth: 1,
-    marginTop: 0,
-    paddingTop: shotgun.contentPadding,
-    borderColor: shotgun.silver
   }
 };
 
 
 const getHomeAddress = (addreses) => addreses ? addreses.find(ad => ad.isDefault) || addreses[0] : addreses;
 
-const getTabs = ({deliveryAddresses = [], suggestedPlaces = [], myLocation, hasLookedUpAddresses}) => {
-  const result = [];
-  if (suggestedPlaces.length || hasLookedUpAddresses) {
-    result.push('Suggested');
-  }
-  if (deliveryAddresses.length) {
-    result.push('Recent');
-  }
-  if (myLocation) {
+const getTabs = () => {
+  const result = ['Recent', 'Suggested'];
+
+  /* if (myLocation) {
     result.push('Nearby Places');
-  }
+  }*/
   return result;
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {history, suggestedPlaces = [], hasLookedUpAddresses, isInBackground} = initialProps;
+  const {history, isInBackground} = initialProps;
 
   if (isInBackground) {
     return;
@@ -173,7 +161,7 @@ const mapStateToProps = (state, initialProps) => {
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
   const homeAddress = getHomeAddress(deliveryAddresses);
 
-  const tabs = getTabs({deliveryAddresses, suggestedPlaces, hasLookedUpAddresses, myLocation: me});
+  const tabs = getTabs();
   let selectedTabIndex = tabs.findIndex(tb => history.location.pathname.endsWith(tb));
   selectedTabIndex = !!~selectedTabIndex ? selectedTabIndex : 0;
   return {

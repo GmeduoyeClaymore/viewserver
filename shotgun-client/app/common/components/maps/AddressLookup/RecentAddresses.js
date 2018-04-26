@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import moment from 'moment';
 import {Text, Row, List, View} from 'native-base';
 import {Icon} from 'common/components';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 const MAX_RECENT_ADDRESSES = 10;
 
@@ -19,13 +20,13 @@ export default class RecentAddresses extends Component {
 
   render() {
     const {deliveryAddresses, onAddressSelected, homeAddress} = this.props;
-    return deliveryAddresses && deliveryAddresses.length ? <View paddedLeft style={styles.resultsContainer}>
+    return <View paddedLeft style={styles.resultsContainer}>
       {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
-      <Text smallText>Recent addresses you have used</Text>
-      <List>
-        {this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}
-      </List>
-    </View> : <Text>No recent addresses</Text>;
+      {deliveryAddresses && deliveryAddresses.length ?
+        [<Text key='header' smallText>Recent addresses you have used</Text>,
+          <List key='list'>{this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}</List>] :
+        <Text smallText>No recent addresses</Text>}
+    </View>;
   }
 }
 
@@ -37,4 +38,12 @@ const HomeAddressItem = ({address = {}, onAddressSelected}) =>
       <Text smallText>{`${address.line1}, ${address.postCode}`}</Text>
     </View>
   </Row>;
+
+const styles = {
+  resultsContainer: {
+    marginTop: 0,
+    paddingTop: shotgun.contentPadding
+  }
+};
+
 

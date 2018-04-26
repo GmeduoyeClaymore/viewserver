@@ -150,9 +150,14 @@ class ReduxRouterClass extends Component{
 }
 
 const navigateFactory = (getNewContainer, setState, dispatch) => (action, state, continueWith) => {
-  Keyboard.dismiss();
-  const newnavigationContainer =  getNewContainer(RouteUtils.parseAction(action, state));
+  const parsedAction = RouteUtils.parseAction(action, state);
+
+  const newnavigationContainer =  getNewContainer(parsedAction);
   if (newnavigationContainer){
+    if (!parsedAction || parsedAction.dismissKeyboard != false) {
+      Keyboard.dismiss();
+    }
+
     setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
   }
 };
