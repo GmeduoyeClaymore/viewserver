@@ -44,8 +44,7 @@ export default {
   tabsStyle: {
     tabBarUnderlineStyle: {
       backgroundColor: colors.blue,
-      height: 7,
-      borderRadius: 3.5
+      height: 7
     }
   },
 

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {PropTypes} from 'prop-types';
 import {Grid, Row, Text} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
@@ -19,14 +18,17 @@ export class OriginDestinationSummary extends Component{
     return <Grid>
       {contentType.hasOrigin ? <Row>
         <Icon name="pin" paddedIcon originPin/>
-        <Text style={{alignSelf: 'flex-start'}}>{addressToText(origin)}</Text>
+        <Text style={styles.originText} numberOfLines={1}>{addressToText(origin)}</Text>
       </Row> : null}
       {contentType.hasDestination ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
           {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
         </Text>
       </Row> : null}
-      {contentType.hasDestination ? <Row><Icon paddedIcon name="pin" /><Text>{destination.flatNumber} {destination.line1}, {destination.postCode}</Text></Row> : null}
+      {contentType.hasDestination ? <Row>
+        <Icon paddedIcon name="pin" />
+        <Text style={styles.originText} numberOfLines={1}>{addressToText(destination)}</Text>
+      </Row> : null}
     </Grid>;
   }
 }
@@ -35,6 +37,9 @@ const styles = {
   timeRow: {
     marginLeft: 6,
     alignItems: 'center'
+  },
+  originText: {
+    alignSelf: 'flex-start'
   },
   timeText: {
     alignSelf: 'flex-start',
@@ -47,11 +52,4 @@ const styles = {
     height: 22,
     marginRight: 15
   }
-};
-
-OriginDestinationSummary.PropTypes = {
-  origin: PropTypes.object,
-  destination: PropTypes.object,
-  delivery: PropTypes.object,
-  contentType: PropTypes.object
 };

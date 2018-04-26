@@ -26,19 +26,23 @@ class OrderRequest extends Component {
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
-          <Col size={70}>
+          <Col size={60}>
             <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
           </Col>
-          <Col size={30} style={styles.priceRow}>
-            <Text style={{...styles.price, marginBottom: 5}}>{orderSummary.product.name }</Text>
-            <Text><Currency value={orderSummary.totalPrice} style={styles.price}/><Icon name="forward-arrow" style={styles.forwardIcon}/></Text>
-            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderSummary)}</Text>
+          <Col size={40}>
+            <Text style={styles.price}>{orderSummary.product.name}</Text>
+            <Currency value={orderSummary.totalPrice} style={styles.price}/>
           </Col>
         </Row>
         <Row size={25}>
-          <Col size={70}>
-            {!orderItem.fixedPrice && contentType.hasStartTime ? <Row style={{paddingRight: 10}}><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.startTime).format('Do MMM, h:mma')}</Text></Row> : null}
-            {!orderItem.fixedPrice && contentType.hasEndTime ? <Row><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.endTime).format('Do MMM, h:mma')}</Text></Row> : null}
+          <Col size={60}>
+            <Row>
+              {contentType.hasStartTime ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(orderItem.startTime).format('Do MMM, h:mma')}</Text>] : null}
+              {contentType.hasEndTime ? <Text> for {moment(orderItem.endTime).from(moment(orderItem.startTime), true)}</Text> : null}
+            </Row>
+          </Col>
+          <Col size={40} style={styles.orderStatusRow}>
+            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderSummary)}</Text>
           </Col>
         </Row>
       </Grid>
@@ -77,30 +81,22 @@ const styles = {
   first: {
     marginTop: 15
   },
-  priceRow: {
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-  },
   locationRow: {
-    paddingBottom: 20,
-  },
-  origin: {
-    alignSelf: 'flex-start'
+    paddingBottom: 15,
   },
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    lineHeight: 18,
+    padding: 0,
+    margin: 0,
+    lineHeight: 20,
     alignSelf: 'flex-end'
+  },
+  orderStatusRow: {
+    justifyContent: 'center'
   },
   orderStatus: {
     alignSelf: 'flex-end'
-  },
-  noRequiredForOffloadCol: {
-    alignItems: 'flex-end'
-  },
-  forwardIcon: {
-    fontSize: 14,
   }
 };
 

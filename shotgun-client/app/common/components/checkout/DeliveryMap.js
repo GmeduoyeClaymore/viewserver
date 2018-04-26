@@ -66,7 +66,7 @@ class DeliveryMap extends Component{
         <Input placeholder='flat/business' style={styles.flatInput} value={address.flatNumber} placeholderTextColor={shotgun.silver} onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
       </Col> : null}
       <Col size={70}>
-        <Text style={address.line1 ? {} : styles.locationTextPlaceholder}>{addressToText(address) || placeholder}</Text>
+        <Text numberOfLines={1} style={address.line1 ? {} : styles.locationTextPlaceholder}>{addressToText(address) || placeholder}</Text>
       </Col>
     </Item>;
   }
