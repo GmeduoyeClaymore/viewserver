@@ -96,7 +96,7 @@ export default class OrderSummaryDao{
         notes: orderSummary.notes,
         imageUrl: orderSummary.imageUrl,
         fixedPrice: orderSummary.fixedPrice == -1 ? undefined : orderSummary.fixedPrice,
-        startTime: orderSummary.start,
+        startTime: orderSummary.startTime,
         endTime: orderSummary.endTime
       },
       product: {

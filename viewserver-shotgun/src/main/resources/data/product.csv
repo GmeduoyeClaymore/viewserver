@@ -1,8 +1,8 @@
 productId,name,description,categoryId,price,imageUrl
 1SmallVan,Small Van,"Ford Transit Connect, Vauxhall Combo or similar. Ideal for 8-12 cardboard removal boxes or one kitchen appliance.",1Vans,2000,small-van
 2MediumVan,Medium Van,"Ford Transit, Volkswagen Transporter or similar. Ideal for small moves and can generally take one or two people's personal belongings of up to 30 to 40 assorted moving boxes, or a single large item of furniture such as a sofa or bed.",1Vans,3000,mid-van
-3LargeVan,Large Van,"Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimesions 4.3x2.2x1.8m",1Vans,4000,large-van
-4Luton,Box/Luton Van,"A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimesions 3.9x2.2x2m",1Vans,5000,luton-lorry
+3LargeVan,Large Van,"Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",1Vans,4000,large-van
+4Luton,Box/Luton Van,"A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimensions 3.9x2.2x2m",1Vans,5000,luton-lorry
 6YDSkip,6 Yard Skip,4.6 m3,2Skips,21000,
 8YDSkip,8 Yard Skip,6.1 m3,2Skips,23000,
 10YDSkip,10 Yard Skip,7.3 m3,2Skips,25000,
@@ -234,14 +234,14 @@ SlateRip,Slate Rip,,2Miscellaneous,250,
 SlateNibbler,Slate Nibbler,,2Miscellaneous,250,
 FloorSqueegee,Floor Squeegee,,2Miscellaneous,250,
 Nibbler(Metal)110v,Nibbler (Metal) 110v,,2Miscellaneous,1400,
-Carpenter,Carpenter,All of our carpenters are equiped with their own tools and a passion for detail,1Workers,15000,
-GroundWorker,Ground Worker,These guys just love to dig. Just supply spades indicate where you want the hole then stand back,1Workers,15000,
-Tiler,Tiler,Our tilers dream of the perfect grout lines on our wet rooms and kitchens,1Workers,15000,
-Painter,Painter,Sand mist coat sand under coat sand main coat sand final coat,1Workers,15000,
-BrickLayer,Brick Layer,Any one can lay a new brick the reclaimed ones are the charm. Give us four corners and we'll work wonders,1Workers,15000,
-Plumber,Plumber,Buteline copper fit push fit whatever you need,1Workers,15000,
-Plasterer,Plasterer,Keep your tools clean and never leave a ceiling half way works we live by,1Workers,15000,
-Labourer,Labourer,Keep active and move briskly around the site keeping everything running and clean,1Workers,12000,
+Carpenter,Carpenter,,1Workers,15000,
+GroundWorker,Ground Worker,,1Workers,15000,
+Tiler,Tiler,,1Workers,15000,
+Painter,Painter,,1Workers,15000,
+BrickLayer,Brick Layer,,1Workers,15000,
+Plumber,Plumber,,1Workers,15000,
+Plasterer,Plasterer,,1Workers,15000,
+Labourer,Labourer,,1Workers,12000,
 HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,4000,
 HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000,
 HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000,

@@ -94,6 +94,7 @@ class ProductList extends Component{
             headerView={this.headerView}
           />
         </Grid>
+        <Text note>{selectedProduct ? selectedProduct.description : ''}</Text>
       </Content>
       <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)}
         validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
@@ -115,7 +116,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {selectedContentType, selectedProduct, selectedCategory = {}} = initialProps;
+  const {selectedContentType, selectedProduct = {}, selectedCategory = {}} = initialProps;
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {

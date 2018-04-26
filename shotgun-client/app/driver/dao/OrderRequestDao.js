@@ -97,7 +97,7 @@ export default class OrderRequestDaoContext{
         productId: orderRequest.productId,
         notes: orderRequest.notes,
         imageUrl: orderRequest.imageUrl,
-        startTime: orderRequest.start,
+        startTime: orderRequest.startTime,
         endTime: orderRequest.endTime
       },
       contentType: {
