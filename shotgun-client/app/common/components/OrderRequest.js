@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
+import {getDaoState} from 'common/dao';
 import {OrderStatuses, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary, Currency} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {connect} from 'custom-redux';
+import {calculatePriceToBePaid} from './checkout/CheckoutUtils';
 
 class OrderRequest extends Component {
   constructor(props) {
@@ -18,9 +20,11 @@ class OrderRequest extends Component {
   }
 
   render() {
-    const {orderSummary, history, next, isLast, isFirst} = this.props;
+    const {orderSummary, history, next, isLast, isFirst, user} = this.props;
     const {delivery, contentType, orderItem} = orderSummary;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
+    const userCreatedThisOrder = user.userId == orderSummary.customerUserId;
+    const price = userCreatedThisOrder ? orderSummary.totalPrice : calculatePriceToBePaid(orderSummary.totalPrice, user);
 
     return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
@@ -31,7 +35,7 @@ class OrderRequest extends Component {
           </Col>
           <Col size={40}>
             <Text style={styles.price}>{orderSummary.product.name}</Text>
-            <Currency value={orderSummary.totalPrice} style={styles.price}/>
+            <Currency value={price} style={styles.price}/>
           </Col>
         </Row>
         <Row size={25}>
@@ -106,6 +110,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     selectedContentType,
     ...initialProps,
+    user: getDaoState(state, ['user'], 'userDao')
   };
 };
 

@@ -17,8 +17,7 @@ export default class OrderRequestDaoContext{
   };
 
   static DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-    reportId: 'driverOrderRequest'
+    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }]
   };
 
   constructor(client, options = {}) {
@@ -65,7 +64,6 @@ export default class OrderRequestDaoContext{
         maxDistance,
         showUnrelated,
         showOutOfRange
-
       }
     };
   
@@ -93,12 +91,12 @@ export default class OrderRequestDaoContext{
       orderId: orderRequest.orderId,
       status: orderRequest.status,
       totalPrice: orderRequest.totalPrice,
+      totalToBePaid: orderRequest.totalToBePaid,
       customerUserId: orderRequest.customerUserId,
       orderItem: {
         productId: orderRequest.productId,
         notes: orderRequest.notes,
         imageUrl: orderRequest.imageUrl,
-        fixedPrice: orderRequest.fixedPrice == -1 ? undefined : orderRequest.fixedPrice,
         startTime: orderRequest.start,
         endTime: orderRequest.endTime
       },

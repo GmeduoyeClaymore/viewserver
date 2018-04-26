@@ -74,6 +74,11 @@ export const getLoadingMessage = (state, daoNames) => {
   return daoNames.map( nm => getDaoStatusMessage(nm, state)).join('\n');
 };
 
+export const findOrderSummaryFromDao = (state, orderId, daoName) => {
+  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
+  return orderSummaries.find(o => o.orderId == orderId);
+};
+
 const getDaoStatusMessage = (statusPair, state) => {
   let nm;
   if (typeof statusPair === 'string'){
