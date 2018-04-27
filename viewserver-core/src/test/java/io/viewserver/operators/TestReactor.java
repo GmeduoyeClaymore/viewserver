@@ -6,7 +6,7 @@ import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.IReactorCommandWheel;
 import io.viewserver.reactor.ITask;
 import io.viewserver.reactor.SimpleReactorCommandWheel;
-import io.viewserver.util.NamedThreadFactory;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.shotgun.viewserver.payments;
 
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.BankAccount;
 import com.stripe.model.Card;

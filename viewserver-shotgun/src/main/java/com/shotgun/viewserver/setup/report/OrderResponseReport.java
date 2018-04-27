@@ -1,14 +1,7 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.OrderWithPartnerDataSource;
 import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
-import com.shotgun.viewserver.user.DeliveryCustomerResponseSpreadFunction;
-import io.viewserver.Constants;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.ProjectionNode;
-import io.viewserver.execution.nodes.SpreadNode;
-import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 

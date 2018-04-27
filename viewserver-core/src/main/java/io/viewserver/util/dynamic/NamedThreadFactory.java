@@ -1,4 +1,4 @@
-package io.viewserver.util;
+package io.viewserver.util.dynamic;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;

@@ -2,7 +2,7 @@ package com.shotgun.viewserver.payments;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.setup.datasource.PaymentDataSource;
 import com.shotgun.viewserver.user.User;
 import com.stripe.Stripe;

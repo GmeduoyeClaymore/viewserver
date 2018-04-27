@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.order.domain;
 
 import java.util.Date;
 import java.util.List;

@@ -50,7 +50,7 @@ public class RecordUtils{
         for(String col : tableKeyDefinition.getKeys()){
             Object keyElement = rec.getValue(col);
             if(keyElement == null){
-                throw new RuntimeException(String.format("Cannot map record as one of key element %s is empty %s",keyElement, rec));
+                throw new RuntimeException(String.format("Cannot map record as one of key elements %s is empty %s",col, rec));
             }
             elements[counter++] = keyElement + "";
         }

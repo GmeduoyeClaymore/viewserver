@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shotgun.viewserver.maps.LatLng;
 
 import java.util.Date;
 
@@ -34,6 +35,12 @@ public class User{
 
 
     public User() {
+    }
+
+    public LatLng getLocation(){
+        Double latitude = this.getLatitude();
+        Double longitude = this.getLongitude();
+        return new LatLng(latitude == null ? 0 : latitude, longitude == null ? 0 : longitude);
     }
 
     public String getStatusMessage() {

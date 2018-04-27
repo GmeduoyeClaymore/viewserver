@@ -75,11 +75,7 @@ public class DimensionMapper extends DimensionMapperBase {
                 return mapLong(namespace, dimensionName, (long) value);
             }
             case String: {
-                try {
-                    return mapString(namespace, dimensionName, (String) value);
-                }catch (Exception ex){
-                    System.out.println(ex);
-                }
+                return mapString(namespace, dimensionName, (String) value);
             }
             default:{
                 throw new RuntimeException("Attempting to map unhandled type "  + dimensionContentType);

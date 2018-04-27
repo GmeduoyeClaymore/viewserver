@@ -1,6 +1,6 @@
 package com.shotgun.viewserver.maps;
 
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 
 import java.util.HashMap;
 import java.util.List;

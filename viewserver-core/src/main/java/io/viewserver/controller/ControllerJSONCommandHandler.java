@@ -35,13 +35,17 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
     }
 
     public String trim(String param){
-        if(param == null){
-            return null;
+        try {
+            if (param == null) {
+                return null;
+            }
+            if (param.length() < 4000) {
+                return param;
+            }
+            return param.substring(0, 4000);
+        }catch (Exception ex){
+            return "null";
         }
-        if(param.length() < 4000){
-            return param;
-        }
-        return param.substring(0,4000);
     }
 
     @Override
@@ -76,10 +80,10 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                         }
                         commandResult.setSuccess(true).setMessage(message).setComplete(true);
                     } catch (InterruptedException e) {
-                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,action), e);
+                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
-                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,action), e);
+                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)));
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     }
                 }

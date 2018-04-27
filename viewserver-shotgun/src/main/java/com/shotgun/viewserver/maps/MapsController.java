@@ -1,7 +1,7 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;

@@ -1,6 +1,9 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.order.domain;
 
-import com.shotgun.viewserver.order.Product;
+import com.shotgun.viewserver.delivery.ProductKey;
+import com.shotgun.viewserver.delivery.UserKey;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.order.types.PaymentStage;
 
 import java.util.Date;
 import java.util.List;

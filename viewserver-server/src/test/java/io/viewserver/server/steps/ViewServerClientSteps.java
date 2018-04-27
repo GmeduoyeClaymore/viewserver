@@ -16,12 +16,10 @@
 
 package io.viewserver.server.steps;
 
-import cucumber.api.PendingException;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.JacksonSerialiser;
-import io.viewserver.datasource.DataSourceRegistry;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.messages.common.ValueLists;
@@ -29,7 +27,6 @@ import io.viewserver.operators.validator.ValidationOperator;
 import io.viewserver.operators.validator.ValidationOperatorColumn;
 import io.viewserver.operators.validator.ValidationOperatorRow;
 import io.viewserver.operators.validator.ValidationUtils;
-import io.viewserver.util.MapReader;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -48,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -266,15 +262,23 @@ public class ViewServerClientSteps {
             String json = IOUtils.readStringAndClose(reader, 0);
             json = parseReferencesInJSONFile(json);
             if (records != null) {
-                for (Map<String, String> record : records) {
-                    Map<String, String> params = clientContext.replaceParams(record);
-                    json = ViewServerClientContext.replaceParams(json, params);
-                }
+                Map<String, String> transpose = transpose(records);
+                Map<String, String> params = clientContext.replaceParams(transpose);
+                clientContext.addAllParams(params);
+                json = ViewServerClientContext.replaceParams(json, params);
             }
             return json;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Map<String, String>  transpose(List<Map<String, String>> records) {
+        HashMap<String,String> result = new HashMap<>();
+        for(Map<String,String> record : records){
+            result.put(record.get("Name"), clientContext.replaceParams(record.get("Value")));
+        }
+        return result;
     }
 
     private String parseReferencesInJSONFile(String json) {
@@ -434,6 +438,7 @@ public class ViewServerClientSteps {
                 }
                 Map<String, String> row = clientContext.replaceParams(record);
                 replaceReferences((HashMap)row);
+                clientContext.replaceParams(row);
                 validationRows.add(ValidationUtils.toRow(row, rowKey));
             }
             operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, rowKey);

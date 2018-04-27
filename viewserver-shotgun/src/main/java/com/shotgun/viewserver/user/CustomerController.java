@@ -7,7 +7,7 @@ import com.shotgun.viewserver.ControllerUtils;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;

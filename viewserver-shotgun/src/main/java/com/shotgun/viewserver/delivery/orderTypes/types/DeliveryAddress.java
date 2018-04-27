@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.delivery.orderTypes.types;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

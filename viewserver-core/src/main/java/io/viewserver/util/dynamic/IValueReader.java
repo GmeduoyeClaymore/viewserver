@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.viewserver.util;
+package io.viewserver.util.dynamic;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,16 +24,25 @@ import java.util.Date;
  */
 public interface IValueReader {
     Date readDate(String field);
+
     Timestamp readTimestamp(String field);
+
     Integer readInteger(String field);
+
     Boolean readBoolean(String field);
+
     Long readLong(String field);
+
     Float readFloat(String field);
+
     Double readDouble(String field);
+
     String readString(String field);
 
     String[] readStringArray(String field);
+
     double[] readDoubleArray(String field);
+
     int[] readIntegerArray(String field);
 
 }

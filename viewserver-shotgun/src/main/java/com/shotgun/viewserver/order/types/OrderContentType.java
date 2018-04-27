@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.order.types;
 
 public  enum OrderContentType {
     Delivery(1),

@@ -7,7 +7,7 @@ import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;

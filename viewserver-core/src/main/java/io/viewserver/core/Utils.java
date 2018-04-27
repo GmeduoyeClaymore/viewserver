@@ -20,13 +20,12 @@ import com.google.common.base.Charsets;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.SystemConfiguration;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by nick on 10/09/15.
@@ -92,6 +91,28 @@ public class Utils {
     }
 
 
+    public static <T> Stream<T> fromArray(T[] array){
+        if(array == null){
+            return Stream.empty();
+        }
+        return Arrays.stream(array);
+    }
+    public static <T> List<T> toList(T[] array){
+        if(array == null){
+            return new ArrayList<T>();
+        }
+        return new ArrayList<T>(Arrays.asList(array));
+    }
+
+    public static <T> T[] toArray(List<T> list, ArrayCreator<T> creator){
+        if(list == null){
+            return null;
+        }
+        return list.toArray((T[]) creator.call(list.size()));
+    }
+
+
+
     private static byte[] getBytes(byte[] input) {
         Random random = new Random(seed);
         int length = input.length;
@@ -102,7 +123,9 @@ public class Utils {
         return output;
     }
 
-    public static void main(String[] args) {
-        System.out.println(serialise(args[0]));
+
+    public interface ArrayCreator<T>{
+        T[] call(int size);
     }
+
 }

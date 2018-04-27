@@ -1,4 +1,4 @@
-import com.shotgun.viewserver.delivery.DeliveryAddress;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.*;
 import org.junit.Before;
 import org.junit.Test;

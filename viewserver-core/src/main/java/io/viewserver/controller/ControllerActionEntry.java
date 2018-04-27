@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.*;
 import io.viewserver.command.ActionParam;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,17 +147,19 @@ public class ControllerActionEntry{
                     }else{
                         try{
                             try{
-                                if(toWrapperClass(paramEntry.getType()).isAssignableFrom(toWrapperClass(parameter.getClass()))){//can we just set it
+                                if(paramEntry.getType().isInterface()){//can we deserialialize it
+                                    args[paramEntry.index] = JSONBackedObjectFactory.create(getParameter(parameter), paramEntry.getType());
+                                }
+                                if(args[paramEntry.index] == null && toWrapperClass(paramEntry.getType()).isAssignableFrom(toWrapperClass(parameter.getClass()))){//can we just set it
                                     args[paramEntry.index] = parameter;
                                 }
-
                                 if(args[paramEntry.index] == null){////can type convert it
                                     args[paramEntry.index] = toObject(paramEntry.getType(),parameter);
                                 }
-
                                 if(args[paramEntry.index] == null){//can we deserialialize it
                                     args[paramEntry.index] = mapper.readValue(getParameter(parameter),paramEntry.getType());
                                 }
+
                             }catch (Exception ex){
                                 throw new RuntimeException(String.format("Problem deserializing parameter named \"%s\" ",paramEntry.getName())  + ex, ex);
                             }

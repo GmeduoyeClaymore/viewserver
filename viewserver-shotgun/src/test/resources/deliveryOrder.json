@@ -9,7 +9,7 @@
     "latitude": 51.4341614,
     "longitude": -0.1523323
   },
-  "customerId": "{param_customerId}",
+  "customerUserId": "{param_customerId}",
   "orderProduct": "1SmallVan",
-  "requiredDate": "{now_date+1}"
+  "openingDate": "{now_date+1}"
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,12 @@ public class ControllerUtils {
         }
         if(ser instanceof String){
             return (String) ser;
+        }
+
+        try{
+            return ((DynamicJsonBackedObject)ser).serialize();
+        }catch(Exception ex){
+
         }
 
         if (ser.getClass().isEnum()){

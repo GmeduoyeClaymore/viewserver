@@ -106,5 +106,9 @@ public class ViewServerClientContext {
     public Map<String, String> getContextParams() {
         return contextParams;
     }
+
+    public void addAllParams(Map<String, String> params) {
+        contextParams.putAll(params);
+    }
 }
 

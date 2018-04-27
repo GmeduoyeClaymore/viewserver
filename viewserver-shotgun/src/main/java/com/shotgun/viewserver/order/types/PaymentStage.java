@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.order.types;
 
 public class PaymentStage{
     public enum State{

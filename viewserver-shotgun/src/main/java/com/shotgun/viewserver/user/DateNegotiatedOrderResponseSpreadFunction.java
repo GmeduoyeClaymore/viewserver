@@ -1,17 +1,13 @@
 package com.shotgun.viewserver.user;
 
-import com.shotgun.viewserver.delivery.DeliveryOrder;
-import io.viewserver.core.JacksonSerialiser;
+import com.shotgun.viewserver.order.domain.NegotiatedOrder;
+import com.shotgun.viewserver.order.types.NegotiationResponse;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
-import io.viewserver.expression.function.IUserDefinedFunction;
-import io.viewserver.expression.tree.IExpression;
-import io.viewserver.expression.tree.IExpressionBool;
-import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.operators.spread.ISpreadFunction;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.ColumnType;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DeliveryCustomerResponseSpreadFunction implements ISpreadFunction {
-    private static final Logger log = LoggerFactory.getLogger(DeliveryCustomerResponseSpreadFunction.class);
+public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunction {
+    private static final Logger log = LoggerFactory.getLogger(DateNegotiatedOrderResponseSpreadFunction.class);
     private final Column partnerId;
     private final Column estimatedDate;
     private final Column orderDetailWithoutResponses;
@@ -34,7 +30,7 @@ public class DeliveryCustomerResponseSpreadFunction implements ISpreadFunction {
     public static String ORDER_DETAIL_WITHOUT_RESPONSES = "orderDetailWithoutResponses";
     public static String PARTNER_ORDER_STATUS = "partnerOrderStatus";
 
-    public DeliveryCustomerResponseSpreadFunction() {
+    public DateNegotiatedOrderResponseSpreadFunction() {
          partnerId = new Column(PARTNER_ID_COLUMN, ContentType.String);
          orderResponseStatus = new Column(PARTNER_ORDER_STATUS, ContentType.String);
          estimatedDate = new Column(ESTIMATED_DATE_COLUMN,ContentType.Date);
@@ -47,24 +43,22 @@ public class DeliveryCustomerResponseSpreadFunction implements ISpreadFunction {
         if(contentTypeJSONString ==null || "".equals(contentTypeJSONString)){
             return new ArrayList<>();
         }
-        DeliveryOrder order = JacksonSerialiser.getInstance().deserialise(contentTypeJSONString, DeliveryOrder.class);
-        List<DeliveryOrder.DeliveryOrderFill> responses = order.responses;
+        NegotiatedOrder order = JSONBackedObjectFactory.create(contentTypeJSONString, NegotiatedOrder.class);
+        NegotiationResponse[] responses = order.getResponses();
         if(responses == null){
             return new ArrayList<>();
         }
-        Object[] customerIds = new Object[responses.size()];
-        Object[] customerResponseDates = new Object[responses.size()];
-        Object[] orderDetails = new Object[responses.size()];
-        Object[] statuses = new Object[responses.size()];
+        Object[] customerIds = new Object[responses.length];
+        Object[] customerResponseDates = new Object[responses.length];
+        Object[] orderDetails = new Object[responses.length];
+        Object[] statuses = new Object[responses.length];
 
-        order.responses = null;
-
-        for(int i = 0; i< responses.size(); i++){
-            DeliveryOrder.DeliveryOrderFill deliveryOrderFill = responses.get(i);
-            customerIds[i] = deliveryOrderFill.partnerId;
-            customerResponseDates[i] = deliveryOrderFill.estimatedDate;
-            orderDetails[i] = JacksonSerialiser.getInstance().serialise(order);
-            statuses[i] = deliveryOrderFill.fillStatus.name();
+        for(int i = 0; i< responses.length; i++){
+            NegotiationResponse deliveryOrderFill = responses[i];
+            customerIds[i] = deliveryOrderFill.getPartnerId();
+            customerResponseDates[i] = deliveryOrderFill.getDate();
+            orderDetails[i] = order.serialize("responses");
+            statuses[i] = deliveryOrderFill.getResponseStatus().name();
         }
 
 

@@ -16,7 +16,7 @@
 
 package io.viewserver;
 
-import io.viewserver.util.Spec;
+import io.viewserver.util.dynamic.Spec;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.experimental.categories.Category;

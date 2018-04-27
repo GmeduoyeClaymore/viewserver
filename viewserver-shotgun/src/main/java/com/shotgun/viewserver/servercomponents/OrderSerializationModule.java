@@ -5,12 +5,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.shotgun.viewserver.delivery.ProductKey;
+import com.shotgun.viewserver.order.types.NegotiationResponse;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -20,8 +24,15 @@ public class OrderSerializationModule extends SimpleModule {
     public OrderSerializationModule() {
         addSerializer(new ProductKeySerialiser());
         addSerializer(new DateSerialiser());
+        registerDynamicClass(NegotiationResponse.class);
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
         addDeserializer(Date.class, new DateDesSerialiser());
+
+    }
+
+    public <T> void  registerDynamicClass(Class<T> dynamicClass){
+        addSerializer(new DynamicJsonBackedObjectSerialiser(dynamicClass));
+        addDeserializer(dynamicClass, new DynamicJsonBackedObjectDesSerialiser(dynamicClass));
     }
 
     public static class ProductKeySerialiser extends StdSerializer<ProductKey> {
@@ -32,17 +43,6 @@ public class OrderSerializationModule extends SimpleModule {
         @Override
         public void serialize(ProductKey value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
             jgen.writeString(value.toString());
-        }
-    }
-
-    public static class DateSerialiser extends StdSerializer<Date> {
-        public DateSerialiser() {
-            super(Date.class);
-        }
-
-        @Override
-        public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
-            jgen.writeString(new DateTime(value).toString());
         }
     }
 
@@ -68,6 +68,45 @@ public class OrderSerializationModule extends SimpleModule {
             final ObjectMapper mapper = (ObjectMapper) p.getCodec();
             final String node = mapper.readValue(p, String.class);
             return new DateTime(node).toDate();
+        }
+    }
+
+    public static class DateSerialiser extends StdSerializer<Date> {
+        public DateSerialiser() {
+            super(Date.class);
+        }
+
+        @Override
+        public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
+            jgen.writeString(new DateTime(value).toString());
+        }
+    }
+
+    public static class DynamicJsonBackedObjectDesSerialiser<TDynamicObject extends DynamicJsonBackedObject> extends StdDeserializer<TDynamicObject> {
+        private Class<TDynamicObject> dynamicObjectClass;
+
+        public DynamicJsonBackedObjectDesSerialiser(Class<TDynamicObject> dynamicObjectClass) {
+            super(dynamicObjectClass);
+            this.dynamicObjectClass = dynamicObjectClass;
+        }
+
+        @Override
+        public TDynamicObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            final ObjectMapper mapper = (ObjectMapper) p.getCodec();
+            JsonNode node = mapper.readTree(p);
+            String orderDetailsString = node.toString();
+            return JSONBackedObjectFactory.create(orderDetailsString,dynamicObjectClass);
+        }
+    }
+
+    public static class DynamicJsonBackedObjectSerialiser<TDynamicObject extends DynamicJsonBackedObject> extends StdSerializer<TDynamicObject> {
+        public DynamicJsonBackedObjectSerialiser(Class<TDynamicObject> dynamicObjectClass) {
+            super(dynamicObjectClass);
+        }
+
+        @Override
+        public void serialize(TDynamicObject value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
+            jgen.writeObject(value.getFields());
         }
     }
 }

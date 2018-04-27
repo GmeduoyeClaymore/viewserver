@@ -1,4 +1,4 @@
-Feature: Delivery order scenarios
+Feature: Negotiated order scenarios
 
   Background:
 	Given a running shotgun viewserver
@@ -119,7 +119,7 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
@@ -155,11 +155,11 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client2" controller "deliveryOrderController" action "cancelResponse" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                                |
 	  | orderId | {client1_deliveryOrderController_createOrder_result} |
 	Given "client2" subscribed to report "orderResponses" with parameters
@@ -174,7 +174,7 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
@@ -206,15 +206,15 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client3" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+2}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	Given "client1" controller "negotiatedOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
 	  | partnerId | {client3_partnerController_registerPartner_result}   |
@@ -235,19 +235,19 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client3" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+2}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	Given "client1" controller "negotiatedOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
 	  | partnerId | {client3_partnerController_registerPartner_result}   |
-	Given "client3" controller "deliveryOrderController" action "cancelResponse" invoked with parameters
+	Given "client3" controller "negotiatedOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                                |
 	  | orderId | {client1_deliveryOrderController_createOrder_result} |
 	Given "client3" subscribed to report "orderResponses" with parameters
@@ -267,15 +267,15 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client2" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	Given "client3" controller "negotiatedOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+2}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	Given "client1" controller "negotiatedOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
 	  | partnerId | {client3_partnerController_registerPartner_result}   |
@@ -301,94 +301,4 @@ Feature: Delivery order scenarios
 	  | partnerLongitude        | Integer | 0      |
 	Then "client4" the following data is received terminally on report "orderRequest"
 	  | ~Action | orderId | orderDetails | orderLocation | status |
-
-
-  Scenario: Starting job marks order as in progress
-	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
-	  | Name             | Value                                              |
-	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                                |
-	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
-	  | Name      | Value                                                |
-	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
-	  | partnerId | {client2_partnerController_registerPartner_result}   |
-	Given "client2" controller "deliveryOrderController" action "startDelivery" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	When "client1" subscribed to report "customerOrderSummary" with parameters
-	  | Name                     | Type   | Value   |
-	  | dimension_customerUserId | String | @userId |
-	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | status     | internalOrderStatus |
-	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | INPROGRESS | ENROUTE             |
-
-
-  Scenario: Partner completing job marking job marks job as partner complete
-	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
-	  | Name             | Value                                              |
-	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                                |
-	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
-	  | Name      | Value                                                |
-	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
-	  | partnerId | {client2_partnerController_registerPartner_result}   |
-	Given "client2" controller "deliveryOrderController" action "startDelivery" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	Given "client2" controller "deliveryOrderController" action "partnerComplete" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	When "client1" subscribed to report "customerOrderSummary" with parameters
-	  | Name                     | Type   | Value   |
-	  | dimension_customerUserId | String | @userId |
-	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | status     | internalOrderStatus |
-	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | INPROGRESS | PARTNERCOMPLETE     |
-
-  Scenario: Partner completing job marking job marks job as partner complete and payment made
-	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "createDeliveryOrder.json" with parameters
-	  | Name             | Value                                              |
-	  | param_customerId | {client1_partnerController_registerPartner_result} |
-	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                                |
-	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
-	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
-	  | Name      | Value                                                |
-	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
-	  | partnerId | {client2_partnerController_registerPartner_result}   |
-	Given "client2" controller "deliveryOrderController" action "startDelivery" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	Given "client2" controller "deliveryOrderController" action "partnerComplete" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	Given "client1" controller "deliveryOrderController" action "customerCompleteAndPay" invoked with parameters
-	  | Name    | Value                                                |
-	  | orderId | {client1_deliveryOrderController_createOrder_result} |
-	When "client1" subscribed to report "customerOrderSummary" with parameters
-	  | Name                     | Type   | Value   |
-	  | dimension_customerUserId | String | @userId |
-	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | status    | internalOrderStatus |
-	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | COMPLETED | CUSTOMERCOMPLETE    |
-	When "client1" subscribed to report "paymentsReport" with parameters
-	  | Name                     | Type   | Value   |
-	  | dimension_paidFromUserId | String | @userId |
-	Given keyColumn is "paymentId"
-	Then "client1" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                       |
-	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_deliveryOrderController_customerCompleteAndPay_result} |
-	When "client2" subscribed to report "paymentsReport" with parameters
-	  | Name                   | Type   | Value   |
-	  | dimension_paidToUserId | String | @userId |
-	Then "client2" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidFromUserId                                     |paymentId                                                       |
-	  | RowAdd  |               | {client1_partnerController_registerPartner_result} |{client1_deliveryOrderController_customerCompleteAndPay_result} |
 

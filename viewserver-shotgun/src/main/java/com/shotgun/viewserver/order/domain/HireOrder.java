@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.delivery;
+package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.order.Product;
 

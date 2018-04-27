@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.viewserver.util;
+package io.viewserver.util.dynamic;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -102,12 +102,12 @@ public abstract class AbstractValueReader implements IValueReader {
         Object o = get(field);
         if (o == null) return null;
         if (o instanceof String[]) return (String[]) o;
-        if (o instanceof String) return new String[] { (String)o};
+        if (o instanceof String) return new String[]{(String) o};
         if (o instanceof Object[]) {
-            Object[] array = (Object[])o;
+            Object[] array = (Object[]) o;
             String[] stringArray = new String[array.length];
             for (int i = 0; i < array.length; i++) {
-                stringArray[i] = new String((char[])array[i]);
+                stringArray[i] = new String((char[]) array[i]);
             }
             return stringArray;
         }
@@ -119,7 +119,7 @@ public abstract class AbstractValueReader implements IValueReader {
         Object o = get(field);
         if (o == null) return null;
         if (o instanceof double[]) return (double[]) o;
-        if (o instanceof Double) return new double[] { (double)o};
+        if (o instanceof Double) return new double[]{(double) o};
 
         throw new ClassCastException("Could not convert type " + o.getClass() + " to " + double[].class);
     }
@@ -130,7 +130,7 @@ public abstract class AbstractValueReader implements IValueReader {
         if (o == null) return null;
         if (o instanceof int[]) return (int[]) o;
 
-        if (o instanceof Integer) return new int[] { (int)o };
+        if (o instanceof Integer) return new int[]{(int) o};
 
         throw new ClassCastException("Could not convert type " + o.getClass() + " to " + int[].class);
     }

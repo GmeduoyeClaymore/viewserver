@@ -17,17 +17,22 @@
 package io.viewserver.core;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +44,9 @@ public class JacksonSerialiser implements IJsonSerialiser {
     private final ObjectMapper mapper = new ObjectMapper();
     private final Map<JavaType, ObjectReader> readers = new HashMap<>();
     private static JacksonSerialiser instance;
+
+
+
 
     public static JacksonSerialiser getInstance(){
         if(instance == null){
@@ -70,6 +78,10 @@ public class JacksonSerialiser implements IJsonSerialiser {
         try {
             if(prettyPrint){
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            }
+
+            if(object == null){
+                return null;
             }
 
             return mapper.writeValueAsString(object);

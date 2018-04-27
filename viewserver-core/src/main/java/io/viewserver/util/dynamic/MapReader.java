@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package io.viewserver.util;
+package io.viewserver.util.dynamic;
+
+import java.util.Map;
 
 /**
- * Created by nick on 12/02/2015.
+ * Created by nick on 11/02/2015.
  */
-public interface Spec {
+public class MapReader extends AbstractValueReader {
+
+    private Map map;
+
+    public MapReader(Map map) {
+        this.map = map;
+    }
+
+    @Override
+    protected Object get(String field) {
+        return map.get(field);
+    }
 }
