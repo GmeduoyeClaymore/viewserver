@@ -3,8 +3,9 @@ import {Text, Content, Header, Left, Body, Container, Button, Title, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import {isAnyOperationPending, getDaoState, getOperationErrors} from 'common/dao';
+import {isAnyOperationPending, getDaoState, getOperationErrors, getNavigationProps} from 'common/dao';
 import {setBankAccount} from 'driver/actions/DriverActions';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 class UpdateBankAccountDetails extends Component {
   onChangeText = async (field, value) => {
@@ -13,15 +14,15 @@ class UpdateBankAccountDetails extends Component {
   }
 
   onSetBankAccount = async () => {
-    const {history, dispatch, parentPath, unsavedBankAccount} = this.props;
-    dispatch(setBankAccount(unsavedBankAccount, () => {
-      history.push(`${parentPath}/DriverSettingsLanding`);
+    const {history, dispatch, unsavedBankAccount, address, next} = this.props;
+    dispatch(setBankAccount(unsavedBankAccount, address, () => {
+      history.push(next);
       this.setState({unsavedBankAccount: undefined});
     }));
   }
   
   render(){
-    const {bankAccount = {}, history, busy, errors, unsavedBankAccount = {}} = this.props;
+    const {bankAccount, history, busy, errors, unsavedBankAccount = {}} = this.props;
 
     return <Container>
       <Header withButton>
@@ -32,9 +33,9 @@ class UpdateBankAccountDetails extends Component {
         </Left>
         <Body><Title>Bank Account Details</Title></Body>
       </Header>
-      <Content keyboardShouldPersistTaps="always" padded>
+      <Content keyboardShouldPersistTaps="always">
         <Grid>
-          <Row>
+          {bankAccount ? <Row style={styles.currentAccountRow}>
             <Col>
               <Text>Current Bank Account</Text>
             </Col>
@@ -45,10 +46,15 @@ class UpdateBankAccountDetails extends Component {
                 <Text note>Sort Code {bankAccount.routingNumber}</Text>
               </View>
             </Col>
-          </Row>
-          <Row style={styles.bankAccountRow}>
+          </Row> :
+            <Row style={styles.currentAccountRow}>
+              <Col>
+                <Text>Enter your bank account details so we can pay you once the job is completed</Text>
+              </Col>
+            </Row>}
+          {bankAccount ? <Row style={styles.updateAccountRow}>
             <Text>Update bank account details</Text>
-          </Row>
+          </Row> : null}
           <Row>
             <Col>
               <Item stackedLabel>
@@ -62,7 +68,7 @@ class UpdateBankAccountDetails extends Component {
           </Row>
           <Row>
             <Col>
-              <Item stackedLabel last>
+              <Item stackedLabel>
                 <Label>Sort code</Label>
                 <ValidatingInput bold placeholder="12-34-56" value={unsavedBankAccount.sortCode}
                   validateOnMount={unsavedBankAccount.sortCode !== undefined}
@@ -76,7 +82,7 @@ class UpdateBankAccountDetails extends Component {
       <ErrorRegion errors={errors}/>
       <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true}
         onPress={this.onSetBankAccount}
-        validationSchema={yup.object(validationSchema)} model={unsavedBankAccount}>
+        validationSchema={yup.object(validationSchema)} model={{...unsavedBankAccount, dob: unsavedBankAccount}}>
         <Text uppercase={false}>Set Bank Account</Text>
       </ValidatingButton>
     </Container>;
@@ -84,8 +90,12 @@ class UpdateBankAccountDetails extends Component {
 }
 
 const styles = {
-  bankAccountRow: {
-    marginTop: 25
+  currentAccountRow: {
+    margin: shotgun.contentPadding,
+    marginTop: 0
+  },
+  updateAccountRow: {
+    margin: shotgun.contentPadding
   }
 };
 
@@ -94,12 +104,18 @@ const validationSchema = {
   sortCode: yup.string().required().matches(/^\d{2}-?\d{2}-?\d{2}$/)
 };
 
-const mapStateToProps = (state, nextOwnProps) => ({
-  ...nextOwnProps,
-  busy: isAnyOperationPending(state, [{ paymentDao: 'getBankAccount'}, { paymentDao: 'setBankAccount'}]),
-  errors: getOperationErrors(state, [{paymentDao: 'getBankAccount'}, {paymentDao: 'setBankAccount'}]),
-  user: getDaoState(state, ['user'], 'userDao'),
-  bankAccount: getDaoState(state, ['bankAccount'], 'paymentDao')
-});
+const mapStateToProps = (state, initialProps) => {
+  const next = getNavigationProps(initialProps).next || initialProps.next;
+
+  return {
+    ...initialProps,
+    next,
+    busy: isAnyOperationPending(state, [{ paymentDao: 'getBankAccount'}, { paymentDao: 'setBankAccount'}]),
+    errors: getOperationErrors(state, [{paymentDao: 'getBankAccount'}, {paymentDao: 'setBankAccount'}]),
+    user: getDaoState(state, ['user'], 'userDao'),
+    bankAccount: getDaoState(state, ['bankAccount'], 'paymentDao'),
+    address: getDaoState(state, ['customer', 'homeAddress'], 'deliveryAddressDao')
+  };
+};
 
 export default withExternalState(mapStateToProps)(UpdateBankAccountDetails);

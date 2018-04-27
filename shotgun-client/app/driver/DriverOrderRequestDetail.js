@@ -18,8 +18,14 @@ class DriverOrderRequestDetail extends Component{
   }
 
   onAcceptPress = async() => {
-    const {orderSummary, history, dispatch, ordersRoot} = this.props;
-    dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'left'})));
+    const {orderSummary, history, dispatch, ordersRoot, bankAccount, parentPath} = this.props;
+
+    if (bankAccount) {
+      dispatch(acceptOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/DriverOrders`, transition: 'left'})));
+    } else {
+      // user has no bank account set up so take them to set it up
+      history.push({pathname: `${parentPath}/Settings/UpdateBankAccountDetails`, transition: 'left'}, {next: `${parentPath}/Checkout`});
+    }
   };
 
   render() {
@@ -66,7 +72,8 @@ const mapStateToProps = (state, initialProps) => {
     user: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ driverDao: 'acceptOrderRequest'}, {driverDao: 'updateOrderPrice'}]),
     busy: !orderSummary,
-    orderSummary
+    orderSummary,
+    bankAccount: getDaoState(state, ['bankAccount'], 'paymentDao')
   };
 };
 

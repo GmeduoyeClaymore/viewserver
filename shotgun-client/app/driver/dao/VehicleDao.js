@@ -48,7 +48,7 @@ export default class VehiclesDaoContext{
   }
 
   transformOptions(options){
-    return {...options};
+    return {...options, filterExpression: 'userId == \"@userId\"'};
   }
 
   extendDao(dao){

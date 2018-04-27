@@ -50,6 +50,7 @@ export default class UserDaoContext{
     if (!user){
       return user;
     }
+    //TODO - for some reason the Viewserver sends through null dates as zeros...
     return {...user, status: user.userStatus};
   }
 

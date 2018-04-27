@@ -73,6 +73,6 @@ export const getBankAccount = (continueWith) => {
   return invokeDaoCommand('paymentDao', 'getBankAccount', {}, continueWith);
 };
 
-export const setBankAccount = (paymentBankAccount, continueWith) => {
-  return invokeDaoCommand('paymentDao', 'setBankAccount', {paymentBankAccount}, continueWith);
+export const setBankAccount = (paymentBankAccount, address, continueWith) => {
+  return invokeDaoCommand('paymentDao', 'setBankAccount', {paymentBankAccount, address}, continueWith);
 };

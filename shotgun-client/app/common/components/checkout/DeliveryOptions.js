@@ -270,7 +270,7 @@ const mapStateToProps = (state, initialProps) => {
 
   return {
     ...initialProps,
-    errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
+    errors: getOperationError(state, 'paymentDao', 'getPaymentCards' ),
     defaultPayment,
     paymentCards,
     user

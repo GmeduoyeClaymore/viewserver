@@ -8,13 +8,6 @@ export default class PaymentDao{
     this.optionsSubject = new Rx.Subject();
     this.name = 'paymentDao';
     this.state = {};
-    this.getCustomerPaymentCards = this.getCustomerPaymentCards.bind(this);
-    this.deletePaymentCard = this.deletePaymentCard.bind(this);
-    this.addPaymentCard = this.addPaymentCard.bind(this);
-    this.updateSubscription = this.updateSubscription.bind(this);
-    this.getBankAccount = this.getBankAccount.bind(this);
-    this.setBankAccount = this.setBankAccount.bind(this);
-    this.updateState = this.updateState.bind(this);
     this.subject.next();
   }
 
@@ -26,29 +19,29 @@ export default class PaymentDao{
     return this.optionsSubject;
   }
 
-  updateState(partialState){
+  updateState = (partialState) => {
     const newState = {...this.state, ...partialState};
     this.state = newState;
     this.subject.next(newState);
   }
 
-  async deletePaymentCard({cardId}){
+  deletePaymentCard = async({cardId}) => {
     const promise = this.client.invokeJSONCommand('paymentController', 'deletePaymentCard', {cardId});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect deletion of payment card ${cardId} in 5 seconds`));
     Logger.debug(`Deleted card ${cardId}`);
-    this.getCustomerPaymentCards();
+    this.getPaymentCards();
     return paymentResponse;
   }
 
-  async addPaymentCard({paymentCard}){
-    const promise = this.client.invokeJSONCommand('paymentController', 'addPaymentCard', {paymentCard});
+  addPaymentCard = async({paymentCard}) => {
+    const promise = this.client.invokeJSONCommand('driverController', 'addPaymentCard', {paymentCard});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error('Could not detect creation of payment card in 5 seconds'));
     Logger.debug('Added card for customer');
-    this.getCustomerPaymentCards();
+    this.getPaymentCards();
     return paymentResponse;
   }
 
-  async getCustomerPaymentCards(){
+  getPaymentCards = async() => {
     const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards');
     const paymentCards =  await promise.timeoutWithError(5000, new Error('Could not get payment cards for customer in 5 seconds'));
     Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
@@ -57,7 +50,7 @@ export default class PaymentDao{
     return result;
   }
 
-  async getBankAccount(){
+  getBankAccount = async() => {
     const promise = this.client.invokeJSONCommand('paymentController', 'getBankAccount');
     const bankAccount =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
     Logger.debug(`Got bank account ${bankAccount}`);
@@ -66,15 +59,15 @@ export default class PaymentDao{
     return result;
   }
 
-  async setBankAccount({paymentBankAccount}){
-    const promise = this.client.invokeJSONCommand('paymentController', 'setBankAccount', {paymentBankAccount});
-    const result =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
+  setBankAccount = async({paymentBankAccount, address}) => {
+    const promise = this.client.invokeJSONCommand('driverController', 'setBankAccount', {paymentBankAccount, address});
+    const result =  await promise.timeoutWithError(5000, new Error('Could set bank account in 5 seconds'));
     Logger.debug('Set bank account');
     this.getBankAccount();
     return result;
   }
 
-  async updateSubscription(){
+  updateSubscription = async() => {
     this.subject.next();
     return;
   }

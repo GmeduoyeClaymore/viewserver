@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
-
 @Controller(name = "userController")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -47,8 +46,6 @@ public class UserController {
     private MapsController mapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
-
-
 
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           LoginController loginController,
@@ -64,26 +61,32 @@ public class UserController {
         this.messagingController = messagingController;
         this.mapsController = mapsController;
         this.reactor = reactor;
-
     }
 
-    @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
-    public String addOrUpdateUser(@ActionParam(name = "user") User user) {
+    public String addOrUpdateUser(User user) {
         log.debug("addOrUpdateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
-            throw new RuntimeException("Already  user registered for email " + user.getEmail());
-        }
 
+        String userId = (String) ControllerContext.get("userId");
         Date now = new Date();
 
-        if (user.getUserId() == null) {
-            user.setUserId(ControllerUtils.generateGuid());
+        if (userId == null) {
+            if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
+                throw new RuntimeException("This email address is already in use " + user.getEmail());
+            }
+            userId = ControllerUtils.generateGuid();
+            user.setUserId(userId);
             user.setCreated(now);
         }
 
+        if (user.getImageData() != null) {
+            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
+            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            user.setImageUrl(imageUrl);
+        }
+
         Record userRecord = new Record()
-                .addValue("userId", user.getUserId())
+                .addValue("userId", userId)
                 .addValue("lastModified", now)
                 .addValue("created", user.getCreated())
                 .addValue("firstName", user.getFirstName())
@@ -102,38 +105,8 @@ public class UserController {
                 .addValue("chargePercentage", user.getChargePercentage());
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
+        log.debug("addOrUpdateUser successful: " + user.getEmail() + " with id " + user.getUserId());
         return user.getUserId();
-    }
-
-
-    @ControllerAction(path = "updateUser", isSynchronous = true)
-    public String updateUser(@ActionParam(name = "user") User user) {
-        log.debug("updateUser user: " + user.getEmail());
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-
-        String userId = getUserId();
-        Date now = new Date();
-
-        if (user.getImageData() != null) {
-            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = imageController.saveToS3(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
-            user.setImageUrl(imageUrl);
-        }
-
-        Record userRecord = new Record()
-                .addValue("userId", userId)
-                .addValue("lastModified", now)
-                .addValue("firstName", user.getFirstName())
-                .addValue("lastName", user.getLastName())
-                .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("contactNo", user.getContactNo())
-                .addValue("email", user.getEmail().toLowerCase())
-                .addValue("imageUrl", user.getImageUrl());
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
-
-        log.debug("Updated user: " + user.getEmail() + " with id " + userId);
-        return userId;
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)
@@ -187,7 +160,6 @@ public class UserController {
 
         if(status != null){
             userRecord.addValue("userStatus", status.name());
-
         }
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);

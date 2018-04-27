@@ -11,20 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface PaymentController {
-    @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
-    HashMap<String, Object> createPaymentCustomer(@ActionParam(name = "emailAddress") String emailAddress, @ActionParam(name = "paymentCard") PaymentCard paymentCard);
+    HashMap<String, Object> createPaymentCustomer(String emailAddress, PaymentCard paymentCard);
 
-    @ControllerAction(path = "createPaymentAccount", isSynchronous = false)
-    String createPaymentAccount(@ActionParam(name = "user") User user,
-                                @ActionParam(name = "deliveryAddress") DeliveryAddress address,
-                                @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
+    String createPaymentAccount(User user, DeliveryAddress address, PaymentBankAccount paymentBankAccount);
 
-    void createCharge(int totalPrice,
-                      int chargePercentage,
-                      String paymentId,
-                      String customerId,
-                      String accountId,
-                      String description);
+    void createCharge(int totalPrice, int chargePercentage, String paymentId, String customerId, String accountId, String description);
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
     String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard);
@@ -38,6 +29,5 @@ public interface PaymentController {
     @ControllerAction(path = "getBankAccount", isSynchronous = false)
     BankAccount getBankAccount();
 
-    @ControllerAction(path = "setBankAccount", isSynchronous = false)
-    void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
+    void setBankAccount(PaymentBankAccount paymentBankAccount);
 }

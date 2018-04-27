@@ -19,17 +19,8 @@ class DriverCapabilityDetails extends Component{
     dispatch(getVehicleDetails(registrationNumber));
   }
 
-  togglePeopleVisibility = (peopleVisible) => {
-    this.setState({numAvailableForOffload: peopleVisible ? 1 : undefined});
-  }
-
-  setNumAvailableForOffload = (numAvailableForOffload) => {
-    this.setState({numAvailableForOffload});
-  }
-
   render(){
-    const {errors, vehicle = {}, busy, registrationNumber, numAvailableForOffload} = this.props;
-    const peopleVisible = numAvailableForOffload > 0;
+    const {errors, vehicle = {}, busy, registrationNumber} = this.props;
 
     return <Content><Grid>
       <Row>
@@ -57,55 +48,6 @@ class DriverCapabilityDetails extends Component{
           <Text>{`${vehicle.dimensions.weight}kg Max`}</Text>
         </Item></Col>
       </Row>) : null}
-      <Row>
-        <Col>
-          <Grid style={styles.offloadGrid}>
-            <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
-            <Row>
-              <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={peopleVisible} onPress={() => this.togglePeopleVisibility(true)}><Text uppercase={false}>Yes</Text></Button></Col>
-              <Col><Button fullWidth light active={!peopleVisible} onPress={() => this.togglePeopleVisibility(false)}><Text uppercase={false}>No</Text></Button></Col>
-            </Row>
-          </Grid>
-          {peopleVisible ?
-            <Grid>
-              <Row>
-                <Text style={{paddingBottom: 15}}>How many people will be available?</Text>
-              </Row>
-              <Row>
-                <Col style={{marginRight: 10}}>
-                  <Row>
-                    <Button personButton active={numAvailableForOffload == 1} onPress={() => this.setNumAvailableForOffload(1)} >
-                      <View>
-                        <Icon name='one-person'/>
-                        <Text style={styles.personSelectText}>1</Text>
-                      </View>
-                    </Button>
-                  </Row>
-                </Col>
-                <Col style={{marginRight: 10}}>
-                  <Row>
-                    <Button personButton active={numAvailableForOffload == 2} onPress={() => this.setNumAvailableForOffload(2)} >
-                      <View>
-                        <Icon name='one-person'/>
-                        <Text style={styles.personSelectText}>2</Text>
-                      </View>
-                    </Button>
-                  </Row>
-                </Col>
-                <Col>
-                  <Row>
-                    <Button personButton active={numAvailableForOffload == 3} onPress={() => this.setNumAvailableForOffload(3)} >
-                      <View>
-                        <Icon name='one-person'/>
-                        <Text style={styles.personSelectText}>3</Text>
-                      </View>
-                    </Button>
-                  </Row>
-                </Col>
-              </Row>
-            </Grid> : null}
-        </Col>
-      </Row>
       <ErrorRegion errors={errors}/>
     </Grid></Content>;
   }
@@ -120,20 +62,10 @@ const validationSchema = {
 };
 
 const styles = {
-  personSelectText: {
-    marginTop: 5,
-    fontWeight: 'normal',
-    fontSize: 16,
-    textAlign: 'center'
-  },
   vehicleRegItem: {
     marginLeft: 0,
     borderBottomWidth: 0,
     width: '100%'
-  },
-  offloadGrid: {
-    marginBottom: shotgun.contentPadding,
-    marginTop: 20
   }
 };
 

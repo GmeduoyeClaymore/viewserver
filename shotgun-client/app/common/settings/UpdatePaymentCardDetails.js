@@ -3,7 +3,7 @@ import {Text, Content, Header, Left, Body, Container, Title, List, ListItem, Vie
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {ErrorRegion, SpinnerButton, CardIcon, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import {isAnyOperationPending, getOperationErrors, getDaoState} from 'common/dao';
+import {isAnyOperationPending, getOperationErrors, getDaoState, getNavigationProps} from 'common/dao';
 import {deletePaymentCard, addPaymentCard} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
@@ -24,13 +24,20 @@ class UpdatePaymentCardDetails extends Component {
   }
 
   addCard = async() => {
-    const {dispatch, newPaymentCard} = this.props;
-    dispatch(addPaymentCard(newPaymentCard, () => this.ccInput.setValues({ number: undefined,  expiry: undefined, cvc: undefined})));
+    const {dispatch, newPaymentCard, next, history} = this.props;
+
+    dispatch(addPaymentCard(newPaymentCard, () => {
+      if (next){
+        //TODO - for some reason the next url of /Driver/Landing/Checkout isn't working so just goBack for now
+        history.goBack();
+        //history.push(next);
+      }
+      this.ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined});
+    }));
   };
 
   render(){
     const {history, busy, errors, user, paymentCards, valid} = this.props;
-
     return <Container>
       <Header withButton>
         <Left>
@@ -42,7 +49,7 @@ class UpdatePaymentCardDetails extends Component {
       </Header>
       <Content padded keyboardShouldPersistTaps="always">
         <List>
-          {paymentCards.map(c => {
+          {paymentCards.length > 0 && paymentCards.map(c => {
             return <ListItem paddedTopBottom key={c.id}>
               <CardIcon style={styles.cardIcon} brand={c.brand} />
               <View>
@@ -54,7 +61,7 @@ class UpdatePaymentCardDetails extends Component {
           })}
           <ListItem paddedTopBottom>
             <View style={{flex: 1}}>
-              <Text>Add a new card</Text>
+              <Text style={styles.informationText}>{paymentCards.length > 0 ? 'Add a new card' : 'Add a credit or debit card so we can take payment for completed jobs'}</Text>
               {paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} onChange={(details) => this.onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
             </View>
           </ListItem>
@@ -69,6 +76,9 @@ class UpdatePaymentCardDetails extends Component {
 }
 
 const styles = {
+  informationText: {
+    marginBottom: shotgun.contentPadding
+  },
   cardIcon: {
     width: 25
   },
@@ -80,7 +90,8 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
-  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao'),
+  next: getNavigationProps(initialProps).next,
+  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || [],
   user: getDaoState(state, ['user'], 'userDao'),
   errors: getOperationErrors(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}, {paymentDao: 'getPaymentCards'}]),
   busy: isAnyOperationPending(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}, {paymentDao: 'getPaymentCards'}])

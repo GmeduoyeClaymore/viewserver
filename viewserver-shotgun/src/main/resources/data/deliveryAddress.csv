@@ -6,3 +6,4 @@ deliveryAddressId,userId,line1,city,postCode,latitude,longitude,googlePlaceId,,i
 5f088727-bb39-46b2-9c4d-e528a0fa495d,2BBui,75 Brompton Rd,London,SW3,51.5002078,-0.1621428,ChIJS-djwzgFdkgR1uVoJ9xSI4I,,FALSE,01/01/2017 08:30
 8ee9ad63-5fdc-4f4c-8d87-743ac8d3bbea,2BBui,94 Oxford St,London,W1D 1BZ,51.5161747,-0.1350527,ChIJl6cFYCsbdkgRcm8iIqkGTtE,,FALSE,01/01/2017 08:30
 e73abef8-6611-449d-a91d-ea1fca7cfd8a,2BBui,110 Hatton Garden,London,EC1N 8LY,51.5182655,-0.1079763,ChIJ4ao3sU0bdkgR2fd7b4vQBwI,,FALSE,01/01/2017 08:30
+ay3abef8-6611-449d-a91d-ea1fca7cfddd,3ABCD,110 Hatton Garden,London,EC1N 8LY,51.5182655,-0.1079763,ChIJ4ao3sU0bdkgR2fd7b4vQBwI,,TRUE,01/01/2017 08:30

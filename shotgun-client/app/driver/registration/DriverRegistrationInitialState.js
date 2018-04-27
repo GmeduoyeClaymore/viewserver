@@ -1,4 +1,4 @@
-export const INITIAL_STATE = {
+/*export const INITIAL_STATE = {
   user: {
     firstName: undefined,
     lastName: undefined,
@@ -16,10 +16,6 @@ export const INITIAL_STATE = {
     city: undefined,
     postCode: undefined
   },
-  bankAccount: {
-    accountNumber: undefined,
-    sortCode: undefined
-  },
   vehicle: {
     registrationNumber: undefined,
     colour: undefined,
@@ -33,31 +29,30 @@ export const INITIAL_STATE = {
       weight: undefined
     }
   }
-};
+};*/
 
-/*export const INITIAL_STATE = {
+export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
-    email: 'test7@test.com',
+    email: `test${Math.random() * 1000}@test.com`,
     contactNo: '07733362799',
     type: 'driver',
     password: 'password',
     dob: '1982-02-03',
     range: 10
   },
-  
   address: {
-    line1: 'line1',
+    line1: '129 Drakefield Road',
+    line2: 'Tooting',
     city: 'London',
-    postCode: 'SW178RS'
+    country: 'UK',
+    postCode: 'SW17 8RS',
+    googlePlaceId: '123456',
+    latitude: 15.1,
+    longitude: 16.3,
+    isDefault: true
   },
-  
-  bankAccount: {
-    accountNumber: '00012345',
-    sortCode: '108800'
-  },
-
   vehicle: {
     registrationNumber: 'YA61AYB',
     colour: undefined,
@@ -71,5 +66,5 @@ export const INITIAL_STATE = {
       weight: undefined
     }
   }
-};*/
+};
 

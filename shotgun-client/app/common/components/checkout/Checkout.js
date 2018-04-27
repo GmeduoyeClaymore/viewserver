@@ -81,7 +81,7 @@ hire(['ContentTypeSelect','ProductCategoryList', 'DeliveryMap', 'DeliveryOptions
 const mapStateToProps = (state, nextOwnProps) => {
   return {
     ...nextOwnProps,
-    busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }])
+    busy: isAnyOperationPending(state, [{ paymentDao: 'getPaymentCards' }])
   };
 };
 

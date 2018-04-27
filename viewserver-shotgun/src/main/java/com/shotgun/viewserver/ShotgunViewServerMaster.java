@@ -56,7 +56,7 @@ public class ShotgunViewServerMaster extends ViewServerMasterBase {
         this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new DriverController(getDatabaseUpdater(),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, loginController, imageController, nexmoController, this.getServerReactor(), configuration.isMock()));
+        this.registerController(new DriverController(getDatabaseUpdater(),paymentController,messagingController, userController, vehicleController, journeyEmulatorController, deliveryAddressController, loginController, imageController, nexmoController, this.getServerReactor(), configuration.isMock()));
         this.registerController(new CustomerController(getDatabaseUpdater(),paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(new OrderController(getDatabaseUpdater(), deliveryAddressController,deliveryController,orderItemController, new PricingStrategyResolver(), messagingController, configuration.isTest()));
         this.registerController(vehicleController);

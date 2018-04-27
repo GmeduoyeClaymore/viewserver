@@ -4,6 +4,7 @@ import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
+import {getDaoState} from 'common/dao';
 
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){
@@ -17,8 +18,13 @@ class ContentTypeSelect extends Component{
   }
 
   startOrder = () => {
-    const {history, next} = this.props;
-    history.push(next);
+    const {history, next, paymentCards, ordersRoot, parentPath} = this.props;
+
+    if (paymentCards.length > 0) {
+      history.push(next);
+    } else {
+      history.push({pathname: `${ordersRoot}/Settings/UpdatePaymentCardDetails`, transition: 'left'}, {next: `${parentPath}`});
+    }
   }
 
   render(){
@@ -79,4 +85,12 @@ const styles = {
   }
 };
 
-export default withExternalState()(ContentTypeSelect);
+const mapStateToProps = (state, initialProps) => {
+  return {
+    ...initialProps,
+    paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || []
+  };
+};
+
+
+export default withExternalState(mapStateToProps)(ContentTypeSelect);

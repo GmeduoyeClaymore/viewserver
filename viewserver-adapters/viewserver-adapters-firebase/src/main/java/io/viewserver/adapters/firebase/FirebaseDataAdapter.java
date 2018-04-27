@@ -46,9 +46,11 @@ public class FirebaseDataAdapter implements IWritableDataAdapter {
                     return;
                 }
 
-                String msg = snapshotComplete ? String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName) :
-                        String.format("Snapshot with %s record from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName);
-                logger.info(msg);
+                if(snapshot.getDocumentChanges().size() > 0) {
+                    String msg = snapshotComplete ? String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName) :
+                            String.format("Snapshot with %s record from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName);
+                    logger.info(msg);
+                }
 
                 for (DocumentChange dc : snapshot.getDocumentChanges()) {
                     try {

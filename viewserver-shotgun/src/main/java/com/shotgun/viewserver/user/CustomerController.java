@@ -62,7 +62,7 @@ public class CustomerController {
         deliveryAddress.setIsDefault(true);
         HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
         user.setStripeCustomerId(stripeResponse.get("customerId").toString());
-        user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
+        user.setStripeDefaultSourceId(stripeResponse.get("defaultSourceId").toString());
 
         String international_format_number = (String) nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number");
         if(international_format_number == null){
