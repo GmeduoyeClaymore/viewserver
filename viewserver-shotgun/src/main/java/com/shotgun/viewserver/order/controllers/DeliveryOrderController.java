@@ -1,8 +1,11 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
+import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
+import com.shotgun.viewserver.order.OrderController;
+import com.shotgun.viewserver.order.domain.DeliveryOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.order.types.OrderContentType;
 import com.shotgun.viewserver.messaging.IMessagingController;
@@ -20,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 @Controller(name = "deliveryOrderController")
-public class DeliveryOrderController implements OrderNotificationController{
+public class DeliveryOrderController implements NegotiationNotifications {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 

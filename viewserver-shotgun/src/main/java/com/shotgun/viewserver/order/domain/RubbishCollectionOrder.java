@@ -2,6 +2,7 @@ package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.Product;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
 import java.util.Date;
 import java.util.List;
@@ -23,4 +24,7 @@ public class RubbishCollectionOrder{
         int filledPrice;
         Date estimatedDate;
     }
+
+
 }
+

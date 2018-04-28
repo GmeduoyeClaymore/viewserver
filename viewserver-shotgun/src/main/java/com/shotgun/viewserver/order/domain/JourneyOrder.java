@@ -1,9 +1,7 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
-import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.order.types.OrderEnumBase;
-import com.shotgun.viewserver.order.domain.SinglePaymentOrder;
 import com.shotgun.viewserver.maps.DistanceAndDuration;
 import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.order.types.TransitionUtils;

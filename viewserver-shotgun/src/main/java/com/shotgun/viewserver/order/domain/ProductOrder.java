@@ -1,24 +1,11 @@
 package com.shotgun.viewserver.order.domain;
 
+import com.shotgun.viewserver.delivery.ProductKey;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+
 import java.util.Date;
 import java.util.List;
 
-public class ProductOrder{
-
-    String customerId;
-    int estimatedCost;
-    int noPeopleRequired;
-    Date requiredDate;
-    ProductOrderFill assignedResponse;
-    List<ProductOrderItem> productOrderItems;
-    List<ProductOrderFill> orderResponses;
-    public class ProductOrderFill{
-        int filledPrice;
-        Date estimatedDate;
-    }
-
-    public class ProductOrderItem{
-        String productKey;
-        int quantity;
-    }
+public interface ProductOrder extends BasicOrder, NegotiatedOrder, DynamicJsonBackedObject {
+    ProductOrderItem[] getProductOrderItems();
 }

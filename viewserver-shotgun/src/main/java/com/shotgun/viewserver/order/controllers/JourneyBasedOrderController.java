@@ -1,7 +1,10 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.*;
+import com.shotgun.viewserver.order.contracts.JourneyNotifications;
+import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 @Controller(name = "journeyBaseOrderController")
-public class JourneyBasedOrderController implements OrderNotificationController, OrderUpdateController, OrderTransformationController{
+public class JourneyBasedOrderController implements JourneyNotifications, OrderUpdateController, OrderTransformationController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
@@ -59,7 +62,6 @@ public class JourneyBasedOrderController implements OrderNotificationController,
                 },
                 JourneyOrder.class
         );
-
     }
 
     private DistanceAndDuration getDistanceAndDuration(JourneyOrder order) {

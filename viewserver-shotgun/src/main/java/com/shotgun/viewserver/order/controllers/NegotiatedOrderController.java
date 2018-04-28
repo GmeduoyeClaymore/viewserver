@@ -1,6 +1,9 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
+import com.shotgun.viewserver.order.OrderTransformationController;
+import com.shotgun.viewserver.order.OrderUpdateController;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
@@ -16,7 +19,7 @@ import static io.viewserver.core.Utils.fromArray;
 
 
 @Controller(name = "negotiatedOrderController")
-public class NegotiatedOrderController implements OrderUpdateController, OrderNotificationController, OrderTransformationController{
+public class NegotiatedOrderController implements OrderUpdateController, NegotiationNotifications, OrderTransformationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NegotiatedOrderController.class);
 

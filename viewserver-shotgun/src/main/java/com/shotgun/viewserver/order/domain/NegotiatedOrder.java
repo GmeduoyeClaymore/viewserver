@@ -99,7 +99,7 @@ public interface NegotiatedOrder  extends BasicOrder {
         static{
             REQUESTED.to(RESPONDED,ASSIGNED);
             RESPONDED.to(ASSIGNED,REQUESTED);
-            ASSIGNED.to(STARTED, RESPONDED);
+            ASSIGNED.to(STARTED,RESPONDED);
             STARTED.to(PARTNERCOMPLETE);
             PARTNERCOMPLETE.to(CUSTOMERCOMPLETE);
         }

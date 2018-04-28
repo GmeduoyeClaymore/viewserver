@@ -70,7 +70,11 @@ public final class PropertyMappingClassInterpreter {
 
         String jsonRepresentation = JacksonSerialiser.getInstance().serialise(value);
 
-        return JacksonSerialiser.getInstance().deserialise(jsonRepresentation,method.getReturnType());
+        Object deserialise = JacksonSerialiser.getInstance().deserialise(jsonRepresentation, method.getReturnType());
+
+        target.put(info.getPropertyName(), deserialise);
+
+        return deserialise;
     }
 
     private static Object invokeExplicitJson(Method method, Object pr, Object[] args, Map<String, Object> propertyValues) {
@@ -100,22 +104,6 @@ public final class PropertyMappingClassInterpreter {
             }
         }
         return result;
-    }
-
-    private static Class getListElementType(Method method) {
-        try {
-            java.lang.reflect.Field f = java.lang.reflect.Method.class.getDeclaredField("signature");
-            f.setAccessible(true);
-            String sigature = (String) f.get(method);
-            Matcher matcher = methodTypePattern.matcher(sigature);
-            if (matcher.find()) {
-                String classString = matcher.group(1);
-                return Class.forName(classString);
-            }
-            return null;
-        } catch (Exception ex) {
-            return null;
-        }
     }
 
     private static UnboundMethodCallHandler<Map<String, Object>> setterHandler(String propertyName) {

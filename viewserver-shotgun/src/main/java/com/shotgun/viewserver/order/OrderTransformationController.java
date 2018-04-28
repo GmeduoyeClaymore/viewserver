@@ -16,7 +16,35 @@ public interface OrderTransformationController extends OrderUpdateController{
         TOrder call(TOrder order);
     }
 
+    default <T extends BasicOrder> T transform(String orderId, Predicate<T> tranformation, Class<T> orderClass){
+        return transform(orderId,tranformation,c->{}, orderClass);
+    }
     default <T extends BasicOrder> T transform(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
+
+        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
+
+        int currentRow = orderTable.getRow(new TableKey(orderId));
+        if(currentRow == -1){
+            throw new RuntimeException("Unable to find order for key:" + orderId);
+        }
+
+        String orderDetailsString = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow).toString();
+
+        T order = JSONBackedObjectFactory.create(orderDetailsString, orderClass);
+
+        if(order == null){
+            throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
+        }
+
+        if(tranformation.test(order)){
+            updateOrderRecord(order);
+        }
+
+        afterTransform.accept(order);
+        return order;
+    }
+
+    default <T extends BasicOrder> T create(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
 
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
 

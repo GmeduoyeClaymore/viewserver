@@ -1,4 +1,4 @@
-Feature: Negotiated order scenarios
+Feature: Journey order scenarios
 
   Background:
 	Given a running shotgun viewserver

@@ -24,7 +24,6 @@ public interface ClassInterpreter<T> {
                             interpreter::interpret
                     ));
             return key -> {
-                System.out.println(iface + "" + typeInfo);
                 return collect.get(key);
             };
         };

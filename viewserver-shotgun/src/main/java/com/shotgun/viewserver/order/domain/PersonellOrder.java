@@ -1,47 +1,8 @@
 package com.shotgun.viewserver.order.domain;
 
-import com.shotgun.viewserver.delivery.ProductKey;
-import com.shotgun.viewserver.delivery.UserKey;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
-import com.shotgun.viewserver.order.types.PaymentStage;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
-import java.util.Date;
-import java.util.List;
-
-public class PersonellOrder{
-    enum OrderType{
-        PRICE,
-        DAY_RATE
-    }
-    enum States{
-        REQUESTED,
-        RESPONDED,
-        ASSIGNED,
-        INPROGRESS,
-        PARTNERCOMPLETE,
-        CUSTOMERCOMPLETE,
-    }
-
-    public class PersonellOrderFill{
-        public UserKey partnerId;
-        public int filledPrice;
-        public Date estimatedDate;
-    }
-
-    public DeliveryAddress origin;
-    public int estimatedCost;
-    public int noPeopleRequired;
-
-    public ProductKey requiredWorkerType;
-    public Date requiredDate;
-    public OrderType orderType;
-    public States orderState;
-
-    public List<PersonellOrderFill> responses;
-    public PersonellOrderFill assignedPartner;
-    public List<PaymentStage> stage;
+public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, NegotiatedOrder, DynamicJsonBackedObject, StagedPaymentOrder {
+    DeliveryAddress getJobLocation();
 }
-
-
-
-

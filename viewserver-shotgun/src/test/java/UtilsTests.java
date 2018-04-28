@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.databind.Module;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
-import com.shotgun.viewserver.order.DeliveryOrder;
+import com.shotgun.viewserver.order.domain.DeliveryOrder;
 import com.shotgun.viewserver.order.domain.SinglePaymentOrder;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.servercomponents.OrderSerializationModule;

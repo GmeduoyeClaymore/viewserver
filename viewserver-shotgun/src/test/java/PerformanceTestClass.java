@@ -6,7 +6,6 @@ import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.databene.contiperf.PerfTest;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 public class PerformanceTestClass{
@@ -44,7 +43,7 @@ public class PerformanceTestClass{
 
         @Override
         public UtilsTests.TestUnit[] getHolders() {
-            return new UtilsTests.TestUnit[0];
+            return new UtilsTests.TestUnit[2];
         }
     }
 
@@ -56,16 +55,16 @@ public class PerformanceTestClass{
     @Test
     @PerfTest(invocations = 1000, warmUp = 1000)
     public void invokeConcrete() {
-        getAMillionRandomLongs(concreteInstance);
+        getMethodHolders(concreteInstance);
     }
 
     @Test
     @PerfTest(invocations = 1000, warmUp = 1000)
     public void invokeProxied() {
-        getAMillionRandomLongs(proxiedInstance);
+        getMethodHolders(proxiedInstance);
     }
 
-    private void getAMillionRandomLongs(UtilsTests.TestUnitHolder generator) {
+    private void getMethodHolders(UtilsTests.TestUnitHolder generator) {
         for (int i = 0; i < 1000000; i++) {
             generator.getHolders();
         }
