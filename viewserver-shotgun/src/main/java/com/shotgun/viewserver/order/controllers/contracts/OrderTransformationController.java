@@ -1,4 +1,4 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.controllers.contracts;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
@@ -21,20 +21,7 @@ public interface OrderTransformationController extends OrderUpdateController{
     }
     default <T extends BasicOrder> T transform(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
 
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-
-        int currentRow = orderTable.getRow(new TableKey(orderId));
-        if(currentRow == -1){
-            throw new RuntimeException("Unable to find order for key:" + orderId);
-        }
-
-        String orderDetailsString = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow).toString();
-
-        T order = JSONBackedObjectFactory.create(orderDetailsString, orderClass);
-
-        if(order == null){
-            throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
-        }
+        T order = getOrderForId(orderId, orderClass);
 
         if(tranformation.test(order)){
             updateOrderRecord(order);
@@ -44,8 +31,7 @@ public interface OrderTransformationController extends OrderUpdateController{
         return order;
     }
 
-    default <T extends BasicOrder> T create(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
-
+    default <T extends BasicOrder> T getOrderForId(String orderId, Class<T> orderClass) {
         KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
 
         int currentRow = orderTable.getRow(new TableKey(orderId));
@@ -53,20 +39,21 @@ public interface OrderTransformationController extends OrderUpdateController{
             throw new RuntimeException("Unable to find order for key:" + orderId);
         }
 
-        String orderDetailsString = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow).toString();
+        Object orderDetails = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow);
+
+        if(orderDetails == null){
+            throw new RuntimeException("no orderDetails field found in order row - " + orderId);
+        }
+
+        String orderDetailsString = orderDetails.toString();
 
         T order = JSONBackedObjectFactory.create(orderDetailsString, orderClass);
 
         if(order == null){
             throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
         }
-
-        if(tranformation.test(order)){
-            updateOrderRecord(order);
-        }
-
-        afterTransform.accept(order);
         return order;
     }
+
 
 }

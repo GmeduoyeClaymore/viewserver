@@ -3,6 +3,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.controller.ControllerRegistration;
+import io.viewserver.controller.MockSession;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
 /**
  * Created by Gbemiga on 30/01/18.
@@ -27,8 +29,8 @@ public class TestControllerUtils {
     public static ControllerContext getControllerContext(String userId) {
         ControllerContext ctxt = ControllerContext.create(new MockSession());
         ControllerContext.set("userId",userId);
-        User user = new User();
-        user.setUserId(userId);
+        User user = JSONBackedObjectFactory.create(User.class);
+        user.set("userId",userId);
         ControllerContext.set("user",user);
         return ctxt;
     }

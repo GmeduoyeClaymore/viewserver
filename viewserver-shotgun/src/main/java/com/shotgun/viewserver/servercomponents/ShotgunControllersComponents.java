@@ -7,11 +7,7 @@ import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
-import com.shotgun.viewserver.order.*;
-import com.shotgun.viewserver.order.controllers.DeliveryOrderController;
-import com.shotgun.viewserver.order.controllers.JourneyBasedOrderController;
-import com.shotgun.viewserver.order.controllers.NegotiatedOrderController;
-import com.shotgun.viewserver.order.controllers.OrderPaymentController;
+import com.shotgun.viewserver.order.controllers.*;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.user.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -32,19 +28,19 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
     public void start() {
         super.start();
         IImageController iImageController = getImageController();
-        IMessagingController messagingController = getMessagingController(); //new MessagingController(configuration.getMessagingApiKey(), getDatabaseUpdater());
+        IMessagingController messagingController = getMessagingController();
         IMapsController mapsController = getMapsController();
         INexmoController nexmoController = getNexmoController();
-        PaymentController paymentController = getPaymentController(); //configuration.isMock() ? new MockPaymentController() : new PaymentControllerImpl(configuration.getStripeKey());
+        PaymentController paymentController = getPaymentController();
 
 
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater);
         DeliveryController deliveryController = new DeliveryController(databaseUpdater);
-        OrderItemController orderItemController = new OrderItemController(databaseUpdater, iImageController);
         VehicleController vehicleController = new VehicleController(databaseUpdater);
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
         UserController userController = new UserController(databaseUpdater, loginController, iImageController, nexmoController, messagingController, mapsController, getServerReactor());
+        DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController);
 
         this.registerController(paymentController);
         this.registerController(mapsController);
@@ -52,16 +48,16 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         this.registerController(userController);
         this.registerController(new PartnerController(databaseUpdater, paymentController, messagingController, userController, vehicleController, loginController, iImageController, nexmoController, this.getServerReactor()));
         this.registerController(new CustomerController(databaseUpdater, paymentController, deliveryAddressController, messagingController, userController, nexmoController));
-        this.registerController(new OrderController(databaseUpdater, deliveryAddressController, deliveryController, orderItemController, new PricingStrategyResolver(), messagingController));
-        this.registerController(new NegotiatedOrderController(databaseUpdater, messagingController));
-        this.registerController(new OrderPaymentController(getPaymentController(), messagingController, databaseUpdater));
-        this.registerController(new JourneyBasedOrderController( messagingController, databaseUpdater, getMapsController()));
-        this.registerController(new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController));
+        this.registerController(new CustomerRatingController(databaseUpdater, deliveryAddressController, deliveryController));
+        this.registerController(deliveryOrderController);
+        this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
+        this.registerController(new PersonellOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController));
+        this.registerController(new ProductOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
+        this.registerController(new RubbishOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController));
         this.registerController(vehicleController);
         this.registerController(deliveryController);
         this.registerController(messagingController);
         this.registerController(deliveryAddressController);
-        this.registerController(orderItemController);
         this.registerController(iImageController);
         this.registerController(new PhoneCallController(databaseUpdater));
         this.registerController(nexmoController);

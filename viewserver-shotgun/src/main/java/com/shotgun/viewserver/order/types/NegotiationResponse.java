@@ -10,7 +10,7 @@ public interface NegotiationResponse extends DynamicJsonBackedObject {
     public String getPartnerId();
     public NegotiationResponseStatus getResponseStatus();
     Date getDate();
-    int getPrice();
+    Integer getPrice();
 
     default NegotiationResponse transitionTo(NegotiationResponseStatus status){
         set("responseStatus",this.getResponseStatus() == null ? status : this.getResponseStatus().transitionTo(status));

@@ -1,10 +1,9 @@
-package com.shotgun.viewserver.order;
+package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.DeliveryController;
-import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.setup.datasource.RatingDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
@@ -16,39 +15,21 @@ import io.viewserver.operators.table.TableKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Controller(name = "orderController")
-public class OrderController {
+@Controller(name = "customerRatingController")
+public class CustomerRatingController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomerRatingController.class);
 
     DeliveryAddressController deliveryAddressController;
     DeliveryController deliveryController;
-    OrderItemController orderItemController;
-    private PricingStrategyResolver pricingStrategyResolver;
-    private IMessagingController messagingController;
-    private KeyedTable productTable;
     private IDatabaseUpdater iDatabaseUpdater;
-    private Integer labourerRate;
 
-    public OrderController(IDatabaseUpdater iDatabaseUpdater,
-                           DeliveryAddressController deliveryAddressController,
-                           DeliveryController deliveryController,
-                           OrderItemController orderItemController,
-                           PricingStrategyResolver pricingStrategyResolver,
-                           IMessagingController messagingController) {
+    public CustomerRatingController(IDatabaseUpdater iDatabaseUpdater,
+                                    DeliveryAddressController deliveryAddressController,
+                                    DeliveryController deliveryController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.deliveryAddressController = deliveryAddressController;
         this.deliveryController = deliveryController;
-        this.orderItemController = orderItemController;
-        this.pricingStrategyResolver = pricingStrategyResolver;
-        this.messagingController = messagingController;
-    }
-
-    KeyedTable getProductTable() {
-        if (this.productTable == null) {
-            this.productTable = ControllerUtils.getKeyedTable(TableNames.PRODUCT_TABLE_NAME);
-        }
-        return this.productTable;
     }
 
 
@@ -83,23 +64,4 @@ public class OrderController {
         iDatabaseUpdater.addOrUpdateRow(TableNames.RATING_TABLE_NAME, RatingDataSource.getDataSource().getSchema(), ratingRecord);
     }
 
-    private int getQuantity(OrderItem orderItem) {
-        return orderItem.getQuantity() == 0 ? 1 : orderItem.getQuantity();
-    }
-
-    private Product getProduct(String productId) {
-        int row = this.getProductTable().getRow(new TableKey(productId));
-        if (row == -1) {
-            throw new RuntimeException(String.format("Unable to find product id \"%s\" in the product table", productId));
-        }
-
-        Product result = new Product();
-        result.setCategoryId((String) ControllerUtils.getColumnValue(this.productTable, "categoryId", row));
-        result.setDescription((String) ControllerUtils.getColumnValue(this.productTable, "description", row));
-        result.setName((String) ControllerUtils.getColumnValue(this.productTable, "name", row));
-        result.setPrice((int) ControllerUtils.getColumnValue(this.productTable, "price", row));
-        result.setProductId((String) ControllerUtils.getColumnValue(this.productTable, "productId", row));
-        return result;
-
-    }
 }

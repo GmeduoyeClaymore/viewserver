@@ -8,10 +8,10 @@ Feature: User relationship scenarios
 	Given a client named "client4" connected to "{client4.url}"
 	Given keyColumn is "userId"
 	Given "client1" All data sources are built
-	Given "client1" controller "partnerController" action "registerPartner" invoked with data file "allRounder.json"
-	Given "client2" controller "partnerController" action "registerPartner" invoked with data file "brickLayerRegistration.json"
-	Given "client3" controller "partnerController" action "registerPartner" invoked with data file "plastererRegistration.json"
-	Given "client4" controller "partnerController" action "registerPartner" invoked with data file "groundWorkerRegistration.json"
+	Given "client1" controller "partnerController" action "registerPartner" invoked with data file "json/users/allRounder.json"
+	Given "client2" controller "partnerController" action "registerPartner" invoked with data file "json/users/brickLayerRegistration.json"
+	Given "client3" controller "partnerController" action "registerPartner" invoked with data file "json/users/plastererRegistration.json"
+	Given "client4" controller "partnerController" action "registerPartner" invoked with data file "json/users/groundWorkerRegistration.json"
 
 
   Scenario: Newly registered users can see themselves
@@ -29,7 +29,7 @@ Feature: User relationship scenarios
 	  | ColumnAdd | String      | firstName             |
 	  | ColumnAdd | String      | lastName              |
 	  | ColumnAdd | String      | contactNo             |
-	  | ColumnAdd | String      | selectedContentTypes  |
+	  | ColumnAdd | Json        | selectedContentTypes  |
 	  | ColumnAdd | String      | email                 |
 	  | ColumnAdd | String      | type                  |
 	  | ColumnAdd | String      | stripeDefaultSourceId |
@@ -74,7 +74,7 @@ Feature: User relationship scenarios
 	  | ColumnAdd | String      | firstName            |
 	  | ColumnAdd | String      | lastName             |
 	  | ColumnAdd | String      | contactNo            |
-	  | ColumnAdd | String      | selectedContentTypes |
+	  | ColumnAdd | Json        | selectedContentTypes |
 	  | ColumnAdd | String      | email                |
 	  | ColumnAdd | String      | type                 |
 	  | ColumnAdd | Double      | latitude             |

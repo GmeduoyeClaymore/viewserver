@@ -14,7 +14,7 @@ public interface OrderPaymentStage extends DynamicJsonBackedObject {
     String getPaymentId();
     String getName();
     String getDescription();
-    int getQuantity();
+    Integer getQuantity();
     Date getLastUpdated();
     PaymentStageType getPaymentStageType();
 

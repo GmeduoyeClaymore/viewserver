@@ -14,7 +14,7 @@ public enum OrderStatus implements TransitionEnumBase<OrderStatus> {
 
     static {
         PLACED.to(ACCEPTED, CANCELLED);
-        ACCEPTED.to(INPROGRESS, PLACED, CANCELLED);
+        ACCEPTED.to(INPROGRESS, PLACED, CANCELLED, COMPLETED);
         INPROGRESS.to(COMPLETED, CANCELLED);
     }
 

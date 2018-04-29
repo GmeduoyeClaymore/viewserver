@@ -1,0 +1,6 @@
+{
+  "origin": "objref://json/orders/rubbishOrderLocation.json",
+  "customerUserId": "{param_customerId}",
+  "orderProduct": "HouseHoldHalfVan",
+  "requiredDate": "{now_date+1}"
+}

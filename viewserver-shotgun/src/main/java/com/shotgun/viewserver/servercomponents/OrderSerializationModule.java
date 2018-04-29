@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.shotgun.viewserver.delivery.ProductKey;
+import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
+import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.joda.time.DateTime;
@@ -23,8 +25,10 @@ import java.util.Date;
 public class OrderSerializationModule extends SimpleModule {
     public OrderSerializationModule() {
         addSerializer(new ProductKeySerialiser());
+        addSerializer(new OrderContentTypeSerializer());
         addSerializer(new DateSerialiser());
         registerDynamicClass(NegotiationResponse.class);
+        registerDynamicClass(OrderPaymentStage.class);
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
         addDeserializer(Date.class, new DateDesSerialiser());
 
@@ -43,6 +47,16 @@ public class OrderSerializationModule extends SimpleModule {
         @Override
         public void serialize(ProductKey value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
             jgen.writeString(value.toString());
+        }
+    }
+    public static class OrderContentTypeSerializer extends StdSerializer<OrderContentType> {
+        public OrderContentTypeSerializer() {
+            super(OrderContentType.class);
+        }
+
+        @Override
+        public void serialize(OrderContentType value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonGenerationException {
+            jgen.writeNumber(value.getContentTypeId());
         }
     }
 

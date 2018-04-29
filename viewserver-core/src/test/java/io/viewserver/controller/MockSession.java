@@ -1,3 +1,5 @@
+package io.viewserver.controller;
+
 import io.viewserver.authentication.AuthenticationToken;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;

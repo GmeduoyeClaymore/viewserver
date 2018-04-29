@@ -42,7 +42,7 @@ public class PaymentControllerTest {
         });
         TestControllerUtils.getControllerContext("foo");
         User user = (User) ControllerContext.get("user");
-        user.setStripeCustomerId(this.customerId);
+        user.set("stripeCustomerId",this.customerId);
     }
 
     @Test
@@ -51,7 +51,6 @@ public class PaymentControllerTest {
         HashMap<String,Object> result = sut.createPaymentCustomer("FOO@BAR.com", paymentCard);
         this.customerId = (String)result.get("customerId");
         assertNotNull(this.customerId);
-
         System.out.println(result);
     }
 

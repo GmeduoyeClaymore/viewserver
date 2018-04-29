@@ -22,17 +22,18 @@ public interface NegotiatedOrder  extends BasicOrder {
     NegotiationResponse getAssignedPartnerResponse();
     NegotiationOrderStatus getNegotiatedResponseStatus();
 
-    default void respond(String partnerId, Date date){
+    default void respond(String partnerId, Date date, Integer price){
         NegotiationResponse negotiationResponse = JSONBackedObjectFactory.create(NegotiationResponse.class).transitionTo(NegotiationResponse.NegotiationResponseStatus.RESPONDED);
         negotiationResponse.set("date",date);
         negotiationResponse.set("partnerId",partnerId);
+        negotiationResponse.set("price",price);
         NegotiationResponse response = negotiationResponse;
         List<NegotiationResponse> responses = toList(this.getResponses());
         responses.add(response);
         this.set("responses",toArray(responses, NegotiationResponse[]::new));
         this.transitionTo(NegotiationOrderStatus.RESPONDED);
     }
-    Date getOpeningDate();
+    Date getRequiredDate();
 
     default NegotiatedOrder transitionTo(NegotiationOrderStatus status){
         NegotiationOrderStatus propertyValue = TransitionUtils.transition(this.getNegotiatedResponseStatus(),status);
@@ -72,7 +73,11 @@ public interface NegotiatedOrder  extends BasicOrder {
             throw new RuntimeException("Unable to find responses from " + partnerId + " to orderId " + partnerId);
         }
         this.set("partnerUserId",partnerId);
-        transitionTo(NegotiationOrderStatus.ASSIGNED).set("assignedPartner",first.get());
+        NegotiationResponse propertyValue = first.get();
+        transitionTo(NegotiationOrderStatus.ASSIGNED).set("assignedPartner", propertyValue);
+        if(propertyValue.getPrice() != null) {
+            this.set("amount", propertyValue.getPrice());
+        }
         for(NegotiationResponse fill : responses){
             if(!fill.getPartnerId().equals(partnerId)){
                 fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.DECLINED);

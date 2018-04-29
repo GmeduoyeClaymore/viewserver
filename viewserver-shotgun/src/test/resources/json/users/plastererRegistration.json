@@ -8,7 +8,7 @@
     "password": "welcome",
     "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
-    "selectedContentTypes": "ref://plasterer_selectedContentTypes.json"
+    "selectedContentTypes": "objref://json/users/plasterer_selectedContentTypes.json"
   },
   "bankAccount": {
     "accountNumber": "00012345",

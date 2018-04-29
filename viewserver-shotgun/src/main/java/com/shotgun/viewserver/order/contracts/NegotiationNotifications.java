@@ -3,7 +3,7 @@ package com.shotgun.viewserver.order.contracts;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.controller.ControllerContext;
 
-public interface NegotiationNotifications extends OrderNotificationContact{
+public interface NegotiationNotifications extends OrderNotificationContract {
 
     default void notifyJobBackOnTheMarket(String orderId, String partnerId) {
         User user = (User) ControllerContext.get("user");

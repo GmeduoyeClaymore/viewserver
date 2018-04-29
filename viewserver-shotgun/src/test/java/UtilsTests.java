@@ -2,7 +2,9 @@ import com.fasterxml.jackson.databind.Module;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.domain.DeliveryOrder;
+import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.SinglePaymentOrder;
+import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.servercomponents.OrderSerializationModule;
 import io.viewserver.core.JacksonSerialiser;
@@ -88,7 +90,7 @@ public class UtilsTests {
         );
 
         DeliveryOrder order = JSONBackedObjectFactory.create(DeliveryOrder.class);
-        order.respond("foo", new Date());
+        order.respond("foo", new Date(), 1);
         System.out.println(order.serialize());
         NegotiationResponse[] response  = order.getResponses();
         Assert.assertNotNull(response);
@@ -115,6 +117,21 @@ public class UtilsTests {
 
         Assert.assertTrue(object.getHolders().length > 0);
         Assert.assertTrue("Holder type is " + object.getHolders()[0].getClass(),object.getHolders()[0] instanceof TestUnit);
+    }
+
+
+    @Test
+    public void Can_add_payment_stage_to_order(){
+        OrderSerializationModule orderSerializationModule = new OrderSerializationModule();
+        orderSerializationModule.registerDynamicClass(TestUnit.class);
+        JacksonSerialiser.getInstance().registerModules(
+                new Module[]{
+                        orderSerializationModule
+                }
+        );
+        StagedPaymentOrder object = JSONBackedObjectFactory.create(StagedPaymentOrder.class);
+        object.addPaymentStage(1,"Foo","Foo", OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
+        Assert.assertNotNull(object.serialize());
     }
 
 

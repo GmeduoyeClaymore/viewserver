@@ -19,6 +19,8 @@ import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKey;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -72,43 +74,35 @@ public class LoginController {
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
                                 rec -> {
-                                    User user = setupContext(rec, peerSession);
-                                    setUserOnline(user, ut).subscribe();
-                                    return user;
+                                    setupContext(userId, peerSession);
+                                    setUserOnline(userId).subscribe();
+                                    return userId;
                                 })
                 )));
     }
 
-    private Observable<Boolean> setUserOnline(User user, KeyedTable table) {
+    private Observable<Boolean> setUserOnline(String userId) {
         Record userRecord = new Record()
-                .addValue("userId", user.getUserId())
+                .addValue("userId", userId)
                 .addValue("online", true)
                 .addValue("userStatus", UserStatus.ONLINE.name());
 
         return iDatabaseUpdater.scheduleAddOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
-    private User setupContext(Map<String,Object> userRecord, IPeerSession session) {
-        ControllerContext.set("userId", userRecord.get("userId"),session);
-        User user = new User();
-        setValue(userRecord,"userId", v ->  user.setUserId((String) v));
-        setValue(userRecord,"chargePercentage", v ->  user.setChargePercentage((Integer) v));
-        setValue(userRecord,"contactNo", v ->  user.setContactNo((String) v));
-        setValue(userRecord,"created", v ->  user.setCreated(new Date((Long) v)));
-        setValue(userRecord,"dob", v ->  user.setDob(new Date((Long) v)));
-        setValue(userRecord,"email", v ->  user.setEmail((String) v));
-        setValue(userRecord,"firstName", v ->  user.setFirstName((String) v));
-        setValue(userRecord,"lastModified", v ->  user.setLastModified(new Date((Long) v)));
-        setValue(userRecord,"lastName", v ->  user.setLastName((String) v));
-        setValue(userRecord,"password", v ->  user.setPassword((String) v));
-        setValue(userRecord,"selectedContentTypes", v ->  user.setSelectedContentTypes((String) v));
-        setValue(userRecord,"stripeAccountId", v ->  user.setStripeAccountId((String) v));
-        setValue(userRecord,"stripeCustomerId", v ->  user.setStripeCustomerId((String) v));
-        setValue(userRecord,"stripeDefaultSourceId", v ->  user.setStripeDefaultSourceId((String) v));
-        setValue(userRecord,"statusMessage", v ->  user.setStatusMessage((String) v));
-        setValue(userRecord,"type", v ->  user.setType((String) v));
-        ControllerContext.set("user", user, session);
-        return user;
+    private String setupContext(String userId,IPeerSession session) {
+        ControllerContext.set("userId", userId,session);
+        ControllerContext.setFactory("user", () -> getUser(userId), session);
+        return userId;
+    }
+
+    private User getUser(String userId) {
+        KeyedTable keyedTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        HashMap<String, Object> userRow = keyedTable.getRowObject(new TableKey(userId));
+        if(userRow == null){
+            throw new RuntimeException(String.format("Unable to user for id %s",userId));
+        }
+        return JSONBackedObjectFactory.create(userRow, User.class);
     }
 
     public int getUserRow(ITable userTable, String loginEmail){
@@ -122,14 +116,6 @@ public class LoginController {
             }
         }
         return -1;
-    }
-
-
-    private static <T> void setValue(Map<String,Object> row,String columnName,Consumer<T> valueSetter){
-        Object columnValue = row.get(columnName);
-        if(columnValue != null){
-            valueSetter.accept((T) columnValue);
-        }
     }
 
     public Observable<Object> waitForDataSources(String... dataSourceNames){

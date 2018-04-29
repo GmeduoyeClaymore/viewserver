@@ -27,7 +27,7 @@ public class UserDataSource {
                                         new Column("lastName", ContentType.String),
                                         new Column("password", ContentType.String),
                                         new Column("contactNo", ContentType.String),
-                                        new Column("selectedContentTypes", ContentType.String),
+                                        new Column("selectedContentTypes", ContentType.Json),
                                         new Column("email",  ContentType.String),
                                         new Column("type",  ContentType.String),
                                         new Column("stripeCustomerId",  ContentType.String),

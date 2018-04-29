@@ -3,7 +3,7 @@ package com.shotgun.viewserver.order.contracts;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.controller.ControllerContext;
 
-public interface PaymentNotifications extends OrderNotificationContact{
+public interface PaymentNotifications extends OrderNotificationContract {
     default void notifyJobCompleted(String orderId, String partnerId) {
         User user = (User) ControllerContext.get("user");
         sendMessage(orderId, partnerId, "Shotgun job completed and paid", String.format("%s has  just marked your job complete and paid", user.getFirstName() + " " + user.getLastName()));

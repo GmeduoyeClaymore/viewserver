@@ -6,7 +6,7 @@ import com.shotgun.viewserver.messaging.IMessagingController;
 import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 
-public interface OrderNotificationContact {
+public interface OrderNotificationContract {
 
     default void sendMessage(String orderId, String toUserId, String title, String body) {
         try {

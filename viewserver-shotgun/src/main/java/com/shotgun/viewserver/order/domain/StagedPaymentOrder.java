@@ -15,19 +15,19 @@ import static io.viewserver.core.Utils.toList;
 public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject {
 
     OrderPaymentStage[] getPaymentStages();
-    public int getOrderTotal();
 
-    default String addPaymentStage(int percentage, String name, String description, OrderPaymentStage.PaymentStageType stageType){
+    default String addPaymentStage(int percentage, String name, String description, OrderPaymentStage.PaymentStageType stageType, OrderPaymentStage.PaymentStageStatus status){
         if(fromArray(getPaymentStages()).anyMatch(c-> c.getName().equals(name))){
             throw new RuntimeException("This order contains another payment stage called " + name);
         }
         List<OrderPaymentStage> paymentStages = toList(getPaymentStages());
         OrderPaymentStage paymentStage = JSONBackedObjectFactory.create(OrderPaymentStage.class);
         UUID uuid = UUID.randomUUID();
-        paymentStage.set("jobPercentage",percentage);
+        paymentStage.set("quantity",percentage);
         paymentStage.set("name",name);
         paymentStage.set("description",description);
         paymentStage.set("paymentStageType",stageType);
+        paymentStage.set("paymentStageStatus",status);
         paymentStage.set("id",uuid.toString());
         paymentStage.set("lastUpdated",new Date());
         paymentStages.add(paymentStage);
@@ -35,14 +35,22 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         return uuid.toString();
     }
 
-    default int getAmount(String paymentStageId){
+    default int getAmountForStage(String paymentStageId){
         OrderPaymentStage orderPaymentStage = getOrderPaymentStage(paymentStageId);
+        Integer quantity = orderPaymentStage.getQuantity();
+        if(quantity == null){
+            throw new RuntimeException("Payment stage quantity cannot be null");
+        }
         if(orderPaymentStage.getPaymentStageType().equals(OrderPaymentStage.PaymentStageType.Fixed)){
-            return orderPaymentStage.getQuantity();
+            return quantity;
         }
 
         if(orderPaymentStage.getPaymentStageType().equals(OrderPaymentStage.PaymentStageType.Percentage)){
-            return (orderPaymentStage.getQuantity() /getOrderTotal()) * 100;
+            Integer orderTotal = getAmount();
+            if(orderTotal == null){
+                throw new RuntimeException("Cannot calculate percentage payment as order total is null");
+            }
+            return (int) ((int) (orderTotal.doubleValue() / 100) * quantity.doubleValue());
         }
 
         throw new RuntimeException("Unrecognised payment stage type " + orderPaymentStage.getPaymentStageType());

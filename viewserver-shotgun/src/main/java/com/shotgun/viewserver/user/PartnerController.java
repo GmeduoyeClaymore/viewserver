@@ -84,7 +84,7 @@ public class PartnerController {
 
         log.debug("Registering driver: " + user.getEmail());
         //We can change this later on or on a per user basis
-        user.setChargePercentage(10);
+        user.set("chargePercentage", 10);
 
         String paymentAccountId = paymentController.createPaymentAccount(user, address, bankAccount);
 
@@ -92,7 +92,7 @@ public class PartnerController {
         if(user.getImageData() != null){
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
             String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
-            user.setImageUrl(imageUrl);
+            user.set("imageUrl",imageUrl);
         }
 
         SettableFuture<String> future = SettableFuture.create();
@@ -102,7 +102,7 @@ public class PartnerController {
             public void execute() {
                 try{
                     ControllerContext.create(context);
-                    user.setStripeAccountId(paymentAccountId);
+                    user.set("stripeAccountId",paymentAccountId);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId", userId);
                     if(vehicle != null){

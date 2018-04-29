@@ -1,16 +1,9 @@
-package com.shotgun.viewserver.order.controllers;
+package com.shotgun.viewserver.order.controllers.contracts;
 
-import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
-import com.shotgun.viewserver.order.OrderTransformationController;
-import com.shotgun.viewserver.order.OrderUpdateController;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
-import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
-import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -18,33 +11,19 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 import static io.viewserver.core.Utils.fromArray;
 
 
-@Controller(name = "negotiatedOrderController")
-public class NegotiatedOrderController implements OrderUpdateController, NegotiationNotifications, OrderTransformationController {
-
-    private static final Logger logger = LoggerFactory.getLogger(NegotiatedOrderController.class);
-
-    private IMessagingController messagingController;
-    private IDatabaseUpdater iDatabaseUpdater;
-
-
-    public NegotiatedOrderController(IDatabaseUpdater iDatabaseUpdater,
-                                     IMessagingController messagingController) {
-        this.iDatabaseUpdater = iDatabaseUpdater;
-        this.messagingController = messagingController;
-    }
-
+public interface NegotiatedOrderController extends OrderUpdateController, NegotiationNotifications, OrderTransformationController {
 
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
-    public void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "estimatedDate")Date estimatedDate){
+    default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "estimatedDate")Date estimatedDate, @ActionParam(name = "price")Integer price){
         String partnerId = getUserId();
         this.transform(
                 orderId,
                 order -> {
                     if(fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
-                        logger.info(partnerId + "Has already responded to this order aborting");
+                        getLogger().info(partnerId + "Has already responded to this order aborting");
                         return false;
                     }
-                    order.respond(partnerId, estimatedDate);
+                    order.respond(partnerId, estimatedDate, price);
                     return  true;
                 },
                 order -> {
@@ -55,7 +34,7 @@ public class NegotiatedOrderController implements OrderUpdateController, Negotia
     }
 
     @ControllerAction(path = "cancelResponsePartner", isSynchronous = true)
-    public void cancelResponsePartner(@ActionParam(name = "orderId")String orderId){
+    default void cancelResponsePartner(@ActionParam(name = "orderId")String orderId){
         String partnerId = getUserId();
         this.transform(
                 orderId,
@@ -77,12 +56,12 @@ public class NegotiatedOrderController implements OrderUpdateController, Negotia
     }
 
     @ControllerAction(path = "cancelResponseCustomer", isSynchronous = true)
-    public void cancelResponse(@ActionParam(name = "orderId")String orderId,  @ActionParam(name = "orderId")String partnerId){
+    default void cancelResponse(@ActionParam(name = "orderId")String orderId,  @ActionParam(name = "orderId")String partnerId){
         this.transform(
                 orderId,
                 order -> {
                     if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
-                        logger.info(partnerId + "Has already responded to this order aborting");
+                        getLogger().info(partnerId + "Has already responded to this order aborting");
                         return false;
                     }
                     order.cancelResponse(partnerId);
@@ -104,12 +83,12 @@ public class NegotiatedOrderController implements OrderUpdateController, Negotia
     }
 
     @ControllerAction(path = "acceptResponse", isSynchronous = true)
-    public void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+    default void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
         this.transform(
                 orderId,
                 order -> {
                     if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
-                        logger.warn(partnerId + " has not responded to this order aborting");
+                        getLogger().warn(partnerId + " has not responded to this order aborting");
                         return false;
                     }
                     order.acceptResponse(partnerId);
@@ -131,25 +110,6 @@ public class NegotiatedOrderController implements OrderUpdateController, Negotia
         );
     }
 
-    private void assertOrderMine(String orderUserId) {
-        if(!getUserId().equals(orderUserId)){
-            throw new RuntimeException("Can only perform this operation on an order that you own");
-        }
-    }
 
 
-    @Override
-    public IDatabaseUpdater getDatabaseUpdater() {
-        return iDatabaseUpdater;
-    }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
-    @Override
-    public IMessagingController getMessagingController() {
-        return messagingController;
-    }
 }

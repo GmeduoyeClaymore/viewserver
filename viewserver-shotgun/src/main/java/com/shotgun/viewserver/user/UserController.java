@@ -49,8 +49,6 @@ public class UserController {
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
 
-
-
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           LoginController loginController,
                           IImageController IImageController,
@@ -75,14 +73,10 @@ public class UserController {
         if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
             throw new RuntimeException("Already  user registered for email " + user.getEmail());
         }
-
-        Date now = new Date();
-
-        if (user.getUserId() == null) {
-            user.setUserId(ControllerUtils.generateGuid());
-            user.setCreated(now);
+        if(user.getUserId() == null) {
+            user.set("userId", ControllerUtils.generateGuid());
         }
-
+        Date now = new Date();
         Record userRecord = new Record()
                 .addValue("userId", user.getUserId())
                 .addValue("lastModified", now)
@@ -106,7 +100,6 @@ public class UserController {
         return user.getUserId();
     }
 
-
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
@@ -118,7 +111,7 @@ public class UserController {
         if (user.getImageData() != null) {
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
             String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
-            user.setImageUrl(imageUrl);
+            user.set("imageUrl", imageUrl);
         }
 
         Record userRecord = new Record()
@@ -177,7 +170,6 @@ public class UserController {
         return future;
 
     }
-
 
     @ControllerAction(path = "updateStatus", isSynchronous = true)
     public void updateStatus(@ActionParam(name = "status") UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
@@ -254,7 +246,6 @@ public class UserController {
         return String.join(">",list);
     }
 
-
     @ControllerAction(path = "updateRange", isSynchronous = true)
     public void updateRange(@ActionParam(name = "range") int range) {
         String userId = getUserId();
@@ -279,9 +270,6 @@ public class UserController {
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));
     }
-
-
-
 
     private static boolean hasUserId(OperatorEvent ev, String userId) {
         if(!ev.getEventType().equals(EventType.ROW_ADD)){

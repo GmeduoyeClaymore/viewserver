@@ -1,9 +1,12 @@
 package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
+import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
 public interface BasicOrder  extends DynamicJsonBackedObject {
+
+    Integer getAmount();
 
     String getCustomerUserId();
 
@@ -12,6 +15,8 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
     String getDescription();
 
     OrderStatus getOrderStatus();
+
+    OrderContentType getOrderContentType();
 
     String getPaymentMethodId();
 

@@ -1,5 +1,5 @@
 {
-  "origin": "objref://deliveryOrderLocation.json",
+  "origin": "objref://json/orders/deliveryOrderLocation.json",
   "destination": {
     "line1": "129 Drakefield Road",
     "city": "London",
@@ -11,5 +11,5 @@
   },
   "customerUserId": "{param_customerId}",
   "orderProduct": "1SmallVan",
-  "openingDate": "{now_date+1}"
+  "requiredDate": "{now_date+1}"
 }

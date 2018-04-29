@@ -85,9 +85,11 @@ public class JacksonSerialiser implements IJsonSerialiser {
             }
 
             return mapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            log.error("Failed to serialise report definition", e);
-            return null;
+        } catch (JsonProcessingException ex) {
+            if(ex.getMessage().contains("Direct self-reference leading to cycle")){
+                throw new RuntimeException("Problem serializing object have all of the nested types been registered as dynamic types");
+            }
+            throw new RuntimeException(ex);
         }
     }
 

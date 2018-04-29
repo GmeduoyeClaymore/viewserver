@@ -4,6 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import static io.viewserver.util.dynamic.ClassInterpreter.getAllMethods;
 
 public class ControllerRegistration{
 
@@ -31,7 +34,7 @@ public class ControllerRegistration{
     }
 
     private HashMap<String, ControllerActionEntry> getActions(Object controller) {
-        Method[] methods = controller.getClass().getDeclaredMethods();
+        Set<Method> methods = getAllMethods(controller.getClass());
         final HashMap<String,ControllerActionEntry> result = new HashMap<String,ControllerActionEntry>();
 
         for(Method m : methods)

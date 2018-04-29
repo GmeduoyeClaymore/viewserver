@@ -181,7 +181,7 @@ public class ValidationUtils {
             ValidationOperatorColumn column = columnsByName.get(key);
             Object val = values.get(key);
             Object currentStr = null;
-            if(val == null){
+            if(val == null || "".equals(val)){
                 currentStr = "";
             }else{
                 currentStr = column == null ? val + "" :  column.getType().convertToContentType(val);

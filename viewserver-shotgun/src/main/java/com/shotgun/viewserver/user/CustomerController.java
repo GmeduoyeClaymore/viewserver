@@ -63,15 +63,14 @@ public class CustomerController {
         log.debug("Registering customer: " + user.getEmail());
         deliveryAddress.setIsDefault(true);
         HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
-        user.setStripeCustomerId(stripeResponse.get("customerId").toString());
-        user.setStripeDefaultSourceId(stripeResponse.get("paymentToken").toString());
+        user.set("stripeCustomerId",stripeResponse.get("customerId").toString());
+        user.set("stripeDefaultSourceId",stripeResponse.get("paymentToken").toString());
 
         String international_format_number = (String) nexmoController.getInternationalFormatNumber(user.getContactNo());
         if(international_format_number == null){
             throw new RuntimeException("Unable to format user contact number " + user.getContactNo() + " is it valid?");
         }
-        user.setContactNo(international_format_number);
-
+        user.set("contactNo",international_format_number);
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId", userId);
         deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);

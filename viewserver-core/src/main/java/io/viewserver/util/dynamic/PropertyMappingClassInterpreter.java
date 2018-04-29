@@ -67,7 +67,7 @@ public final class PropertyMappingClassInterpreter {
         if (method.getReturnType().isAssignableFrom(value.getClass())) {
             return value;
         }
-
+//Convert value to string then into required object to coerce into the correct shape then cache result
         String jsonRepresentation = JacksonSerialiser.getInstance().serialise(value);
 
         Object deserialise = JacksonSerialiser.getInstance().deserialise(jsonRepresentation, method.getReturnType());
@@ -80,7 +80,16 @@ public final class PropertyMappingClassInterpreter {
     private static Object invokeExplicitJson(Method method, Object pr, Object[] args, Map<String, Object> propertyValues) {
         if (method.getName().equals("serialize")) {
             HashMap<String, Object> result = getFields(args[0], propertyValues);
-            return ControllerUtils.toString(result);
+            try
+            {
+                return ControllerUtils.toString(result);
+            }
+            catch (Exception ex){
+                if(ex.getMessage().contains("Direct self-reference leading to cycle")){
+                    throw new RuntimeException("Problem serializing object have all of the nested types been registered as dynamic types");
+                }
+                throw ex;
+            }
         }
         if (method.getName().equals("getFields")) {
             return getFields(args[0], propertyValues);

@@ -4,6 +4,7 @@ import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -56,6 +57,9 @@ public class ControllerContext implements AutoCloseable{
         set(name, value, peerSession1);
     }
 
+    public static void setFactory(String name, Callable value, IPeerSession peerSession1) {
+        set(name,value, peerSession1);
+    }
     public static void set(String name, Object value, IPeerSession peerSession1) {
         synchronized (peerSession1){
             ConcurrentHashMap<String,Object> params = getParams(peerSession1);
@@ -89,7 +93,15 @@ public class ControllerContext implements AutoCloseable{
             if(params == null){
                 return null;
             }
-            return params.get(name);
+            Object o = params.get(name);
+            if( o instanceof Callable){
+                try {
+                    return ((Callable)o).call();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return o;
         }
     }
 

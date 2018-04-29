@@ -47,7 +47,9 @@ public class ControllerUtils {
         if (ser.getClass().isEnum()){
             return ((Enum)ser).name();
         }
+
         return JacksonSerialiser.getInstance().serialise(ser);
+
     }
 
     public static String toConsistentString(Object ser) {
