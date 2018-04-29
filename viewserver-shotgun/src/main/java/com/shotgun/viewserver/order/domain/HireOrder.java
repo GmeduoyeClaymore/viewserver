@@ -2,6 +2,7 @@ package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.order.types.OrderContentType;
 import com.shotgun.viewserver.order.types.OrderEnumBase;
 import com.shotgun.viewserver.order.types.TransitionUtils;
 import com.shotgun.viewserver.user.User;
@@ -14,12 +15,16 @@ import java.util.List;
 
 
 public interface HireOrder extends NegotiatedOrder, BasicOrder, StagedPaymentOrder, DynamicJsonBackedObject, SourceOrderForLinkedDeliveries {
-
     Date getHireStartDate();
     Date getHireEndDate();
     String getOutboundDeliveryId();
     String getInboundDeliveryId();
     HireOrderStatus getHireOrderStatus();
+
+    @Override
+    default OrderContentType getOrderContentType(){
+        return OrderContentType.Hire;
+    }
 
     OrderLeg getOrderLeg();
     enum OrderLeg{
@@ -36,13 +41,21 @@ public interface HireOrder extends NegotiatedOrder, BasicOrder, StagedPaymentOrd
     public static enum HireOrderStatus implements OrderEnumBase<HireOrderStatus> {
         ITEMREADY(OrderStatus.INPROGRESS),
         OUTFORDELIVERY(OrderStatus.INPROGRESS),
+        ONHIRE(OrderStatus.INPROGRESS),
         OFFHIRE(OrderStatus.INPROGRESS),
+        RETURNED(OrderStatus.INPROGRESS),
         COMPLETE(OrderStatus.INPROGRESS);
 
         List<HireOrderStatus> permittedFrom = new ArrayList<>();
         List<HireOrderStatus> permittedTo = new ArrayList<>();
 
         static {
+            ITEMREADY.to(OUTFORDELIVERY,ONHIRE);
+            OUTFORDELIVERY.to(ONHIRE);
+            ONHIRE.to(OFFHIRE);
+            ONHIRE.to(OFFHIRE);
+            OFFHIRE.to(RETURNED);
+            OFFHIRE.to(COMPLETE);
         }
 
         private OrderStatus orderStatus;

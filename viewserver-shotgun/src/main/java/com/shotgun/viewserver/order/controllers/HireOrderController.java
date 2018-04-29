@@ -2,22 +2,21 @@ package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
-import com.shotgun.viewserver.order.controllers.contracts.OrderCreationController;
+import com.shotgun.viewserver.order.contracts.HireNotifications;
+import com.shotgun.viewserver.order.controllers.contracts.*;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
-import com.shotgun.viewserver.order.controllers.contracts.LinkedDeliveryOrderController;
-import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderController;
-import com.shotgun.viewserver.order.controllers.contracts.SinglePaymentOrderController;
-import com.shotgun.viewserver.order.domain.HireOrder;
-import com.shotgun.viewserver.order.domain.NegotiatedOrder;
+import com.shotgun.viewserver.order.domain.*;
 import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Controller(name = "hireOrderController")
-public class HireOrderController implements NegotiationNotifications, OrderCreationController, NegotiatedOrderController, SinglePaymentOrderController, LinkedDeliveryOrderController{
+public class HireOrderController implements HireNotifications, NegotiationNotifications, OrderCreationController, NegotiatedOrderController, SinglePaymentOrderController, LinkedDeliveryOrderController, JourneyBasedOrderController{
 
     private static final Logger logger = LoggerFactory.getLogger(RubbishOrderController.class);
     private DeliveryOrderController deliveryOrderController;
@@ -34,14 +33,62 @@ public class HireOrderController implements NegotiationNotifications, OrderCreat
         this.iMessagingController = iMessagingController;
     }
 
-    @ControllerAction(path = "createOrder", isSynchronous = true)
-    String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")HireOrder order){
+    @ControllerAction(path = "createDeliveryOrder", isSynchronous = true)
+    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){
         return this.create(
                 order,
                 paymentMethodId,
                 (rec,ord) -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
-                    rec.addValue("orderLocation", order.getProductAddress());
+                    rec.addValue("orderLocation", order.getOrigin());
+                    return true;
+                },
+                ord -> {
+                    if(ord.getPartnerUserId() != null){
+                        notifyJobAssigned(ord.getOrderId(),ord.getPartnerUserId());
+                    }
+                }
+        );
+    }
+
+    @ControllerAction(path = "markItemReady", isSynchronous = true)
+    public void markItemReady(@ActionParam(name = "orderId")String orderId) {
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(HireOrder.HireOrderStatus.ITEMREADY);
+                    return true;
+                },
+                HireOrder.class
+        );
+    }
+    @ControllerAction(path = "startJourney", isSynchronous = true)
+    public void startJourney(@ActionParam(name = "orderId")String orderId) {
+        LinkedDeliveryOrderController.super.startJourney(orderId);
+        LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
+        HireOrder parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class);
+        parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.OFFHIRE : HireOrder.HireOrderStatus.OUTFORDELIVERY);
+        notifyHireItemOutForDelivery(parentOrder);
+    }
+
+    @Override
+    @ControllerAction(path = "completeJourney", isSynchronous = true)
+    public void completeJourney(@ActionParam(name = "orderId")String orderId) {
+        LinkedDeliveryOrderController.super.startJourney(orderId);
+        LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
+        HireOrder parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class);
+        parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.RETURNED : HireOrder.HireOrderStatus.ONHIRE);
+        notifyItemOnHire(parentOrder);
+    }
+
+    @ControllerAction(path = "createOrder", isSynchronous = true)
+    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")HireOrder order){
+        return this.create(
+                order,
+                paymentMethodId,
+                (rec,ord) -> {
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+                    rec.addValue("orderLocation", order.getOrigin());
                     return true;
                 },
                 ord -> {

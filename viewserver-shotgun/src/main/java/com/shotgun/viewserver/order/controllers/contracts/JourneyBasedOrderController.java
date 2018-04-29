@@ -13,7 +13,7 @@ import java.util.Date;
 public interface JourneyBasedOrderController extends JourneyNotifications, OrderUpdateController, OrderTransformationController {
 
     @ControllerAction(path = "startJourney", isSynchronous = true)
-    default void startJourney(@ActionParam(name = "orderId")String orderId){
+    public default void startJourney(@ActionParam(name = "orderId")String orderId){
         this.transform(
                 orderId,
                 order -> {

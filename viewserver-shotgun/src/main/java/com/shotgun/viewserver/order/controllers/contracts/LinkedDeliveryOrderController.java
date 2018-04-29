@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public interface LinkedDeliveryOrderController extends HireNotifications, OrderCreationController, OrderTransformationController, SinglePaymentOrderController, JourneyBasedOrderController {
 
+
     @Override
     default void notifyJourneyComplete(String orderId, JourneyOrder journeyOrder) {
         User user = (User) ControllerContext.get("user");
@@ -49,7 +50,7 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
-                    deliveryOrder.set(order.createOutboundDelivery(user));
+                    deliveryOrder.set(order.createOutboundDelivery(user.getUserId()));
                     return true;
                 },
                 SourceOrderForLinkedDeliveries.class
@@ -64,7 +65,7 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
-                    deliveryOrder.set(order.createOutboundDelivery(user));
+                    deliveryOrder.set(order.createOutboundDelivery(user.getUserId()));
                     return true;
                 },
                 SourceOrderForLinkedDeliveries.class
@@ -83,7 +84,7 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
-                    DeliveryOrder deliveryOrder = order.createOutboundDelivery(user);
+                    DeliveryOrder deliveryOrder = order.createOutboundDelivery(user.getUserId());
                     deliveryOrder.set("requiredDate", requiredDate);
                     deliveryOrder.set("partnerId", partnerId);
                     deliveryHireId.set(getDeliveryOrderController().createOrder(paymentMethodId, deliveryOrder));
@@ -111,7 +112,7 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
-                    DeliveryOrder deliveryOrder = order.createInboundDelivery(user);
+                    DeliveryOrder deliveryOrder = order.createInboundDelivery(user.getUserId());
                     deliveryOrder.set("requiredDate", requiredDate);
                     deliveryOrder.set("partnerId", partnerId);
                     deliveryHireId.set(getDeliveryOrderController().createOrder(paymentMethodId, deliveryOrder));

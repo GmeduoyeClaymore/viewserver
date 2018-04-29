@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.contracts;
 
+import com.shotgun.viewserver.order.domain.HireOrder;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.controller.ControllerContext;
 
@@ -33,7 +34,7 @@ public interface NegotiationNotifications extends OrderNotificationContract {
         User user = (User) ControllerContext.get("user");
         sendMessage(orderId,partnerId,  "Shotgun job assigned to you",   String.format("%s has  just assigned a job to you in shotgun", user.getFirstName() + " " + user.getLastName()));
     }
-
-
 }
+
+
 

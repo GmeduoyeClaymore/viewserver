@@ -16,4 +16,15 @@ public interface HireNotifications extends OrderNotificationContract {
         sendMessage(orderId, hireOrder.getCustomerUserId(), "Item awaiting collection", String.format("%s has just told us your item is awaiting collection", user.getFirstName() + " " + user.getLastName()));
     }
 
+    default void notifyHireItemOutForDelivery(HireOrder parentOrder) {
+        User user = (User) ControllerContext.get("user");
+        sendMessage(parentOrder.getOrderId(),parentOrder.getCustomerUserId(),  "Hire order out for delivery",   String.format("%s has just marked your order %s as out for delivery", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+    }
+
+    default void notifyItemOnHire(HireOrder parentOrder) {
+        User user = (User) ControllerContext.get("user");
+        sendMessage(parentOrder.getOrderId(),parentOrder.getPartnerUserId(),  "Hire order delivered",   String.format("%s has just marked your order %s as delivered", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+        sendMessage(parentOrder.getOrderId(),parentOrder.getCustomerUserId(),  "Hire started",   String.format("%s has started. You should have the item till %s to avoid extra charges", parentOrder.getDescription(), parentOrder.getHireEndDate()));
+    }
+
 }

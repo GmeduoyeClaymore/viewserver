@@ -47,7 +47,7 @@ Feature: Rubbish order scenarios
 	  | RowAdd  |               | {client1_rubbishOrderController_createOrder_result} | ref://json/orders/rubbishOrder.json | 2                  | ref://json/orders/rubbishOrderLocation.json | PLACED |
 	Given "client1" subscribed to report "orderRequest" with parameters
 	  | Name                     | Type    | Value   | Excluded |
-	  | dimension_contentTypeId  | Integer | 1       |          |
+	  | dimension_contentTypeId  | Integer | 2       |          |
 	  | dimension_customerUserId | String  | @userId | exclude  |
 	  | dimension_status         | String  | PLACED  |          |
 	  | showOutOfRange           | String  | true    |          |

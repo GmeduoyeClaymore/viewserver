@@ -9,6 +9,7 @@ path,level,categoryId,category,parentCategoryId,isLeaf
 1Rubbish>2CommercialWaste,2,2CommercialWaste,Commercial Waste,1Rubbish,TRUE
 1Workers,1,1Workers,Workers,NONE,TRUE
 1Plant,1,1Plant,Plant,NONE,FALSE
+1Products,1,1Products,Products,NONE,FALSE
 1Plant>2AccessLadder,2,2AccessLadder,Access & Ladders ,1Plant,FALSE
 1Plant>2AccessLadder>3Ladder,3,3Ladder,Ladder,2AccessLadder,TRUE
 1Plant>2AccessLadder>3StepLadder,3,3StepLadder,Step Ladder,2AccessLadder,TRUE

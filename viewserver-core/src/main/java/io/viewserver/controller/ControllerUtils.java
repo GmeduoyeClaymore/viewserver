@@ -52,7 +52,7 @@ public class ControllerUtils {
 
     }
 
-    public static String toConsistentString(Object ser) {
+    public static String toConsistentString(Object ser, String propertyName) {
         if (ser == null) {
             return null;
         }
@@ -60,7 +60,11 @@ public class ControllerUtils {
             return (String) ser;
         }
         if(ser instanceof HashMap){
-            ser = convertToListMapAndOrderProperties((HashMap)ser);
+            if(propertyName !=null){
+                ser = ((HashMap)ser).get(propertyName);
+            }else{
+                ser = convertToListMapAndOrderProperties((HashMap)ser);
+            }
         }
         return JacksonSerialiser.getInstance().serialise(ser);
     }

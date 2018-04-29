@@ -30,6 +30,7 @@ import io.viewserver.schema.column.IRowFlags;
 import cucumber.api.DataTable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by bemm on 01/12/2014.
@@ -87,8 +88,8 @@ public class ValidationOperator extends OperatorBase{
 
     public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName) {
         System.out.println(this.getName() + " validating rows");
-        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName);
-        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName);
+        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName, true);
+        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName, false);
         try {
             expectedTable.diff(actual);
         }catch (Throwable throwable){
@@ -132,7 +133,7 @@ public class ValidationOperator extends OperatorBase{
         return DataTable.create(columns);
     }
 
-    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn) {
+    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn, boolean rowsAreFromCucumber) {
 
         for(ValidationOperatorRow row : actionsToConvert){
             if(ValidationAction.Remove.equals(row.getValidationAction())){
@@ -160,13 +161,17 @@ public class ValidationOperator extends OperatorBase{
         tableData.add(columns);
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
-            for(String key : columns){
-                Object val = row.get(key);
+            for(String keyString : columns){
+                ItemKey itemKey = new ItemKey(keyString);
+                Object val = row.get(itemKey.getColumnName());
+                if(rowsAreFromCucumber){
+                    val = row.get(keyString);
+                }
                 if(val == null || "".equals(val)){
                     result.add("");
                 }
                 else{
-                    ValidationOperatorColumn out = columnsByName.get(key);
+                    ValidationOperatorColumn out = columnsByName.get(itemKey.getColumnName());
                     if(referenceActions != null && out!= null && out.getType().equals(ContentType.Json)){//basically if it is JSON then look at the reference row and only compare properties found in the source row
                         HashMap<String,Object> me =  val instanceof HashMap ? (HashMap)val : ControllerUtils.mapDefault(val + "");
                         Integer id = (Integer) row.get(ValidationUtils.ID_NAME);
@@ -175,15 +180,20 @@ public class ValidationOperator extends OperatorBase{
                             result.add(transform.call(val + ""));
                             continue;
                         }
-                        HashMap<String,Object> reference = (HashMap<String, Object>) referenceAction.get(key);
+                        Object ref = referenceAction.get(keyString);
+                        if(ref instanceof String){
+                            result.add(transform.call(ref + ""));
+                            continue;
+                        }
+                        HashMap<String,Object> reference = (HashMap<String, Object>) ref;
                         if(reference == null){
                             result.add(transform.call(val + ""));
                             continue;
                         }
                         HashMap<String, Object> propsToCompare = filterForReferenceProps(me, reference);
-                        result.add(transform.call(ControllerUtils.toConsistentString(propsToCompare)));
+                        result.add(transform.call(ControllerUtils.toConsistentString(propsToCompare, itemKey.getPropertyName() )));
                     }else{
-                        result.add(transform.call(out == null ? val + "" : ControllerUtils.toConsistentString(out.getType().convertToContentType(val))));
+                        result.add(transform.call(out == null || (rowsAreFromCucumber && itemKey.getPropertyName() != null) ? val + "" : ControllerUtils.toConsistentString(out.getType().convertToContentType(val),itemKey.getPropertyName() )));
                     }
                 }
 

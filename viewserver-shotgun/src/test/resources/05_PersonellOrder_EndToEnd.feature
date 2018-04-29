@@ -47,7 +47,7 @@ Feature: Personell order scenarios
 	  | RowAdd  |               | {client1_personellOrderController_createOrder_result} | ref://json/orders/personellOrder.json | 5                  | ref://json/orders/personellOrderLocation.json | PLACED |
 	Given "client1" subscribed to report "orderRequest" with parameters
 	  | Name                     | Type    | Value   | Excluded |
-	  | dimension_contentTypeId  | Integer | 1       |          |
+	  | dimension_contentTypeId  | Integer | 5       |          |
 	  | dimension_customerUserId | String  | @userId | exclude  |
 	  | dimension_status         | String  | PLACED  |          |
 	  | showOutOfRange           | String  | true    |          |

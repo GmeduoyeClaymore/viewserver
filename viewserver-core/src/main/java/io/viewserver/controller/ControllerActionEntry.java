@@ -302,13 +302,10 @@ public class ControllerActionEntry{
     }
 
     public static String toString(Object ser){
-        try {
-            if(ser == null){
-                return null;
-            }
-            return mapper.writerFor(ser.getClass()).writeValueAsString(ser);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to serialize object \"" + ser + "\"",e);
+        if(ser == null){
+            return null;
         }
+        return ControllerUtils.toString(ser);
+
     }
 }

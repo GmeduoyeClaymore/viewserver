@@ -164,7 +164,10 @@ public class ExecutionContext implements IExecutionContext{
     private void commitInputOperators() {
         int count = inputOperators.size();
         for (int i = 0; i < count; i++) {
-            inputOperators.get(i).inputReady();
+            IInputOperator iInputOperator = inputOperators.get(i);
+            if(inputOperators!=null) {
+                iInputOperator.inputReady();
+            }
         }
     }
 

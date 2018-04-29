@@ -376,6 +376,20 @@ public class ViewServerClientSteps {
         connectionContext.getOptions().addSortColumn(sortColumn, "descending".equals(direction));
     }
 
+    @When("^\"([^\"]*)\" subscribed to report \"([^\"]*)\" with \"([^\"]*)\" is \"([^\"]*)\"$")
+    public void subscribedToReportWithOrderId(String clientName, String reportName,String paramName,String paramValue, DataTable records) throws Throwable {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        String s = clientContext.replaceParams(paramValue);
+        if(paramName.startsWith("dimension")){
+            ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(paramName,false, ValueLists.valueListOf(s)));
+        }else{
+            ctxt.getReportContext().getParameterValues().put(paramName, ValueLists.valueListOf(s));
+
+        }
+        I_subscribe_to_report(clientName,reportName);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportName,keyColumn,records), 5, 500, 0,false);
+    }
+
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\"$")
     public void the_following_data_is_received_eventually(String clientName, String reportId, DataTable records) {
         repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 500, 0,false);
