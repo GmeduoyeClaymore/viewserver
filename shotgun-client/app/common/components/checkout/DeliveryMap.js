@@ -11,9 +11,6 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {isEqual, debounce} from 'lodash';
 import * as ContentTypes from 'common/constants/ContentTypes';
-const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
-const LATITUDE_DELTA = 0.0322;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 import {addressToText} from 'common/components/maps/MapUtils';
 
 /*eslint-disable */

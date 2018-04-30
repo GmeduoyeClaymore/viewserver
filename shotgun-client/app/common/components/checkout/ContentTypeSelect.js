@@ -4,7 +4,7 @@ import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
-
+import * as ContentTypes from 'common/constants/ContentTypes';
 
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){

@@ -3,7 +3,7 @@ import {View, StyleSheet, Dimensions} from 'react-native';
 import {Text, Spinner, Row, Content, Item} from 'native-base';
 import {LoadingScreen, PagingListView, SearchBar, Icon} from 'common/components';
 import {updateSubscriptionAction} from 'common/dao/DaoActions';
-import {CheckBox} from 'common/components/basic';
+import {CheckBox} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {withExternalState} from 'custom-redux';
 import yup from 'yup';

@@ -43,10 +43,8 @@ export default class OrderSummaryDao{
   getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts, userId}){
     const reportContext =  {
       reportId,
-      dimensions: {
-      },
-      excludedFilters: {
-      }
+      dimensions: {},
+      excludedFilters: {}
     };
 
     if (isCompleted !== undefined) {

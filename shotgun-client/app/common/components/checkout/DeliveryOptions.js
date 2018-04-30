@@ -9,17 +9,12 @@ import yup from 'yup';
 import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
-
-
-/*eslint-enable */
 import {calculateTotalPrice} from './CheckoutUtils';
 import {TextInputMask} from 'react-native-masked-text';
 
 class DeliveryOptions extends Component {
   constructor(props) {
     super(props);
-
-
     this.state = {
       isDatePickerVisible: false,
       isFixedPrice: false,
@@ -46,7 +41,6 @@ class DeliveryOptions extends Component {
   setFixedPrice = (fixedPriceMask) => {
     const {orderItem} = this.props;
     const fixedPrice = this.refs.fixedPriceInput.getRawValue() * 100;
-    console.log(fixedPriceMask);
     super.setState({fixedPriceMask: (fixedPrice != 0 ? fixedPriceMask : undefined)});
     this.setState({ orderItem: {...orderItem, fixedPrice}});
   }
@@ -103,6 +97,7 @@ class DeliveryOptions extends Component {
     const {resources} = this;
     const {paymentCards, orderItem, errors, next, delivery, payment, selectedContentType, history} = this.props;
     const {isDatePickerVisible, isFixedPrice, isDurationDays, calculatedPrice, fixedPriceMask, duration} = this.state;
+    const {supportsFromTime, supportsTillTime} = resources;
 
     const validationSchema = {};
 
@@ -130,14 +125,14 @@ class DeliveryOptions extends Component {
           </Row>
         </ListItem>
 
-        {selectedContentType.hasStartTime ?  <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+        {supportsFromTime ?  <ListItem padded onPress={() => this.toggleDatePicker(true)}>
           <Icon paddedIcon name="delivery-time" />
           {orderItem.startTime !== undefined ? <Text>{moment(orderItem.startTime).format('ddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.StartTime}</Text>}
           <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}
             isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={this.onChangeDate} {...datePickerOptions} minimumDate={resources.MinimumStartTimeOptions} />
         </ListItem> : null}
 
-        {selectedContentType.hasEndTime ?  <ListItem padded>
+        {supportsTillTime ?  <ListItem padded>
           <Icon paddedIcon name="delivery-time" />
           <Col>
             <TextInputMask type={'only-numbers'} keyboardType='phone-pad' underlineColorAndroid='transparent'
@@ -206,7 +201,6 @@ const datePickerOptions = {
   maximumDate: moment().add(14, 'days').toDate()
 };
 
-
 const TommorowDateOption = {
   name: 'Tmrw',
   resolver: () => moment().add(1, 'days').startOf('day').add(9, 'hours').minute(0).toDate()
@@ -226,7 +220,6 @@ const TwoWorkingDayOption = {
   name: '2 Days',
   resolver: ({from}) => (moment(from) || moment()).startOf('day').add(1, 'days').add(9, 'hours').add(8, 'hours').toDate()
 };
-
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
