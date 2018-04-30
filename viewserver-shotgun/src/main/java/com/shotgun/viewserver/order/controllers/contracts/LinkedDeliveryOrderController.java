@@ -1,11 +1,9 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
 import com.shotgun.viewserver.order.contracts.HireNotifications;
+import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.controllers.DeliveryOrderController;
-import com.shotgun.viewserver.order.domain.DeliveryOrder;
-import com.shotgun.viewserver.order.domain.JourneyOrder;
-import com.shotgun.viewserver.order.domain.LinkedDeliveryOrder;
-import com.shotgun.viewserver.order.domain.SourceOrderForLinkedDeliveries;
+import com.shotgun.viewserver.order.domain.*;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
@@ -14,7 +12,7 @@ import io.viewserver.controller.ControllerContext;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
-public interface LinkedDeliveryOrderController extends HireNotifications, OrderCreationController, OrderTransformationController, SinglePaymentOrderController, JourneyBasedOrderController {
+public interface LinkedDeliveryOrderController extends HireNotifications, OrderCreationController, OrderTransformationController, SinglePaymentOrderController, JourneyBasedOrderController, NegotiationNotifications {
 
 
     @Override
@@ -43,8 +41,31 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
         }
     }
 
-    @ControllerAction(path = "createOutboundDeliveryOrder", isSynchronous = true)
-    default DeliveryOrder createOutboundDeliveryOrder(@ActionParam(name = "orderId")String orderId){
+    @ControllerAction(path = "createDeliveryOrder", isSynchronous = true)
+    default String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")LinkedDeliveryOrder order){
+        return this.create(
+                order,
+                paymentMethodId,
+                (rec,ord) -> {
+
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+                    rec.addValue("orderLocation", order.getOrigin());
+                    return true;
+                },
+                ord -> {
+                    SourceOrderForLinkedDeliveries sourceOrderForLinkedDeliveries = getOrderForId(order.getSourceOrderId(), SourceOrderForLinkedDeliveries.class);
+                    sourceOrderForLinkedDeliveries.set(order.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? "inboundDeliveryId" : "outboundDeliveryId", order.getOrderId() );
+                    updateOrderRecord(sourceOrderForLinkedDeliveries);
+
+                    if(ord.getPartnerUserId() != null){
+                        notifyJobAssigned(ord.getOrderId(),ord.getPartnerUserId());
+                    }
+                }
+        );
+    }
+
+    @ControllerAction(path = "generateOutboundDeliveryOrder", isSynchronous = true)
+    default DeliveryOrder generateOutboundDeliveryOrder(@ActionParam(name = "orderId")String orderId){
         AtomicReference<DeliveryOrder> deliveryOrder = new AtomicReference<>();
         this.transform(
                 orderId,
@@ -58,8 +79,8 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
         return deliveryOrder.get();
     }
 
-    @ControllerAction(path = "createInboundDeliveryOrder", isSynchronous = true)
-    default DeliveryOrder createInboundDeliveryOrder(@ActionParam(name = "orderId")String orderId){
+    @ControllerAction(path = "generateInboundDeliveryOrder", isSynchronous = true)
+    default DeliveryOrder generateInboundDeliveryOrder(@ActionParam(name = "orderId")String orderId){
         AtomicReference<DeliveryOrder> deliveryOrder = new AtomicReference<>();
         this.transform(
                 orderId,

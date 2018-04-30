@@ -8,6 +8,8 @@ import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 public interface SourceOrderForLinkedDeliveries extends BasicOrder{
     DeliveryAddress getOrigin();
     DeliveryAddress getProductAddress();
+    String getOutboundDeliveryId();
+    String getInboundDeliveryId();
     default LinkedDeliveryOrder createOutboundDelivery(String customerId){
         LinkedDeliveryOrder result = JSONBackedObjectFactory.create(LinkedDeliveryOrder.class);
         result.set("startLocation", getOrigin());

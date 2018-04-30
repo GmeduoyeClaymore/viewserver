@@ -42,6 +42,7 @@ public interface OrderCreationController {
         if (!beforCreate.test(orderRecord, order)) {
             return null;
         }
+
         orderRecord
                 .addValue("orderId", orderId)
                 .addValue("paymentMethodId", paymentMethodId)

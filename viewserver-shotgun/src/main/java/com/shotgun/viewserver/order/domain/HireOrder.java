@@ -17,8 +17,6 @@ import java.util.List;
 public interface HireOrder extends NegotiatedOrder, BasicOrder, StagedPaymentOrder, DynamicJsonBackedObject, SourceOrderForLinkedDeliveries {
     Date getHireStartDate();
     Date getHireEndDate();
-    String getOutboundDeliveryId();
-    String getInboundDeliveryId();
     HireOrderStatus getHireOrderStatus();
 
     @Override

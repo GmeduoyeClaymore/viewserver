@@ -251,12 +251,12 @@ Feature: Hire order scenarios
 	Given "client1" controller "hireOrderController" action "markItemReady" invoked with parameters
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
-	Given "client1" controller "hireOrderController" action "createOutboundDeliveryOrder" invoked with parameters
+	Given "client1" controller "hireOrderController" action "generateOutboundDeliveryOrder" invoked with parameters
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
 	Given "client1" controller "hireOrderController" action "createDeliveryOrder" invoked with parameters
 	  | Name            | Value                                                            |
-	  | order           | {client1_hireOrderController_createOutboundDeliveryOrder_result} |
+	  | order           | {client1_hireOrderController_generateOutboundDeliveryOrder_result} |
 	  | paymentMethodId | XXXX                                                             |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                    |
@@ -277,12 +277,12 @@ Feature: Hire order scenarios
 	Then "client1" the following data is received terminally on report "customerOrderSummary"
 	  | ~Action | orderId                                          | orderDetails.hireOrderStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ONHIRE                       |
-	Given "client1" controller "hireOrderController" action "createInboundDeliveryOrder" invoked with parameters
+	Given "client1" controller "hireOrderController" action "generateInboundDeliveryOrder" invoked with parameters
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
 	Given "client1" controller "hireOrderController" action "createDeliveryOrder" invoked with parameters
 	  | Name            | Value                                                           |
-	  | order           | {client1_hireOrderController_createInboundDeliveryOrder_result} |
+	  | order           | {client1_hireOrderController_generateInboundDeliveryOrder_result} |
 	  | paymentMethodId | XXXX                                                            |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                    |

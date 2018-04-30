@@ -33,23 +33,6 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
         this.iMessagingController = iMessagingController;
     }
 
-    @ControllerAction(path = "createDeliveryOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){
-        return this.create(
-                order,
-                paymentMethodId,
-                (rec,ord) -> {
-                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
-                    rec.addValue("orderLocation", order.getOrigin());
-                    return true;
-                },
-                ord -> {
-                    if(ord.getPartnerUserId() != null){
-                        notifyJobAssigned(ord.getOrderId(),ord.getPartnerUserId());
-                    }
-                }
-        );
-    }
 
     @ControllerAction(path = "markItemReady", isSynchronous = true)
     public void markItemReady(@ActionParam(name = "orderId")String orderId) {
