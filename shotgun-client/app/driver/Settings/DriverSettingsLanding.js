@@ -63,8 +63,8 @@ const DriverSettings = ({history, dispatch, user, parentPath}) => {
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>
       </List>
+      <Button fullWidth paddedTopBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
     </Content>
-    <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
   </Container> : null;
 };
 

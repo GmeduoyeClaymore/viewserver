@@ -380,10 +380,11 @@ public class ViewServerClientSteps {
     public void subscribedToReportWithOrderId(String clientName, String reportName,String paramName,String paramValue, DataTable records) throws Throwable {
         ClientConnectionContext ctxt = clientContext.get(clientName);
         String s = clientContext.replaceParams(paramValue);
+
         if(paramName.startsWith("dimension")){
             ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(paramName,false, ValueLists.valueListOf(s)));
         }else{
-            ctxt.getReportContext().getParameterValues().put(paramName, ValueLists.valueListOf(s));
+            ctxt.getReportContext().getParameterValues().put(paramName, ValueLists.valueListOf(paramValue));
 
         }
         I_subscribe_to_report(clientName,reportName);

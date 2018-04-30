@@ -18,4 +18,6 @@ export {Icon} from './Icon';
 export {Tabs} from './Tabs';
 export {SearchBar} from './SearchBar';
 export {AverageRating} from './AverageRating';
+export {CheckBox} from './CheckBox';
+export {CurrencyInput} from './CurrencyInput';
 export {OriginDestinationSummary} from './OriginDestinationSummary';

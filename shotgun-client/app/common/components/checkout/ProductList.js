@@ -34,10 +34,11 @@ class ProductList extends Component{
   constructor(props){
     super(props);
 
-    this.search = this.search.bind(this);
-    this.setState = this.setState.bind(this);
-    this.goBack = this.goBack.bind(this);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
   }
 
   rowView({item: p, ...rest}){
@@ -51,12 +52,12 @@ class ProductList extends Component{
     </Col> : null;
   }
 
-  search(searchText) {
+  search = (searchText) => {
     const {dispatch} = this.props;
     dispatch(updateSubscriptionAction('productDao', {searchText}));
   }
 
-  goBack(){
+  goBack = () => {
     const {parentSelectedCategory, history} = this.props;
     history.goBack();
     this.setState({selectedCategory: parentSelectedCategory});
@@ -94,6 +95,7 @@ class ProductList extends Component{
             headerView={this.headerView}
           />
         </Grid>
+        <Text note>{selectedProduct ? selectedProduct.description : ''}</Text>
       </Content>
       <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)}
         validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
@@ -115,7 +117,7 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {selectedContentType, selectedProduct, selectedCategory = {}} = initialProps;
+  const {selectedContentType, selectedProduct = {}, selectedCategory = {}} = initialProps;
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {
@@ -131,5 +133,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const ConnectedProductList =  withExternalState(mapStateToProps)(ProductList);
-export default ConnectedProductList;
+export default withExternalState(mapStateToProps)(ProductList);

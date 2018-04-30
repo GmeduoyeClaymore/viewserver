@@ -1,4 +1,4 @@
-import {invokeDaoCommand, getDaoCommandStatus} from 'common/dao';
+import {invokeDaoCommand} from 'common/dao';
 import {register, registerNakedDao} from 'common/actions/CommonActions';
 import OrderDao from 'common/dao/OrderDao';
 import CustomerDao from 'customer/dao/CustomerDao';
@@ -49,17 +49,6 @@ export const loginCustomer = (email, password, continueWith) => {
 
 export const getPaymentCards = (continueWith) => {
   return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', continueWith);
-};
-
-export const getPaymentCardsIfNotAlreadySucceeded =  (continueWith) =>  async (dispatch, getState) => {
-  const paymentCardCommandStatus = getDaoCommandStatus(getState(), 'getCustomerPaymentCards', 'paymentDao' );
-  const succeededInGettingCards =  paymentCardCommandStatus === 'success';
-  const getPaymentCardsCommandInFlight = paymentCardCommandStatus === 'start';
-  if (!succeededInGettingCards && !getPaymentCardsCommandInFlight){
-    dispatch(getPaymentCards());
-  } else if (continueWith){
-    continueWith();
-  }
 };
 
 export const cancelOrder = (orderId, continueWith) => {

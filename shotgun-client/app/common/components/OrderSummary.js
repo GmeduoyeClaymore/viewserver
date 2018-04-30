@@ -59,7 +59,7 @@ class OrderSummary extends Component{
     const {resources} = this;
     const {orderItem, delivery, contentType, product, deliveryUser} = this.props;
     const {quantity: noPeople} = orderItem;
-    const {supportsFrom, supportsTill, supportsNoPeople} = resources
+    const {supportsFrom, supportsTill, supportsNoPeople} = resources;
     
     return <List>
       {this.renderMap()}
@@ -67,9 +67,9 @@ class OrderSummary extends Component{
         <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
       </ListItem>
       {deliveryUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}`}</Text></ListItem> : null}
-      {!delivery.isFixedPrice && supportsFrom ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {!delivery.isFixedPrice && supportsTill ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {supportsNoPeople && noPeople ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeople} ${noPeople > 1?  'people' : 'person'} required`}</Text></ListItem> : null}
+      {supportsFrom ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.startTime).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {supportsTill ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.endTime).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {supportsNoPeople && noPeople ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeople} ${noPeople > 1 ?   'people' : 'person'} required`}</Text></ListItem> : null}
       {product ? <ListItem padded>
         {product.imageUrl ? <Icon paddedIcon name={product.imageUrl}/> : null}
         <Text>{`${product.name}`}</Text>

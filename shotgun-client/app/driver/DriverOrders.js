@@ -1,111 +1,46 @@
 import React, {Component} from 'react';
-import {PagingListView, OrderRequest, Tabs, Icon} from 'common/components';
-import {View, Text, Container, Spinner, Header, Body, Title, Tab, Left, Button} from 'native-base';
-import {getDaoState, getNavigationProps} from 'common/dao';
+import {Tabs, Icon} from 'common/components';
+import {Container, Header, Body, Title, Tab, Left, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {connect, ReduxRouter, Route} from 'custom-redux';
+import DriverOrderItems from './DriverOrderItems';
 
-const DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-  reportId: 'driverOrderSummary',
-  driverId: '@userId',
-  userId: undefined
-};
-
-const CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-  columnsToSort: [{ name: 'from', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-  reportId: 'customerOrderSummary',
-  userId: '@userId',
-  driverId: undefined
-};
-
-const Paging = () => <Spinner />;
-const NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs todo'}</Text>;
-
-const RowView = ({item: orderSummary, isLast, isFirst, history, isCustomer, ordersRoot}) => {
-  const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
-  let next;
-  if (isCustomer){
-    next = isOnRoute ? `${ordersRoot}/CustomerOrderInProgress` : `${ordersRoot}/CustomerOrderDetail`;
-  } else {
-    next = isOnRoute ? `${ordersRoot}/DriverOrderInProgress` : `${ordersRoot}/DriverOrderDetail`;
-  }
-  return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
-};
-
-const getOptions =  (isCustomer, isCompleted) => ({
-  ...(isCustomer ? CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS),
-  isCompleted
-});
-
-class OrderListings extends Component{
-  render(){
-    const {history, ordersRoot, isCustomer, isCompleted} = this.props;
-    return <View style={{flex: 1}}>
-      <PagingListView
-        daoName='orderSummaryDao'
-        dataPath={['orders']}
-        rowView={RowView}
-        history={history}
-        ordersRoot={ordersRoot}
-        isCustomer={isCustomer}
-        options={getOptions(isCustomer, isCompleted)}
-        paginationWaitingView={Paging}
-        emptyView={NoItems}
-        pageSize={10}
-        headerView={() => null}
-      />
-    </View>;
-  }
-}
-
-class DriverOrders  extends Component{
-  constructor(props){
-    super(props);
-    this.goToTabNamed = this.goToTabNamed.bind(this);
-  }
-
-  goToTabNamed (name){
+class DriverOrders extends Component{
+  goToTabNamed = (name) => {
     const {history, isCompleted, path, canGoBack} = this.props;
     history.replace({pathname: `${path}/${name}`}, {isCompleted, canGoBack});
   }
 
   render() {
     const {history, isCustomer, defaultOptions, isCompleted, canGoBack, parentPath, path, height, ordersRoot} = this.props;
+
     return <Container>
-      <Header hasTabs  withButton={canGoBack}>
+      <Header hasTabs withButton={canGoBack}>
         {canGoBack ? <Left>
           <Button>
             <Icon name='back-arrow' onPress={() => history.goBack()} />
           </Button>
         </Left> : null }
-        <Body><Title>{'My Jobs' + (isCompleted ? ' (Completed)' : '')}</Title></Body>
+        <Body><Title>{`My Jobs ${isCompleted ? ' (Completed)' : ''}`}</Title></Body>
       </Header>
       <Tabs initialPage={isCustomer ? 1 : 0}  page={isCustomer ? 1 : 0} {...shotgun.tabsStyle}>
-        <Tab heading={'Accepted'} onPress={() => this.goToTabNamed('Accepted')}/>
-        <Tab heading={'Posted'} onPress={() => this.goToTabNamed('Posted')}/>
+        <Tab heading='Accepted' onPress={() => this.goToTabNamed('Accepted')}/>
+        <Tab heading='Posted' onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
-      <ReduxRouter  name="DriverOrdersRouter" height={height - 150} defaultRoute={'Accepted'} {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
-        <Route path={'Accepted'} component={OrderListings}/>
-        <Route path={'Posted'} component={OrderListings}/>
+      <ReduxRouter  name="DriverOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Accepted' {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+        <Route path={'Accepted'} component={DriverOrderItems}/>
+        <Route path={'Posted'} component={DriverOrderItems}/>
       </ReduxRouter>
     </Container>;
   }
 }
 
 const mapStateToProps = (state, initialProps) => {
-  const navigationProps = getNavigationProps(initialProps);
   const {history, path} = initialProps;
-  const {location} = history;
-  const {pathname} = location;
 
   return {
-    isCustomer: pathname.endsWith(`${path}/Posted`),
-    ...initialProps,
-    ...navigationProps,
-    vehicle: getDaoState(state, ['vehicle'], 'vehicleDao'),
-    position: getDaoState(state, ['position'], 'userDao')
+    isCustomer: history.location.pathname.endsWith(`${path}/Posted`),
+    ...initialProps
   };
 };
 

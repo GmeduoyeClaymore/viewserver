@@ -6,7 +6,7 @@ export default class OrderRequestDaoContext{
   static DEFAULT_POSITION = {
     latitude: 0,
     longitude: 0
-  }
+  };
   static OPTIONS = {
     offset: 0,
     limit: 10,
@@ -16,6 +16,9 @@ export default class OrderRequestDaoContext{
     position: OrderRequestDaoContext.DEFAULT_POSITION
   };
 
+  static DRIVER_ORDER_REQUEST_DEFAULT_OPTIONS = {
+    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }]
+  };
 
   constructor(client, options = {}) {
     this.client = client;
@@ -61,7 +64,6 @@ export default class OrderRequestDaoContext{
         maxDistance,
         showUnrelated,
         showOutOfRange
-
       }
     };
   
@@ -89,21 +91,22 @@ export default class OrderRequestDaoContext{
       orderId: orderRequest.orderId,
       status: orderRequest.status,
       totalPrice: orderRequest.totalPrice,
+      totalToBePaid: orderRequest.totalToBePaid,
       customerUserId: orderRequest.customerUserId,
       orderItem: {
         productId: orderRequest.productId,
         notes: orderRequest.notes,
         imageUrl: orderRequest.imageUrl,
+        startTime: orderRequest.startTime,
+        endTime: orderRequest.endTime
       },
       contentType: {
         contentTypeId: orderRequest.contentTypeContentTypeId,
         name: orderRequest.contentTypeName,
-        origin: orderRequest.contentTypeOrigin,
-        destination: orderRequest.contentTypeDestination,
-        noPeople: orderRequest.contentTypeNoPeople,
-        fromTime: orderRequest.contentTypeFromTime,
-        tillTime: orderRequest.contentTypeTillTime,
-        noItems: orderRequest.contentTypeNoItems,
+        hasOrigin: orderRequest.contentTypeHasOrigin,
+        hasDestination: orderRequest.contentTypeHasDestination,
+        hasStartTime: orderRequest.contentTypeHasStartTime,
+        hasEndTime: orderRequest.contentTypeHasEndTime,
         rootProductCategory: orderRequest.contentTypeRootProductCategory,
         pricingStrategy: orderRequest.contentTypePricingStrategy
       },
@@ -113,14 +116,9 @@ export default class OrderRequestDaoContext{
         imageUrl: orderRequest.productImageUrl
       },
       delivery: {
-        from: orderRequest.from,
-        till: orderRequest.till,
+        deliveryId: orderRequest.deliveryId,
         distance: orderRequest.distance,
         duration: orderRequest.duration,
-        isFixedPrice: orderRequest.isFixedPrice,
-        fixedPriceValue: orderRequest.fixedPriceValue,
-        noRequiredForOffload: orderRequest.noRequiredForOffload,
-        deliveryId: orderRequest.deliveryId,
         origin: {
           flatNumber: orderRequest.originFlatNumber,
           line1: orderRequest.originLine1,

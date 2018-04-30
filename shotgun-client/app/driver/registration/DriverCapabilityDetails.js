@@ -1,181 +1,156 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import {Text, Content, Item, Label, Button, Grid, Row, Col} from 'native-base';
+import {Text, Item, Label, Button, Grid, Row, Col, Content} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import {isAnyLoading, getLoadingErrors, getOperationError } from 'common/dao';
+import {isAnyOperationPending, getOperationError, getDaoState} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ValidationService from 'common/services/ValidationService';
+import {getVehicleDetails} from 'driver/actions/DriverActions';
 
 class DriverCapabilityDetails extends Component{
-  constructor(props){
-    super(props);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.togglePeopleVisibility = this.togglePeopleVisibility.bind(this);
-    this.requestVehicleDetails = this.requestVehicleDetails.bind(this);
-    this.state = {
-      errors: ''
-    };
+  setRegistrationNumber = (registrationNumber) => {
+    this.setState({registrationNumber});
   }
 
-  static validationSchema = {
-    registrationNumber: yup.string().required(), //TODO REGEX DOESNT WORK ON IOS.matches(/ ^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/i),
-    colour: yup.string().required(),
-    make: yup.string().required(),
-    model: yup.string().required(),
-    dimensions: yup.object().required()
-  };
-
-  onChangeVehicleText(field, value){
-    const {vehicle = {}} = this.props;
-    this.setState({vehicle: {...vehicle, [field]: value}});
+  requestVehicleDetails = () => {
+    const {dispatch, registrationNumber} = this.props;
+    dispatch(getVehicleDetails(registrationNumber));
   }
 
-  onChangeText(field, value){
-    this.setState({[field]: value});
+  togglePeopleVisibility = (peopleVisible) => {
+    this.setState({numAvailableForOffload: peopleVisible ? 1 : undefined});
   }
 
-  async requestVehicleDetails(){
-    const {client, vehicle} = this.props;
-    try {
-      const vehicleDetails = await client.invokeJSONCommand('vehicleDetailsController', 'getDetails', vehicle.registrationNumber);
-      this.setState({vehicle: vehicleDetails, selectedProductIds: vehicleDetails.selectedProductIds});
-      super.setState({errors: ''});
-    } catch (error){
-      this.setState({vehicle: {registrationNumber: vehicle.registrationNumber}});
-      super.setState({errors: error});
-    }
-  }
-
-  togglePeopleVisibility(peopleVisible){
-    this.onChangeText('numAvailableForOffload', peopleVisible ? 1 : undefined);
+  setNumAvailableForOffload = (numAvailableForOffload) => {
+    this.setState({numAvailableForOffload});
   }
 
   render(){
-    const {dimensions, errors: errorsFromProps = '', vehicle, numAvailableForOffload} = this.props;
+    const {errors: errorsFromProps = '', vehicle, numAvailableForOffload, registrationNumber} = this.props;
     const {errors: errorsFromState = ''} = this.state;
     const errors = [errorsFromProps, errorsFromState].filter( c=> !!c).join('\n');
     const peopleVisible = numAvailableForOffload > 0;
-    const combinedErrors = `${errors}`;
 
-    return <Content keyboardShouldPersistTaps="always" padded>
-      <View>
-        <Row>
-          <Item stackedLabel style={{marginLeft: 0, borderBottomWidth: 0, width: '100%'}}>
+    return <Content><Grid>
+      <Row>
+        <Col>
+          <Item stackedLabel style={styles.vehicleRegItem}>
             <Label>Vehicle registration</Label>
-            <ValidatingInput bold placeholder='AB01 CDE' value={vehicle.registrationNumber} validateOnMount={vehicle.registrationNumber !== undefined} onChangeText={(value) => this.onChangeVehicleText('registrationNumber', value)} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} maxLength={10}/>
+            <ValidatingInput bold placeholder='AB01 CDE' value={registrationNumber} validateOnMount={registrationNumber !== undefined} onChangeText={(value) => this.setRegistrationNumber(value)} validationSchema={validationSchema.registrationNumber} maxLength={10}/>
           </Item>
-        </Row>
-        <Row>
-          <Col>
-            <ValidatingButton fullWidth onPress={() => this.requestVehicleDetails()} validateOnMount={vehicle.registrationNumber !== undefined} validationSchema={DriverCapabilityDetails.validationSchema.registrationNumber} model={vehicle.registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
-          </Col>
-        </Row>
-        {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
-          <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-            <Label>Vehicle model</Label>
-            <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
-          </Item></View>
-          <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-            <Label>Vehicle colour</Label>
-            <Text>{vehicle.colour}</Text>
-          </Item></View>
-          <View style={{width: '50%'}}><Item stackedLabel vehicleDetails>
-            <Label>Approx dimensions</Label>
-            <Text>{`${dimensions.volume}m\xB3 load space`}</Text>
-            <Text>{`${dimensions.weight}kg Max`}</Text>
-          </Item></View>
-        </Row>) : null}
-        <Row>
-          <Col>
-            <Grid style={{marginBottom: shotgun.contentPadding, marginTop: 20}}>
-              <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
+          <ValidatingButton fullWidth busy={busy} onPress={this.requestVehicleDetails} validateOnMount={registrationNumber !== undefined} validationSchema={validationSchema.registrationNumber} model={registrationNumber || ''}><Text uppercase={false}>Look up my vehicle</Text></ValidatingButton>
+        </Col>
+      </Row>
+
+      {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Vehicle model</Label>
+          <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
+        </Item></Col>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Vehicle colour</Label>
+          <Text>{vehicle.colour}</Text>
+        </Item></Col>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Approx dimensions</Label>
+          <Text>{`${vehicle.dimensions.volume}m\xB3 load space`}</Text>
+          <Text>{`${vehicle.dimensions.weight}kg Max`}</Text>
+        </Item></Col>
+      </Row>) : null}
+      <Row>
+        <Col>
+          <Grid style={styles.offloadGrid}>
+            <Row><Text style={{marginBottom: shotgun.contentPadding}}>Are you able to load and off-load items?</Text></Row>
+            <Row>
+              <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={peopleVisible} onPress={() => this.togglePeopleVisibility(true)}><Text uppercase={false}>Yes</Text></Button></Col>
+              <Col><Button fullWidth light active={!peopleVisible} onPress={() => this.togglePeopleVisibility(false)}><Text uppercase={false}>No</Text></Button></Col>
+            </Row>
+          </Grid>
+          {peopleVisible ?
+            <Grid>
               <Row>
-                <Col style={{paddingRight: shotgun.contentPadding}}><Button fullWidth light active={peopleVisible} onPress={() => this.togglePeopleVisibility(true)}><Text uppercase={false}>Yes</Text></Button></Col>
-                <Col><Button fullWidth light active={!peopleVisible} onPress={() => this.togglePeopleVisibility(false)}><Text uppercase={false}>No</Text></Button></Col>
+                <Text style={{paddingBottom: 15}}>How many people will be available?</Text>
               </Row>
-            </Grid>
-            {peopleVisible ?
-              <Grid>
-                <Row>
-                  <Text style={{paddingBottom: 15}}>How many people will be available?</Text>
-                </Row>
-                <Row>
-                  <Col style={{marginRight: 10}}>
-                    <Row>
-                      <Button personButton active={numAvailableForOffload == 1} onPress={() => this.onChangeText('numAvailableForOffload', 1)} >
+              <Row>
+                <Col style={{marginRight: 10}}>
+                  <Row>
+                    <Button personButton active={numAvailableForOffload == 1} onPress={() => this.setNumAvailableForOffload(1)} >
+                      <View>
                         <Icon name='one-person'/>
-                      </Button>
-                    </Row>
-                    <Row style={styles.personSelectTextRow}>
-                      <Text style={styles.personSelectText}>1</Text>
-                    </Row>
-                  </Col>
-                  <Col style={{marginRight: 10}}>
-                    <Row>
-                      <Button personButton active={numAvailableForOffload == 2} onPress={() => this.onChangeText('numAvailableForOffload', 2)} >
+                        <Text style={styles.personSelectText}>1</Text>
+                      </View>
+                    </Button>
+                  </Row>
+                </Col>
+                <Col style={{marginRight: 10}}>
+                  <Row>
+                    <Button personButton active={numAvailableForOffload == 2} onPress={() => this.setNumAvailableForOffload(2)} >
+                      <View>
                         <Icon name='one-person'/>
-                      </Button>
-                    </Row>
-                    <Row style={styles.personSelectTextRow}>
-                      <Text style={styles.personSelectText}>2</Text>
-                    </Row>
-                  </Col>
-                  <Col>
-                    <Row>
-                      <Button personButton active={numAvailableForOffload == 3} onPress={() => this.onChangeText('numAvailableForOffload', 3)} >
+                        <Text style={styles.personSelectText}>2</Text>
+                      </View>
+                    </Button>
+                  </Row>
+                </Col>
+                <Col>
+                  <Row>
+                    <Button personButton active={numAvailableForOffload == 3} onPress={() => this.setNumAvailableForOffload(3)} >
+                      <View>
                         <Icon name='one-person'/>
-                      </Button>
-                    </Row>
-                    <Row style={styles.personSelectTextRow}>
-                      <Text style={styles.personSelectText}>3</Text>
-                    </Row>
-                  </Col>
-                </Row>
-              </Grid> : null}
-          </Col>
-        </Row>
-        <ErrorRegion errors={combinedErrors}/>
-      </View>
-    </Content>;
+                        <Text style={styles.personSelectText}>3</Text>
+                      </View>
+                    </Button>
+                  </Row>
+                </Col>
+              </Row>
+            </Grid> : null}
+        </Col>
+      </Row>
+      <ErrorRegion errors={errors}/>
+    </Grid></Content>;
   }
 }
 
+const validationSchema = {
+  registrationNumber: yup.string().required(), //TODO REGEX DOESNT WORK ON IOS.matches(/ ^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/i),
+  colour: yup.string().required(),
+  make: yup.string().required(),
+  model: yup.string().required(),
+  dimensions: yup.object().required()
+};
+
 const styles = {
-  personSelectTextRow: {
-    justifyContent: 'center'
-  },
   personSelectText: {
     marginTop: 5,
-    marginBottom: 25,
+    fontWeight: 'normal',
     fontSize: 16,
     textAlign: 'center'
+  },
+  vehicleRegItem: {
+    marginLeft: 0,
+    borderBottomWidth: 0,
+    width: '100%'
+  },
+  offloadGrid: {
+    marginBottom: shotgun.contentPadding,
+    marginTop: 20
   }
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {vehicle = {}, selectedContentTypes, user, bankAccount, address} = initialProps;
-  const {dimensions} = vehicle;
-  const registrationErrors = getOperationError(state, 'loginDao', 'registerAndLoginDriver') || [];
-  const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy = isAnyLoading(state, ['userDao', 'vehicleDao', 'loginDao']);
   return {
     ...initialProps,
-    vehicle,
-    user,
-    bankAccount,
-    address,
-    selectedContentTypes,
-    dimensions,
-    busy,
-    errors: [loadingErrors, registrationErrors].filter( c=> !!c).join('\n')
+    vehicle: getDaoState(state, ['vehicleDetails'], 'driverDao') || initialProps.vehicle,
+    errors: getOperationError(state, 'driverDao', 'getVehicleDetails'),
+    busy: isAnyOperationPending(state, [{ driverDao: 'getVehicleDetails'}])
   };
 };
 
-const  canSubmit = async (state) => {
+const canSubmit = async (state) => {
   const {vehicle} = state;
-  return await ValidationService.validate(vehicle, yup.object(DriverCapabilityDetails.validationSchema));
+  return await ValidationService.validate(vehicle, yup.object(validationSchema));
 };
 
 export const ConnectedDriverCapabilityDetails =  withExternalState(mapStateToProps)(DriverCapabilityDetails);

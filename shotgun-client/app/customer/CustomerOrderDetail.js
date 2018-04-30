@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Col} from 'native-base';
-import {OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion, AverageRating} from 'common/components';
-import  {CurrencyInput} from 'common/components/basic';
+import {CurrencyInput, OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion, AverageRating} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import {cancelOrder, rejectDriver, updateOrderPrice} from 'customer/actions/CustomerActions';

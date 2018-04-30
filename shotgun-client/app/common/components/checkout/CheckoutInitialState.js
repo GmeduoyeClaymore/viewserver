@@ -1,33 +1,29 @@
 export const INITIAL_STATE = {
   totalPrice: undefined,
-  price: undefined,
   selectedProduct: undefined,
   showAll: true,
   orderItem: {
     productId: undefined,
     notes: undefined,
     imageUrl: undefined,
-    imageData: undefined
+    imageData: undefined,
+    fixedPrice: undefined,
+    quantity: 1
   },
   selectedContentType: {
     contentTypeId: undefined,
     name: undefined,
-    origin: undefined,
-    destination: undefined,
-    fromTime: undefined,
-    tillTime: undefined,
-    noItems: undefined,
+    hasOrigin: undefined,
+    hasDestination: undefined,
+    hasStartTime: undefined,
+    hasEndTime: undefined,
     rootProductCategory: undefined,
     pricingStrategy: undefined
   },
   deliveryUser: undefined,
   delivery: {
-    from: undefined,
-    noRequiredForOffload: 0,
     deliveryId: undefined,
     distance: undefined,
-    isFixedPrice: false,
-    fixedPriceValue: undefined,
     duration: undefined,
     origin: {
       flatNumber: undefined,
@@ -49,21 +45,50 @@ export const INITIAL_STATE = {
     }
   },
   payment: {
-    paymentId: undefined
+    paymentId: undefined,
+    brand: undefined,
+    last4: undefined
   }
 };
 
 /*export const INITIAL_STATE = {
+  totalPrice: undefined,
+  showAll: true,
   orderItem: {
+    productId: '2MediumVan',
+    contentTypeId: 1,
+    quantity: 1,
     notes: 'some notes are here \n there are a lot of them',
     imageData: undefined,
     imageUrl: undefined,
-    productId: 'PROD_Disposal',
+  },
+  selectedProduct: {
+    productId: '2MediumVan',
+    name: 'Medium Van',
+    description: 'Ford Transit, Volkswagen Transporter or similar. Ideal for small moves and can generally take one or two peoples personal belongings of up to 30 to 40 assorted moving boxes, or a single large item of furniture such as a sofa or bed.',
+    categoryId: '1Vans',
+    price: 3000,
+    imageUrl: 'mid-van',
+    dimension_productId: '2MediumVan',
+    prodConstantJoinCol: 1,
+    rank: 2,
+    key: 2
+  },
+  selectedContentType: {
+    contentTypeId: 1,
+    name: 'Delivery',
+    rootProductCategory: '1Vans',
+    pricingStrategy: 'JOURNEY_DISTANCE',
+    description: 'Schedule deliveries in an instant',
+    hasOrigin: true,
+    hasDestination: true,
+    hasStartTime: true,
+    hasEndTime: undefined
   },
   delivery: {
-    from: new Date(),
-    noRequiredForOffload: 0,
     deliveryId: undefined,
+    distance: 9487,
+    duration: 1740,
     origin: {
       line1: '12 Kinnoul Rd',
       city: 'London',
@@ -74,48 +99,57 @@ export const INITIAL_STATE = {
     },
     destination: {
       flatNumber: undefined,
-      line1: undefined,
-      city: undefined,
-      postCode: undefined,
-      googlePlaceId: undefined,
-      latitude: undefined,
-      longitude: undefined
+      line1: '94 Oxford St',
+      city: 'London',
+      postCode: 'W1D 1BZ',
+      googlePlaceId: 'ChIJl6cFYCsbdkgRcm8iIqkGTtE',
+      latitude: 51.5161747,
+      longitude: -0.1350527
     }
   },
   payment: {
-    paymentId: '12345'
+    paymentId: undefined,
+    brand: undefined,
+    last4: undefined
   }
 };*/
 
-/*export const INITIAL_STATE = {
+/*
+export const INITIAL_STATE = {
   totalPrice: undefined,
+  showAll: true,
   orderItem: {
-    notes: 'this is example delivery data',
+    productId: 'BrickLayer',
+    contentTypeId: 5,
+    quantity: 1,
+    notes: 'some notes are here \n there are a lot of them',
     imageData: undefined,
     imageUrl: undefined,
-    productId: '1SmallVan',
   },
   selectedProduct: {
-    productId: 'GroundWorker',
-    name: 'Ground worker',
-    description: 'These guys just love to dig. Just supply spades indicate where you want the hole then stand back.'
+    productId: 'BrickLayer',
+    name: 'Brick Layer',
+    description: 'Any one can lay a new brick the reclaimed ones are the charm. Give us four corners and well work wonders',
+    categoryId: '1Workers',
+    price: 15000,
+    imageUrl: '',
+    dimension_productId: 'BrickLayer',
+    prodConstantJoinCol: 1,
+    rank: 0,
+    key: 0,
+    rowId: 0,
   },
   selectedContentType: {
-    contentTypeId: 1,
-    name: 'Personell',
-    origin: true,
-    destination: true,
-    fromTime: true,
-    tillTime: false,
-    noItems: 1,
+    contentTypeId: 5,
+    name: 'Trades People',
+    hasOrigin: true,
+    hasStartTime: true,
+    hasEndTime: true,
     rootProductCategory: '1Workers',
-    pricingStrategy: 'DURATION'
+    pricingStrategy: 'JOB_DURATION',
+    description: 'Need a plumber? Ground worker? Labourer? Electrician? Get one now ... and yes track his progress !!',
   },
   delivery: {
-    from: new Date(),
-    distance: 2000,
-    duration: 5000,
-    noRequiredForOffload: 0,
     deliveryId: undefined,
     origin: {
       line1: '12 Kinnoul Rd',
@@ -125,16 +159,12 @@ export const INITIAL_STATE = {
       latitude: 51.4857236,
       longitude: -0.2123406
     },
-    destination: {
-      line1: '129 Drakefield Rd',
-      city: 'London',
-      postCode: 'SW17 8RS',
-      googlePlaceId: 'ChIJI6Q-6tkFdkgR5YDG0_IWuvw',
-      latitude: 51.4341614,
-      longitude: -0.1523323
-    }
+    destination: {}
   },
   payment: {
-    paymentId: '12345'
+    paymentId: undefined,
+    brand: undefined,
+    last4: undefined
   }
-};*/
+};
+*/

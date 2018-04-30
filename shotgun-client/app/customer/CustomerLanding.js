@@ -10,15 +10,11 @@ import {customerServicesRegistrationAction, getPaymentCards} from 'customer/acti
 import {watchPosition} from 'driver/actions/DriverActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
-import {Container} from 'native-base';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import shotgun from 'native-base-theme/variables/shotgun';
-
-const contentHeight = shotgun.deviceHeight - shotgun.footerHeight;
-const contentWidth = shotgun.deviceWidth;
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -60,23 +56,21 @@ class CustomerLanding extends Component {
 
   render() {
     const {busy, client, path, isLoggedIn, history} = this.props;
-    const completeProps = {client, ...this.props, height: contentHeight, width: contentWidth, ordersPath: `${path}/Orders` };
+    const completeProps = {client, ...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/Orders` };
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }
     return busy ? <LoadingScreen text="Loading"/> :
-      <Container>
-        <ReduxRouter  name="CustomerLandingRouter"  {...completeProps} defaultRoute={'/CustomerOrders'}>
-          <Route path={'/Checkout'} component={Checkout}/>
-          <Route path={'/CustomerOrders'} exact component={CustomerOrders}/>
-          <Route path={'/Orders'} exact component={CustomerOrders}/>
-          <Route path={'/CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-          <Route path={'/CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
-          <Route path={'/Settings'} parentPath={path} component={CustomerSettings}/>
-          <Route path={'/UserRelationships'} component={UserRelationships}/>
-        </ReduxRouter>
-        <CustomerMenuBar {...this.props}/>
-      </Container>;
+      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'/CustomerOrders'}>
+        <Route path={'/Checkout'} component={Checkout}/>
+        <Route path={'/CustomerOrders'} exact component={CustomerOrders}/>
+        <Route path={'/Orders'} exact component={CustomerOrders}/>
+        <Route path={'/CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'/CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
+        <Route path={'/Settings'} parentPath={path} component={CustomerSettings}/>
+        <Route path={'/UserRelationships'} component={UserRelationships}/>
+      </ReduxRouter>,
+      <CustomerMenuBar key='menuBar' {...this.props}/>];
   }
 }
 

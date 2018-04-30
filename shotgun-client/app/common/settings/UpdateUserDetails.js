@@ -2,57 +2,33 @@ import React, {Component} from 'react';
 import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion, ImageSelector} from 'common/components';
-import {connect} from 'custom-redux';
+import {withExternalState} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
 import {Image} from 'react-native';
 
 class UpdateUserDetails extends Component{
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      user: {
-        firstName: props.user.firstName,
-        lastName: props.user.lastName,
-        contactNo: props.user.contactNo,
-        email: props.user.email,
-        imageUrl: props.user.imageUrl,
-        imageData: undefined,
-        type: props.user.type
-      }
-    };
-
-    this.pickerOptions = {
-      cropping: true,
-      cropperCircleOverlay: true,
-      useFrontCamera: true,
-      height: 400,
-      width: 400
-    };
+  onChangeText = (field, value) => {
+    const {unsavedUser} = this.props;
+    this.setState({unsavedUser: {...unsavedUser, [field]: value}});
   }
 
+  onSelectImage = (response) => {
+    this.onChangeText('imageData', response.data);
+  };
+
+  showPicker = () => {
+    ImageSelector.show({title: 'Select Image', onSelect: this.onSelectImage, options: imagePickerOptions});
+  };
+
+  onUpdateDetails = () => {
+    const {dispatch, unsavedUser, onUpdate} = this.props;
+    dispatch(onUpdate(unsavedUser));
+  };
+
   render() {
-    const {dispatch, busy, errors, history, onUpdate} = this.props;
-    const {user} = this.state;
-    user.imageUrl = user.imageData !== undefined ? `data:image/jpeg;base64,${user.imageData}` : user.imageUrl;
-
-    const isDriver = user.type == 'driver';
-
-    const onChangeText = (field, value) => {
-      this.setState({user: {...user, [field]: value}});
-    };
-
-    const onSelectImage = (response) => {
-      onChangeText('imageData', response.data);
-    };
-
-    const showPicker = () => {
-      ImageSelector.show({title: 'Select Image', onSelect: onSelectImage, options: this.pickerOptions});
-    };
-
-    const onUpdateDetails = () => {
-      dispatch(onUpdate(user));
-    };
+    const {unsavedUser, busy, errors, history} = this.props;
+    unsavedUser.imageUrl = unsavedUser.imageData !== undefined ? `data:image/jpeg;base64,${unsavedUser.imageData}` : unsavedUser.imageUrl;
+    const isDriver = unsavedUser.type == 'driver';
 
     return <Container>
       <Header withButton>
@@ -71,9 +47,9 @@ class UpdateUserDetails extends Component{
                 <Col>
                   <Item stackedLabel>
                     <Label>First name</Label>
-                    <ValidatingInput bold value={user.firstName} placeholder="John"
-                      validateOnMount={user.firstName !== undefined}
-                      onChangeText={(value) => onChangeText('firstName', value)}
+                    <ValidatingInput bold value={unsavedUser.firstName} placeholder="John"
+                      validateOnMount={unsavedUser.firstName !== undefined}
+                      onChangeText={(value) => this.onChangeText('firstName', value)}
                       validationSchema={validationSchema.firstName} maxLength={30}/>
                   </Item>
                 </Col>
@@ -82,9 +58,9 @@ class UpdateUserDetails extends Component{
                 <Col>
                   <Item stackedLabel>
                     <Label>Last name</Label>
-                    <ValidatingInput bold value={user.lastName} placeholder="Smith"
-                      validateOnMount={user.lastName !== undefined}
-                      onChangeText={(value) => onChangeText('lastName', value)}
+                    <ValidatingInput bold value={unsavedUser.lastName} placeholder="Smith"
+                      validateOnMount={unsavedUser.lastName !== undefined}
+                      onChangeText={(value) => this.onChangeText('lastName', value)}
                       validationSchema={validationSchema.lastName} maxLength={30}/>
                   </Item>
                 </Col>
@@ -92,8 +68,8 @@ class UpdateUserDetails extends Component{
             </Col>
             {isDriver ? <Col width={60}><Row>
               <Col >
-                {user.imageUrl != undefined ? <Row style={{justifyContent: 'center'}} onPress={showPicker}>
-                  <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/>
+                {unsavedUser.imageUrl != undefined ? <Row style={{justifyContent: 'center'}} onPress={this.showPicker}>
+                  <Image source={{uri: unsavedUser.imageUrl}} resizeMode='contain' style={styles.image}/>
                 </Row> : null}
               </Col>
             </Row></Col> : null }
@@ -103,8 +79,8 @@ class UpdateUserDetails extends Component{
               <Item stackedLabel>
                 <Label>Phone number</Label>
                 <ValidatingInput bold keyboardType='phone-pad' placeholder="01234 56678"
-                  validateOnMount={user.contactNo !== undefined} value={user.contactNo}
-                  onChangeText={(value) => onChangeText('contactNo', value)}
+                  validateOnMount={unsavedUser.contactNo !== undefined} value={unsavedUser.contactNo}
+                  onChangeText={(value) => this.onChangeText('contactNo', value)}
                   validationSchema={validationSchema.contactNo}/>
               </Item>
             </Col>
@@ -114,32 +90,37 @@ class UpdateUserDetails extends Component{
               <Item stackedLabel>
                 <Label>Email</Label>
                 <ValidatingInput bold keyboardType='email-address' placeholder="email@email.com"
-                  validateOnMount={user.email !== undefined} value={user.email}
-                  onChangeText={(value) => onChangeText('email', value)}
+                  validateOnMount={unsavedUser.email !== undefined} value={unsavedUser.email}
+                  onChangeText={(value) => this.onChangeText('email', value)}
                   validationSchema={validationSchema.email} maxLength={30}/>
               </Item>
             </Col>
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} style={styles.continueButton}
-        onPress={onUpdateDetails} validationSchema={yup.object(validationSchema)} model={user}>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
+        onPress={this.onUpdateDetails} validationSchema={yup.object(validationSchema)} model={unsavedUser}>
         <Text uppercase={false}>Update details</Text>
       </ValidatingButton>
+      <ErrorRegion errors={errors}/>
     </Container>;
   }
 }
 
 const styles = {
-  continueButton: {
-    marginTop: 50
-  },
   image: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 100
   }
+};
+
+const imagePickerOptions = {
+  cropping: true,
+  cropperCircleOverlay: true,
+  useFrontCamera: true,
+  height: 400,
+  width: 400
 };
 
 const validationSchema = {
@@ -149,13 +130,17 @@ const validationSchema = {
   contactNo: yup.string().required().matches(/^(((\+?44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+?44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+?44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
 };
 
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  user: getDaoState(state, ['user'], 'userDao'),
-  errors: getOperationErrors(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}]),
-  busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}])
-});
+const mapStateToProps = (state, initialProps) => {
+  const user = getDaoState(state, ['user'], 'userDao');
+  let {unsavedUser} = initialProps;
+  unsavedUser = unsavedUser !== undefined ? unsavedUser : (user !== undefined ? user : {});
+  
+  return {
+    ...initialProps,
+    unsavedUser,
+    errors: getOperationErrors(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}]),
+    busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}])
+  };
+};
 
-export default connect(
-  mapStateToProps
-)(UpdateUserDetails);
+export default withExternalState(mapStateToProps)(UpdateUserDetails);

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {Image} from 'react-native';
 import {connect} from 'custom-redux';
 import {Container, Button, Text, Grid, Col, Row} from 'native-base';
 import MapView from 'react-native-maps';
@@ -11,8 +11,7 @@ import {LoadingScreen, RatingAction, ErrorRegion, Icon, AverageRating} from 'com
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import locationImg from 'common/assets/location.png';
 
-const {width, height} = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
+const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 

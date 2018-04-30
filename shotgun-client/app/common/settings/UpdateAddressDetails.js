@@ -8,36 +8,35 @@ import {updateDeliveryAddress} from 'common/actions/CommonActions';
 import { withExternalState } from 'custom-redux';
 
 class HomeAddressDetails  extends Component{
-  constructor(props) {
-    super(props);
+  onChangeText = async (field, value) => {
+    const {unSavedDeliveryAddress} = this.props;
+    this.setState({unSavedDeliveryAddress: {...unSavedDeliveryAddress, [field]: value}});
   }
 
+  doAddressLookup = (addressLabel) => {
+    const {history, parentPath} = this.props;
+    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['unSavedDeliveryAddress']});
+  }
+
+  onUpdateAddress = () => {
+    const {history, dispatch, next, unSavedDeliveryAddress} = this.props;
+
+    dispatch(updateDeliveryAddress({...unSavedDeliveryAddress, isDefault: true},
+      () =>  {
+        history.push(next);
+        this.setState({unSavedDeliveryAddress: undefined});
+      }
+    ));
+  }
+
+  getLocationText = (location = {}, placeholder) => {
+    const style = location.line1 ? {} : styles.locationTextPlaceholder;
+    const text = location.line1 ? location.line1 : placeholder;
+    return <Text style={[styles.line1Text, style]} onPress={() => this.doAddressLookup(placeholder)}>{text}</Text>;
+  }
 
   render() {
-    const {history, busy, errors, dispatch, next, parentPath, unSavedDeliveryAddress} = this.props;
-
-    const onChangeText = async (field, value) => {
-      this.setState({unSavedDeliveryAddress: {...unSavedDeliveryAddress, [field]: value}});
-    };
-
-    const doAddressLookup = (addressLabel) => {
-      history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['unSavedDeliveryAddress']});
-    };
-
-    const onUpdateAddress = () => {
-      dispatch(updateDeliveryAddress({...unSavedDeliveryAddress, isDefault: true},
-        () =>  {
-          history.push(next);
-          this.setState({unSavedDeliveryAddress: undefined});
-        }
-      ));
-    };
-
-    const getLocationText = (location = {}, placeholder) => {
-      const style = location.line1 ? {} : styles.locationTextPlaceholder;
-      const text = location.line1 ? location.line1 : placeholder;
-      return <Text style={[styles.line1Text, style]} onPress={() => doAddressLookup(placeholder)}>{text}</Text>;
-    };
+    const {history, busy, errors, unSavedDeliveryAddress} = this.props;
 
     return <Container>
       <Header withButton>
@@ -54,7 +53,7 @@ class HomeAddressDetails  extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>Street Address</Label>
-                {getLocationText(unSavedDeliveryAddress, 'Search for your home address')}
+                {this.getLocationText(unSavedDeliveryAddress, 'Search for your home address')}
               </Item>
             </Col>
           </Row>
@@ -64,7 +63,7 @@ class HomeAddressDetails  extends Component{
                 <Label>Flat number/Business Name</Label>
                 <ValidatingInput bold placeholder="Optional" value={unSavedDeliveryAddress.flatNumber}
                   validateOnMount={unSavedDeliveryAddress.flatNumber !== undefined}
-                  onChangeText={(value) => onChangeText('flatNumber', value)}
+                  onChangeText={(value) => this.onChangeText('flatNumber', value)}
                   validationSchema={validationSchema.flatNumber} maxLength={30}/>
               </Item>
             </Col>
@@ -75,7 +74,7 @@ class HomeAddressDetails  extends Component{
                 <Label>City</Label>
                 <ValidatingInput bold placeholder="Cityville" value={unSavedDeliveryAddress.city}
                   validateOnMount={unSavedDeliveryAddress.city !== undefined}
-                  onChangeText={(value) => onChangeText('city', value)}
+                  onChangeText={(value) => this.onChangeText('city', value)}
                   validationSchema={validationSchema.city} maxLength={30}/>
               </Item>
             </Col>
@@ -86,7 +85,7 @@ class HomeAddressDetails  extends Component{
                 <Label>Postcode</Label>
                 <ValidatingInput bold placeholder="PC12 ABC" value={unSavedDeliveryAddress.postCode}
                   validateOnMount={unSavedDeliveryAddress.postCode !== undefined}
-                  onChangeText={(value) => onChangeText('postCode', value)}
+                  onChangeText={(value) => this.onChangeText('postCode', value)}
                   validationSchema={validationSchema.postCode} maxLength={30}/>
               </Item>
             </Col>
@@ -95,7 +94,7 @@ class HomeAddressDetails  extends Component{
       </Content> : null}
       <ErrorRegion errors={errors}/>
       <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
-        onPress={onUpdateAddress} validationSchema={yup.object(validationSchema)}
+        onPress={this.onUpdateAddress} validationSchema={yup.object(validationSchema)}
         model={unSavedDeliveryAddress}>
         <Text uppercase={false}>Update Address</Text>
       </ValidatingButton>
@@ -136,6 +135,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withExternalState(
-  mapStateToProps
-)(HomeAddressDetails);
+export default withExternalState(mapStateToProps)(HomeAddressDetails);

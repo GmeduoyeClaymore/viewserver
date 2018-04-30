@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {connect, Route, ReduxRouter, Redirect} from 'custom-redux';
-import {Container} from 'native-base';
 import DriverMenuBar from './DriverMenuBar';
 import DriverOrders from './DriverOrders';
 import DriverOrderDetail from './DriverOrderDetail';
@@ -20,9 +19,6 @@ import CustomerOrderInProgress from 'customer/orders/CustomerOrderInProgress';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
-
-const contentHeight = shotgun.deviceHeight - shotgun.footerHeight;
-const contentWidth = shotgun.deviceWidth;
 
 class DriverLanding extends Component {
   constructor(props) {
@@ -52,11 +48,12 @@ class DriverLanding extends Component {
 
   render() {
     const {busy, path, isLoggedIn, history} = this.props;
+    const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/DriverOrders/Posted`, ordersRoot: `${path}`};
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }
-    return  busy ? <LoadingScreen text="Loading"/> : <Container>
-      <ReduxRouter  name="DriverLandingRouter"  {...this.props}  height={contentHeight} width={contentWidth}   defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}} ordersPath={`${path}/DriverOrders/Posted`} ordersRoot={`${path}`}>
+    return  busy ? <LoadingScreen text="Loading"/> :
+      [<ReduxRouter key='router' name="DriverLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'Checkout'}>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'DriverOrderRequests'} exact component={DriverOrderRequests}/>
         <Route path={'DriverOrderRequestDetail'} exact component={DriverOrderRequestDetail}/>
@@ -68,9 +65,8 @@ class DriverLanding extends Component {
         <Route path={'DriverOrderInProgress'} exact component={DriverOrderInProgress}/>
         <Route path={'Settings'} component={DriverSettings}/>
         <Route path={'UserRelationships'} component={UserRelationships}/>
-      </ReduxRouter>
-      <DriverMenuBar {...this.props}/>
-    </Container>;
+      </ReduxRouter>,
+      <DriverMenuBar key='menuBar' {...this.props}/>];
   }
 }
 

@@ -1,17 +1,210 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {CheckBox, CurrencyInput, formatPrice} from 'common/components/basic';
 import {Picker} from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
-import {getDaoState, isAnyOperationPending, getOperationError, getNavigationProps} from 'common/dao';
-import {LoadingScreen, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
+import {getDaoState, getOperationError} from 'common/dao';
+import {Currency, ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
+import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {getPaymentCardsIfNotAlreadySucceeded} from 'customer/actions/CustomerActions';
-import {calculateTotalPrice} from './CheckoutUtils';
 import {withExternalState} from 'custom-redux';
+
+
+/*eslint-enable */
+import {calculateTotalPrice} from './CheckoutUtils';
+import {TextInputMask} from 'react-native-masked-text';
+
+class DeliveryOptions extends Component {
+  constructor(props) {
+    super(props);
+
+
+    this.state = {
+      isDatePickerVisible: false,
+      isFixedPrice: false,
+      isDurationDays: true,
+      duration: undefined,
+      calculatedPrice: undefined,
+      fixedPriceMask: undefined
+    };
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+  }
+
+  componentDidMount() {
+    this.setCard(this.props.defaultPayment);
+  }
+
+  setCard = ({id: paymentId, brand, last4}) => {
+    this.setState({ payment: { paymentId, brand, last4} });
+  }
+
+  toggleDatePicker = (isDatePickerVisible) => {
+    super.setState({isDatePickerVisible});
+  }
+
+  setFixedPrice = (fixedPriceMask) => {
+    const {orderItem} = this.props;
+    const fixedPrice = this.refs.fixedPriceInput.getRawValue() * 100;
+    console.log(fixedPriceMask);
+    super.setState({fixedPriceMask: (fixedPrice != 0 ? fixedPriceMask : undefined)});
+    this.setState({ orderItem: {...orderItem, fixedPrice}});
+  }
+
+  setIsDurationDays = (isDurationDays) => {
+    super.setState({isDurationDays}, this.calculateEndTime);
+  }
+
+  onChangeDuration = (duration) => {
+    super.setState({duration}, this.calculateEndTime);
+  }
+
+  toggleFixedPrice = (isFixedPrice) => {
+    const {orderItem} = this.props;
+
+    if (!isFixedPrice) {
+      this.setState({orderItem: {...orderItem, fixedPrice: undefined}});
+      super.setState({fixedPriceMask: undefined});
+    }
+    super.setState({isFixedPrice});
+  }
+
+  onChangeDate = (value) => {
+    const {orderItem} = this.props;
+    this.setState({ orderItem: {...orderItem, startTime: value}}, this.calculateEndTime);
+    this.toggleDatePicker(false);
+  }
+
+  calculateEndTime = () => {
+    const {isDurationDays, duration} = this.state;
+    const {orderItem} = this.props;
+    const {startTime} = orderItem;
+
+    //TODO - validation so the duration can only be a sensible number
+
+    if (startTime !== undefined && duration != undefined && duration.trim() !== ''){
+      const momentStartTime = moment(startTime);
+      const endTime = (isDurationDays ? momentStartTime.startOf('day').add(duration, 'days') : momentStartTime.add(duration, 'hours')).toDate();
+      this.setState({ orderItem: {...orderItem, endTime}}, this.loadEstimatedPrice);
+    }
+  }
+
+  loadEstimatedPrice = async() => {
+    const {client, orderItem, delivery} = this.props;
+    if (orderItem.startTime && orderItem.endTime){
+      const calculatedPrice = await calculateTotalPrice({client, delivery, orderItem});
+      if (calculatedPrice){
+        super.setState({calculatedPrice});
+      }
+    }
+  }
+
+  render() {
+    const {resources} = this;
+    const {paymentCards, orderItem, errors, next, delivery, payment, selectedContentType, history} = this.props;
+    const {isDatePickerVisible, isFixedPrice, isDurationDays, calculatedPrice, fixedPriceMask, duration} = this.state;
+
+    const validationSchema = {};
+
+    if (selectedContentType.hasStartTime){
+      validationSchema.startTime = yup.date().required();
+    }
+
+    if (selectedContentType.hasEndTime){
+      validationSchema.endTime = yup.date().required();
+    }
+
+    return <Container>
+      <Header withButton>
+        <Left>
+          <Button onPress={() => history.goBack()}>
+            <Icon name='back-arrow'/>
+          </Button>
+        </Left>
+        <Body><Title>{resources.PageTitle}</Title></Body>
+      </Header>
+      <Content>
+        <ListItem padded>
+          <Row>
+            <OriginDestinationSummary contentType={selectedContentType} delivery={delivery}/>
+          </Row>
+        </ListItem>
+
+        {selectedContentType.hasStartTime ?  <ListItem padded onPress={() => this.toggleDatePicker(true)}>
+          <Icon paddedIcon name="delivery-time" />
+          {orderItem.startTime !== undefined ? <Text>{moment(orderItem.startTime).format('ddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.StartTime}</Text>}
+          <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}
+            isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={this.onChangeDate} {...datePickerOptions} minimumDate={resources.MinimumStartTimeOptions} />
+        </ListItem> : null}
+
+        {selectedContentType.hasEndTime ?  <ListItem padded>
+          <Icon paddedIcon name="delivery-time" />
+          <Col>
+            <TextInputMask type={'only-numbers'} keyboardType='phone-pad' underlineColorAndroid='transparent'
+              placeholderTextColor={shotgun.coolGrey} placeholder={resources.EndTime} value={duration} onChangeText={this.onChangeDuration}/>
+          </Col>
+
+          <Button style={styles.periodButton} light={isDurationDays} onPress={() => this.setIsDurationDays(false)}>
+            <Text style={styles.buttonText}>Hours</Text>
+          </Button>
+          <Button style={styles.periodButton} light={!isDurationDays} onPress={() => this.setIsDurationDays(true)}>
+            <Text style={styles.buttonText}>Days</Text>
+          </Button>
+        </ListItem> : null}
+
+        {resources.AllowFixedPrice ?
+          <ListItem padded>
+            <Grid>
+              <Row>
+                <Text>This job will cost</Text>
+              </Row>
+              <Row>
+                <Col>
+                  {isFixedPrice ?
+                    <TextInputMask ref={'fixedPriceInput'} underlineColorAndroid='transparent' style={styles.fixedPriceInput} type={'money'} placeholder='Enter price'
+                      options={{ unit: '£', separator: '.', delimiter: ','}} value={fixedPriceMask} onChangeText={this.setFixedPrice}/> :
+                    calculatedPrice ? <Currency value={calculatedPrice} style={styles.calculatedPrice}/> : <Text style={styles.calculatedPricePlaceholder}>Start & duration required</Text>}
+                </Col>
+
+                <Button style={styles.periodButton} light={isFixedPrice} onPress={() => this.toggleFixedPrice(false)}>
+                  <Text style={styles.buttonText}>Calculated</Text>
+                </Button>
+                <Button style={styles.periodButton} light={!isFixedPrice} onPress={() => this.toggleFixedPrice(true)}>
+                  <Text style={styles.buttonText}>Fixed Price</Text>
+                </Button>
+              </Row>
+
+            </Grid>
+          </ListItem>
+          : null}
+
+        <ListItem padded style={{borderBottomWidth: 0}}>
+          <CardIcon brand={payment.brand} /><Text>Use card</Text>
+          <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(c, i) => this.setCard(paymentCards[i])}>
+            {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
+          </Picker>
+        </ListItem>
+        <Text note style={styles.noteText}>You will not be charged until the job has been completed</Text>
+        <ErrorRegion errors={errors}/>
+        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)} validationSchema={delivery.isFixedPrice ? yup.object(fixedPriceValidationSchema) : yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon next name='forward-arrow' />
+        </ValidatingButton>
+      </Content>
+    </Container>;
+  }
+}
+
+const fixedPriceValidationSchema = {
+  fixedPriceValue: yup.number().required()
+};
+
+const datePickerOptions = {
+  datePickerModeAndroid: 'calendar',
+  mode: 'datetime',
+  titleIOS: 'Select delivery time',
+  maximumDate: moment().add(14, 'days').toDate()
+};
 
 
 const TommorowDateOption = {
@@ -70,270 +263,54 @@ resourceDictionary.
   property('supportsNoPeople', true).
       rubbish(false).
       hire(false);
-
 /*eslint-enable */
-
-class DeliveryOptions extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangeValue = this.onChangeValue.bind(this);
-    this.setRequireHelp = this.setRequireHelp.bind(this);
-    this.loadEstimatedPrice = this.loadEstimatedPrice.bind(this);
-
-    this.setCard = this.setCard.bind(this);
-    this.toggleFixedPrice = this.toggleFixedPrice.bind(this);
-    this.onFixedPriceValueChanged = this.onFixedPriceValueChanged.bind(this);
-
-    this.state = {
-      requireHelp: false,
-      from_isDatePickerVisible: false,
-      till_isDatePickerVisible: false,
-      selectedCard: undefined,
-      date: undefined
-    };
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
-  }
-
-  async componentDidMount() {
-    const {getPaymentCardsIfNotAlreadyGot} = this.props;
-    if (getPaymentCardsIfNotAlreadyGot){
-      getPaymentCardsIfNotAlreadyGot();
-    }
-    if (this.props.defaultCard !== undefined) {
-      this.setCard(this.props.defaultCard);
-    }
-    await this.loadEstimatedPrice();
-  }
-
-  componentWillReceiveProps(nextProps = {}) {
-    if (nextProps.defaultCard !== this.props.defaultCard && nextProps.defaultCard !== undefined) {
-      this.setCard(nextProps.defaultCard);
-    }
-  }
-
-  setCard(selectedCard) {
-    this.setState({ payment: { paymentId: selectedCard.id } });
-    super.setState({ selectedCard });
-  }
-
-  toggleDatePicker(pickerName, isDatePickerVisible) {
-    super.setState({[pickerName + '_isDatePickerVisible']: isDatePickerVisible});
-  }
-
-  setRequireHelp(requireHelp) {
-    super.setState({ requireHelp });
-    this.onChangeNoItems(0);
-  }
-
-  onChangeValue(field, value, continueWith) {
-    const { delivery} = this.props;
-    this.setState({ delivery: {...delivery, ...{ [field]: value}}}, continueWith);
-  }
-
-  onFixedPriceValueChanged(price) {
-    this.onChangeValue('fixedPriceValue', price );
-  }
-
-  toggleFixedPrice(){
-    const { delivery } = this.props;
-    const {isFixedPrice, fixedPriceValue} = delivery;
-    this.setState({ delivery: {...delivery, ...{ isFixedPrice: !isFixedPrice, fixedPriceValue: isFixedPrice ? undefined : fixedPriceValue  } }});
-  }
-
-  onChangeDate(field, value) {
-    this.onChangeValue(field, value, () => this.loadEstimatedPrice());
-    this.toggleDatePicker(field, false);
-  }
-
-  async loadEstimatedPrice(){
-    const { client, orderItem, delivery} = this.props;
-    if (delivery.from && delivery.till){
-      const  price = await calculateTotalPrice({client, delivery, orderItem});
-      if (price){
-        this.setState({price});
-      }
-    }
-  }
-
-  onChangeNoItems(quantity){
-    const { orderItem } = this.props;
-    this.setState({ orderItem: {...orderItem, quantity}}, () => this.loadEstimatedPrice());
-  }
-
-  render() {
-    const {resources, tillInput} = this;
-    const { busy, paymentCards, errors, next, delivery, payment, orderItem, selectedContentType, price, history} = this.props;
-    const { quantity: noRequiredForOffload } = orderItem;
-    const { requireHelp, from_isDatePickerVisible, till_isDatePickerVisible, selectedCard } = this.state;
-
-    const {supportsFromTime, supportsTillTime, supportsNoPeople} = resources;
-
-    const datePickerOptions = {
-      datePickerModeAndroid: 'calendar',
-      mode: 'datetime',
-      titleIOS: 'Select delivery time',
-      minimumDate: moment().startOf('day').toDate(),
-      maximumDate: moment().add(14, 'days').toDate()
-    };
-
-    const validationSchema = {};
-
-    if (supportsFromTime){
-      validationSchema.from = yup.date().required();
-    }
-
-    if (supportsTillTime){
-      validationSchema.till = yup.date().required();
-    }
-
-    const fixedPriceValidationSchema = {
-      fixedPriceValue: yup.number().required()
-    };
-    
-
-    return busy ?
-      <LoadingScreen text="Loading Customer Cards" /> : <Container>
-        <Header withButton>
-          <Left>
-            <Button onPress={() => history.goBack()}>
-              <Icon name='back-arrow'/>
-            </Button>
-          </Left>
-          <Body><Title>{resources.PageTitle}</Title></Body>
-        </Header>
-        <Content>
-          <ErrorRegion errors={errors}/>
-          <ListItem padded>
-            <Row>
-              <OriginDestinationSummary contentType={selectedContentType} delivery={delivery}/>
-            </Row>
-          </ListItem>
-          {resources.AllowFixedPrice ?
-            <ListItem padded>
-              <Row style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
-                <CheckBox onPress={() => this.toggleFixedPrice()} style={{marginRight: 10}}  categorySelectionCheckbox checked={delivery.isFixedPrice}/>
-                {delivery.isFixedPrice ? <CurrencyInput
-                  style={styles.input}
-                  initialPrice={delivery.fixedPriceValue}
-                  placeholder="Enter Fixed Price"
-                  onValueChanged={this.onFixedPriceValueChanged}
-                /> : <Text style={{fontSize: 18, fontWeight: 'bold'}}>{formatPrice(price / 100)}</Text>}
-              </Row></ListItem> : null}
-          { !delivery.isFixedPrice && supportsFromTime ?  <ListItem padded onPress={() => this.toggleDatePicker('from', true)}>
-            <Icon paddedIcon name="delivery-time" />
-            {delivery.from !== undefined ? <Text>{moment(delivery.from).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
-            <DatePicker cannedDateOptions={resources.CannedStartDateOptions} asapDateResolver={resources.AsapStartDateResolver}  isVisible={from_isDatePickerVisible} onCancel={() => this.toggleDatePicker('from', false)} onConfirm={(date) => {
-              this.onChangeDate('from', date);
-              if (tillInput){
-                setTimeout(tillInput.attemptToSetCannedDate);
-              }
-            }} {...datePickerOptions} />
-          </ListItem> : null}
-          {!delivery.isFixedPrice && supportsTillTime ?  <ListItem padded onPress={() => this.toggleDatePicker('till', true)}>
-            <Icon paddedIcon name="delivery-time" />
-            {delivery.till !== undefined ? <Text>{moment(delivery.till).format('dddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobEndCaption}</Text>}
-            <DatePicker ref={ tillInput => { this.tillInput = tillInput;}}cannedDateOptions={resources.CannedEndDateOptions} from={delivery.from} asapDateResolver={resources.AsapEndDateResolver} isVisible={till_isDatePickerVisible} onCancel={() => this.toggleDatePicker('till', false)} onConfirm={(date) => this.onChangeDate('till', date)} {...datePickerOptions} />
-          </ListItem> : null}
-          {selectedCard ? <ListItem padded >
-            <CardIcon brand={selectedCard.brand} /><Text>Pay with card</Text>
-            <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(itemValue) => this.setCard(itemValue)}>
-              {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c} />)}
-            </Picker>
-          </ListItem> : null}
-          
-          {supportsNoPeople ?
-            <ListItem padded style={{ borderBottomWidth: 0 }} onPress={() => this.setRequireHelp(!requireHelp)}>
-              <CheckBox checked={requireHelp} categorySelectionCheckbox onPress={() => this.setRequireHelp(!requireHelp)} />
-              <Text>{resources.NoPeopleCaption}</Text>
-            </ListItem> : null}
-
-          {supportsNoPeople && requireHelp ? <ListItem paddedLeftRight style={{ borderBottomWidth: 0, borderTopWidth: 0 }}>
-            <Grid>
-              <Row>
-                <Text style={{ paddingBottom: 5 }}>How many people do you need?</Text>
-              </Row>
-              <Row>
-                <Col style={{ marginRight: 10 }}>
-                  <Row>
-                    <Button personButton active={noRequiredForOffload == 1} onPress={() => this.onChangeNoItems(1)} >
-                      <Icon name='one-person' />
-                    </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>1</Text>
-                  </Row>
-                </Col>
-                <Col style={{ marginRight: 10 }}>
-                  <Row>
-                    <Button personButton active={noRequiredForOffload == 2} onPress={() => this.onChangeNoItems(2)} >
-                      <Icon name='two-people' />
-                    </Button>
-                  </Row>
-                  <Row style={styles.personSelectTextRow}>
-                    <Text style={styles.personSelectText}>2</Text>
-                  </Row>
-                </Col>
-              </Row>
-            </Grid>
-          </ListItem> : null}
-        </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)} validationSchema={delivery.isFixedPrice ? yup.object(fixedPriceValidationSchema) : yup.object(validationSchema)} validateOnMount={true} model={delivery}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow' />
-        </ValidatingButton>
-      </Container>;
-  }
-}
-
-
-DeliveryOptions.PropTypes = {
-  paymentCards: PropTypes.array,
-  user: PropTypes.object
-};
 
 const styles = {
   cardPicker: {
-    width: 200,
-    height: 20
+    width: 200
   },
-  personSelectTextRow: {
-    justifyContent: 'center'
+  calculatedPrice: {
+    marginTop: 12,
+    fontSize: 18,
+    fontWeight: 'bold'
   },
-  personSelectText: {
-    marginTop: 5,
-    marginBottom: 25,
-    fontSize: 16,
-    textAlign: 'center'
+  calculatedPricePlaceholder: {
+    color: shotgun.coolGrey,
+    marginTop: 12,
+    fontSize: 12,
+    alignSelf: 'flex-start'
   },
-  input: {
-    paddingHorizontal: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-    padding: 10,
-    width: 225,
-    borderWidth: 0.5,
-    borderColor: '#edeaea'
+  periodButton: {
+    marginLeft: 5,
+    justifyContent: 'center',
+    width: 100
   },
+  buttonText: {
+    fontSize: 10
+  },
+  fixedPriceInput: {
+    borderBottomWidth: 0,
+    paddingLeft: 0,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  noteText: {
+    alignSelf: 'center',
+    paddingBottom: 15
+  }
 };
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
-  const {dispatch} = initialProps;
   const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
-  const defaultCard = paymentCards.find(c => c.id == user.stripeDefaultPaymentSource) || paymentCards[0];
-  const getPaymentCardsIfNotAlreadyGot = () =>{
-    dispatch(getPaymentCardsIfNotAlreadySucceeded());
-  };
+  const defaultPayment = paymentCards.find(c => c.id == user.stripeDefaultSourceId) || paymentCards[0];
+
   return {
-    getPaymentCardsIfNotAlreadyGot,
     ...initialProps,
-    ...getNavigationProps(initialProps),
-    busy: isAnyOperationPending(state, [{ paymentDao: 'getCustomerPaymentCards' }]),
     errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
-   
+    defaultPayment,
     paymentCards,
-    user,
-    defaultCard
+    user
   };
 };
 

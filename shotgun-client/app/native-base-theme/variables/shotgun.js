@@ -1,8 +1,10 @@
 import color from 'color';
+import { Platform, Dimensions, PixelRatio, StatusBar} from 'react-native';
 
-import { Platform, Dimensions, PixelRatio } from 'react-native';
-
-const deviceHeight = Dimensions.get('window').height;
+const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
+const footerHeight = 50;
+const tabHeight = 120;
+const deviceHeight = Dimensions.get('window').height - statusBarHeight;
 const deviceWidth = Dimensions.get('window').width;
 const platform = Platform.OS;
 const platformStyle = undefined;
@@ -42,8 +44,7 @@ export default {
   tabsStyle: {
     tabBarUnderlineStyle: {
       backgroundColor: colors.blue,
-      height: 7,
-      borderRadius: 3.5
+      height: 7
     }
   },
 
@@ -161,10 +162,9 @@ export default {
   },
 
   // Footer
-
   footerDefaultBg: this.brandPrimary,
-  footerPaddingBottom: isIphoneX ? 34 : platform === 'ios' ? 0 : 34,
-  footerHeight: 50 + (platform === 'ios' ? 0 : 34),
+  footerPaddingBottom: 0,
+  footerHeight,
 
   // FooterTab
   tabBarTextColor: this.silver,
@@ -175,6 +175,7 @@ export default {
   tabActiveBgColor: this.brandPrimary,
 
   // Tab
+  tabHeight,
   tabDefaultBg: colors.brandPrimary,
   topTabBarTextColor: colors.coolGrey,
   topTabBarActiveTextColor: colors.brandDark,
@@ -305,6 +306,7 @@ export default {
   jumbotronPadding: 30,
   deviceWidth,
   deviceHeight,
+  contentHeight: deviceHeight - footerHeight,
   isIphoneX,
 
   // New Variable

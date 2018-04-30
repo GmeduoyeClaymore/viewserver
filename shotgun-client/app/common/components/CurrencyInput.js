@@ -49,6 +49,7 @@ export class CurrencyInput extends Component{
   }
 
   onValueChanged(t){
+    console.log(t);
     this.setState({price: t});
   }
 

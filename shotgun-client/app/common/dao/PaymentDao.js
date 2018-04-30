@@ -7,12 +7,14 @@ export default class PaymentDao{
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.name = 'paymentDao';
+    this.state = {};
     this.getCustomerPaymentCards = this.getCustomerPaymentCards.bind(this);
     this.deletePaymentCard = this.deletePaymentCard.bind(this);
     this.addPaymentCard = this.addPaymentCard.bind(this);
     this.updateSubscription = this.updateSubscription.bind(this);
     this.getBankAccount = this.getBankAccount.bind(this);
     this.setBankAccount = this.setBankAccount.bind(this);
+    this.updateState = this.updateState.bind(this);
     this.subject.next();
   }
 
@@ -22,6 +24,12 @@ export default class PaymentDao{
 
   get optionsObservable(){
     return this.optionsSubject;
+  }
+
+  updateState(partialState){
+    const newState = {...this.state, ...partialState};
+    this.state = newState;
+    this.subject.next(newState);
   }
 
   async deletePaymentCard({cardId}){
@@ -45,7 +53,7 @@ export default class PaymentDao{
     const paymentCards =  await promise.timeoutWithError(5000, new Error('Could not get payment cards for customer in 5 seconds'));
     Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
     const result = {paymentCards};
-    this.subject.next(result);
+    this.updateState(result);
     return result;
   }
 
@@ -54,7 +62,7 @@ export default class PaymentDao{
     const bankAccount =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
     Logger.debug(`Got bank account ${bankAccount}`);
     const result = {bankAccount};
-    this.subject.next(result);
+    this.updateState(result);
     return result;
   }
 

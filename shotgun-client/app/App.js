@@ -1,7 +1,7 @@
 import React from 'react';
-import {UIManager, View} from 'react-native';
+import {UIManager, View, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
-import {Container, Text, StyleProvider, Root, Spinner} from 'native-base';
+import {Text, StyleProvider, Root, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
 import configureStore from './redux/ConfigureStore';
 import Client from './viewserver-client/Client';
@@ -33,7 +33,7 @@ class App extends React.Component {
     super();
     registerTokenListener();
     this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.20:6060/');
+    //this.client = new Client('ws://192.168.0.5:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
   }
@@ -57,32 +57,30 @@ class App extends React.Component {
     if (busy || isLoggedIn == undefined){
       return !isConnected ? <LoadingScreen text={'Connecting'}/> : <LoadingScreen text={'Signing You In'}/>;
     }
-    return <Container>
-      <ReactNativeModal
-        isVisible={!isConnected}
-        backdropOpacity={0.4}>
-        <View style={styles.modalContainer}>
-          <View style={styles.innerContainer}>
-            <Spinner/>
-            <Text>Reconnecting</Text>
-          </View>
+    return [<ReactNativeModal key='connectingModal'
+      isVisible={!isConnected}
+      backdropOpacity={0.4}>
+      <View style={styles.modalContainer}>
+        <View style={styles.innerContainer}>
+          <Spinner/>
+          <Text>Reconnecting</Text>
         </View>
-      </ReactNativeModal>
-      <Root>
-        <StyleProvider style={getTheme(shotgun)}>
-          <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
-            <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
-            <Route path="Root" exact component={LandingCommon}/>
-            <Route path="LandingCommon" exact component={LandingCommon}/>
-            <Route path="Customer/Registration" component={CustomerRegistration}/>
-            <Route path="Driver/Registration" component={DriverRegistration}/>
-            <Route path="Customer/Landing" component={CustomerLanding}/>
-            <Route path="Driver/Landing" component={DriverLanding}/>
-            <Route path="TermsAndConditions" component={TermsAndConditions}/>
-          </ReduxRouter>
-        </StyleProvider>
-      </Root>
-    </Container>;
+      </View>
+    </ReactNativeModal>,
+    <TouchableWithoutFeedback key='root' onPress={() => Keyboard.dismiss()}><Root>
+      <StyleProvider style={getTheme(shotgun)}>
+        <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
+          <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
+          <Route path="Root" exact component={LandingCommon}/>
+          <Route path="LandingCommon" exact component={LandingCommon}/>
+          <Route path="Customer/Registration" component={CustomerRegistration}/>
+          <Route path="Driver/Registration" component={DriverRegistration}/>
+          <Route path="Customer/Landing" component={CustomerLanding}/>
+          <Route path="Driver/Landing" component={DriverLanding}/>
+          <Route path="TermsAndConditions" component={TermsAndConditions}/>
+        </ReduxRouter>
+      </StyleProvider>
+    </Root></TouchableWithoutFeedback>];
   }
 }
 

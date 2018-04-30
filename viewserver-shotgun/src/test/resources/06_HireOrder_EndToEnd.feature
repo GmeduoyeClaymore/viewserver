@@ -294,15 +294,15 @@ Feature: Hire order scenarios
 	Given "client4" controller "hireOrderController" action "startJourney" invoked with parameters
 	  | Name    | Value                                                    |
 	  | orderId | {client1_hireOrderController_createDeliveryOrder_result} |
-	Then "client1" the following data is received terminally on report "customerOrderSummary"
+	Then "client1" subscribed to report "customerOrderSummary" with "dimension_orderId" is "{client1_hireOrderController_createOrder_result}"
 	  | ~Action | orderId                                          | orderDetails.hireOrderStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | OFFHIRE                      |
 	Given "client4" controller "hireOrderController" action "completeJourney" invoked with parameters
 	  | Name    | Value                                                    |
 	  | orderId | {client1_hireOrderController_createDeliveryOrder_result} |
-	Then "client1" the following data is received terminally on report "customerOrderSummary"
+	When "client1" subscribed to report "customerOrderSummary" with "dimension_orderId" is "{client1_hireOrderController_createOrder_result}"
 	  | ~Action | orderId                                          | orderDetails.hireOrderStatus |
-	  | RowUpdate  | {client1_hireOrderController_createOrder_result} | COMPLETE                     |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | COMPLETE                     |
 
 
   Scenario: Partner completing job marking job marks job as partner complete and payment made

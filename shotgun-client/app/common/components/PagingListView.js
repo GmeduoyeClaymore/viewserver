@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
 import {updateSubscriptionAction, resetDataAction, clearCommandStatus} from 'common/dao/DaoActions';
 import {isEqual, connectAdvanced} from 'custom-redux';
@@ -43,7 +43,7 @@ class PagingListView extends Component {
 
   onScroll(e) {
     const {busy, size, doPage} = this.props;
-    const windowHeight = Dimensions.get('window').height;
+    const windowHeight = shotgun.contentHeight;
     const height = e.nativeEvent.contentSize.height;
     const offset = e.nativeEvent.contentOffset.y;
     if (windowHeight + offset >= (height * 0.75)) {

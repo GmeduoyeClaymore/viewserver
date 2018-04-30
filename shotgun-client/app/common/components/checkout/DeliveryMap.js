@@ -1,21 +1,20 @@
 import React, {Component}  from 'react';
 import { withExternalState} from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row} from 'native-base';
+import {Input, Container, Button, Text, Grid, Col, Row, Item} from 'native-base';
 import MapView from 'react-native-maps';
-import {ErrorRegion, Icon, LoadingScreen} from 'common/components';
+import {Icon, LoadingScreen} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
 import ProductMarker from 'common/components/maps/ProductMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
-import { getDaoState, updateSubscriptionAction } from 'common/dao';
+import {getDaoState, updateSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
-import {TextInput} from 'react-native';
 import {isEqual, debounce} from 'lodash';
-import {addressToText} from 'common/utils';
 import * as ContentTypes from 'common/constants/ContentTypes';
 const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+import {addressToText} from 'common/components/maps/MapUtils';
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary().
@@ -25,16 +24,6 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
 
 class DeliveryMap extends Component{
   stateKey = 'checkout';
-  constructor(props){
-    super(props);
-    this.doAddressLookup = this.doAddressLookup.bind(this);
-    this.setDurationAndDistance = this.setDurationAndDistance.bind(this);
-    this.getLocationText = this.getLocationText.bind(this);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.fitMap = debounce(this.fitMap.bind(this), 1000);
-
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
-  }
 
   componentDidMount(){
     const {isInBackground} = this.props;
@@ -42,6 +31,21 @@ class DeliveryMap extends Component{
       return;
     }
     this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
+  }
+
+  componentWillReceiveProps(newProps){
+    const {oldOptions, isInBackground} = newProps;
+    if (isInBackground){
+      return;
+    }
+    const newOptions = this.getOptionsFromProps(newProps);
+    if (!isEqual(newOptions, oldOptions)){
+      this.subscribeToUsersForProduct(newOptions);
+    }
+    const {destination, origin} = this.props;
+    if (destination != newProps.destination || origin != newProps.origin){
+      this.fitMap();
+    }
   }
 
   async subscribeToUsersForProduct(options){
@@ -58,85 +62,66 @@ class DeliveryMap extends Component{
       columnsToSort: [{name: 'distance', direction: 'asc'}]
     };
   }
-  componentWillReceiveProps(newProps){
-    const {oldOptions, isInBackground} = newProps;
-    if (isInBackground){
-      return;
-    }
-    const newOptions = this.getOptionsFromProps(newProps);
-    if (!isEqual(newOptions, oldOptions)){
-      this.subscribeToUsersForProduct(newOptions);
-    }
-    const {destination, origin} = this.props;
-    if (destination != newProps.destination || origin != newProps.origin){
-      this.fitMap();
-    }
-  }
 
-  async onChangeText(location, field, value){
+  onChangeText = (location, field, value) => {
     const {delivery} = this.props;
     newLocation = {...delivery[location], [field]: value};
     this.setState({delivery: {...delivery, [location]: newLocation}});
   }
 
-  getLocationText(address, addressKey, placeholder){
-    style = address.line1 ? {} : styles.locationTextPlaceholder;
-    text = addressToText(address) || placeholder;
-    const {onChangeText} = this;
-    return  <Row fullWidth style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
-      <Icon name="pin" style={{paddingRight: 15}} originPin /><Row>
-        {address.line1 !== undefined ? <Col size={30}>
-          <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
-        </Col> : null}
-        <Col size={70}>
-          <Text style={style} >{text}</Text>
-        </Col>
-      </Row></Row>;
+  getLocationText = (address, addressKey, placeholder) => {
+    return  <Item style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
+      <Icon name="pin" style={styles.inputPin} originPin />
+      {address.line1 !== undefined ? <Col size={30} style={{}}>
+        <Input placeholder='flat/business' style={styles.flatInput} value={address.flatNumber} placeholderTextColor={shotgun.silver} onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
+      </Col> : null}
+      <Col size={70}>
+        <Text numberOfLines={1} style={address.line1 ? {} : styles.locationTextPlaceholder}>{addressToText(address) || placeholder}</Text>
+      </Col>
+    </Item>;
   }
 
-  setDurationAndDistance({distance, duration}){
+  setDurationAndDistance = ({distance, duration}) => {
     const {delivery} = this.props;
     this.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
     this.fitMap();
   }
 
-  doAddressLookup(addressLabel, addressKey){
+  doAddressLookup = (addressLabel, addressKey) => {
     const {history, parentPath} = this.props;
     history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
   }
 
-
-  getOriginAndDestination(props){
-    const {destination, origin} = props;
+  getOriginAndDestination = () => {
+    const {destination, origin} = this.props;
     return {destination, origin};
   }
 
   componentDidUpdate(oldProps){
-    const {getOriginAndDestination} = this;
-    if (!isEqual(getOriginAndDestination(oldProps), getOriginAndDestination(this.props))){
+    if (!isEqual(this.getOriginAndDestination(oldProps), this.getOriginAndDestination(this.props))){
       if (this.mvd){
         this.mvd.fetchAndRenderRoute();
       }
-      this.fitMap(this.props);
+      this.fitMap();
     }
   }
 
 
-  fitMap(){
-    const {map} = this;
+  fitMap = debounce(() => {
     const {destination, origin} = this.props;
-    if ((origin.line1 !== undefined && destination.line1 !== undefined) && map) {
-      map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
+    if ((origin.line1 !== undefined && destination.line1 !== undefined) && this.map) {
+      this.map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
         edgePadding: { top: 250, right: 100, bottom: 150, left: 100 },
         animated: true,
       });
     }
-  }
+  }, 1000)
 
   render(){
     const {fitMap, setDurationAndDistance, getLocationText, resources} = this;
-    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
     const {supportsOrigin, supportsDestination} = resources;
+    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
+
     if (!me){
       return <LoadingScreen text="Waiting for user ..."/>;
     }
@@ -150,29 +135,27 @@ class DeliveryMap extends Component{
       longitudeDelta: LONGITUDE_DELTA
     };
 
-    return <Container style={{ flex: 1 }}>
+    return <Container>
+      <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
+        <Icon name='back-arrow'/>
+      </Button>
       <Grid>
-        <Row size={85}>
-          <Row fullWidth style={{position: 'absolute', top: 40, left: 15, zIndex: 2 }}>
+        <Row>
+          <Row style={styles.inputRowHolder}>
             <Col>
-              {supportsOrigin ? getLocationText(origin, 'origin', 'Enter pick-up location') : null}
-              {supportsDestination ? getLocationText(destination, 'destination', 'Enter drop-off location') : null}
+              {supportsOrigin ? this.getLocationText(origin, 'origin', 'Pick-up location') : null}
+              {supportsDestination ? this.getLocationText(destination, 'destination', 'Drop-off location') : null}
             </Col>
           </Row>
-          <ErrorRegion errors={errors}>
-            {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={initialRegion}
-              showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
-              {showDirections && origin && destination ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={setDurationAndDistance} strokeWidth={3} /> : null}
+          {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> :
+            <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap} initialRegion={initialRegion}
+              showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
+              {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={this.setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
-              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
+              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={`userWithProduct${user.userId}`}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
             </MapView>}
-          </ErrorRegion>
-          <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
-            <Icon name='back-arrow'/>
-          </Button>
         </Row>
-       
       </Grid>
       <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton(supportsDestination, supportsOrigin)}>
         <Text uppercase={false} style={{alignSelf: 'center'}}>Continue</Text>
@@ -182,35 +165,51 @@ class DeliveryMap extends Component{
   }
 }
 
+const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
+const LATITUDE_DELTA = 0.0322;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
 const validationSchema = {
   flatNumber: yup.string().max(30)
 };
 
 const styles = {
+  inputRowHolder: {
+    position: 'absolute',
+    top: 45,
+    left: 15,
+    right: 15,
+    zIndex: 2
+  },
+  inputRow: {
+    marginBottom: 15,
+    backgroundColor: shotgun.brandPrimary,
+    padding: 10,
+  },
   nextButton: {
-    position: 'absolute', bottom: 15, left: 15, zIndex: 2,
-    width: shotgun.deviceWidth - 45,
-    marginLeft: 8,
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 15,
+    left: 15,
+    right: 15,
+    zIndex: 2,
     justifyContent: 'center'
   },
   backButton: {
     position: 'absolute',
     left: 0,
-    top: 6
+    top: 6,
+    zIndex: 2
   },
   locationTextPlaceholder: {
     color: shotgun.silver
   },
-  inputRow: {
-    width: shotgun.deviceWidth - 45,
-    margin: 8,
-    backgroundColor: shotgun.brandPrimary,
-    paddingTop: 16,
-    paddingBottom: 16,
-    paddingLeft: 16
+  flatInput: {
+    padding: 0,
+    height: 12,
+    lineHeight: 18
+  },
+  inputPin: {
+    paddingRight: 15
   }
 };
 

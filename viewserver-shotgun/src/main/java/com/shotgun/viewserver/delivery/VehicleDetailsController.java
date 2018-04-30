@@ -8,6 +8,8 @@ import io.viewserver.controller.ControllerAction;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ public class VehicleDetailsController implements IVehicleDetailsController {
     private static final Logger log = LoggerFactory.getLogger(VehicleDetailsController.class);
     private static String VEHICLE_DETAILS_QUERY_URL = "https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData";
     private VehicleDetailsApiKey apiKey;
+
     private static String[] PERMITTED_BODY_STYLES = new String[]{
             VehicleBodyStyles.BOX_VAN, VehicleBodyStyles.PANEL_VAN,
             VehicleBodyStyles.CAR_DERIVED_VAN, VehicleBodyStyles.LIGHT_VAN,

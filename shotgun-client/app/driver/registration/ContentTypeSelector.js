@@ -122,30 +122,25 @@ class ContentTypeSelector extends Component{
     const stateForContentType = selectedContentTypes[contentType.contentTypeId];
     const {stateKey, ...rest} = this.props;
 
-    return <View>
-      <Button style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
-        <View>
-          <Image resizeMode="contain" source={resolveContentTypeIconSml(contentType)} style={styles.contentTypeIcon}/>
-          <Text style={styles.contentTypeButtonText}>{contentType.name}</Text>
-        </View>
+    return [<Button key='button' style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
+      <View>
+        <Image resizeMode="contain" source={resolveContentTypeIconSml(contentType)} style={styles.contentTypeIcon}/>
+        <Text style={styles.contentTypeButtonText}>{contentType.name}</Text>
+      </View>
+    </Button>,
+    <ReactNativeModal key='modal' isVisible={detailVisible} style={styles.modal}>
+      <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
+      <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
+
+      <Button fullWidth iconRight style={styles.confirmButton} onPress={this.handleConfirm} disabled={!canSubmit}>
+        <Text uppercase={false}>Confirm</Text>
+        <Icon next name='forward-arrow'/>
       </Button>
-        
-      <ReactNativeModal isVisible={detailVisible} style={styles.modal} backdropOpacity={0.4}>
-        <View style={styles.contentTypeSelectorContainer}>
-          <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
-          <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
 
-          <Button padded fullWidth iconRight style={{marginBottom: 5}} onPress={this.handleConfirm} disabled={!canSubmit}>
-            <Text uppercase={false}>Confirm</Text>
-            <Icon next name='forward-arrow'/>
-          </Button>
-
-          <Button paddedBottom fullWidth cancelButton onPress={this.handleCancel}>
-            <Text uppercase={false}>Cancel</Text>
-          </Button>
-        </View>
-      </ReactNativeModal>
-    </View>;
+      <Button fullWidth cancelButton onPress={this.handleCancel}>
+        <Text uppercase={false}>Cancel</Text>
+      </Button>
+    </ReactNativeModal>];
   }
 }
 
@@ -174,25 +169,20 @@ const styles = {
     fontWeight: 'bold',
     textAlign: 'center'
   },
-  contentTypeSelectView: {
-    flex: 3,
-    justifyContent: 'flex-start',
-    paddingTop: 30
-  },
   modal: {
-    margin: 0
-  },
-  contentTypeSelectorContainer: {
+    margin: 0,
     backgroundColor: shotgun.brandPrimary,
     borderRadius: 0,
     width: shotgun.deviceWidth,
     height: shotgun.deviceHeight,
-    overflow: 'hidden',
+    padding: shotgun.contentPadding
   },
   title: {
-    paddingTop: 20,
     textAlign: 'center',
     color: shotgun.brandLight
+  },
+  confirmButton: {
+    marginBottom: 5
   }
 };
 

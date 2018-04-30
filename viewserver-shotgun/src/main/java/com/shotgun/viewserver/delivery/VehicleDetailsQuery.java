@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.delivery;
 
+import java.net.URLEncoder;
+
 /**
  * Created by Gbemiga on 09/01/18.
  */
@@ -19,6 +21,6 @@ public class VehicleDetailsQuery {
     }
 
     public String toQueryString(String key){
-        return String.format("v=2&api_nullitems=1&auth_apikey=%s&user_tag=&key_VRM=%s",key,regNo);
+        return String.format("v=2&api_nullitems=1&auth_apikey=%s&user_tag=&key_VRM=%s",key, regNo.replace(" ", ""));
     }
 }

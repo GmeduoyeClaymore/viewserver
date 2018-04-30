@@ -6,28 +6,19 @@ import moment from 'moment';
 import {Button, Text} from 'native-base';
 import {isEqual} from 'lodash';
 const IS_ANDROID = Platform.OS === 'android';
-
-export const DatePicker =  (IS_ANDROID ? CustomDatePickerAndroid : CustomDatePickerIOS);
-
-const AsapCannedDateOption = {
-  name: 'ASAP',
-  resolver: () => moment().add(30, 'minute').toDate()
-};
+const DatePicker =  (IS_ANDROID ? CustomDatePickerAndroid : CustomDatePickerIOS);
 
 export default class DatePickerControl extends Component{
   constructor(props){
     super(props);
     this.state = {};
-    this.setDate = this.setDate.bind(this);
-    this.setCannedDateOption = this.setCannedDateOption.bind(this);
-    this.attemptToSetCannedDate = this.attemptToSetCannedDate.bind(this);
   }
 
-  setDate(date, canned){
+  setDate = (date, canned) => {
     this.setState({date, canned});
   }
 
-  attemptToSetCannedDate(){
+  attemptToSetCannedDate = () => {
     const {state} = this;
     const {canned, date} = state;
     if (canned){
@@ -39,7 +30,7 @@ export default class DatePickerControl extends Component{
     }
   }
 
-  setCannedDateOption(canned){
+  setCannedDateOption = (canned) => {
     const {onConfirm} = this.props;
     const {resolver} = canned;
     const date = resolver(this.props);
@@ -65,6 +56,11 @@ export default class DatePickerControl extends Component{
   }
 }
 
+const AsapCannedDateOption = {
+  name: 'ASAP',
+  resolver: () => moment().add(30, 'minute').toDate()
+};
+
 const styles = {
   datePicker: {
     marginRight: 15
@@ -77,11 +73,9 @@ const styles = {
   button: {
     marginLeft: 5,
     justifyContent: 'center',
-    width: 70
+    width: 100
   },
   buttonText: {
-    fontSize: 10,
-    textAlign: 'center',
-    alignSelf: 'center'
+    fontSize: 10
   }
 };

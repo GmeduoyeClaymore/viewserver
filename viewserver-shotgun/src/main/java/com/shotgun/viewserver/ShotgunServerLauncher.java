@@ -70,7 +70,7 @@ public class ShotgunServerLauncher{
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
-        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey"),false));
+        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(RealShotgunControllersComponents.class);
@@ -101,7 +101,7 @@ public class ShotgunServerLauncher{
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
-        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey"),false));
+        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new FirebaseConnectionFactory(get("firebase.keyfilePath")));
         container.addComponent(new FirebaseApplicationSetup(
                 container.getComponent(FirebaseConnectionFactory.class),
@@ -120,7 +120,7 @@ public class ShotgunServerLauncher{
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
-        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey"),false));
+        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new FirebaseConnectionFactory(get("firebase.keyfilePath")));
         container.addComponent(new FirebaseTestApplicationSetup(
                 container.getComponent(FirebaseConnectionFactory.class),

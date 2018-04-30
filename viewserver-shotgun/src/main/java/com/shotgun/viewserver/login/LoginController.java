@@ -105,6 +105,7 @@ public class LoginController {
         return JSONBackedObjectFactory.create(userRow, User.class);
     }
 
+    //TODO - this full table scan won't scale will need to do something better at some point
     public int getUserRow(ITable userTable, String loginEmail){
         IOutput output = userTable.getOutput();
         IRowSequence rows = (output.getAllRows());

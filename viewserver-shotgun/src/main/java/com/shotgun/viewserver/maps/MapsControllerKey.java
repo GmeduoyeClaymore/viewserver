@@ -7,18 +7,12 @@ package com.shotgun.viewserver.maps;
 
 public class MapsControllerKey{
     private String key;
-    private boolean supportsReverveGeocoding;
 
-    public MapsControllerKey(String key, boolean supportsReverveGeocoding) {
+    public MapsControllerKey(String key) {
         this.key = key;
-        this.supportsReverveGeocoding = supportsReverveGeocoding;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public boolean isSupportsReverseGeocoding() {
-        return supportsReverveGeocoding;
     }
 }

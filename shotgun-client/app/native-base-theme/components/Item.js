@@ -105,7 +105,6 @@ export default (variables = variable) => {
       '.multiline': {
         height: null,
       },
-      height: variables.inputHeightBase,
       color: variables.inputColor,
       flex: 1,
       top: Platform.OS === 'ios' ? 1.5 : undefined,

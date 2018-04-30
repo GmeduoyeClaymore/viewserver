@@ -52,13 +52,16 @@ public class ClientConnectionContext{
 
 
     public ClientSubscription addSubscription(String name, ClientSubscription clientSubscription, TestSubscriptionEventHandler eventHandler) {
-        if(subscriptions.containsKey(name)){
-            throw new RuntimeException("Already have subscription for " + name);
+        ClientSubscription sub = subscriptions.get(name);
+        if(sub != null){
+            try {
+                sub.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         subscriptions.put(name, clientSubscription);
-        if(eventHandlerHashMap.containsKey(name)){
-            throw new RuntimeException("Already have event handler for " + name);
-        }
+        TestSubscriptionEventHandler handler = eventHandlerHashMap.get(name);
         eventHandlerHashMap.put(name, eventHandler);
         return clientSubscription;
     }

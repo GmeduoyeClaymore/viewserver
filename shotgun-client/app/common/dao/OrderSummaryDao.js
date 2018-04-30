@@ -11,6 +11,20 @@ export default class OrderSummaryDao{
     filterMode: 2,
   };
 
+  static DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    reportId: 'driverOrderSummary',
+    driverId: '@userId',
+    userId: undefined
+  };
+
+  static CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    reportId: 'customerOrderSummary',
+    userId: '@userId',
+    driverId: undefined
+  };
+
   constructor(client, options = {}, name = 'orderSummaryDao') {
     this.client = client;
     this.options = {...OrderSummaryDao.OPTIONS, ...options};
@@ -81,6 +95,9 @@ export default class OrderSummaryDao{
         productId: orderSummary.productId,
         notes: orderSummary.notes,
         imageUrl: orderSummary.imageUrl,
+        fixedPrice: orderSummary.fixedPrice == -1 ? undefined : orderSummary.fixedPrice,
+        startTime: orderSummary.startTime,
+        endTime: orderSummary.endTime
       },
       product: {
         productId: orderSummary.productProductId,
@@ -90,23 +107,16 @@ export default class OrderSummaryDao{
       contentType: {
         contentTypeId: orderSummary.contentTypeContentTypeId,
         name: orderSummary.contentTypeName,
-        origin: orderSummary.contentTypeOrigin,
-        destination: orderSummary.contentTypeDestination,
-        noPeople: orderSummary.contentTypeNoPeople,
-        fromTime: orderSummary.contentTypeFromTime,
-        tillTime: orderSummary.contentTypeTillTime,
-        noItems: orderSummary.contentTypeNoItems,
+        hasOrigin: orderSummary.contentTypeHasOrigin,
+        hasDestination: orderSummary.contentTypeHasDestination,
+        hasStartTime: orderSummary.contentTypeHasStartTime,
+        hasEndTime: orderSummary.contentTypeHasEndTime,
         rootProductCategory: orderSummary.contentTypeRootProductCategory,
         pricingStrategy: orderSummary.contentTypePricingStrategy
       },
       delivery: {
-        from: orderSummary.from,
-        till: orderSummary.till,
         distance: orderSummary.distance,
-        isFixedPrice: orderSummary.isFixedPrice,
-        fixedPriceValue: orderSummary.fixedPriceValue,
         duration: orderSummary.duration,
-        noRequiredForOffload: orderSummary.noRequiredForOffload,
         deliveryId: orderSummary.deliveryId,
         customerRatingAvg: orderSummary.customerRatingAvg != undefined ? orderSummary.customerRatingAvg : 0,
         customerFirstName: orderSummary.customerFirstName,

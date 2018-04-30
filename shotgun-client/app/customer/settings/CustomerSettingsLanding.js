@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Text, Content, List, ListItem, Header, Container, Left, Body, Title, Subtitle} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Body, Title, Row, Col} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
-import {Icon} from 'common/components';
+import {Icon, AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
 import {Linking} from 'react-native';
 //import DeviceInfo from 'react-native-device-info';
@@ -16,15 +16,16 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
   };
 
   return user ? <Container>
-    <Header withButton>
-      <Left>
-        <Button onPress={() => history.goBack()}>
-          <Icon name='back-arrow'/>
-        </Button>
-      </Left>
+    <Header>
       <Body>
-        <Title>{user.firstName} {user.lastName}</Title>
-        {user.ratingAvg > 0 ? <Subtitle><Icon name='star' avgStar/> {user.ratingAvg.toFixed(1)}</Subtitle> : null}
+        <Row style={{width: '100%'}}>
+          <Col size={75}>
+            <Title>{user.firstName} {user.lastName}</Title>
+          </Col>
+          <Col size={25} style={{paddingTop: 20}}>
+            <AverageRating rating={user.ratingAvg}/>
+          </Col>
+        </Row>
       </Body>
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
@@ -46,8 +47,8 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>
       </List>
+      <Button fullWidth paddedTopBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
     </Content>
-    <Button fullWidth paddedBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
   </Container> : null;
 };
 

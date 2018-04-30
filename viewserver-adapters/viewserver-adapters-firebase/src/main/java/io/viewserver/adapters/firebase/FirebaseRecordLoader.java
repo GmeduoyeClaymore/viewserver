@@ -1,10 +1,7 @@
 package io.viewserver.adapters.firebase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentChange;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreException;
+import com.google.cloud.firestore.*;
 import io.viewserver.datasource.*;
 import io.viewserver.schema.Schema;
 import org.slf4j.Logger;
@@ -24,6 +21,7 @@ public class FirebaseRecordLoader implements IRecordLoader{
     private OperatorCreationConfig creationConfig;
     boolean snapshotComplete;
     private CollectionReference collection;
+    private ListenerRegistration listenerRegistration;
 
     public FirebaseRecordLoader(FirebaseConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.connectionFactory = connectionFactory;
@@ -46,7 +44,7 @@ public class FirebaseRecordLoader implements IRecordLoader{
         return  rx.Observable.create(subscriber -> {
             try{
                 logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
-                getCollection().addSnapshotListener((snapshot, e) -> {
+                EventListener<QuerySnapshot> listener = (snapshot, e) -> {
                     if (e != null) {
                         logger.error(String.format("Listener failed for %s table", tableName), e);
                         return;
@@ -54,22 +52,24 @@ public class FirebaseRecordLoader implements IRecordLoader{
 
                     for (DocumentChange dc : snapshot.getDocumentChanges()) {
                         try {
-                            if(snapshotComplete) {
+                            if (snapshotComplete) {
                                 logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
                             }
                             //TODO - deal with removes
                             DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
                             subscriber.onNext(changeRecord);
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             logger.error(String.format("There was an error updating a record in the %s table", tableName));
                         }
                     }
-                });
+                };
+                this.listenerRegistration = getCollection().addSnapshotListener(listener);
             }catch (Exception ex){
                 subscriber.onError(ex);
             }}, Emitter.BackpressureMode.BUFFER);
 
     }
+
 
     private int addFirebaseListener(Consumer<IRecord> consumer){
         CompletableFuture<Integer> ss = new CompletableFuture<>();
@@ -110,6 +110,7 @@ public class FirebaseRecordLoader implements IRecordLoader{
     private void onFirebaseListenerError(FirestoreException e, Consumer<IRecord> consumer){
         logger.error(String.format("Listener failed for %s table re-adding listener", tableName), e);
         snapshotComplete = false;
+        this.listenerRegistration.remove();
         addFirebaseListener(consumer);
     }
 
