@@ -5,7 +5,6 @@ import com.shotgun.viewserver.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.constants.VanProducts;
 import com.shotgun.viewserver.constants.VanVolumes;
-import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.Vehicle;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
@@ -46,13 +45,10 @@ public class VehicleController {
                     .addValue("colour", vehicle.getColour())
                     .addValue("make", vehicle.getMake())
                     .addValue("model", vehicle.getModel())
-                    .addValue("dimensions", ControllerUtils.toString(vehicle.getDimensions()))
+                    .addValue("volume", vehicle.getVolume())
+                    .addValue("weight", vehicle.getWeight())
                     .addValue("selectedProductIds", ControllerUtils.toString(vehicle.getSelectedProductIds()))
                     .addValue("bodyStyle", vehicle.getBodyStyle());
-
-            if (vehicle.getNumAvailableForOffload() != null) {
-                vehicleRecord.addValue("numAvailableForOffload", vehicle.getNumAvailableForOffload());
-            }
 
             iDatabaseUpdater.addOrUpdateRow(TableNames.VEHICLE_TABLE_NAME, "vehicle", vehicleRecord);
             return vehicle.getVehicleId();
@@ -63,16 +59,16 @@ public class VehicleController {
         }
     }
 
-    public static List<String> getValidProductsVehicle(Dimensions dimensions) {
-        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolume()));
+    public static List<String> getValidProductsVehicle(double volume) {
+        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", volume));
 
-        if (dimensions.getVolume() < VanVolumes.MediumVan) {
+        if (volume < VanVolumes.MediumVan) {
             log.debug("This is the volume of small van");
             return Arrays.asList(VanProducts.SmallVan);
-        } else if (dimensions.getVolume() < VanVolumes.LargeVan) {
+        } else if (volume < VanVolumes.LargeVan) {
             log.debug("This is the volume of medium van");
             return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan);
-        } else if (dimensions.getVolume() < VanVolumes.Luton) {
+        } else if (volume < VanVolumes.Luton) {
             log.debug("This is the volume of large van");
             return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan);
         } else {

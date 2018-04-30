@@ -65,12 +65,11 @@ public class VehicleDetailsController {
             long weight = ((Double) get(dimensions, "PayloadWeight")).longValue();
             double volume = ((Double) get(dimensions, "PayloadVolume")).doubleValue();
 
-            Dimensions dim = new Dimensions(volume, weight);
             String reg = (String) get(vehicleRegistration, "Vrm");
             String make = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Make"));
             String model = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Model"));
             String color = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Colour"));
-            return new Vehicle(dim, make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]));
+            return new Vehicle(make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(volume).toArray(new String[0]), volume, weight);
         }catch(RuntimeException ex){
             throw ex;
         }catch (Exception ex){

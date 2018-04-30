@@ -10,28 +10,20 @@ export const INITIAL_STATE = {
     imageData: undefined,
     range: 50
   },
-  address: {
+  deliveryAddress: {
     flatNumber: undefined,
     line1: undefined,
     city: undefined,
-    postCode: undefined
-  },
-  vehicle: {
-    registrationNumber: undefined,
-    colour: undefined,
-    make: undefined,
-    model: undefined,
-    numAvailableForOffload: undefined,
-    dimensions: {
-      height: undefined,
-      width: undefined,
-      length: undefined,
-      weight: undefined
-    }
+    postCode: undefined,
+    googlePlaceId: undefined,
+    latitude: undefined,
+    longitude: undefined,
+    isDefault: true
   }
 };
 
-/*export const INITIAL_STATE = {
+/*
+export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
@@ -42,7 +34,7 @@ export const INITIAL_STATE = {
     dob: '1982-02-03',
     range: 10
   },
-  address: {
+  deliveryAddress: {
     line1: '129 Drakefield Road',
     line2: 'Tooting',
     city: 'London',
@@ -52,19 +44,7 @@ export const INITIAL_STATE = {
     latitude: 15.1,
     longitude: 16.3,
     isDefault: true
-  },
-  vehicle: {
-    registrationNumber: 'YA61AYB',
-    colour: undefined,
-    make: undefined,
-    model: undefined,
-    numAvailableForOffload: undefined,
-    dimensions: {
-      height: undefined,
-      width: undefined,
-      length: undefined,
-      weight: undefined
-    }
   }
-};*/
+};
+*/
 

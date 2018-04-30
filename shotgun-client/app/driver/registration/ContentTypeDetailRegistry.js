@@ -1,4 +1,4 @@
-import DriverCapabilityDetails from './DriverCapabilityDetails';
+import DriverCapabilityDetails from './DriverVehicleDetails';
 import ProductCategorySelector from './ProductCategorySelector';
 import ProductSelector from './ProductSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';

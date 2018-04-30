@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public  class Vehicle{
-    private Dimensions dimensions;
+    private double volume;
+    long weight;
     String vehicleId;
     String registrationNumber;
     String colour;
@@ -12,14 +13,13 @@ public  class Vehicle{
     String model;
     String bodyStyle;
     String[] selectedProductIds;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    Integer numAvailableForOffload;
 
     public Vehicle() {
     }
 
-    public Vehicle(Dimensions dimensions,String make, String model, String bodyStyle,String colour, String reg, String[] selectedProductIds) {
-        this.dimensions = dimensions;
+    public Vehicle(String make, String model, String bodyStyle,String colour, String reg, String[] selectedProductIds, double volume, long weight) {
+        this.volume = volume;
+        this.weight = weight;
         this.model = model;
         this.make = make;
         this.bodyStyle = bodyStyle;
@@ -28,22 +28,24 @@ public  class Vehicle{
         this.selectedProductIds = selectedProductIds;
     }
 
-
-
-    public Dimensions getDimensions() {
-        return dimensions;
+    public double getVolume() {
+        return volume;
     }
 
-    public void setDimensions(Dimensions dimensions) {
-        this.dimensions = dimensions;
+    public void setVolume(double volume) {
+        this.volume = volume;
     }
 
-    public Integer getNumAvailableForOffload() {
-        return numAvailableForOffload;
+    public long getWeight() {
+        return weight;
     }
 
-    public void setNumAvailableForOffload(Integer numAvailableForOffload) {
-        this.numAvailableForOffload = numAvailableForOffload;
+    public void setWeight(long weight) {
+        this.weight = weight;
+    }
+
+    public void setBodyStyle(String bodyStyle) {
+        this.bodyStyle = bodyStyle;
     }
 
     public String[] getSelectedProductIds() {
@@ -105,7 +107,6 @@ public  class Vehicle{
     @Override
     public String toString() {
         return "Vehicle{" +
-                "dimensions=" + dimensions +
                 ", vehicleId='" + vehicleId + '\'' +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 ", colour='" + colour + '\'' +

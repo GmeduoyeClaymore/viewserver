@@ -7,18 +7,28 @@ import {withExternalState} from 'custom-redux';
 import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from 'driver/registration/ContentTypeSelector';
-import {updateDriver} from 'driver/actions/DriverActions';
+import {updateDriver, updateVehicle} from 'driver/actions/DriverActions';
 import Immutable from 'seamless-immutable';
+import * as ContentTypes from 'common/constants/ContentTypes';
 
 class ConfigureServices extends Component{
-  constructor(props){
-    super(props);
-    this.register = this.register.bind(this);
-  }
-
-  async register(){
+  updateServices = async() => {
+    //TODO - this selectedcontenttypes thing is a horrible mess, a big ball of json urg, why is it an object and not array as well?
     const {user, selectedContentTypes, dispatch, history, parentPath} = this.props;
-    const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
+    const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : undefined;
+    const filteredContentTypes = {};
+
+    for (const [key, value] of Object.entries(selectedContentTypes)) {
+      const {selectedProductCategories, selectedProductIds} = value;
+      filteredContentTypes[key] = {selectedProductCategories, selectedProductIds};
+    }
+
+    const persistedUser =  {...user, selectedContentTypes: JSON.stringify(filteredContentTypes)};
+
+    if (vehicle){
+      dispatch(updateVehicle(vehicle));
+    }
+
     dispatch(updateDriver(persistedUser, () => history.push(`${parentPath}/DriverSettingsLanding`)));
   }
 
@@ -51,7 +61,7 @@ class ConfigureServices extends Component{
         </Grid>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.updateServices} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
         <Text uppercase={false}>Save</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>
@@ -75,7 +85,6 @@ const styles = {
     textAlign: 'center'
   }
 };
-
 
 const validationSchema = {
   selectedContentTypes: yup.array().required()

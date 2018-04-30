@@ -9,7 +9,6 @@ import ReactNativeModal from 'react-native-modal';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
 import {isEqual} from 'lodash';
-import Logger from 'common/Logger';
 import Immutable from 'seamless-immutable';
 
 const resourceDictionary = new ContentTypes.ResourceDictionary();
@@ -92,8 +91,7 @@ class ContentTypeSelector extends Component{
     if (!contentType){
       return undefined;
     }
-    Logger.info('Validating ' + contentType.contentTypeId);
-    
+
     const contentForContentType = unsavedSelectedContentTypes[contentType.contentTypeId];
     if (!contentForContentType){
       return {error: 'must specify some content for content type'};

@@ -103,7 +103,7 @@ public class DriverController {
                     ControllerContext.create(context);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId", userId);
-                    if (vehicle.getDimensions() != null) {
+                    if (vehicle.getRegistrationNumber() != null) {
                         vehicleController.addOrUpdateVehicle(vehicle);
                     }
                     deliveryAddressController.addOrUpdateDeliveryAddress(address);

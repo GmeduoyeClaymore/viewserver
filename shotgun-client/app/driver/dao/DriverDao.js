@@ -23,7 +23,7 @@ export default class DriverDao{
 
   updateDriver = async({driver}) => {
     Logger.info(`Updating driver ${driver.email}`);
-    const driverId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: driver});
+    const driverId = await this.client.invokeJSONCommand('userController', 'addOrUpdateUser', {user: driver});
     Logger.info(`Driver ${driverId} updated`);
     return driverId;
   }

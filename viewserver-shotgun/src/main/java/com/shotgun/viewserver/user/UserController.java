@@ -63,7 +63,8 @@ public class UserController {
         this.reactor = reactor;
     }
 
-    public String addOrUpdateUser(User user) {
+    @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
+    public String addOrUpdateUser(@ActionParam(name = "user") User user) {
         log.debug("addOrUpdateUser user: " + user.getEmail());
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
 
@@ -93,7 +94,7 @@ public class UserController {
                 .addValue("lastName", user.getLastName())
                 .addValue("dob", user.getDob())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
+
                 .addValue("contactNo", nexmoController.getPhoneNumberInfo(user.getContactNo()).get("international_format_number"))
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
@@ -103,6 +104,10 @@ public class UserController {
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl())
                 .addValue("chargePercentage", user.getChargePercentage());
+
+        if(user.getPassword() != null){
+            userRecord.addValue("password", ControllerUtils.encryptPassword(user.getPassword()));
+        }
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, "user", userRecord);
         log.debug("addOrUpdateUser successful: " + user.getEmail() + " with id " + user.getUserId());

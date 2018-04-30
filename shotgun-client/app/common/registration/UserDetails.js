@@ -100,24 +100,23 @@ class UserDetails extends Component{
               </Item>
             </Col>
           </Row>
-          {!isDriver ? <Row>
+          {isDriver ? <Row>
             <Col>
-              <Item stackedLabel last>
+              <Item stackedLabel>
                 <Label>Date of birth</Label>
                 <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={false} bold
                   value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined}
                   placeholder="Enter Date Of Birth" validateOnMount={user.dob !== undefined}
-                  validationSchema={validationSchema.dob} maxLength={30}/>
+                  validationSchema={drivervalidationSchema.dob} maxLength={30}/>
                 <DatePicker isVisible={isDobDatePickerVisible} cannedDateOptions={[]}
                   onCancel={() => this.toggleDatePicker(false)}
-                  onConfirm={this.onChangeDob} {...datePickerOptions} />
-                <Text note>We need to ensure you are over 18 before we can send you payments</Text>
+                  onConfirm={(value) => this.onChangeText('dob', value)} {...datePickerOptions} />
               </Item>
             </Col>
           </Row> : null}
           <Row>
             <Col>
-              <Item stackedLabel>
+              <Item stackedLabel last>
                 <Label>Create an account password</Label>
                 <ValidatingInput bold secureTextEntry={true} returnKeyType={'next'} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => this.onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
               </Item>

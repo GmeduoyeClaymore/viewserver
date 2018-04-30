@@ -4,25 +4,28 @@ import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, 
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon, TermsAgreement} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
+import {getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {registerAndLoginDriver} from 'driver/actions/DriverActions';
 
 class DriverAccountType extends Component{
-  constructor(props){
-    super(props);
-    this.register = this.register.bind(this);
-  }
+  register = async() => {
+    const {user, bankAccount, deliveryAddress, selectedContentTypes, dispatch, history} = this.props;
+    //TODO - this selectedcontenttypes thing is a horrible mess, a big ball of json urg, why is it an object and not array as well?
+    const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : undefined;
+    const filteredContentTypes = {};
 
-  async register(){
-    const {user, bankAccount, address, selectedContentTypes, dispatch, history} = this.props;
-    const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
-    const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : {};
-    dispatch(registerAndLoginDriver(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
-  }
+    for (const [key, value] of Object.entries(selectedContentTypes)) {
+      const {selectedProductCategories, selectedProductIds} = value;
+      filteredContentTypes[key] = {selectedProductCategories, selectedProductIds};
+    }
 
+    const persistedUser =  {...user, selectedContentTypes: JSON.stringify(filteredContentTypes)};
+
+    dispatch(registerAndLoginDriver(persistedUser, vehicle, deliveryAddress, bankAccount, () => history.push('/Root')));
+  }
 
   render(){
     const {history, contentTypes = [], selectedContentTypes = {}, errors, busy} = this.props;

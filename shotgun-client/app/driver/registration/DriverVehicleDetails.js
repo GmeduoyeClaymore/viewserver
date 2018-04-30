@@ -1,15 +1,31 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import {Text, Item, Label, Button, Grid, Row, Col, Content} from 'native-base';
+import {Text, Item, Label, Grid, Row, Col, Content} from 'native-base';
 import yup from 'yup';
-import {ValidatingInput, ValidatingButton, ErrorRegion, Icon} from 'common/components';
+import {ValidatingInput, ValidatingButton, ErrorRegion} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import {isAnyOperationPending, getOperationError, getDaoState} from 'common/dao';
-import shotgun from 'native-base-theme/variables/shotgun';
 import ValidationService from 'common/services/ValidationService';
 import {getVehicleDetails} from 'driver/actions/DriverActions';
+import {isEqual} from 'lodash';
 
-class DriverCapabilityDetails extends Component{
+class DriverVehicleDetails extends Component{
+  componentWillMount() {
+    const {vehicleDetails} = this.props;
+
+    if (vehicleDetails !== undefined) {
+      this.setState({vehicle: vehicleDetails, selectedProductIds: vehicleDetails.selectedProductIds});
+    }
+  }
+
+  componentWillReceiveProps(newProps){
+    const {vehicleDetails} = newProps;
+    const {vehicle, vehicleDetails: oldVehicleDetails} = this.props;
+
+    if (!isEqual(vehicleDetails, oldVehicleDetails) || vehicle == undefined){
+      this.setState({vehicle: {...vehicleDetails, vehicleId: oldVehicleDetails.vehicleId}, errors: '', selectedProductIds: vehicleDetails.selectedProductIds});
+    }
+  }
+
   setRegistrationNumber = (registrationNumber) => {
     this.setState({registrationNumber});
   }
@@ -20,7 +36,7 @@ class DriverCapabilityDetails extends Component{
   }
 
   render(){
-    const {errors, vehicle = {}, busy, registrationNumber} = this.props;
+    const {errors, vehicleDetails, busy, registrationNumber} = this.props;
 
     return <Content><Grid>
       <Row>
@@ -33,19 +49,23 @@ class DriverCapabilityDetails extends Component{
         </Col>
       </Row>
 
-      {vehicle.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
+      {vehicleDetails.make != undefined ? (<Row style={{flexWrap: 'wrap'}}>
+        <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
+          <Label>Registration number</Label>
+          <Text>{vehicleDetails.registrationNumber}</Text>
+        </Item></Col>
         <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
           <Label>Vehicle model</Label>
-          <Text>{`${vehicle.make} ${vehicle.model}`} </Text>
+          <Text>{`${vehicleDetails.make} ${vehicleDetails.model}`} </Text>
         </Item></Col>
         <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
           <Label>Vehicle colour</Label>
-          <Text>{vehicle.colour}</Text>
+          <Text>{vehicleDetails.colour}</Text>
         </Item></Col>
         <Col style={{width: '50%'}}><Item stackedLabel vehicleDetails>
           <Label>Approx dimensions</Label>
-          <Text>{`${vehicle.dimensions.volume}m\xB3 load space`}</Text>
-          <Text>{`${vehicle.dimensions.weight}kg Max`}</Text>
+          <Text>{`${vehicleDetails.volume}m\xB3 load space`}</Text>
+          <Text>{`${vehicleDetails.weight}kg Max`}</Text>
         </Item></Col>
       </Row>) : null}
       <ErrorRegion errors={errors}/>
@@ -58,7 +78,8 @@ const validationSchema = {
   colour: yup.string().required(),
   make: yup.string().required(),
   model: yup.string().required(),
-  dimensions: yup.object().required()
+  volume: yup.number().required(),
+  weight: yup.number().required()
 };
 
 const styles = {
@@ -72,7 +93,7 @@ const styles = {
 const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
-    vehicle: getDaoState(state, ['vehicleDetails'], 'driverDao') || initialProps.vehicle,
+    vehicleDetails: getDaoState(state, ['vehicleDetails'], 'driverDao') || getDaoState(state, ['vehicle'], 'vehicleDao') || {},
     errors: getOperationError(state, 'driverDao', 'getVehicleDetails'),
     busy: isAnyOperationPending(state, [{ driverDao: 'getVehicleDetails'}])
   };
@@ -83,5 +104,5 @@ const canSubmit = async (state) => {
   return await ValidationService.validate(vehicle, yup.object(validationSchema));
 };
 
-export const ConnectedDriverCapabilityDetails =  withExternalState(mapStateToProps)(DriverCapabilityDetails);
-export default {control: ConnectedDriverCapabilityDetails, validator: canSubmit};
+export const ConnectedDriverVehicleDetails =  withExternalState(mapStateToProps)(DriverVehicleDetails);
+export default {control: ConnectedDriverVehicleDetails, validator: canSubmit};
