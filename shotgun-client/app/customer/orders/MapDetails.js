@@ -17,7 +17,7 @@ export default class MapDetails extends Component{
   }
   render(){
     let map;
-    const {origin, destination, driverPosition, contentType, client} = this.props;
+    const {origin, destination, partnerPosition, contentType, client} = this.props;
     const fitMap = () => {
       if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
         map.fitToElements(false);
@@ -25,8 +25,8 @@ export default class MapDetails extends Component{
     };
 
     const region = {
-      latitude: driverPosition.latitude,
-      longitude: driverPosition.longitude,
+      latitude: partnerPosition.latitude,
+      longitude: partnerPosition.longitude,
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA
     };
@@ -34,7 +34,7 @@ export default class MapDetails extends Component{
     return <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
       showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
       {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
-      <MapView.Marker image={locationImg} coordinate={{...driverPosition}}/>
+      <MapView.Marker image={locationImg} coordinate={{...partnerPosition}}/>
       <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
       {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
     </MapView>;

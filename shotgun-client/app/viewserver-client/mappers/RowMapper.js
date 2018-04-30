@@ -1,8 +1,16 @@
 import Logger from 'common/Logger';
+import ProtoLoader from '../core/ProtoLoader';
 
 export default class RowMapper{
-  static _parseValue(rowValue) {
+  static _parseValue(rowValue, column) {
     const value = rowValue[rowValue.value];
+    if (column.dataType === ProtoLoader.Dto.DataType.JSON && value){
+      try {
+        return JSON.parse(value);
+      } catch (error){
+        Logger.error(`Error parsing JSON value in ${column.name}=${value}`, error);
+      }
+    }
     try {
       switch (rowValue.value) {
       case 'longValue':
@@ -23,8 +31,9 @@ export default class RowMapper{
     const row = {};
     Logger.fine('Mapping row values ' + JSON.stringify(schema));
     rowValues.forEach(rowValue => {
-      const columnName = schema[rowValue.columnId].name;
-      const columnValue = _self._parseValue(rowValue);
+      const column = schema[rowValue.columnId];
+      const columnName = column.name;
+      const columnValue = _self._parseValue(rowValue, column);
       row[columnName] = columnValue;
     });
 

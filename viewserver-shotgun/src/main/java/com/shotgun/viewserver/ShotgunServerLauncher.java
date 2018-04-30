@@ -161,7 +161,7 @@ public class ShotgunServerLauncher{
 
         if(bootstrap){
             container.getComponent(IApplicationSetup.class).run();
-            return;
+            //return;
         }
 
         server = container.getComponent(BasicServer.class);

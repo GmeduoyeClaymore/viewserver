@@ -20,7 +20,7 @@ export default RegistrationCommon = ({history}) => {
             <Row style={styles.orRow}><Text>or</Text></Row>
           </Col>
           <Col size={45}>
-            <Row size={35}><Button large onPress={() => history.push('/Driver/Registration')}><Icon name='drive'/></Button></Row>
+            <Row size={35}><Button large onPress={() => history.push('/Partner/Registration')}><Icon name='drive'/></Button></Row>
             <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>I have something to supply</Text></Row>
           </Col>
         </Row>

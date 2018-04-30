@@ -526,7 +526,8 @@
         "STRING": 8,
         "NULLABLEBOOLEAN": 9,
         "DATE": 10,
-        "DATETIME": 11
+        "DATETIME": 11,
+        "JSON": 12
       }
     },
     "SchemaChangeDto": {

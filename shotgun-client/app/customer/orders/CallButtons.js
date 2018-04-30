@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import {callDriver} from 'customer/actions/CustomerActions';
+import {callPartner} from 'customer/actions/CustomerActions';
 
 export default class CallButtons extends Component{
   constructor(props){
@@ -10,14 +10,14 @@ export default class CallButtons extends Component{
   render(){
     const {errors, orderSummary, dispatch} = this.props;
 
-    const onPressCallDriver = async () => {
-      dispatch(callDriver(orderSummary.orderId));
+    const onPressCallPartner = async () => {
+      dispatch(callPartner(orderSummary.orderId));
     };
   
     <ErrorRegion errors={errors}>
-      <Button fullWidth callButtonSml onPress={onPressCallDriver}>
+      <Button fullWidth callButtonSml onPress={onPressCallPartner}>
         <Icon name="phone" paddedIcon/>
-        <Text uppercase={false}>Call driver</Text>
+        <Text uppercase={false}>Call partner</Text>
       </Button>
     </ErrorRegion>;
   }

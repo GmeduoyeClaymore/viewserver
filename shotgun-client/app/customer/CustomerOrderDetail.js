@@ -4,7 +4,7 @@ import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Col} 
 import {CurrencyInput, OrderSummary, Icon, LoadingScreen, PriceSummary, RatingSummary, SpinnerButton, ErrorRegion, AverageRating} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
-import {cancelOrder, rejectDriver, updateOrderPrice} from 'customer/actions/CustomerActions';
+import {cancelOrder, rejectPartner, updateOrderPrice} from 'customer/actions/CustomerActions';
 import {Image} from 'react-native';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -30,15 +30,15 @@ resourceDictionary.
     personell(({product}) => `${product.name} Job`).
     rubbish(() => 'Rubbish Collection').
   property('RejectButtonCaption', 'Reject').
-    delivery('Reject Driver').
+    delivery('Reject Partner').
     personell('Reject Worker').
-    rubbish('Reject Driver').
+    rubbish('Reject Partner').
   property('PricingControl', staticPriceControl).
     personell(dynamicPriceControl).
   property('TrackButtonCaption', 'Track').
-    delivery('Track Driver').
+    delivery('Track Partner').
     personell('Track Worker').
-    rubbish('Track Driver');
+    rubbish('Track Partner');
     /*eslint-disable */
 
 
@@ -78,10 +78,10 @@ class CustomerOrderDetail extends Component{
     const {delivery = {}} = orderSummary;
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
-    const hasDriver = delivery.driverFirstName !== undefined;
+    const hasPartner = delivery.partnerFirstName !== undefined;
     const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
-    const showCancelButton = !isComplete && !isCancelled && !hasDriver;
-    const showRejectDriverButton = hasDriver && !isComplete && !isOnRoute;
+    const showCancelButton = !isComplete && !isCancelled && !hasPartner;
+    const showRejectPartnerButton = hasPartner && !isComplete && !isOnRoute;
     const {resources} = this;
     const {PricingControl} = resources;
 
@@ -89,8 +89,8 @@ class CustomerOrderDetail extends Component{
       dispatch(cancelOrder(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
     };
 
-    const onRejectDriver = () => {
-      dispatch(rejectDriver(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
+    const onRejectPartner = () => {
+      dispatch(rejectPartner(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
     };
 
     const onPressTrack = () => {
@@ -108,20 +108,20 @@ class CustomerOrderDetail extends Component{
       </Header>
       <Content>
         <ErrorRegion errors={errors}/>
-        <PricingControl readonly={busyUpdating} userId={userId} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isDriver={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
+        <PricingControl readonly={busyUpdating} userId={userId} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isPartner={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
         {showCancelButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> : null}
-        {hasDriver && !isComplete ? <Grid style={styles.driverDetailView}>
+        {hasPartner && !isComplete ? <Grid style={styles.partnerDetailView}>
           <Col style={{alignItems: 'flex-end'}}>
-            <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/>
+            <Image source={{uri: delivery.partnerImageUrl}} resizeMode='contain' style={styles.partnerImage}/>
           </Col>
           <Col>
-            <Text>{delivery.driverFirstName} {delivery.driverLastName}</Text>
-            <AverageRating rating={delivery.driverRatingAvg}/>
+            <Text>{delivery.partnerFirstName} {delivery.partnerLastName}</Text>
+            <AverageRating rating={delivery.partnerRatingAvg}/>
           </Col>
         </Grid> : null}
-        {showRejectDriverButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
+        {showRejectPartnerButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectPartner}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton> : null}
         {isOnRoute ? <Button padded fullWidth style={styles.ctaButton} signOutButton onPress={onPressTrack}><Text uppercase={false}>{resources.TrackButtonCaption}</Text></Button> : null}
-        <RatingSummary orderSummary={orderSummary} isDriver={false}/>
+        <RatingSummary orderSummary={orderSummary} isPartner={false}/>
         <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem} client={client} product={orderSummary.product} contentType={orderSummary.contentType}/>
       </Content>
     </Container>;
@@ -132,13 +132,13 @@ const styles = {
   ctaButton: {
     marginTop: 10
   },
-  driverDetailView: {
+  partnerDetailView: {
     marginTop: 15,
     flex: 1,
     alignContent: 'center',
     alignItems: 'center'
   },
-  driverImage: {
+  partnerImage: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 40,
@@ -169,13 +169,13 @@ const mapStateToProps = (state, initialProps) => {
   orderSummary = orderSummary || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
   
   const {contentType: selectedContentType} = (orderSummary || {});
-  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}])
+  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}])
   return {
     ...initialProps,
     selectedContentType,
     orderId,
     errors,
-    busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}]),
+    busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}]),
     busy: isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
     orderSummary
   };

@@ -51,7 +51,10 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),
+                                                new IProjectionConfig.ProjectionColumn("requiredDate"),
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
+                                                new IProjectionConfig.ProjectionColumn("path"),
+                                                new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
                                         .withConnection("hasResponded")

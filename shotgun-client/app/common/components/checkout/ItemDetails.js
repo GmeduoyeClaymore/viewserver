@@ -31,7 +31,6 @@ class ItemDetails extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-
   onChangeValue(field, value){
     const {orderItem={}} = this.props;
     this.setState({orderItem: {...orderItem, [field]: value}});

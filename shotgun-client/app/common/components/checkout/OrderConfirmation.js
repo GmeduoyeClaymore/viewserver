@@ -48,7 +48,7 @@ class OrderConfirmation extends Component{
         <Body><Title>{this.resources.PageTitle({product: selectedProduct})}</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isDriver={false} price={price}/>
+        <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isPartner={false} price={price}/>
         <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
       </Content>
       <ErrorRegion errors={errors}/>

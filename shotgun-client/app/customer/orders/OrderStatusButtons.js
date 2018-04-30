@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import { SpinnerButton} from 'common/components';
 import Text from 'react-native';
-import {cancelOrder, rejectDriver, customerCompleteOrder} from 'customer/actions/CustomerActions';
+import {cancelOrder, rejectPartner, customerCompleteOrder} from 'customer/actions/CustomerActions';
 import {View} from 'native-base';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary().
   property('RejectButtonCaption', 'Reject').
-    delivery('Reject Driver').
+    delivery('Reject Partner').
     personell('Reject Worker').
-    rubbish('Reject Driver');
+    rubbish('Reject Partner');
 /*eslint-disable */
 
 const  CancelOrder = ({orderSummary, history, ordersPath, busyUpdating}) => {
@@ -22,11 +22,11 @@ const  CancelOrder = ({orderSummary, history, ordersPath, busyUpdating}) => {
     return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> 
 };
 
-const  RejectDriver = ({orderSummary, history, ordersPath, busyUpdating, resources}) => {
-    const onRejectDriver = () => {
-        dispatch(rejectDriver(orderSummary.orderId, () => history.push(`${ordersPath}`)));
+const  RejectPartner = ({orderSummary, history, ordersPath, busyUpdating, resources}) => {
+    const onRejectPartner = () => {
+        dispatch(rejectPartner(orderSummary.orderId, () => history.push(`${ordersPath}`)));
     };
-    return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectDriver}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton>
+    return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectPartner}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton>
 };
 
 const  CompleteOrder = ({orderSummary, history, ordersPath, busyUpdating, resources}) => {
@@ -56,7 +56,7 @@ export default class OrderStatusButtons extends Component {
         });
         return <View column>
             {!!~possibleStatuses.indexOf(OrderStatuses.CANCELLED) ? <CancelOrder {...this.props}/> : null}
-            {!!~possibleStatuses.indexOf(OrderStatuses.PLACED) ? <RejectDriver {...this.props}/> : null}
+            {!!~possibleStatuses.indexOf(OrderStatuses.PLACED) ? <RejectPartner {...this.props}/> : null}
             {!!~possibleStatuses.indexOf(OrderStatuses.COMPLETEDBYCUSTOMER) ? <CompleteOrder {...this.props}/> : null}
         </View>
     }

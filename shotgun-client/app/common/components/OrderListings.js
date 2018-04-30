@@ -1,6 +1,6 @@
 class OrderListings extends Component{
   getOptions = (isCustomer, isCompleted) => ({
-    ...(isCustomer ? CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS),
+    ...(isCustomer ? CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS),
     isCompleted
   });
 

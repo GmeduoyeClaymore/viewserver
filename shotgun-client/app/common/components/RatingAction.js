@@ -2,17 +2,17 @@ import React from 'react';
 import {Text, View} from 'native-base';
 import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {rateCustomer} from 'driver/actions/DriverActions';
-import {rateDriver} from 'customer/actions/CustomerActions';
+import {rateCustomer} from 'partner/actions/PartnerActions';
+import {ratePartner} from 'customer/actions/CustomerActions';
 import {Icon} from 'common/components';
 
-const RatingAction = ({isDriver, orderSummary, dispatch}) => {
+const RatingAction = ({isPartner, orderSummary, dispatch}) => {
   const {delivery} = orderSummary;
-  const name = isDriver ? delivery.customerFirstName : delivery.driverFirstName;
-  const rating = isDriver ? orderSummary.customerRating : orderSummary.driverRating;
+  const name = isPartner ? delivery.customerFirstName : delivery.partnerFirstName;
+  const rating = isPartner ? orderSummary.customerRating : orderSummary.partnerRating;
 
   const onPressStar = (newRating) => {
-    const ratingFunc = isDriver ? rateCustomer : rateDriver;
+    const ratingFunc = isPartner ? rateCustomer : ratePartner;
     const action = ratingFunc(orderSummary.orderId, newRating);
     dispatch(action);
   };

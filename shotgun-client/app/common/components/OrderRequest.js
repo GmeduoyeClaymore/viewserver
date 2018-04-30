@@ -8,45 +8,38 @@ import {Icon, OriginDestinationSummary, Currency} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {connect} from 'custom-redux';
 
-
-import {calculatePriceToBePaid} from './checkout/CheckoutUtils';
-
 class OrderRequest extends Component {
   constructor(props) {
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-
   render() {
-    const {orderSummary, history, next, isLast, isFirst, user} = this.props;
-    const {delivery, contentType, orderItem} = orderSummary;
-    const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
-    const {supportsFromTime, supportsTillTime} = resources;
-    const userCreatedThisOrder = user.userId == orderSummary.customerUserId;
-    const price = userCreatedThisOrder ? orderSummary.totalPrice : calculatePriceToBePaid(orderSummary.totalPrice, user);
+    const {orderRequest, history, next, isLast, isFirst} = this.props;
+    const {orderDetails} = orderRequest;
 
-    return <ListItem style={[styles.orderRequest, isOnRoute ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
-      onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderSummary.orderId})}>
+    const isInProgress = orderRequest.status == 'INPROGRESS';
+
+    return <ListItem style={[styles.orderRequest, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
+      onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderRequest.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={60}>
-            <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+            <OriginDestinationSummary {...orderDetails}/>
           </Col>
           <Col size={40}>
-            <Text style={styles.price}>{orderSummary.product.name}</Text>
-            <Currency value={price} style={styles.price}/>
+            <Text style={styles.price}>{orderDetails.Title}</Text>
+            <Currency value={orderDetails.amount} style={styles.price}/>
           </Col>
         </Row>
         <Row size={25}>
           <Col size={60}>
             <Row>
-              {supportsFromTime ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(orderItem.startTime).format('Do MMM, h:mma')}</Text>] : null}
-              {supportsTillTime ? <Text> for {moment(orderItem.endTime).from(moment(orderItem.startTime), true)}</Text> : null}
+              {orderDetails.requiredDate ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(orderDetails.requiredDate).format('Do MMM, h:mma')}</Text>] : null}
             </Row>
           </Col>
           <Col size={40} style={styles.orderStatusRow}>
-            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderSummary)}</Text>
+            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderRequest)}</Text>
           </Col>
         </Row>
       </Grid>
@@ -62,7 +55,6 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
   property('supportsFromTime', true).
   property('supportsTillTime', true).
     rubbish(false);
-
 /*eslint-enable */
 
 const styles = {
@@ -108,10 +100,10 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {orderSummary = {}} = initialProps;
-  const {contentType: selectedContentType} = orderSummary;
+  const {orderRequest = {}} = initialProps;
+  const {orderContentTypeId} = orderRequest;
   return {
-    selectedContentType,
+    orderContentTypeId,
     ...initialProps,
     user: getDaoState(state, ['user'], 'userDao')
   };

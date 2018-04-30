@@ -5,10 +5,10 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {RatingAction, Icon} from 'common/components';
 import {Image} from 'react-native';
 
-export const RatingSummary = ({orderSummary, isDriver}) => {
+export const RatingSummary = ({orderSummary, isPartner}) => {
   const {delivery} = orderSummary;
-  const name = isDriver ? delivery.customerFirstName : delivery.driverFirstName;
-  const rating = isDriver ? orderSummary.customerRating : orderSummary.driverRating;
+  const name = isPartner ? delivery.customerFirstName : delivery.partnerFirstName;
+  const rating = isPartner ? orderSummary.customerRating : orderSummary.partnerRating;
 
   const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
   const isRated = rating !== 0 && rating !== undefined;
@@ -20,13 +20,13 @@ export const RatingSummary = ({orderSummary, isDriver}) => {
   if (isRated) {
     const stars = [...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
     return <View style={styles.view}>
-      {!isDriver ?
-        <Image source={{uri: delivery.driverImageUrl}} resizeMode='contain' style={styles.driverImage}/> : null}
+      {!isPartner ?
+        <Image source={{uri: delivery.partnerImageUrl}} resizeMode='contain' style={styles.partnerImage}/> : null}
       <Text style={styles.text}>You rated {name}</Text>{stars}
     </View>;
   }
 
-  return <RatingAction isDriver={isDriver} orderSummary={orderSummary}/>;
+  return <RatingAction isPartner={isPartner} orderSummary={orderSummary}/>;
 };
 
 const styles = {
@@ -45,7 +45,7 @@ const styles = {
     padding: 2,
     color: shotgun.gold,
   },
-  driverImage: {
+  partnerImage: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 30,

@@ -4,52 +4,36 @@ import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/components/maps/MapUtils';
-import * as ContentTypes from 'common/constants/ContentTypes';
-
 export class OriginDestinationSummary extends Component{
   constructor(){
     super();
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   render(){
-    const {resources} = this;
-    const {delivery} = this.props;
-    const {origin, destination = {}, distance, duration} = delivery;
-    const {supportsOrigin, supportsDestination} = resources;
+    const {origin, destination, distanceAndDuration} = this.props;
 
     const formatDuration = () => {
-      const momentDuration = moment.duration(duration, 'seconds');
-      return duration < 3600 ? `${momentDuration.minutes()}mins` : `${momentDuration.hours()}hrs`;
+      const momentDuration = moment.duration(distanceAndDuration.duration, 'seconds');
+      return distanceAndDuration.duration < 3600 ? `${momentDuration.minutes()}mins` : `${momentDuration.hours()}hrs`;
     };
 
     return <Grid>
-      {supportsOrigin ? <Row>
+      {origin ? <Row>
         <Icon name="pin" paddedIcon originPin/>
         <Text style={styles.originText} numberOfLines={1}>{addressToText(origin)}</Text>
       </Row> : null}
-      {supportsDestination ? <Row style={styles.timeRow}>
+      {distanceAndDuration ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
-          {delivery.distance ? `${Math.round(distance / 1000)}kms` : null}{delivery.duration ? ` (${formatDuration()})` : null}
+          {distanceAndDuration.distance ? `${Math.round(distanceAndDuration.distance / 1000)}kms` : null}{distanceAndDuration.duration ? ` (${formatDuration()})` : null}
         </Text>
       </Row> : null}
-      {supportsDestination ? <Row>
+      {destination ? <Row>
         <Icon paddedIcon name="pin" />
         <Text style={styles.originText} numberOfLines={1}>{addressToText(destination)}</Text>
       </Row> : null}
     </Grid>;
   }
 }
-
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('supportsOrigin', true).
-  property('supportsDestination', true).
-    skip(false).
-    hire(false).
-    rubbish(false);
-/*eslint-enable */
 
 const styles = {
   timeRow: {

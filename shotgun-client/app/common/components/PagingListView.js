@@ -50,7 +50,7 @@ class PagingListView extends Component {
       const limit = this.state.limit + this.state.pageSize;
       if (!busy && limit < (size + this.state.pageSize)) {
         this.setState({limit});
-        Logger.info('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - Paging paging list view because the scroll area has changed');
+        Logger.debug('PAGINGLISTVIEW - SUBSCRIBIING BECAUSE - Paging paging list view because the scroll area has changed');
         doPage(limit);
       }
     }

@@ -233,8 +233,8 @@ export default class Network {
     if (schemaChange) {
       schemaChange.addedColumns.forEach(addedColumn => {
         Logger.fine('Column added', addedColumn);
-
-        handler.onColumnAdded(addedColumn.columnId, {name: addedColumn.name, type: addedColumn.type});
+        const {type, dataType, name} = addedColumn;
+        handler.onColumnAdded(addedColumn.columnId, {type, dataType, name});
       });
 
       schemaChange.removedColumns.forEach(removedColumnId => {

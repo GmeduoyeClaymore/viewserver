@@ -149,6 +149,10 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         Object lookup = lookups.get(key);
         if (lookup == null) {
+            key = getLookupKey("global", dimensionName);
+            lookup = lookups.get(key);
+        }
+        if (lookup == null) {
             throw new IllegalArgumentException("There is no dimension registered as " + key);
         }
         return lookup;

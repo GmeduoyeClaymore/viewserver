@@ -33,7 +33,7 @@ export default class TransitionManager{
   }
 
   log(message){
-    Logger.info(`TransitionManager-${this.name} - ${message}`);
+    Logger.debug(`TransitionManager-${this.name} - ${message}`);
   }
 
   isRemoved(route){

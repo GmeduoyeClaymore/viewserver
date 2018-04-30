@@ -51,8 +51,8 @@ class CustomerOrderInProgress extends Component{
         <Body><Title>{resources.PageTitle(orderSummary)}</Title></Body>
       </Header>
       <Content>
-        {isComplete ? [<RatingAction isDriver={false} orderSummary={orderSummary}/>,
-        <Button fullWidth disabled={orderSummary.driverRating == 0} onPress={()=> history.push(`${parentPath}/CustomerOrders`)}><Text uppercase={false}>Done</Text></Button>]: undefined}
+        {isComplete ? [<RatingAction isPartner={false} orderSummary={orderSummary}/>,
+        <Button fullWidth disabled={orderSummary.partnerRating == 0} onPress={()=> history.push(`${parentPath}/CustomerOrders`)}><Text uppercase={false}>Done</Text></Button>]: undefined}
         <ProgressViewControl {...this.props}/>
       </Content>
     </Container>
@@ -75,7 +75,7 @@ const styles = {
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  driverImage: {
+  partnerImage: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 60,
@@ -97,7 +97,7 @@ const mapStateToProps = (state, initialProps) => {
     contentType,
     ...initialProps,
     orderId,
-    errors: getOperationError(state, 'customerDao', 'callDriver' ),
+    errors: getOperationError(state, 'customerDao', 'callPartner' ),
     busy: isAnyOperationPending(state, [{ orderSummaryDao: 'resetSubscription'}, {userDao: 'getCurrentPosition'}]) || orderSummary == undefined,
     orderSummary
   };

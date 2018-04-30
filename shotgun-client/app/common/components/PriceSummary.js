@@ -5,14 +5,14 @@ import {Currency} from 'common/components';
 
 export class PriceSummary extends Component{
   render() {
-    const {orderStatus, isDriver, price} = this.props;
+    const {orderStatus, isPartner, price} = this.props;
 
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
     const getCustomerHeading = () => isComplete ? 'You were charged' : 'You will be charged';
-    const getDriverHeading = () => isComplete ? 'You were paid' : 'You will be paid';
+    const getPartnerHeading = () => isComplete ? 'You were paid' : 'You will be paid';
 
     return <Grid>
-      <Row style={styles.row}><Text style={styles.heading}>{isDriver ? getDriverHeading() : getCustomerHeading()}</Text></Row>
+      <Row style={styles.row}><Text style={styles.heading}>{isPartner ? getPartnerHeading() : getCustomerHeading()}</Text></Row>
       <Row style={styles.row}>{!price ? <Spinner/> : <Currency value={price} style={styles.price}/>}</Row>
     </Grid>;
   }

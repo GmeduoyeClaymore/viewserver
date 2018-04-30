@@ -49,6 +49,11 @@ public class GetPartnerResponseField implements IUserDefinedFunction, IExpressio
             return null;
         }
         String orderDetailJson = orderDetailExpression.getString(row);
+
+        if(orderDetailJson == null || "".equals(orderDetailJson)){
+            return null;
+        }
+
         NegotiatedOrder order = JSONBackedObjectFactory.create(orderDetailJson, NegotiatedOrder.class);
         if(order.getResponses() == null ){
             return null;

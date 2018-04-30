@@ -7,7 +7,7 @@ import CustomerOrders from './orders/CustomerOrders';
 import CustomerOrderDetail from './orders/CustomerOrderDetail';
 import CustomerOrderInProgress from './orders/CustomerOrderInProgress';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
-import {watchPosition} from 'driver/actions/DriverActions';
+import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {LoadingScreen} from 'common/components';

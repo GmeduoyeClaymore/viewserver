@@ -42,7 +42,7 @@ class UserDetails  extends Component{
   render(){
     const {onChangeText} = this;
     const {history, next, user, dobIsDatePickerVisible} = this.props;
-    const isDriver = user.type === 'driver';
+    const isPartner = user.type === 'partner';
 
 
     return <Container>
@@ -57,7 +57,7 @@ class UserDetails  extends Component{
       <Content keyboardShouldPersistTaps="always">
         <Grid>
           <Row>
-            <Col width={isDriver ? 40 : 100}>
+            <Col width={isPartner ? 40 : 100}>
               <Row>
                 <Col>
                   <Item stackedLabel>
@@ -75,7 +75,7 @@ class UserDetails  extends Component{
                 </Col>
               </Row>
             </Col>
-            {isDriver ? <Col width={60}><Row >
+            {isPartner ? <Col width={60}><Row >
               <Col >
                 {user.imageData != undefined ? <Row style={{justifyContent: 'center'}} onPress={this.showPicker}>
                   <Image source={{uri: `data:image/jpeg;base64,${user.imageData}`}} resizeMode='contain' style={styles.image}/>
@@ -101,11 +101,11 @@ class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
-          {isDriver ? <Row>
+          {isPartner ? <Row>
             <Col>
               <Item stackedLabel>
                 <Label>DOB</Label>
-                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={true} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={drivervalidationSchema.dob} maxLength={30}/>
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={true} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={partnervalidationSchema.dob} maxLength={30}/>
                 <DatePicker isVisible={dobIsDatePickerVisible} cannedDateOptions={[]} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeDob(date)} {...datePickerOptions} />
               </Item>
             </Col>
@@ -128,7 +128,7 @@ class UserDetails  extends Component{
           </Row>
         </Grid>
       </Content>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isDriver ? drivervalidationSchema : validationSchema)} model={user}>
+      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>
@@ -186,7 +186,7 @@ const validationSchema = {
   contactNo: yup.string().required().max(35),
 };
 
-const drivervalidationSchema = {
+const partnervalidationSchema = {
   ...validationSchema,
   // CANT ADD IMAGE IN IOS simulator. Should this be mandatory ???? imageData: yup.string().required(),
   dob: yup.date().required()

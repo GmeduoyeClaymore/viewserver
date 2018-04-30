@@ -9,10 +9,10 @@ import ProtoLoader from './viewserver-client/core/ProtoLoader';
 import LandingCommon from './LandingCommon';
 import RegistrationCommon from './RegistrationCommon';
 import CustomerRegistration from './customer/registration/CustomerRegistration';
-import DriverRegistration from './driver/registration/DriverRegistration';
+import PartnerRegistration from './partner/registration/PartnerRegistration';
 import TermsAndConditions from 'common/registration/TermsAndConditions';
 import CustomerLanding from './customer/CustomerLanding';
-import DriverLanding from './driver/DriverLanding';
+import PartnerLanding from './partner/PartnerLanding';
 import getTheme from './native-base-theme/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
@@ -32,8 +32,8 @@ class App extends React.Component {
   constructor() {
     super();
     registerTokenListener();
-    this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.5:6060/');
+    //this.client = new Client('ws://shotgun.ltd:6060/');
+    this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
   }
@@ -74,9 +74,9 @@ class App extends React.Component {
           <Route path="Root" exact component={LandingCommon}/>
           <Route path="LandingCommon" exact component={LandingCommon}/>
           <Route path="Customer/Registration" component={CustomerRegistration}/>
-          <Route path="Driver/Registration" component={DriverRegistration}/>
+          <Route path="Partner/Registration" component={PartnerRegistration}/>
           <Route path="Customer/Landing" component={CustomerLanding}/>
-          <Route path="Driver/Landing" component={DriverLanding}/>
+          <Route path="Partner/Landing" component={PartnerLanding}/>
           <Route path="TermsAndConditions" component={TermsAndConditions}/>
         </ReduxRouter>
       </StyleProvider>

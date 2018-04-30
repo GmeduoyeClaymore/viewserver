@@ -14,6 +14,7 @@ export default class ProtoLoader{
     static async loadAll(){
       const root = ProtoBuf.Root.fromJSON(require('./proto/bundle.json'));
       ProtoLoader._dto.OptionsDto = root.lookupType('OptionsDto');
+      ProtoLoader._dto.DataType = root.DataType;
       ProtoLoader._dto.CommandDto = root.lookupType('CommandDto');
       ProtoLoader._dto.MessageDto = root.lookupType('MessageDto');
       ProtoLoader._dto.RowEventDto = root.lookupType('RowEventDto');

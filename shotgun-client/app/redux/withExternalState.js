@@ -95,7 +95,6 @@ const wrapperFactory = (Component, {
   mapGlobalStateToProps,
   mapGlobalStateToPropsFactory
 }) => {
-  Logger.info('WEXT - Creating ' + Component.name);
   let hasInitialized = false;
 
   const changeSetStateImplementationAndReturnNewProps = props => {
@@ -111,8 +110,6 @@ const wrapperFactory = (Component, {
     constructor(props){
       super(props);
       this.stateSpecificProps = changeSetStateImplementationAndReturnNewProps(this.props);
-      Logger.info('WEXTXX - Instantiating ' + Component.name);
-
       const {propsFromStateToPassIntoComponent} = this.props;
       const {stateKey} = this.stateSpecificProps;
 

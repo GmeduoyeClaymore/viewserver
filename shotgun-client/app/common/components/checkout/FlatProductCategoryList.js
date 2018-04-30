@@ -9,14 +9,6 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
 
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('PageTitle', 'Select Category').
-    personell('Select Worker').
-    rubbish('Commercial or domestic waste?');
-/*eslint-enable */
-
 class FlatProductCategoryList extends Component{
   constructor(props){
     super(props);
@@ -114,6 +106,14 @@ FlatProductCategoryList.propTypes = {
 const validationSchema = {
   categoryId: yup.string().required(),
 };
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('PageTitle', 'Select Category').
+    personell('Select Worker').
+    rubbish('Commercial or domestic waste?');
+/*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
   const {selectedContentType, selectedCategory} = initialProps;

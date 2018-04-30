@@ -28,7 +28,7 @@ class UpdateUserDetails extends Component{
   render() {
     const {unsavedUser, busy, errors, history} = this.props;
     unsavedUser.imageUrl = unsavedUser.imageData !== undefined ? `data:image/jpeg;base64,${unsavedUser.imageData}` : unsavedUser.imageUrl;
-    const isDriver = unsavedUser.type == 'driver';
+    const isPartner = unsavedUser.type == 'partner';
 
     return <Container>
       <Header withButton>
@@ -42,7 +42,7 @@ class UpdateUserDetails extends Component{
       <Content keyboardShouldPersistTaps="always">
         <Grid>
           <Row>
-            <Col width={isDriver ? 40 : 100}>
+            <Col width={isPartner ? 40 : 100}>
               <Row>
                 <Col>
                   <Item stackedLabel>
@@ -66,7 +66,7 @@ class UpdateUserDetails extends Component{
                 </Col>
               </Row>
             </Col>
-            {isDriver ? <Col width={60}><Row>
+            {isPartner ? <Col width={60}><Row>
               <Col >
                 {unsavedUser.imageUrl != undefined ? <Row style={{justifyContent: 'center'}} onPress={this.showPicker}>
                   <Image source={{uri: unsavedUser.imageUrl}} resizeMode='contain' style={styles.image}/>
@@ -138,8 +138,8 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     unsavedUser,
-    errors: getOperationErrors(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}]),
-    busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {driverDao: 'updateDriver'}])
+    errors: getOperationErrors(state, [{customerDao: 'updateCustomer'}, {partnerDao: 'updatePartner'}]),
+    busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {partnerDao: 'updatePartner'}])
   };
 };
 

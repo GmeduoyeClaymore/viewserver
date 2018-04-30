@@ -103,16 +103,11 @@ class ReduxRouterClass extends Component{
   }
 
   render() {
-    Logger.info(`${this.props.name} - rendering`);
     const {width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground} = this.props;
     const height = this.getHeight();
 
     const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
-    if (routesToRender.length){
-      Logger.info(`${this.props.name} - visible routes are - ${JSON.stringify(routesToRender)}`);
-    }
-
     const result =  <Container>
       {routesToRender.length ? routesToRender.map(
         (rt) => {

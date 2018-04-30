@@ -55,16 +55,16 @@ export const cancelOrder = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'cancelOrder', {orderId}, continueWith);
 };
 
-export const rejectDriver = (orderId, continueWith) => {
-  return invokeDaoCommand('customerDao', 'rejectDriver', {orderId}, continueWith);
+export const rejectPartner = (orderId, continueWith) => {
+  return invokeDaoCommand('customerDao', 'rejectPartner', {orderId}, continueWith);
 };
 
 export const customerCompleteOrder = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'customerCompleteOrder', {orderId}, continueWith);
 };
 
-export const callDriver = (orderId, continueWith) => {
-  return invokeDaoCommand('customerDao', 'callDriver', {orderId}, continueWith);
+export const callPartner = (orderId, continueWith) => {
+  return invokeDaoCommand('customerDao', 'callPartner', {orderId}, continueWith);
 };
 
 export const deletePaymentCard = (cardId, continueWith) => {
@@ -75,6 +75,6 @@ export const addPaymentCard = (paymentCard, continueWith) => {
   return invokeDaoCommand('paymentDao', 'addPaymentCard', {paymentCard}, continueWith);
 };
 
-export const rateDriver = (orderId, rating, continueWith) => {
-  return invokeDaoCommand('customerDao', 'rateDriver', {orderId, rating}, continueWith);
+export const ratePartner = (orderId, rating, continueWith) => {
+  return invokeDaoCommand('customerDao', 'ratePartner', {orderId, rating}, continueWith);
 };

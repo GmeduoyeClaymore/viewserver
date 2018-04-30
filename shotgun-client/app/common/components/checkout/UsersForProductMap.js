@@ -62,7 +62,7 @@ class UsersForProductMap extends Component{
   assignDeliveryToUser(user){
     const {delivery: oldDelivery, next, history}  = this.props;
     const delivery = {...oldDelivery};
-    delivery.driverId = user.userId;
+    delivery.partnerId = user.userId;
     this.setState({delivery, deliveryUser: user}, () => history.push(next));
   }
 

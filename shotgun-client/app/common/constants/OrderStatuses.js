@@ -5,7 +5,7 @@ export const OrderStatuses = {
   ACCEPTED: 'ACCEPTED',
   INPROGRESS: 'INPROGRESS',
   COMPLETED: 'COMPLETED',
-  COMPLETEDBYDRIVER: 'COMPLETEDBYDRIVER',
+  COMPLETEDBYPARTNER: 'COMPLETEDBYPARTNER',
   COMPLETEDBYCUSTOMER: 'COMPLETEDBYCUSTOMER',
   CANCELLED: 'CANCELLED'
 };
@@ -13,9 +13,9 @@ export const OrderStatuses = {
 export const getDeliveryFriendlyOrderStatusName = (summary) => {
   switch (summary.status){
   case OrderStatuses.PLACED:
-    return 'Awaiting Driver';
+    return 'Awaiting Partner';
   case OrderStatuses.ACCEPTED:
-    return 'Driver assigned';
+    return 'Partner assigned';
   case OrderStatuses.INPROGRESS:
     return 'On it\'s ways';
   case OrderStatuses.COMPLETED:
@@ -30,9 +30,9 @@ export const getDeliveryFriendlyOrderStatusName = (summary) => {
 export const getRubbishFriendlyOrderStatusName = (summary) => {
   switch (summary.status){
   case OrderStatuses.PLACED:
-    return 'Awaiting Driver';
+    return 'Awaiting Partner';
   case OrderStatuses.ACCEPTED:
-    return 'Driver assigned';
+    return 'Partner assigned';
   case OrderStatuses.INPROGRESS:
     return 'On it\'s ways';
   case OrderStatuses.COMPLETED:
@@ -86,7 +86,7 @@ export const getPossibleStatuses = ({
     if (iAmTheCustomer){
       return doubleComplete ? [OrderStatuses.COMPLETEDBYCUSTOMER] : [];
     }
-    return [doubleComplete ? OrderStatuses.COMPLETEDBYDRIVER : OrderStatuses.COMPLETED];
+    return [doubleComplete ? OrderStatuses.COMPLETEDBYPARTNER : OrderStatuses.COMPLETED];
   }
 
   if (orderSummaryStatus == OrderStatuses.COMPLETEDBYCUSTOMER){
@@ -96,7 +96,7 @@ export const getPossibleStatuses = ({
     return doubleComplete ? [OrderStatuses.COMPLETED] : [];
   }
 
-  if (orderSummaryStatus == OrderStatuses.COMPLETEDBYDRIVER){
+  if (orderSummaryStatus == OrderStatuses.COMPLETEDBYPARTNER){
     if (iAmTheCustomer){
       return doubleComplete ? [OrderStatuses.COMPLETED] : [];
     }

@@ -26,7 +26,6 @@ message RowEventDto {
     required RowEventType eventType = 1;
     optional uint32 rowId = 2;
 
-
     message ColumnValue {
         required uint32 columnId = 1;
         oneof value {
@@ -38,8 +37,9 @@ message RowEventDto {
         string stringValue = 7;
         bytes blobValue = 8;
         sint32 nullValue = 9;
+        }
     }
-}
-repeated ColumnValue values = 3;
+
+    repeated ColumnValue values = 3;
     optional string tableKey = 4;
 }

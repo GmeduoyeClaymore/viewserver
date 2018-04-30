@@ -38,6 +38,7 @@ export default class Dao {
 
   handleConnectionStatus({isLoggedIn, isConnected}){
     if ((this.daoContext.canSubscribeWithoutLogin || isLoggedIn) && isConnected && this.subscribed){
+      this.forceNexUpdate = true;
       Logger.info('Handling reconnection logic - ' + this.name);
       this.updateSubscription(this.options, true);
     }

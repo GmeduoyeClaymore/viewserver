@@ -6,7 +6,7 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderStatusButtons from './OrderStatusButtons';
 import OrderPriceControl from './OrderPriceControl';
-import DriverDetails from './DriverDetails';
+import PartnerDetails from './PartnerDetails';
 import MapDetails from './MapDetails';
 import invariant from 'invariant';
 
@@ -56,7 +56,7 @@ class CustomerOrderDetail extends Component{
         <OrderStatusButtons {...this.props}/>
         <OrderPriceControl {...this.props}/>
         <MapDetails {...this.props}/>
-        <DriverDetails  {...this.props}/>
+        <PartnerDetails  {...this.props}/>
         <RatingSummary  {...this.props}/>
         <OrderSummary   {...this.props}/>
       </Content>
@@ -76,13 +76,13 @@ const mapStateToProps = (state, initialProps) => {
   orderSummary = orderSummary || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
   
   const {delivery = {}, contentType, orderItem} = (orderSummary || {});
-  const driverPosition = {latitude: delivery.driverLatitude, longitude: delivery.driverLongitude};
+  const partnerPosition = {latitude: delivery.partnerLatitude, longitude: delivery.partnerLongitude};
   const {origin = {}, destination = {}} = delivery;
-  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}])
+  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}])
   const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,
-    driverPosition,
+    partnerPosition,
     delivery,
     contentType,
     destination,
@@ -92,7 +92,7 @@ const mapStateToProps = (state, initialProps) => {
     isPendingOrderSummarySubscription,
     me: getDaoState(state, ['user'], 'userDao'),
     errors,
-    busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectDriver'}, {customerDao: 'updateOrderPrice'}]),
+    busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}]),
     busy: isPendingOrderSummarySubscription|| orderSummary == undefined,
     orderSummary
   };

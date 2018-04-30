@@ -214,7 +214,7 @@ class RelatedUserComponent extends Component{
           daoName='orderSummaryDao'
           dataPath={['orders']}
           elementContainerStyle={{borderWidth: 0.5, borderColor: '#edeaea', padding: 5}}
-          options={{driverId: user.userId, reportId: 'driverOrderSummary', isCompleted: true}}
+          options={{partnerId: user.userId, reportId: 'partnerOrderSummary', isCompleted: true}}
           rowView={JobSummary   }
           paginationWaitingView={Paging}
           emptyView={NoItems}

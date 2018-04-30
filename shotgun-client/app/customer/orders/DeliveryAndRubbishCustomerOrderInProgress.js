@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import DriverDetails from './DriverDetails';
+import PartnerDetails from './PartnerDetails';
 import VehicleDetails from './VehicleDetails';
 import CallButtons from './CallButtons';
 
@@ -18,7 +18,7 @@ export default class DeliveryAndRubbishCustomerOrderInProgress extends Component
           <Icon name='back-arrow'/>
         </Button>
       </Row>
-      <DriverDetails  {...this.props}/>
+      <PartnerDetails  {...this.props}/>
       <VehicleDetails {...this.props}/>
       <CallButtons    {...this.props}/>
     </Grid>;

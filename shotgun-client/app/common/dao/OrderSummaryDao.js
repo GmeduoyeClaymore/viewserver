@@ -11,10 +11,10 @@ export default class OrderSummaryDao{
     filterMode: 2,
   };
 
-  static DRIVER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
+  static PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
     columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
-    reportId: 'driverOrderSummary',
-    driverId: '@userId',
+    reportId: 'partnerOrderSummary',
+    partnerId: '@userId',
     userId: undefined
   };
 
@@ -22,7 +22,7 @@ export default class OrderSummaryDao{
     columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
     reportId: 'customerOrderSummary',
     userId: '@userId',
-    driverId: undefined
+    partnerId: undefined
   };
 
   constructor(client, options = {}, name = 'orderSummaryDao') {
@@ -40,7 +40,7 @@ export default class OrderSummaryDao{
     return  this._name;
   }
 
-  getReportContext({orderId, isCompleted, reportId, driverId, selectedProducts, userId}){
+  getReportContext({orderId, isCompleted, reportId, partnerId, selectedProducts, userId}){
     const reportContext =  {
       reportId,
       dimensions: {},
@@ -58,8 +58,8 @@ export default class OrderSummaryDao{
     if (userId != undefined){
       reportContext.dimensions.dimension_customerUserId = [userId];
     }
-    if (driverId !== undefined){
-      reportContext.dimensions.dimension_driverId = driverId;
+    if (partnerId !== undefined){
+      reportContext.dimensions.dimension_partnerId = partnerId;
     }
 
     if (selectedProducts !== undefined){
@@ -87,7 +87,7 @@ export default class OrderSummaryDao{
       rank: orderSummary.rank,
       totalPrice: orderSummary.totalPrice,
       customerRating: orderSummary.customerRating,
-      driverRating: orderSummary.driverRating,
+      partnerRating: orderSummary.partnerRating,
       quantity: orderSummary.quantity,
       orderItem: {
         productId: orderSummary.productId,
@@ -119,12 +119,12 @@ export default class OrderSummaryDao{
         customerRatingAvg: orderSummary.customerRatingAvg != undefined ? orderSummary.customerRatingAvg : 0,
         customerFirstName: orderSummary.customerFirstName,
         customerLastName: orderSummary.customerLastName,
-        driverRatingAvg: orderSummary.driverRatingAvg != undefined ? orderSummary.driverRatingAvg : 0,
-        driverFirstName: orderSummary.driverFirstName,
-        driverLastName: orderSummary.driverLastName,
-        driverImageUrl: orderSummary.driverImageUrl,
-        driverLatitude: orderSummary.driverLatitude,
-        driverLongitude: orderSummary.driverLongitude,
+        partnerRatingAvg: orderSummary.partnerRatingAvg != undefined ? orderSummary.partnerRatingAvg : 0,
+        partnerFirstName: orderSummary.partnerFirstName,
+        partnerLastName: orderSummary.partnerLastName,
+        partnerImageUrl: orderSummary.partnerImageUrl,
+        partnerLatitude: orderSummary.partnerLatitude,
+        partnerLongitude: orderSummary.partnerLongitude,
         registrationNumber: orderSummary.registrationNumber,
         vehicleColour: orderSummary.vehicleColour,
         vehicleMake: orderSummary.vehicleMake,
@@ -153,17 +153,17 @@ export default class OrderSummaryDao{
     };
   }
 
-  createSubscriptionStrategy({driverId, isCompleted, reportId, orderId, userId, selectedProducts}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({driverId, userId, reportId, isCompleted, orderId, selectedProducts}), dataSink);
+  createSubscriptionStrategy({partnerId, isCompleted, reportId, orderId, userId, selectedProducts}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({partnerId, userId, reportId, isCompleted, orderId, selectedProducts}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['orderId', 'isCompleted', 'reportId', 'driverId', 'selectedProducts']);
+    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['orderId', 'isCompleted', 'reportId', 'partnerId', 'selectedProducts']);
   }
 
   transformOptions(options){
-    if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'driverOrderSummary')){
-      throw new Error('reportId should be defined and be either customerOrderSummary or driverOrderSummary');
+    if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'partnerOrderSummary')){
+      throw new Error('reportId should be defined and be either customerOrderSummary or partnerOrderSummary');
     }
 
     return options;

@@ -21,7 +21,7 @@ export default class LoginDao{
     this.initMessaging = this.initMessaging.bind(this);
     this.loginByUserId = this.loginByUserId.bind(this);
     this.loginUserByUsernameAndPassword = this.loginUserByUsernameAndPassword.bind(this);
-    this.registerAndLoginDriver = this.registerAndLoginDriver.bind(this);
+    this.registerAndLoginPartner = this.registerAndLoginPartner.bind(this);
     this.registerAndLoginCustomer = this.registerAndLoginCustomer.bind(this);
     this.connectClientIfNotConnected = this.connectClientIfNotConnected.bind(this);
     this.doLoginStuff = this.doLoginStuff.bind(this);
@@ -68,12 +68,12 @@ export default class LoginDao{
     return userId;
   }
 
-  async registerAndLoginDriver({driver, vehicle, address, bankAccount}){
-    Logger.info(`Registering driver ${driver.email}`);
-    const driverId = await this.client.invokeJSONCommand('driverController', 'registerDriver', {user: driver, vehicle, bankAccount, address});
-    Logger.info(`Driver ${driverId} registered`);
-    await this.loginByUserId(driverId);
-    return driverId;
+  async registerAndLoginPartner({partner, vehicle, address, bankAccount}){
+    Logger.info(`Registering partner ${partner.email}`);
+    const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: partner, vehicle, bankAccount, address});
+    Logger.info(`Partner ${partnerId} registered`);
+    await this.loginByUserId(partnerId);
+    return partnerId;
   }
 
   async registerAndLoginCustomer({customer, deliveryAddress, paymentCard}){

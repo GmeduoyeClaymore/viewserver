@@ -9,12 +9,12 @@ export default class CustomerDao{
     this.name = 'customerDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
-    this.rejectDriver = this.rejectDriver.bind(this);
+    this.rejectPartner = this.rejectPartner.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
     this.checkout = this.checkout.bind(this);
-    this.rateDriver = this.rateDriver.bind(this);
-    this.callDriver = this.callDriver.bind(this);
+    this.ratePartner = this.ratePartner.bind(this);
+    this.callPartner = this.callPartner.bind(this);
     this.updateOrderPrice = this.updateOrderPrice.bind(this);
   }
 
@@ -33,17 +33,17 @@ export default class CustomerDao{
     await this.client.invokeJSONCommand('customerController', 'cancelOrder', orderId);
   }
 
-  async rejectDriver({orderId}){
-    await this.client.invokeJSONCommand('customerController', 'rejectDriver', orderId);
+  async rejectPartner({orderId}){
+    await this.client.invokeJSONCommand('customerController', 'rejectPartner', orderId);
   }
 
   async customerCompleteOrder({orderId}){
     await this.client.invokeJSONCommand('customerController', 'customerCompleteOrder', orderId);
   }
 
-  async callDriver({orderId}){
-    const driverPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getDriverVirtualNumber', orderId);
-    PhoneCallService.call(driverPhoneNumber);
+  async callPartner({orderId}){
+    const partnerPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getPartnerVirtualNumber', orderId);
+    PhoneCallService.call(partnerPhoneNumber);
   }
  
   async checkout({orderItem, payment, product, delivery}){
@@ -51,8 +51,8 @@ export default class CustomerDao{
     return orderId;
   }
 
-  async rateDriver({orderId, rating}){
-    await this.client.invokeJSONCommand('orderController', 'addDriverRating', {orderId,  rating});
+  async ratePartner({orderId, rating}){
+    await this.client.invokeJSONCommand('orderController', 'addPartnerRating', {orderId,  rating});
   }
 }
 

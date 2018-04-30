@@ -22,7 +22,7 @@ export default class PersonellCustomerOrderInProgress extends Component{
     const {goToTabNamed} = this;
     const page = history.location.pathname.endsWith('Directions')  ? 1 : 0;
     return <Grid>
-      <DriverDetails {...this.props}/>
+      <PartnerDetails {...this.props}/>
       <CallButtons {...this.props}/>
       <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
         <Tab heading="Photos" onPress={() => goToTabNamed('OrderPhotoUpload')}/>
