@@ -1,0 +1,121 @@
+import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
+import RxDataSink from 'common/dataSinks/RxDataSink';
+import {hasAnyOptionChanged} from 'common/dao';
+
+export default class OrderRequestDaoContext{
+  static DEFAULT_POSITION = {
+    latitude: 0,
+    longitude: 0
+  };
+  static OPTIONS = {
+    offset: 0,
+    limit: 10,
+    filterMode: 2,
+    maxDistance: 0,
+    showOutOfRange: true,
+    position: OrderRequestDaoContext.DEFAULT_POSITION
+  };
+
+  static PARTNER_ORDER_REQUEST_DEFAULT_OPTIONS = {
+    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }]
+  };
+
+  constructor(client, options = {}) {
+    this.client = client;
+    this.options = {...OrderRequestDaoContext.OPTIONS, ...options};
+    this.subscribeOnCreate = false;
+  }
+
+  get defaultOptions(){
+    return this.options;
+  }
+
+  get name(){
+    return 'orderRequestDao';
+  }
+
+  isImplicitylChecked(categoryObj, selectedProductCategories) {
+    return !!selectedProductCategories.find(c=> this.isDescendendantOf(categoryObj, c));
+  }
+
+  isDescendendantOf(parent, child){
+    const {path: childPath = ''} = child;
+    const {path: parentPath = ''} = parent;
+    return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
+  }
+
+  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
+    if (typeof contentType === 'undefined') {
+      return {};
+    }
+    const {latitude: partnerLatitude, longitude: partnerLongitude} = position;
+    const {selectedProductIds} = contentTypeOptions;
+    const baseReportContext =  {
+      reportId: 'orderRequest',
+      dimensions: {
+        dimension_contentTypeId: [contentType.contentTypeId]
+      },
+      excludedFilters: {
+        dimension_customerUserId: '@userId'
+      },
+      parameters: {
+        partnerLatitude,
+        partnerLongitude,
+        maxDistance,
+        showUnrelated,
+        showOutOfRange
+      }
+    };
+  
+    if (selectedProductIds){
+      baseReportContext.dimensions.dimension_productId = selectedProductIds;
+    }
+
+    return baseReportContext;
+  }
+
+  createDataSink(){
+    return new RxDataSink();
+  }
+
+  mapDomainEvent(dataSink){
+    return {
+      orders: dataSink.orderedRows.map(r => this.mapOrderRequest(r)),
+    };
+  }
+
+  mapOrderRequest(orderRequest){
+    return orderRequest;
+  }
+
+  createSubscriptionStrategy(options, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(options), dataSink);
+  }
+
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return hasAnyOptionChanged(previousOptions, newOptions, ['contentType', 'location', 'maxDistance', 'showUnrelated', 'showOutOfRange']);
+  }
+
+  transformOptions(options){
+    if (typeof options.contentType === 'undefined'){
+      throw new Error('contentTypeId should be defined');
+    }
+    options.filterExpression = this.generateFilterExpression(options);
+    return options;
+  }
+
+  generateFilterExpression(opts){
+    const {contentTypeOptions = {}, contentType = {}} = opts;
+    const {selectedProductCategories = []} = contentTypeOptions;
+    if (!selectedProductCategories.length){
+      return undefined;
+    }
+    const expressionArray = [...selectedProductCategories.filter(cat => !this.isImplicitylChecked(cat, selectedProductCategories)).map(this.toFilterExpression)];
+    expressionArray.push(`contentTypeRootProductCategory == "${contentType.rootProductCategory}"`);
+    return expressionArray.join(' || ');
+  }
+
+  toFilterExpression({path}){
+    return `path like "${path}*"`;
+  }
+}

@@ -147,13 +147,13 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
 
     protected Object getLookup(String dimensionNamespace, String dimensionName) {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
+        LookupKey key2 = getLookupKey("global", dimensionName);
         Object lookup = lookups.get(key);
         if (lookup == null) {
-            key = getLookupKey("global", dimensionName);
-            lookup = lookups.get(key);
+            lookup = lookups.get(key2);
         }
         if (lookup == null) {
-            throw new IllegalArgumentException("There is no dimension registered as " + key);
+            throw new IllegalArgumentException("There is no dimension registered as " + key + " or " + key2);
         }
         return lookup;
     }
