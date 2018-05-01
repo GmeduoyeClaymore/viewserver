@@ -1,6 +1,8 @@
 import React from 'react';
 import {Text, Button, Container, Grid, Col, Row} from 'native-base';
+import {Image} from 'react-native';
 import {Icon} from 'common/components';
+import {AppImages} from 'common/assets/img/Images';
 
 export default DriverRegistrationLanding = ({history}) => {
   return <Container padded>
@@ -10,7 +12,7 @@ export default DriverRegistrationLanding = ({history}) => {
     <Grid>
       <Row size={50}>
         <Col>
-          <Text>Big Image Here</Text>
+          <Image source={AppImages.launch} style={styles.image}/>
         </Col>
       </Row>
       <Row size={50}>
@@ -26,6 +28,10 @@ export default DriverRegistrationLanding = ({history}) => {
 const styles = {
   signInButton: {
     marginBottom: 15
+  },
+  image: {
+    resizeMode: 'contain',
+    width: '100%'
   },
   backButton: {
     position: 'absolute',

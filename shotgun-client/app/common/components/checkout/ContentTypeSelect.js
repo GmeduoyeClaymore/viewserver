@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
+import {Image} from 'react-native';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
 import {INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import {getDaoState} from 'common/dao';
+import {ContentTypeImages} from 'common/assets/img/Images';
 
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){
@@ -41,7 +43,7 @@ class ContentTypeSelect extends Component{
               {contentTypes.map((v, i) => {
                 return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
                   <Button style={{height: 'auto'}} large active={selectedContentType.contentTypeId == v.contentTypeId} onPress={() => this.selectContentType(v)}>
-                    <Icon name={v.imageUrl || 'dashed'}/>
+                    <Image source={ContentTypeImages[v.contentTypeId]} style={styles.image}/>
                   </Button>
                   <Text style={styles.contentTypeSelectText}>{v.name}</Text>
                 </View>;
@@ -67,6 +69,11 @@ const validationSchema = {
 const styles = {
   title: {
     marginTop: 25
+  },
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
   },
   subTitle: {
     marginTop: 10,

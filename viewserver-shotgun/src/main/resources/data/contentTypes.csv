@@ -1,4 +1,4 @@
 contentTypeId,name,hasOrigin,hasDestination,hasStartTime,hasEndTime,rootProductCategory,pricingStrategy,description
-1,Delivery,TRUE,TRUE,TRUE,FALSE,1Vans,JOURNEY_DISTANCE,Schedule deliveries in an instant
-2,Rubbish Collection,TRUE,FALSE,TRUE,FALSE,1Rubbish,FIXED,Get rid of site rubbish now. Track that driver !!
-5,Trades People,TRUE,FALSE,TRUE,TRUE,1Workers,JOB_DURATION,Need a plumber? Ground worker? Labourer? Electrician? Get one now ... and yes track his progress !!
+1,Delivery,TRUE,TRUE,TRUE,FALSE,1Vans,JOURNEY_DISTANCE,Schedule deliveries in an instant and track the drivers' progress
+2,Rubbish Collection,TRUE,FALSE,TRUE,FALSE,1Rubbish,FIXED,Get rid of commercial or domestic rubbish now.
+5,Trades People,TRUE,FALSE,TRUE,TRUE,1Workers,JOB_DURATION,"Need a plumber, ground worker, labourer, electrician? Get one now."

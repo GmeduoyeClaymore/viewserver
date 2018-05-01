@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {View, TouchableHighlight, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
@@ -7,28 +6,23 @@ import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDa
 import {withExternalState, Redirect} from 'custom-redux';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
-import {resolveProductCategoryIcon} from 'common/assets';
+
+import {CategoryImages} from 'common/assets/img/Images';
 
 class ProductCategoryList extends Component{
-  constructor(props){
-    super(props);
-    this.navigateToCategory = this.navigateToCategory.bind(this);
-    this.rowView = this.rowView.bind(this);
-  }
-
-  rowView({item: row}){
+  rowView = ({item: row}) => {
     const {categoryId, category} = row;
  
     return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory(row)} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'row', flex: 1, padding: 0}}>
-        <Image resizeMode="contain" source={resolveProductCategoryIcon(row.categoryId)}  style={styles.picture}/>
+        <Image source={CategoryImages[row.categoryId]} style={styles.image}/>
         <Text>{`${category}`}</Text>
       </View>
     </TouchableHighlight>;
   }
 
 
-  navigateToCategory(category){
+  navigateToCategory = (category) => {
     const {history, match} = this.props;
     if (category.isLeaf) {
       history.push(`${match.path}/ProductList`, {category});
@@ -37,7 +31,7 @@ class ProductCategoryList extends Component{
     }
   }
 
-  goToCategory(selectedCategory){
+  goToCategory = (selectedCategory) => {
     const {selectedCategory: parentSelectedCategory} = this.props;
     this.setState({selectedCategory, parentSelectedCategory});
   }
@@ -89,6 +83,18 @@ const validationSchema = {
   productId: yup.string().required(),
 };
 
+const styles = {
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
+  },
+  pagingListView: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 10
+  }
+};
+
 const mapStateToProps = (state, initialProps) => {
   const {selectedContentType, selectedProduct, selectedCategory} = initialProps;
   const {productCategory: rootProductCategory} = selectedContentType;
@@ -113,26 +119,6 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-
-ProductCategoryList.propTypes = {
-  product: PropTypes.object,
-  dispatch: PropTypes.func,
-  screenProps: PropTypes.object,
-  navigation: PropTypes.object
-};
-
-const styles = {
-  pagingListView: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 10
-  },
-  picture: {
-    height: 50,
-    width: 50
-  }
-};
-
 const ConnectedProductCategoryList =  withExternalState(mapStateToProps)(ProductCategoryList);
-
 export default ConnectedProductCategoryList;
 
