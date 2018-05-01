@@ -22,26 +22,6 @@ Feature: Rubbish order scenarios
 	  | Name                     | Type   | Value           |
 	  | dimension_status         | String | ACCEPTED,PLACED |
 	  | dimension_customerUserId | String | @userId         |
-	Then "client1" the following schema is received eventually on report "customerOrderSummary"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | internalOrderStatus   | String      |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                             | orderDetails                        | orderContentTypeId | orderLocation                               | status |
 	  | RowAdd  |               | {client1_rubbishOrderController_createOrder_result} | ref://json/orders/rubbishOrder.json | 2                  | ref://json/orders/rubbishOrderLocation.json | PLACED |
@@ -55,25 +35,6 @@ Feature: Rubbish order scenarios
 	  | showUnrelated            | String  | true    |          |
 	  | maxDistance              | Integer | 0       |          |
 	  | partnerLongitude         | Integer | 0       |          |
-	Then "client1" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received terminally on report "orderRequest"
 	  | ~Action | partner_email | orderId |
 
@@ -91,25 +52,7 @@ Feature: Rubbish order scenarios
 	  | showUnrelated           | String  | true   |
 	  | maxDistance             | Integer | 0      |
 	  | partnerLongitude        | Integer | 0      |
-	Then "client2" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
+
 	Then "client2" the following data is received eventually on report "orderRequest"
 	  | ~Action | orderId                                             | orderDetails                        | orderLocation                               | status |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | ref://json/orders/rubbishOrder.json | ref://json/orders/rubbishOrderLocation.json | PLACED |
@@ -123,7 +66,7 @@ Feature: Rubbish order scenarios
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
 	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                |
+	  | price         | 105                                                 |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |

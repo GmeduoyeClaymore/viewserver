@@ -55,25 +55,6 @@ Feature: Personell order scenarios
 	  | showUnrelated            | String  | true    |          |
 	  | maxDistance              | Integer | 0       |          |
 	  | partnerLongitude         | Integer | 0       |          |
-	Then "client1" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received terminally on report "orderRequest"
 	  | ~Action | partner_email | orderId |
 
@@ -91,25 +72,6 @@ Feature: Personell order scenarios
 	  | showUnrelated           | String  | true   |
 	  | maxDistance             | Integer | 0      |
 	  | partnerLongitude        | Integer | 0      |
-	Then "client2" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client2" the following data is received eventually on report "orderRequest"
 	  | ~Action | orderId                                               | orderDetails                          | orderLocation                                 | status |
 	  | RowAdd  | {client1_personellOrderController_createOrder_result} | ref://json/orders/personellOrder.json | ref://json/orders/personellOrderLocation.json | PLACED |

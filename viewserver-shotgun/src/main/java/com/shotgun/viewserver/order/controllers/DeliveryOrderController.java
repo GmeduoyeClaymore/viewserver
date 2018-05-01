@@ -47,7 +47,13 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
             order,
             paymentMethodId,
             (rec,ord) -> {
+                if(order.getDestination() == null){
+                    throw new RuntimeException("Delivery order should have destination");
+                }
                 deliveryAddressController.addOrUpdateDeliveryAddress(order.getDestination());
+                if(order.getOrigin() == null){
+                    throw new RuntimeException("Delivery order should have an origin");
+                }
                 deliveryAddressController.addOrUpdateDeliveryAddress(order.getOrigin());
                 order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
                 rec.addValue("orderLocation", order.getOrigin());

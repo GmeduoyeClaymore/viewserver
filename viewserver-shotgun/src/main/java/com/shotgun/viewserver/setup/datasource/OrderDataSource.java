@@ -74,18 +74,20 @@ public class OrderDataSource {
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderContentTypeId"))
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderDetails"))
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("totalPrice"))
+                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId","dimension_contentTypeId"))
+                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("product_name","productName"))
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("productCategory_path","path"))
                                 .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory","contentTypeRootProductCategory"))
                                 .withConnection("contentTypeJoin")
 
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId","productId", Cardinality.Byte, ContentType.String),
-                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String),
+                        new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_orderId","orderId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_assignedPartnerUserId","assignedPartnerUserId", Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int)
+                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String,true),
+                        new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int,true).withImported()
                 ))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

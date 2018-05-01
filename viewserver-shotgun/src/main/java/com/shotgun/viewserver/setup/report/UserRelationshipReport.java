@@ -124,7 +124,7 @@ public class UserRelationshipReport {
                     .withParameter("latitude", "Latitude Override", double[].class)
                     .withParameter("longitude", "Longitude Override", double[].class)
                     .withParameter("maxDistance", "Max Distance Override", double[].class)
-                    .withParameter("_userId", "User Id", String[].class)
+                    .withParameter("@userId", "User Id", String[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
                     .withDataSource(UserProductDataSource.NAME)
                     .withOutput("meFilter");

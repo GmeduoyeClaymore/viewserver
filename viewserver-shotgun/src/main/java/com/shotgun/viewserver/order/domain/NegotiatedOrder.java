@@ -33,7 +33,6 @@ public interface NegotiatedOrder  extends BasicOrder {
         this.set("responses",toArray(responses, NegotiationResponse[]::new));
         this.transitionTo(NegotiationOrderStatus.RESPONDED);
     }
-    Date getRequiredDate();
 
     default NegotiatedOrder transitionTo(NegotiationOrderStatus status){
         NegotiationOrderStatus propertyValue = TransitionUtils.transition(this.getNegotiatedResponseStatus(),status);

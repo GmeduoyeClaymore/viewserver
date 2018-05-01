@@ -52,6 +52,7 @@ public class OrderWithPartnerDataSource {
                                         new IProjectionConfig.ProjectionColumn("requiredDate"),
                                         new IProjectionConfig.ProjectionColumn("orderId"),
                                         new IProjectionConfig.ProjectionColumn("status"),
+                                        new IProjectionConfig.ProjectionColumn("productName"),
                                         new IProjectionConfig.ProjectionColumn("path"),
                                         new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                         new IProjectionConfig.ProjectionColumn("dimension_orderId"),
@@ -63,7 +64,7 @@ public class OrderWithPartnerDataSource {
                                 ).withConnection("ratingJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId", Cardinality.Byte, ContentType.String, true).withImported(),
+                        new Dimension("dimension_orderId", Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_customerUserId", Cardinality.Int, ContentType.String,true).withImported(),
                         new Dimension("dimension_assignedPartnerUserId", Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_status",Cardinality.Int, ContentType.String, true).withImported(),

@@ -21,6 +21,7 @@ public interface SourceOrderForLinkedDeliveries extends BasicOrder{
             throw new RuntimeException("Unable to create hire delivery order from an unsaved hire order");
         }
         result.set("sourceOrderId", orderId);
+        result.set("sourceOrderContentType", getOrderContentType());
         result.setOrderStatus(OrderStatus.PLACED);
         return result;
     }

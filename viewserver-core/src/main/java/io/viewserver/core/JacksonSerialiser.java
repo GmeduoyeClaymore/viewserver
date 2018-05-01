@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,9 @@ public class JacksonSerialiser implements IJsonSerialiser {
 
     @Override
     public String serialise(Object object) {
+        if(object != null && object.getClass().isAssignableFrom(DynamicJsonBackedObject.class)){
+            return ((DynamicJsonBackedObject)object).serialize();
+        }
         return serialise(object, false);
     }
 

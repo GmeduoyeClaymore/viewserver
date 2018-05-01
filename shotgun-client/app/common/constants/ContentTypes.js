@@ -56,8 +56,10 @@ export class ResourceDictionaryProperty{
 }
 
 export const resolveResourceFromProps = (props, resourceDictionary, caller) => {
-  const {selectedContentType, contentType, orderContentTypeId} = props;
-  if (orderContentTypeId){
+  const {selectedContentType, contentType, orderContentTypeId, order = {}} = props;
+  if (order.orderContentTypeId){
+    caller.resources = resourceDictionary.resolve(order.orderContentTypeId);
+  } else if (orderContentTypeId){
     caller.resources = resourceDictionary.resolve(orderContentTypeId);
   } else if (selectedContentType){
     caller.resources = resourceDictionary.resolve(selectedContentType.contentTypeId);

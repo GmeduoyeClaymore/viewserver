@@ -13,13 +13,7 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Item Details').
     personell(() => 'Job Description').
-    rubbish(() => 'Rubbish Details').
-  property('supportsFrom', true).
-  property('supportsTill', true).
-    rubbish(false).
-  property('supportsNoPeople', true).
-    rubbish(false).
-    hire(false);
+    rubbish(() => 'Rubbish Details')
 /*eslint-enable */
 
 
@@ -33,8 +27,8 @@ class OrderSummary extends Component{
 
   renderMap(){
     const { width } = Dimensions.get('window');
-    const {delivery = {}, client} = this.props;
-    const {origin, destination} = delivery;
+    const {order = {}, client} = this.props;
+    const {origin, destination} = order;
     const mapWidth = width - 50;
     const mapHeight = mapWidth / 2;
     return <ListItem style={styles.mapListItem}>
@@ -43,36 +37,32 @@ class OrderSummary extends Component{
   }
 
   renderItemDetails(){
-    const {orderItem} = this.props;
+    const {order} = this.props;
     const {resources} = this;
-    orderItem.imageUrl = orderItem.imageData !== undefined ? `data:image/jpeg;base64,${orderItem.imageData}` : orderItem.imageUrl;
     return <ListItem padded style={{borderBottomWidth: 0}}>
       <Grid>
         <Row><Text style={styles.itemDetailsTitle}>{resources.PageTitle()}</Text></Row>
-        <Row><Text>{orderItem.notes}</Text></Row>
-        {orderItem.imageUrl !== undefined && orderItem.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: orderItem.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
+        <Row><Text>{order.description}</Text></Row>
+        {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
       </Grid>
     </ListItem>;
   }
 
   render() {
-    const {resources} = this;
-    const {orderItem, delivery, contentType, product, deliveryUser} = this.props;
-    const {quantity: noPeople} = orderItem;
-    const {supportsFrom, supportsTill, supportsNoPeople} = resources;
+    const {order} = this.props;
+    const {partnerUser, orderProduct, noPeopleRequired, requiredDate} = order;
     
     return <List>
       {this.renderMap()}
       <ListItem padded>
-        <OriginDestinationSummary contentType={contentType} delivery={delivery}/>
+        <OriginDestinationSummary {...order}/>
       </ListItem>
-      {deliveryUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}`}</Text></ListItem> : null}
-      {supportsFrom ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.startTime).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {supportsTill ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(orderItem.endTime).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {supportsNoPeople && noPeople ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeople} ${noPeople > 1 ?   'people' : 'person'} required`}</Text></ListItem> : null}
-      {product ? <ListItem padded>
-        {product.imageUrl ? <Icon paddedIcon name={product.imageUrl}/> : null}
-        <Text>{`${product.name}`}</Text>
+      {partnerUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${partnerUser.firstName} ${partnerUser.lastName}`}</Text></ListItem> : null}
+      {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+      {noPeopleRequired ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeopleRequired} ${noPeopleRequired > 1 ?   'people' : 'person'} required`}</Text></ListItem> : null}
+      {orderProduct ? <ListItem padded>
+        {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
+        <Text>{`${orderProduct.name}`}</Text>
       </ListItem> : null}
       {this.renderItemDetails()}
     </List>;
@@ -104,7 +94,10 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
+  const {order} = initialProps;
+  const {orderContentType} = order;
   return {
+    orderContentType,
     ...initialProps
   };
 };

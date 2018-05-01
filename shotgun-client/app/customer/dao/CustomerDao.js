@@ -3,16 +3,14 @@ import Rx from 'rxjs/Rx';
 import PhoneCallService from 'common/services/PhoneCallService';
 
 export default class CustomerDao{
-  constructor(client, orderDao) {
+  constructor(client) {
     this.client = client;
-    this.orderDao = orderDao;
     this.name = 'customerDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
     this.rejectPartner = this.rejectPartner.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
     this.cancelOrder = this.cancelOrder.bind(this);
-    this.checkout = this.checkout.bind(this);
     this.ratePartner = this.ratePartner.bind(this);
     this.callPartner = this.callPartner.bind(this);
     this.updateOrderPrice = this.updateOrderPrice.bind(this);
@@ -44,11 +42,6 @@ export default class CustomerDao{
   async callPartner({orderId}){
     const partnerPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getPartnerVirtualNumber', orderId);
     PhoneCallService.call(partnerPhoneNumber);
-  }
- 
-  async checkout({orderItem, payment, product, delivery}){
-    const orderId = await this.orderDao.createOrder({paymentId: payment.paymentId, product, delivery, orderItems: [{quantity: 1, ...orderItem}]});
-    return orderId;
   }
 
   async ratePartner({orderId, rating}){

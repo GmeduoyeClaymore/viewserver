@@ -5,6 +5,8 @@ import com.shotgun.viewserver.delivery.ProductKey;
 import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
+import java.util.Date;
+
 public interface BasicOrder  extends DynamicJsonBackedObject {
 
     Integer getAmount();
@@ -27,6 +29,7 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
 
     void setOrderStatus(OrderStatus status);
 
+    Date getRequiredDate();
 
     default void transitionTo(OrderStatus status){
         this.setOrderStatus(this.getOrderStatus().transitionTo(status));

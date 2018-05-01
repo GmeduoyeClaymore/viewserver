@@ -12,14 +12,14 @@ export default class OrderSummaryDao{
   };
 
   static PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
     reportId: 'partnerOrderSummary',
     partnerId: '@userId',
     userId: undefined
   };
 
   static CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'startTime', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
     reportId: 'customerOrderSummary',
     userId: '@userId',
     partnerId: undefined
@@ -43,8 +43,10 @@ export default class OrderSummaryDao{
   getReportContext({orderId, isCompleted, reportId, partnerId, selectedProducts, userId}){
     const reportContext =  {
       reportId,
-      dimensions: {},
-      excludedFilters: {}
+      dimensions: {
+      },
+      excludedFilters: {
+      }
     };
 
     if (isCompleted !== undefined) {
@@ -80,77 +82,7 @@ export default class OrderSummaryDao{
   }
 
   mapOrderSummary(orderSummary){
-    return {
-      orderId: orderSummary.orderId,
-      status: orderSummary.status,
-      customerUserId: orderSummary.customerUserId,
-      rank: orderSummary.rank,
-      totalPrice: orderSummary.totalPrice,
-      customerRating: orderSummary.customerRating,
-      partnerRating: orderSummary.partnerRating,
-      quantity: orderSummary.quantity,
-      orderItem: {
-        productId: orderSummary.productId,
-        notes: orderSummary.notes,
-        imageUrl: orderSummary.imageUrl,
-        fixedPrice: orderSummary.fixedPrice == -1 ? undefined : orderSummary.fixedPrice,
-        startTime: orderSummary.startTime,
-        endTime: orderSummary.endTime
-      },
-      product: {
-        productId: orderSummary.productProductId,
-        name: orderSummary.productName,
-        imageUrl: orderSummary.productImageUrl
-      },
-      contentType: {
-        contentTypeId: orderSummary.contentTypeContentTypeId,
-        name: orderSummary.contentTypeName,
-        hasOrigin: orderSummary.contentTypeHasOrigin,
-        hasDestination: orderSummary.contentTypeHasDestination,
-        hasStartTime: orderSummary.contentTypeHasStartTime,
-        hasEndTime: orderSummary.contentTypeHasEndTime,
-        rootProductCategory: orderSummary.contentTypeRootProductCategory,
-        pricingStrategy: orderSummary.contentTypePricingStrategy
-      },
-      delivery: {
-        distance: orderSummary.distance,
-        duration: orderSummary.duration,
-        deliveryId: orderSummary.deliveryId,
-        customerRatingAvg: orderSummary.customerRatingAvg != undefined ? orderSummary.customerRatingAvg : 0,
-        customerFirstName: orderSummary.customerFirstName,
-        customerLastName: orderSummary.customerLastName,
-        partnerRatingAvg: orderSummary.partnerRatingAvg != undefined ? orderSummary.partnerRatingAvg : 0,
-        partnerFirstName: orderSummary.partnerFirstName,
-        partnerLastName: orderSummary.partnerLastName,
-        partnerImageUrl: orderSummary.partnerImageUrl,
-        partnerLatitude: orderSummary.partnerLatitude,
-        partnerLongitude: orderSummary.partnerLongitude,
-        registrationNumber: orderSummary.registrationNumber,
-        vehicleColour: orderSummary.vehicleColour,
-        vehicleMake: orderSummary.vehicleMake,
-        vehicleModel: orderSummary.vehicleModel,
-        origin: {
-          flatNumber: orderSummary.originFlatNumber,
-          line1: orderSummary.originLine1,
-          city: orderSummary.originCity,
-          postCode: orderSummary.originPostCode,
-          latitude: orderSummary.originLatitude,
-          longitude: orderSummary.originLongitude
-        },
-        destination: {
-          flatNumber: orderSummary.destinationFlatNumber,
-          line1: orderSummary.destinationLine1,
-          city: orderSummary.destinationCity,
-          postCode: orderSummary.destinationPostCode,
-          latitude: orderSummary.destinationLatitude,
-          longitude: orderSummary.destinationLongitude
-        }
-        
-      },
-      payment: {
-        paymentId: orderSummary.paymentId
-      }
-    };
+    return orderSummary;
   }
 
   createSubscriptionStrategy({partnerId, isCompleted, reportId, orderId, userId, selectedProducts}, dataSink){

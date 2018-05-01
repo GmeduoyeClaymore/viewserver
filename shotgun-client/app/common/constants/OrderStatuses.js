@@ -45,14 +45,14 @@ export const getRubbishFriendlyOrderStatusName = (summary) => {
 };
 
 export const getProductBasedFriendlyOrderStatusName = (summary) => {
-  const {product = {}} = summary;
+  const {productName} = summary;
   switch (summary.status){
   case OrderStatuses.PLACED:
-    return 'Awaiting ' + product.name;
+    return 'Awaiting ' + productName;
   case OrderStatuses.ACCEPTED:
-    return product.name + ' assigned';
+    return productName + ' assigned';
   case OrderStatuses.INPROGRESS:
-    return product.name + ' on their way';
+    return productName + ' on their way';
   case OrderStatuses.COMPLETED:
     return 'Complete';
   case OrderStatuses.CANCELLED:

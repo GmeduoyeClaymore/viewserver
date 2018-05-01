@@ -1,40 +1,35 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.*;
+import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.RatingDataSource;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.execution.nodes.CalcColNode;
-import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
-import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
-public class OrderRequestReport {
-        public static final String ID = "orderRequest";
+public class PartnerOrderSummaryReport {
+        public static final String ID = "partnerOrderSummary";
 
         public static ReportDefinition getReportDefinition() {
-                return new ReportDefinition(ID, "orderRequest")
-                        .withDataSource(OrderWithPartnerDataSource.NAME)
-                        .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
-                        .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
-                        .withParameter("maxDistance", "Maximum Distance Override", String[].class)
-                        .withParameter("@userId", "User Id", String[].class)
-                        .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
+                return new ReportDefinition(ID, "partnerOrderSummary")
+                        .withDataSource(OrderDataSource.NAME)
                         .withNodes(
-                                new CalcColNode("distanceCalcCol")
-                                        .withCalculations(
-                                                new CalcColOperator.CalculatedColumn("currentDistance", "distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"),
-                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
-                                        .withConnection("#input"),
-                                new FilterNode("distanceFilter")
-                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
-                                        .withConnection("distanceCalcCol"),
-                                new FilterNode("hasResponded")
-                                        .withExpression("getResponseField(\"{@userId}\",\"responseStatus\",orderDetails) == null")
-                                        .withConnection("distanceFilter"),
-                                new ProjectionNode("orderRequestProjection")
+                                new JoinNode("customerJoin")
+                                        .withLeftJoinColumns("userId")
+                                        .withRightJoinColumns("userId")
+                                        .withConnection("#input", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin"), Constants.OUT, "right"),
+                                new JoinNode("ratingJoin")
+                                        .withLeftJoinColumns("orderId", "userId")
+                                        .withLeftJoinOuter()
+                                        .withRightJoinColumns("orderId", "userId")
+                                        .withConnection("customerJoin", Constants.OUT, "left")
+                                        .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
+                                new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
                                                 new IProjectionConfig.ProjectionColumn("partner_latitude"),
@@ -58,8 +53,8 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                        .withConnection("hasResponded")
+                                                        .withConnection("ratingJoin")
                         )
-                        .withOutput("orderRequestProjection");
+                        .withOutput("orderSummaryProjection");
         }
 }

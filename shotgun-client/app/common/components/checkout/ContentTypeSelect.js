@@ -1,20 +1,21 @@
 import React, {Component} from 'react';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
-import {INITIAL_STATE} from './CheckoutInitialState';
+import {DELIVERY_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
+
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){
-    this.props.resetParentComponentState();
+    this.setState({});
   }
   
   selectContentType = (selectedContentType) => {
-    const {resetParentComponentState} = this.props;
-    const orderItem = {...INITIAL_STATE.orderItem, contentTypeId: selectedContentType.contentTypeId};
-    resetParentComponentState(() => this.setState({...INITIAL_STATE, selectedContentType, orderItem, selectedCategory: selectedContentType.productCategory}));
+    const resources = resourceDictionary.resolve(this.selectContentType.contentTypeId);
+    const {InitialState} = resources;
+    this.setState({...InitialState, selectedContentType, selectedCategory: selectedContentType.productCategory});
   }
 
   startOrder = () => {
@@ -55,16 +56,11 @@ class ContentTypeSelect extends Component{
   }
 }
 
-const withFixedPice = (state) => {
-  const delivery = {...state.delivery, isFixedPrice: true};
-  return {...state, delivery};
-};
-
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
 resourceDictionary.
-  property('InitialState', INITIAL_STATE).
-    personell(withFixedPice(INITIAL_STATE))
+  property('InitialState', {}).
+    delivery(DELIVERY_ORDER_INITIAL_STATE)
 /*eslint-enable */
 
 const validationSchema = {

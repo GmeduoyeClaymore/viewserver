@@ -32,7 +32,6 @@ public class ShotgunViewServerSteps {
         launcher.stop();
         if(Boolean.parseBoolean(System.getProperty("serverShouldBeStarted", "true"))) {
             launcher.run(env, true);
-            launcher.run(env, false);
         }
     }
 

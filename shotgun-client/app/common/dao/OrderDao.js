@@ -1,5 +1,20 @@
 import Logger from 'common/Logger';
 import Rx from 'rxjs/Rx';
+import * as ContentTypes from 'common/constants/ContentTypes';
+import invariant from 'invariant';
+
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+/*eslint-disable */
+resourceDictionary.
+  property('getControllerName').
+    personell(() => 'personellOrderController').
+    rubbish(() => 'rubbishOrderController').
+    skip(() => 'hireOrderController').
+    delivery(order => order.sourceOrderContentType ? getController(order.sourceOrderContentType) :  'deliveryOrderController').
+    hire(() => 'hireOrderController').
+  property('getControllerAction','createOrder').
+    delivery(order => order.sourceOrderContentType ? 'createDeliveryOrder' :  'createOrder');
+/*eslint-enable */
 
 export default class OrdersDao{
   constructor(client) {
@@ -27,9 +42,16 @@ export default class OrdersDao{
     return;
   }
 
-  async createOrder({delivery, paymentId, product, orderItems}) {
+  async createOrder({order, paymentId}) {
     Logger.info('Creating order');
-    const orderId = await this.client.invokeJSONCommand('orderController', 'createOrder', {paymentId, product, delivery, orderItems});
+    invariant(order.orderContentType, 'Order content type should be defined');
+    const resources = resourceDictionary.resolve(order.orderContentType);
+    invariant(resources, 'Unable to find resource dictionary for content type ' + order.orderContentType);
+    const controller = resources.getControllerName(order);
+    const action = resources.getControllerAction(order);
+    invariant(controller, 'Unable to get controller name for order');
+    invariant(action, 'Unable to get action for order');
+    const orderId = await this.client.invokeJSONCommand(controller, action, {paymentId, order});
     Logger.info(`Order ${orderId} created`);
     return orderId;
   }

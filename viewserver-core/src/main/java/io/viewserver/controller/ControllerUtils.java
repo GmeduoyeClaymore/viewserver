@@ -38,10 +38,8 @@ public class ControllerUtils {
             return (String) ser;
         }
 
-        try{
+        if(ser.getClass().isAssignableFrom(DynamicJsonBackedObject.class)){
             return ((DynamicJsonBackedObject)ser).serialize();
-        }catch(Exception ex){
-
         }
 
         if (ser.getClass().isEnum()){

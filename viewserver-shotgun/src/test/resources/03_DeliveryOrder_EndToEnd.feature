@@ -43,7 +43,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | internalOrderStatus   | String      |
 	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | orderDetails             | orderContentTypeId | orderLocation                    | status |
+	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED |
 	Given "client1" subscribed to report "orderRequest" with parameters
 	  | Name                     | Type    | Value   | Excluded |
@@ -56,24 +56,28 @@ Feature: Delivery order scenarios
 	  | maxDistance              | Integer | 0       |          |
 	  | partnerLongitude         | Integer | 0       |          |
 	Then "client1" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
+	  | ~Action   | ~Name                          | ~ColumnType |
+	  | ColumnAdd | orderId                        | String      |
+	  | ColumnAdd | status                         | String      |
+	  | ColumnAdd | orderLocation                  | Json        |
+	  | ColumnAdd | orderContentTypeId             | Int         |
+	  | ColumnAdd | orderDetails                   | Json        |
+	  | ColumnAdd | totalPrice                     | Int         |
+	  | ColumnAdd | partner_firstName              | String      |
+	  | ColumnAdd | partner_lastName               | String      |
+	  | ColumnAdd | partner_email                  | String      |
+	  | ColumnAdd | partner_latitude               | Double      |
+	  | ColumnAdd | partner_longitude              | Double      |
+	  | ColumnAdd | partner_imageUrl               | String      |
+	  | ColumnAdd | partner_online                 | Bool        |
+	  | ColumnAdd | partner_userStatus             | String      |
+	  | ColumnAdd | partner_statusMessage          | String      |
+	  | ColumnAdd | partner_ratingAvg              | Double      |
+	  | ColumnAdd | rank                           | Int         |
+	  | ColumnAdd | requiredDate                   | DateTime    |
+	  | ColumnAdd | productName                    | String      |
+	  | ColumnAdd | path                           | String      |
+	  | ColumnAdd | contentTypeRootProductCategory | String      |
 	Then "client1" the following data is received terminally on report "orderRequest"
 	  | ~Action | partner_email | orderId |
 
@@ -92,26 +96,30 @@ Feature: Delivery order scenarios
 	  | maxDistance             | Integer | 0      |
 	  | partnerLongitude        | Integer | 0      |
 	Then "client2" the following schema is received eventually on report "orderRequest"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | rank                  | Int         |
+	  | ~Action   | ~Name                          | ~ColumnType |
+	  | ColumnAdd | orderId                        | String      |
+	  | ColumnAdd | status                         | String      |
+	  | ColumnAdd | orderLocation                  | Json        |
+	  | ColumnAdd | orderContentTypeId             | Int         |
+	  | ColumnAdd | orderDetails                   | Json        |
+	  | ColumnAdd | totalPrice                     | Int         |
+	  | ColumnAdd | partner_firstName              | String      |
+	  | ColumnAdd | partner_lastName               | String      |
+	  | ColumnAdd | partner_email                  | String      |
+	  | ColumnAdd | partner_latitude               | Double      |
+	  | ColumnAdd | partner_longitude              | Double      |
+	  | ColumnAdd | partner_imageUrl               | String      |
+	  | ColumnAdd | partner_online                 | Bool        |
+	  | ColumnAdd | partner_userStatus             | String      |
+	  | ColumnAdd | partner_statusMessage          | String      |
+	  | ColumnAdd | partner_ratingAvg              | Double      |
+	  | ColumnAdd | rank                           | Int         |
+	  | ColumnAdd | requiredDate                   | DateTime    |
+	  | ColumnAdd | productName                    | String      |
+	  | ColumnAdd | path                           | String      |
+	  | ColumnAdd | contentTypeRootProductCategory | String      |
 	Then "client2" the following data is received eventually on report "orderRequest"
-	  | ~Action | orderId                                              | orderDetails             | orderLocation                    | status |
+	  | ~Action | orderId                                              | orderDetails                         | orderLocation                                | status |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | ref://json/orders/deliveryOrderLocation.json | PLACED |
 
 
@@ -147,7 +155,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | orderDetails          | Json        |
 	  | ColumnAdd | rank                  | Int         |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                              | orderDetails             | partner_firstName | partner_lastName | orderLocation                    | partnerOrderStatus |
+	  | ~Action | orderId                                              | orderDetails                         | partner_firstName | partner_lastName | orderLocation                                | partnerOrderStatus |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | Modestas          | BrickLayer       | ref://json/orders/deliveryOrderLocation.json | RESPONDED          |
 
 
@@ -198,7 +206,7 @@ Feature: Delivery order scenarios
 	  | maxDistance             | Integer | 0     |
 	  | partnerLongitude        | Integer | 0     |
 	Then "client3" the following data is received eventually on report "orderRequest"
-	  | ~Action | orderId                                              | orderDetails             | orderLocation                    | status |
+	  | ~Action | orderId                                              | orderDetails                         | orderLocation                                | status |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | ref://json/orders/deliveryOrderLocation.json | PLACED |
 
 
@@ -303,7 +311,6 @@ Feature: Delivery order scenarios
 	  | ~Action | orderId | orderDetails | orderLocation | status |
 
 
-
   Scenario: Starting job marks order as in progress
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
@@ -352,19 +359,19 @@ Feature: Delivery order scenarios
 	  | Name                     | Type   | Value   |
 	  | dimension_customerUserId | String | @userId |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                             | status    |
+	  | ~Action | partner_email | orderId                                              | status    |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | COMPLETED |
 	When "client1" subscribed to report "paymentsReport" with parameters
 	  | Name                     | Type   | Value   |
 	  | dimension_paidFromUserId | String | @userId |
 	Given keyColumn is "paymentId"
 	Then "client1" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                      |
+	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                       |
 	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_deliveryOrderController_customerCompleteAndPay_result} |
 	When "client2" subscribed to report "paymentsReport" with parameters
 	  | Name                   | Type   | Value   |
 	  | dimension_paidToUserId | String | @userId |
 	Then "client2" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                      |
+	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                       |
 	  | RowAdd  |               | {client1_partnerController_registerPartner_result} | {client1_deliveryOrderController_customerCompleteAndPay_result} |
 

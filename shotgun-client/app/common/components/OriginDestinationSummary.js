@@ -54,4 +54,4 @@ const styles = {
     height: 22,
     marginRight: 15
   }
-};
+}

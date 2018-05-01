@@ -22,6 +22,11 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
 class DeliveryMap extends Component{
   stateKey = 'checkout';
 
+  constructor(props){
+    super(props);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+  }
+
   componentDidMount(){
     const {isInBackground} = this.props;
     if (isInBackground){
@@ -52,9 +57,9 @@ class DeliveryMap extends Component{
   }
 
   getOptionsFromProps(props){
-    const {selectedProduct, position} = props;
+    const {order, position} = props;
     return {
-      selectedProduct,
+      selectedProduct: order.orderProduct,
       position,
       columnsToSort: [{name: 'distance', direction: 'asc'}]
     };
@@ -79,14 +84,14 @@ class DeliveryMap extends Component{
   }
 
   setDurationAndDistance = ({distance, duration}) => {
-    const {delivery} = this.props;
-    this.setState({delivery: {...delivery, distance: Math.round(distance),  duration: Math.round(duration)}});
+    const {order, setStateWithPath, dispatch} = this.props;
+    setStateWithPath({distance: Math.round(distance),  duration: Math.round(duration)}, ['order','distanceAndDuration'], undefined,  dispatch);
     this.fitMap();
   }
 
   doAddressLookup = (addressLabel, addressKey) => {
     const {history, parentPath} = this.props;
-    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
+    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['order', addressKey]});
   }
 
   getOriginAndDestination = () => {
@@ -117,7 +122,7 @@ class DeliveryMap extends Component{
   render(){
     const {fitMap, setDurationAndDistance, getLocationText, resources} = this;
     const {supportsOrigin, supportsDestination} = resources;
-    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, selectedProduct, usersWithProduct, history} = this.props;
+    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, usersWithProduct, history} = this.props;
 
     if (!me){
       return <LoadingScreen text="Waiting for user ..."/>;
@@ -150,7 +155,7 @@ class DeliveryMap extends Component{
               {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={this.setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
-              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={`userWithProduct${user.userId}`}  coordinate={{ ...user }}><ProductMarker product={selectedProduct} /></MapView.Marker>)}
+              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={`userWithProduct${user.userId}`}  coordinate={{ ...user }}><ProductMarker product={order.orderProduct} /></MapView.Marker>)}
             </MapView>}
         </Row>
       </Grid>
@@ -211,8 +216,9 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {delivery, selectedContentType, selectedProduct} = initialProps;
-  const {destination, origin, distance, duration} = delivery;
+  const {selectedContentType, order} = initialProps;
+  const {destination = {}, origin = {}, distanceAndDuration = {}} = order;
+  const {distance,duration} = distanceAndDuration;
   const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
   const disableDoneButton = (supportsDestination, supportsOrigin) => origin.line1 == undefined || supportsDestination && !distance || supportsDestination && !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
@@ -220,7 +226,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     state,
     me: getDaoState(state, ['user'], 'userDao'),
-    delivery, selectedProduct, selectedContentType, destination, origin, showDirections, disableDoneButton,
+    selectedContentType, destination, origin, showDirections, disableDoneButton,
     usersWithProduct: getDaoState(state, ['users'], 'userRelationshipDao') || []
   };
 };

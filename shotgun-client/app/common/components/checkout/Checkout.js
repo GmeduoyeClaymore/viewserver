@@ -10,16 +10,14 @@ import UsersForProductMap from './UsersForProductMap';
 import ProductList from './ProductList';
 import AddressLookup from 'common/components/maps/AddressLookup';
 import {Route, ReduxRouter, withExternalState, removeProperties} from 'custom-redux';
-import {INITIAL_STATE} from './CheckoutInitialState';
 import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {LoadingScreen} from 'common/components';
 import {isAnyOperationPending} from 'common/dao';
-
+import {DELIVERY_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 class Checkout extends Component {
-  static InitialState = INITIAL_STATE;
   static stateKey = 'customerCheckout';
-
+  static InitialState = DELIVERY_ORDER_INITIAL_STATE;
   constructor(props){
     super(props);
     Logger.info('Creating checkout component');
@@ -44,13 +42,13 @@ class Checkout extends Component {
   }
 
   render() {
-    const {resetComponentState: resetParentComponentState, path, busy} = this.props;
-    const customerProps = {...this.props, stateKey: Checkout.stateKey, resetParentComponentState};
+    const {path, busy} = this.props;
+    const customerProps = {...this.props, stateKey: Checkout.stateKey};
     const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'parentPath']);
     const {getNext} = this;
 
     return busy ? <LoadingScreen text="Loading"/> :
-      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
+      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'OrderConfirmation'}>
         <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />

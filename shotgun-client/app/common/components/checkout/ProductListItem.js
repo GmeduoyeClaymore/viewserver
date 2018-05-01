@@ -4,17 +4,17 @@ import {Button} from 'native-base';
 import {Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
 
-const onChangeProduct = ({orderItem, product, setState}) => {
-  const {productId} = product;
-  setState({ selectedProduct: product, orderItem: {...orderItem, productId}});
+const onChangeProduct = ({order, product, setState}) => {
+  const {productId, name} = product;
+  setState({ selectedProduct: product, order: {...order, orderProduct: product, title: name, productId, amount: product.price}});
 };
 
-const ProductListItem = ({product, orderItem, setState, selectedProduct = {}, index: i, dispatch}) => {
+const ProductListItem = ({product, order, setState, selectedProduct = {}, index: i, dispatch}) => {
   if (!product){
     return null;
   }
   return <View key={i} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
-    <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context: this, orderItem, product, setState: part => setState(part, undefined, dispatch)})}>
+    <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context: this, order, product, setState: part => setState(part, undefined, dispatch)})}>
       <Icon name={product.imageUrl || 'dashed'}/>
     </Button>
     <Text style={styles.productSelectText}>{product.name}</Text>

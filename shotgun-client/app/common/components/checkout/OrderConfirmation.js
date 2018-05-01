@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import {withExternalState} from 'custom-redux';
 import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
-import {isAnyOperationPending, getOperationError, hasAnyOptionChanged} from 'common/dao';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {calculateTotalPrice} from './CheckoutUtils';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 class OrderConfirmation extends Component{
@@ -14,29 +13,13 @@ class OrderConfirmation extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  async componentDidMount(){
-    await this.getTotalPrice();
-  }
-
-  componentWillReceiveProps(newProps){
-    if (hasAnyOptionChanged(this.props, newProps, ['isReady']) && newProps.isReady){
-      this.getTotalPrice();
-    }
-  }
-
   createJob = () => {
-    const {dispatch, history, orderItem, payment, delivery, selectedProduct, ordersPath} = this.props;
-    dispatch(checkout(orderItem, payment, delivery, selectedProduct, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
-  }
-
-  getTotalPrice = async() => {
-    const {client, orderItem, delivery} = this.props;
-    const  price = await calculateTotalPrice({client, delivery, orderItem});
-    this.setState({price});
+    const {dispatch, history, order, payment, ordersPath} = this.props;
+    dispatch(checkout(order, payment, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
   }
 
   render(){
-    const {client, errors, busy, orderItem, delivery, deliveryUser, selectedProduct, selectedContentType, price, history} = this.props;
+    const {client, errors, busy, order, history, selectedContentType} = this.props;
 
     return <Container>
       <Header withButton>
@@ -45,11 +28,11 @@ class OrderConfirmation extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>{this.resources.PageTitle({product: selectedProduct})}</Title></Body>
+        <Body><Title>{this.resources.PageTitle({product: order.orderProduct})}</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={OrderStatuses.PLACED} isFixedPrice={delivery.isFixedPrice} isPartner={false} price={price}/>
-        <OrderSummary delivery={delivery} deliveryUser={deliveryUser} orderItem={orderItem} client={client} product={selectedProduct} contentType={selectedContentType}/>
+        <PriceSummary orderStatus={OrderStatuses.PLACED} isPartner={false} price={order.amount}/>
+        <OrderSummary order={order} client={client} selectedContentType={selectedContentType}/>
       </Content>
       <ErrorRegion errors={errors}/>
       <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
@@ -61,27 +44,19 @@ class OrderConfirmation extends Component{
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
 property('PageTitle', ({product}) => `${product.name} Job`).
-delivery(() => 'Delivery').
-personell(({product}) => `${product.name} Job`).
-rubbish(() => 'Rubbish Collection').
+  delivery(() => 'Delivery').
+  personell(({product}) => `${product.name} Job`).
+  rubbish(() => 'Rubbish Collection').
 property('SubmitButtonCaption', 'Create Job').
-delivery('Create Delivery').
-personell('Create Job');
+  delivery('Create Delivery').
+  personell('Create Job');
 /*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
-  const {delivery, payment, orderItem, selectedProduct, selectedContentType, deliveryUser} = initialProps;
-
   return {
     ...initialProps,
-    orderItem,
-    delivery,
-    deliveryUser,
-    selectedProduct,
-    selectedContentType,
-    payment,
-    errors: getOperationError(state, 'customerDao', 'checkout'),
-    busy: isAnyOperationPending(state, [{ customerDao: 'checkout'}])
+    errors: getOperationError(state, 'orderDao', 'createOrder'),
+    busy: isAnyOperationPending(state, [{ orderDao: 'createOrder'}])
   };
 };
 

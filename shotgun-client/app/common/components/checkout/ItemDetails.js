@@ -32,8 +32,8 @@ class ItemDetails extends Component{
   }
 
   onChangeValue(field, value){
-    const {orderItem={}} = this.props;
-    this.setState({orderItem: {...orderItem, [field]: value}});
+    const {order={}} = this.props;
+    this.setState({order: {...order, [field]: value}});
   }
 
   onSelectImage(response){
@@ -47,7 +47,7 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {next, orderItem, history} = this.props;
+    const {next, order, history, imageData} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
@@ -61,12 +61,12 @@ class ItemDetails extends Component{
           <Body><Title>{resources.PageTitle}</Title></Body>
         </Header>
         <Content padded>
-          {orderItem.imageData != undefined ? <Grid onPress={showPicker}>
+          {imageData != undefined ? <Grid onPress={showPicker}>
             <Row style={{justifyContent: 'center'}}>
-              <Image source={{uri: `data:image/jpeg;base64,${orderItem.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
+              <Image source={{uri: `data:image/jpeg;base64,${imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
             </Row>
           </Grid> : null}
-          {orderItem.imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
+          {imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
             <Grid>
               <Row style={styles.imageButtonIconRow}>
                 <Icon name='camera' style={{marginBottom: 15}}/>
@@ -76,9 +76,9 @@ class ItemDetails extends Component{
               </Row>
             </Grid>
           </Button> : null}
-          <ValidatingInput style={styles.detailsInput} value={orderItem.notes} multiline={true} placeholder={resources.InputPlaceholder} onChangeText={(value) => onChangeValue('notes', value)} validateOnMount={true} validationSchema={validationSchema.notes} maxLength={200}/>
+          <ValidatingInput style={styles.detailsInput} value={order.description} multiline={true} placeholder={resources.InputPlaceholder} onChangeText={(value) => onChangeValue('description', value)} validateOnMount={true} validationSchema={validationSchema.description} maxLength={200}/>
         </Content>
-        <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={orderItem}>
+        <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
@@ -89,7 +89,7 @@ class ItemDetails extends Component{
 }
 
 const validationSchema = {
-  notes: yup.string().required().max(200)
+  description: yup.string().required().max(200)
 };
 
 const styles = {

@@ -37,10 +37,6 @@ class ProductList extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  componentWillReceiveProps(nextProps) {
-    ContentTypes.resolveResourceFromProps(nextProps, resourceDictionary, this);
-  }
-
   rowView({item: p, ...rest}){
     return (<ProductListItem key={p.productId} product={p} {...rest}/>);
   }

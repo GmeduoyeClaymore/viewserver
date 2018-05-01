@@ -2,11 +2,11 @@ import color from 'color';
 import { Platform, Dimensions, PixelRatio, StatusBar} from 'react-native';
 
 const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
-const footerHeight = 50;
+const platform = Platform.OS;
+const footerHeight = (platform === 'ios' ? 34 : 50);
 const tabHeight = 120;
 const deviceHeight = Dimensions.get('window').height - statusBarHeight;
 const deviceWidth = Dimensions.get('window').width;
-const platform = Platform.OS;
 const platformStyle = undefined;
 const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 375;
 
