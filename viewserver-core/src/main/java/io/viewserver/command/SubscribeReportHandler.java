@@ -63,7 +63,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             Options options = Options.fromMessage(data.getOptions());
             substituteParamValues(peerSession, reportContext, options);
 
-            log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+            log.trace("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
             ICatalog catalog = reportContextRegistry.getOrCreateCatalogForContext(reportContext);
 

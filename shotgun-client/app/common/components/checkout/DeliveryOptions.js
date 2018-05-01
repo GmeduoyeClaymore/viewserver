@@ -205,7 +205,7 @@ const mapStateToProps = (state, initialProps) => {
   const {payment} = initialProps;
   return {
     ...initialProps,
-    errors: getOperationError(state, 'paymentDao', 'getCustomerPaymentCards' ),
+    errors: getOperationError(state, 'paymentDao', 'getPaymentCards' ),
     defaultPayment,
     payment: payment || defaultPayment,
     paymentCards,

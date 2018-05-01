@@ -22,7 +22,6 @@ import io.viewserver.network.netty.NettyChannel;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
@@ -43,9 +42,7 @@ public class PaymentControllerImpl implements PaymentController {
         Stripe.apiKey = apiKey.getPrivateKey();
     }
 
-    @Override
-    @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
-    public HashMap<String, Object> createPaymentCustomer(@ActionParam(name = "emailAddress") String emailAddress, @ActionParam(name = "paymentCard") PaymentCard paymentCard) {
+    public HashMap<String, Object> createPaymentCustomer(String emailAddress, PaymentCard paymentCard) {
         String cardToken = createCardToken(paymentCard);
         Map<String, Object> customerParams = new HashMap<>();
         customerParams.put("email", emailAddress);
@@ -56,7 +53,7 @@ public class PaymentControllerImpl implements PaymentController {
             logger.debug("Added stripe payment customer with id {}", customer.getId());
             HashMap<String, Object> result = new HashMap<>();
             result.put("customerId", customer.getId());
-            result.put("paymentToken", cardToken);
+            result.put("defaultSourceId", customer.getDefaultSource());
             return result;
         } catch (Exception e) {
             logger.error("There was a problem adding the payment customer", e);
@@ -64,11 +61,7 @@ public class PaymentControllerImpl implements PaymentController {
         }
     }
 
-    @Override
-    @ControllerAction(path = "createPaymentAccount", isSynchronous = false)
-    public String createPaymentAccount(@ActionParam(name = "user") User user,
-                                       @ActionParam(name = "deliveryAddress") DeliveryAddress address,
-                                       @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+    public String createPaymentAccount(User user, DeliveryAddress address, PaymentBankAccount paymentBankAccount) {
         Account account = null;
         Map<String, Object> accountParams = null;
 
@@ -215,6 +208,11 @@ public class PaymentControllerImpl implements PaymentController {
     public List<Card> getPaymentCards() {
         try {
             User user = getUser();
+
+            if(user.getStripeCustomerId() == null){
+                return null;
+            }
+
             HashMap<String, Object> sourcesParams = new HashMap<>();
             sourcesParams.put("object", "card");
             ExternalAccountCollection cards = Customer.retrieve(user.getStripeCustomerId()).getSources().list(sourcesParams);
@@ -224,14 +222,6 @@ public class PaymentControllerImpl implements PaymentController {
             logger.error("There was a problem getting the payment cards", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private User getUser() {
-        User user = (User) ControllerContext.get("user");
-        if(user == null){
-            throw new RuntimeException("User must be logged in to get current payment cards");
-        }
-        return user;
     }
 
     @Override
@@ -251,7 +241,13 @@ public class PaymentControllerImpl implements PaymentController {
     @ControllerAction(path = "getBankAccount", isSynchronous = false)
     public BankAccount getBankAccount() {
         try {
-            String stripeAccountId = getStripeAccountId();
+            User user = getUser();
+            String stripeAccountId = user.getStripeAccountId();
+
+            if(stripeAccountId == null){
+                return null;
+            }
+
             Account account = Account.retrieve(stripeAccountId, null);
             BankAccount ac =(BankAccount)account.getExternalAccounts().getData().get(0);
             logger.debug("Got bank account for stripe account {}", stripeAccountId);
@@ -260,15 +256,6 @@ public class PaymentControllerImpl implements PaymentController {
             logger.error("There was a problem getting the bank account", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private String getStripeAccountId() {
-        User user = getUser();
-        String stripeAccountId = user.getStripeAccountId();
-        if(stripeAccountId == null){
-            throw new RuntimeException("No stripe account id specified for current user");
-        }
-        return stripeAccountId;
     }
 
     private String getStripeCustomerToken() {
@@ -281,10 +268,11 @@ public class PaymentControllerImpl implements PaymentController {
     }
 
     @Override
-    @ControllerAction(path = "setBankAccount", isSynchronous = false)
-    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+    public void setBankAccount(PaymentBankAccount paymentBankAccount) {
         try {
-            String stripeAccountId = getStripeAccountId();
+            String stripeAccountId = getUser().getStripeAccountId();
+
+            //stripe account exists update the bank account
             Map<String, Object> externalAccount = new HashMap<>();
             externalAccount.put("object", "bank_account");
             externalAccount.put("account_number", paymentBankAccount.getAccountNumber().replaceAll("[^\\d]", ""));
@@ -294,10 +282,10 @@ public class PaymentControllerImpl implements PaymentController {
             externalAccount.put("currency", "gbp");
 
             Account account = Account.retrieve(stripeAccountId, null);
-
             Map<String, Object> accountParams = new HashMap<>();
             accountParams.put("external_account", externalAccount);
             account.update(accountParams);
+
             logger.debug("Set bank account for stripe account {}", stripeAccountId);
         } catch (Exception e) {
             logger.error("There was a problem setting the bank account", e);
@@ -323,5 +311,13 @@ public class PaymentControllerImpl implements PaymentController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private User getUser() {
+        User user = (User) ControllerContext.get("user");
+        if(user == null){
+            throw new RuntimeException("User must be logged in to get current payment cards");
+        }
+        return user;
     }
 }

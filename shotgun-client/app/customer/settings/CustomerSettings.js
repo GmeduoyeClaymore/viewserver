@@ -3,7 +3,7 @@ import CustomerSettingsLanding from './CustomerSettingsLanding';
 import AddressLookup from 'common/components/maps/AddressLookup';
 import UpdateUserDetails from 'common/settings/UpdateUserDetails';
 import UpdateAddressDetails from 'common/settings/UpdateAddressDetails';
-import UpdatePaymentCardDetails from './UpdatePaymentCardDetails';
+import UpdatePaymentCardDetails from 'common/settings/UpdatePaymentCardDetails';
 import {Route, ReduxRouter} from 'custom-redux';
 import {updateCustomer} from 'customer/actions/CustomerActions';
 

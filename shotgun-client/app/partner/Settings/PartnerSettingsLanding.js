@@ -46,13 +46,13 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
           <Text style={styles.text}>Completed Jobs</Text>
           <Icon style={{paddingRight: 10}} name='two-people'/>
         </ListItem>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdatePaymentCardDetails`)}>
+          <Text style={styles.text}>Payment cards</Text>
+          <Icon style={{paddingRight: 10}} name='payment'/>
+        </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateBankAccountDetails`)}>
           <Text style={styles.text}>Bank Details</Text>
           <Icon style={{paddingRight: 10}} name='payment'/>
-        </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateVehicleDetails`)}>
-          <Text style={styles.text}>Vehicle Details</Text>
-          <Icon style={styles.icon} name='drive'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/ConfigureServices`)}>
           <Text style={styles.text}>Configure Services</Text>

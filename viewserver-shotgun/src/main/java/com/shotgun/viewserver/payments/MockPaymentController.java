@@ -261,8 +261,7 @@ public class MockPaymentController implements PaymentController {
         return stripeCustomerToken;
     }
 
-    @ControllerAction(path = "setBankAccount", isSynchronous = false)
-    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
+    public void setBankAccount(PaymentBankAccount paymentBankAccount) {
         try {
             String stripeAccountId = getStripeAccountId();
             Map<String, Object> externalAccount = new HashMap<>();

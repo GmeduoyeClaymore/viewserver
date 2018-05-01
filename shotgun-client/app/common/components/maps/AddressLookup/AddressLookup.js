@@ -140,10 +140,13 @@ const styles = {
 };
 
 
-const getHomeAddress = (addreses) => addreses ? addreses.find(ad => ad.isDefault) || addreses[0] : addreses;
+const getTabs = (showRecent) => {
+  const result = [];
 
-const getTabs = () => {
-  const result = ['Recent', 'Suggested'];
+  if (showRecent){
+    result.push('Recent');
+  }
+  result.push('Suggested');
 
   /* if (myLocation) {
     result.push('Nearby Places');
@@ -152,16 +155,16 @@ const getTabs = () => {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {history, isInBackground} = initialProps;
+  const {history, isInBackground, showRecent = true} = initialProps;
 
   if (isInBackground) {
     return;
   }
   const me = getDaoState(state, ['user'], 'userDao');
   const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
-  const homeAddress = getHomeAddress(deliveryAddresses);
+  const homeAddress = getDaoState(state, ['customer', 'homeAddress'], 'deliveryAddressDao');
 
-  const tabs = getTabs();
+  const tabs = getTabs(showRecent);
   let selectedTabIndex = tabs.findIndex(tb => history.location.pathname.endsWith(tb));
   selectedTabIndex = !!~selectedTabIndex ? selectedTabIndex : 0;
   return {

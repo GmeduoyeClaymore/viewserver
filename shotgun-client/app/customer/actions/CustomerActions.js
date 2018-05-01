@@ -48,7 +48,7 @@ export const loginCustomer = (email, password, continueWith) => {
 };
 
 export const getPaymentCards = (continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getCustomerPaymentCards', continueWith);
+  return invokeDaoCommand('paymentDao', 'getPaymentCards', continueWith);
 };
 
 export const cancelOrder = (orderId, continueWith) => {

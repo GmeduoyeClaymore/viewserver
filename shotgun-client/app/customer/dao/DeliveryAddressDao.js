@@ -29,9 +29,13 @@ export default class DeliveryAddressDao{
   }
 
   mapDomainEvent(dataSink){
+    const deliveryAddresses = dataSink.rows;
+    const homeAddress = deliveryAddresses ? deliveryAddresses.find(ad => ad.isDefault) || deliveryAddresses[0] : deliveryAddresses;
+
     return {
       customer: {
-        deliveryAddresses: dataSink.rows
+        deliveryAddresses,
+        homeAddress
       }
     };
   }

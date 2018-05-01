@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {resolveContentTypeIconSml} from 'common/assets';
 import {Icon} from 'common/components';
 import {resolveDetailsControl} from './ContentTypeDetailRegistry';
 import {Image, View } from 'react-native';
@@ -9,8 +8,8 @@ import ReactNativeModal from 'react-native-modal';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
 import {isEqual} from 'lodash';
-import Logger from 'common/Logger';
 import Immutable from 'seamless-immutable';
+import {ContentTypeImages} from 'common/assets/img/Images';
 
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
@@ -91,8 +90,7 @@ class ContentTypeSelector extends Component{
     if (!contentType){
       return undefined;
     }
-    Logger.info('Validating ' + contentType.contentTypeId);
-    
+
     const contentForContentType = unsavedSelectedContentTypes[contentType.contentTypeId];
     if (!contentForContentType){
       return {error: 'must specify some content for content type'};
@@ -122,25 +120,26 @@ class ContentTypeSelector extends Component{
     const stateForContentType = selectedContentTypes[contentType.contentTypeId];
     const {stateKey, ...rest} = this.props;
 
-    return [<Button key='button' style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
-      <View>
-        <Image resizeMode="contain" source={resolveContentTypeIconSml(contentType)} style={styles.contentTypeIcon}/>
+    return [
+      <View key='button'>
+        <Button style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
+          <Image source={ContentTypeImages[contentType.contentTypeId]} style={styles.contentTypeIcon}/>
+        </Button>
         <Text style={styles.contentTypeButtonText}>{contentType.name}</Text>
-      </View>
-    </Button>,
-    <ReactNativeModal key='modal' isVisible={detailVisible} style={styles.modal}>
-      <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
-      <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
+      </View>,
+      <ReactNativeModal key='modal' isVisible={detailVisible} style={styles.modal}>
+        <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
+        <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
 
-      <Button fullWidth iconRight style={styles.confirmButton} onPress={this.handleConfirm} disabled={!canSubmit}>
-        <Text uppercase={false}>Confirm</Text>
-        <Icon next name='forward-arrow'/>
-      </Button>
+        <Button fullWidth iconRight style={styles.confirmButton} onPress={this.handleConfirm} disabled={!canSubmit}>
+          <Text uppercase={false}>Confirm</Text>
+          <Icon next name='forward-arrow'/>
+        </Button>
 
-      <Button fullWidth cancelButton onPress={this.handleCancel}>
-        <Text uppercase={false}>Cancel</Text>
-      </Button>
-    </ReactNativeModal>];
+        <Button fullWidth cancelButton onPress={this.handleCancel}>
+          <Text uppercase={false}>Cancel</Text>
+        </Button>
+      </ReactNativeModal>];
   }
 }
 
@@ -159,8 +158,9 @@ const styles = {
     height: 'auto'
   },
   contentTypeIcon: {
-    width: 70,
-    height: 70,
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
     alignSelf: 'center'
   },
   contentTypeButtonText: {

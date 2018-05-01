@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
@@ -8,6 +8,7 @@ import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
+import {CategoryImages} from 'common/assets/img/Images';
 
 class FlatProductCategoryList extends Component{
   constructor(props){
@@ -19,11 +20,11 @@ class FlatProductCategoryList extends Component{
   }
 
   rowView({item: row, index: i, highlightedCategory}){
-    const {categoryId, category, imageUrl} = row;
+    const {categoryId, category} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
       <Button style={{height: 'auto'}} large active={highlightedCategory && highlightedCategory.categoryId == row.categoryId} onPress={() => this.highlightCategory(row)}>
-        <Icon name={imageUrl || 'dashed'}/>
+        <Image source={CategoryImages[row.categoryId]} style={styles.image}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
     </View>;
@@ -137,6 +138,11 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 const styles = {
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
+  },
   productSelectText: {
     width: '100%',
     marginTop: 5,

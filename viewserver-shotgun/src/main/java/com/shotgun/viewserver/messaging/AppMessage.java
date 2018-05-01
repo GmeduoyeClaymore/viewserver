@@ -106,6 +106,7 @@ public class AppMessage {
         customNotificationBody.put("body", getBody());
         customNotificationBody.put("sound", getSound());
         customNotificationBody.put("click_action", getAction());
+        customNotificationBody.put("icon", "ic_notif");
         customNotificationBody.put("priority", getPriority());
         customNotificationBody.put("show_in_foreground", true);
         body.put("notification", customNotificationBody);

@@ -1,4 +1,4 @@
-import DriverCapabilityDetails from './DriverCapabilityDetails';
+import DriverCapabilityDetails from './DriverVehicleDetails';
 import ProductCategorySelector from './ProductCategorySelector';
 import HeirarchicalProductCategorySelector from './HeirarchicalProductCategorySelector';
 import ProductSelector from './ProductSelector';
