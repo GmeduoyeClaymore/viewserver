@@ -49,6 +49,8 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
     protected void processConfig(IDimensionMapConfig config) {
         indexedDimensions.clear();
         indexedDimensionsBySourceColumn.clear();
+        this.dataSourceName = config.getDataSourceName();
+        this.removeInputColumns = config.removeInputColumns();
         if(config.getDimensions() == null){
             throw new RuntimeException("Dimensions should not be nul");
         }
@@ -58,9 +60,9 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
             }
             indexedDimensions.put(dim.getName(),dim);
             indexedDimensionsBySourceColumn.put(dim.getSourceColumnName(),dim);
+            dimensionMapper.registerDimension(dim.isGlobal() ? "global" : dataSourceName,dim.getName(),dim.getContentType());
         }
-        this.dataSourceName = config.getDataSourceName();
-        this.removeInputColumns = config.removeInputColumns();
+
     }
 
 

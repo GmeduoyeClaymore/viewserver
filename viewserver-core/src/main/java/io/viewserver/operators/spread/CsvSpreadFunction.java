@@ -12,6 +12,11 @@ import java.util.Map;
 
 public class CsvSpreadFunction implements ISpreadFunction {
     @Override
+    public List<Column> getColumns() {
+        return null;
+    }
+
+    @Override
     public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
         String value = (String) ColumnHolderUtils.getValue(columnHolder,row);
         if(value == null){

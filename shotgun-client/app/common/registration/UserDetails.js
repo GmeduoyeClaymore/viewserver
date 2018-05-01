@@ -1,49 +1,40 @@
 import React, {Component} from 'react';
 import {Input, Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
-import {Image, TextInput} from 'react-native';
+import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
+import {withExternalState} from 'custom-redux';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
-import {withExternalState} from 'custom-redux';
 
-class UserDetails  extends Component{
-  constructor(props){
-    super(props);
-    this.toggleDatePicker = this.toggleDatePicker.bind(this);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.onSelectImage = this.onSelectImage.bind(this);
-    this.showPicker = this.showPicker.bind(this);
-  }
-
-  onChangeText(field, value){
+class UserDetails extends Component{
+  onChangeText = (field, value) => {
     const {user} = this.props;
     this.setState({user: {...user, [field]: value}});
   }
 
-  onChangeDob(dob){
-    this.onChangeText('dob', dob);
-    this.toggleDatePicker(false);
-  }
-
-  toggleDatePicker(dobIsDatePickerVisible){
-    this.setState({dobIsDatePickerVisible});
-  }
-
-  onSelectImage(response){
+  onSelectImage = (response) => {
     this.onChangeText('imageData', response.data);
   }
 
-  showPicker(){
+  showPicker = () => {
     ImageSelector.show({title: 'Select Image', onSelect: this.onSelectImage, options: imagePickerOptions});
+  }
+
+  onChangeDob = (unsavedDob) => {
+    this.setState({unsavedDob});
+    this.toggleDatePicker(false);
+  }
+
+  toggleDatePicker = (isDobDatePickerVisible) =>{
+    this.setState({isDobDatePickerVisible});
   }
 
   render(){
     const {onChangeText} = this;
-    const {history, next, user, dobIsDatePickerVisible} = this.props;
+    const {history, next, user, isDobDatePickerVisible} = this.props;
     const isPartner = user.type === 'partner';
-
 
     return <Container>
       <Header withButton>
@@ -101,6 +92,7 @@ class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
+<<<<<<< HEAD
           {isPartner ? <Row>
             <Col>
               <Item stackedLabel>
@@ -110,6 +102,8 @@ class UserDetails  extends Component{
               </Item>
             </Col>
           </Row> : null }
+=======
+>>>>>>> 88338599c87a781a0e62568a45310c8bade8bae7
           <Row>
             <Col>
               <Item stackedLabel>
@@ -118,9 +112,23 @@ class UserDetails  extends Component{
               </Item>
             </Col>
           </Row>
-          <Row>
+          {isDriver ? <Row>
             <Col>
               <Item stackedLabel>
+                <Label>Date of birth</Label>
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={false} bold
+                  value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined}
+                  placeholder="Enter Date Of Birth" validateOnMount={user.dob !== undefined}
+                  validationSchema={drivervalidationSchema.dob} maxLength={30}/>
+                <DatePicker isVisible={isDobDatePickerVisible} cannedDateOptions={[]}
+                  onCancel={() => this.toggleDatePicker(false)}
+                  onConfirm={(value) => this.onChangeText('dob', value)} {...datePickerOptions} />
+              </Item>
+            </Col>
+          </Row> : null}
+          <Row>
+            <Col>
+              <Item stackedLabel last>
                 <Label>Create an account password</Label>
                 <ValidatingInput bold secureTextEntry={true} returnKeyType={'next'} placeholder="****" value={user.password} validateOnMount={user.password !== undefined} onChangeText={(value) => this.onChangeText('password', value)} validationSchema={validationSchema.password} maxLength={30}/>
               </Item>
@@ -135,6 +143,14 @@ class UserDetails  extends Component{
     </Container>;
   }
 }
+
+const datePickerOptions = {
+  datePickerModeAndroid: 'spinner',
+  mode: 'date',
+  titleIOS: 'Your date of birth',
+  minimumDate: moment().subtract(100, 'years').toDate(),
+  maximumDate: moment().subtract(18, 'years').toDate()
+};
 
 const styles = {
   image: {
@@ -160,14 +176,6 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'flex-start'
   }
-};
-
-const datePickerOptions = {
-  datePickerModeAndroid: 'spinner',
-  mode: 'date',
-  titleIOS: 'Select delivery time',
-  minimumDate: moment().add(-100, 'years').toDate(),
-  maximumDate: moment().add(1, 'years').toDate()
 };
 
 const imagePickerOptions = {

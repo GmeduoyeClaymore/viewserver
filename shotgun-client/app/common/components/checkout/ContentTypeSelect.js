@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
+import {Image} from 'react-native';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
 import {DELIVERY_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
+import {getDaoState} from 'common/dao';
+import {ContentTypeImages} from 'common/assets/img/Images';
 import * as ContentTypes from 'common/constants/ContentTypes';
-
 
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){
@@ -19,8 +21,13 @@ class ContentTypeSelect extends Component{
   }
 
   startOrder = () => {
-    const {history, next} = this.props;
-    history.push(next);
+    const {history, next, paymentCards, ordersRoot, parentPath} = this.props;
+
+    if (paymentCards.length > 0) {
+      history.push(next);
+    } else {
+      history.push({pathname: `${ordersRoot}/Settings/UpdatePaymentCardDetails`, transition: 'left'}, {next: `${parentPath}`});
+    }
   }
 
   render(){
@@ -37,7 +44,7 @@ class ContentTypeSelect extends Component{
               {contentTypes.map((v, i) => {
                 return <View key={i} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
                   <Button style={{height: 'auto'}} large active={selectedContentType.contentTypeId == v.contentTypeId} onPress={() => this.selectContentType(v)}>
-                    <Icon name={v.imageUrl || 'dashed'}/>
+                    <Image source={ContentTypeImages[v.contentTypeId]} style={styles.image}/>
                   </Button>
                   <Text style={styles.contentTypeSelectText}>{v.name}</Text>
                 </View>;
@@ -71,6 +78,11 @@ const styles = {
   title: {
     marginTop: 25
   },
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
+  },
   subTitle: {
     marginTop: 10,
     marginBottom: 20,
@@ -88,4 +100,12 @@ const styles = {
   }
 };
 
-export default withExternalState()(ContentTypeSelect);
+const mapStateToProps = (state, initialProps) => {
+  return {
+    ...initialProps,
+    paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || []
+  };
+};
+
+
+export default withExternalState(mapStateToProps)(ContentTypeSelect);

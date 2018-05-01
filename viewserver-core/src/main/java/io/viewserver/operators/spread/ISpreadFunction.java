@@ -8,5 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ISpreadFunction {
+    List<Column> getColumns();
+
     List<Map.Entry<Column,Object[]>> getValues(int row, ColumnHolder columnHolder);
 }

@@ -10,7 +10,7 @@ export const INITIAL_STATE = {
     imageData: undefined,
     range: 50
   },
-  address: {
+  deliveryAddress: {
     flatNumber: undefined,
     line1: undefined,
     city: undefined,
@@ -34,20 +34,21 @@ export const INITIAL_STATE = {
   }
 };
 
-/*export const INITIAL_STATE = {
+/*
+export const INITIAL_STATE = {
   user: {
     firstName: 'paul',
     lastName: 'graves',
-    email: 'test7@test.com',
+    email: `test${Math.random() * 1000}@test.com`,
     contactNo: '07733362799',
     type: 'partner',
     password: 'password',
     dob: '1982-02-03',
     range: 10
   },
-  
-  address: {
-    line1: 'line1',
+  deliveryAddress: {
+    line1: '129 Drakefield Road',
+    line2: 'Tooting',
     city: 'London',
     postCode: 'SW178RS'
   },
@@ -69,5 +70,6 @@ export const INITIAL_STATE = {
       weight: undefined
     }
   }
-};*/
+};
+*/
 

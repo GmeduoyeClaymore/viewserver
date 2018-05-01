@@ -37,7 +37,7 @@ public class VehicleController {
             }
 
             if (vehicle.getVehicleId() == null) {
-                vehicle.setVehicleId(ControllerUtils.generateGuid());
+                vehicle.set("vehicleId",ControllerUtils.generateGuid());
             }
 
             Record vehicleRecord = new Record()

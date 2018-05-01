@@ -19,6 +19,7 @@ public class DataSourceDimensionMappingStep implements IExecutionPlanStep<DataSo
         List<Dimension> dimensions = dataSource.getDimensions();
         List<IGraphNode> nodes = dataSourceExecutionPlanContext.getGraphNodes();
 
+
         if (!dimensions.isEmpty()) {
             nodes.add(new DimensionMapperNode(DataSource.DIMENSION_MAP_NAME)
                     .withDimensions(dimensions)

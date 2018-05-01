@@ -5,6 +5,7 @@ import com.shotgun.viewserver.constants.VehicleBodyStyles;
 import com.shotgun.viewserver.user.VehicleController;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,8 @@ public class VehicleDetailsController implements IVehicleDetailsController {
             String make = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Make"));
             String model = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Model"));
             String color = WordUtils.capitalizeFully((String) get(vehicleRegistration, "Colour"));
-            return new Vehicle(make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(volume).toArray(new String[0]), volume, weight);
+            Dimensions dim = JSONBackedObjectFactory.create(Dimensions.class).with(volume, weight);
+            return JSONBackedObjectFactory.create(Vehicle.class).with(make, model, bodyType, color, reg, VehicleController.getValidProductsVehicle(dim).toArray(new String[0]), volume, weight);
         }catch(RuntimeException ex){
             throw ex;
         }catch (Exception ex){

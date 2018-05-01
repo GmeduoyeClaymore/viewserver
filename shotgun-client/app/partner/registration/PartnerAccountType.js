@@ -4,7 +4,7 @@ import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, 
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon, TermsAgreement} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
+import {getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -24,10 +24,9 @@ class PartnerAccountType extends Component{
       vehicle = selectedContentTypes[ContentTypes.DELIVERY].vehicle;
       selectedContentTypes = selectedContentTypes.setIn([ContentTypes.DELIVERY], selectedContentTypes[ContentTypes.DELIVERY].without(['vehicle']));
     }
-    const persistedUser = user.setIn(['selectedContentTypes'], JSON.stringify(selectedContentTypes));
+    const persistedUser = user.setIn(['selectedContentTypes'], selectedContentTypes);
     dispatch(registerAndLoginPartner(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
   }
-
 
   render(){
     const {history, contentTypes = [], selectedContentTypes = {}, errors, busy} = this.props;

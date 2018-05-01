@@ -18,10 +18,10 @@ import java.util.Map;
 
 public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunction {
     private static final Logger log = LoggerFactory.getLogger(DateNegotiatedOrderResponseSpreadFunction.class);
-    private final Column partnerId;
-    private final Column estimatedDate;
-    private final Column orderDetailWithoutResponses;
-    private final Column orderResponseStatus;
+    private static final Column partnerId;
+    private static final Column estimatedDate;
+    private static final Column orderDetailWithoutResponses;
+    private static final Column orderResponseStatus;
 
 
     public static String NAME = "getPartnerResponseIdsFromOrderDetail";
@@ -29,12 +29,25 @@ public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunctio
     public static String ESTIMATED_DATE_COLUMN = "estimatedDate";
     public static String ORDER_DETAIL_WITHOUT_RESPONSES = "orderDetailWithoutResponses";
     public static String PARTNER_ORDER_STATUS = "partnerOrderStatus";
+    private static List<Column> columns = new ArrayList<>();
 
+    static{
+        partnerId = new Column(PARTNER_ID_COLUMN, ContentType.String);
+        orderResponseStatus = new Column(PARTNER_ORDER_STATUS, ContentType.String);
+        estimatedDate = new Column(ESTIMATED_DATE_COLUMN,ContentType.Date);
+        orderDetailWithoutResponses = new Column(ORDER_DETAIL_WITHOUT_RESPONSES,ContentType.Json);
+        columns.add(partnerId);
+        columns.add(orderResponseStatus);
+        columns.add(estimatedDate);
+        columns.add(orderDetailWithoutResponses);
+
+    }
     public DateNegotiatedOrderResponseSpreadFunction() {
-         partnerId = new Column(PARTNER_ID_COLUMN, ContentType.String);
-         orderResponseStatus = new Column(PARTNER_ORDER_STATUS, ContentType.String);
-         estimatedDate = new Column(ESTIMATED_DATE_COLUMN,ContentType.Date);
-         orderDetailWithoutResponses = new Column(ORDER_DETAIL_WITHOUT_RESPONSES,ContentType.Json);
+    }
+
+    @Override
+    public List<Column> getColumns(){
+        return this.columns;
     }
 
     @Override

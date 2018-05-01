@@ -9,14 +9,17 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CategorySpreadFunction implements ISpreadFunction {
     private static final Logger log = LoggerFactory.getLogger(CategorySpreadFunction.class);
+    private static final Column column = new Column("categoryIds",ContentType.String);
+
+    @Override
+    public List<Column> getColumns() {
+        return Arrays.asList(column);
+    }
 
     @Override
     public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
@@ -43,7 +46,7 @@ public class CategorySpreadFunction implements ISpreadFunction {
             }
         }
         List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
-        result.add(new HashMap.SimpleEntry(new Column("categoryIds",ContentType.String), result));
+        result.add(new HashMap.SimpleEntry(column, result));
         return result;
     }
 

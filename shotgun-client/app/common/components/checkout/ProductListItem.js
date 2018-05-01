@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text} from 'react-native';
-import {Button} from 'native-base';
-import {Icon} from 'common/components';
+import {Image, View} from 'react-native';
+import {Button, Text} from 'native-base';
 import {withExternalState} from 'custom-redux';
+import {ProductImages} from 'common/assets/img/Images';
 
 const onChangeProduct = ({order, product, setState}) => {
   const {productId, name} = product;
@@ -13,9 +13,10 @@ const ProductListItem = ({product, order, setState, selectedProduct = {}, index:
   if (!product){
     return null;
   }
-  return <View key={i} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
+
+  return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
     <Button style={{height: 'auto'}} large active={selectedProduct.productId == product.productId} onPress={() => onChangeProduct({context: this, order, product, setState: part => setState(part, undefined, dispatch)})}>
-      <Icon name={product.imageUrl || 'dashed'}/>
+      <Image source={ProductImages[product.productId]} style={styles.image}/>
     </Button>
     <Text style={styles.productSelectText}>{product.name}</Text>
   </View>;
@@ -24,6 +25,11 @@ const ProductListItem = ({product, order, setState, selectedProduct = {}, index:
 ProductListItem.stateKey = 'checkout';
 
 const styles = {
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
+  },
   subTitle: {
     marginTop: 25,
     marginBottom: 30,

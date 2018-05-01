@@ -25,10 +25,7 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -36,7 +33,13 @@ import java.util.Map;
  */
 public class ProductSpreadFunction implements ISpreadFunction {
     private static final Logger log = LoggerFactory.getLogger(ProductSpreadFunction.class);
+    private static Column producId = new Column("spreadProductId", ContentType.String);
 
+
+    @Override
+    public List<Column> getColumns() {
+        return Arrays.asList(producId);
+    }
 
     @Override
     public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
@@ -58,7 +61,7 @@ public class ProductSpreadFunction implements ISpreadFunction {
             }
         }
         List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
-        result.add(new HashMap.SimpleEntry(new Column("spreadProductId", ContentType.String), productIdsList.toArray()));
+        result.add(new HashMap.SimpleEntry(producId, productIdsList.toArray()));
         return result;
     }
 
