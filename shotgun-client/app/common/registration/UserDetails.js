@@ -92,18 +92,6 @@ class UserDetails extends Component{
               </Item>
             </Col>
           </Row>
-<<<<<<< HEAD
-          {isPartner ? <Row>
-            <Col>
-              <Item stackedLabel>
-                <Label>DOB</Label>
-                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={true} bold value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined} placeholder="Select Date Of Birth" validateOnMount={user.dob !== undefined} onChangeText={(value) => onChangeText('dob', value)} validationSchema={partnervalidationSchema.dob} maxLength={30}/>
-                <DatePicker isVisible={dobIsDatePickerVisible} cannedDateOptions={[]} onCancel={() => this.toggleDatePicker(false)} onConfirm={(date) => this.onChangeDob(date)} {...datePickerOptions} />
-              </Item>
-            </Col>
-          </Row> : null }
-=======
->>>>>>> 88338599c87a781a0e62568a45310c8bade8bae7
           <Row>
             <Col>
               <Item stackedLabel>
@@ -112,14 +100,14 @@ class UserDetails extends Component{
               </Item>
             </Col>
           </Row>
-          {isDriver ? <Row>
+          {isPartner ? <Row>
             <Col>
               <Item stackedLabel>
                 <Label>Date of birth</Label>
                 <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={false} bold
                   value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined}
                   placeholder="Enter Date Of Birth" validateOnMount={user.dob !== undefined}
-                  validationSchema={drivervalidationSchema.dob} maxLength={30}/>
+                  validationSchema={partnervalidationSchema.dob} maxLength={30}/>
                 <DatePicker isVisible={isDobDatePickerVisible} cannedDateOptions={[]}
                   onCancel={() => this.toggleDatePicker(false)}
                   onConfirm={(value) => this.onChangeText('dob', value)} {...datePickerOptions} />

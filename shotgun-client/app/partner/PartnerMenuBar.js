@@ -21,7 +21,7 @@ const styles = {
     height: '65%',
     width: '100%',
   }
-}
+};
 
 export default connect(undefined, true, false)(PartnerMenuBar);
 

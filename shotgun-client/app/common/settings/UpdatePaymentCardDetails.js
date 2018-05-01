@@ -28,7 +28,6 @@ class UpdatePaymentCardDetails extends Component {
 
     dispatch(addPaymentCard(newPaymentCard, () => {
       if (next){
-        //TODO - for some reason the next url of /Driver/Landing/Checkout isn't working so just goBack for now
         history.goBack();
         //history.push(next);
       }
