@@ -6,7 +6,7 @@
     "responseStatus": "ACCEPTED"
   },
   "amount": 1200,
-  "orderId": "dbc84c56-7bf4-4065-aa77-566a51934042",
+  "orderId": "{orderId}",
   "orderContentTypeId": 5,
   "negotiatedResponseStatus": "ASSIGNED",
   "origin": {
@@ -55,5 +55,8 @@
       "responseStatus": "ACCEPTED"
     }
   ],
-  "orderProduct": {"productId": "{productId}"}
+  "orderProduct": {
+    "productId": "{productId}",
+    "productName": "{productId} name"
+  }
 }

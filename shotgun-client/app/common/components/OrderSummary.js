@@ -37,19 +37,19 @@ class OrderSummary extends Component{
 
   render() {
     const {order} = this.props;
-    const {partnerUser, orderProduct, noPeopleRequired, requiredDate} = order;
+    const {assignedPartner, orderProduct, requiredDate} = order;
     
     return <List>
       {this.renderMap()}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>
       </ListItem>
-      {partnerUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${partnerUser.firstName} ${partnerUser.lastName}`}</Text></ListItem> : null}
+   {/*   TODO - add partner image and rating and phone partner button*/}
+      {assignedPartner ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${assignedPartner.firstName} ${assignedPartner.lastName}`}</Text></ListItem> : null}
       {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
-      {noPeopleRequired ? <ListItem padded><Icon paddedIcon name="one-person"/><Text key='text'>{`${noPeopleRequired} ${noPeopleRequired > 1 ?   'people' : 'person'} required`}</Text></ListItem> : null}
       {orderProduct ? <ListItem padded>
         {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
-        <Text>{`${orderProduct.name}`}</Text>
+        <Text>{orderProduct.productName}</Text>
       </ListItem> : null}
       {this.renderItemDetails()}
     </List>;

@@ -75,8 +75,8 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  const orderResponse = findOrderSummaryFromDao(state, orderId, 'partnerOrderResponseDao');
-  const order = orderResponse ? orderResponse.orderDetails : findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
+  let order = findOrderSummaryFromDao(state, orderId, 'partnerOrderResponseDao');
+  order = order || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
 
   return {
     ...initialProps,
