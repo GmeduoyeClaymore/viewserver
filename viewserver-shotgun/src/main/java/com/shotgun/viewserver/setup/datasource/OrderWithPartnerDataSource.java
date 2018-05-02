@@ -33,6 +33,9 @@ public class OrderWithPartnerDataSource {
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                         new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                         new IProjectionConfig.ProjectionColumn("partner_longitude"),

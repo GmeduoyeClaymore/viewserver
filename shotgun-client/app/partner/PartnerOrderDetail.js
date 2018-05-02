@@ -6,7 +6,6 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 import {startOrderRequest, cancelOrderRequest} from 'partner/actions/PartnerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
-import {calculatePriceToBePaid} from 'common/components/checkout/CheckoutUtils';
 
 class PartnerOrderDetail extends Component{
   beforeNavigateTo(){
@@ -14,31 +13,33 @@ class PartnerOrderDetail extends Component{
     if (orderSummary == undefined) {
       dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
-        reportId: 'partnerOrderSummary'
+        reportId: 'partnerOrderResponse'
       }));
     }
   }
 
   onStartPress = async() => {
-    const {orderSummary = {status: ''}, dispatch} = this.props;
-    dispatch(startOrderRequest(orderSummary.orderId, navigateToOrderInProgress));
+    const {order = {status: ''}, dispatch} = this.props;
+    dispatch(startOrderRequest(order.orderId, this.navigateToOrderInProgress));
   };
 
   navigateToOrderInProgress = () => {
-    const {orderSummary = {status: ''}, history, ordersRoot} = this.props;
-    history.push({pathname: `${ordersRoot}/PartnerOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
+    const {order = {status: ''}, history, ordersRoot} = this.props;
+    history.push({pathname: `${ordersRoot}/PartnerOrderInProgress`, transition: 'left'}, {orderId: order.orderId});
   }
 
   onCancelPress = async() => {
-    const {orderSummary = {status: ''}, history, dispatch, ordersRoot} = this.props;
-    dispatch(cancelOrderRequest(orderSummary.orderId, () => history.push({pathname: `${ordersRoot}/PartnerOrders`, transition: 'right'})));
+    const {order = {status: ''}, history, dispatch, ordersRoot} = this.props;
+    dispatch(cancelOrderRequest(order.orderId, () => history.push({pathname: `${ordersRoot}/PartnerOrders`, transition: 'right'})));
   };
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, user} = this.props;
-    const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
-    const userCreatedThisOrder = user.userId == orderSummary.customerUserId;
-    const price = userCreatedThisOrder ? orderSummary.totalPrice : calculatePriceToBePaid(orderSummary.totalPrice, user);
+    const {order = {status: ''}, client, history, busy, busyUpdating, user} = this.props;
+    const isComplete = order.orderStatus == OrderStatuses.COMPLETED;
+    const userCreatedThisOrder = user.userId == order.customerUserId;
+
+    //TODO - show the amount - the charge percentage if the user did not create this order
+   // const amount = userCreatedThisOrder ? order.amount : calculatePriceToBePaid(order.totalPrice, user);
 
     return busy ? <LoadingScreen text='Waiting for order'/> : <Container>
       <Header withButton>
@@ -50,8 +51,8 @@ class PartnerOrderDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={orderSummary.status} isPartner={true} price={price}/>
-        <RatingSummary orderSummary={orderSummary} isPartner={true}/>
+        <PriceSummary orderStatus={order.orderStatus} isPartner={true} price={order.amount}/>
+        <RatingSummary order={order} isPartner={true}/>
         {!isComplete ?
           <View>
             {!userCreatedThisOrder ? <Button fullWidth padded style={styles.startButton} onPress={this.navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button> : null}
@@ -59,7 +60,7 @@ class PartnerOrderDetail extends Component{
             <SpinnerButton busy={busyUpdating} fullWidth padded cancelButton onPress={this.onCancelPress}><Text uppercase={false}>Cancel this job</Text></SpinnerButton>
           </View> : null
         }
-        <OrderSummary delivery={orderSummary.delivery} orderItem={orderSummary.orderItem}  product={orderSummary.product} contentType={orderSummary.contentType} client={client}/>
+        <OrderSummary order={order} client={client}/>
       </Content>
     </Container>;
   }
@@ -74,16 +75,16 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  let orderSummary = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
-  orderSummary = orderSummary || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
+  const orderResponse = findOrderSummaryFromDao(state, orderId, 'partnerOrderResponseDao');
+  const order = orderResponse ? orderResponse.orderDetails : findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
 
   return {
     ...initialProps,
     orderId,
     user: getDaoState(state, ['user'], 'userDao'),
     busyUpdating: isAnyOperationPending(state, [{ partnerDao: 'startOrderRequest'}, { partnerDao: 'cancelOrderRequest'}]),
-    busy: !orderSummary,
-    orderSummary
+    busy: !order,
+    order
   };
 };
 

@@ -6,14 +6,14 @@ import {rateCustomer} from 'partner/actions/PartnerActions';
 import {ratePartner} from 'customer/actions/CustomerActions';
 import {Icon} from 'common/components';
 
-const RatingAction = ({isPartner, orderSummary, dispatch}) => {
-  const {delivery} = orderSummary;
-  const name = isPartner ? delivery.customerFirstName : delivery.partnerFirstName;
-  const rating = isPartner ? orderSummary.customerRating : orderSummary.partnerRating;
+const RatingAction = ({isPartner, order, dispatch}) => {
+  const {assignedPartner, customer} = order;
+  const name = isPartner ? assignedPartner.firstName : customer.firstName;
+  const rating = isPartner ? assignedPartner.ratingAvg : customer.ratingAvg;
 
   const onPressStar = (newRating) => {
     const ratingFunc = isPartner ? rateCustomer : ratePartner;
-    const action = ratingFunc(orderSummary.orderId, newRating);
+    const action = ratingFunc(order.orderId, newRating);
     dispatch(action);
   };
 

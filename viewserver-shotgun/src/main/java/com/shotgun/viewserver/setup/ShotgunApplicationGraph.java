@@ -32,7 +32,6 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         dataSources.add(DeliveryDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(UserRelationshipDataSource.getDataSource());
-        dataSources.add(OrderItemsDataSource.getDataSource());
         dataSources.add(OrderWithResponseDataSource.getDataSource());
         dataSources.add(OrderWithPartnerDataSource.getDataSource());
         dataSources.add(VehicleDataSource.getDataSource());

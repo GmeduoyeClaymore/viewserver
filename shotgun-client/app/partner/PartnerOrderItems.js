@@ -7,15 +7,15 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 class PartnerOrderItems extends Component{
   NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs to do'}</Text>;
 
-  RowView = ({item: orderRequest, isLast, isFirst, history, isCustomer, ordersRoot}) => {
-    const isOnRoute = orderRequest.status == OrderStatuses.PICKEDUP;
+  RowView = ({item: order, isLast, isFirst, history, isCustomer, ordersRoot}) => {
+    const isOnRoute = order.orderStatus == OrderStatuses.INPROGRESS;
     let next;
     if (isCustomer){
       next = isOnRoute ? `${ordersRoot}/CustomerOrderInProgress` : `${ordersRoot}/CustomerOrderDetail`;
     } else {
       next = isOnRoute ? `${ordersRoot}/PartnerOrderInProgress` : `${ordersRoot}/PartnerOrderDetail`;
     }
-    return <OrderRequest history={history} orderRequest={orderRequest} key={orderRequest.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+    return <OrderRequest history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };
 
   getOptions = (isCustomer, isCompleted) => ({

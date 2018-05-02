@@ -93,6 +93,7 @@ public class CsvRecordLoader implements IRecordLoader {
 
                 for (final CSVRecord record : parser) {
                     for (int z = 0; z < multiple; z++) {
+                        parameteriseRecord(record);
                         recordWrapper.setRecord(record);
                         consumer.accept(recordWrapper);
                         recordsLoaded++;
@@ -109,6 +110,10 @@ public class CsvRecordLoader implements IRecordLoader {
         }
 
         return recordsLoaded;
+    }
+
+    private void parameteriseRecord(CSVRecord record) {
+
     }
 
     public CsvRecordLoader withFileName(String fileName) {

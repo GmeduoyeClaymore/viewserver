@@ -2,7 +2,7 @@ export const DELIVERY_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
     orderProduct: undefined,
-    orderContentType: 1,
+    orderContentTypeId: 1,
     origin: undefined,
     destination: undefined,
     distanceAndDuration: undefined
@@ -14,7 +14,19 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
     orderProduct: undefined,
-    orderContentType: 2,
+    orderContentTypeId: 2,
+    origin: undefined,
+    destination: undefined,
+    distanceAndDuration: undefined
+  },
+  payment: undefined
+};
+
+export const PERSONELL_ORDER_INITIAL_STATE =  {
+  selectedContentType: undefined,
+  order: {
+    orderProduct: undefined,
+    orderContentTypeId: 5,
     origin: undefined,
     destination: undefined,
     distanceAndDuration: undefined
@@ -38,7 +50,7 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
       categoryId: '1Workers',
       price: 15000
     },
-    orderContentType: 5,
+    orderContentTypeId: 5,
     origin: {
       googlePlaceId: 'ChIJ64Z3QcUEdkgRu_XB2S70e60',
       city: 'London',
@@ -82,7 +94,7 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
       key: 1,
       rowId: 1
     },
-    orderContentType: 2,
+    orderContentTypeId: 2,
     origin: {
       googlePlaceId: "ChIJ64Z3QcUEdkgRu_XB2S70e60",
       city: "London",

@@ -40,12 +40,19 @@ public class OrderDataSource {
                 .withSchema(schema)
                 .withOutput("projectionNode")
                 .withNodes(
+                        new JoinNode("customerJoin")
+                                .withLeftJoinColumns("userId")
+                                .withRightJoinColumns("userId")
+                                .withColumnPrefixes("", "customer_")
+                                .withAlwaysResolveNames()
+                                .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
                                 .withRightJoinColumns("productId")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
-                                .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
+                                .withConnection("customerJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productCategoryJoin")
                                 .withLeftJoinColumns("product_categoryId")
@@ -63,23 +70,27 @@ public class OrderDataSource {
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ContentTypeDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("projectionNode")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("created"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("lastModified"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("status"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("requiredDate"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderLocation"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("userId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("assignedPartnerUserId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("paymentMethodId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("productId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderContentTypeId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("orderDetails"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("totalPrice"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId","dimension_contentTypeId"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("product_name","productName"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("productCategory_path","path"))
-                                .withProjectionColumns(new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory","contentTypeRootProductCategory"))
+                                .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("orderId"),
+                                        new IProjectionConfig.ProjectionColumn("created"),
+                                        new IProjectionConfig.ProjectionColumn("lastModified"),
+                                        new IProjectionConfig.ProjectionColumn("status"),
+                                        new IProjectionConfig.ProjectionColumn("requiredDate"),
+                                        new IProjectionConfig.ProjectionColumn("orderLocation"),
+                                        new IProjectionConfig.ProjectionColumn("userId"),
+                                        new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
+                                        new IProjectionConfig.ProjectionColumn("assignedPartnerUserId"),
+                                        new IProjectionConfig.ProjectionColumn("paymentMethodId"),
+                                        new IProjectionConfig.ProjectionColumn("productId"),
+                                        new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
+                                        new IProjectionConfig.ProjectionColumn("orderDetails"),
+                                        new IProjectionConfig.ProjectionColumn("totalPrice"),
+                                        new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"),
+                                        new IProjectionConfig.ProjectionColumn("product_name", "productName"),
+                                        new IProjectionConfig.ProjectionColumn("productCategory_path", "path"),
+                                        new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"))
                                 .withConnection("contentTypeJoin")
 
                 )

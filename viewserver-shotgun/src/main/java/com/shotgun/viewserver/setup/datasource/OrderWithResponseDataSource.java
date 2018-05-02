@@ -44,6 +44,9 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ORDER_DETAIL_WITHOUT_RESPONSES, "orderDetails"),
+                                        new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                        new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("partner_userId"),
                                         new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                         new IProjectionConfig.ProjectionColumn("partner_latitude"),
@@ -72,12 +75,12 @@ public class OrderWithResponseDataSource {
                                 ).withConnection("ratingJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_orderId","orderId", Cardinality.Byte, ContentType.String, true).withImported(),
-                        new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String,true).withImported(),
+                        new Dimension("dimension_orderId", "orderId", Cardinality.Byte, ContentType.String, true).withImported(),
+                        new Dimension("dimension_customerUserId", "userId", Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_partnerId", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN, Cardinality.Int, ContentType.String),
                         new Dimension("dimension_partnerOrderStatus", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS, Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String, true).withImported(),
-                        new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int, true).withImported(),
+                        new Dimension("dimension_status", "status", Cardinality.Int, ContentType.String, true).withImported(),
+                        new Dimension("dimension_contentTypeId", "orderContentTypeId", Cardinality.Int, ContentType.Int, true).withImported(),
                         new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported()))
                 .withOutput("orderSummaryProjection")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
