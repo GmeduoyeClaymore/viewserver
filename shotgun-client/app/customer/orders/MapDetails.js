@@ -51,17 +51,10 @@ export default class MapDetails extends Component{
   }
 
   render(){
-    const {order, partnerResponses, client} = this.props;
+    const {order, partnerResponses = [], client} = this.props;
     const {origin, destination} = order;
 
-    const region = {
-      latitude: partnerPosition.latitude,
-      longitude: partnerPosition.longitude,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA
-    };
-
-    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap} initialRegion={region}
+    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap}
       showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
       {destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
       {partnerResponses.map( (res, i) => <MapView.Marker key={i} image={locationImg} coordinate={{...res}}/>)}
