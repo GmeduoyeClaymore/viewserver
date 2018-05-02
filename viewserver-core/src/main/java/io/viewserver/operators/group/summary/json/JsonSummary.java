@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.viewserver.operators.group.summary;
+package io.viewserver.operators.group.summary.json;
 
+import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.group.ISummary;
+import io.viewserver.operators.group.summary.ISummaryContext;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 import io.viewserver.schema.column.chunked.ChunkedColumnString;
@@ -64,6 +66,7 @@ public class JsonSummary implements ISummary {
     public void initialise(ISummaryContext context) {
         this.context = context;
         summaryColumn = (ColumnHolderString)ColumnHolderUtils.createColumnHolder(name, ColumnType.String);
+        summaryColumn.getMetadata().setDataType(ContentType.Json);
         summaryColumn.setColumn(new JsonColumn(summaryColumn, context.getColumnWatcher(), context.getTableStorage(), 1024, 1024));
         context.setResultColumn(summaryColumn);
         bucketHolder = context.getInboundSchema().getColumnHolder(bucketColumn);
@@ -134,9 +137,9 @@ public class JsonSummary implements ISummary {
 
     private String getJson(int row) {
         jsonBuilder.setLength(0);
-        jsonBuilder.append('[');
+        jsonBuilder.append('{');
         TreeMap<Object, Integer> rowMap = rowMaps.get(row);
-        boolean first = true, quoteBucket = bucketHolder.getType().equals(ColumnType.String);
+        boolean first = true;
         for (Map.Entry<Object, Integer> entry : rowMap.entrySet()) {
             Object bucketValue = entry.getKey();
             int sourceRowId = entry.getValue();
@@ -145,30 +148,27 @@ public class JsonSummary implements ISummary {
             } else {
                 first = false;
             }
+            jsonBuilder.append('"');
+            jsonBuilder.append(String.format("%s",bucketValue));
+            jsonBuilder.append('"');
+            jsonBuilder.append(':');
             jsonBuilder.append('{');
-            jsonBuilder.append("bucket:");
-            if (quoteBucket) {
-                jsonBuilder.append('"');
-            }
-            jsonBuilder.append(bucketValue);
-            if (quoteBucket) {
-                jsonBuilder.append('"');
-            }
+            boolean isFirst = true;
             for (ColumnHolder valueHolder : valueHolders) {
-                jsonBuilder.append(',').append(valueHolder.getName()).append(':');
+                if (!isFirst) {
+                    jsonBuilder.append(',');
+                } else {
+                    isFirst = false;
+                }
+                jsonBuilder.append('"').append(valueHolder.getName()).append('"').append(':');
                 Object value = ColumnHolderUtils.getValue(valueHolder, sourceRowId);
-                boolean useQuotes = false;
-                if ((useQuotes = valueHolder.getType().equals(ColumnType.String))) {
-                    jsonBuilder.append('"');
-                }
+                jsonBuilder.append('"');
                 jsonBuilder.append(value);
-                if (useQuotes) {
-                    jsonBuilder.append('"');
-                }
+                jsonBuilder.append('"');
             }
             jsonBuilder.append('}');
         }
-        jsonBuilder.append(']');
+        jsonBuilder.append('}');
         return jsonBuilder.toString();
     }
 

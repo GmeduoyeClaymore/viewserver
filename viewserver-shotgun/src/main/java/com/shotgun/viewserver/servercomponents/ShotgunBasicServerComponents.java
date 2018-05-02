@@ -33,3 +33,5 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         spreadColumnRegistry.register("getPartnerResponseIdsFromOrderDetail", DateNegotiatedOrderResponseSpreadFunction.class);
     }
 }
+
+

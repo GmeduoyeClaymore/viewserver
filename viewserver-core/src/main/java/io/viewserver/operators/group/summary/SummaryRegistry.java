@@ -17,6 +17,7 @@
 package io.viewserver.operators.group.summary;
 
 import io.viewserver.operators.group.summary.avg.AvgFactory;
+import io.viewserver.operators.group.summary.json.JsonSummaryFactory;
 import io.viewserver.operators.group.summary.minmax.MinMaxFactory;
 import io.viewserver.operators.group.summary.stdDev.StdDevFactory;
 import io.viewserver.operators.group.summary.sum.SumFactory;
@@ -36,6 +37,7 @@ public class SummaryRegistry {
         register(new AvgFactory());
         register(new VarFactory());
         register(new StdDevFactory());
+        register(new JsonSummaryFactory());
         register(new MinMaxFactory(MinMaxFactory.NAME_MAX));
         register(new MinMaxFactory(MinMaxFactory.NAME_MIN));
     }
