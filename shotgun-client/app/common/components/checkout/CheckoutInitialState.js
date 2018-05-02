@@ -10,6 +10,18 @@ export const DELIVERY_ORDER_INITIAL_STATE =  {
   payment: undefined
 };
 
+export const RUBBISH_ORDER_INITIAL_STATE =  {
+  selectedContentType: undefined,
+  order: {
+    orderProduct: undefined,
+    orderContentType: 2,
+    origin: undefined,
+    destination: undefined,
+    distanceAndDuration: undefined
+  },
+  payment: undefined
+};
+
 
 /*export const INITIAL_STATE = {
   totalPrice: undefined,

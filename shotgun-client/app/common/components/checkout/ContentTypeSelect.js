@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
 import {H1, Button, Container, Text, Grid, Row, Content, View} from 'native-base';
-import {DELIVERY_ORDER_INITIAL_STATE} from './CheckoutInitialState';
+import {DELIVERY_ORDER_INITIAL_STATE, RUBBISH_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 import yup from 'yup';
 import {ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
@@ -66,7 +66,8 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
 resourceDictionary.
   property('InitialState', {}).
-    delivery(DELIVERY_ORDER_INITIAL_STATE)
+    delivery(DELIVERY_ORDER_INITIAL_STATE).
+    rubbish(RUBBISH_ORDER_INITIAL_STATE)
 /*eslint-enable */
 
 const validationSchema = {
