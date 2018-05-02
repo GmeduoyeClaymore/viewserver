@@ -43,6 +43,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | internalOrderStatus   | String      |
 	  | ColumnAdd | rank                  | Int         |
+	  | ColumnAdd | partnerDetailsJson    | Json        |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED |
@@ -159,7 +160,13 @@ Feature: Delivery order scenarios
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                              | orderDetails                         | partner_firstName | partner_lastName | orderLocation                                | partnerOrderStatus |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | Modestas          | BrickLayer       | ref://json/orders/deliveryOrderLocation.json | RESPONDED          |
-
+	When "client1" subscribed to report "customerOrderSummary" with parameters
+	  | Name                     | Type   | Value           |
+	  | dimension_status         | String | ACCEPTED,PLACED |
+	  | dimension_customerUserId | String | @userId         |
+	Then "client1" the following data is received eventually on report "customerOrderSummary"
+	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerDetailsJson                                             |
+	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED | {"{client2_partnerController_registerPartner_result}" : {"partnerOrderStatus":"RESPONDED"}} |
 
   Scenario: Cancelling Response to order removes order from the responses list
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters

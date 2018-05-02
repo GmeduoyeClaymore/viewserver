@@ -17,7 +17,7 @@ public class OrderWithResponseDataSource {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(
-                        new SpreadNode("productsSpread")
+                        new SpreadNode("orderResponseSpread")
                                 .withInputColumn("orderDetails")
                                 .withRemoveInputColumn()
                                 .withSpreadFunction(DateNegotiatedOrderResponseSpreadFunction.NAME)
@@ -28,7 +28,7 @@ public class OrderWithResponseDataSource {
                                 .withRightJoinColumns("userId")
                                 .withColumnPrefixes("", "partner_")
                                 .withAlwaysResolveNames()
-                                .withConnection("productsSpread", Constants.OUT, "left")
+                                .withConnection("orderResponseSpread", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("ratingJoin")
                                 .withLeftJoinColumns("orderId", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN)
@@ -40,6 +40,7 @@ public class OrderWithResponseDataSource {
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ESTIMATED_DATE_COLUMN),
+                                        new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PRICE_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ORDER_DETAIL_WITHOUT_RESPONSES, "orderDetails"),

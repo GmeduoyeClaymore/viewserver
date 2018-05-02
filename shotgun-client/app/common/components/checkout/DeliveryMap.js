@@ -122,7 +122,7 @@ class DeliveryMap extends Component{
   render(){
     const {fitMap, setDurationAndDistance, getLocationText, resources} = this;
     const {supportsOrigin, supportsDestination} = resources;
-    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, usersWithProduct, history} = this.props;
+    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, usersWithProduct, history, order} = this.props;
 
     if (!me){
       return <LoadingScreen text="Waiting for user ..."/>;
