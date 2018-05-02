@@ -43,7 +43,7 @@ class OrderSummary extends Component{
     return <List>
       {this.renderMap()}
       <ListItem padded>
-        <OriginDestinationSummary {...order}/>
+        <OriginDestinationSummary order={order}/>
       </ListItem>
       {partnerUser ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${partnerUser.firstName} ${partnerUser.lastName}`}</Text></ListItem> : null}
       {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
