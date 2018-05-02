@@ -33,6 +33,7 @@ public class CustomerOrderSummaryReport {
                                         "partner_userStatus",
                                         "partner_statusMessage",
                                         "partner_ratingAvg",
+                                        DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN,
                                         DateNegotiatedOrderResponseSpreadFunction.ESTIMATED_DATE_COLUMN,
                                         DateNegotiatedOrderResponseSpreadFunction.PRICE_COLUMN,
                                         DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS,

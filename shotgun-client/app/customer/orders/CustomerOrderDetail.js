@@ -160,10 +160,10 @@ const findOrderSummaryFromDao = (state, orderId, daoName) => {
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   invariant(orderId, 'orderId should be specfied');
-  let orderRow = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
-  orderRow = orderRow || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
+  let order = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
+  order = order || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
 
-  const {order, partnerResponses} = orderRow || {};
+  const {partnerResponses} = order || {};
   
   const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}])
   const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
