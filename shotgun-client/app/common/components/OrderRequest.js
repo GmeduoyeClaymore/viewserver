@@ -15,31 +15,30 @@ class OrderRequest extends Component {
   }
 
   render() {
-    const {orderRequest, history, next, isLast, isFirst} = this.props;
-    const {orderDetails} = orderRequest;
+    const {order, history, next, isLast, isFirst} = this.props;
 
-    const isInProgress = orderRequest.status == 'INPROGRESS';
+    const isInProgress = order.orderStatus == OrderStatuses.INPROGRESS;
 
-    return <ListItem style={[styles.orderRequest, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
-      onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: orderRequest.orderId})}>
+    return <ListItem style={[styles.order, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
+      onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: order.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={60}>
-            <OriginDestinationSummary order={orderDetails}/>
+            <OriginDestinationSummary order={order}/>
           </Col>
           <Col size={40}>
-            <Text style={styles.price}>{orderDetails.Title}</Text>
-            <Currency value={orderDetails.amount} style={styles.price}/>
+            <Text style={styles.price}>{order.Title}</Text>
+            <Currency value={order.amount} style={styles.price}/>
           </Col>
         </Row>
         <Row size={25}>
           <Col size={60}>
             <Row>
-              {orderDetails.requiredDate ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(orderDetails.requiredDate).format('Do MMM, h:mma')}</Text>] : null}
+              {order.requiredDate ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(order.requiredDate).format('Do MMM, h:mma')}</Text>] : null}
             </Row>
           </Col>
           <Col size={40} style={styles.orderStatusRow}>
-            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(orderRequest)}</Text>
+            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(order)}</Text>
           </Col>
         </Row>
       </Grid>
@@ -58,7 +57,7 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
 /*eslint-enable */
 
 const styles = {
-  orderRequest: {
+  order: {
     paddingTop: 10,
     paddingRight: 15,
     paddingBottom: 10,
@@ -100,8 +99,8 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {orderRequest = {}} = initialProps;
-  const {orderContentTypeId} = orderRequest;
+  const {order = {}} = initialProps;
+  const {orderContentTypeId} = order;
   return {
     orderContentTypeId,
     ...initialProps,

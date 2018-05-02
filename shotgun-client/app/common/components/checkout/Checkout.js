@@ -18,7 +18,7 @@ import {PERSONELL_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 
 class Checkout extends Component {
   static stateKey = 'customerCheckout';
-  static InitialState = PERSONELL_ORDER_INITIAL_STATE;
+  //static InitialState = PERSONELL_ORDER_INITIAL_STATE;
 
   constructor(props){
     super(props);

@@ -24,7 +24,6 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
         register(DeliveryAddressDataSource.getDataSource().getSchema(), DeliveryAddressDataSource.NAME);
         register(DeliveryDataSource.getDataSource().getSchema(), DeliveryDataSource.NAME);
-        register(OrderItemsDataSource.getDataSource().getSchema(), OrderItemsDataSource.NAME);
         register(PhoneNumberDataSource.getDataSource().getSchema(), PhoneNumberDataSource.NAME);
         register(ProductCategoryDataSource.getDataSource().getSchema(), ProductCategoryDataSource.NAME);
         register(ProductDataSource.getDataSource().getSchema(), ProductDataSource.NAME);

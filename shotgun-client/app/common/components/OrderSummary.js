@@ -14,7 +14,6 @@ class OrderSummary extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-
   renderMap = () => {
     const {order = {}, client} = this.props;
     const {origin, destination} = order;
@@ -85,9 +84,9 @@ rubbish(() => 'Rubbish Details')
 
 const mapStateToProps = (state, initialProps) => {
   const {order} = initialProps;
-  const {orderContentType} = order;
+  const {orderContentTypeId} = order;
   return {
-    orderContentType,
+    orderContentTypeId,
     ...initialProps
   };
 };

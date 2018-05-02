@@ -118,7 +118,7 @@ class DeliveryOptions extends Component {
 
 const validationSchema = {
   requiredDate: yup.date().required(),
-  amount: yup.number().required()
+  amount: yup.number().min(1).required()
 };
 
 const datePickerOptions = {

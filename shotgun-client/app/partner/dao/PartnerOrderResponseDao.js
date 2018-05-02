@@ -2,7 +2,6 @@ import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubs
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
 
-
 export default class PartnerOrderResponseDao{
   static DEFAULT_OPTIONS = {
     offset: 0,
@@ -38,6 +37,7 @@ export default class PartnerOrderResponseDao{
     reportContext.dimensions.dimension_partnerId = ['@userId'];
 
     if (isCompleted !== undefined) {
+      //TODO - use the OrderStatus enum for these values
       reportContext.dimensions.dimension_partnerOrderStatus = isCompleted == true ? ['CUSTOMERCOMPLETE'] : ['REQUESTED', 'RESPONDED', 'ASSIGNED', 'STARTED', 'PARTNERCOMPLETE'];
     }
 
@@ -54,12 +54,28 @@ export default class PartnerOrderResponseDao{
 
   mapDomainEvent(dataSink){
     return {
-      orders: dataSink.orderedRows.map(r => this.mapOrderSummary(r))
+      orders: dataSink.orderedRows.map(this.mapOrderResponse)
     };
   }
 
-  mapOrderSummary(orderSummary){
-    return orderSummary;
+  mapOrderResponse(orderResponse){
+    const {orderDetails, partner_firstName, partner_lastName, partner_ratingAvg, partner_imageUrl, customer_firstName, customer_lastName, customer_ratingAvg} = orderResponse;
+
+    return {
+      ...orderDetails,
+      assignedPartner: {
+        ...orderDetails.assignedPartner,
+        firstName: partner_firstName,
+        lastName: partner_lastName,
+        ratingAvg: partner_ratingAvg,
+        imageUrl: partner_imageUrl
+      },
+      customer: {
+        firstName: customer_firstName,
+        lastName: customer_lastName,
+        ratingAvg: customer_ratingAvg
+      }
+    };
   }
 
   createSubscriptionStrategy({isCompleted, orderId}, dataSink){
