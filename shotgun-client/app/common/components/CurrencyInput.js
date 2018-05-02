@@ -1,67 +1,35 @@
 import React, {Component} from 'react';
-import { TextInput } from 'react-native';
-
-export const formatPrice = (price) => {
-  if (!price || price === 'undefined'){
-    return undefined;
-  }
-  return `£${(parseFloat(price + '')).toFixed(2)}`;
-};
+import {TextInputMask} from 'react-native-masked-text';
 
 export class CurrencyInput extends Component{
   constructor(props){
     super(props);
-
-    this.setFormattedPriceValue = this.setFormattedPriceValue.bind(this);
-    this.clearFormattedPriceValue = this.clearFormattedPriceValue.bind(this);
-    this.setFormattedPriceValueFromProps = this.setFormattedPriceValueFromProps.bind(this);
-    this.onValueChanged = this.onValueChanged.bind(this);
     this.state = {
-      formattedPrice: undefined
+      amountMask: undefined
     };
   }
 
-  componentDidMount(){
-    this.setFormattedPriceValueFromProps(this.props);
-  }
-
-  componentWillReceiveProps(newProps){
-    this.setFormattedPriceValueFromProps(newProps);
-  }
-  setFormattedPriceValueFromProps(newProps){
-    const {initialPrice} = newProps;
-    const formattedPrice = formatPrice(initialPrice / 100);
-    this.setState({formattedPrice});
-  }
-
-  setFormattedPriceValue(){
-    const { onValueChanged } = this.props;
-    const {price } = this.state;
-    const formattedPrice = formatPrice(price);
+  setAmount = (amountMask) => {
+    const {onValueChanged} = this.props;
+    const amount = this.refs.amountInput.getRawValue() * 100;
     if (onValueChanged){
-      onValueChanged(parseFloat(price) * 100);
+      onValueChanged(amount);
     }
-    this.setState({formattedPrice});
+    super.setState({amountMask});
   }
 
-  clearFormattedPriceValue(){
-    this.setState({formattedPrice: undefined});
-  }
-
-  onValueChanged(t){
-    console.log(t);
-    this.setState({price: t});
-  }
-
-  render(){
-    const {formattedPrice} = this.state;
-    return <TextInput
-      keyboardType='phone-pad'
-      {...this.props}
-      value={formattedPrice}
-      onFocus={this.clearFormattedPriceValue}
-      onBlur={this.setFormattedPriceValue}
-      onChangeText={this.onValueChanged}
-    />;
+  render() {
+    const {amountMask} = this.state;
+    return <TextInputMask ref={'amountInput'} underlineColorAndroid='transparent' style={styles.amountInput} type={'money'} placeholder='Enter amount'
+      options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount}/>;
   }
 }
+
+const styles = {
+  amountInput: {
+    borderBottomWidth: 0,
+    paddingLeft: 0,
+    fontSize: 18,
+    fontWeight: 'bold',
+  }
+};

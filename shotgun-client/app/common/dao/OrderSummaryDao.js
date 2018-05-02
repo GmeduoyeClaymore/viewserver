@@ -81,8 +81,31 @@ export default class OrderSummaryDao{
     };
   }
 
-  mapOrderSummary(orderSummary){
-    return orderSummary;
+  mapOrderSummary(orderRow){
+    const {
+      partnerResponses,
+      orderDetails,
+    } = orderRow;
+
+    return {partnerResponses: !partnerResponses ? null : partnerResponses.map(this.mapPartnerResponse), orderDetails};
+  }
+
+  mapPartnerResponse(response){
+    return {
+      latitude: response.partner_latitude,
+      longitude: response.partner_longitude,
+      firstname: response.partner_firstName,
+      lastname: response.partner_lastName,
+      email: response.partner_email,
+      imageUrl: response.partner_imageUrl,
+      online: response.partner_online,
+      userStatus: response.partner_userStatus,
+      statusMessage: response.partner_statusMessage,
+      ratingAvg: response.partner_ratingAvg,
+      estimatedDate: response.estimatedDate,
+      price: response.price,
+      partnerOrderStatus: response.partnerOrderStatus,
+    };
   }
 
   createSubscriptionStrategy({partnerId, isCompleted, reportId, orderId, userId, selectedProducts}, dataSink){

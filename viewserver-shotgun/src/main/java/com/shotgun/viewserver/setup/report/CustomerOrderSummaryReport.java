@@ -22,7 +22,7 @@ public class CustomerOrderSummaryReport {
                 .withNodes(
                         new GroupByNode("groupPartnerDetails")
                                 .withGroupByColumns("orderId")
-                                .withSummary("partnerDetailsJson","json","partner_userId", new Object[]{
+                                .withSummary("partnerResponses","json","partner_userId", new Object[]{
                                         "partner_latitude",
                                         "partner_longitude",
                                         "partner_firstName",
@@ -65,7 +65,7 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("order_partner_ratingAvg","partner_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("order_requiredDate","requiredDate"),
                                         new IProjectionConfig.ProjectionColumn("order_orderLocation","orderLocation"),
-                                        new IProjectionConfig.ProjectionColumn("groupPartnerDetails_partnerDetailsJson","partnerDetailsJson"),
+                                        new IProjectionConfig.ProjectionColumn("groupPartnerDetails_partnerResponses","partnerResponses"),
                                         new IProjectionConfig.ProjectionColumn("internalOrderStatus"),
                                         new IProjectionConfig.ProjectionColumn("order_totalPrice", "totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("order_orderContentTypeId","orderContentTypeId"),

@@ -15,14 +15,46 @@ export default class MapDetails extends Component{
   constructor(props){
     super(props);
   }
-  render(){
-    let map;
-    const {origin, destination, partnerPosition, contentType, client} = this.props;
-    const fitMap = () => {
-      if ((origin.line1 !== undefined && destination.line1 !== undefined)) {
-        map.fitToElements(false);
+
+
+  isMapReady(){
+    const {map} = this;
+    return map && map.state && map.state.isReady;
+  }
+
+  fitMap(newProps){
+    try {
+      if (!this.isMapReady()){
+        Logger.info('Abandoning fit map as map is not ready ' + error);
+        return;
       }
-    };
+      const {map} = this;
+      const {order, partnerResponses} = newProps;
+      const positions = [];
+      positions.push(order.origin);
+      positions.push(order.destination);
+      partnerResponses.forEach(
+        res =>{
+          if (res.latitude != undefined && res.longitude != undefined){
+            positions.push(res);
+          }
+        }
+      );
+      Logger.info(`Calling fit map for ${positions.length} users`);
+      if (positions.length){
+        map.fitToCoordinates(positions, {
+          edgePadding: { top: 50, right: 100, bottom: 250, left: 100 },
+          animated: false,
+        });
+      }
+    } catch (error){
+      Logger.info('Encountered error in fit map ' + error);
+    }
+  }
+
+  render(){
+    const {order, partnerResponses, client} = this.props;
+    const {origin, destination} = order;
 
     const region = {
       latitude: partnerPosition.latitude,
@@ -31,12 +63,12 @@ export default class MapDetails extends Component{
       longitudeDelta: LONGITUDE_DELTA
     };
 
-    return <MapView ref={c => { map = c; }} style={{ flex: 1 }} onMapReady={fitMap} initialRegion={region}
+    return <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap} initialRegion={region}
       showsUserLocation={false} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false}>
-      {contentType.destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
-      <MapView.Marker image={locationImg} coordinate={{...partnerPosition}}/>
+      {destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
+      {partnerResponses.map( (res, i) => <MapView.Marker key={i} image={locationImg} coordinate={{...res}}/>)}
       <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
-      {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
+      {destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
     </MapView>;
   }
 }
