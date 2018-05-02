@@ -9,7 +9,6 @@ export default class LoginDao{
     this.name = 'loginDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
-    this.handleConnectionStatusChanged = this.handleConnectionStatusChanged.bind(this);
     this.client.connection.connectionObservable.subscribe(this.handleConnectionStatusChanged);
   
     this.subject.next();
@@ -18,39 +17,27 @@ export default class LoginDao{
       isConnected: this.client.connected
     };
     this.crx = crx;// force rx extensions to load
-    this.initMessaging = this.initMessaging.bind(this);
-    this.loginByUserId = this.loginByUserId.bind(this);
-    this.loginUserByUsernameAndPassword = this.loginUserByUsernameAndPassword.bind(this);
-    this.registerAndLoginPartner = this.registerAndLoginPartner.bind(this);
-    this.registerAndLoginCustomer = this.registerAndLoginCustomer.bind(this);
-    this.connectClientIfNotConnected = this.connectClientIfNotConnected.bind(this);
-    this.doLoginStuff = this.doLoginStuff.bind(this);
-    this.logOut = this.logOut.bind(this);
-    this.initMessaging = this.initMessaging.bind(this);
-    this.onChangeToken = this.onChangeToken.bind(this);
-    this.updateState = this.updateState.bind(this);
-    this.onRegister = this.onRegister.bind(this);
   }
 
-  async onRegister(){
-    await this.connectClientIfNotConnected();
-    const userid = await PrincipalService.getUserIdFromDevice();
-    if (userid){
-      await this.loginByUserId(userid);
-    } else {
-      this.updateState({isLoggedIn: false});
-    }
-  }
+   onRegister = async() => {
+     await this.connectClientIfNotConnected();
+     const userid = await PrincipalService.getUserIdFromDevice();
+     if (userid){
+       await this.loginByUserId(userid);
+     } else {
+       this.updateState({isLoggedIn: false});
+     }
+   }
 
-  get observable(){
-    return this.subject;
-  }
+   get observable(){
+     return this.subject;
+   }
 
-  get optionsObservable(){
-    return this.optionsSubject;
-  }
+   get optionsObservable(){
+     return this.optionsSubject;
+   }
 
-  async loginByUserId(userId){
+  loginByUserId = async(userId) => {
     this.assertNotLoggedIn();
     await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
     await this.doLoginStuff(userId);
@@ -58,7 +45,7 @@ export default class LoginDao{
     this.optionsSubject.next({userId});
   }
 
-  async loginUserByUsernameAndPassword({email, password}){
+  loginUserByUsernameAndPassword = async({email, password}) => {
     this.assertNotLoggedIn();
     const userId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});
     Logger.info(`User ${userId} logged in`);
@@ -68,7 +55,7 @@ export default class LoginDao{
     return userId;
   }
 
-  async registerAndLoginPartner({partner, vehicle, address, bankAccount}){
+  registerAndLoginPartner = async({partner, vehicle, address, bankAccount}) => {
     Logger.info(`Registering partner ${partner.email}`);
     const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: partner, vehicle, bankAccount, address});
     Logger.info(`Partner ${partnerId} registered`);
@@ -76,7 +63,7 @@ export default class LoginDao{
     return partnerId;
   }
 
-  async registerAndLoginCustomer({customer, deliveryAddress, paymentCard}){
+  registerAndLoginCustomer = async({customer, deliveryAddress, paymentCard}) => {
     Logger.info(`Registering customer ${customer.email}`);
     const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
     Logger.info(`Customer ${customerId} registered`);
@@ -84,20 +71,20 @@ export default class LoginDao{
     return customerId;
   }
 
-  async connectClientIfNotConnected(){
+  connectClientIfNotConnected = async() => {
     if (!this.client.connected){
       await this.client.connect(true);
     }
     this.client.connected;
   }
 
-  async handleConnectionStatusChanged(isConnected){
+  handleConnectionStatusChanged = async(isConnected) => {
     if (isConnected){
       const userId = await PrincipalService.getUserIdFromDevice();
       if (userId){
         try {
           await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
-          await this.doLoginStuff(userId);
+          await this.initMessaging();
           this.updateState({isConnected: true, isLoggedIn: true});
         } catch (error){
           Logger.error('Problem re logging you in ' + error );
@@ -111,34 +98,34 @@ export default class LoginDao{
     }
   }
 
-  async doLoginStuff(userId){
+  doLoginStuff = async(userId) => {
     await PrincipalService.setUserIdOnDevice(userId);
     await this.initMessaging();
   }
 
-  async logOut(){
+  logOut = async() => {
     await PrincipalService.removeUserIdFromDevice();
     this.updateState({isLoggedIn: false});
   }
 
-  async initMessaging(){
+  initMessaging = async() => {
     const token = await FCM.getFCMToken();
     const apnsToken = await FCM.getAPNSToken();
     await this.onChangeToken(token);
     Logger.info(`!!! Finished initializing firebase messaging fcm token is ${token} apns token is ${apnsToken}`);
   }
 
-  async onChangeToken(token){
+  onChangeToken = async(token) => {
     await this.client.invokeJSONCommand('messagingController', 'updateUserToken', token);
   }
 
-  updateState(partialState){
+  updateState = (partialState) => {
     const newState = {...this.state, ...partialState};
     this.state = newState;
     this.subject.next(newState);
   }
 
-  assertNotLoggedIn(){
+  assertNotLoggedIn = () => {
     if (this.state.isLoggedIn){
       throw new Error('Cannot log in again already logged in ');
     }

@@ -65,10 +65,10 @@ class DeliveryMap extends Component{
     };
   }
 
-  onChangeText = (location, field, value) => {
-    const {delivery} = this.props;
-    newLocation = {...delivery[location], [field]: value};
-    this.setState({delivery: {...delivery, [location]: newLocation}});
+  onChangeText = async(location, field, value) => {
+    const {order} = this.props;
+    const currentLocation = order[location];
+    this.setState({order: {...order, [location]: {...currentLocation, [field]: value}}});
   }
 
   getLocationText = (address, addressKey, placeholder) => {

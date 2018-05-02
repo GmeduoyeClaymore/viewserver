@@ -22,6 +22,81 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
   payment: undefined
 };
 
+/*export const PERSONELL_ORDER_INITIAL_STATE =  {
+  selectedContentType: {
+    contentTypeId: 5,
+    name: 'Trades People',
+    rootProductCategory: '1Workers',
+    pricingStrategy: 'DURATION',
+  },
+  order: {
+    orderProduct: {
+      dimension_productId: 5,
+      productId: 'Carpenter',
+      name: 'Carpenter',
+      description: '',
+      categoryId: '1Workers',
+      price: 15000
+    },
+    orderContentType: 5,
+    origin: {
+      googlePlaceId: 'ChIJ64Z3QcUEdkgRu_XB2S70e60',
+      city: 'London',
+      latitude: 51.5033635,
+      postCode: 'SW1A 2AB',
+      line1: '11 Downing Street',
+      longitude: -0.1276248
+    },
+    destination: undefined,
+    distanceAndDuration: undefined
+  },
+  payment: undefined
+};*/
+
+
+/*
+export const RUBBISH_ORDER_INITIAL_STATE =  {
+  selectedContentType: {
+    contentTypeId: 2,
+    name: "Rubbish Collection",
+    rootProductCategory: "1Rubbish",
+    pricingStrategy: "FIXED",
+    description: "Get rid of site rubbish now. Track that driver !!"
+  },
+  productCategory: {
+    categoryId: "1Rubbish",
+    category: "Rubbish",
+    parentCategoryId: "NONE",
+    level: 1,
+    path: "1Rubbish"
+  },
+  order: {
+    orderProduct: {
+      dimension_productId: 16,
+      productId: "HouseHoldThreeQuarterVan",
+      name: "Household Three Quarter van",
+      description: "750 kg",
+      categoryId: "2HouseHoldWaste",
+      price: 18000,
+      rank: 1,
+      key: 1,
+      rowId: 1
+    },
+    orderContentType: 2,
+    origin: {
+      googlePlaceId: "ChIJ64Z3QcUEdkgRu_XB2S70e60",
+      city: "London",
+      latitude: 51.5033635,
+      postCode: "SW1A 2AB",
+      line1: "11 Downing Street",
+      longitude: -0.1276248
+    },
+    destination: undefined,
+    distanceAndDuration: undefined
+  },
+  payment: undefined
+};
+*/
 
 /*export const INITIAL_STATE = {
   totalPrice: undefined,

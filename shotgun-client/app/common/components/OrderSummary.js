@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, Image} from 'react-native';
+import {Image} from 'react-native';
 import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
@@ -8,40 +8,28 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('PageTitle', () => 'Item Details').
-    personell(() => 'Job Description').
-    rubbish(() => 'Rubbish Details')
-/*eslint-enable */
-
-
 class OrderSummary extends Component{
   constructor(props){
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
-    this.renderItemDetails = this.renderItemDetails.bind(this);
   }
 
 
-  renderMap(){
-    const { width } = Dimensions.get('window');
+  renderMap = () => {
     const {order = {}, client} = this.props;
     const {origin, destination} = order;
-    const mapWidth = width - 50;
+    const mapWidth = shotgun.deviceWidth - 50;
     const mapHeight = mapWidth / 2;
     return <ListItem style={styles.mapListItem}>
       <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
     </ListItem>;
   }
 
-  renderItemDetails(){
+  renderItemDetails = () => {
     const {order} = this.props;
-    const {resources} = this;
     return <ListItem padded style={{borderBottomWidth: 0}}>
       <Grid>
-        <Row><Text style={styles.itemDetailsTitle}>{resources.PageTitle()}</Text></Row>
+        <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
         <Row><Text>{order.description}</Text></Row>
         {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
       </Grid>
@@ -75,12 +63,6 @@ const styles = {
     borderBottomWidth: 0,
     marginTop: 20
   },
-  picture: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
-    marginRight: 8
-  },
   image: {
     aspectRatio: 1.2,
     borderRadius: 4,
@@ -92,6 +74,14 @@ const styles = {
     marginBottom: 10
   }
 };
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+property('PageTitle', () => 'Item Details').
+personell(() => 'Job Description').
+rubbish(() => 'Rubbish Details')
+/*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
   const {order} = initialProps;

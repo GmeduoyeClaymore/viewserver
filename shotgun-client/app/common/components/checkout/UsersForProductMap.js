@@ -3,80 +3,68 @@ import {withExternalState} from 'custom-redux';
 import { Container, Button, Text, Col, Row, Header, Title, Body, Left} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
-import {TextInput, Dimensions} from 'react-native';
+import {TextInput} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/components/maps/MapUtils';
 import {UserRelationshipsControl} from 'common/components/relationships/UserRelationships';
-const {width} = Dimensions.get('window');
-const contentWidth = width - 20;
-
-const getAddressForlocation = async (client, location) => {
-  if (!location || !location.latitude || !location.longitude){
-    return undefined;
-  }
-  const {latitude, longitude} = location;
-  const results =  await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
-    latitude, longitude
-  });
-  return results[0];
-};
+const contentWidth = shotgun.deviceWidth - 20;
 
 class UsersForProductMap extends Component{
-  constructor(props){
-    super(props);
-    this.doAddressLookup = this.doAddressLookup.bind(this);
-    this.getLocationTextInput = this.getLocationTextInput.bind(this);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.assignDeliveryToUser = this.assignDeliveryToUser.bind(this);
-    this.state = {};
-  }
-
   async componentDidMount(){
-    const {me = {}, delivery, client} = this.props;
+    const {me = {}, order, client} = this.props;
     const {latitude, longitude} = me;
     
-    this.setState({delivery: {...delivery, origin: delivery.origin && delivery.origin.line1 ? delivery.origin : await getAddressForlocation(client, {longitude, latitude})}});
+    this.setState({order: {...order, origin: order.origin && order.origin.line1 ? order.origin : await this.getAddressForlocation(client, {longitude, latitude})}});
   }
 
-  async onChangeText(location, field, value){
-    const {delivery} = this.props;
-    newLocation = {...delivery[location], [field]: value};
-    this.setState({delivery: {...delivery, [location]: newLocation}});
+  getAddressForlocation = async (client, location) => {
+    if (!location || !location.latitude || !location.longitude){
+      return undefined;
+    }
+    const {latitude, longitude} = location;
+    const results =  await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
+      latitude, longitude
+    });
+    return results[0];
+  };
+
+  onChangeText = async(location, field, value) => {
+    const {order} = this.props;
+    const currentLocation = order[location];
+    this.setState({order: {...order, [location]: {...currentLocation, [field]: value}}});
   }
 
-  getLocationTextInput(address, addressKey, placeholder){
+  getLocationTextInput = (address, addressKey, placeholder) => {
     style = address && address.line1 ? {} : styles.locationTextPlaceholder;
     text = addressToText(address) || placeholder;
-    const {onChangeText, doAddressLookup} = this;
     return  <Row>
       {address && address.line1 !== undefined ? <Col size={30}>
-        <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
+        <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
       <Col size={70}>
-        <Text style={style} onPress={() => doAddressLookup(placeholder, addressKey)}>{text}</Text>
+        <Text style={style} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{text}</Text>
       </Col>
     </Row>;
   }
 
-  assignDeliveryToUser(user){
-    const {delivery: oldDelivery, next, history}  = this.props;
-    const delivery = {...oldDelivery};
-    delivery.partnerId = user.userId;
-    this.setState({delivery, deliveryUser: user}, () => history.push(next));
+  assignDeliveryToUser = (deliveryUser) => {
+    const {order, next, history}  = this.props;
+    this.setState({order: {...order, partnerId: deliveryUser.userId},  deliveryUser}, () => history.push(next));
   }
 
-
-  doAddressLookup(addressLabel, addressKey){
+  doAddressLookup = (addressLabel, addressKey) => {
     const {history, parentPath} = this.props;
     history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
   }
 
-
   render(){
     const {getLocationTextInput, assignDeliveryToUser} = this;
-    const {origin, selectedProduct = {}, errors, disableDoneButton, next, deliveryUser, client, history} = this.props;
-    const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${selectedProduct.name})` : `${selectedProduct.name}s`;
+    const {order, errors, next, deliveryUser, client, history} = this.props;
+    const {origin, orderProduct} = order;
+    const disableDoneButton = !origin || origin.line1 == undefined;
+
+    const title = deliveryUser ? `Assigned to ${deliveryUser.firstName} ${deliveryUser.lastName}  (${orderProduct.name})` : `${orderProduct.name}s`;
     return <Container>
       <Header withButton>
         <Left>
@@ -91,7 +79,7 @@ class UsersForProductMap extends Component{
         {getLocationTextInput(origin, 'origin', 'Enter job location')}
       </Row>
       <Row size={25}>
-        <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} geoLocation={origin} selectedProduct={selectedProduct} onPressAssignUser={assignDeliveryToUser}/>
+        <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} geoLocation={origin} selectedProduct={orderProduct} onPressAssignUser={assignDeliveryToUser}/>
         <ErrorRegion errors={errors} />
       </Row>
       <Button fullWidth paddedBottom iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
@@ -127,16 +115,15 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {delivery, selectedContentType, selectedProduct, selectedUser, selectedUserIndex} = initialProps;
-  const {origin} = delivery;
-  const disableDoneButton = !origin || origin.line1 == undefined;
+  const {order, selectedContentType, selectedUser, selectedUserIndex} = initialProps;
 
   return {
     ...initialProps,
     selectedUser,
     selectedUserIndex,
     me: getDaoState(state, ['user'], 'userDao'),
-    delivery, selectedProduct, selectedContentType, origin,  disableDoneButton
+    order,
+    selectedContentType
   };
 };
 
