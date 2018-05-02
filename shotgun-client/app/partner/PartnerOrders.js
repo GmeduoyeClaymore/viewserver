@@ -27,7 +27,7 @@ class PartnerOrders extends Component{
         <Tab heading='Accepted' onPress={() => this.goToTabNamed('Accepted')}/>
         <Tab heading='Posted' onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
-      <ReduxRouter  name="PartnerOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Accepted' {...{history, isCustomer, defaultOptions, isCompleted: !!isCompleted, parentPath, ordersRoot, path} } >
+      <ReduxRouter  name="PartnerOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Accepted' {...this.props } >
         <Route path={'Accepted'} component={PartnerOrderItems}/>
         <Route path={'Posted'} component={PartnerOrderItems}/>
       </ReduxRouter>
