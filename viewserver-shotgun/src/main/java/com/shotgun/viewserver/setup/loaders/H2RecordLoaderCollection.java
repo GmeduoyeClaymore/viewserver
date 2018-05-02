@@ -31,6 +31,13 @@ public class H2RecordLoaderCollection implements IRecordLoaderCollection {
     public Map<String, IRecordLoader> getDataLoaders() {
         return loaders;
     }
+
+    @Override
+    public void close() {
+        if(loaders != null){
+            loaders.values().forEach(c->c.close());
+        }
+    }
 }
 
 

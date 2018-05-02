@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.maps;
 
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,15 +21,15 @@ public class DeliveryAddressParser{
                 componentsByType.put(str, (String) component.get("long_name"));
             }
         }
-        DeliveryAddress result = new DeliveryAddress();
-        result.setGooglePlaceId((String)firstResult.get("place_id"));
+        DeliveryAddress result = JSONBackedObjectFactory.create(DeliveryAddress.class);
+        result.set("googlePlaceId", firstResult.get("place_id"));
         HashMap<String, Object> geometry = (HashMap<String, Object>) firstResult.get("geometry");
         HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
-        result.setLatitude((Double) location.get("lat"));
-        result.setLongitude((Double) location.get("lng"));
-        result.setLine1(componentsByType.get("street_number") + " " + componentsByType.get("route"));
-        result.setCity(componentsByType.get("postal_town"));
-        result.setPostCode(componentsByType.get("postal_code"));
+        result.set("latitude",location.get("lat"));
+        result.set("longitude",location.get("lng"));
+        result.set("line1",componentsByType.get("street_number") + " " + componentsByType.get("route"));
+        result.set("city",componentsByType.get("postal_town"));
+        result.set("postCode",componentsByType.get("postal_code"));
         return result;
     }
 }

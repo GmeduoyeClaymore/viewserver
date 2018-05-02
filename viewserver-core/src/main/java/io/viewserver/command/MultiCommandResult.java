@@ -62,10 +62,10 @@ public class MultiCommandResult extends CommandResult {
     @Override
     public void setComplete(boolean complete) {
         if (++completeCount == commandCount) {
-            log.warn("MultiCommandResult '{}' - complete count incremented to {} - triggering parent", name, completeCount);
+            log.trace("MultiCommandResult '{}' - complete count incremented to {} - triggering parent", name, completeCount);
             super.setComplete(true);
         } else if (completeCount > commandCount) {
-            log.warn("MultiCommandResult '{}' - received {} complete, expected {} - not triggering parent", name, completeCount, commandCount);
+            log.trace("MultiCommandResult '{}' - received {} complete, expected {} - not triggering parent", name, completeCount, commandCount);
         } else {
             log.trace("MultiCommandResult '{}' - complete count incremented to {} ({} required)", name, completeCount, commandCount);
         }

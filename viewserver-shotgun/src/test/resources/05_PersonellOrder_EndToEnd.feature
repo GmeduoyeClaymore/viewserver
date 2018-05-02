@@ -22,26 +22,6 @@ Feature: Personell order scenarios
 	  | Name                     | Type   | Value           |
 	  | dimension_status         | String | ACCEPTED,PLACED |
 	  | dimension_customerUserId | String | @userId         |
-	Then "client1" the following schema is received eventually on report "customerOrderSummary"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | status                | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | internalOrderStatus   | String      |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                               | orderDetails                          | orderContentTypeId | orderLocation                                 | status |
 	  | RowAdd  |               | {client1_personellOrderController_createOrder_result} | ref://json/orders/personellOrder.json | 5                  | ref://json/orders/personellOrderLocation.json | PLACED |
@@ -108,6 +88,7 @@ Feature: Personell order scenarios
 	  | ColumnAdd | partner_statusMessage | String      |
 	  | ColumnAdd | partner_ratingAvg     | Double      |
 	  | ColumnAdd | orderDetails          | Json        |
+	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | rank                  | Int         |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                               | orderDetails                          | partner_firstName | partner_lastName | orderLocation                                 | partnerOrderStatus |
@@ -348,16 +329,15 @@ Feature: Personell order scenarios
 	  | dimension_paidToUserId | String | @userId |
 	Given keyColumn is "paymentId"
 	Then "client2" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                        | totalPrice |
-	  | RowAdd  |               | {client1_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 10        |
+	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                    | totalPrice |
+	  | RowAdd  |               | {client1_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 10         |
 
 	When "client1" subscribed to report "paymentsReport" with parameters
-	  | Name                   | Type   | Value   |
+	  | Name                     | Type   | Value   |
 	  | dimension_paidFromUserId | String | @userId |
 	Then "client1" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidToUserId                                     | paymentId                                                        | totalPrice |
-	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 10        |
-
+	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                    | totalPrice |
+	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 10         |
 
 
   Scenario: Logging a days work paying and completing
@@ -374,32 +354,32 @@ Feature: Personell order scenarios
 	  | orderId   | {client1_personellOrderController_createOrder_result} |
 	  | partnerId | {client2_partnerController_registerPartner_result}    |
 	Given "client2" controller "personellOrderController" action "logDayStarted" invoked with parameters
-	  | Name             | Value                                                 |
-	  | orderId          | {client1_personellOrderController_createOrder_result} |
+	  | Name    | Value                                                 |
+	  | orderId | {client1_personellOrderController_createOrder_result} |
 	Given "client2" controller "personellOrderController" action "logDayComplete" invoked with parameters
-	  | Name           | Value                                                     |
-	  | orderId        | {client1_personellOrderController_createOrder_result}     |
+	  | Name           | Value                                                   |
+	  | orderId        | {client1_personellOrderController_createOrder_result}   |
 	  | paymentStageId | {client2_personellOrderController_logDayStarted_result} |
 	Given "client2" controller "personellOrderController" action "completePaymentStage" invoked with parameters
-	  | Name           | Value                                                     |
-	  | orderId        | {client1_personellOrderController_createOrder_result}     |
+	  | Name           | Value                                                   |
+	  | orderId        | {client1_personellOrderController_createOrder_result}   |
 	  | paymentStageId | {client2_personellOrderController_logDayStarted_result} |
 	Given "client1" controller "personellOrderController" action "payForPaymentStage" invoked with parameters
-	  | Name           | Value                                                     |
-	  | orderId        | {client1_personellOrderController_createOrder_result}     |
+	  | Name           | Value                                                   |
+	  | orderId        | {client1_personellOrderController_createOrder_result}   |
 	  | paymentStageId | {client2_personellOrderController_logDayStarted_result} |
 	When "client2" subscribed to report "paymentsReport" with parameters
 	  | Name                   | Type   | Value   |
 	  | dimension_paidToUserId | String | @userId |
 	Given keyColumn is "paymentId"
 	Then "client2" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                        | totalPrice |
+	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                    | totalPrice |
 	  | RowAdd  |               | {client1_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 105        |
 
 	When "client1" subscribed to report "paymentsReport" with parameters
-	  | Name                   | Type   | Value   |
+	  | Name                     | Type   | Value   |
 	  | dimension_paidFromUserId | String | @userId |
 	Then "client1" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidToUserId                                     | paymentId                                                        | totalPrice |
+	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                    | totalPrice |
 	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_personellOrderController_payForPaymentStage_result} | 105        |
 

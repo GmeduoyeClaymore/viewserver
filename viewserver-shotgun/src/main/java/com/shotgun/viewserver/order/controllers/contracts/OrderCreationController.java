@@ -47,7 +47,7 @@ public interface OrderCreationController {
                 .addValue("orderId", orderId)
                 .addValue("paymentMethodId", paymentMethodId)
                 .addValue("created", now)
-                .addValue("productId", order.getOrderProduct())
+                .addValue("productId", order.getOrderProduct() == null ? null : order.getOrderProduct().getProductId())
                 .addValue("status", order.getOrderStatus().name())
                 .addValue("orderContentTypeId", order.getOrderContentType().getContentTypeId())
                 .addValue("lastModified", now)

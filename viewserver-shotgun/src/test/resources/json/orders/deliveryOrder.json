@@ -12,7 +12,9 @@
     "longitude": -0.1523323
   },
   "customerUserId": "{param_customerId}",
-  "orderProduct": "CommercialThreeQuarterVan",
+  "orderProduct": {
+    "productId" : "CommercialThreeQuarterVan"
+  },
   "requiredDate": "01/01/2017"
 }
 

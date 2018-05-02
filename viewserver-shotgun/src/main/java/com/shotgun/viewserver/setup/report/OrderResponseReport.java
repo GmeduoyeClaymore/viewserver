@@ -26,6 +26,7 @@ public class OrderResponseReport {
                                                 new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                                 new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("orderLocation"),
+                                                new IProjectionConfig.ProjectionColumn("requiredDate"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),

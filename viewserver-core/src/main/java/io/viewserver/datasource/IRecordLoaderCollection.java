@@ -6,4 +6,6 @@ import java.util.Map;
 
 public interface IRecordLoaderCollection {
     Map<String,IRecordLoader> getDataLoaders() ;
+
+    void close();
 }

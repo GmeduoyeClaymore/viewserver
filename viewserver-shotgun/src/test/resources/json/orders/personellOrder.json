@@ -1,6 +1,8 @@
 {
   "jobLocation": "objref://json/orders/personellOrderLocation.json",
   "customerUserId": "{param_customerId}",
-  "orderProduct": "GroundWorker",
+  "orderProduct": {
+    "productId" : "GroundWorker"
+  },
   "requiredDate": "{now_date+1}"
 }

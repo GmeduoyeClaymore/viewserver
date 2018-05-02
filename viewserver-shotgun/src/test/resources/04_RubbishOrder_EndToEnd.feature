@@ -71,25 +71,6 @@ Feature: Rubbish order scenarios
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
 	  | dimension_partnerOrderStatus | String | RESPONDED |
-	Then "client2" the following schema is received eventually on report "orderResponses"
-	  | ~Action   | ~Name                 | ~ColumnType |
-	  | ColumnAdd | orderId               | String      |
-	  | ColumnAdd | partnerOrderStatus    | String      |
-	  | ColumnAdd | orderLocation         | Json        |
-	  | ColumnAdd | orderContentTypeId    | Int         |
-	  | ColumnAdd | totalPrice            | Int         |
-	  | ColumnAdd | partner_firstName     | String      |
-	  | ColumnAdd | partner_lastName      | String      |
-	  | ColumnAdd | partner_email         | String      |
-	  | ColumnAdd | partner_latitude      | Double      |
-	  | ColumnAdd | partner_longitude     | Double      |
-	  | ColumnAdd | partner_imageUrl      | String      |
-	  | ColumnAdd | partner_online        | Bool        |
-	  | ColumnAdd | partner_userStatus    | String      |
-	  | ColumnAdd | partner_statusMessage | String      |
-	  | ColumnAdd | partner_ratingAvg     | Double      |
-	  | ColumnAdd | orderDetails          | Json        |
-	  | ColumnAdd | rank                  | Int         |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                             | orderDetails                        | partner_firstName | partner_lastName | orderLocation                               | partnerOrderStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | ref://json/orders/rubbishOrder.json | Modestas          | BrickLayer       | ref://json/orders/rubbishOrderLocation.json | RESPONDED          |

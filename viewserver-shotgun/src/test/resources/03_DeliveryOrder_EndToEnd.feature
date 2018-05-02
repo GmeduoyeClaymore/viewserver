@@ -40,6 +40,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | partner_userStatus    | String      |
 	  | ColumnAdd | partner_statusMessage | String      |
 	  | ColumnAdd | partner_ratingAvg     | Double      |
+	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | internalOrderStatus   | String      |
 	  | ColumnAdd | rank                  | Int         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
@@ -152,6 +153,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | partner_userStatus    | String      |
 	  | ColumnAdd | partner_statusMessage | String      |
 	  | ColumnAdd | partner_ratingAvg     | Double      |
+	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | orderDetails          | Json        |
 	  | ColumnAdd | rank                  | Int         |
 	Then "client2" the following data is received eventually on report "orderResponses"

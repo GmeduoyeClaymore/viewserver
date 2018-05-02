@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection {
     private Callable<IRecordLoaderCollection>[] collections;
+    private HashMap<String, IRecordLoader> loaderMap;
 
     public CompositeRecordLoaderCollection(Callable<IRecordLoaderCollection>... collections){
 
@@ -18,7 +19,7 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
 
     @Override
     public Map<String, IRecordLoader> getDataLoaders() {
-        Map<String,IRecordLoader> loaderMap = new HashMap<>();
+        loaderMap = new HashMap<>();
         for(Callable<IRecordLoaderCollection> factory : collections){
             try {
                 loaderMap.putAll(factory.call().getDataLoaders());
@@ -27,5 +28,12 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
             }
         }
         return loaderMap;
+    }
+
+    @Override
+    public void close() {
+        if(loaderMap != null){
+            loaderMap.values().forEach(c->c.close());
+        }
     }
 }

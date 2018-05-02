@@ -1,61 +1,13 @@
 export const DELIVERY_ORDER_INITIAL_STATE =  {
-  selectedContentType: {
-    contentTypeId: 1,
-    name: 'Delivery',
-    rootProductCategory: '1Vans',
-    pricingStrategy: 'JOURNEY_DISTANCE',
-    description: 'Schedule deliveries in an instant',
-    hasOrigin: true,
-    hasDestination: true,
-    hasStartTime: true
-  },
+  selectedContentType: undefined,
   order: {
-    orderProduct: {
-      dimension_productId: 4,
-      productId: '4Luton',
-      name: 'Box/Luton Van',
-      description: 'A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimensions 3.9x2.2x2m',
-      categoryId: '1Vans',
-      price: 5000,
-      imageUrl: 'luton-lorry',
-      rank: 0,
-      key: 0,
-      rowId: 0
-    },
+    orderProduct: undefined,
     orderContentType: 1,
-    title: 'Box/Luton Van',
-    productId: '4Luton',
-    amount: 5000,
-    origin: {
-      line1: '12 Cromwell Rd',
-      city: 'London',
-      postCode: 'SW5 0SE',
-      country: 'United Kingdom',
-      googlePlaceId: 'ChIJvTu8sPQPdkgRqaph3ybp8KE',
-      latitude: 51.494426,
-      longitude: -0.1927663
-    },
-    destination: {
-      line1: '333 North End Rd',
-      city: 'London',
-      postCode: 'SW6 1NN',
-      country: 'United Kingdom',
-      googlePlaceId: 'ChIJJUyCW5APdkgRcCNMMsNN5sY',
-      latitude: 51.4849723,
-      longitude: -0.2020104
-    },
-    distanceAndDuration: {
-      distance: 1829,
-      duration: 433
-    },
-    requiredDate: '2018-05-01T11:44:14.620Z',
-    description: 'Sefsefsefsef'
+    origin: undefined,
+    destination: undefined,
+    distanceAndDuration: undefined
   },
-  payment: {
-    paymentId: 'card_1BZjOtJf2h7PvwlulrG7Lrbx',
-    brand: 'Visa',
-    last4: '4242'
-  }
+  payment: undefined
 };
 
 

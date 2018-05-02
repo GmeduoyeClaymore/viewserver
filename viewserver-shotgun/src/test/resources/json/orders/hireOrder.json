@@ -1,7 +1,9 @@
 {
   "origin": "objref://json/orders/hireOrderLocation.json",
   "customerUserId": "{param_customerId}",
-  "orderProduct": "DrillSDS110v",
+  "orderProduct": {
+    "productId" : "DrillSDS110v"
+  },
   "requiredDate": "{now_date+1}",
   "estimatedNoDays": "10"
 }

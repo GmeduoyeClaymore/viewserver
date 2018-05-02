@@ -61,7 +61,7 @@ public class CustomerController {
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
     public String registerCustomer(@ActionParam(name = "user")User user, @ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress, @ActionParam(name = "paymentCard")PaymentCard paymentCard){
         log.debug("Registering customer: " + user.getEmail());
-        deliveryAddress.setIsDefault(true);
+        deliveryAddress.set("isDefault",true);
         HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
         user.set("stripeCustomerId",stripeResponse.get("customerId").toString());
         user.set("stripeDefaultSourceId",stripeResponse.get("paymentToken").toString());

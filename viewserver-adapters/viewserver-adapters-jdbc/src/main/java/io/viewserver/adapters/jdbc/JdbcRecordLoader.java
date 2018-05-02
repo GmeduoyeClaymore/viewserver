@@ -71,6 +71,11 @@ public class JdbcRecordLoader implements IWritableRecordLoader {
     }
 
     @Override
+    public void close() {
+
+    }
+
+    @Override
     public TableKeyDefinition getDerivedTableKeyDefinition() {
         return null;
     }

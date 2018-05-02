@@ -1,5 +1,6 @@
 package io.viewserver.datasource;
 
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.table.*;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -16,6 +17,7 @@ public class RecordUtils{
     }
 
     public static void addRecordToTableOperator(KeyedTable operator, IRecord rec) {
+        ExecutionContext.AssertUpdateThread();
         logger.info("Added record rec to operator " + operator.getPath());
         TableKeyDefinition tableKeyDefinition = operator.getTableKeyDefinition();
         if(tableKeyDefinition == null ){

@@ -15,14 +15,13 @@ class ContentTypeSelect extends Component{
   }
   
   selectContentType = (selectedContentType) => {
-    const resources = resourceDictionary.resolve(this.selectContentType.contentTypeId);
+    const resources = resourceDictionary.resolve(selectedContentType.contentTypeId);
     const {InitialState} = resources;
     this.setState({...InitialState, selectedContentType, selectedCategory: selectedContentType.productCategory});
   }
 
   startOrder = () => {
     const {history, next, paymentCards, ordersRoot, parentPath} = this.props;
-
     if (paymentCards.length > 0) {
       history.push(next);
     } else {

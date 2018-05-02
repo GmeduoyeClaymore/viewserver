@@ -41,7 +41,7 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         Object existingLookup = lookups.get(key);
         if (existingLookup != null) {
-            log.warn("Already found a dimension named " + existingLookup + " not registering it again");
+            log.warn("Already found a dimension named " + key + " not registering it again");
             return (LookupKey) key;
         }
 

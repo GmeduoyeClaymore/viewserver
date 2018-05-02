@@ -34,7 +34,7 @@ export default class PaymentDao{
   }
 
   addPaymentCard = async({paymentCard}) => {
-    const promise = this.client.invokeJSONCommand('partnerController', 'addPaymentCard', {paymentCard});
+    const promise = this.client.invokeJSONCommand('paymentController', 'addPaymentCard', {paymentCard});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error('Could not detect creation of payment card in 5 seconds'));
     Logger.debug('Added card for customer');
     this.getPaymentCards();

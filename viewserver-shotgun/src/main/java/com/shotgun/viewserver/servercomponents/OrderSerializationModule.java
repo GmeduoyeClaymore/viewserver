@@ -11,13 +11,17 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.ProductKey;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.domain.LinkedDeliveryOrder;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
+import com.shotgun.viewserver.order.domain.OrderProduct;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -31,6 +35,9 @@ public class OrderSerializationModule extends SimpleModule {
         registerDynamicClass(NegotiationResponse.class);
         registerDynamicClass(OrderPaymentStage.class);
         registerDynamicClass(LinkedDeliveryOrder.class);
+        registerDynamicClass(OrderProduct.class);
+        registerDynamicClass(DeliveryAddress.class);
+        registerDynamicClass(Dimensions.class);
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
         addDeserializer(Date.class, new DateDesSerialiser());
 
@@ -83,6 +90,12 @@ public class OrderSerializationModule extends SimpleModule {
         public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
             final ObjectMapper mapper = (ObjectMapper) p.getCodec();
             final String node = mapper.readValue(p, String.class);
+            if(node == null || "".equals(node)){
+                return null;
+            }
+            if(StringUtils.isNumeric(node)){
+                return new Date(Long.parseLong(node));
+            }
             return new DateTime(node).toDate();
         }
     }

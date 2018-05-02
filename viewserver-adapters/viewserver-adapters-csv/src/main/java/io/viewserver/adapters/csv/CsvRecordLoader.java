@@ -63,6 +63,11 @@ public class CsvRecordLoader implements IRecordLoader {
     }
 
     @Override
+    public void close() {
+
+    }
+
+    @Override
     public rx.Observable<IRecord> getRecords(String query) {
         return  rx.Observable.create(subscriber -> {
         try{

@@ -59,7 +59,8 @@ public class FirebaseRecordLoader implements IRecordLoader{
                             DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
                             subscriber.onNext(changeRecord);
                         } catch (Exception ex) {
-                            logger.error(String.format("There was an error updating a record in the %s table", tableName));
+                            logger.error(String.format("There was an error updating a record in the %s table", tableName), ex
+                            );
                         }
                     }
                 };
@@ -125,6 +126,13 @@ public class FirebaseRecordLoader implements IRecordLoader{
         return connectionFactory.getConnection();
     }
 
+
+    @Override
+    public void close(){
+        if(this.listenerRegistration != null) {
+            this.listenerRegistration.remove();
+        }
+    }
 }
 
 

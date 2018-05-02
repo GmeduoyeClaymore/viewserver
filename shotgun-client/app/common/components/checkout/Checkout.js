@@ -14,10 +14,8 @@ import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {LoadingScreen} from 'common/components';
 import {isAnyOperationPending} from 'common/dao';
-import {DELIVERY_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 class Checkout extends Component {
   static stateKey = 'customerCheckout';
-  static InitialState = DELIVERY_ORDER_INITIAL_STATE;
   constructor(props){
     super(props);
     Logger.info('Creating checkout component');

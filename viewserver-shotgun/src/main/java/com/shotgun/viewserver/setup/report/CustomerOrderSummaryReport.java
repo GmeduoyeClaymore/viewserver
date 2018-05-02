@@ -34,6 +34,7 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("partner_userStatus"),
                                         new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                         new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                        new IProjectionConfig.ProjectionColumn("requiredDate"),
                                         new IProjectionConfig.ProjectionColumn("orderLocation"),
                                         new IProjectionConfig.ProjectionColumn("internalOrderStatus"),
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),

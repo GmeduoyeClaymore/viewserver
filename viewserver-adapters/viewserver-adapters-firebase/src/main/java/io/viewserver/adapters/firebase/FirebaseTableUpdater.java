@@ -94,6 +94,9 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
                 case String: {
                     return record.getString(columnName);
                 }
+                case Json: {
+                    return record.getValue(columnName);
+                }
                 case DateTime: {
                     return record.getDateTime(columnName) != null ? record.getDateTime(columnName) : null;
                 }

@@ -66,6 +66,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         for(Map.Entry<String,ColumnHolder> entry : spreadColumnsByName.entrySet()){
             output.getSchema().removeColumn(entry.getValue().getColumnId());
         }
+
         spreadColumnsByName.clear();
     }
 
@@ -93,16 +94,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             }
         }
 
-        private ColumnHolder getOrCreateSpreadColumn(Column configColumn) {
-            if(spreadColumnsByName.containsKey(configColumn.getName())){
-                return spreadColumnsByName.get(configColumn.getName());
-            }
-            ColumnHolder holder = ColumnHolderUtils.createColumnHolder(configColumn);
-            output.getSchema().addColumn(holder);
-            SpreadOperator.this.tableStorage.initialiseColumn(holder);
-            spreadColumnsByName.put(holder.getName(),holder);
-            return holder;
-        }
+
 
         @Override
         protected void onColumnRemove(ColumnHolder columnHolder) {
@@ -157,7 +149,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
 
         @Override
         protected void onRowUpdate(int row, IRowFlags rowFlags) {
-            log.info("Starting to process update for row {}",row);
+            log.debug("Starting to process update for row {}",row);
             TIntHashSet ourRows = spreadAssociations.get(row);
             if (ourRows == null) {
                 throw new RuntimeException("Attempting to update a row that doesnt exist");
@@ -186,9 +178,9 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                     isAdd = true;
                     outputRow = associationCounter++;
                 }
-                log.info("Row {} has just been added in {}",outputRow,"add");
+                log.debug("Row {} has just been added in {}",outputRow,"add");
                 for(Map.Entry<Column, Object[]> val : values){
-                    ColumnHolder spreadColumn = getOrCreateSpreadColumn(val.getKey());
+                    ColumnHolder spreadColumn = SpreadOperator.this.output.getOrCreateSpreadColumn(val.getKey());
                     Object[] value = val.getValue();
                     Object result = i < value.length ? value[i] : null;
                     ColumnHolderUtils.setValue(spreadColumn,outputRow, result);
@@ -222,7 +214,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                 throw new RuntimeException("Attempting to remove a row that doesnt exist");
             }
             for(int i : ourRows.toArray()){
-                log.info("Row {} has just been removed in remove",i);
+                log.debug("Row {} has just been removed in remove",i);
                 inputToOutputMappings.remove(i);
                 output.handleRemove(i);
                 ourRows.remove(i);
@@ -239,6 +231,25 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
             super(name, owner);
 
             columnHolderFactory = new SpreadOperator.MappedColumnHolderFactory();
+        }
+
+        @Override
+        public void resetSchema() {
+            super.resetSchema();
+            for(Column column : SpreadOperator.this.spreadFunction.getColumns()){
+                this.getOrCreateSpreadColumn(column);
+            }
+        }
+
+        private ColumnHolder getOrCreateSpreadColumn(Column configColumn) {
+            if(spreadColumnsByName.containsKey(configColumn.getName())){
+                return spreadColumnsByName.get(configColumn.getName());
+            }
+            ColumnHolder holder = ColumnHolderUtils.createColumnHolder(configColumn);
+            output.getSchema().addColumn(holder);
+            SpreadOperator.this.tableStorage.initialiseColumn(holder);
+            spreadColumnsByName.put(holder.getName(),holder);
+            return holder;
         }
 
         @Override

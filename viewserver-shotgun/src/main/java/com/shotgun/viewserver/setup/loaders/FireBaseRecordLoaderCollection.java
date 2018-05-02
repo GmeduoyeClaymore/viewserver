@@ -54,4 +54,9 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
     public Map<String, IRecordLoader> getDataLoaders() {
         return loaders;
     }
+
+    @Override
+    public void close(){
+        loaders.values().forEach(c-> c.close());
+    }
 }

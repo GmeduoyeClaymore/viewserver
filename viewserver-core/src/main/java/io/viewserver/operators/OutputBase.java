@@ -84,7 +84,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
                 subscriber.onError(ex);
             }}, Emitter.BackpressureMode.BUFFER);
 
-        return Observable.concat(snapshot,subject);
+        return Observable.concat(snapshot,subject.onBackpressureBuffer(100));
     }
 
     public String getName() {

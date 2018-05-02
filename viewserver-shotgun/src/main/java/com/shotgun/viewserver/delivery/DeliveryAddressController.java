@@ -43,10 +43,10 @@ public class DeliveryAddressController {
             String deliveryAddressId = getDeliveryAddressIdFromGooglePlaceId(userId, deliveryAddress.getGooglePlaceId());
 
             if(deliveryAddressId != null){
-                deliveryAddress.setDeliveryAddressId(deliveryAddressId);
+                deliveryAddress.set("deliveryAddressId",deliveryAddressId);
             }else{
-                deliveryAddress.setDeliveryAddressId(ControllerUtils.generateGuid());
-                deliveryAddress.setCreated(now);
+                deliveryAddress.set("deliveryAddressId",ControllerUtils.generateGuid());
+                deliveryAddress.set("created",now);
             }
         }
 

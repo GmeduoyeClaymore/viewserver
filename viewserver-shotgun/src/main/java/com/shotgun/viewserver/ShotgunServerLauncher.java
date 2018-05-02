@@ -129,7 +129,7 @@ public class ShotgunServerLauncher{
         ));
         container.addComponent(DatasourceFirebaseTableUpdater.class);
         container.addComponent(FireBaseRecordLoaderCollection.class);
-        container.addComponent(RealShotgunControllersComponents.class);
+        container.addComponent(MockShotgunControllersComponents.class);
         return true;
     }
 

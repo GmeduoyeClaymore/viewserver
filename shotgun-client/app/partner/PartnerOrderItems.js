@@ -18,7 +18,8 @@ class PartnerOrderItems extends Component{
     return <OrderRequest history={history} orderRequest={orderRequest} key={orderRequest.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };
 
-  getOptions = (isCompleted) => ({
+  getOptions = (isCustomer, isCompleted) => ({
+    ...(isCustomer ? OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : {}),
     isCompleted
   });
 

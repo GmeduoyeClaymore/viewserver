@@ -25,7 +25,7 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
 
     String getOrderId();
 
-    ProductKey getOrderProduct();
+    OrderProduct getOrderProduct();
 
     void setOrderStatus(OrderStatus status);
 

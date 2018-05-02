@@ -157,7 +157,6 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         });
         new DataSourceCatalog(values[0], new ChunkedColumnStorage(1024));
         IDataSource dataSourceForRow = getDataSourceForRow(row);
-        log.info(String.format("Added data source %s to row %s active rows are %s",dataSourceForRow.getName(),row, getOutput().getRowTracker()));
         this.registered.onNext(dataSourceForRow);
         return row;
     }
@@ -165,7 +164,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     @Override
     public void setStatus(String name, DataSourceStatus status) {
         int rowId = getRow(new TableKey(name));
-        log.info("Updating data source {} with row {}",name,rowId);
+        log.debug("Updating data source {} with row {}",name,rowId);
         updateRow(rowId, row -> row.setString(STATUS_COL, status.toString()));
         this.statusChanged.onNext(get(name));
     }
@@ -197,7 +196,11 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             return dataSource;
         }
         ColumnHolder jsonColHolder = getOutput().getSchema().getColumnHolder(JSON_COL);
-        dataSource = deserialise((String) ColumnHolderUtils.getValue(jsonColHolder, rowId));
+        Object value = ColumnHolderUtils.getValue(jsonColHolder, rowId);
+        if(value == null ){
+            throw new RuntimeException("No data source json found for data source " + ColumnHolderUtils.getValue(getOutput().getSchema().getColumnHolder(ID_COL), rowId) + " row " +rowId);
+        }
+        dataSource = deserialise((String) value);
         dataSourcesById.put(rowId, dataSource);
         return dataSource;
     }
@@ -234,6 +237,9 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
 
 
     private IDataSource deserialise(String json) {
+        if(json == null){
+            return null;
+        }
         json = Utils.replaceSystemTokens(json);
         return serialiser.deserialise(json, DataSource.class);
     }

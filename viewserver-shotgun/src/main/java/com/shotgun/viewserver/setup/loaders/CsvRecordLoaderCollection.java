@@ -46,6 +46,13 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
     public Map<String, IRecordLoader> getDataLoaders() {
         return loaders;
     }
+
+    @Override
+    public void close() {
+        if(loaders != null){
+            loaders.values().forEach(c->c.close());
+        }
+    }
 }
 
 

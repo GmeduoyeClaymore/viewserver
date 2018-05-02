@@ -55,6 +55,9 @@ public class DocumentChangeRecord extends Record {
             case String: {
                 return doc.getString(colName);
             }
+            case Json: {
+                return doc.get(colName);
+            }
             case DateTime: {
                 return doc.getDate(colName) != null ? new java.sql.Date(doc.getDate(colName).getTime()) : null;
             }

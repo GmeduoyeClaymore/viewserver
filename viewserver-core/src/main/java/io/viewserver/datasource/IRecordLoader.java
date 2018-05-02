@@ -23,5 +23,7 @@ public interface IRecordLoader {
     SchemaConfig getSchemaConfig();
     Observable<IRecord> getRecords(String query);
     OperatorCreationConfig getCreationConfig();
+
+    void close();
 }
 

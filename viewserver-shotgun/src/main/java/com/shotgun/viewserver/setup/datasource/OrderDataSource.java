@@ -3,8 +3,10 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.Constants;
 import io.viewserver.datasource.*;
+import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 
 import java.util.Arrays;

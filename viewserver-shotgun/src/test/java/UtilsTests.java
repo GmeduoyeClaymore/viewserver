@@ -31,6 +31,8 @@ public class UtilsTests {
         DeliveryAddress getDestination();
     }
 
+
+
     @Test
     public void Can_deserialize(){
         JacksonSerialiser.getInstance().registerModules(
@@ -44,6 +46,23 @@ public class UtilsTests {
         TestInterface object = JSONBackedObjectFactory.create(json, TestInterface.class);
         System.out.println(object.getOrigin());
         System.out.println(object.getDestination());
+        Assert.assertNotNull(object);
+
+        Assert.assertNotNull(ControllerUtils.mapDefault(json));
+    }
+
+
+    @Test
+    public void Can_deserialize_delivery_order(){
+        JacksonSerialiser.getInstance().registerModules(
+                new Module[]{
+                        new OrderSerializationModule()
+                }
+        );
+        String json = TestUtils.getJsonStringFromFile("json/bugs/deliveryOrder_withLongDates.json");
+        DeliveryOrder object = JSONBackedObjectFactory.create(json, DeliveryOrder.class);
+        System.out.println(object.getOrigin().getCreated());
+        System.out.println(object.getDestination().getCreated());
         Assert.assertNotNull(object);
 
         Assert.assertNotNull(ControllerUtils.mapDefault(json));

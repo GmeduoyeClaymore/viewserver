@@ -184,6 +184,9 @@ public class ViewServerClientSteps {
                 waitingFor[0] = getUnbuiltDataSourceNames(subscription);
                 return waitingFor[0];
             }).filter(res -> res == null).take(1).timeout(timeout, timeUnit).toBlocking().toIterable().iterator().next();
+            subscribeLatch = new CountDownLatch(1);
+            trySubscribeOperator(clientName, "/datasources",options, subscribeLatch);
+            subscribeLatch.await(timeout, timeUnit);
         }
         Assert.assertNull("Some data sources still not built \n" + waitingFor[0], waitingFor[0]);
     }

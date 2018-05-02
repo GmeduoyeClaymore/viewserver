@@ -53,6 +53,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         for (Subscription sub: subscriptions) {
             sub.unsubscribe();
         }
+        recordLoaderCollection.close();
     }
 
     private void addRecordToTableOperator(KeyedTable keyedTable, IRecord rec) {
