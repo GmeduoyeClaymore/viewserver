@@ -10,13 +10,6 @@ public class ProductCategoryReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "productCategory")
                         .withDataSource(ProductCategoryDataSource.NAME)
-                        .withParameter("parentCategoryId", "Parent Category Id", String[].class)
-                        .withNodes(
-                                new FilterNode("categoryFilter")
-                                        .withExpression("parentCategoryId == parentCategoryId")
-                                        .withConnection("#input")
-                        )
-
                         .withOutput("categoryFilter");
         }
 }

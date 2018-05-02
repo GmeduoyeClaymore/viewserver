@@ -4,18 +4,18 @@ import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {addressToText} from 'common/components/maps/MapUtils';
+
 export class OriginDestinationSummary extends Component{
-  constructor(){
-    super();
-  }
+  formatDuration = () => {
+    const {order} = this.props;
+    const {distanceAndDuration} = order;
+    const momentDuration = moment.duration(distanceAndDuration.duration, 'seconds');
+    return distanceAndDuration.duration < 3600 ? `${momentDuration.minutes()}mins` : `${momentDuration.hours()}hrs`;
+  };
 
   render(){
-    const {origin, destination, distanceAndDuration} = this.props;
-
-    const formatDuration = () => {
-      const momentDuration = moment.duration(distanceAndDuration.duration, 'seconds');
-      return distanceAndDuration.duration < 3600 ? `${momentDuration.minutes()}mins` : `${momentDuration.hours()}hrs`;
-    };
+    const {order} = this.props;
+    const {origin, destination, distanceAndDuration} = order;
 
     return <Grid>
       {origin ? <Row>
@@ -24,7 +24,7 @@ export class OriginDestinationSummary extends Component{
       </Row> : null}
       {distanceAndDuration ? <Row style={styles.timeRow}>
         <Icon name="dashed" style={styles.dashedIcon}/><Text time style={styles.timeText}>
-          {distanceAndDuration.distance ? `${Math.round(distanceAndDuration.distance / 1000)}kms` : null}{distanceAndDuration.duration ? ` (${formatDuration()})` : null}
+          {distanceAndDuration.distance ? `${Math.round(distanceAndDuration.distance / 1000)}kms` : null}{distanceAndDuration.duration ? ` (${this.formatDuration()})` : null}
         </Text>
       </Row> : null}
       {destination ? <Row>
@@ -54,4 +54,4 @@ const styles = {
     height: 22,
     marginRight: 15
   }
-}
+};

@@ -13,13 +13,10 @@ import {CategoryImages} from 'common/assets/img/Images';
 class FlatProductCategoryList extends Component{
   constructor(props){
     super(props);
-    this.rowView = this.rowView.bind(this);
-    this.goBack = this.goBack.bind(this);
-    this.highlightCategory = this.highlightCategory.bind(this);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  rowView({item: row, index: i, highlightedCategory}){
+  rowView = ({item: row, index: i, highlightedCategory}) => {
     const {categoryId, category} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
@@ -30,13 +27,11 @@ class FlatProductCategoryList extends Component{
     </View>;
   }
 
-  headerView({selectedCategory}){ return <Text note style={{marginBottom: 10}}>{selectedCategory.description}</Text>;}
+  headerView = ({selectedCategory}) => <Text note style={{marginBottom: 10}}>{selectedCategory.description}</Text>;
 
-  highlightCategory(highlightedCategory){
-    this.setState({highlightedCategory});
-  }
+  highlightCategory = (highlightedCategory) =>  this.setState({highlightedCategory})
 
-  navigateToCategory(){
+  navigateToCategory = () => {
     const {next, history, selectedCategory: parentSelectedCategory, highlightedCategory} = this.props;
 
     if (highlightedCategory.isLeaf) {
@@ -47,7 +42,7 @@ class FlatProductCategoryList extends Component{
     }
   }
 
-  goBack(){
+  goBack = () => {
     const {history, rootProductCategory, parentSelectedCategory} = this.props;
 
     if (parentSelectedCategory == undefined || rootProductCategory.categoryId === parentSelectedCategory.categoryId){
@@ -108,6 +103,25 @@ const validationSchema = {
   categoryId: yup.string().required(),
 };
 
+const styles = {
+  image: {
+    resizeMode: 'contain',
+    height: '70%',
+    width: '100%',
+  },
+  productSelectText: {
+    width: '100%',
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  pagingListView: {
+    backgroundColor: shotgun.brandPrimary,
+    marginTop: 10
+  }
+};
+
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -135,25 +149,6 @@ const mapStateToProps = (state, initialProps) => {
     errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']),
     ...initialProps
   };
-};
-
-const styles = {
-  image: {
-    resizeMode: 'contain',
-    height: '70%',
-    width: '100%',
-  },
-  productSelectText: {
-    width: '100%',
-    marginTop: 5,
-    marginBottom: 25,
-    fontSize: 16,
-    textAlign: 'center'
-  },
-  pagingListView: {
-    backgroundColor: shotgun.brandPrimary,
-    marginTop: 10
-  }
 };
 
 const ConnectedProductCategoryList =  withExternalState(mapStateToProps)(FlatProductCategoryList);
