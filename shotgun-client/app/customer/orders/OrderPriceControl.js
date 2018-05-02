@@ -11,7 +11,7 @@ const dynamicPriceControl = ({price, orderSummary = {}, onValueChanged, ...props
     <PriceSummary price={orderSummary.totalPrice}  {...props}/> :
     <Col>
       <PriceSummary price={orderSummary.totalPrice} onValueChanged={onValueChanged} {...props}/>
-      <CurrencyInput style={styles.input} {...props} placeholder="Enter Fixed Price" initialPrice={price} onValueChanged={onValueChanged}/>
+
     </Col>;
 };
 /*eslint-disable */
@@ -28,10 +28,6 @@ export default class OrderPriceControl extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  onFixedPriceValueChanged(newPrice){
-    const {orderSummary, dispatch} = this.props;
-    dispatch(updateOrderPrice(orderSummary.orderId, newPrice));
-  }
 
   render(){
     const {orderSummary = {status: ''}, busyUpdating, userId} = this.props;

@@ -27,9 +27,7 @@ export const customerServicesRegistrationAction = (client, continueWith) => {
   };
 };
 
-export const checkout = (order, payment, continueWith) => {
-  return invokeDaoCommand('orderDao', 'createOrder', {order, payment}, continueWith);
-};
+
 
 export const registerCustomer = (customer, deliveryAddress, paymentCard, continueWith) => {
   return invokeDaoCommand('loginDao', 'registerAndLoginCustomer', {customer, deliveryAddress, paymentCard}, continueWith);
@@ -51,17 +49,6 @@ export const getPaymentCards = (continueWith) => {
   return invokeDaoCommand('paymentDao', 'getPaymentCards', continueWith);
 };
 
-export const cancelOrder = (orderId, continueWith) => {
-  return invokeDaoCommand('customerDao', 'cancelOrder', {orderId}, continueWith);
-};
-
-export const rejectPartner = (orderId, continueWith) => {
-  return invokeDaoCommand('customerDao', 'rejectPartner', {orderId}, continueWith);
-};
-
-export const customerCompleteOrder = (orderId, continueWith) => {
-  return invokeDaoCommand('customerDao', 'customerCompleteOrder', {orderId}, continueWith);
-};
 
 export const callPartner = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'callPartner', {orderId}, continueWith);
@@ -77,4 +64,24 @@ export const addPaymentCard = (paymentCard, continueWith) => {
 
 export const ratePartner = (orderId, rating, continueWith) => {
   return invokeDaoCommand('customerDao', 'ratePartner', {orderId, rating}, continueWith);
+};
+
+export const checkout = (order, payment, continueWith) => {
+  return invokeDaoCommand('orderDao', 'createOrder', {order, payment}, continueWith);
+};
+
+export const addPaymentStage = (orderId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'addPaymentStage', {orderId}, continueWith);
+};
+
+export const cancelOrder = (orderId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'cancelOrder', {orderId}, continueWith);
+};
+
+export const rejectPartner = (orderId, partnerId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'rejectPartner', {orderId, partnerId}, continueWith);
+};
+
+export const acceptPartner = (orderId, partnerId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'acceptPartner', {orderId, partnerId}, continueWith);
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Picker} from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
 import {getDaoState, getOperationError} from 'common/dao';
-import {ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary} from 'common/components';
+import {ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary, CurrencyInput} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
 import yup from 'yup';
@@ -16,8 +16,7 @@ class DeliveryOptions extends Component {
     super(props);
 
     this.state = {
-      isDatePickerVisible: false,
-      amountMask: undefined
+      isDatePickerVisible: false
     };
 
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
@@ -29,10 +28,7 @@ class DeliveryOptions extends Component {
     }
   }
 
-  setAmount = (amountMask) => {
-    const {order} = this.props;
-    const amount = this.refs.amountInput.getRawValue() * 100;
-    super.setState({amountMask});
+  setAmount = (amount) => {
     this.setState({ order: {...order, amount}});
   }
 
@@ -90,10 +86,8 @@ class DeliveryOptions extends Component {
               </Row>
               <Row>
                 <Col>
-                  <TextInputMask ref={'amountInput'} underlineColorAndroid='transparent' style={styles.amountInput} type={'money'} placeholder='Enter amount'
-                    options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount}/>
+                  <CurrencyInput onValueChange={this.setAmount}/>
                 </Col>
-
                 <Button style={styles.periodButton} light={order.isFixedPrice} onPress={() => this.toggleFixedPrice(false)}>
                   <Text style={styles.buttonText}>Day Rate</Text>
                 </Button>
@@ -185,12 +179,6 @@ const styles = {
   },
   buttonText: {
     fontSize: 10
-  },
-  amountInput: {
-    borderBottomWidth: 0,
-    paddingLeft: 0,
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   noteText: {
     alignSelf: 'center',

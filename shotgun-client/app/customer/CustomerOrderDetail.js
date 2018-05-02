@@ -12,17 +12,7 @@ const hasStarted = status => {
   return !~[OrderStatuses.PLACED, OrderStatuses.ACCEPTED].indexOf(status);
 };
 
-/*eslint-disable */
-const staticPriceControl = (props) => <PriceSummary {...props}/>;
-const dynamicPriceControl = ({price,orderSummary={},onValueChanged, ...props}) => {
-  const {userId} =props;
-  return hasStarted(orderSummary.status) || orderSummary.customerUserId != userId ? 
-  <PriceSummary price={orderSummary.totalPrice}  {...props}/> :  
-  <Col>
-    <PriceSummary price={orderSummary.totalPrice} onValueChanged={onValueChanged} {...props}/>
-    <CurrencyInput style={styles.input} {...props} placeholder="Enter Fixed Price" initialPrice={price} onValueChanged={onValueChanged}/>
-  </Col>;
-}
+
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Order Summary').
@@ -74,8 +64,8 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {orderSummary = {status: ''}, client, history, busy, busyUpdating, dispatch, errors, parentPath, userId, ordersPath} = this.props;
-    const {delivery = {}} = orderSummary;
+    const {orderDetails, partnerDetails, client, history, busy, busyUpdating, dispatch, errors, parentPath, userId, ordersPath} = this.props;
+
     const isCancelled = orderSummary.status == OrderStatuses.CANCELLED;
     const isComplete = orderSummary.status == OrderStatuses.COMPLETED;
     const hasPartner = delivery.partnerFirstName !== undefined;
@@ -85,17 +75,6 @@ class CustomerOrderDetail extends Component{
     const {resources} = this;
     const {PricingControl} = resources;
 
-    const onCancelOrder = () => {
-      dispatch(cancelOrder(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
-    };
-
-    const onRejectPartner = () => {
-      dispatch(rejectPartner(orderSummary.orderId, () => history.push({pathname: `${ordersPath}`, transition: 'right'})));
-    };
-
-    const onPressTrack = () => {
-      history.push({pathname: `${parentPath}/CustomerOrderInProgress`, transition: 'left'}, {orderId: orderSummary.orderId});
-    }
   
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>
@@ -110,8 +89,10 @@ class CustomerOrderDetail extends Component{
         <ErrorRegion errors={errors}/>
         <PricingControl readonly={busyUpdating} userId={userId} onValueChanged={this.onFixedPriceValueChanged} isFixedPrice={delivery.isFixedPrice} orderStatus={orderSummary.status} isPartner={false} orderSummary={orderSummary} price={orderSummary.totalPrice}/>
         {showCancelButton ? <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> : null}
-        {hasPartner && !isComplete ? <Grid style={styles.partnerDetailView}>
+        {partnerDetails ? <Grid style={styles.partnerDetailView}>
           <Col style={{alignItems: 'flex-end'}}>
+          <Icon paddedIcon name="delivery-time" />
+          {order.requiredDate !== undefined ? <Text>{moment(order.requiredDate).format('ddd Do MMMM, h:mma')}</Text> : <Text grey>{resources.JobStartCaption}</Text>}
             <Image source={{uri: delivery.partnerImageUrl}} resizeMode='contain' style={styles.partnerImage}/>
           </Col>
           <Col>
@@ -159,14 +140,15 @@ const styles = {
 
 
 const findOrderSummaryFromDao = (state, orderId, daoName) => {
-  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
-  return  orderSummaries.find(o => o.orderId == orderId);
+  const orderRows = getDaoState(state, ['orders'], daoName) || [];
+  return  orderRows.find(o => o.orderId == orderId);
 }
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  let orderSummary = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
-  orderSummary = orderSummary || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
+  let orderRow = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
+  orderRow = orderRow || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
+  const {orderDetails, partnerDetails} = orderRow || {};
   
   const {contentType: selectedContentType} = (orderSummary || {});
   const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}])
@@ -176,8 +158,9 @@ const mapStateToProps = (state, initialProps) => {
     orderId,
     errors,
     busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}]),
-    busy: isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]) || orderSummary == undefined,
-    orderSummary
+    busy: isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]),
+    orderDetails,
+    partnerDetails
   };
 };
 

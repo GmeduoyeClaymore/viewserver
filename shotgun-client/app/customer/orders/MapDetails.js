@@ -10,12 +10,10 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-
 export default class MapDetails extends Component{
   constructor(props){
     super(props);
   }
-
 
   isMapReady(){
     const {map} = this;

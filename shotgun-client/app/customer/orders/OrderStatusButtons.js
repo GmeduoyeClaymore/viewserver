@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import { SpinnerButton} from 'common/components';
 import Text from 'react-native';
-import {cancelOrder, rejectPartner, customerCompleteOrder} from 'customer/actions/CustomerActions';
+
 import {View} from 'native-base';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -29,6 +29,13 @@ const  RejectPartner = ({orderSummary, history, ordersPath, busyUpdating, resour
     return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectPartner}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton>
 };
 
+const  AcceptPartner = ({orderSummary, history, ordersPath, busyUpdating, resources}) => {
+    const onAcceptPartner = () => {
+        dispatch(rejectPartner(orderSummary.orderId, () => history.push(`${ordersPath}`)));
+    };
+    return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onAcceptPartner}><Text uppercase={false}>{resources.RejectButtonCaption}</Text></SpinnerButton>
+};
+
 const  CompleteOrder = ({orderSummary, history, ordersPath, busyUpdating, resources}) => {
     const onCompleteOrder = () => {
         dispatch(customerCompleteOrder(orderSummary.orderId, () => history.push(`${ordersPath}`)));
@@ -39,7 +46,8 @@ const  CompleteOrder = ({orderSummary, history, ordersPath, busyUpdating, resour
 export default class OrderStatusButtons extends Component {
     static propTypes = {
         me: PropTypes.object.isRequired,
-        orderSummary: PropTypes.object.isRequired
+        order: PropTypes.object.isRequired,
+        partnerResponses: PropTypes.object.isRequired
     }
     constructor(props){
         super(props);
@@ -47,15 +55,8 @@ export default class OrderStatusButtons extends Component {
     }
 
     render(){
-        const {ordersPath, orderSummary, dispatch, me, contentType} = this.props;
-        
-        const possibleStatuses = OrderStatuses.getPossibleStatuses({
-            orderSummaryStatus: orderSummary.status,
-            iAmTheCustomer: orderSummary.userId === me.userId,
-            doubleComplete: contentType.doubleComplete
-        });
+        const {ordersPath, order, partnerResponses, dispatch, me, contentType} = this.props;
         return <View column>
-            {!!~possibleStatuses.indexOf(OrderStatuses.CANCELLED) ? <CancelOrder {...this.props}/> : null}
             {!!~possibleStatuses.indexOf(OrderStatuses.PLACED) ? <RejectPartner {...this.props}/> : null}
             {!!~possibleStatuses.indexOf(OrderStatuses.COMPLETEDBYCUSTOMER) ? <CompleteOrder {...this.props}/> : null}
         </View>
