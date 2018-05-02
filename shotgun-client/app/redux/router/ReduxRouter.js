@@ -133,7 +133,7 @@ class ReduxRouterClass extends Component{
             <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined}  {...completeProps}/>
           </View>;
         }
-      ) : <LoadingScreen text="Navigating ..."/>}
+      ) : <LoadingScreen text="Navigating..."/>}
     </Container>;
 
     if (!routesToRender.length){

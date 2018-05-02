@@ -3,7 +3,6 @@ import * as RouteUtils from './routeUtils';
 import matchPath from './matchPath';
 import invariant from 'invariant';
 import { memoize } from '../../memoize';
-import removeProperties from '../../removeProperties';
 import NavigationTransformation from './NavigationTransformation';
 const DefaultNavigationStack = [{
   pathname: '/'

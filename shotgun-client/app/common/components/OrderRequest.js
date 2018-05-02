@@ -25,7 +25,7 @@ class OrderRequest extends Component {
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={60}>
-            <OriginDestinationSummary {...orderDetails}/>
+            <OriginDestinationSummary order={orderDetails}/>
           </Col>
           <Col size={40}>
             <Text style={styles.price}>{orderDetails.Title}</Text>
