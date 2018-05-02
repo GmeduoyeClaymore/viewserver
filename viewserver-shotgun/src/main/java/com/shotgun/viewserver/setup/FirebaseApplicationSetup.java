@@ -57,7 +57,6 @@ public class FirebaseApplicationSetup implements IApplicationSetup {
         recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
         recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
         recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
-        recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
     }
 
     private void recreate(Firestore db, String operatorName, SchemaConfig schema) {

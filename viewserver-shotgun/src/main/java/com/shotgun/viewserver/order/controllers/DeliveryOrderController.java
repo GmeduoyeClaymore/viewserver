@@ -8,6 +8,7 @@ import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderController;
 import com.shotgun.viewserver.order.controllers.contracts.SinglePaymentOrderController;
 import com.shotgun.viewserver.order.domain.DeliveryOrder;
+import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentController;
@@ -40,6 +41,7 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
         this.paymentController = paymentController;
         this.mapsController = mapsController;
     }
+
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
     public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){

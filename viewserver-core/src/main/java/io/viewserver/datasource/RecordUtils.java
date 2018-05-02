@@ -17,6 +17,14 @@ public class RecordUtils{
     }
 
     public static void addRecordToTableOperator(KeyedTable operator, IRecord rec) {
+        if(!Thread.currentThread().getName().startsWith("reactor-")){
+            operator.getExecutionContext().submit(() -> actualyAddRecord(operator,rec), 0);
+            return;
+        }
+        actualyAddRecord(operator, rec);
+    }
+
+    public static void actualyAddRecord(KeyedTable operator, IRecord rec) {
         ExecutionContext.AssertUpdateThread();
         logger.info("Added record rec to operator " + operator.getPath());
         TableKeyDefinition tableKeyDefinition = operator.getTableKeyDefinition();
@@ -43,7 +51,6 @@ public class RecordUtils{
         }else{
             operator.updateRow(row, rowUpdater);
         }
-
     }
 
     public static TableKey getTableKey(IRecord rec, TableKeyDefinition tableKeyDefinition) {
