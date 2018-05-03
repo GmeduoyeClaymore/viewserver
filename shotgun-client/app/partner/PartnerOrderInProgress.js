@@ -90,7 +90,7 @@ class PartnerOrderInProgress extends Component{
             <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker>
             {contentType.destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
           </MapView>
-          <Button transparent style={styles.backButton} onPress={() => history.push({pathname: `${ordersRoot}/PartnerOrders`, transition: 'right'})}>
+          <Button transparent style={styles.backButton} onPress={() => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'right'})}>
             <Icon name='back-arrow'/>
           </Button>
         </Row>

@@ -8,7 +8,7 @@ import {Icon, OriginDestinationSummary, Currency} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {connect} from 'custom-redux';
 
-class OrderRequest extends Component {
+class OrderListItem extends Component {
   constructor(props) {
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
@@ -107,5 +107,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-const ConnectedOrderRequest = connect(mapStateToProps)(OrderRequest);
-export {ConnectedOrderRequest as OrderRequest};
+const ConnectedOrderRequest = connect(mapStateToProps)(OrderListItem);
+export {ConnectedOrderRequest as OrderListItem};

@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {PagingListView, OrderRequest} from 'common/components';
+import {PagingListView, OrderListItem} from 'common/components';
 import {Text, Spinner} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 
-class PartnerOrderItems extends Component{
+class PartnerMyOrdersListView extends Component{
   NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs to do'}</Text>;
 
   RowView = ({item: order, isLast, isFirst, history, isCustomer, ordersRoot}) => {
@@ -15,7 +15,7 @@ class PartnerOrderItems extends Component{
     } else {
       next = isOnRoute ? `${ordersRoot}/PartnerOrderInProgress` : `${ordersRoot}/PartnerOrderDetail`;
     }
-    return <OrderRequest history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+    return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };
 
   getOptions = (isCustomer, isCompleted) => ({
@@ -42,4 +42,4 @@ class PartnerOrderItems extends Component{
   }
 }
 
-export default PartnerOrderItems;
+export default PartnerMyOrdersListView;

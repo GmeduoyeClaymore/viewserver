@@ -6,7 +6,7 @@ import UpdatePaymentCardDetails from 'common/settings/UpdatePaymentCardDetails';
 import {Route, ReduxRouter} from 'custom-redux';
 import {updatePartner} from 'partner/actions/PartnerActions';
 import ConfigureServices from './ConfigureServices';
-import PartnerOrders from 'partner/PartnerOrders';
+import PartnerMyOrders from 'partner/PartnerMyOrders';
 
 class  PartnerSettings extends Component{
   constructor(props){
@@ -23,7 +23,7 @@ class  PartnerSettings extends Component{
       <Route transition='left' path={'UpdateBankAccountDetails'} exact component={UpdateBankAccountDetails} next={`${path}/PartnerSettingsLanding`}/>
       <Route transition='left' path={'ConfigureServices'} exact stateKey={'configureServices'} component={ConfigureServices}/>
       <Route transition='left' path={'UpdatePaymentCardDetails'} exact component={UpdatePaymentCardDetails}/>
-      <Route transition='left' path={'PartnerOrders'} exact component={PartnerOrders} canGoBack={true} isCompleted={true}/>
+      <Route transition='left' path={'PartnerMyOrders'} exact component={PartnerMyOrders} canGoBack={true} isCompleted={true}/>
     </ReduxRouter>;
   }
 }

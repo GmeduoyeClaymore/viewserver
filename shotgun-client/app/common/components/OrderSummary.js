@@ -3,7 +3,7 @@ import {Image} from 'react-native';
 import {Text, List, ListItem, Grid, Row} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
-import {Icon, OriginDestinationSummary} from 'common/components';
+import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -37,15 +37,19 @@ class OrderSummary extends Component{
 
   render() {
     const {order} = this.props;
-    const {assignedPartner, orderProduct, requiredDate} = order;
-    
+    const {assignedPartner, userCreatedThisOrder = false, customer, orderProduct, requiredDate} = order;
+
     return <List>
       {this.renderMap()}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>
       </ListItem>
-   {/*   TODO - add partner image and rating and phone partner button*/}
-      {assignedPartner ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>{`Assigned to ${assignedPartner.firstName} ${assignedPartner.lastName}`}</Text></ListItem> : null}
+
+      {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
+        <Icon paddedIcon name="one-person"/>
+        <UserInfo orderid={order.orderId} user={userCreatedThisOrder ? assignedPartner : customer} isPartner={!userCreatedThisOrder}/>
+      </ListItem> : null}
+
       {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {orderProduct ? <ListItem padded>
         {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}

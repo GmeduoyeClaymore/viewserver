@@ -58,6 +58,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                         new IProjectionConfig.ProjectionColumn("orderId"),
+                                        new IProjectionConfig.ProjectionColumn("userId"),
                                         new IProjectionConfig.ProjectionColumn("status"),
                                         new IProjectionConfig.ProjectionColumn("dimension_orderId"),
                                         new IProjectionConfig.ProjectionColumn("dimension_customerUserId"),

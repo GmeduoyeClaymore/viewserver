@@ -30,7 +30,7 @@ class PartnerOrderDetail extends Component{
 
   onCancelPress = async() => {
     const {order, history, dispatch, ordersRoot} = this.props;
-    dispatch(cancelOrderRequest(order.orderId, () => history.push({pathname: `${ordersRoot}/PartnerOrders`, transition: 'right'})));
+    dispatch(cancelOrderRequest(order.orderId, () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'right'})));
   };
 
   render() {

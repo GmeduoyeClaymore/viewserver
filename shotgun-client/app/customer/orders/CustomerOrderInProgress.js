@@ -75,7 +75,7 @@ const styles = {
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  partnerImage: {
+  images: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 60,

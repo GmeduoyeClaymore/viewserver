@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import PartnerDetails from './PartnerDetails';
+import PartnerDetails from '../../common/components/UserInfo';
 import VehicleDetails from './VehicleDetails';
 import CallButtons from './CallButtons';
 

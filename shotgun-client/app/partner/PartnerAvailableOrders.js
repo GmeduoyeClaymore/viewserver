@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route, memoize} from 'custom-redux';
-import {LoadingScreen, Tabs } from 'common/components';
+import {LoadingScreen, Tabs} from 'common/components';
 import {Container, Header, Body, Title, Tab } from 'native-base';
 import {getDaoState, isAnyLoading} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
-import PartnerOrderRequestItems from './PartnerOrderRequestItems';
+import PartnerAvailableOrdersListView from './PartnerAvailableOrdersListView';
 
-class PartnerOrderRequests extends Component{
+class PartnerAvailableOrders extends Component{
   goToTabNamed = (name) => {
     const {history, path} = this.props;
     history.replace(`${path}/ContentTypeId${name}X`);
@@ -23,8 +23,8 @@ class PartnerOrderRequests extends Component{
         {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => this.goToTabNamed(c.contentTypeId)}/>)}
       </Tabs>
       {selectedContentTypes[0] ?
-        <ReduxRouter  name="PartnerOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
-          {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={PartnerOrderRequestItems} />)}
+        <ReduxRouter name="PartnerOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
+          {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={PartnerAvailableOrdersListView} />)}
         </ReduxRouter> : null}
     </Container>;
   }
@@ -75,4 +75,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(mapStateToProps)(PartnerOrderRequests);
+export default connect(mapStateToProps)(PartnerAvailableOrders);

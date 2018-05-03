@@ -91,7 +91,7 @@ class CustomerOrderInProgress extends Component{
                       <AverageRating rating={delivery.partnerRatingAvg}/>
                     </Col>
                     <Col>
-                      <Image source={{uri: delivery.partnerImageUrl}} resizeMode='contain' style={styles.partnerImage}/>
+                      <Image source={{uri: delivery.partnerImageUrl}} resizeMode='contain' style={styles.images}/>
                     </Col>
                   </Row>
                 </Col>
@@ -139,7 +139,7 @@ const styles = {
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  partnerImage: {
+  images: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 60,

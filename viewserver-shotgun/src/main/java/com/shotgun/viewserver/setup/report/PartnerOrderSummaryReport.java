@@ -4,8 +4,10 @@ import com.shotgun.viewserver.setup.datasource.OrderDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
+import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -21,6 +23,9 @@ public class PartnerOrderSummaryReport {
                                         .withRightJoinColumns("userId")
                                         .withConnection("#input", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
+                                new CalcColNode("userCreatedThisOrderCalc")
+                                        .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
+                                        .withConnection("customerJoin"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -45,7 +50,7 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                                        .withConnection("customerJoin")
+                                                        .withConnection("userCreatedThisOrderCalc")
                         )
                         .withOutput("orderSummaryProjection");
         }

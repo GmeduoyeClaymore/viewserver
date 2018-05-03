@@ -59,21 +59,25 @@ export default class PartnerOrderResponseDao{
   }
 
   mapOrderResponse(orderResponse){
-    const {orderDetails, partner_firstName, partner_lastName, partner_ratingAvg, partner_imageUrl, customer_firstName, customer_lastName, customer_ratingAvg} = orderResponse;
+    const {orderDetails} = orderResponse;
+
+    const assignedPartner = orderDetails.assignedPartner ? {
+      ...orderDetails.assignedPartner,
+      firstName: orderResponse.partner_firstName,
+      lastName: orderResponse.partner_lastName,
+      ratingAvg: orderResponse.partner_ratingAvg,
+      imageUrl: orderResponse.partner_imageUrl
+    } : undefined;
 
     return {
       ...orderDetails,
-      assignedPartner: {
-        ...orderDetails.assignedPartner,
-        firstName: partner_firstName,
-        lastName: partner_lastName,
-        ratingAvg: partner_ratingAvg,
-        imageUrl: partner_imageUrl
-      },
+      assignedPartner,
+      userCreatedThisOrder: orderResponse.userCreatedThisOrder || false,
       customer: {
-        firstName: customer_firstName,
-        lastName: customer_lastName,
-        ratingAvg: customer_ratingAvg
+        userId: orderResponse.customer_userId,
+        firstName: orderResponse.customer_firstName,
+        lastName: orderResponse.customer_lastName,
+        ratingAvg: orderResponse.customer_ratingAvg
       }
     };
   }

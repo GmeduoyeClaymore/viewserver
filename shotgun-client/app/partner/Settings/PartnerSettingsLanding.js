@@ -42,7 +42,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/PartnerOrders`)}>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/PartnerMyOrders`)}>
           <Text style={styles.text}>Completed Jobs</Text>
           <Icon style={{paddingRight: 10}} name='two-people'/>
         </ListItem>
