@@ -14,7 +14,7 @@ import * as RouteUtils from './utils/routeUtils';
 import invariant  from 'invariant';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Container} from 'native-base';
-
+import {setStateIfIsMounted} from 'custom-redux';
 
 class ReduxRouterClass extends Component{
   constructor(props){
@@ -26,6 +26,7 @@ class ReduxRouterClass extends Component{
     this.handleBack = this.handleBack.bind(this);
     this.getHeight = this.getHeight.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
+    setStateIfIsMounted(this);
   }
 
   componentWillMount () {

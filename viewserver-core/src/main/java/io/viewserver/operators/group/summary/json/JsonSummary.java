@@ -142,6 +142,9 @@ public class JsonSummary implements ISummary {
         boolean first = true;
         for (Map.Entry<Object, Integer> entry : rowMap.entrySet()) {
             Object bucketValue = entry.getKey();
+            if(bucketValue == null || "".equals(bucketValue) || "null".equals(bucketValue)){
+                continue;
+            }
             int sourceRowId = entry.getValue();
             if (!first) {
                 jsonBuilder.append(',');
