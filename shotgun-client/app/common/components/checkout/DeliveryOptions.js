@@ -8,6 +8,7 @@ import moment from 'moment';
 import yup from 'yup';
 import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {PaymentTypes} from 'common/constants/PaymentTypes';
 import {withExternalState} from 'custom-redux';
 
 class DeliveryOptions extends Component {
@@ -78,26 +79,24 @@ class DeliveryOptions extends Component {
             isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={this.onChangeDate} {...datePickerOptions} minimumDate={resources.MinimumStartTimeOptions} />
         </ListItem>
 
-        {resources.AllowFixedPrice ?
-          <ListItem padded>
-            <Grid>
-              <Row>
-                <Text>This job will cost</Text>
-              </Row>
-              <Row>
-                <Col>
-                  <CurrencyInput onValueChange={this.setAmount}/>
-                </Col>
-                <Button style={styles.periodButton} light={order.paymentType === 'DayRate'} onPress={() => this.setPaymentType('DayRate')}>
-                  <Text style={styles.buttonText}>Day Rate</Text>
-                </Button>
-                <Button style={styles.periodButton} light={order.paymentType === 'Fixed'} onPress={() => this.setPaymentType('DayRate')}>
-                  <Text style={styles.buttonText}>Fixed Price</Text>
-                </Button>
-              </Row>
-            </Grid>
-          </ListItem>
-          : null}
+        <ListItem padded>
+          <Grid>
+            <Row>
+              <Text style={styles.amountLabel}>Amount you want to pay for this job</Text>
+            </Row>
+            <Row>
+              <Col>
+                <CurrencyInput onValueChange={this.setAmount}/>
+              </Col>
+              {resources.AllowDayRate ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.FIXED} onPress={() => this.setPaymentType(PaymentTypes.DAYRATE)}>
+                <Text style={styles.buttonText}>Day Rate</Text>
+              </Button> : null }
+              {resources.AllowFixedPrice ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.DAYRATE} onPress={() => this.setPaymentType(PaymentTypes.FIXED)}>
+                <Text style={styles.buttonText}>Fixed Price</Text>
+              </Button> : null }
+            </Row>
+          </Grid>
+        </ListItem>
 
         <ListItem padded style={{borderBottomWidth: 0}}>
           <CardIcon brand={payment.brand} /><Text>Use card</Text>
@@ -148,7 +147,9 @@ resourceDictionary.
   property('JobEndCaption', 'Set a return time').
     delivery('Set a return time').
     personell('Job End Date').
-  property('AllowFixedPrice', false).
+  property('AllowFixedPrice', true).
+    personell(true).
+  property('AllowDayRate', false).
     personell(true).
   property('MinimumStartTimeOptions', moment().startOf('day').toDate()).
     personell(moment().add(1, 'days').toDate()).
@@ -171,6 +172,9 @@ const styles = {
     marginTop: 12,
     fontSize: 12,
     alignSelf: 'flex-start'
+  },
+  amountLabel: {
+    marginBottom: 10
   },
   periodButton: {
     marginLeft: 5,

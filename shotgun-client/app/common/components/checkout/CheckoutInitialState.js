@@ -1,3 +1,5 @@
+import {PaymentTypes} from 'common/constants/PaymentTypes';
+
 export const DELIVERY_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
@@ -5,11 +7,13 @@ export const DELIVERY_ORDER_INITIAL_STATE =  {
     orderContentTypeId: 1,
     origin: undefined,
     destination: undefined,
-    distanceAndDuration: undefined
+    distanceAndDuration: undefined,
+    paymentType: PaymentTypes.FIXED
   },
   payment: undefined
 };
 
+/*
 export const RUBBISH_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
@@ -17,10 +21,12 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
     orderContentTypeId: 2,
     origin: undefined,
     destination: undefined,
-    distanceAndDuration: undefined
+    distanceAndDuration: undefined,
+    paymentType: PaymentTypes.FIXED
   },
   payment: undefined
 };
+*/
 
 export const PERSONELL_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
@@ -29,12 +35,14 @@ export const PERSONELL_ORDER_INITIAL_STATE =  {
     orderContentTypeId: 5,
     origin: undefined,
     destination: undefined,
-    distanceAndDuration: undefined
+    distanceAndDuration: undefined,
+    paymentType: PaymentTypes.FIXED
   },
   payment: undefined
 };
 
-/*export const PERSONELL_ORDER_INITIAL_STATE =  {
+/*
+export const PERSONELL_ORDER_INITIAL_STATE =  {
   selectedContentType: {
     contentTypeId: 5,
     name: 'Trades People',
@@ -48,8 +56,9 @@ export const PERSONELL_ORDER_INITIAL_STATE =  {
       name: 'Carpenter',
       description: '',
       categoryId: '1Workers',
-      price: 15000
+      price: 15000,
     },
+    paymentType: PaymentTypes.FIXED,
     orderContentTypeId: 5,
     origin: {
       googlePlaceId: 'ChIJ64Z3QcUEdkgRu_XB2S70e60',
@@ -63,10 +72,10 @@ export const PERSONELL_ORDER_INITIAL_STATE =  {
     distanceAndDuration: undefined
   },
   payment: undefined
-};*/
+};
+*/
 
 
-/*
 export const RUBBISH_ORDER_INITIAL_STATE =  {
   selectedContentType: {
     contentTypeId: 2,
@@ -108,7 +117,6 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
   },
   payment: undefined
 };
-*/
 
 /*export const INITIAL_STATE = {
   totalPrice: undefined,

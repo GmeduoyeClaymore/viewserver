@@ -5,9 +5,7 @@ import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
-
 import java.util.Date;
-
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 import static io.viewserver.core.Utils.fromArray;
 

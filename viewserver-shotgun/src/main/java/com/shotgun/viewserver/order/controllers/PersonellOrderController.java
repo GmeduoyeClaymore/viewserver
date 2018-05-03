@@ -16,7 +16,6 @@ import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;

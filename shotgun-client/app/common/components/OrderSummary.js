@@ -37,7 +37,7 @@ class OrderSummary extends Component{
 
   render() {
     const {order} = this.props;
-    const {assignedPartner, userCreatedThisOrder = false, customer, orderProduct, requiredDate} = order;
+    const {assignedPartner, userCreatedThisOrder = true, customer, orderProduct, requiredDate} = order;
 
     return <List>
       {this.renderMap()}

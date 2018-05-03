@@ -5,6 +5,7 @@ import {Text, Container, Header, Left, Button, Body, Title, Content} from 'nativ
 import {OrderSummary, PriceSummary, CurrencyInput, LoadingScreen, SpinnerButton, Icon} from 'common/components';
 import {respondToOrder} from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import moment from 'moment';
 
 class PartnerAvailableOrderDetail extends Component{
   constructor(props){
@@ -28,10 +29,12 @@ class PartnerAvailableOrderDetail extends Component{
 
   onRespondPress = async() => {
     const {order, history, dispatch, ordersRoot, bankAccount, parentPath, negotiationAmount} = this.props;
-    const {orderId, orderContentTypeId} = order;
+    const {orderId, requiredDate, orderContentTypeId} = order;
+    const negotiationDate = moment(requiredDate).toDate();
+
 
     if (bankAccount) {
-      dispatch(respondToOrder(orderId, orderContentTypeId, order.requiredDate, negotiationAmount,  () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'left'})));
+      dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount,  () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'left'})));
     } else {
       // user has no bank account set up so take them to set it up
       history.push({pathname: `${parentPath}/Settings/UpdateBankAccountDetails`, transition: 'left'}, {next: `${parentPath}/Checkout`});

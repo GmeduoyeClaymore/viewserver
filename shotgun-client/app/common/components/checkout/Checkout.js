@@ -14,10 +14,11 @@ import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {LoadingScreen} from 'common/components';
 import {isAnyOperationPending} from 'common/dao';
+import {PERSONELL_ORDER_INITIAL_STATE, RUBBISH_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 
 class Checkout extends Component {
   static stateKey = 'customerCheckout';
-  //static InitialState = PERSONELL_ORDER_INITIAL_STATE;
+  static InitialState = RUBBISH_ORDER_INITIAL_STATE;
 
   constructor(props){
     super(props);
@@ -47,7 +48,7 @@ class Checkout extends Component {
     const {getNext} = this;
 
     return busy ? <LoadingScreen text="Loading"/> :
-      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
+      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'DeliveryOptions'}>
         <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />

@@ -47,25 +47,24 @@ class PartnerLanding extends Component {
   }
 
   render() {
-    const stateKey = 'partner';
     const {busy, path, isLoggedIn, history} = this.props;
-    const completeProps = {...this.props, stateKey, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerMyOrders/Posted`, ordersRoot: `${path}`};
+    const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerMyOrders/Posted`, ordersRoot: `${path}`};
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }
     return  busy ? <LoadingScreen text="Loading"/> :
       [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'PartnerMyOrders'}>
-        <Route stateKey={stateKey} path={'Checkout'} component={Checkout}/>
-        <Route stateKey={stateKey} path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
-        <Route stateKey={stateKey} path={'PartnerAvailableOrderDetail'} exact component={PartnerAvailableOrderDetail}/>
-        <Route stateKey={stateKey} path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
-        <Route stateKey={stateKey} path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-        <Route stateKey={stateKey} path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
-        <Route stateKey={stateKey} path={'Orders'} exact component={PartnerMyOrders}/>
-        <Route stateKey={stateKey} path={'PartnerMyOrderDetail'} exact component={PartnerMyOrderDetail}/>
-        <Route stateKey={stateKey} path={'PartnerOrderInProgress'} exact component={PartnerOrderInProgress}/>
-        <Route stateKey={stateKey} path={'Settings'} component={PartnerSettings}/>
-        <Route stateKey={stateKey} path={'UserRelationships'} component={UserRelationships}/>
+        <Route path={'Checkout'} component={Checkout}/>
+        <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
+        <Route path={'PartnerAvailableOrderDetail'} exact component={PartnerAvailableOrderDetail}/>
+        <Route path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
+        <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
+        <Route path={'Orders'} exact component={PartnerMyOrders}/>
+        <Route path={'PartnerMyOrderDetail'} exact component={PartnerMyOrderDetail}/>
+        <Route path={'PartnerOrderInProgress'} exact component={PartnerOrderInProgress}/>
+        <Route path={'Settings'} component={PartnerSettings}/>
+        <Route path={'UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,
       <PartnerMenuBar key='menuBar' {...this.props}/>];
   }

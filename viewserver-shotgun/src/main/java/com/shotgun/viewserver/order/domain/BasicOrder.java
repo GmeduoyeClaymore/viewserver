@@ -1,17 +1,15 @@
 package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
-import com.shotgun.viewserver.delivery.ProductKey;
 import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
-
 import java.util.Date;
 
 public interface BasicOrder  extends DynamicJsonBackedObject {
 
     enum PaymentType{
-        Fixed,
-        DayRate
+        FIXED,
+        DAYRATE
     }
 
     PaymentType getPaymentType();
