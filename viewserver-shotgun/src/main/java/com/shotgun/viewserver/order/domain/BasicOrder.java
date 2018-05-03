@@ -9,6 +9,13 @@ import java.util.Date;
 
 public interface BasicOrder  extends DynamicJsonBackedObject {
 
+    enum PaymentType{
+        Fixed,
+        DayRate
+    }
+
+    PaymentType getPaymentType();
+
     Integer getAmount();
 
     String getCustomerUserId();

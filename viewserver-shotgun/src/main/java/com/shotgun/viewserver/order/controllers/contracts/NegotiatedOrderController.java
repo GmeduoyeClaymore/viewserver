@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
+import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import io.viewserver.command.ActionParam;
@@ -13,16 +14,26 @@ import static io.viewserver.core.Utils.fromArray;
 
 public interface NegotiatedOrderController extends OrderUpdateController, NegotiationNotifications, OrderTransformationController {
 
+    @ControllerAction(path = "updateOrderAmount", isSynchronous = true)
+    default void updateOrderAmount(@ActionParam(name = "orderId")String orderId,@ActionParam(name = "amount")Integer amount){
+        this.transform(
+                orderId,
+                order -> {
+                    order.set("amount", amount);
+                    return  true;
+                },
+                NegotiatedOrder.class
+        );
+    }
+
+
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
     default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "requiredDate")Date requiredDate, @ActionParam(name = "amount")Integer amount){
         String partnerId = getUserId();
         this.transform(
                 orderId,
                 order -> {
-                    if(fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
-                        getLogger().info(partnerId + "Has already responded to this order aborting");
-                        return false;
-                    }
+
                     order.respond(partnerId, requiredDate, amount);
                     return  true;
                 },
@@ -82,6 +93,25 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
         );
     }
 
+    @ControllerAction(path = "rejectResponse", isSynchronous = true)
+    default void rejectResponse(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+        this.transform(
+                orderId,
+                order -> {
+                    if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
+                        getLogger().warn(partnerId + " has not responded to this order aborting");
+                        return false;
+                    }
+                    order.rejectResponse(partnerId);
+                    return  true;
+                },
+                order -> {
+                    notifyJobRejected(orderId,partnerId);
+                },
+                NegotiatedOrder.class
+        );
+    }
+
     @ControllerAction(path = "acceptResponse", isSynchronous = true)
     default void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
         this.transform(
@@ -110,6 +140,31 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
         );
     }
 
+    @ControllerAction(path = "cancelOrder", isSynchronous = true)
+    default void cancelOrder(@ActionParam(name = "orderId")String orderId){
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(OrderStatus.CANCELLED);
+                    return  true;
+                },
+                order -> {
+                    if(order.getNegotiatedResponseStatus().equals(NegotiatedOrder.NegotiationOrderStatus.RESPONDED)){
+                        fromArray(order.getResponses()).forEach(
+                                res -> {
+                                    notifyJobCancelled(orderId, res.getPartnerId());
+                                }
+                        );
+                    }
+                    else{
+                        notifyJobCancelled(orderId, order.getPartnerUserId());
+                    }
+
+
+                },
+                NegotiatedOrder.class
+        );
+    }
 
 
 }

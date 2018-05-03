@@ -23,14 +23,24 @@ public interface NegotiatedOrder  extends BasicOrder {
     NegotiationOrderStatus getNegotiatedResponseStatus();
 
     default void respond(String partnerId, Date date, Integer price){
-        NegotiationResponse negotiationResponse = JSONBackedObjectFactory.create(NegotiationResponse.class).transitionTo(NegotiationResponse.NegotiationResponseStatus.RESPONDED);
+        Optional<NegotiationResponse> result = fromArray(getResponses()).filter(c->c.getPartnerId().equals(partnerId)).findAny();
+        NegotiationResponse negotiationResponse;
+        if(result.isPresent()){
+            negotiationResponse = result.get();
+        }
+        else{
+            negotiationResponse = JSONBackedObjectFactory.create(NegotiationResponse.class);
+        }
+        negotiationResponse.transitionTo(NegotiationResponse.NegotiationResponseStatus.RESPONDED);
         negotiationResponse.set("date",date);
         negotiationResponse.set("partnerId",partnerId);
         negotiationResponse.set("price",price);
         NegotiationResponse response = negotiationResponse;
-        List<NegotiationResponse> responses = toList(this.getResponses());
-        responses.add(response);
-        this.set("responses",toArray(responses, NegotiationResponse[]::new));
+        if(!result.isPresent()){
+            List<NegotiationResponse> responses = toList(this.getResponses());
+            responses.add(response);
+            this.set("responses",toArray(responses, NegotiationResponse[]::new));
+        }
         this.transitionTo(NegotiationOrderStatus.RESPONDED);
     }
 
@@ -84,6 +94,24 @@ public interface NegotiatedOrder  extends BasicOrder {
                 fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.ACCEPTED);
             }
         }
+        this.set("responses",responses);
+    }
+
+    default void rejectResponse(String partnerId){
+        if(!fromArray(this.getResponses()).anyMatch(c-> c.getPartnerId().equals(partnerId))){
+            throw new RuntimeException("Cannot find a response from partner to decline" + partnerId + " to cancel ");
+        }
+        transitionTo(NegotiationOrderStatus.RESPONDED);
+        set("assignedPartner", null);
+        NegotiationResponse[] responses = getResponses();
+        fromArray(responses).forEach(
+                res -> {
+                    NegotiationResponse fill = res;
+                    if(fill.getPartnerId().equals(partnerId)){
+                        fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.DECLINED);
+                    }
+                }
+        );
         this.set("responses",responses);
     }
 

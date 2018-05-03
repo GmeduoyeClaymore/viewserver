@@ -30,12 +30,6 @@ public class OrderWithResponseDataSource {
                                 .withAlwaysResolveNames()
                                 .withConnection("orderResponseSpread", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
-                        new JoinNode("ratingJoin")
-                                .withLeftJoinColumns("orderId", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN)
-                                .withLeftJoinOuter()
-                                .withRightJoinColumns("orderId", "userId")
-                                .withConnection("responsePartnerJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
@@ -72,7 +66,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn("dimension_status"),
                                         new IProjectionConfig.ProjectionColumn("dimension_contentTypeId"),
                                         new IProjectionConfig.ProjectionColumn("dimension_productId")
-                                ).withConnection("ratingJoin")
+                                ).withConnection("responsePartnerJoin")
                 )
                 .withDimensions(Arrays.asList(
                         new Dimension("dimension_orderId", "orderId", Cardinality.Byte, ContentType.String, true).withImported(),

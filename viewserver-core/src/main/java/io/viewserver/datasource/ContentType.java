@@ -41,6 +41,7 @@ public enum ContentType {
 
     private static Object convertFromString(Object c) {
         if(c instanceof String){
+
             return ControllerUtils.mapDefault((java.lang.String) c);
         }
         return c;

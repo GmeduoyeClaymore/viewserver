@@ -93,6 +93,7 @@ Feature: Personell order scenarios
       | ColumnAdd | customer_firstName    | String      |
       | ColumnAdd | customer_lastName     | String      |
       | ColumnAdd | customer_ratingAvg    | Double      |
+      | ColumnAdd | userCreatedThisOrder  | Bool        |
     Then "client2" the following data is received eventually on report "orderResponses"
       | ~Action | orderId                                               | orderDetails                          | partner_firstName | partner_lastName | orderLocation                                 | partnerOrderStatus |
       | RowAdd  | {client1_personellOrderController_createOrder_result} | ref://json/orders/personellOrder.json | Modestas          | BrickLayer       | ref://json/orders/personellOrderLocation.json | RESPONDED          |
@@ -311,7 +312,7 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "addPaymentStage" invoked with parameters
       | Name             | Value                                                 |
       | orderId          | {client1_personellOrderController_createOrder_result} |
-      | percentage       | 10                                                    |
+      | amount       | 10                                                    |
       | name             | "First fix electrical"                                |
       | description      | "All first fix electrical work"                       |
       | paymentStageType | Percentage                                            |

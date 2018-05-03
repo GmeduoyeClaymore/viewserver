@@ -42,15 +42,15 @@ Feature: User relationship scenarios
 	  | ColumnAdd | Bool        | online                |
 	  | ColumnAdd | String      | userStatus            |
 	  | ColumnAdd | String      | statusMessage         |
-	  | ColumnAdd | String      | ratingGroupBy_userId  |
-	  | ColumnAdd | Int         | count                 |
+	  | ColumnAdd | Json        | ratings               |
 	  | ColumnAdd | Double      | ratingAvg             |
 	  | ColumnAdd | Int         | rank                  |
+	  | ColumnAdd | Bool         | dimension_online                  |
 	Then "client2" the following data is received eventually on report "userReport"
-	  | ~Action | contactNo    | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
-	  | RowAdd  | 447966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | 0.0      | 0.0       |        |          | True   | 50    | 0    | 0.0       |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
+	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | 0.0      | 0.0       |        |          | True   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
 
-  Scenario: Newly registered users can be seen by each other
+  Scenario: Newly registered users can be seen by each otherß
 
   Scenario: Can see partner for product in userProduct report
 	Given "client1" report parameters
@@ -88,4 +88,45 @@ Feature: User relationship scenarios
 	  | ColumnAdd | Int         | rank                 |
 	Then "client1" the following data is received eventually on report "usersForProductAll"
 	  | ~Action | contactNo    | distance | email                        | firstName | id | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
-	  | RowAdd  | 447966265016 | 0.0      | modestasbricklayer@gmail.com | Modestas  |    |          | Null          | BrickLayer | 0.0      | 0.0       |        |          | true   | 50    | 0    | 0.0       |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+	  | RowAdd  | 07966265016 | 0.0      | modestasbricklayer@gmail.com | Modestas  |    |          | Null          | BrickLayer | 0.0      | 0.0       |        |          | true   | 50    | 0    | -1.0       |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+
+
+  Scenario: Can add rating for users
+	Given "client2" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                              |
+	  | orderId    | XXXXXXX                                            |
+	  | userId     | {client1_partnerController_registerPartner_result} |
+	  | rating     | 5                                                  |
+	  | comments   | "Foo comment"                                      |
+	  | ratingType | Customer                                           |
+	When "client1" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client1" the following data is received eventually on report "userReport"
+	  | ~Action |  | ratings                                                                      | ratingAvg | userId                                             |
+	  | RowAdd  |  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"}} | 5.0       | {client1_partnerController_registerPartner_result} |
+
+
+  Scenario: Can add multiple ratings for users
+	Given "client2" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                              |
+	  | orderId    | XXXXXXX                                            |
+	  | userId     | {client1_partnerController_registerPartner_result} |
+	  | rating     | 5                                                  |
+	  | comments   | "Foo comment"                                      |
+	  | ratingType | Customer                                           |
+	Given "client3" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                              |
+	  | orderId    | YYYYYYYY                                           |
+	  | userId     | {client1_partnerController_registerPartner_result} |
+	  | rating     | 2                                                  |
+	  | comments   | "Foo comment too"                                  |
+	  | ratingType | Customer                                           |
+	When "client1" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client1" the following data is received eventually on report "userReport"
+	  | ~Action |  | ratings                                                                                                                                                   | ratingAvg | userId                                             |
+	  | RowAdd  |  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"} ,  "1" : {"fromUserId":"{client3_partnerController_registerPartner_result}"}} | 3.5       | {client1_partnerController_registerPartner_result} |
+
+

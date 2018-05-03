@@ -48,7 +48,7 @@ public class OperatorEvent{
             if (rowFlags != null && !rowFlags.isDirty(columnHolder.getColumnId())) {
                 continue;
             }
-            result.put(columnHolder.getName(), ColumnHolderUtils.getValue(columnHolder, row));
+            result.put(columnHolder.getName(), ColumnHolderUtils.getValue(columnHolder, row, true));
         }
         return result;
     }

@@ -30,7 +30,6 @@ import io.viewserver.schema.column.IRowFlags;
 import cucumber.api.DataTable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by bemm on 01/12/2014.
@@ -173,7 +172,7 @@ public class ValidationOperator extends OperatorBase{
                 else{
                     ValidationOperatorColumn out = columnsByName.get(itemKey.getColumnName());
                     if(referenceActions != null && out!= null && out.getType().equals(ContentType.Json)){//basically if it is JSON then look at the reference row and only compare properties found in the source row
-                        HashMap<String,Object> me =  val instanceof HashMap ? (HashMap)val : ControllerUtils.mapDefault(val + "");
+                        HashMap<String,Object> me = getMapFromVal(val);
                         Integer id = (Integer) row.get(ValidationUtils.ID_NAME);
                         HashMap<String, Object> referenceAction = referenceActionsRows.stream().filter(c -> isRowWithId(id,c)).findFirst().orElse(null);
                         if(referenceAction == null){
@@ -201,6 +200,18 @@ public class ValidationOperator extends OperatorBase{
             tableData.add(result);
         }
         return DataTable.create(tableData);
+    }
+
+    private HashMap<String, Object> getMapFromVal(Object val) {
+        if(val instanceof List){
+            List valList = (List) val;
+            HashMap<String,Object> result = new HashMap();
+            for(int i=0;i<valList.size();i++){
+                result.put(i+"", valList.get(i));
+            }
+            return result;
+        }
+        return val instanceof HashMap ? (HashMap)val : (HashMap<String, Object>) ControllerUtils.mapDefault(val + "");
     }
 
     private boolean isRowWithId(Integer id, HashMap<String, Object> c) {

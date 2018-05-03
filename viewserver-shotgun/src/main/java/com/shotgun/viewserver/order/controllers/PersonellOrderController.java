@@ -26,7 +26,7 @@ import static io.viewserver.core.Utils.fromArray;
 @Controller(name = "personellOrderController")
 public class PersonellOrderController  implements NegotiationNotifications,PaymentNotifications, OrderTransformationController, OrderCreationController, NegotiatedOrderController, StagedPaymentController, SinglePaymentOrderController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerRatingController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PersonellOrderController.class);
 
     private IMessagingController messagingController;
     private IDatabaseUpdater iDatabaseUpdater;

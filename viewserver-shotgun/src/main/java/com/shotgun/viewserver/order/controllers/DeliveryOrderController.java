@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @Controller(name = "deliveryOrderController")
 public class DeliveryOrderController implements NegotiationNotifications, OrderCreationController, NegotiatedOrderController, SinglePaymentOrderController, JourneyBasedOrderController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerRatingController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeliveryOrderController.class);
 
     private IMessagingController messagingController;
     private IDatabaseUpdater iDatabaseUpdater;

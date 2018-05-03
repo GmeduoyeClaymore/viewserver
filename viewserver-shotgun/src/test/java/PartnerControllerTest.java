@@ -14,7 +14,7 @@ public class PartnerControllerTest {
 
     @Before
     public void createSut(){
-        sut = new PartnerController(null,null,null,null,null,null, null, null, null);
+        sut = new PartnerController(null,null,null,null,null,null);
     }
 
     @Test

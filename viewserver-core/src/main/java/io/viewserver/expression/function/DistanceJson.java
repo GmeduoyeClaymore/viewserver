@@ -39,7 +39,7 @@ public class DistanceJson implements IUserDefinedFunction, IExpressionDouble {
         if(string == null){
             return -1;
         }
-        HashMap<String,Object> location = ControllerUtils.mapDefault(string);
+        HashMap<String,Object> location = (HashMap<String, Object>) ControllerUtils.mapDefault(string);
         Double lat = (Double) location.get("lat");
         Double lng = (Double) location.get("lng");
         return Distance.distance(lat == null ? 0 : lat, lng == null ? 0 : lng, latExp.getDouble(row), lngExp.getDouble(row), unit.getString(row));

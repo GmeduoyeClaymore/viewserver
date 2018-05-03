@@ -35,7 +35,7 @@ public class ControllerUtils{
     private static final Logger logger = LoggerFactory.getLogger(ControllerUtils.class);
 
     public static HashMap<String,Object> mapDefault(String json){
-        return io.viewserver.controller.ControllerUtils.mapDefault(json);
+        return (HashMap<String, Object>) io.viewserver.controller.ControllerUtils.mapDefault(json);
     }
 
     public static String toString(Object ser){

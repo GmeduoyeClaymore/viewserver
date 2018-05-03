@@ -15,7 +15,7 @@ import java.util.List;
 public class UserRelationshipReport {
         public static final String USER_FOR_PRODUCT_REPORT_ID = "usersForProduct";
         public static final String USER_RELATIONSHIPS = "userRelationships";
-        public static String MainuserOperatorName = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin");
+        public static String MainuserOperatorName = IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME);
 
         public static List<IGraphNode> getSharedGraphNodes(String userOperatorName, boolean showUnrelated){
                 return Arrays.asList(
