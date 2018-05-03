@@ -19,7 +19,6 @@ public class FirebaseTestApplicationSetup  extends FirebaseApplicationSetup {
     protected void setup(Firestore db) {
         delete(db, UserDataSource.NAME);
         delete(db, ContentTypeDataSource.NAME);
-        delete(db, DeliveryDataSource.NAME);
         delete(db, DeliveryAddressDataSource.NAME);
         delete(db, OrderDataSource.NAME);
         delete(db, PhoneNumberDataSource.NAME);
