@@ -1,13 +1,12 @@
 import Logger from 'common/Logger';
 import {AsyncStorage} from 'react-native';
-
+import invariant from 'invariant';
 export default class PrincipalService {
   static userIdKey = '@shotgun:userId';
 
   static async getUserIdFromDevice(){
     try {
-      return "3ABCD";
-     // return await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(5000, 'Unable to find get userid within 5 second timespan');
+      return await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(5000, 'Unable to find get userid within 5 second timespan');
     } catch (error) {
       throw new Error('Error getting user id from device ' + error);
     }
@@ -15,7 +14,8 @@ export default class PrincipalService {
 
   static async setUserIdOnDevice(userId){
     try {
-     // await AsyncStorage.setItem(PrincipalService.userIdKey, userId).timeoutWithError(5000, 'Unable to find set userid within 5 second timespan');
+      invariant(userId, 'User cannot be null');
+      await AsyncStorage.setItem(PrincipalService.userIdKey, userId).timeoutWithError(5000, 'Unable to find set userid within 5 second timespan');
     } catch (error) {
       //TODO - error handling here
       Logger.error('Error saving user id on device ' + error);

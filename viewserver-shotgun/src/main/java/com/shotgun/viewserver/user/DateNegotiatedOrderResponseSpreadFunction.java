@@ -63,22 +63,27 @@ public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunctio
         }
         NegotiatedOrder order = JSONBackedObjectFactory.create(contentTypeJSONString, NegotiatedOrder.class);
         NegotiationResponse[] responses = order.getResponses();
+        int length;
         if(responses == null){
-            return new ArrayList<>();
+            length = 1;
+        }else{
+            length = responses.length;
         }
-        Object[] customerIds = new Object[responses.length];
-        Object[] customerResponseDates = new Object[responses.length];
-        Object[] orderDetails = new Object[responses.length];
-        Object[] statuses = new Object[responses.length];
-        Object[] prices = new Object[responses.length];
+        Object[] customerIds = new Object[length];
+        Object[] customerResponseDates = new Object[length];
+        Object[] orderDetails = new Object[length];
+        Object[] statuses = new Object[length];
+        Object[] prices = new Object[length];
 
-        for(int i = 0; i< responses.length; i++){
-            NegotiationResponse negotiationResponse = responses[i];
-            customerIds[i] = negotiationResponse.getPartnerId();
-            customerResponseDates[i] = negotiationResponse.getDate();
-            orderDetails[i] = order.serialize("responses");
-            statuses[i] = negotiationResponse.getResponseStatus().name();
-            prices[i] = negotiationResponse.getPrice();
+        if(responses != null) {
+            for (int i = 0; i < length; i++) {
+                NegotiationResponse negotiationResponse = responses[i];
+                customerIds[i] = negotiationResponse.getPartnerId();
+                customerResponseDates[i] = negotiationResponse.getDate();
+                orderDetails[i] = order.serialize("responses");
+                statuses[i] = negotiationResponse.getResponseStatus().name();
+                prices[i] = negotiationResponse.getPrice();
+            }
         }
 
 

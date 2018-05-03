@@ -218,6 +218,7 @@ public class ControllerActionEntry{
                 Futures.addCallback(future, new FutureCallback<Object>() {
                     @Override
                     public void onSuccess(Object o) {
+
                         result.set(ControllerActionEntry.toString(o));
                     }
 
@@ -304,6 +305,9 @@ public class ControllerActionEntry{
     public static String toString(Object ser){
         if(ser == null){
             return null;
+        }
+        if( ser instanceof String){
+            return (String) ser;
         }
         return ControllerUtils.toString(ser);
 
