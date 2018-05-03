@@ -49,7 +49,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
                 order,
                 paymentMethodId,
                 (rec,ord) -> {
-                    DeliveryAddress jobLocation = order.getJobLocation();
+                    DeliveryAddress jobLocation = order.getOrigin();
                     if(jobLocation == null){
                         throw new RuntimeException("Job location cannot be null");
                     }

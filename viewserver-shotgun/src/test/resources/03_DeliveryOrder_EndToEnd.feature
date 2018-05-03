@@ -43,7 +43,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | internalOrderStatus   | String      |
 	  | ColumnAdd | rank                  | Int         |
-	  | ColumnAdd | partnerResponses    | Json        |
+	  | ColumnAdd | partnerResponses      | Json        |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED |
@@ -165,7 +165,7 @@ Feature: Delivery order scenarios
 	  | dimension_status         | String | ACCEPTED,PLACED |
 	  | dimension_customerUserId | String | @userId         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerResponses                                             |
+	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerResponses                                                                            |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED | {"{client2_partnerController_registerPartner_result}" : {"partnerOrderStatus":"RESPONDED"}} |
 
   Scenario: Cancelling Response to order removes order from the responses list
@@ -247,6 +247,45 @@ Feature: Delivery order scenarios
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                              | partnerOrderStatus |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | DECLINED           |
+
+  Scenario: Rejecting response causes to change to declined for rejected partner then responding again brings it back
+	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
+	  | Name             | Value                                              |
+	  | param_customerId | {client1_partnerController_registerPartner_result} |
+	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name          | Value                                                |
+	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
+	  | estimatedDate | "{now_date+1}"                                       |
+	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name          | Value                                                |
+	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
+	  | estimatedDate | "{now_date+2}"                                       |
+	Given "client1" controller "deliveryOrderController" action "rejectResponse" invoked with parameters
+	  | Name      | Value                                                |
+	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
+	  | partnerId | {client3_partnerController_registerPartner_result}   |
+	Given "client3" subscribed to report "orderResponses" with parameters
+	  | Name                | Type   | Value   |
+	  | dimension_partnerId | String | @userId |
+	Then "client3" the following data is received eventually on report "orderResponses"
+	  | ~Action | orderId                                              | partnerOrderStatus |
+	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | DECLINED           |
+	Given "client2" subscribed to report "orderResponses" with parameters
+	  | Name                | Type   | Value   |
+	  | dimension_partnerId | String | @userId |
+	Then "client2" the following data is received eventually on report "orderResponses"
+	  | ~Action | orderId                                              | partnerOrderStatus |
+	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | RESPONDED          |
+	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name          | Value                                                |
+	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
+	  | estimatedDate | "{now_date+2}"                                       |
+	Given "client3" subscribed to report "orderResponses" with parameters
+	  | Name                | Type   | Value   |
+	  | dimension_partnerId | String | @userId |
+	Then "client3" the following data is received eventually on report "orderResponses"
+	  | ~Action | orderId                                              | partnerOrderStatus |
+	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | RESPONDED          |
 
   Scenario: Cancelling accepted response causes job to go back into responded state
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters

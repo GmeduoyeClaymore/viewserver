@@ -6,14 +6,12 @@ import invariant from 'invariant';
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
 resourceDictionary.
-  property('getControllerName').
-    personell(() => 'personellOrderController').
-    rubbish(() => 'rubbishOrderController').
-    skip(() => 'hireOrderController').
-    delivery(order => order.sourceOrderContentType ? getController(order.sourceOrderContentType) :  'deliveryOrderController').
-    hire(() => 'hireOrderController').
-  property('getControllerAction', order => 'createOrder').
-    delivery(order => order.sourceOrderContentType ? 'createDeliveryOrder' :  'createOrder');
+  property('Controller').
+    personell('personellOrderController').
+    rubbish('rubbishOrderController').
+    skip('hireOrderController').
+    delivery('deliveryOrderController').
+    hire('hireOrderController');
 /*eslint-enable */
 
 export default class OrdersDao{
@@ -42,18 +40,54 @@ export default class OrdersDao{
     return;
   }
 
-  async createOrder({order, paymentId}) {
+  getControllerForOrder(orderContentTypeId){
     Logger.info('Creating order');
-    invariant(order.orderContentTypeId, 'Order content type should be defined');
-    const resources = resourceDictionary.resolve(order.orderContentTypeId);
-    invariant(resources, 'Unable to find resource dictionary for content type ' + order.orderContentTypeId);
-    const controller = resources.getControllerName(order);
-    const action = resources.getControllerAction(order);
-    invariant(controller, 'Unable to get controller name for order');
-    invariant(action, 'Unable to get action for order');
-    const orderId = await this.client.invokeJSONCommand(controller, action, {paymentId, order});
+    invariant(orderContentTypeId, 'Order content type should be defined');
+    const resources = resourceDictionary.resolve(orderContentTypeId);
+    invariant(resources, 'Unable to find resource dictionary for content type ' + orderContentTypeId);
+    return  resources.Controller;
+  }
+
+  createOrder = async ({order, paymentId}) => {
+    const controller = this.getControllerForOrder(order.orderContentTypeId);
+    const orderId = await this.client.invokeJSONCommand(controller, 'createOrder', {paymentId, order});
     Logger.info(`Order ${orderId} created`);
     return orderId;
+  }
+
+  cancelOrder = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    await this.client.invokeJSONCommand(controller, 'cancelOrder', {orderId});
+    Logger.info(`Order ${orderId} cancelled`);
+    return orderId;
+  }
+
+  rejectResponse = async ({orderId, partnerId, orderContentTypeId}) => {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    await this.client.invokeJSONCommand(controller, 'rejectResponse', {orderId, partnerId});
+    Logger.info(`Order ${orderId} partner ${partnerId} rejected`);
+    return orderId;
+  }
+
+  acceptResponse = async ({orderId, partnerId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    await this.client.invokeJSONCommand(controller, 'acceptResponse', {orderId, partnerId});
+    Logger.info(`Order ${orderId} partner ${partnerId} accepted`);
+    return orderId;
+  }
+
+  updateOrderAmount = async ({orderId, amount, orderContentTypeId}) => {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    await this.client.invokeJSONCommand(controller, 'updateOrderAmount', {orderId, amount});
+    Logger.info(`Order ${orderId} amount ${amount} updated`);
+    return orderId;
+  };
+
+  addPaymentStage = async ({orderId, orderContentTypeId, amount, name, description, paymentStageType}) =>  {
+    const {controller} = this.getControllerForOrder(orderContentTypeId);
+    const paymentStageId = await this.client.invokeJSONCommand(controller, 'addPaymentStage', {orderId, amount, name, description, paymentStageType});
+    Logger.info(`Order payment stage ${paymentStageId} created`);
+    return paymentStageId;
   }
 }
 

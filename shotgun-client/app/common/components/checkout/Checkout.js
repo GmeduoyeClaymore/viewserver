@@ -38,7 +38,6 @@ class Checkout extends Component {
       if (!!~currentIndex){
         return `${path}/${navigationPath[currentIndex + 1]}`;
       }
-      Logger.info(`Unable to find next for "${currentPath}" for content type ${this.resources.contentTypeId}`);
     }
   }
 

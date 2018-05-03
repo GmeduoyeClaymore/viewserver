@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Image} from 'react-native';
-import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem, View} from 'native-base';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem, View, Spinner} from 'native-base';
 import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, CurrencyInput, Currency} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import MapDetails from './MapDetails';
 import invariant from 'invariant';
 import moment from 'moment';
-import {cancelOrder, rejectPartner, acceptPartner, updateOrderPrice} from 'customer/actions/CustomerActions';
+import {cancelOrder, rejectResponse, acceptResponse, updateOrderAmount} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 /*eslint-disable */
@@ -19,42 +19,46 @@ resourceDictionary.
     rubbish(() => 'Rubbish Collection');
 /*eslint-disable */
 
-const  CancelOrder = ({orderId, busyUpdating}) => {
+const  CancelOrder = ({orderId, busyUpdating, dispatch}) => {
   const onCancelOrder = () => {
-      dispatch(cancelOrder(orderId));
+      dispatch(cancelOrder({orderId}));
   };
-  return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> 
+  return <SpinnerButton padded busy={busyUpdating} fullWidth danger onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> 
 };
 
-const  RejectPartner = ({orderId, busyUpdating}) => {
+const  RejectPartner = ({orderId, partnerId, busyUpdating, dispatch}) => {
   const onRejectPartner = () => {
-      dispatch(rejectPartner(orderId));
+      dispatch(rejectResponse({orderId, partnerId, orderContentTypeId}));
   };
-  return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onRejectPartner}><Text uppercase={false}>Reject</Text></SpinnerButton>
+  return <SpinnerButton padded busy={busyUpdating} fullWidth danger onPress={onRejectPartner}><Text uppercase={false}>Reject</Text></SpinnerButton>
 };
 
-const  AcceptPartner = ({orderId, busyUpdating}) => {
+const  AcceptPartner = ({orderId, partnerId, orderContentTypeId, busyUpdating, dispatch}) => {
   const onAcceptPartner = () => {
-      dispatch(acceptPartner(orderId));
+      dispatch(acceptResponse({orderId, partnerId, orderContentTypeId}));
   };
-  return <SpinnerButton padded busy={busyUpdating} fullWidth danger style={styles.ctaButton} onPress={onAcceptPartner}><Text uppercase={false}>Accept</Text></SpinnerButton>
+  return <SpinnerButton padded busy={busyUpdating} fullWidth info onPress={onAcceptPartner}><Text uppercase={false}>Accept</Text></SpinnerButton>
 };
 
-const onOrderAmountChanged = (orderId, newAmount) => {
-  dispatch(updateOrderPrice(orderId, newAmount));
-}
+const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, busyUpdating, dispatch}) => {
+  const onUpdateOrderAmount = () => {
+    dispatch(updateOrderAmount({orderId, orderContentTypeId, amount}));
+  };
+  return <SpinnerButton padded busy={busyUpdating} fullWidth success onPress={onUpdateOrderAmount}><Text uppercase={false}>Update</Text></SpinnerButton>
+};
 
-const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, busyUpdating}) => {
+
+const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating}) => {
   return <Row>{partnerResponses.map(
     response  => {
-      const {latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, partnerOrderStatus} = response;
+      const {partnerId, latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, partnerOrderStatus} = response;
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
       return <Row style={styles.view}>
           <Text>{moment(estimatedDate).format('ddd Do MMMM, h:mma')}</Text>
           <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.partnerImage}/>
-          <Row><RejectPartner {...this.props}/><AcceptPartner  {...this.props}/></Row>
-      </Row>;
-    })}</Row>;
+          <Row><RejectPartner orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/><AcceptPartner orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/></Row>
+      </Row>
+    })}</Row>
   
 }
 
@@ -62,6 +66,9 @@ class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+    this.state = {
+      amount: undefined
+    }
   }
 
   beforeNavigateTo(){
@@ -78,13 +85,13 @@ class CustomerOrderDetail extends Component{
     }
   }
 
-  setAmount = (amount) => {
+  updateAmountInState = (amount) => {
     const {order} = this.props;
-    onOrderAmountChanged(order.orderId,amount);
+    super.setState({amount});
   }
 
   render() {
-    const {busy, order, client, partnerResponses, errors, history, busyUpdating} = this.props;
+    const {busy, order, orderId, client, partnerResponses, errors, history, busyUpdating, dispatch} = this.props;
     const {resources} = this;
     return busy || !order? <LoadingScreen text={ !busy && !order ? "Order \"" + orderId + "\" cannot be found" : "Loading Order..."}/> : <Container>
       <Header withButton>
@@ -97,13 +104,15 @@ class CustomerOrderDetail extends Component{
       </Header>
       <Content>
         <ErrorRegion errors={errors}/>
-        <CancelOrder orderId={order.orderId} busyUpdating={busyUpdating} />
-        <PartnerAcceptRejectControl orderId={order.orderId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
+        <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
+        <PartnerAcceptRejectControl dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
         <Grid>
-          <Row style={styles.row}><Text style={styles.heading}>You wil pay</Text></Row>
-          <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price}/>}</Row>
+          <Row style={styles.row}><Text style={styles.heading}>Advertised Rate</Text></Row>
+          <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.isFixedPrice ?  '' : 'a day'}/>}</Row>
         </Grid>
-        <CurrencyInput onValueChange={this.setAmount}/>
+        <Grid>
+          <Row style={styles.row}><CurrencyInput dispatch={dispatch} onValueChange={this.updateAmountInState}/><UpdateOrderPrice orderContentTypeId={order.orderContentTypeId}  dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/></Row>
+        </Grid>
         <MapDetails order={order} client={client}/>
         <ListItem padded style={{borderBottomWidth: 0}}>
           <Grid>
@@ -119,6 +128,8 @@ class CustomerOrderDetail extends Component{
 
 const styles = {
   row: {
+    marginTop:10,
+    marginBottom:10,
     justifyContent: 'center'
   },
   view: {
@@ -167,7 +178,7 @@ const mapStateToProps = (state, initialProps) => {
 
   const {partnerResponses} = order || {};
   
-  const errors = getOperationErrors(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}])
+  const errors = getOperationErrors(state, [{orderDao: 'cancelOrder'}, {orderDao: 'rejectResponse'}, {orderDao: 'updateOrderAmount'}])
   const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,
@@ -177,7 +188,7 @@ const mapStateToProps = (state, initialProps) => {
     isPendingOrderSummarySubscription,
     me: getDaoState(state, ['user'], 'userDao'),
     errors,
-    busyUpdating: isAnyOperationPending(state, [{customerDao: 'cancelOrder'}, {customerDao: 'rejectPartner'}, {customerDao: 'updateOrderPrice'}]),
+    busyUpdating: isAnyOperationPending(state, [{orderDao: 'cancelOrder'}, {orderDao: 'rejectResponse'}, {orderDao: 'updateOrderAmount'}]),
     busy: isPendingOrderSummarySubscription,
   };
 };

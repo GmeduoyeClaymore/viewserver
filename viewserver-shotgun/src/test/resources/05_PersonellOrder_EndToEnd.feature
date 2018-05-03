@@ -308,7 +308,7 @@ Feature: Personell order scenarios
 	Given "client2" controller "personellOrderController" action "addPaymentStage" invoked with parameters
 	  | Name             | Value                                                 |
 	  | orderId          | {client1_personellOrderController_createOrder_result} |
-	  | percentage       | 10                                                    |
+	  | amount           | 10                                                    |
 	  | name             | "First fix electrical"                                |
 	  | description      | "All first fix electrical work"                       |
 	  | paymentStageType | Percentage                                            |

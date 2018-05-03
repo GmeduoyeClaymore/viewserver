@@ -15,7 +15,7 @@ public interface StagedPaymentController extends OrderTransformationController, 
     @ControllerAction(path = "addPaymentStage", isSynchronous = true)
     default String addPaymentStage(
             @ActionParam(name = "orderId")String orderId,
-            @ActionParam(name = "percentage")int percentage,
+            @ActionParam(name = "amount")int amount,
             @ActionParam(name = "name")String name,
             @ActionParam(name = "description")String description,
             @ActionParam(name = "paymentStageType")OrderPaymentStage.PaymentStageType paymentStageType) {
@@ -23,7 +23,7 @@ public interface StagedPaymentController extends OrderTransformationController, 
         this.transform(
                 orderId,
                 order -> {
-                    stagedPaymentId.set(order.addPaymentStage(percentage, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None));
+                    stagedPaymentId.set(order.addPaymentStage(amount, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None));
                     return true; },
                 StagedPaymentOrder.class
         );
