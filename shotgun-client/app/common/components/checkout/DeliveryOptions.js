@@ -9,7 +9,6 @@ import yup from 'yup';
 import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
-import {TextInputMask} from 'react-native-masked-text';
 
 class DeliveryOptions extends Component {
   constructor(props) {

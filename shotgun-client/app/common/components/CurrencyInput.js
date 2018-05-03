@@ -21,7 +21,7 @@ export class CurrencyInput extends Component{
   render() {
     const {amountMask} = this.state;
     return <TextInputMask ref={'amountInput'} underlineColorAndroid='transparent' style={styles.amountInput} type={'money'} placeholder='Enter amount'
-      options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount}/>;
+      options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount} {...this.props}/>;
   }
 }
 

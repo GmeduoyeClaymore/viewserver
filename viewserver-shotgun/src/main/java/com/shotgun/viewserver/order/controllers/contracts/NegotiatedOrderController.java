@@ -14,7 +14,7 @@ import static io.viewserver.core.Utils.fromArray;
 public interface NegotiatedOrderController extends OrderUpdateController, NegotiationNotifications, OrderTransformationController {
 
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
-    default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "estimatedDate")Date estimatedDate, @ActionParam(name = "price")Integer price){
+    default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "requiredDate")Date requiredDate, @ActionParam(name = "amount")Integer amount){
         String partnerId = getUserId();
         this.transform(
                 orderId,
@@ -23,7 +23,7 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                         getLogger().info(partnerId + "Has already responded to this order aborting");
                         return false;
                     }
-                    order.respond(partnerId, estimatedDate, price);
+                    order.respond(partnerId, requiredDate, amount);
                     return  true;
                 },
                 order -> {

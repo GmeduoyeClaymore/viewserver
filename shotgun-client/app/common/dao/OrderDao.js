@@ -22,8 +22,6 @@ export default class OrdersDao{
     this.name = 'orderDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
-    this.createOrder = this.createOrder.bind(this);
-    this.updateSubscription = this.updateSubscription.bind(this);
     this.subject.next();
     this.options = {};
   }
@@ -36,13 +34,13 @@ export default class OrdersDao{
     return this.optionsSubject;
   }
 
-  async updateSubscription(options){
+  updateSubscription = async(options) => {
     this.options = {...this.options, ...options};
     this.subject.next();
     return;
   }
 
-  async createOrder({order, paymentId}) {
+  createOrder = async({order, paymentId}) => {
     Logger.info('Creating order');
     invariant(order.orderContentTypeId, 'Order content type should be defined');
     const resources = resourceDictionary.resolve(order.orderContentTypeId);
@@ -54,6 +52,12 @@ export default class OrdersDao{
     const orderId = await this.client.invokeJSONCommand(controller, action, {paymentId, order});
     Logger.info(`Order ${orderId} created`);
     return orderId;
+  }
+
+  respondToOrderRequest = async({order, requiredDate, amount}) => {
+    const resources = resourceDictionary.resolve(order.orderContentTypeId);
+    const controller = resources.getControllerName(order);
+    await this.client.invokeJSONCommand(controller, 'respondToOrder', {orderId: order.orderId, requiredDate, amount});
   }
 }
 

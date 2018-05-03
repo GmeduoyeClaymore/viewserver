@@ -45,12 +45,13 @@ class OrderSummary extends Component{
         <OriginDestinationSummary order={order}/>
       </ListItem>
 
+      {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
+
       {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
         <Icon paddedIcon name="one-person"/>
         <UserInfo orderid={order.orderId} user={userCreatedThisOrder ? assignedPartner : customer} isPartner={!userCreatedThisOrder}/>
       </ListItem> : null}
 
-      {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {orderProduct ? <ListItem padded>
         {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
         <Text>{orderProduct.name}</Text>
