@@ -29,6 +29,8 @@ public class UserDataSource {
                                         new Column("contactNo", ContentType.String),
                                         new Column("selectedContentTypes", ContentType.Json),
                                         new Column("email",  ContentType.String),
+                                        new Column("ratings",  ContentType.Json),
+                                        new Column("ratingAvg",  ContentType.Double),
                                         new Column("type",  ContentType.String),
                                         new Column("stripeCustomerId",  ContentType.String),
                                         new Column("stripeAccountId", ContentType.String),
@@ -45,20 +47,9 @@ public class UserDataSource {
                                 ))
                                 .withKeyColumns("userId")
                 )
-				.withNodes(
-                        new GroupByNode("ratingGroupBy")
-                                .withGroupByColumns("userId")
-                                .withSummary("ratingAvg", "avg", "rating")
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME)),
-                        new JoinNode("ratingJoin")
-                                .withLeftJoinColumns("userId")
-                                .withLeftJoinOuter()
-                                .withRightJoinColumns("userId")
-                                .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
-                                .withConnection("ratingGroupBy", Constants.OUT, "right")
-                )
-                .withDimensions(Arrays.asList(new Dimension("dimension_userId","userId", Cardinality.Byte, ContentType.String), new Dimension("online", Cardinality.Byte, ContentType.Bool)))
-                .withOutput("ratingJoin")
+                .withDimensions(Arrays.asList(new Dimension("dimension_userId","userId", Cardinality.Byte, ContentType.String),
+                        new Dimension("dimension_online","online", Cardinality.Byte, ContentType.Bool)))
+                .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

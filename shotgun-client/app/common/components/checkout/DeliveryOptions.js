@@ -33,9 +33,9 @@ class DeliveryOptions extends Component {
     this.setState({ order: {...order, amount}});
   }
 
-  toggleFixedPrice = (isFixedPrice) => {
+  setPaymentType = (paymentType) => {
     const {order} = this.props;
-    this.setState({order: {...order, isFixedPrice}});
+    this.setState({order: {...order, paymentType}});
   }
 
   setCard = ({id: paymentId, brand, last4}) => {
@@ -89,10 +89,10 @@ class DeliveryOptions extends Component {
                 <Col>
                   <CurrencyInput onValueChange={this.setAmount}/>
                 </Col>
-                <Button style={styles.periodButton} light={order.isFixedPrice} onPress={() => this.toggleFixedPrice(false)}>
+                <Button style={styles.periodButton} light={order.paymentType === 'DayRate'} onPress={() => this.setPaymentType('DayRate')}>
                   <Text style={styles.buttonText}>Day Rate</Text>
                 </Button>
-                <Button style={styles.periodButton} light={!order.isFixedPrice} onPress={() => this.toggleFixedPrice(true)}>
+                <Button style={styles.periodButton} light={order.paymentType === 'Fixed'} onPress={() => this.setPaymentType('DayRate')}>
                   <Text style={styles.buttonText}>Fixed Price</Text>
                 </Button>
               </Row>

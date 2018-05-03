@@ -1,8 +1,6 @@
 package com.shotgun.viewserver.setup.report;
 
-import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
 import com.shotgun.viewserver.setup.datasource.OrderDataSource;
-import com.shotgun.viewserver.setup.datasource.RatingDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
@@ -22,13 +20,7 @@ public class PartnerOrderSummaryReport {
                                         .withLeftJoinColumns("userId")
                                         .withRightJoinColumns("userId")
                                         .withConnection("#input", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, "ratingJoin"), Constants.OUT, "right"),
-                                new JoinNode("ratingJoin")
-                                        .withLeftJoinColumns("orderId", "userId")
-                                        .withLeftJoinOuter()
-                                        .withRightJoinColumns("orderId", "userId")
-                                        .withConnection("customerJoin", Constants.OUT, "left")
-                                        .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
+                                        .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -53,7 +45,7 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                                        .withConnection("ratingJoin")
+                                                        .withConnection("customerJoin")
                         )
                         .withOutput("orderSummaryProjection");
         }

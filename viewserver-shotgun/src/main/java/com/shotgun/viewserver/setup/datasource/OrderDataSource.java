@@ -55,18 +55,12 @@ public class OrderDataSource {
                                 .withAlwaysResolveNames()
                                 .withConnection("customerJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
-                        new JoinNode("ratingJoin")
-                                .withLeftJoinColumns("orderId", "assignedPartnerUserId")
-                                .withLeftJoinOuter()
-                                .withRightJoinColumns("orderId", "userId")
-                                .withConnection("partnerJoin", Constants.OUT, "left")
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
                                 .withRightJoinColumns("productId")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
-                                .withConnection("ratingJoin", Constants.OUT, "left")
+                                .withConnection("partnerJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productCategoryJoin")
                                 .withLeftJoinColumns("product_categoryId")

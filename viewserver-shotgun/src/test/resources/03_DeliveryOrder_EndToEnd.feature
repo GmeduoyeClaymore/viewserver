@@ -131,6 +131,46 @@ Feature: Delivery order scenarios
       | RowAdd  | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | ref://json/orders/deliveryOrderLocation.json | PLACED |
 
 
+  Scenario: Rejecting response causes to change to declined for rejected partner then responding again brings it back
+    Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
+      | Name             | Value                                              |
+      | param_customerId | {client1_partnerController_registerPartner_result} |
+    Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+      | Name          | Value                                                |
+      | orderId       | {client1_deliveryOrderController_createOrder_result} |
+      | estimatedDate | "{now_date+1}"                                       |
+    Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+      | Name          | Value                                                |
+      | orderId       | {client1_deliveryOrderController_createOrder_result} |
+      | estimatedDate | "{now_date+2}"                                       |
+    Given "client1" controller "deliveryOrderController" action "rejectResponse" invoked with parameters
+      | Name      | Value                                                |
+      | orderId   | {client1_deliveryOrderController_createOrder_result} |
+      | partnerId | {client3_partnerController_registerPartner_result}   |
+    Given "client3" subscribed to report "orderResponses" with parameters
+      | Name                | Type   | Value   |
+      | dimension_partnerId | String | @userId |
+    Then "client3" the following data is received eventually on report "orderResponses"
+      | ~Action | orderId                                              | partnerOrderStatus |
+      | RowAdd  | {client1_deliveryOrderController_createOrder_result} | DECLINED           |
+    Given "client2" subscribed to report "orderResponses" with parameters
+      | Name                | Type   | Value   |
+      | dimension_partnerId | String | @userId |
+    Then "client2" the following data is received eventually on report "orderResponses"
+      | ~Action | orderId                                              | partnerOrderStatus |
+      | RowAdd  | {client1_deliveryOrderController_createOrder_result} | RESPONDED          |
+    Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+      | Name          | Value                                                |
+      | orderId       | {client1_deliveryOrderController_createOrder_result} |
+      | estimatedDate | "{now_date+2}"                                       |
+    Given "client3" subscribed to report "orderResponses" with parameters
+      | Name                | Type   | Value   |
+      | dimension_partnerId | String | @userId |
+    Then "client3" the following data is received eventually on report "orderResponses"
+      | ~Action | orderId                                              | partnerOrderStatus |
+      | RowAdd  | {client1_deliveryOrderController_createOrder_result} | RESPONDED          |
+
+
   Scenario: Responding to order causes order to appear in responded order list for partner
     Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
       | Name             | Value                                              |

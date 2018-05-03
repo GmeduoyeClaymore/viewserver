@@ -12,15 +12,26 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ControllerUtils {
 
     private static TypeReference<HashMap<String, Object>> dictionaryType = new TypeReference<HashMap<String, Object>>() {
     };
+    private static TypeReference<List<HashMap>> listDictionaryType = new TypeReference<List<HashMap>>(){
+
+    };
     private static ObjectMapper mapper = new ObjectMapper();
 
-    public static HashMap<String, Object> mapDefault(String json) {
+    public static Object mapDefault(String json) {
+        if(json.startsWith("[")){
+            try {
+                return mapper.readValue(json, listDictionaryType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         HashMap<String, Object> map = null;
         try {
             map = mapper.readValue(json, dictionaryType);

@@ -228,7 +228,7 @@ public class ViewServerClientSteps {
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
     public void controller_action_invoked_with_data_file(String clientName, String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
-        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile), null);
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, TestUtils.getJsonStringFromFile(dataFile), null);
     }
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\" with parameters$")
@@ -247,14 +247,6 @@ public class ViewServerClientSteps {
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);
     }
 
-    private Object getJsonObjectFromFile(String dataFile) {
-        String jsonStringFromFile = getJsonStringFromFile(dataFile, null);
-        return ControllerUtils.mapDefault(jsonStringFromFile);
-    }
-    private String getJsonStringFromFile(String dataFile) {
-        return getJsonStringFromFile(dataFile, null);
-    }
-
     private String getJsonStringFromFile(String dataFile, List<Map<String, String>> records) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dataFile);
         if (inputStream == null) {
@@ -263,7 +255,7 @@ public class ViewServerClientSteps {
         Reader reader = IOUtils.getBufferedReader(inputStream);
         try {
             String json = IOUtils.readStringAndClose(reader, 0);
-            json = parseReferencesInJSONFile(json);
+            json = TestUtils.parseReferencesInJSONFile(json);
             if (records != null) {
                 Map<String, String> transpose = transpose(records);
                 Map<String, String> params = clientContext.replaceParams(transpose);
@@ -284,29 +276,7 @@ public class ViewServerClientSteps {
         return result;
     }
 
-    private String parseReferencesInJSONFile(String json) {
-        HashMap<String, Object> result = ControllerUtils.mapDefault(json);
-        replaceReferences(result);
-        return ControllerUtils.toString(result);
-    }
 
-    private void replaceReferences(HashMap<String, Object> result) {
-        for (Map.Entry<String, Object> entry : result.entrySet()) {
-            if (entry.getValue() instanceof HashMap) {
-                replaceReferences((HashMap) entry.getValue());
-            } else if (entry.getValue() instanceof String) {
-                String value = (String) entry.getValue();
-                if (value.startsWith("ref://")) {
-                    String fileReference = value.substring(6);
-                    entry.setValue(getJsonStringFromFile(fileReference));
-                }
-                if (value.startsWith("objref://")) {
-                    String fileReference = value.substring(9);
-                    entry.setValue(getJsonObjectFromFile(fileReference));
-                }
-            }
-        }
-    }
 
     @When("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
     public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result) throws InterruptedException, ExecutionException, TimeoutException {
@@ -455,7 +425,7 @@ public class ViewServerClientSteps {
                     columns = new ArrayList<>(record.keySet());
                 }
                 Map<String, String> row = clientContext.replaceParams(record);
-                replaceReferences((HashMap)row);
+                TestUtils.replaceReferences((HashMap)row);
                 clientContext.replaceParams(row);
                 validationRows.add(ValidationUtils.toRow(row, rowKey));
             }

@@ -39,108 +39,59 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 
 @Controller(name = "userController")
-public class UserController {
+public class UserController implements UserTransformationController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private LoginController loginController;
     private IImageController IImageController;
-    private INexmoController nexmoController;
     private IMessagingController messagingController;
     private IMapsController IMapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
 
     public UserController(IDatabaseUpdater iDatabaseUpdater,
-                          LoginController loginController,
                           IImageController IImageController,
-                          INexmoController nexmoController,
                           IMessagingController messagingController,
                           IMapsController IMapsController, IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
 
-        this.loginController = loginController;
         this.IImageController = IImageController;
-        this.nexmoController = nexmoController;
         this.messagingController = messagingController;
         this.IMapsController = IMapsController;
         this.reactor = reactor;
 
     }
 
-    @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
-    public String addOrUpdateUser(@ActionParam(name = "user") User user) {
-        log.debug("addOrUpdateUser user: " + user.getEmail());
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        if (this.loginController.getUserRow(userTable, user.getEmail()) != -1) {
-            throw new RuntimeException("Already  user registered for email " + user.getEmail());
-        }
-        if(user.getUserId() == null) {
-            user.set("userId", ControllerUtils.generateGuid());
-        }
-        Date now = new Date();
-        Record userRecord = new Record()
-                .addValue("userId", user.getUserId())
-                .addValue("lastModified", now)
-                .addValue("created", user.getCreated())
-                .addValue("firstName", user.getFirstName())
-                .addValue("lastName", user.getLastName())
-                .addValue("dob", user.getDob())
-                .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
-                .addValue("contactNo", nexmoController.getInternationalFormatNumber(user.getContactNo()))
-                .addValue("email", user.getEmail().toLowerCase())
-                .addValue("type", user.getType())
-                .addValue("range", user.getRange())
-                .addValue("stripeCustomerId", user.getStripeCustomerId())
-                .addValue("stripeDefaultSourceId", user.getStripeDefaultSourceId())
-                .addValue("stripeAccountId", user.getStripeAccountId())
-                .addValue("imageUrl", user.getImageUrl())
-                .addValue("chargePercentage", user.getChargePercentage());
+    @ControllerAction(path = "addOrUpdateRating", isSynchronous = true)
+    public void addOrUpdateRating(@ActionParam(name = "userId") String userId, @ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating, @ActionParam(name = "comments") String comments,  @ActionParam(name = "ratingType")UserRating.RatingType ratingType) {
+        this.transform(userId,
+                user -> {
+                    user.addRating(getUserId(), orderId, rating,comments, ratingType);
+                    return true;
+                }, User.class);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
-        return user.getUserId();
     }
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-
         String userId = getUserId();
-        Date now = new Date();
+        user.set("userId",userId);
 
         if (user.getImageData() != null) {
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
             String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
             user.set("imageUrl", imageUrl);
         }
-
-        Record userRecord = new Record()
-                .addValue("userId", userId)
-                .addValue("lastModified", now)
-                .addValue("firstName", user.getFirstName())
-                .addValue("lastName", user.getLastName())
-                .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("contactNo", user.getContactNo())
-                .addValue("email", user.getEmail().toLowerCase())
-                .addValue("imageUrl", user.getImageUrl());
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema()
-                , userRecord);
-
-        log.debug("Updated user: " + user.getEmail() + " with id " + userId);
-        return userId;
+        return this.addOrUpdateUser(user);
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)
     public void setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
-        String userId = getUserId();
-
-        Record userRecord = new Record()
-                .addValue("userId", userId)
-                .addValue("latitude", latitude)
-                .addValue("longitude", longitude);
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME,  UserDataSource.getDataSource().getSchema(), userRecord);
+        this.transform(getUserId(),
+                user -> {
+                    user.set("latitude", latitude);
+                    user.set("longitude", longitude);
+                    return true;
+                }, User.class);
     }
 
     @ControllerAction(path = "setLocationFromPostcode", isSynchronous = false)
@@ -175,16 +126,13 @@ public class UserController {
     public void updateStatus(@ActionParam(name = "status") UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
         String userId = getUserId();
 
-        Record userRecord = new Record()
-                .addValue("userId", userId)
-                .addValue("statusMessage", statusMessage);
 
-        if(status != null){
-            userRecord.addValue("userStatus", status.name());
-
-        }
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        this.transform(getUserId(),
+                user -> {
+                    user.set("statusMessage", statusMessage);
+                    user.set("userStatus", status.name());
+                    return true;
+                }, User.class);
     }
 
     @ControllerAction(path = "updateRelationship", isSynchronous = true)
@@ -248,13 +196,11 @@ public class UserController {
 
     @ControllerAction(path = "updateRange", isSynchronous = true)
     public void updateRange(@ActionParam(name = "range") int range) {
-        String userId = getUserId();
-
-        Record userRecord = new Record()
-                .addValue("userId", userId)
-                .addValue("range", range);
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        this.transform(getUserId(),
+                user -> {
+                    user.set("range", range);
+                    return true;
+                }, User.class);
     }
 
     public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){
@@ -282,4 +228,13 @@ public class UserController {
         return userId.equals(result.get("userId"));
     }
 
+    @Override
+    public IDatabaseUpdater getDatabaseUpdater() {
+        return this.iDatabaseUpdater;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return log;
+    }
 }

@@ -110,6 +110,9 @@ public class ColumnHolderUtils {
     }
 
     public static Object getValue(ColumnHolder columnHolder, int row) {
+        return getValue(columnHolder,row, false);
+    }
+    public static Object getValue(ColumnHolder columnHolder, int row, boolean castOutJson) {
         switch (columnHolder.getType()) {
             case Bool: {
                 return ((IColumnBool)columnHolder).getBool(row);
@@ -139,6 +142,9 @@ public class ColumnHolderUtils {
                 String string = ((IColumnString) columnHolder).getString(row);
                 if(string == null){
                     return null;
+                }
+                if(castOutJson && columnHolder.getMetadata().getDataType() != null && columnHolder.getMetadata().getDataType().equals(ContentType.Json)){
+                    return ControllerUtils.mapDefault(string);
                 }
                 return string;
             }

@@ -7,7 +7,9 @@ import com.shotgun.viewserver.order.domain.SinglePaymentOrder;
 import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.servercomponents.OrderSerializationModule;
+import com.shotgun.viewserver.user.User;
 import io.viewserver.core.JacksonSerialiser;
+import io.viewserver.server.steps.TestUtils;
 import io.viewserver.util.dynamic.ClassInterpreter;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
@@ -163,6 +165,23 @@ public class UtilsTests {
         );
         String json = "{\"date\":\"2018-04-27T13:56:59.808+01:00\",\"partnerId\":\"foo\",\"responseStatus\":\"RESPONDED\"}";
         System.out.println(JSONBackedObjectFactory.create(json, NegotiationResponse.class));
+    }
+
+    @Test
+    public void Can_reserialized_user(){
+        JacksonSerialiser.getInstance().registerModules(
+                new Module[]{
+                        new OrderSerializationModule()
+                }
+        );
+        String jsonStringFromFile = TestUtils.getJsonStringFromFile("json/users/allRounderUser.json");
+        User user = JSONBackedObjectFactory.create(jsonStringFromFile, User.class);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getSelectedContentTypes());
+        user = JSONBackedObjectFactory.create(user.serialize(), User.class);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getSelectedContentTypes());
+        System.out.println(user.getSelectedContentTypes());
     }
 
     @Test
