@@ -22,6 +22,7 @@ import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.table.ISchemaConfig;
 import io.viewserver.operators.table.TableKeyDefinition;
+import org.apache.commons.beanutils.ConvertUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -309,11 +310,13 @@ public class ColumnHolderUtils {
                     switch (columnHolder.getMetadata().getDataType()) {
                         case Date:
                         case DateTime: {
-                            val = ((Date) value).getTime();
-                            break;
+                            if(value.getClass().isAssignableFrom(Date.class)){
+                                val = ((Date) value).getTime();
+                                break;
+                            }
                         }
                         default: {
-                            val = (Long) value;
+                            val = ConvertUtils.convert(value,Long.class);
                         }
                     }
                 }

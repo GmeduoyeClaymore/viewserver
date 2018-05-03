@@ -43,7 +43,7 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | requiredDate          | DateTime    |
 	  | ColumnAdd | internalOrderStatus   | String      |
 	  | ColumnAdd | rank                  | Int         |
-	  | ColumnAdd | partnerDetailsJson    | Json        |
+	  | ColumnAdd | partnerResponses    | Json        |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED |
@@ -165,7 +165,7 @@ Feature: Delivery order scenarios
 	  | dimension_status         | String | ACCEPTED,PLACED |
 	  | dimension_customerUserId | String | @userId         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerDetailsJson                                             |
+	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerResponses                                             |
 	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED | {"{client2_partnerController_registerPartner_result}" : {"partnerOrderStatus":"RESPONDED"}} |
 
   Scenario: Cancelling Response to order removes order from the responses list

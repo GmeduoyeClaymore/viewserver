@@ -22,7 +22,7 @@ public class CustomerOrderSummaryReport {
                 .withNodes(
                         new GroupByNode("groupPartnerDetails")
                                 .withGroupByColumns("orderId")
-                                .withSummary("partnerResponses","json","partner_userId", new Object[]{
+                                .withSummary("partnerResponses","json",DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN, new Object[]{
                                         "partner_latitude",
                                         "partner_longitude",
                                         "partner_firstName",
