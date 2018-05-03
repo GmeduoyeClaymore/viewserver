@@ -28,8 +28,10 @@ import org.junit.runner.RunWith;
 @Category(Spec.class)
 @RunWith(Cucumber.class)
 @CucumberOptions(
+        features = {
+                "src/test/resources"
+        },
         glue = {
-                "io.viewserver.steps",
                 "io.viewserver.server.steps"
         },
         format = {
@@ -38,5 +40,5 @@ import org.junit.runner.RunWith;
         ,
         tags = {"~@ignore"}
 )
-public class CucumberTest {
+public class ShotgunCucumberTest {
 }
