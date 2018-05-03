@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Container, Header, Left, Button, Body, Title, Content, Text} from 'native-base';
-import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, CurrencyInput} from 'common/components';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem} from 'native-base';
+import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, CurrencyInput, Currency} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import MapDetails from './MapDetails';
@@ -15,7 +15,6 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Order Summary').
     delivery(() => 'Delivery Job').
-    personell(({product}) => `${product.name} Job`).
     rubbish(() => 'Rubbish Collection');
 /*eslint-disable */
 
@@ -84,7 +83,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order, partnerResponses, errors, history, busyUpdating} = this.props;
+    const {busy, order = {}, client, partnerResponses, errors, history, busyUpdating} = this.props;
     const {resources} = this;
     return busy ? <LoadingScreen text="Loading Order"/> : <Container>
       <Header withButton>
@@ -101,10 +100,10 @@ class CustomerOrderDetail extends Component{
         <PartnerAcceptRejectControl orderId={order.orderId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
         <Grid>
           <Row style={styles.row}><Text style={styles.heading}>You wil pay</Text></Row>
-          <Row style={styles.row}>{!price ? <Spinner/> : <Currency value={price} style={styles.price}/>}</Row>
+          <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price}/>}</Row>
         </Grid>
         <CurrencyInput onValueChange={this.setAmount}/>
-        <MapDetails order={order}/>
+        <MapDetails order={order} client={client}/>
         <ListItem padded style={{borderBottomWidth: 0}}>
           <Grid>
             <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
@@ -159,7 +158,9 @@ const findOrderSummaryFromDao = (state, orderId, daoName) => {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  invariant(orderId, 'orderId should be specfied');
+  if(orderId == null){
+    return;
+  }
   let order = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
   order = order || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
 

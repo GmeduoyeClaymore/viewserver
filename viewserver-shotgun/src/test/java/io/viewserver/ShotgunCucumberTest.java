@@ -16,9 +16,9 @@
 
 package io.viewserver;
 
-import io.viewserver.util.dynamic.Spec;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
+import io.viewserver.util.dynamic.Spec;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
@@ -28,8 +28,11 @@ import org.junit.runner.RunWith;
 @Category(Spec.class)
 @RunWith(Cucumber.class)
 @CucumberOptions(
+        features = {
+                "src/test/resources"
+        },
         glue = {
-                "io.viewserver.steps"
+                "io.viewserver.server.steps"
         },
         format = {
                 "junit:target/cucumber-report/junit.xml",
@@ -37,5 +40,5 @@ import org.junit.runner.RunWith;
         ,
         tags = {"~@ignore"}
 )
-public class CucumberTest {
+public class ShotgunCucumberTest {
 }

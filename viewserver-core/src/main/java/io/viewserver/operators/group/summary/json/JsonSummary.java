@@ -94,7 +94,7 @@ public class JsonSummary implements ISummary {
     public void onGroupEnter(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
         Object bucketValue = ColumnHolderUtils.getValue(bucketHolder, rowId);
-        rowMap.put(bucketValue, rowId);
+        rowMap.put(bucketValue+"", rowId);
         context.markDirty(groupId);
     }
 
@@ -102,7 +102,7 @@ public class JsonSummary implements ISummary {
     public void onGroupLeave(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
         Object bucketValue = ColumnHolderUtils.getPreviousValue(bucketHolder, rowId);
-        rowMap.remove(bucketValue);
+        rowMap.remove(bucketValue+"");
         context.markDirty(groupId);
     }
 

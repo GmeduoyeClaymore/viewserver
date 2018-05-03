@@ -7,6 +7,7 @@ import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.SchemaConfig;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import rx.Observable;
@@ -19,6 +20,7 @@ import java.util.List;
 /**
  * Created by Gbemiga on 17/12/17.
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PaymentControllerTest {
 

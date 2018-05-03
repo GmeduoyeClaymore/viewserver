@@ -1,4 +1,24 @@
 {
+  "assignedPartner": {
+    "date": "2018-05-04T18:13:32.592+01:00",
+    "price": null,
+    "partnerId": "{assignedPartnerUserId}",
+    "responseStatus": "ACCEPTED"
+  },
+  "responses": [
+    {
+      "date": "2018-05-03T18:13:32.592+01:00",
+      "price": null,
+      "partnerId": "f0cd46b4-a502-4c86-8601-b21674dc6d3a",
+      "responseStatus": "DECLINED"
+    },
+    {
+      "date": "2018-05-04T18:13:32.592+01:00",
+      "price": null,
+      "partnerId": "{assignedPartnerUserId}",
+      "responseStatus": "ACCEPTED"
+    }
+  ],
   "distanceAndDuration": {
     "distance": 11039,
     "duration": 2220
@@ -31,13 +51,12 @@
   },
   "requiredDate": "2018-05-03T10:14:49.424Z",
   "description": "this is a small van order",
-  "orderStatus": "PLACED",
+  "orderStatus": "ACCEPTED",
   "title": "Large Van",
   "orderProduct": {
-    "dimension_productId": 3,
-    "productId": "LargeVan",
+    "productId": "{productId}",
     "price": 4000,
-    "name": "Large Van",
+    "name": "{productId} Van",
     "description": "Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",
     "rank": 1,
     "categoryId": "1Vans",

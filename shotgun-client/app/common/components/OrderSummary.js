@@ -49,7 +49,7 @@ class OrderSummary extends Component{
       {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
       {orderProduct ? <ListItem padded>
         {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
-        <Text>{orderProduct.productName}</Text>
+        <Text>{orderProduct.name}</Text>
       </ListItem> : null}
       {this.renderItemDetails()}
     </List>;

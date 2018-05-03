@@ -22,7 +22,6 @@ public class FirebaseTestApplicationSetup  extends FirebaseApplicationSetup {
         delete(db, DeliveryDataSource.NAME);
         delete(db, DeliveryAddressDataSource.NAME);
         delete(db, OrderDataSource.NAME);
-        delete(db, OrderItemsDataSource.NAME);
         delete(db, PhoneNumberDataSource.NAME);
         delete(db, ProductDataSource.NAME);
         delete(db, ProductCategoryDataSource.NAME);

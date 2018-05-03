@@ -24,8 +24,13 @@ export default class GenericJSONCommandPromise{
   onSuccess(commandResultId, message){
     Logger.fine(`Command successfully executed with the following message "${message}"`);
     try {
-      const argument = message ? JSON.parse(message) : undefined;
-      this.resolve(argument);
+      try {
+        const argument = message ? JSON.parse(message) : undefined;
+        this.resolve(argument);
+      } catch (error){
+        Logger.warning(`Unable to parse response to json ${error} resolving command with a ${message}`);
+        this.resolve(message);
+      }
     } catch (err) {
       Logger.warning(`Unable to parse message ${message} resolving command with a null`);
       this.resolve();

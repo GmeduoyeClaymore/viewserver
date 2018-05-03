@@ -2,6 +2,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.images.ImageController;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -9,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Scanner;
 
-
+@Ignore
 public class ImageControllerTest {
 
     private IImageController sut;

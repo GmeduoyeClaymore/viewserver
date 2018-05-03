@@ -236,8 +236,10 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         @Override
         public void resetSchema() {
             super.resetSchema();
-            for(Column column : SpreadOperator.this.spreadFunction.getColumns()){
-                this.getOrCreateSpreadColumn(column);
+            if(SpreadOperator.this.spreadFunction != null && SpreadOperator.this.spreadFunction.getColumns() != null) {
+                for (Column column : SpreadOperator.this.spreadFunction.getColumns()) {
+                    this.getOrCreateSpreadColumn(column);
+                }
             }
         }
 

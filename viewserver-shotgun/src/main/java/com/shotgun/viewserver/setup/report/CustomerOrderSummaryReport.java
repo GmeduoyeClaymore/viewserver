@@ -22,7 +22,7 @@ public class CustomerOrderSummaryReport {
                 .withNodes(
                         new GroupByNode("groupPartnerDetails")
                                 .withGroupByColumns("orderId")
-                                .withSummary("partnerResponses","json","partner_userId", new Object[]{
+                                .withSummary("partnerResponses","json",DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN, new Object[]{
                                         "partner_latitude",
                                         "partner_longitude",
                                         "partner_firstName",
@@ -43,9 +43,9 @@ public class CustomerOrderSummaryReport {
                                 .withLeftJoinColumns("orderId")
                                 .withRightJoinColumns("orderId")
                                 .withLeftJoinOuter()
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderWithPartnerDataSource.NAME), Constants.OUT, "left")
-                                .withConnection("groupPartnerDetails", Constants.OUT, "right")
-                                .withColumnPrefixes("order_","groupPartnerDetails_")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderDataSource.NAME), Constants.OUT, "right")
+                                .withConnection("groupPartnerDetails", Constants.OUT, "left")
+                                .withColumnPrefixes("groupPartnerDetails_","order_")
                                 .withAlwaysResolveNames(),
                         new CalcColNode("orderFieldsCalc")
                                 .withCalculations(

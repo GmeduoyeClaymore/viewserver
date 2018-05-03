@@ -1,0 +1,33 @@
+{
+  "amount": 18000,
+  "productId": "HouseHoldThreeQuarterVan",
+  "orderId": "{orderId}",
+  "negotiatedResponseStatus": "REQUESTED",
+  "origin": {
+    "deliveryAddressId": "65e90f91-6873-4a06-b8c2-ef74f8a5eda4",
+    "country": "United Kingdom",
+    "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
+    "city": "London",
+    "created": "2018-05-03T11:35:06.357+01:00",
+    "latitude": 51.4857235,
+    "postCode": "W6",
+    "line1": "12 Kinnoul Rd",
+    "longitude": -0.212341
+  },
+  "requiredDate": "2018-05-03T11:04:54.797Z",
+  "description": "this is a rubbish order",
+  "orderStatus": "PLACED",
+  "orderProduct": {
+    "dimension_productId": 16,
+    "productId": "HouseHoldThreeQuarterVan",
+    "price": 18000,
+    "name": "Household  Three Quarter van",
+    "description": "750 kg",
+    "rank": 1,
+    "categoryId": "2HouseHoldWaste",
+    "key": 1,
+    "rowId": 1
+  },
+  "orderContentTypeId": 2,
+  "title": "Household  Three Quarter van"
+}
