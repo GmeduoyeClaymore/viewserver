@@ -14,7 +14,6 @@ import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {LoadingScreen} from 'common/components';
 import {isAnyOperationPending} from 'common/dao';
-import {PERSONELL_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 
 class Checkout extends Component {
   static stateKey = 'customerCheckout';

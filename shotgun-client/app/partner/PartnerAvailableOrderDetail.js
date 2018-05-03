@@ -3,7 +3,7 @@ import {withExternalState} from 'custom-redux';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao} from 'common/dao';
 import {Text, Container, Header, Left, Button, Body, Title, Content} from 'native-base';
 import {OrderSummary, PriceSummary, CurrencyInput, LoadingScreen, SpinnerButton, Icon} from 'common/components';
-import {respondToOrderRequest} from 'partner/actions/PartnerActions';
+import {respondToOrder} from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 class PartnerAvailableOrderDetail extends Component{
@@ -28,9 +28,10 @@ class PartnerAvailableOrderDetail extends Component{
 
   onRespondPress = async() => {
     const {order, history, dispatch, ordersRoot, bankAccount, parentPath, negotiationAmount} = this.props;
+    const {orderId, orderContentTypeId} = order;
 
     if (bankAccount) {
-      dispatch(respondToOrderRequest(order, order.requiredDate, negotiationAmount,  () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'left'})));
+      dispatch(respondToOrder(orderId, orderContentTypeId, order.requiredDate, negotiationAmount,  () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'left'})));
     } else {
       // user has no bank account set up so take them to set it up
       history.push({pathname: `${parentPath}/Settings/UpdateBankAccountDetails`, transition: 'left'}, {next: `${parentPath}/Checkout`});

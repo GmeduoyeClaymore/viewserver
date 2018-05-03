@@ -76,9 +76,9 @@ export default class OrdersDao{
     return orderId;
   }
 
-  respondToOrderRequest = async({order, requiredDate, amount}) => {
+  respondToOrder = async({orderId, orderContentTypeId, requiredDate, amount}) => {
     const controller = this.getControllerForOrder(orderContentTypeId);
-    await this.client.invokeJSONCommand(controller, 'respondToOrder', {orderId: order.orderId, requiredDate, amount});
+    await this.client.invokeJSONCommand(controller, 'respondToOrder', {orderId, requiredDate, amount});
   };
 
   updateOrderAmount = async ({orderId, amount, orderContentTypeId}) => {
