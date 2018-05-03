@@ -15,6 +15,9 @@ public class OrderResponseReport {
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
+                                                new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_longitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_firstName"),

@@ -2,7 +2,7 @@ import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubs
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
 
-export default class OrderRequestDaoContext{
+export default class OrderRequestDao{
   static DEFAULT_POSITION = {
     latitude: 0,
     longitude: 0
@@ -13,7 +13,7 @@ export default class OrderRequestDaoContext{
     filterMode: 2,
     maxDistance: 0,
     showOutOfRange: true,
-    position: OrderRequestDaoContext.DEFAULT_POSITION
+    position: OrderRequestDao.DEFAULT_POSITION
   };
 
   static PARTNER_ORDER_REQUEST_DEFAULT_OPTIONS = {
@@ -22,7 +22,7 @@ export default class OrderRequestDaoContext{
 
   constructor(client, options = {}) {
     this.client = client;
-    this.options = {...OrderRequestDaoContext.OPTIONS, ...options};
+    this.options = {...OrderRequestDao.OPTIONS, ...options};
     this.subscribeOnCreate = false;
   }
 
@@ -44,7 +44,7 @@ export default class OrderRequestDaoContext{
     return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
   }
 
-  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
+  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDao.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
     if (typeof contentType === 'undefined') {
       return {};
     }
@@ -85,7 +85,23 @@ export default class OrderRequestDaoContext{
   }
 
   mapOrderRequest(orderRequest){
-    return orderRequest;
+    const {orderDetails, partner_firstName, partner_lastName, partner_ratingAvg, partner_imageUrl, customer_firstName, customer_lastName, customer_ratingAvg} = orderRequest;
+
+    return {
+      ...orderDetails,
+      assignedPartner: {
+        ...orderDetails.assignedPartner,
+        firstName: partner_firstName,
+        lastName: partner_lastName,
+        ratingAvg: partner_ratingAvg,
+        imageUrl: partner_imageUrl
+      },
+      customer: {
+        firstName: customer_firstName,
+        lastName: customer_lastName,
+        ratingAvg: customer_ratingAvg
+      }
+    };
   }
 
   createSubscriptionStrategy(options, dataSink){

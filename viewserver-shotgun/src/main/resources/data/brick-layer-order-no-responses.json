@@ -1,0 +1,37 @@
+{
+  "amount": 20000,
+  "productId": "BrickLayer",
+  "orderId": "{orderId}",
+  "negotiatedResponseStatus": "REQUESTED",
+  "origin": {
+    "googlePlaceId": "ChIJ64Z3QcUEdkgRu_XB2S70e60",
+    "city": "London",
+    "created": "2018-05-03T11:03:49.520+01:00",
+    "latitude": 51.5033635,
+    "userId": "3ABCD",
+    "rowId": 0,
+    "deliveryAddressId": "d4d21560-dd67-4ab3-ab21-036b66ad96a3",
+    "lastUsed": 1525341829520,
+    "rank": 0,
+    "postCode": "SW1A 2AB",
+    "line1": "11 Downing Street",
+    "key": 0,
+    "longitude": -0.1276248
+  },
+  "requiredDate": "2018-05-04T07:00:00.000Z",
+  "description": "this is a brick layer order description",
+  "orderStatus": "PLACED",
+  "orderProduct": {
+    "dimension_productId": 9,
+    "productId": "BrickLayer",
+    "price": 15000,
+    "name": "Brick Layer",
+    "description": "",
+    "rank": 0,
+    "categoryId": "1Workers",
+    "key": 0,
+    "rowId": 0
+  },
+  "orderContentTypeId": 5,
+  "title": "Brick Layer"
+}

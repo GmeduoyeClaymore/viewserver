@@ -10,8 +10,8 @@ export const OrderStatuses = {
   CANCELLED: 'CANCELLED'
 };
 
-export const getDeliveryFriendlyOrderStatusName = (summary) => {
-  switch (summary.status){
+export const getDeliveryFriendlyOrderStatusName = (order) => {
+  switch (order.orderStatus){
   case OrderStatuses.PLACED:
     return 'Awaiting Partner';
   case OrderStatuses.ACCEPTED:
@@ -27,8 +27,8 @@ export const getDeliveryFriendlyOrderStatusName = (summary) => {
   }
 };
 
-export const getRubbishFriendlyOrderStatusName = (summary) => {
-  switch (summary.status){
+export const getRubbishFriendlyOrderStatusName = (order) => {
+  switch (order.orderStatus){
   case OrderStatuses.PLACED:
     return 'Awaiting Partner';
   case OrderStatuses.ACCEPTED:
@@ -44,9 +44,10 @@ export const getRubbishFriendlyOrderStatusName = (summary) => {
   }
 };
 
-export const getProductBasedFriendlyOrderStatusName = (summary) => {
-  const {productName} = summary;
-  switch (summary.status){
+export const getProductBasedFriendlyOrderStatusName = (order) => {
+  const {productName} = order.orderProduct;
+
+  switch (order.orderStatus){
   case OrderStatuses.PLACED:
     return 'Awaiting ' + productName;
   case OrderStatuses.ACCEPTED:

@@ -22,9 +22,10 @@ class PartnerOrderRequests extends Component{
       <Tabs initialPage={selectedContentTypeIndex} page={selectedContentTypeIndex} {...shotgun.tabsStyle}>
         {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => this.goToTabNamed(c.contentTypeId)}/>)}
       </Tabs>
-      {selectedContentTypes[0] ? <ReduxRouter  name="PartnerOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
-        {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={PartnerOrderRequestItems} />)}
-      </ReduxRouter> : null}
+      {selectedContentTypes[0] ?
+        <ReduxRouter  name="PartnerOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
+          {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={PartnerOrderRequestItems} />)}
+        </ReduxRouter> : null}
     </Container>;
   }
 }

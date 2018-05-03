@@ -19,22 +19,22 @@ class PartnerOrderDetail extends Component{
   }
 
   onStartPress = async() => {
-    const {order = {status: ''}, dispatch} = this.props;
+    const {order, dispatch} = this.props;
     dispatch(startOrderRequest(order.orderId, this.navigateToOrderInProgress));
   };
 
   navigateToOrderInProgress = () => {
-    const {order = {status: ''}, history, ordersRoot} = this.props;
+    const {order, history, ordersRoot} = this.props;
     history.push({pathname: `${ordersRoot}/PartnerOrderInProgress`, transition: 'left'}, {orderId: order.orderId});
   }
 
   onCancelPress = async() => {
-    const {order = {status: ''}, history, dispatch, ordersRoot} = this.props;
+    const {order, history, dispatch, ordersRoot} = this.props;
     dispatch(cancelOrderRequest(order.orderId, () => history.push({pathname: `${ordersRoot}/PartnerOrders`, transition: 'right'})));
   };
 
   render() {
-    const {order = {status: ''}, client, history, busy, busyUpdating, user} = this.props;
+    const {order = {}, client, history, busy, busyUpdating, user} = this.props;
     const isComplete = order.orderStatus == OrderStatuses.COMPLETED;
     const userCreatedThisOrder = user.userId == order.customerUserId;
 

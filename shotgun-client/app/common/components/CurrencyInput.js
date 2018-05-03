@@ -10,10 +10,10 @@ export class CurrencyInput extends Component{
   }
 
   setAmount = (amountMask) => {
-    const {onValueChanged} = this.props;
+    const {onValueChange} = this.props;
     const amount = this.refs.amountInput.getRawValue() * 100;
-    if (onValueChanged){
-      onValueChanged(amount);
+    if (onValueChange){
+      onValueChange(amount);
     }
     super.setState({amountMask});
   }

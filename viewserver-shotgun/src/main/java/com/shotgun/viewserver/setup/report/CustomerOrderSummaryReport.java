@@ -43,7 +43,7 @@ public class CustomerOrderSummaryReport {
                                 .withLeftJoinColumns("orderId")
                                 .withRightJoinColumns("orderId")
                                 .withLeftJoinOuter()
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderWithPartnerDataSource.NAME), Constants.OUT, "right")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderDataSource.NAME), Constants.OUT, "right")
                                 .withConnection("groupPartnerDetails", Constants.OUT, "left")
                                 .withColumnPrefixes("groupPartnerDetails_","order_")
                                 .withAlwaysResolveNames(),

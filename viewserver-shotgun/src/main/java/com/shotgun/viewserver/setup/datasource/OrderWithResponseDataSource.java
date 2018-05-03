@@ -22,11 +22,11 @@ public class OrderWithResponseDataSource {
                                 .withRemoveInputColumn()
                                 .withSpreadFunction(DateNegotiatedOrderResponseSpreadFunction.NAME)
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderDataSource.NAME), Constants.OUT, Constants.IN),
-                        new JoinNode("partnerJoin")
+                        new JoinNode("responsePartnerJoin")
                                 .withLeftJoinColumns(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN)
                                 .withLeftJoinOuter()
                                 .withRightJoinColumns("userId")
-                                .withColumnPrefixes("", "partner_")
+                                .withColumnPrefixes("", "responsePartner_")
                                 .withAlwaysResolveNames()
                                 .withConnection("orderResponseSpread", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
@@ -34,7 +34,7 @@ public class OrderWithResponseDataSource {
                                 .withLeftJoinColumns("orderId", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN)
                                 .withLeftJoinOuter()
                                 .withRightJoinColumns("orderId", "userId")
-                                .withConnection("partnerJoin", Constants.OUT, "left")
+                                .withConnection("responsePartnerJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new ProjectionNode("orderSummaryProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -47,19 +47,18 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn("customer_firstName"),
                                         new IProjectionConfig.ProjectionColumn("customer_lastName"),
                                         new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
-                                        new IProjectionConfig.ProjectionColumn("partner_userId"),
-                                        new IProjectionConfig.ProjectionColumn("partner_latitude"),
-                                        new IProjectionConfig.ProjectionColumn("partner_latitude"),
-                                        new IProjectionConfig.ProjectionColumn("partner_longitude"),
-                                        new IProjectionConfig.ProjectionColumn("partner_firstName"),
-                                        new IProjectionConfig.ProjectionColumn("partner_lastName"),
-                                        new IProjectionConfig.ProjectionColumn("partner_email"),
-                                        new IProjectionConfig.ProjectionColumn("partner_imageUrl"),
-                                        new IProjectionConfig.ProjectionColumn("partner_online"),
-                                        new IProjectionConfig.ProjectionColumn("partner_range"),
-                                        new IProjectionConfig.ProjectionColumn("partner_userStatus"),
-                                        new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
-                                        new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_userId", "partner_userId"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_latitude", "partner_latitude"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_longitude", "partner_longitude"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_firstName", "partner_firstName"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_lastName", "partner_lastName"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_email", "partner_email"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_imageUrl", "partner_imageUrl"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_online", "partner_online"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_range", "partner_range"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_userStatus", "partner_userStatus"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_statusMessage", "partner_statusMessage"),
+                                        new IProjectionConfig.ProjectionColumn("responsePartner_ratingAvg", "partner_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("orderLocation"),
                                         new IProjectionConfig.ProjectionColumn("requiredDate"),
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),

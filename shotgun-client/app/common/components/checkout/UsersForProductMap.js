@@ -11,24 +11,6 @@ import {UserRelationshipsControl} from 'common/components/relationships/UserRela
 const contentWidth = shotgun.deviceWidth - 20;
 
 class UsersForProductMap extends Component{
-  async componentDidMount(){
-    const {me = {}, order, client} = this.props;
-    const {latitude, longitude} = me;
-    
-    this.setState({order: {...order, origin: order.origin && order.origin.line1 ? order.origin : await this.getAddressForlocation(client, {longitude, latitude})}});
-  }
-
-  getAddressForlocation = async (client, location) => {
-    if (!location || !location.latitude || !location.longitude){
-      return undefined;
-    }
-    const {latitude, longitude} = location;
-    const results =  await client.invokeJSONCommand('mapsController', 'getAddressesFromLatLong', {
-      latitude, longitude
-    });
-    return results[0];
-  };
-
   onChangeText = async(location, field, value) => {
     const {order} = this.props;
     const currentLocation = order[location];
@@ -36,14 +18,12 @@ class UsersForProductMap extends Component{
   }
 
   getLocationTextInput = (address, addressKey, placeholder) => {
-    style = address && address.line1 ? {} : styles.locationTextPlaceholder;
-    text = addressToText(address) || placeholder;
     return  <Row>
       {address && address.line1 !== undefined ? <Col size={30}>
         <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
       <Col size={70}>
-        <Text style={style} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{text}</Text>
+        <Text numberOfLines={1} style={address && address.line1 ? {} : styles.locationTextPlaceholder} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{addressToText(address) || placeholder}</Text>
       </Col>
     </Row>;
   }
@@ -55,7 +35,7 @@ class UsersForProductMap extends Component{
 
   doAddressLookup = (addressLabel, addressKey) => {
     const {history, parentPath} = this.props;
-    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['delivery', addressKey]});
+    history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['order', addressKey]});
   }
 
   render(){

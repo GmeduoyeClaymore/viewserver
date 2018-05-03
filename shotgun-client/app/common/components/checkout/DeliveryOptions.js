@@ -29,6 +29,7 @@ class DeliveryOptions extends Component {
   }
 
   setAmount = (amount) => {
+    const {order} = this.props;
     this.setState({ order: {...order, amount}});
   }
 
@@ -54,7 +55,7 @@ class DeliveryOptions extends Component {
   render() {
     const {resources} = this;
     const {paymentCards, errors, next, order, payment = {}, history} = this.props;
-    const {isDatePickerVisible, amountMask} = this.state;
+    const {isDatePickerVisible} = this.state;
 
     return <Container>
       <Header withButton>

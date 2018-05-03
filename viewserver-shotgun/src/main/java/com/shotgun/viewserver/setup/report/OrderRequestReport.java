@@ -16,7 +16,7 @@ public class OrderRequestReport {
 
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
-                        .withDataSource(OrderWithPartnerDataSource.NAME)
+                        .withDataSource(OrderDataSource.NAME)
                         .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
                         .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
                         .withParameter("maxDistance", "Maximum Distance Override", String[].class)
@@ -29,7 +29,7 @@ public class OrderRequestReport {
                                                 new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
                                         .withConnection("#input"),
                                 new FilterNode("distanceFilter")
-                                        .withExpression("currentDistanceFilter <= isNull({maxDistance},partner_range)")
+                                        .withExpression("currentDistanceFilter <= isNull({maxDistance}, partner_range)")
                                         .withConnection("distanceCalcCol"),
                                 new FilterNode("hasResponded")
                                         .withExpression("getResponseField(\"{@userId}\",\"responseStatus\",orderDetails) == null")
@@ -37,6 +37,9 @@ public class OrderRequestReport {
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
+                                                new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_longitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_firstName"),
@@ -47,6 +50,14 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("partner_userStatus"),
                                                 new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                                 new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                                new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                                new IProjectionConfig.ProjectionColumn("orderLocation"),
+                                                new IProjectionConfig.ProjectionColumn("requiredDate"),
+                                                new IProjectionConfig.ProjectionColumn("totalPrice"),
+                                                new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
+                                                new IProjectionConfig.ProjectionColumn("orderDetails"),
+                                                new IProjectionConfig.ProjectionColumn("orderId"),
+                                                new IProjectionConfig.ProjectionColumn("partnerOrderStatus"),
                                                 new IProjectionConfig.ProjectionColumn("orderLocation"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),

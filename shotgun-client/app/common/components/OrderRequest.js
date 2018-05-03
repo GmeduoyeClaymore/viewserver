@@ -16,7 +16,6 @@ class OrderRequest extends Component {
 
   render() {
     const {order, history, next, isLast, isFirst} = this.props;
-
     const isInProgress = order.orderStatus == OrderStatuses.INPROGRESS;
 
     return <ListItem style={[styles.order, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
@@ -27,7 +26,7 @@ class OrderRequest extends Component {
             <OriginDestinationSummary order={order}/>
           </Col>
           <Col size={40}>
-            <Text style={styles.price}>{order.Title}</Text>
+            <Text style={styles.price} numberOfLines={1}>{order.orderProduct.name}</Text>
             <Currency value={order.amount} style={styles.price}/>
           </Col>
         </Row>
@@ -38,7 +37,7 @@ class OrderRequest extends Component {
             </Row>
           </Col>
           <Col size={40} style={styles.orderStatusRow}>
-            <Text note style={styles.orderStatus}>{this.resources.OrderStatusResolver(order)}</Text>
+            <Text note numberOfLines={1} style={styles.orderStatus}>{this.resources.OrderStatusResolver(order)}</Text>
           </Col>
         </Row>
       </Grid>

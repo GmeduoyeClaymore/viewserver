@@ -83,7 +83,7 @@ export default (variables = variable) => {
     borderTopWidth: 1,
     borderColor: '#cbcbcb',
     height: variables.footerHeight,
-    paddingTop: 10,
+    paddingTop: variables.footerPaddingTop,
     paddingBottom: variables.footerPaddingBottom,
     elevation: 0,
     left: 0,

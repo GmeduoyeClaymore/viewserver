@@ -92,18 +92,16 @@ const validationSchema = {
 
 
 const mapStateToProps = (state, initialProps) => {
-  const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
   const registrationErrors = getOperationError(state, 'partnerDao', 'updatePartner') || [];
-  const busy = isAnyOperationPending(state, [{ partnerDao: 'updatePartner'}]) ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']);
   const user =  getDaoState(state, ['user'], 'userDao');
-  const selectedContentTypes = Immutable(JSON.parse(user.selectedContentTypes));
+
   return {
     ...initialProps,
     user,
-    selectedContentTypes: initialProps.selectedContentTypes || selectedContentTypes,
-    contentTypes,
-    busy,
+    selectedContentTypes: initialProps.selectedContentTypes || user.selectedContentTypes,
+    contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
+    busy: isAnyOperationPending(state, [{ partnerDao: 'updatePartner'}]) ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']),
     errors: [loadingErrors, registrationErrors].filter( c=> !!c).join('\n')
   };
 };
