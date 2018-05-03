@@ -3,7 +3,7 @@ import { Platform, Dimensions, PixelRatio, StatusBar} from 'react-native';
 
 const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 const platform = Platform.OS;
-const footerHeight = (platform === 'ios' ? 34 : 50);
+const footerHeight = 50;
 const tabHeight = 120;
 const deviceHeight = Dimensions.get('window').height - statusBarHeight;
 const deviceWidth = Dimensions.get('window').width;
@@ -163,6 +163,7 @@ export default {
 
   // Footer
   footerDefaultBg: this.brandPrimary,
+  footerPaddingTop: Platform.OS === 'ios' ? 10 :0,
   footerPaddingBottom: 0,
   footerHeight,
 

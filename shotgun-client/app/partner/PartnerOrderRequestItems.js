@@ -5,19 +5,16 @@ import OrderRequestDao from 'partner/dao/OrderRequestDao';
 
 class PartnerOrderRequestItems extends Component {
   NoItems = () => <Text empty>No jobs available</Text>;
-  RowView = ({item: orderRequest, isLast, isFirst, history, parentPath}) => <OrderRequest history={history}
-    orderRequest={orderRequest}
-    key={orderRequest.orderId}
-    isLast={isLast}
-    isFirst={isFirst}
-    next={`${parentPath}/PartnerOrderRequestDetail`}/>;
+  RowView = ({item: order, isLast, isFirst, history, parentPath}) =>
+    <OrderRequest history={history} order={order} key={order.orderId} isLast={isLast} isFirst={isFirst} next={`${parentPath}/PartnerOrderRequestDetail`}/>;
 
   getDefaultOptions = (contentType, contentTypeOptions) => {
     return {
       ...OrderRequestDao.PARTNER_ORDER_REQUEST_DEFAULT_OPTIONS,
       userId: undefined,
       contentType,
-      contentTypeOptions
+      contentTypeOptions,
+      showOutOfRange: true
     };
   };
 

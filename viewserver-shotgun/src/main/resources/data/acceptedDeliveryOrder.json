@@ -36,7 +36,7 @@
     "duration": 600
   },
   "description": "This is the desciption for a commercial rubbish collection that is required in east london",
-  "requiredDate": "01/01/2017",
+  "requiredDate": "2018-05-03T08:00:00+01:00",
   "orderStatus": "ACCEPTED",
   "title": "{productId} title",
   "partnerUserId": "{assignedPartnerUserId}",

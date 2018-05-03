@@ -47,12 +47,26 @@ public class OrderDataSource {
                                 .withAlwaysResolveNames()
                                 .withConnection(DataSource.TABLE_NAME, Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
+                        new JoinNode("partnerJoin")
+                                .withLeftJoinColumns("assignedPartnerUserId")
+                                .withLeftJoinOuter()
+                                .withRightJoinColumns("userId")
+                                .withColumnPrefixes("", "partner_")
+                                .withAlwaysResolveNames()
+                                .withConnection("customerJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
+                        new JoinNode("ratingJoin")
+                                .withLeftJoinColumns("orderId", "assignedPartnerUserId")
+                                .withLeftJoinOuter()
+                                .withRightJoinColumns("orderId", "userId")
+                                .withConnection("partnerJoin", Constants.OUT, "left")
+                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(RatingDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productJoin")
                                 .withLeftJoinColumns("productId")
                                 .withRightJoinColumns("productId")
                                 .withColumnPrefixes("", "product_")
                                 .withAlwaysResolveNames()
-                                .withConnection("customerJoin", Constants.OUT, "left")
+                                .withConnection("ratingJoin", Constants.OUT, "left")
                                 .withConnection(IDataSourceRegistry.getDefaultOperatorPath(ProductDataSource.NAME), Constants.OUT, "right"),
                         new JoinNode("productCategoryJoin")
                                 .withLeftJoinColumns("product_categoryId")
@@ -82,6 +96,18 @@ public class OrderDataSource {
                                         new IProjectionConfig.ProjectionColumn("customer_lastName"),
                                         new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("assignedPartnerUserId"),
+                                        new IProjectionConfig.ProjectionColumn("partner_latitude"),
+                                        new IProjectionConfig.ProjectionColumn("partner_latitude"),
+                                        new IProjectionConfig.ProjectionColumn("partner_longitude"),
+                                        new IProjectionConfig.ProjectionColumn("partner_firstName"),
+                                        new IProjectionConfig.ProjectionColumn("partner_lastName"),
+                                        new IProjectionConfig.ProjectionColumn("partner_email"),
+                                        new IProjectionConfig.ProjectionColumn("partner_imageUrl"),
+                                        new IProjectionConfig.ProjectionColumn("partner_online"),
+                                        new IProjectionConfig.ProjectionColumn("partner_range"),
+                                        new IProjectionConfig.ProjectionColumn("partner_userStatus"),
+                                        new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
+                                        new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("paymentMethodId"),
                                         new IProjectionConfig.ProjectionColumn("productId"),
                                         new IProjectionConfig.ProjectionColumn("orderContentTypeId"),

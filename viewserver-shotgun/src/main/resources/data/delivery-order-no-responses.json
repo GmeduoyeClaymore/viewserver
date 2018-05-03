@@ -1,0 +1,41 @@
+{
+  "orderProduct": {
+    "dimension_productId": 3,
+    "productId": "LargeVan",
+    "name": "Large Van",
+    "description": "Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",
+    "categoryId": "1Vans",
+    "price": 4000,
+    "rank": 1,
+    "key": 1,
+    "rowId": 1
+  },
+  "orderContentTypeId": 1,
+  "origin": {
+    "line1": "129 Drakefield Rd",
+    "city": "London",
+    "postCode": "SW17 8RS",
+    "country": "United Kingdom",
+    "googlePlaceId": "ChIJI6Q-6tkFdkgR5YDG0_IWuvw",
+    "latitude": 51.434162,
+    "longitude": -0.1523323
+  },
+  "destination": {
+    "line1": "12 Kinnoul Rd",
+    "city": "London",
+    "postCode": "W6",
+    "country": "United Kingdom",
+    "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
+    "latitude": 51.485725,
+    "longitude": -0.212341
+  },
+  "distanceAndDuration": {
+    "distance": 8318,
+    "duration": 1385
+  },
+  "title": "Large Van",
+  "productId": "LargeVan",
+  "amount": 4000,
+  "requiredDate": "2018-05-17T09:17:00.000Z",
+  "description": "delivery description"
+}
