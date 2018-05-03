@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem} from 'native-base';
+import {Image} from 'react-native';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem, View} from 'native-base';
 import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, CurrencyInput, Currency} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -43,18 +44,18 @@ const onOrderAmountChanged = (orderId, newAmount) => {
   dispatch(updateOrderPrice(orderId, newAmount));
 }
 
-const PartnerAcceptRejectControl = ({partnerResponses, orderId}) => {
-  return partnerResponses.map(
+const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, busyUpdating}) => {
+  return <Row>{partnerResponses.map(
     response  => {
       const {latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, partnerOrderStatus} = response;
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
-      return <View style={styles.view}>
+      return <Row style={styles.view}>
           <Text>{moment(estimatedDate).format('ddd Do MMMM, h:mma')}</Text>
           <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.partnerImage}/>
           <Row><RejectPartner {...this.props}/><AcceptPartner  {...this.props}/></Row>
-      </View>;
-    }
-  );
+      </Row>;
+    })}</Row>;
+  
 }
 
 class CustomerOrderDetail extends Component{
@@ -83,9 +84,9 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order = {}, client, partnerResponses, errors, history, busyUpdating} = this.props;
+    const {busy, order, client, partnerResponses, errors, history, busyUpdating} = this.props;
     const {resources} = this;
-    return busy ? <LoadingScreen text="Loading Order"/> : <Container>
+    return busy || !order? <LoadingScreen text={ !busy && !order ? "Order \"" + orderId + "\" cannot be found" : "Loading Order..."}/> : <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => history.goBack()}>
@@ -171,6 +172,7 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     order,
+    orderId,
     partnerResponses,
     isPendingOrderSummarySubscription,
     me: getDaoState(state, ['user'], 'userDao'),
