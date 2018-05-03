@@ -97,7 +97,6 @@ public class OrderDataSource {
                                         new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("assignedPartnerUserId"),
                                         new IProjectionConfig.ProjectionColumn("partner_latitude"),
-                                        new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                         new IProjectionConfig.ProjectionColumn("partner_longitude"),
                                         new IProjectionConfig.ProjectionColumn("partner_firstName"),
                                         new IProjectionConfig.ProjectionColumn("partner_lastName"),
