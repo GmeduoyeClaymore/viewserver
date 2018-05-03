@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {PagingListView, OrderRequest} from 'common/components';
+import {PagingListView, OrderListItem} from 'common/components';
 import {Spinner, Text} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
@@ -7,10 +7,10 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 class OrderItems extends Component {
   NoItems = () => <Text empty>No jobs to display</Text>;
 
-  RowView = ({item: orderSummary, isLast, isFirst, history, parentPath}) => {
-    const isOnRoute = orderSummary.status == OrderStatuses.PICKEDUP;
+  RowView = ({item: order, isLast, isFirst, history, parentPath}) => {
+    const isOnRoute = order.orderStatus == OrderStatuses.INPROGRESS;
     const next = isOnRoute ? `${parentPath}/CustomerOrderInProgress` : `${parentPath}/CustomerOrderDetail`;
-    return <OrderRequest history={history} orderSummary={orderSummary} key={orderSummary.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+    return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };
 
   getDefaultOptions = (isCompleted) => ({

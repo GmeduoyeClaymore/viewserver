@@ -20,7 +20,7 @@ export const RatingSummary = ({order, isPartner}) => {
     const stars = [...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
     return <View style={styles.view}>
       {!isPartner ?
-        <Image source={{uri: assignedPartner.imageUrl}} resizeMode='contain' style={styles.partnerImage}/> : null}
+        <Image source={{uri: assignedPartner.imageUrl}} resizeMode='contain' style={styles.images}/> : null}
       <Text style={styles.text}>You rated {name}</Text>{stars}
     </View>;
   }
@@ -44,7 +44,7 @@ const styles = {
     padding: 2,
     color: shotgun.gold,
   },
-  partnerImage: {
+  images: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 30,

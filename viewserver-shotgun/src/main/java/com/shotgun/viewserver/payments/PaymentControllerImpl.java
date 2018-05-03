@@ -217,7 +217,8 @@ public class PaymentControllerImpl implements PaymentController {
             sourcesParams.put("object", "card");
             ExternalAccountCollection cards = Customer.retrieve(user.getStripeCustomerId()).getSources().list(sourcesParams);
             logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), user.getStripeCustomerId());
-            return cards.getData().stream().map(a -> (Card) a).collect(Collectors.toList());
+            List<Card> cardsList = cards.getData().stream().map(a -> (Card) a).collect(Collectors.toList());
+            return cardsList;
         } catch (Exception e) {
             logger.error("There was a problem getting the payment cards", e);
             throw new RuntimeException(e);

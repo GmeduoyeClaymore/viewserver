@@ -1,7 +1,9 @@
 package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
+import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.ProjectionNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
@@ -12,6 +14,9 @@ public class OrderResponseReport {
                 return new ReportDefinition(ID, "orderResponses")
                         .withDataSource(OrderWithResponseDataSource.NAME)
                         .withNodes(
+                                new CalcColNode("userCreatedThisOrderCalc")
+                                        .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
+                                        .withConnection("#input"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -34,9 +39,10 @@ public class OrderResponseReport {
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
-                                                new IProjectionConfig.ProjectionColumn("partnerOrderStatus")
+                                                new IProjectionConfig.ProjectionColumn("partnerOrderStatus"),
+                                                new IProjectionConfig.ProjectionColumn("userCreatedThisOrder")
                                         )
-                                        .withConnection("#input")
+                                        .withConnection("userCreatedThisOrderCalc")
                         )
                         .withOutput("orderRequestProjection");
         }

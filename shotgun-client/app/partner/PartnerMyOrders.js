@@ -3,9 +3,9 @@ import {Tabs, Icon} from 'common/components';
 import {Container, Header, Body, Title, Tab, Left, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect, ReduxRouter, Route} from 'custom-redux';
-import PartnerOrderItems from './PartnerOrderItems';
+import PartnerMyOrdersListView from './PartnerMyOrdersListView';
 
-class PartnerOrders extends Component{
+class PartnerMyOrders extends Component{
   goToTabNamed = (name) => {
     const {history, isCompleted, path, canGoBack} = this.props;
     history.replace({pathname: `${path}/${name}`}, {isCompleted, canGoBack});
@@ -28,8 +28,8 @@ class PartnerOrders extends Component{
         <Tab heading='Posted' onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
       <ReduxRouter  name="PartnerOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Accepted' {...this.props} >
-        <Route path={'Accepted'} component={PartnerOrderItems}/>
-        <Route path={'Posted'} component={PartnerOrderItems}/>
+        <Route path={'Accepted'} component={PartnerMyOrdersListView}/>
+        <Route path={'Posted'} component={PartnerMyOrdersListView}/>
       </ReduxRouter>
     </Container>;
   }
@@ -44,4 +44,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(mapStateToProps )(PartnerOrders);
+export default connect(mapStateToProps )(PartnerMyOrders);

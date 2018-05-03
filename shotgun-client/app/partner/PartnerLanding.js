@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect, Route, ReduxRouter, Redirect} from 'custom-redux';
 import PartnerMenuBar from './PartnerMenuBar';
-import PartnerOrders from './PartnerOrders';
+import PartnerMyOrders from './PartnerMyOrders';
 import PartnerOrderDetail from './PartnerOrderDetail';
-import PartnerOrderRequests from './PartnerOrderRequests';
-import PartnerOrderRequestDetail from './PartnerOrderRequestDetail';
+import PartnerAvailableOrders from './PartnerAvailableOrders';
+import PartnerAvailableOrderDetail from './PartnerAvailableOrderDetail';
 import PartnerOrderInProgress from './PartnerOrderInProgress';
 import PartnerSettings from './Settings/PartnerSettings';
 import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
@@ -48,19 +48,19 @@ class PartnerLanding extends Component {
 
   render() {
     const {busy, path, isLoggedIn, history} = this.props;
-    const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerOrders/Posted`, ordersRoot: `${path}`};
+    const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerMyOrders/Posted`, ordersRoot: `${path}`};
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }
     return  busy ? <LoadingScreen text="Loading"/> :
-      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'PartnerOrders'}>
+      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'PartnerMyOrders'}>
         <Route path={'Checkout'} component={Checkout}/>
-        <Route path={'PartnerOrderRequests'} exact component={PartnerOrderRequests}/>
-        <Route path={'PartnerOrderRequestDetail'} exact component={PartnerOrderRequestDetail}/>
-        <Route path={'PartnerOrders'} exact component={PartnerOrders}/>
+        <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
+        <Route path={'PartnerAvailableOrderDetail'} exact component={PartnerAvailableOrderDetail}/>
+        <Route path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
-        <Route path={'Orders'} exact component={PartnerOrders}/>
+        <Route path={'Orders'} exact component={PartnerMyOrders}/>
         <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
         <Route path={'PartnerOrderInProgress'} exact component={PartnerOrderInProgress}/>
         <Route path={'Settings'} component={PartnerSettings}/>

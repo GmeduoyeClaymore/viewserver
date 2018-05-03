@@ -8,8 +8,8 @@ import {AppImages} from 'common/assets/img/Images';
 const PartnerMenuBar = ({history, path}) => {
   return <Footer>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Icon name='list'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerOrderRequests`})}><Image source={AppImages.spanner} style={styles.image}/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerOrders`})}><Icon name='jobs'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerAvailableOrders`})}><Image source={AppImages.spanner} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerMyOrders`})}><Icon name='jobs'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Icon style={{marginLeft: 10, marginRight: 10}} name='two-people'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Icon name='one-person'/></Button></FooterTab>
   </Footer>;

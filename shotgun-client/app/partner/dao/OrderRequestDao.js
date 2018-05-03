@@ -16,7 +16,7 @@ export default class OrderRequestDao{
     position: OrderRequestDao.DEFAULT_POSITION
   };
 
-  static PARTNER_ORDER_REQUEST_DEFAULT_OPTIONS = {
+  static PARTNER_AVAILABLE_ORDERS_DEFAULT_OPTIONS = {
     columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }]
   };
 
@@ -87,15 +87,17 @@ export default class OrderRequestDao{
   mapOrderRequest(orderRequest){
     const {orderDetails, partner_firstName, partner_lastName, partner_ratingAvg, partner_imageUrl, customer_firstName, customer_lastName, customer_ratingAvg} = orderRequest;
 
+    const assignedPartner = orderDetails.assignedPartner ? {
+      ...orderDetails.assignedPartner,
+      firstName: partner_firstName,
+      lastName: partner_lastName,
+      ratingAvg: partner_ratingAvg,
+      imageUrl: partner_imageUrl
+    } : undefined;
+
     return {
       ...orderDetails,
-      assignedPartner: {
-        ...orderDetails.assignedPartner,
-        firstName: partner_firstName,
-        lastName: partner_lastName,
-        ratingAvg: partner_ratingAvg,
-        imageUrl: partner_imageUrl
-      },
+      assignedPartner,
       customer: {
         firstName: customer_firstName,
         lastName: customer_lastName,

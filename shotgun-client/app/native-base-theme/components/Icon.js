@@ -14,8 +14,6 @@ export default (variables = variable) => {
     '.avgStar': {
       fontSize: 12,
       padding: 2,
-      marginRight: 10,
-      paddingRight: 20,
       color: variables.gold
     },
     '.right': {

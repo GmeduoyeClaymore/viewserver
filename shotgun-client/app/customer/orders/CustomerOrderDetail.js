@@ -51,7 +51,7 @@ const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, busyUpdating}
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
       return <Row style={styles.view}>
           <Text>{moment(estimatedDate).format('ddd Do MMMM, h:mma')}</Text>
-          <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.partnerImage}/>
+          <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.images}/>
           <Row><RejectPartner {...this.props}/><AcceptPartner  {...this.props}/></Row>
       </Row>;
     })}</Row>;
@@ -139,7 +139,7 @@ const styles = {
     padding: 2,
     color: shotgun.gold,
   },
-  partnerImage: {
+  images: {
     aspectRatio: 1,
     borderRadius: 150,
     width: 30,

@@ -3,6 +3,7 @@ import locationImg from 'common/assets/location.png';
 import MapView from 'react-native-maps';
 import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
+import Logger from 'common/Logger';
 const {width, height} = Dimensions.get('window');
 
 
