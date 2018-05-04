@@ -5,9 +5,7 @@ import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
-
 import java.util.Date;
-
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 import static io.viewserver.core.Utils.fromArray;
 
@@ -28,13 +26,13 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
 
 
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
-    default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "estimatedDate")Date estimatedDate, @ActionParam(name = "price")Integer price){
+    default void respondToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "requiredDate")Date requiredDate, @ActionParam(name = "amount")Integer amount){
         String partnerId = getUserId();
         this.transform(
                 orderId,
                 order -> {
 
-                    order.respond(partnerId, estimatedDate, price);
+                    order.respond(partnerId, requiredDate, amount);
                     return  true;
                 },
                 order -> {

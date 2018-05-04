@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {connect, Route, ReduxRouter, Redirect} from 'custom-redux';
+import {withExternalState, Route, ReduxRouter, Redirect} from 'custom-redux';
 import PartnerMenuBar from './PartnerMenuBar';
 import PartnerMyOrders from './PartnerMyOrders';
-import PartnerOrderDetail from './PartnerOrderDetail';
+import PartnerMyOrderDetail from './PartnerMyOrderDetail';
 import PartnerAvailableOrders from './PartnerAvailableOrders';
 import PartnerAvailableOrderDetail from './PartnerAvailableOrderDetail';
 import PartnerOrderInProgress from './PartnerOrderInProgress';
@@ -61,7 +61,7 @@ class PartnerLanding extends Component {
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
         <Route path={'Orders'} exact component={PartnerMyOrders}/>
-        <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
+        <Route path={'PartnerMyOrderDetail'} exact component={PartnerMyOrderDetail}/>
         <Route path={'PartnerOrderInProgress'} exact component={PartnerOrderInProgress}/>
         <Route path={'Settings'} component={PartnerSettings}/>
         <Route path={'UserRelationships'} component={UserRelationships}/>
@@ -82,6 +82,6 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-export default connect(mapStateToProps)(PartnerLanding);
+export default withExternalState(mapStateToProps)(PartnerLanding);
 
 

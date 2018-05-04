@@ -108,5 +108,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-
 export default withExternalState(mapStateToProps)(ContentTypeSelect);

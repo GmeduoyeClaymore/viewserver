@@ -56,7 +56,7 @@
   "orderProduct": {
     "productId": "{productId}",
     "price": 4000,
-    "name": "{productId} Van",
+    "name": "{productId}",
     "description": "Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",
     "rank": 1,
     "categoryId": "1Vans",

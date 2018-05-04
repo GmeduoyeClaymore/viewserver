@@ -13,10 +13,8 @@ export class UserInfo extends Component{
 
   render(){
     const {user} = this.props;
-    if (!user){
-      return null;
-    }
-    return <Grid>
+
+    return user ? <Grid>
       <Col>
         <Col>
           <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.images}/>
@@ -32,7 +30,7 @@ export class UserInfo extends Component{
           <Text uppercase={false}>Call</Text>
         </Button>
       </Col>
-    </Grid>;
+    </Grid> : null;
   }
 }
 

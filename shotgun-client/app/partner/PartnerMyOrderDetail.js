@@ -7,7 +7,7 @@ import {startOrderRequest, cancelOrderRequest} from 'partner/actions/PartnerActi
 import shotgun from 'native-base-theme/variables/shotgun';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 
-class PartnerOrderDetail extends Component{
+class PartnerMyOrderDetail extends Component{
   beforeNavigateTo(){
     const {dispatch, orderId, orderSummary} = this.props;
     if (orderSummary == undefined) {
@@ -34,12 +34,11 @@ class PartnerOrderDetail extends Component{
   };
 
   render() {
-    const {order = {}, client, history, busy, busyUpdating, user} = this.props;
+    const {order = {}, client, history, busy, busyUpdating} = this.props;
     const isComplete = order.orderStatus == OrderStatuses.COMPLETED;
-    const userCreatedThisOrder = user.userId == order.customerUserId;
 
-    //TODO - show the amount - the charge percentage if the user did not create this order
-   // const amount = userCreatedThisOrder ? order.amount : calculatePriceToBePaid(order.totalPrice, user);
+    //TODO - show the amount - the charge percentage
+    // const amount = calculatePriceToBePaid(order.totalPrice, user);
 
     return busy ? <LoadingScreen text='Waiting for order'/> : <Container>
       <Header withButton>
@@ -55,8 +54,8 @@ class PartnerOrderDetail extends Component{
         <RatingSummary order={order} isPartner={true}/>
         {!isComplete ?
           <View>
-            {!userCreatedThisOrder ? <Button fullWidth padded style={styles.startButton} onPress={this.navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button> : null}
-            {!userCreatedThisOrder ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onStartPress}><Text uppercase={false}>Start this job</Text></SpinnerButton> : null}
+            <Button fullWidth padded style={styles.startButton} onPress={this.navigateToOrderInProgress}><Text uppercase={false}>Show navigation map</Text></Button>
+            <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onStartPress}><Text uppercase={false}>Start this job</Text></SpinnerButton>
             <SpinnerButton busy={busyUpdating} fullWidth padded cancelButton onPress={this.onCancelPress}><Text uppercase={false}>Cancel this job</Text></SpinnerButton>
           </View> : null
         }
@@ -88,5 +87,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(mapStateToProps)(PartnerOrderDetail);
+export default connect(mapStateToProps)(PartnerMyOrderDetail);
 

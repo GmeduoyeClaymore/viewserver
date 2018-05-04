@@ -39,6 +39,10 @@ export const updateVehicle = (vehicle, continueWith) => {
   return invokeDaoCommand('vehicleDao', 'addOrUpdateVehicle', {vehicle}, continueWith);
 };
 
+export const respondToOrder = (orderId, orderContentTypeId, requiredDate, amount, continueWith) => {
+  return invokeDaoCommand('orderDao', 'respondToOrder', {orderId, orderContentTypeId, requiredDate, amount}, continueWith);
+};
+
 export const acceptOrderRequest = (orderId, continueWith) => {
   return invokeDaoCommand('partnerDao', 'acceptOrderRequest', {orderId}, continueWith);
 };
