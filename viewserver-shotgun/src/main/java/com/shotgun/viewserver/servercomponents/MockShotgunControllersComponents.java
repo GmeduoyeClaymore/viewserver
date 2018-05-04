@@ -9,7 +9,9 @@ import com.shotgun.viewserver.maps.MockMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.messaging.MockMessagingController;
 import com.shotgun.viewserver.payments.MockPaymentController;
-import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.payments.IPaymentController;
+import com.shotgun.viewserver.payments.PaymentControllerImpl;
+import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.MockNexmoController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -27,8 +29,8 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
     }
 
     @Override
-    protected PaymentController getPaymentController() {
-        return new MockPaymentController(databaseUpdater);
+    protected IPaymentController getPaymentController() {
+        return new PaymentControllerImpl(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"), databaseUpdater);
     }
 
     @Override

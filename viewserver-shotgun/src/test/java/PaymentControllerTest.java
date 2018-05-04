@@ -24,7 +24,7 @@ import java.util.List;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PaymentControllerTest {
 
-    private PaymentController sut;
+    private IPaymentController sut;
 
     private static String customerId;
     private ControllerContext ctxt;
@@ -62,19 +62,12 @@ public class PaymentControllerTest {
         assertNotNull(sut.addPaymentCard(getPaymentCard(this.customerId)));
     }
 
-    @Test
-    public void C_canGetPaymentCards(){
-        List<Card> paymentCards = sut.getPaymentCards();
-        assertTrue(paymentCards.size() == 2);
-    }
-
 
     private PaymentCard getPaymentCard(String customerToken) {
         if(customerToken == null){
             throw new RuntimeException("specify customer id");
         }
         PaymentCard paymentCard = new PaymentCard();
-        paymentCard.setCustomerToken(customerToken);
         paymentCard.setCvc("123");
         paymentCard.setExpMonth("12");
         paymentCard.setExpYear("22");

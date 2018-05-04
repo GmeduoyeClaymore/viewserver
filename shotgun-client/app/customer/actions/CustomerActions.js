@@ -39,11 +39,6 @@ export const loginCustomer = (email, password, continueWith) => {
   return invokeDaoCommand('customerDao', 'loginCustomer', {email, password}, continueWith);
 };
 
-export const getPaymentCards = (continueWith) => {
-  return invokeDaoCommand('paymentDao', 'getPaymentCards', continueWith);
-};
-
-
 export const callPartner = (orderId, continueWith) => {
   return invokeDaoCommand('customerDao', 'callPartner', {orderId}, continueWith);
 };

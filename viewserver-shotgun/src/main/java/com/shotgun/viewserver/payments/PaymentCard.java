@@ -2,7 +2,6 @@ package com.shotgun.viewserver.payments;
 
 
 public class PaymentCard {
-    private String customerToken;
     private String number;
     private String expMonth;
     private String expYear;
@@ -38,10 +37,6 @@ public class PaymentCard {
 
     public void setCvc(String cvc) {
         this.cvc = cvc;
-    }
-
-    public void setCustomerToken(String customerToken) {
-        this.customerToken = customerToken;
     }
 }
 

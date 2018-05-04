@@ -30,7 +30,7 @@ class PartnerAvailableOrderDetail extends Component{
   onRespondPress = async() => {
     const {order, history, dispatch, ordersRoot, bankAccount, parentPath, negotiationAmount} = this.props;
     const {orderId, requiredDate, orderContentTypeId} = order;
-    const negotiationDate = moment(requiredDate).toDate();
+    const negotiationDate = moment(requiredDate).valueOf();
 
 
     if (bankAccount) {

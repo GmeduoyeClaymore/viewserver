@@ -9,7 +9,7 @@ import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderControl
 import com.shotgun.viewserver.order.controllers.contracts.SinglePaymentOrderController;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.order.domain.ProductOrder;
-import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -24,10 +24,10 @@ public class ProductOrderController implements NegotiationNotifications, OrderCr
     private DeliveryOrderController deliveryOrderController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IMapsController iMapsController;
-    private PaymentController paymentController;
+    private IPaymentController paymentController;
     private IMessagingController iMessagingController;
 
-    public ProductOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, PaymentController paymentController, IMessagingController iMessagingController) {
+    public ProductOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController) {
         this.deliveryOrderController = deliveryOrderController;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.iMapsController = iMapsController;
@@ -69,7 +69,7 @@ public class ProductOrderController implements NegotiationNotifications, OrderCr
     }
 
     @Override
-    public PaymentController getPaymentController() {
+    public IPaymentController getPaymentController() {
         return paymentController;
     }
 

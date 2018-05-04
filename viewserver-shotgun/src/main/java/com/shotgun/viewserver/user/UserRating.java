@@ -13,3 +13,4 @@ public interface UserRating extends DynamicJsonBackedObject {
     String getFromUserId();
     int getRating();
 }
+

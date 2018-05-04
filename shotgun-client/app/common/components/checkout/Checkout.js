@@ -12,13 +12,11 @@ import AddressLookup from 'common/components/maps/AddressLookup';
 import {Route, ReduxRouter, withExternalState, removeProperties} from 'custom-redux';
 import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {LoadingScreen} from 'common/components';
-import {isAnyOperationPending} from 'common/dao';
 import {PERSONELL_ORDER_INITIAL_STATE, RUBBISH_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 
 class Checkout extends Component {
   static stateKey = 'customerCheckout';
-  static InitialState = RUBBISH_ORDER_INITIAL_STATE;
+  // static InitialState = RUBBISH_ORDER_INITIAL_STATE;
 
   constructor(props){
     super(props);
@@ -42,24 +40,23 @@ class Checkout extends Component {
   }
 
   render() {
-    const {path, busy} = this.props;
+    const {path} = this.props;
     const customerProps = {...this.props, stateKey: Checkout.stateKey};
     const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'parentPath']);
     const {getNext} = this;
 
-    return busy ? <LoadingScreen text="Loading"/> :
-      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
-        <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
-        <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
-        <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />
-        <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryOptions' exact component={DeliveryOptions} next={getNext('DeliveryOptions')} />
-        <Route stateKey={Checkout.stateKey} transition='left' path='ProductCategoryList' exact component={ProductCategoryList}  next={getNext('ProductCategoryList')} />
-        <Route stateKey={Checkout.stateKey} transition='left' path='FlatProductCategoryList' exact component={FlatProductCategoryList} next={getNext('FlatProductCategoryList')}  />
-        <Route stateKey={Checkout.stateKey} transition='left' path='ProductList' exact component={ProductList}  next={getNext('ProductList')} />
-        <Route stateKey={Checkout.stateKey} transition='left' path='ItemDetails' exact component={ItemDetails}  next={getNext('ItemDetails')} />
-        <Route stateKey={Checkout.stateKey} transition='left' path='OrderConfirmation' exact component={OrderConfirmation} next={getNext('ItemDetails')}/>
-        <Route stateKey={Checkout.stateKey} transition='left' path='UsersForProductMap' exact component={UsersForProductMap} next={getNext('UsersForProductMap')} />
-      </ReduxRouter>;
+    return <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
+      <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
+      <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
+      <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryOptions' exact component={DeliveryOptions} next={getNext('DeliveryOptions')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='ProductCategoryList' exact component={ProductCategoryList}  next={getNext('ProductCategoryList')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='FlatProductCategoryList' exact component={FlatProductCategoryList} next={getNext('FlatProductCategoryList')}  />
+      <Route stateKey={Checkout.stateKey} transition='left' path='ProductList' exact component={ProductList}  next={getNext('ProductList')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='ItemDetails' exact component={ItemDetails}  next={getNext('ItemDetails')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='OrderConfirmation' exact component={OrderConfirmation} next={getNext('ItemDetails')}/>
+      <Route stateKey={Checkout.stateKey} transition='left' path='UsersForProductMap' exact component={UsersForProductMap} next={getNext('UsersForProductMap')} />
+    </ReduxRouter>;
   }
 }
 
@@ -76,8 +73,7 @@ resourceDictionary.
 
 const mapStateToProps = (state, nextOwnProps) => {
   return {
-    ...nextOwnProps,
-    busy: isAnyOperationPending(state, [{ paymentDao: 'getPaymentCards' }])
+    ...nextOwnProps
   };
 };
 

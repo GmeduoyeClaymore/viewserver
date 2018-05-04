@@ -242,7 +242,9 @@ public class ViewServerClientSteps {
         for(Map<String,String> record : records){
             String paramName = record.get("Name");
             String paramValue = record.get("Value");
-            result.put(paramName, clientContext.replaceParams(paramValue));
+
+            paramValue = TestUtils.replaceReference(paramValue);
+            result.put(paramName,  clientContext.replaceParams(paramValue));
         }
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);
     }

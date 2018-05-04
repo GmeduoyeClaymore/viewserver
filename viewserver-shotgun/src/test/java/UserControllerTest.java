@@ -10,7 +10,7 @@ public class UserControllerTest {
 
     @Before
     public void createSut(){
-        sut = new UserController(null,null,null,null,null);
+        sut = new UserController(null,null,null,null,null, null);
     }
 
     @Test

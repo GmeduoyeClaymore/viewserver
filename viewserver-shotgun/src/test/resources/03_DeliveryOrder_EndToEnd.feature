@@ -272,7 +272,7 @@ Feature: Delivery order scenarios
   Scenario: Accepting response causes order status to change to accepted for partner then declined for the remaining partners
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
 	  | Name             | Value                                              |
-	  | param_customerId | {client1_partnerController_registerPartner_result} |
+	  | param_paymentCard | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |

@@ -4,6 +4,7 @@ import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.setup.datasource.PaymentDataSource;
+import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -25,38 +26,18 @@ import java.util.*;
 import static com.shotgun.viewserver.ControllerUtils.getUser;
 
 @Controller(name = "paymentController")
-public class MockPaymentController implements PaymentController {
+public class MockPaymentController extends BasePaymentController implements IPaymentController {
     private static final Logger logger = LoggerFactory.getLogger(MockPaymentController.class);
     private IDatabaseUpdater iDatabaseUpdater;
     public MockPaymentController(IDatabaseUpdater iDatabaseUpdater) {
         this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
-    @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
-    public HashMap<String, Object> createPaymentCustomer(@ActionParam(name = "emailAddress") String emailAddress, @ActionParam(name = "paymentCard") PaymentCard paymentCard) {
-        String cardToken = createCardToken(paymentCard);
-        Map<String, Object> customerParams = new HashMap<>();
-        customerParams.put("email", emailAddress);
-        customerParams.put("source", cardToken);
-
-        try {
-            Customer customer = createMockCustomer(customerParams);
-            logger.debug("Added stripe payment customer with id {}", customer.getId());
-            HashMap<String, Object> result = new HashMap<>();
-            result.put("customerId", customer.getId());
-            result.put("paymentToken", cardToken);
-            return result;
-        } catch (Exception e) {
-            logger.error("There was a problem adding the payment customer", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Customer createMockCustomer(Map<String, Object> customerParams) {
+    protected Customer createCustomer(Map<String, Object> params){
         Customer customer = new Customer();
         UUID uuid = UUID.randomUUID();
         customer.setId(uuid.toString());
-        customer.setEmail((String) customerParams.get("email"));
+        customer.setEmail((String) params.get("email"));
         return customer;
     }
 
@@ -184,42 +165,6 @@ public class MockPaymentController implements PaymentController {
         }
     }
 
-    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
-        try {
-            String customerToken = getStripeCustomerToken();
-            String cardToken = createCardToken(paymentCard);
-            Customer customer = Customer.retrieve(customerToken);
-            Map<String, Object> params = new HashMap<>();
-            params.put("source", cardToken);
-            customer.getSources().create(params);
-            logger.debug("Added stripe payment card with token {}", cardToken);
-            return cardToken;
-        } catch (Exception e) {
-            logger.error("There was a problem adding the payment card", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @ControllerAction(path = "getPaymentCards", isSynchronous = false)
-    public List<Card> getPaymentCards() {
-        try {
-            List<Card> result = new ArrayList<>();
-            Card e = new Card();
-            e.setExpMonth(12);
-            e.setExpYear(22);
-            e.setName("Mr OO Meduoye");
-            e.setBrand("VISA");
-            e.setLast4("4242");
-            e.setIin("123");
-            result.add(e);
-            return result;
-        } catch (Exception e) {
-            logger.error("There was a problem getting the payment cards", e);
-            throw new RuntimeException(e);
-        }
-    }
-
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
     public void deletePaymentCard(@ActionParam(name = "cardId") String cardId) {
@@ -252,14 +197,7 @@ public class MockPaymentController implements PaymentController {
         return stripeAccountId;
     }
 
-    private String getStripeCustomerToken() {
-        User user = getUser();
-        String stripeCustomerToken = user.getStripeCustomerId();
-        if (stripeCustomerToken == null) {
-            throw new RuntimeException("No stripe customerid specified for current user");
-        }
-        return stripeCustomerToken;
-    }
+
 
     public void setBankAccount(PaymentBankAccount paymentBankAccount) {
         try {
@@ -284,7 +222,16 @@ public class MockPaymentController implements PaymentController {
         }
     }
 
-    private String createCardToken(PaymentCard paymentCard) {
+    protected String getStripeCustomerToken() {
+        User user = getUser();
+        String stripeCustomerToken = user.getStripeCustomerId();
+        if (stripeCustomerToken == null) {
+            throw new RuntimeException("No stripe customerid specified for current user");
+        }
+        return stripeCustomerToken;
+    }
+
+    protected String createCardToken(PaymentCard paymentCard) {
 
         Map<String, Object> tokenParams = new HashMap<>();
         Map<String, Object> cardParams = new HashMap<>();

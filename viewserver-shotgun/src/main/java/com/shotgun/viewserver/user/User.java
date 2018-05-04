@@ -27,6 +27,7 @@ public interface User extends DynamicJsonBackedObject{
     }
 
     UserRating[] getRatings();
+    SavedPaymentCard[] getPaymentCards();
     Double getLatitude();
     Double getLongitude();
     String getFirstName();
@@ -41,7 +42,6 @@ public interface User extends DynamicJsonBackedObject{
     String getType();
     int getRange();
     String getStripeCustomerId();
-    String getStripeDefaultSourceId();
     String getStripeAccountId();
     String getImageUrl();
     Integer getChargePercentage();
@@ -77,6 +77,21 @@ public interface User extends DynamicJsonBackedObject{
         }
     }
 
+    default void addPaymentCard(SavedPaymentCard savedPaymentCard){
+        List<SavedPaymentCard> savedPaymentCards = toList(this.getPaymentCards());
+        savedPaymentCards.add(savedPaymentCard);
+        this.set("paymentCards",toArray(savedPaymentCards, SavedPaymentCard[]::new));
+    }
+
+    default void deletePaymentCard(String cardId){
+        Optional<SavedPaymentCard> paymentCard = fromArray(getPaymentCards()).filter(c->c.getCardId().equals(cardId)).findAny();
+
+        if(paymentCard.isPresent()){
+            List<SavedPaymentCard> paymentCards = toList(this.getPaymentCards());
+            paymentCards.remove(paymentCard);
+            this.set("paymentCards",toArray(paymentCards, SavedPaymentCard[]::new));
+        }
+    }
 }
 
 

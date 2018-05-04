@@ -5,14 +5,13 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
-import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
-import com.shotgun.viewserver.payments.PaymentController;
-import io.viewserver.adapters.common.IDatabaseUpdater;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -30,34 +29,34 @@ import java.util.Date;
 @Controller(name = "partnerController")
 public class PartnerController {
     private static final Logger log = LoggerFactory.getLogger(PartnerController.class);
-    private PaymentController paymentController;
+    private IPaymentController paymentController;
     private UserController userController;
     private VehicleController vehicleController;
     private LoginController loginController;
     private IImageController IImageController;
+    private DeliveryAddressController deliveryAddressController;
     private IReactor reactor;
 
-    public PartnerController(PaymentController paymentController,
+    public PartnerController(IPaymentController paymentController,
                              UserController userController,
                              VehicleController vehicleController,
                              LoginController loginController,
                              IImageController IImageController,
+                             DeliveryAddressController deliveryAddressController,
                              IReactor reactor) {
         this.paymentController = paymentController;
         this.userController = userController;
         this.vehicleController = vehicleController;
         this.loginController = loginController;
         this.IImageController = IImageController;
+        this.deliveryAddressController = deliveryAddressController;
         this.reactor = reactor;
     }
 
     @ControllerAction(path = "registerPartner", isSynchronous = false)
     public ListenableFuture<String> registerPartner(@ActionParam(name = "user")User user,
                                                     @ActionParam(name = "vehicle")Vehicle vehicle,
-                                                    @ActionParam(name = "address")DeliveryAddress address,
-                                                    @ActionParam(name = "bankAccount")PaymentBankAccount bankAccount
-
-    ){
+                                                    @ActionParam(name = "address")DeliveryAddress address){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
@@ -67,8 +66,6 @@ public class PartnerController {
         log.debug("Registering driver: " + user.getEmail());
         //We can change this later on or on a per user basis
         user.set("chargePercentage", 10);
-
-        String paymentAccountId = paymentController.createPaymentAccount(user, address, bankAccount);
 
         //save image if required
         if(user.getImageData() != null){
@@ -85,7 +82,6 @@ public class PartnerController {
             public void execute() {
                 try{
                     ControllerContext.create(context);
-                    user.set("stripeAccountId",paymentAccountId);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId",userId);
                     if(vehicle != null){
@@ -93,6 +89,10 @@ public class PartnerController {
                             vehicleController.addOrUpdateVehicle(vehicle);
                         }
                     }
+
+                    address.set("isDefault",true);
+                    deliveryAddressController.addOrUpdateDeliveryAddress(address);
+
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     Observable.from(loginController.setUserId(userId)).subscribe(
                             res -> {

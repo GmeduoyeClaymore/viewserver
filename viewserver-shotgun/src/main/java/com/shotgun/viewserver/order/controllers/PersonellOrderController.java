@@ -9,7 +9,7 @@ import com.shotgun.viewserver.order.contracts.PaymentNotifications;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.PersonellOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
-import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -30,12 +30,12 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
     private IMessagingController messagingController;
     private IDatabaseUpdater iDatabaseUpdater;
     private DeliveryAddressController deliveryAddressController;
-    private PaymentController paymentController;
+    private IPaymentController paymentController;
 
     public PersonellOrderController(IDatabaseUpdater iDatabaseUpdater,
                                     IMessagingController messagingController,
                                     DeliveryAddressController deliveryAddressController,
-                                    PaymentController paymentController) {
+                                    IPaymentController paymentController) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
         this.deliveryAddressController = deliveryAddressController;
@@ -120,7 +120,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
     }
 
     @Override
-    public PaymentController getPaymentController() {
+    public IPaymentController getPaymentController() {
         return paymentController;
     }
 }
