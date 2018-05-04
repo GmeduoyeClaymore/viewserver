@@ -39,20 +39,10 @@ export default class PaymentDao{
     return paymentResponse;
   }
 
-  getBankAccount = async() => {
-    const promise = this.client.invokeJSONCommand('paymentController', 'getBankAccount');
-    const bankAccount =  await promise.timeoutWithError(5000, new Error('Could get bank account for stripe account for current user in 5 seconds'));
-    Logger.debug(`Got bank account ${bankAccount}`);
-    const result = {bankAccount};
-    this.updateState(result);
-    return result;
-  }
-
   setBankAccount = async({paymentBankAccount, address}) => {
     const promise = this.client.invokeJSONCommand('partnerController', 'setBankAccount', {paymentBankAccount, address});
     const result =  await promise.timeoutWithError(5000, new Error('Could set bank account in 5 seconds'));
     Logger.debug('Set bank account');
-    this.getBankAccount();
     return result;
   }
 

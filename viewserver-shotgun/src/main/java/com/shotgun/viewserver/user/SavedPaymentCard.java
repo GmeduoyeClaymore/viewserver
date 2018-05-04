@@ -6,7 +6,8 @@ public interface SavedPaymentCard extends DynamicJsonBackedObject {
     String getCardId();
     String getBrand();
     String getLast4();
-    String getExpMonth();
-    String getExpYear();
+    Integer getExpMonth();
+    Integer getExpYear();
     Boolean getIsDefault();
 }
+

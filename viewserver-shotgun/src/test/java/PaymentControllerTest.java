@@ -1,6 +1,5 @@
 import com.shotgun.viewserver.payments.*;
 import com.shotgun.viewserver.user.User;
-import com.stripe.model.Card;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.IRecord;
@@ -15,7 +14,6 @@ import rx.Observable;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Gbemiga on 17/12/17.
@@ -31,7 +29,7 @@ public class PaymentControllerTest {
 
     @Before
     public void createSut(){
-        sut = new PaymentControllerImpl(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"), new IDatabaseUpdater() {
+        sut = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4"), new IDatabaseUpdater() {
             @Override
             public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
 

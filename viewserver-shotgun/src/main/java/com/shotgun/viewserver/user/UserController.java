@@ -5,6 +5,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -36,6 +38,7 @@ import rx.Observable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
@@ -62,20 +65,21 @@ public class UserController implements UserTransformationController {
         this.paymentController = paymentController;
         this.IMapsController = IMapsController;
         this.reactor = reactor;
-
     }
 
     @ControllerAction(path = "addOrUpdateRating", isSynchronous = true)
-    public void addOrUpdateRating(@ActionParam(name = "userId") String userId, @ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating, @ActionParam(name = "comments") String comments,  @ActionParam(name = "ratingType")UserRating.RatingType ratingType) {
+    public void addOrUpdateRating(@ActionParam(name = "userId") String userId, @ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating, @ActionParam(name = "comments") String comments, @ActionParam(name = "ratingType") UserRating.RatingType ratingType) {
         this.transform(userId,
                 user -> {
-                    user.addRating(getUserId(), orderId, rating,comments, ratingType);
+                    user.addRating(getUserId(), orderId, rating, comments, ratingType);
                     return true;
                 }, User.class);
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public void addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard){
+    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
+        AtomicReference<String> cardId = new AtomicReference<>();
+
         this.transform(getUserId(),
                 user -> {
                     String customerToken = user.getStripeCustomerId();
@@ -89,12 +93,15 @@ public class UserController implements UserTransformationController {
                     }
 
                     user.addPaymentCard(savedPaymentCard);
+                    cardId.set(savedPaymentCard.getCardId());
                     return true;
                 }, User.class);
+
+        return cardId.get();
     }
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public void deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId){
+    public void deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId) {
         this.transform(getUserId(),
                 user -> {
                     paymentController.deletePaymentCard(cardId);
@@ -102,6 +109,36 @@ public class UserController implements UserTransformationController {
                     return true;
                 }, User.class);
     }
+
+    @ControllerAction(path = "setDefaultPaymentCard", isSynchronous = true)
+    public void setDefaultPaymentCard(@ActionParam(name = "setDefaultPaymentCard") String cardId) {
+        this.transform(getUserId(),
+                user -> {
+                    user.setDefaultPaymentCard(cardId);
+                    return true;
+                }, User.class);
+    }
+
+    @ControllerAction(path = "setBankAccount", isSynchronous = true)
+    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount, @ActionParam(name = "address") DeliveryAddress address) {
+        this.transform(getUserId(),
+                user -> {
+                    SavedBankAccount savedBankAccount;
+                    String stripeAccountId = user.getStripeAccountId();
+                    if (stripeAccountId == null) {
+                        //no stripe account exists for this user, create it
+                        HashMap<String, Object> stripeResponse = paymentController.createPaymentAccount(user, address, paymentBankAccount);
+                        user.set("stripeAccountId", stripeResponse.get("stripeAccountId").toString());
+                        savedBankAccount = (SavedBankAccount) stripeResponse.get("savedBankAccount");
+                    } else {
+                        savedBankAccount = paymentController.setBankAccount(paymentBankAccount);
+                    }
+
+                    user.setBankAccount(savedBankAccount);
+                    return true;
+                }, User.class);
+    }
+
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {
@@ -142,15 +179,15 @@ public class UserController implements UserTransformationController {
         reactor.scheduleTask(new ITask() {
             @Override
             public void execute() {
-                try{
-                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME,  UserDataSource.getDataSource().getSchema(), userRecord);
+                try {
+                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
                     future.set(result);
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     log.error("There was a problem setting user location from postcode", ex);
                     future.setException(ex);
                 }
             }
-        },0,0);
+        }, 0, 0);
         return future;
 
     }
@@ -173,7 +210,7 @@ public class UserController implements UserTransformationController {
         String userId = getUserId();
 
         Record userRecord = new Record()
-                .addValue("relationshipId", constructKey(userId,targetUserId))
+                .addValue("relationshipId", constructKey(userId, targetUserId))
                 .addValue("fromUserId", userId)
                 .addValue("toUserId", targetUserId)
                 .addValue("relationshipStatus", userRelationshipStatus == null ? null : userRelationshipStatus.name())
@@ -206,7 +243,7 @@ public class UserController implements UserTransformationController {
                 }
             });
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error("There was a problem sending the notification", ex);
         }
     }
@@ -215,7 +252,7 @@ public class UserController implements UserTransformationController {
         return String.format("shotgun://Landing/UserRelationships/RelationshipView/DetailX/SelectedUser%sX", targetUserId);
     }
 
-    private String getUsername(String userId, KeyedTable userTable){
+    private String getUsername(String userId, KeyedTable userTable) {
         String firstName = (String) ControllerUtils.getColumnValue(userTable, "firstName", userId);
         String lastName = (String) ControllerUtils.getColumnValue(userTable, "lastName", userId);
         return firstName + " " + lastName;
@@ -224,7 +261,7 @@ public class UserController implements UserTransformationController {
     private String constructKey(String userId, String targetUserId) {
         List<String> list = Arrays.asList(userId, targetUserId);
         Collections.sort(list);
-        return String.join(">",list);
+        return String.join(">", list);
     }
 
     @ControllerAction(path = "updateRange", isSynchronous = true)
@@ -236,28 +273,28 @@ public class UserController implements UserTransformationController {
                 }, User.class);
     }
 
-    public static rx.Observable<Map<String,Object>> waitForUser(final String userId, KeyedTable userTable){
+    public static rx.Observable<Map<String, Object>> waitForUser(final String userId, KeyedTable userTable) {
 
-        if(userId == null){
+        if (userId == null) {
             throw new RuntimeException("Userid must be specified");
         }
         int userRowId = userTable.getRow(new TableKey(userId));
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
-            log.info("Waiting for user {}",userId);
-            return output.observable().filter(ev -> hasUserId(ev,userId)).take(1).timeout(30, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String,Object>)ev.getEventData());
+            log.info("Waiting for user {}", userId);
+            return output.observable().filter(ev -> hasUserId(ev, userId)).take(1).timeout(30, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
         }
-        return rx.Observable.just(OperatorEvent.getRowDetails(output,userRowId, null));
+        return rx.Observable.just(OperatorEvent.getRowDetails(output, userRowId, null));
     }
 
     private static boolean hasUserId(OperatorEvent ev, String userId) {
-        if(!ev.getEventType().equals(EventType.ROW_ADD)){
+        if (!ev.getEventType().equals(EventType.ROW_ADD)) {
             return false;
         }
-        if(ev.getEventData() == null){
+        if (ev.getEventData() == null) {
             return false;
         }
-        HashMap<String,Object> result = (HashMap<String,Object>)ev.getEventData();
+        HashMap<String, Object> result = (HashMap<String, Object>) ev.getEventData();
         return userId.equals(result.get("userId"));
     }
 

@@ -29,6 +29,7 @@ public class UserDataSource {
                                         new Column("contactNo", ContentType.String),
                                         new Column("selectedContentTypes", ContentType.Json),
                                         new Column("email",  ContentType.String),
+                                        new Column("bankAccount",  ContentType.Json),
                                         new Column("paymentCards",  ContentType.Json),
                                         new Column("ratings",  ContentType.Json),
                                         new Column("ratingAvg",  ContentType.Double),

@@ -68,6 +68,6 @@ public class TestUtils {
             return getJsonObjectFromFile(fileReference);
         }
 
-        return  value;
+        return value;
     }
 }
