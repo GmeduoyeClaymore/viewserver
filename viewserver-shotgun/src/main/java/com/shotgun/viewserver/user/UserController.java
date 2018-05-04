@@ -5,6 +5,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -74,7 +76,7 @@ public class UserController implements UserTransformationController {
                 }, User.class);
     }
 
-    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
+    @ControllerAction(path = "addPaymentCard", isSynchronous = true)
     public void addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard){
         this.transform(getUserId(),
                 user -> {
@@ -93,7 +95,7 @@ public class UserController implements UserTransformationController {
                 }, User.class);
     }
 
-    @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
+    @ControllerAction(path = "deletePaymentCard", isSynchronous = true)
     public void deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId){
         this.transform(getUserId(),
                 user -> {
@@ -102,6 +104,40 @@ public class UserController implements UserTransformationController {
                     return true;
                 }, User.class);
     }
+
+    @ControllerAction(path = "setDefaultPaymentCard", isSynchronous = true)
+    public void setDefaultPaymentCard(@ActionParam(name = "setDefaultPaymentCard") String cardId){
+        this.transform(getUserId(),
+                user -> {
+                    user.setDefaultPaymentCard(cardId);
+                    return true;
+                }, User.class);
+    }
+
+    @ControllerAction(path = "setBankAccount", isSynchronous = true)
+    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount, @ActionParam(name = "address") DeliveryAddress address) {
+        try {
+            this.transform(getUserId(),
+                    user -> {
+                      /*  String stripeAccountId = user.getStripeAccountId();
+                        if (stripeAccountId == null) {
+                            //no stripe account exists for this user, create it
+                            stripeAccountId = paymentController.createPaymentAccount(user, address, paymentBankAccount);
+                            user.set("stripeAccountId", )
+                            user.setStripeAccountId(stripeAccountId);
+                            userController.addOrUpdateUser(user);
+                        } else {
+                            paymentController.setBankAccount(paymentBankAccount);
+                        }*/
+                        return true;
+                    }, User.class);
+
+        } catch (Exception e) {
+            log.error("There was a problem setting the bank account", e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {

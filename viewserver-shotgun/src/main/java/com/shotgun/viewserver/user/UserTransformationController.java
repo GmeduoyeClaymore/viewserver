@@ -62,6 +62,7 @@ public interface UserTransformationController{
                 .addValue("created", user.getCreated())
                 .addValue("ratings", user.getRatings())
                 .addValue("paymentCards", user.getPaymentCards())
+                .addValue("bankAccount", user.getBankAccount())
                 .addValue("firstName", user.getFirstName())
                 .addValue("lastName", user.getLastName())
                 .addValue("dob", user.getDob())

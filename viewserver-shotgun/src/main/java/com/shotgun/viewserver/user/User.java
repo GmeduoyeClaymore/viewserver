@@ -28,6 +28,7 @@ public interface User extends DynamicJsonBackedObject{
 
     UserRating[] getRatings();
     SavedPaymentCard[] getPaymentCards();
+    SavedBankAccount getBankAccount();
     Double getLatitude();
     Double getLongitude();
     String getFirstName();
@@ -83,6 +84,24 @@ public interface User extends DynamicJsonBackedObject{
         this.set("paymentCards",toArray(savedPaymentCards, SavedPaymentCard[]::new));
     }
 
+    default void setDefaultPaymentCard(String cardId){
+        Optional<SavedPaymentCard> paymentCard = fromArray(getPaymentCards()).filter(c->c.getCardId().equals(cardId)).findAny();
+
+        if(paymentCard.isPresent()){
+            List<SavedPaymentCard> paymentCards = toList(this.getPaymentCards());
+
+            for(int i=0; 0< paymentCards.size(); i++){
+                SavedPaymentCard currentCard = paymentCards.get(i);
+                boolean isDefault = currentCard.getCardId().equals(paymentCard.get().getCardId());
+                currentCard.set("isDefault", isDefault);
+
+                paymentCards.set(i, currentCard);
+            }
+
+            this.set("paymentCards",toArray(paymentCards, SavedPaymentCard[]::new));
+        }
+    }
+
     default void deletePaymentCard(String cardId){
         Optional<SavedPaymentCard> paymentCard = fromArray(getPaymentCards()).filter(c->c.getCardId().equals(cardId)).findAny();
 
@@ -91,6 +110,10 @@ public interface User extends DynamicJsonBackedObject{
             paymentCards.remove(paymentCard);
             this.set("paymentCards",toArray(paymentCards, SavedPaymentCard[]::new));
         }
+    }
+
+    default void setBankAccount(SavedBankAccount savedBankAccount){
+        this.set("savedBankAccount", savedBankAccount);
     }
 }
 

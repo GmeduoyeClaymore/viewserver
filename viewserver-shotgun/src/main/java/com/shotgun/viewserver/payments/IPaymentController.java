@@ -13,28 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IPaymentController {
-    @ControllerAction(path = "createPaymentCustomer", isSynchronous = false)
-    HashMap<String, Object> createPaymentCustomer(@ActionParam(name = "emailAddress") String emailAddress, @ActionParam(name = "paymentCard") PaymentCard paymentCard);
+    HashMap<String, Object> createPaymentCustomer(String emailAddress, PaymentCard paymentCard);
 
-    @ControllerAction(path = "createPaymentAccount", isSynchronous = false)
-    String createPaymentAccount(@ActionParam(name = "user") User user,
-                                @ActionParam(name = "deliveryAddress") DeliveryAddress address,
-                                @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
+    HashMap<String, Object> createPaymentAccount(User user, DeliveryAddress address, PaymentBankAccount paymentBankAccount);
 
-    String createCharge(int totalPrice,
-                        String paymentMethodId,
-                        String fromCustomerUserId,
-                        String toCustomerUserId,
-                        String description);
+    String createCharge(int totalPrice, String paymentMethodId, String fromCustomerUserId, String toCustomerUserId, String description);
 
     SavedPaymentCard addPaymentCard(PaymentCard paymentCard);
 
     void deletePaymentCard(String cardId);
 
-    @ControllerAction(path = "getBankAccount", isSynchronous = false)
-    BankAccount getBankAccount();
-
-    @ControllerAction(path = "setBankAccount", isSynchronous = false)
-    void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount);
+    void setBankAccount(PaymentBankAccount paymentBankAccount);
 }
 

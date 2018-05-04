@@ -41,73 +41,8 @@ public class MockPaymentController extends BasePaymentController implements IPay
         return customer;
     }
 
-    @ControllerAction(path = "createPaymentAccount", isSynchronous = false)
-    public String createPaymentAccount(@ActionParam(name = "user") User user,
-                                       @ActionParam(name = "deliveryAddress") DeliveryAddress address,
-                                       @ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount) {
-        Account account = null;
-        Map<String, Object> accountParams = null;
-
-        try {
-            //https://stripe.com/docs/api#update_account
-            Map<String, Object> payoutSchedule = new HashMap<>();
-            payoutSchedule.put("delay_days", 7);
-            payoutSchedule.put("interval", "weekly");
-            payoutSchedule.put("weekly_anchor", "monday");
-
-            Map<String, Object> tosAcceptance = new HashMap<>();
-            tosAcceptance.put("date", (long) System.currentTimeMillis() / 1000L);
-            IPeerSession session = ControllerContext.Current().getPeerSession();
-            String ip = "127.0.0.1";
-            tosAcceptance.put("ip", ip);
-
-            Map<String, Object> dob = new HashMap<>();
-            Calendar c = Calendar.getInstance();
-            if (user.getDob() == null) {
-                throw new RuntimeException("No DOB specified");
-            }
-            c.setTime(user.getDob());
-            dob.put("day", c.get(Calendar.DAY_OF_MONTH));
-            dob.put("month", c.get(Calendar.MONTH));
-            dob.put("year", c.get(Calendar.YEAR));
-
-            Map<String, Object> entityAddress = new HashMap<>();
-            entityAddress.put("line1", address.getLine1());
-            entityAddress.put("city", address.getCity());
-            entityAddress.put("postal_code", address.getPostCode());
-
-            Map<String, Object> legalEntity = new HashMap<>();
-            legalEntity.put("address", entityAddress);
-            legalEntity.put("dob", dob);
-            legalEntity.put("first_name", user.getFirstName());
-            legalEntity.put("last_name", user.getLastName());
-            legalEntity.put("type", "individual");
-
-            Map<String, Object> externalAccount = new HashMap<>();
-            externalAccount.put("object", "bank_account");
-            externalAccount.put("account_number", paymentBankAccount.getAccountNumber().replaceAll("[^\\d]", ""));
-            externalAccount.put("routing_number", paymentBankAccount.getSortCode().replaceAll("[^\\d]", ""));
-            externalAccount.put("account_holder_type", "individual");
-            externalAccount.put("country", "GB");
-            externalAccount.put("currency", "gbp");
-
-            accountParams = new HashMap<>();
-            accountParams.put("type", "custom");
-            accountParams.put("country", "GB");
-            accountParams.put("default_currency", "gbp");
-            accountParams.put("email", user.getEmail());
-            accountParams.put("external_account", externalAccount);
-            accountParams.put("payout_schedule", payoutSchedule);
-            accountParams.put("tos_acceptance", tosAcceptance);
-            accountParams.put("legal_entity", legalEntity);
-            UUID uuid = UUID.randomUUID();
-
-            logger.debug("Added stripe account id {} params are {}", uuid.toString(), ControllerUtils.toString(accountParams));
-            return uuid.toString();
-        } catch (Exception e) {
-            logger.error(String.format("There was a problem creating the payment account \"%s\"", ControllerUtils.toString(accountParams)), e);
-            throw new RuntimeException(e);
-        }
+    protected String createAccount(Map<String, Object> params){
+        return UUID.randomUUID().toString();
     }
 
     public String createCharge(int totalPrice,
@@ -165,29 +100,6 @@ public class MockPaymentController extends BasePaymentController implements IPay
         }
     }
 
-
-    @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public void deletePaymentCard(@ActionParam(name = "cardId") String cardId) {
-        try {
-            String customerToken = getStripeCustomerToken();
-        } catch (Exception e) {
-            logger.error("There was a problem deleting the payment card", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @ControllerAction(path = "getBankAccount", isSynchronous = false)
-    public BankAccount getBankAccount() {
-        try {
-            BankAccount bankAccount = new BankAccount();
-            bankAccount.setAccount("XXXXXXX");
-            return bankAccount;
-        } catch (Exception e) {
-            logger.error("There was a problem getting the bank account", e);
-            throw new RuntimeException(e);
-        }
-    }
-
     private String getStripeAccountId() {
         User user = getUser();
         String stripeAccountId = user.getStripeAccountId();
@@ -196,8 +108,6 @@ public class MockPaymentController extends BasePaymentController implements IPay
         }
         return stripeAccountId;
     }
-
-
 
     public void setBankAccount(PaymentBankAccount paymentBankAccount) {
         try {

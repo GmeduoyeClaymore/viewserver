@@ -129,7 +129,7 @@ Feature: User registration scenarios
       | ~Action |  | ratings                                                                                                                                                   | ratingAvg | userId                                             |
       | RowAdd  |  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"} ,  "1" : {"fromUserId":"{client3_partnerController_registerPartner_result}"}} | 3.5       | {client1_partnerController_registerPartner_result} |
 
-  Scenario: Can add first payment card for user
+  Scenario: Can add payment card for user
     Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
       | Name        | Value                                    |
       | paymentCard | ref://json/payments/visaPaymentCard.json |
@@ -137,8 +137,39 @@ Feature: User registration scenarios
       | Name             | Type   | Value   |
       | dimension_userId | String | @userId |
     Then "client1" the following data is received eventually on report "userReport"
-      | ~Action | paymentCards    | userId                                             |
-      | RowAdd  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"} ,  "1" : {"fromUserId":"{client3_partnerController_registerPartner_result}"}} | {client1_partnerController_registerPartner_result} |
+      | ~Action | paymentCards                                                                                    | userId                                             |
+      | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
+
+  Scenario: Can add multiple payment cards for user
+    Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
+      | Name        | Value                                    |
+      | paymentCard | ref://json/payments/visaPaymentCard.json |
+    And "client1" controller "userController" action "addPaymentCard" invoked with parameters
+      | Name        | Value                                          |
+      | paymentCard | ref://json/payments/masterCardPaymentCard.json |
+    When "client1" subscribed to report "userReport" with parameters
+      | Name             | Type   | Value   |
+      | dimension_userId | String | @userId |
+    Then "client1" the following data is received eventually on report "userReport"
+      | ~Action | paymentCards                                                                                                                                                                                       | userId                                             |
+      | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}, "1" : {"brand": "Mastercard", "last4": "4444", "expMonth": 8, "expYear": 2022, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
+
+  Scenario: Can set default payment card for user
+    Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
+      | Name        | Value                                    |
+      | paymentCard | ref://json/payments/visaPaymentCard.json |
+    And "client1" controller "userController" action "addPaymentCard" invoked with parameters
+      | Name        | Value                                          |
+      | paymentCard | ref://json/payments/masterCardPaymentCard.json |
+    And "client1" controller "userController" action "setDefaultPaymentCard" invoked with parameters
+      | Name   | Value  |
+      | cardId | "12345 |
+    When "client1" subscribed to report "userReport" with parameters
+      | Name             | Type   | Value   |
+      | dimension_userId | String | @userId |
+    Then "client1" the following data is received eventually on report "userReport"
+      | ~Action | paymentCards                                                                                                                                                                                       | userId                                             |
+      | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}, "1" : {"brand": "MasterCard", "last4": "4444", "expMonth": 8, "expYear": 2022, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
 
 
   Scenario: Can delete payment card for user

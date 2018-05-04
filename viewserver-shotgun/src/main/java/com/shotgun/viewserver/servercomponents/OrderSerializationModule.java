@@ -19,6 +19,7 @@ import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.OrderProduct;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.order.types.OrderContentType;
+import com.shotgun.viewserver.user.SavedBankAccount;
 import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.UserRating;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
@@ -40,6 +41,7 @@ public class OrderSerializationModule extends SimpleModule {
         registerDynamicClass(OrderProduct.class);
         registerDynamicClass(UserRating.class);
         registerDynamicClass(SavedPaymentCard.class);
+        registerDynamicClass(SavedBankAccount.class);
         registerDynamicClass(DeliveryAddress.class);
         registerDynamicClass(Dimensions.class);
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
