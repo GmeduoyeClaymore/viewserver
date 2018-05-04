@@ -49,12 +49,12 @@ const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated
 };
 
 
-const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating, dispatch}) => {
-  return <Row>{partnerResponses.filter( res => !!~VISIBLE_STATUSES.indexOf(res.responseStatus)).map(
-    response  => {
+const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating, dispatch, showAll}) => {
+  return <Row>{partnerResponses.filter( res => showAll || !!~VISIBLE_STATUSES.indexOf(res.responseStatus)).map(
+    (response,idx)  => {
       const {partnerId, latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
-      return <Row style={styles.view}>
+      return <Row key={idx} style={styles.view}>
           <Image  resizeMode='stretch' source={{uri: imageUrl}} style={styles.partnerImage}/>
           <Col  size={20} style={{marginLeft: 10}}>
           <Text style={{...styles.subHeading,marginBottom: 5}}>{firstname + ' ' + lastname}</Text>
@@ -68,6 +68,54 @@ const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentT
           </Col>
       </Row>
     })}</Row>
+}
+
+class OrderNegotiationPanel extends Component{
+  constructor(props) {
+    super(props);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+    this.state = {
+      amount: undefined,
+      showAll: false
+    }
+  }
+
+
+  updateAmountInState = (amount) => {
+    const {order} = this.props;
+    super.setState({amount});
+  }
+
+  toggleShow = () => {
+    const {showAll} = this.state;
+    super.setState({showAll: !showAll});
+  }
+
+  clearAmount = (amount) => {
+    this.updateAmountInState(undefined);
+    if(this.amountInput){
+      this.amountInput.clear();
+    }
+  }
+
+  render(){
+    const {busy, order, orderId, client, partnerResponses, errors, history, busyUpdating, dispatch} = this.props;
+    if(!order){
+      return null;
+    }
+    return [<Grid style={{paddingLeft: 30, paddingTop: 10, marginBottom: 10}}>
+            <Col size={32}>
+              <Text style={{...styles.heading, marginTop:10}}>Advertised Rate</Text>
+              <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
+              <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChange={this.updateAmountInState} placeholder="Enter updated amount"/>
+            </Col>
+            {this.state.amount ? <Col size={20}>
+              <UpdateOrderPrice showAll={this.state.showAll} style={{marginTop:17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
+            </Col> : null}
+          </Grid>
+          ,<PartnerAcceptRejectControl dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>, 
+        <Row style={{paddingLeft: 25}} onPress={this.toggleShow}><Text>{this.state.showAll ? "Hide rejected": "Show all..."}</Text></Row>];
+  }
 }
 
 class CustomerOrderDetail extends Component{
@@ -93,18 +141,6 @@ class CustomerOrderDetail extends Component{
     }
   }
 
-  updateAmountInState = (amount) => {
-    const {order} = this.props;
-    super.setState({amount});
-  }
-
-  clearAmount = (amount) => {
-    this.updateAmountInState(undefined);
-    if(this.amountInput){
-      this.amountInput.clear();
-    }
-  }
-
   render() {
     const {busy, order, orderId, client, partnerResponses, errors, history, busyUpdating, dispatch} = this.props;
     const {resources} = this;
@@ -120,17 +156,7 @@ class CustomerOrderDetail extends Component{
       <Content>
         <ErrorRegion errors={errors}/>
         <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-        <Grid style={{paddingLeft: 30, paddingTop: 10, marginBottom: 10}}>
-          <Col size={32}>
-            <Text style={{...styles.heading, marginTop:10}}>Advertised Rate</Text>
-            <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
-            <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChange={this.updateAmountInState} placeholder="Enter updated amount"/>
-          </Col>
-          {this.state.amount ? <Col size={20}>
-            <UpdateOrderPrice style={{marginTop:17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
-          </Col> : null}
-        </Grid>
-        <PartnerAcceptRejectControl dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
+        <OrderNegotiationPanel {...this.props}/>
         <MapDetails order={order} client={client}/>
         <ListItem padded style={{borderBottomWidth: 0}}>
           <Grid>
