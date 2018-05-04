@@ -89,7 +89,9 @@ public interface NegotiatedOrder  extends BasicOrder {
         }
         for(NegotiationResponse fill : responses){
             if(!fill.getPartnerId().equals(partnerId)){
-                fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.DECLINED);
+                if(fill.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)) {
+                    fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.DECLINED);
+                }
             }else{
                 fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.ACCEPTED);
             }
