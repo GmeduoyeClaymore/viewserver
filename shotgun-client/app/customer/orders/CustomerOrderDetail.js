@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'custom-redux';
 import {Image} from 'react-native';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem} from 'native-base';
-import {Icon, LoadingScreen, ErrorRegion, SpinnerButton} from 'common/components';
+import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import MapDetails from './MapDetails';
@@ -66,14 +66,7 @@ class CustomerOrderDetail extends Component{
         <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
         <CustomerNegotiationPanel {...this.props}/>
         <CustomerStagedPaymentPanel {...this.props}/>
-        <MapDetails order={order} client={client}/>
-        <ListItem padded style={{borderBottomWidth: 0}}>
-          <Grid>
-            <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
-            <Row><Text>{order.description}</Text></Row>
-            {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
-          </Grid>
-        </ListItem>
+        <OrderSummary order={order} client={client}/>
       </Content>
     </Container>;
   }

@@ -42,7 +42,6 @@ class PartnerLanding extends Component {
     dispatch(partnerServicesRegistrationAction(client, userId));
     dispatch(customerServicesRegistrationAction(client));
     dispatch(watchPosition());
-    dispatch(getBankAccount());
   }
 
   render() {

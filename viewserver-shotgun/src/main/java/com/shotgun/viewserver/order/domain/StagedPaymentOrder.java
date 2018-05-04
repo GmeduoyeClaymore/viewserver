@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.domain;
 
+import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.order.types.OrderEnumBase;
 import com.shotgun.viewserver.order.types.TransitionEnumBase;
@@ -63,6 +64,7 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
             throw new RuntimeException("Cannot start payment stage  \"" + paymentStageId + "\" as order already contains a started payment stage");
         }
         stage.transitionTo(OrderPaymentStage.PaymentStageStatus.Started);
+        this.transitionTo(OrderStatus.INPROGRESS);
         stage.set("lastUpdated",new Date());
     }
 
@@ -74,7 +76,7 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
 
     default void payForPaymentStage(String paymentStageId, String charge){
         OrderPaymentStage stage = getOrderPaymentStage(paymentStageId);
-        stage.transitionTo(OrderPaymentStage.PaymentStageStatus.Complete);
+        stage.transitionTo(OrderPaymentStage.PaymentStageStatus.Paid);
         stage.set("paymentId",charge);
         stage.set("lastUpdated",new Date());
     }

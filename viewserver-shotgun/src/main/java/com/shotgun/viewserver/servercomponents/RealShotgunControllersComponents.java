@@ -13,6 +13,7 @@ import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.messaging.MockMessagingController;
 import com.shotgun.viewserver.payments.IPaymentController;
+import com.shotgun.viewserver.payments.MockPaymentController;
 import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
@@ -55,7 +56,8 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IPaymentController getPaymentController() {
-        return new PaymentController(stripeApiKey, databaseUpdater);
+        //return new PaymentController(stripeApiKey, databaseUpdater);
+        return new MockPaymentController(databaseUpdater);
     }
 
     @Override
