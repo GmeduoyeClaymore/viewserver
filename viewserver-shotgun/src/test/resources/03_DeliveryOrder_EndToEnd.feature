@@ -138,11 +138,11 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                       |
+	  | requiredDate | "{now_date+2}"                                       |
 	Given "client1" controller "deliveryOrderController" action "rejectResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
@@ -162,7 +162,7 @@ Feature: Delivery order scenarios
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                       |
+	  | requiredDate | "{now_date+2}"                                       |
 	Given "client3" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
@@ -178,7 +178,7 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
@@ -225,7 +225,7 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client2" controller "deliveryOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                                |
 	  | orderId | {client1_deliveryOrderController_createOrder_result} |
@@ -244,7 +244,7 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	When "client2" subscribed to report "orderRequest" with parameters
 	  | Name                    | Type    | Value  |
 	  | dimension_contentTypeId | Integer | 1      |
@@ -276,11 +276,11 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                       |
+	  | requiredDate | "{now_date+2}"                                       |
 	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
@@ -305,11 +305,11 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                       |
+	  | requiredDate | "{now_date+2}"                                       |
 	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
@@ -337,11 +337,11 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                       |
+	  | requiredDate | "{now_date+2}"                                       |
 	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
@@ -377,7 +377,7 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
@@ -400,7 +400,7 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                |
 	  | orderId       | {client1_deliveryOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                       |
+	  | requiredDate | "{now_date+1}"                                       |
 	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |

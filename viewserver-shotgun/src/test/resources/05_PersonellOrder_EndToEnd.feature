@@ -64,8 +64,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client2" subscribed to report "orderResponses" with parameters
       | Name                         | Type   | Value     |
       | dimension_partnerId          | String | @userId   |
@@ -106,8 +106,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client2" controller "personellOrderController" action "cancelResponsePartner" invoked with parameters
       | Name    | Value                                                 |
       | orderId | {client1_personellOrderController_createOrder_result} |
@@ -126,8 +126,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     When "client2" subscribed to report "orderRequest" with parameters
       | Name                    | Type    | Value  |
       | dimension_contentTypeId | Integer | 5      |
@@ -159,13 +159,13 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client3" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+2}"                                        |
-      | price         | 100                                                   |
+      | requiredDate | "{now_date+2}"                                        |
+      | amount         | 100                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |
@@ -190,13 +190,13 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client3" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+2}"                                        |
-      | price         | 100                                                   |
+      | requiredDate | "{now_date+2}"                                        |
+      | amount         | 100                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |
@@ -224,13 +224,13 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client3" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+2}"                                        |
-      | price         | 100                                                   |
+      | requiredDate | "{now_date+2}"                                        |
+      | amount         | 100                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |
@@ -266,8 +266,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |
@@ -303,8 +303,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |
@@ -351,8 +351,8 @@ Feature: Personell order scenarios
     Given "client2" controller "personellOrderController" action "respondToOrder" invoked with parameters
       | Name          | Value                                                 |
       | orderId       | {client1_personellOrderController_createOrder_result} |
-      | estimatedDate | "{now_date+1}"                                        |
-      | price         | 105                                                   |
+      | requiredDate | "{now_date+1}"                                        |
+      | amount         | 105                                                   |
     Given "client1" controller "personellOrderController" action "acceptResponse" invoked with parameters
       | Name      | Value                                                 |
       | orderId   | {client1_personellOrderController_createOrder_result} |

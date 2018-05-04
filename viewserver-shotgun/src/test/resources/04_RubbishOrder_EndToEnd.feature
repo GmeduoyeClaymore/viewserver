@@ -65,8 +65,8 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
@@ -83,8 +83,8 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client2" controller "rubbishOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                               |
 	  | orderId | {client1_rubbishOrderController_createOrder_result} |
@@ -103,8 +103,8 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	When "client2" subscribed to report "orderRequest" with parameters
 	  | Name                    | Type    | Value  |
 	  | dimension_contentTypeId | Integer | 2      |
@@ -136,12 +136,12 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client3" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                      |
+	  | requiredDate | "{now_date+2}"                                      |
 	  | price         | 100                                                 |
 	Given "client1" controller "rubbishOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                               |
@@ -167,12 +167,12 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client3" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                      |
+	  | requiredDate | "{now_date+2}"                                      |
 	  | price         | 100                                                 |
 	Given "client1" controller "rubbishOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                               |
@@ -201,12 +201,12 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client3" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                      |
+	  | requiredDate | "{now_date+2}"                                      |
 	  | price         | 100                                                 |
 	Given "client1" controller "rubbishOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                               |
@@ -243,8 +243,8 @@ Feature: Rubbish order scenarios
 	Given "client2" controller "rubbishOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                               |
 	  | orderId       | {client1_rubbishOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                      |
-	  | price         | 105                                                 |
+	  | requiredDate | "{now_date+1}"                                      |
+	  | amount         | 105                                                 |
 	Given "client1" controller "rubbishOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                               |
 	  | orderId   | {client1_rubbishOrderController_createOrder_result} |

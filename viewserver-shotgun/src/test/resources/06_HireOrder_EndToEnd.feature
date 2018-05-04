@@ -64,8 +64,8 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
@@ -82,8 +82,8 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client2" controller "hireOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
@@ -102,8 +102,8 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	When "client2" subscribed to report "orderRequest" with parameters
 	  | Name                    | Type    | Value  |
 	  | dimension_contentTypeId | Integer | 3      |
@@ -135,13 +135,13 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                   |
-	  | price         | 100                                              |
+	  | requiredDate | "{now_date+2}"                                   |
+	  | amount         | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -166,13 +166,13 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                   |
-	  | price         | 100                                              |
+	  | requiredDate | "{now_date+2}"                                   |
+	  | amount         | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -200,13 +200,13 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                   |
-	  | price         | 100                                              |
+	  | requiredDate | "{now_date+2}"                                   |
+	  | amount         | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -242,8 +242,8 @@ Feature: Hire order scenarios
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+2}"                                   |
-	  | price         | 100                                              |
+	  | requiredDate | "{now_date+2}"                                   |
+	  | amount         | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -255,13 +255,13 @@ Feature: Hire order scenarios
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
 	Given "client1" controller "hireOrderController" action "createDeliveryOrder" invoked with parameters
-	  | Name            | Value                                                            |
+	  | Name            | Value                                                              |
 	  | order           | {client1_hireOrderController_generateOutboundDeliveryOrder_result} |
-	  | paymentMethodId | XXXX                                                             |
+	  | paymentMethodId | XXXX                                                               |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                    |
 	  | orderId       | {client1_hireOrderController_createDeliveryOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                           |
+	  | requiredDate | "{now_date+1}"                                           |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name    | Value                                                    |
 	  | orderId | {client1_hireOrderController_createDeliveryOrder_result} |
@@ -281,13 +281,13 @@ Feature: Hire order scenarios
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
 	Given "client1" controller "hireOrderController" action "createDeliveryOrder" invoked with parameters
-	  | Name            | Value                                                           |
+	  | Name            | Value                                                             |
 	  | order           | {client1_hireOrderController_generateInboundDeliveryOrder_result} |
-	  | paymentMethodId | XXXX                                                            |
+	  | paymentMethodId | XXXX                                                              |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                                    |
 	  | orderId       | {client1_hireOrderController_createDeliveryOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                           |
+	  | requiredDate | "{now_date+1}"                                           |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name    | Value                                                    |
 	  | orderId | {client1_hireOrderController_createDeliveryOrder_result} |
@@ -312,8 +312,8 @@ Feature: Hire order scenarios
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
 	  | Name          | Value                                            |
 	  | orderId       | {client1_hireOrderController_createOrder_result} |
-	  | estimatedDate | "{now_date+1}"                                   |
-	  | price         | 105                                              |
+	  | requiredDate | "{now_date+1}"                                   |
+	  | amount         | 105                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
