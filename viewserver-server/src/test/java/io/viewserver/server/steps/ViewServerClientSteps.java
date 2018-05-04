@@ -243,7 +243,7 @@ public class ViewServerClientSteps {
             String paramName = record.get("Name");
             String paramValue = record.get("Value");
 
-            paramValue = TestUtils.replaceReference(paramValue);
+            paramValue = TestUtils.replaceReference(paramValue) + "";
             result.put(paramName,  clientContext.replaceParams(paramValue));
         }
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);

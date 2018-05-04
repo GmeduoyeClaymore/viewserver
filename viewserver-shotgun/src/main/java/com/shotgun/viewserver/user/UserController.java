@@ -74,7 +74,7 @@ public class UserController implements UserTransformationController {
                 }, User.class);
     }
 
-    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
+    @ControllerAction(path = "addPaymentCard", isSynchronous = true)
     public void addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard){
         this.transform(getUserId(),
                 user -> {
