@@ -30,6 +30,17 @@ public interface StagedPaymentController extends OrderTransformationController, 
         return stagedPaymentId.get();
     }
 
+    @ControllerAction(path = "removePaymentStage", isSynchronous = true)
+    default void removePaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        this.transform(
+                orderId,
+                order -> {
+                    order.removePaymentStage(paymentStageId);
+                    return true;
+                },
+                StagedPaymentOrder.class
+        );
+    }
 
     @ControllerAction(path = "startPaymentStage", isSynchronous = true)
     default void startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {

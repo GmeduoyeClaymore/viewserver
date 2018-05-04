@@ -46,6 +46,10 @@ export class ValidatingInput extends Component {
     this.setState({touched: true});
   }
 
+  clearTouched(){
+    this.setState({touched: false});
+  }
+
   getPlaceHolder(){
     const {placeholder} = this.props;
     const errorMsg = this.state.touched === true ? this.state.error : '';

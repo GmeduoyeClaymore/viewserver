@@ -11,6 +11,7 @@ import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
+import com.shotgun.viewserver.messaging.MockMessagingController;
 import com.shotgun.viewserver.payments.MockPaymentController;
 import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.payments.PaymentControllerImpl;
@@ -65,7 +66,8 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IMessagingController getMessagingController() {
-        return new MessagingController(messagingApiKey, this.databaseUpdater);
+        //return new MessagingController(messagingApiKey, this.databaseUpdater);
+        return new MockMessagingController(databaseUpdater);
     }
 
     @Override

@@ -84,7 +84,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
     }
 
     @ControllerAction(path = "logDayComplete", isSynchronous = true)
-    public void logDayComplete(@ActionParam(name = "orderId")String orderId){
+    public String logDayComplete(@ActionParam(name = "orderId")String orderId){
         AtomicReference<OrderPaymentStage> paymentStage = new AtomicReference<>();
         this.transform(
                 orderId,
@@ -102,6 +102,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
                 },
                 PersonellOrder.class
         );
+        return paymentStage.get().getId();
     }
 
     @Override

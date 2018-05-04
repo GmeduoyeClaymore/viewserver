@@ -63,6 +63,14 @@ export const addPaymentStage = ({orderId, orderContentTypeId, amount, name, desc
   return invokeDaoCommand('orderDao', 'addPaymentStage', {orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith);
 };
 
+export const removePaymentStage = ({orderId, paymentStageId, orderContentTypeId}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'removePaymentStage', {orderId, paymentStageId, orderContentTypeId}, continueWith);
+};
+
+export const payForPaymentStage = ({orderId, paymentStageId, orderContentTypeId}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'payForPaymentStage', {orderId, paymentStageId, orderContentTypeId}, continueWith);
+};
+
 export const cancelOrder = ({orderId, orderContentTypeId}, continueWith) => {
   return invokeDaoCommand('orderDao', 'cancelOrder', {orderId, orderContentTypeId}, continueWith);
 };
@@ -78,4 +86,5 @@ export const acceptResponse = ({orderId, partnerId, orderContentTypeId}, continu
 export const updateOrderAmount = ({orderId, amount, orderContentTypeId}, continueWith) => {
   return invokeDaoCommand('orderDao', 'updateOrderAmount', {orderId, amount, orderContentTypeId}, continueWith);
 };
+
 

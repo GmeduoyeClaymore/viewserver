@@ -45,6 +45,7 @@ export default class OrdersDao{
     invariant(orderContentTypeId, 'Order content type should be defined');
     const resources = resourceDictionary.resolve(orderContentTypeId);
     invariant(resources, 'Unable to find resource dictionary for content type ' + orderContentTypeId);
+    invariant(resources.Controller, 'Unable to find controller within resource dictionary');
     return  resources.Controller;
   }
 
@@ -89,9 +90,24 @@ export default class OrdersDao{
   };
 
   addPaymentStage = async ({orderId, orderContentTypeId, amount, name, description, paymentStageType}) =>  {
-    const {controller} = this.getControllerForOrder(orderContentTypeId);
+    const controller = this.getControllerForOrder(orderContentTypeId);
     const paymentStageId = await this.client.invokeJSONCommand(controller, 'addPaymentStage', {orderId, amount, name, description, paymentStageType});
     Logger.info(`Order payment stage ${paymentStageId} created`);
+    return paymentStageId;
+  }
+
+  removePaymentStage = async ({orderId, paymentStageId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'removePaymentStage', {orderId, paymentStageId});
+    Logger.info(`Order payment stage ${paymentStageId} removed`);
+    return paymentStageId;
+  }
+
+
+  payForPaymentStage = async ({orderId, paymentStageId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'payForPaymentStage', {orderId, paymentStageId});
+    Logger.info(`Order payment stage ${paymentStageId} removed`);
     return paymentStageId;
   }
 }

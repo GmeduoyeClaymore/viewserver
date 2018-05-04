@@ -7,6 +7,7 @@ import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.viewserver.core.Utils.fromArray;
 import static io.viewserver.core.Utils.toArray;
@@ -84,6 +85,11 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
             throw new RuntimeException("This order doesn't contain a payment stage " + paymentStageId);
         }
         return first.get();
+    }
+
+    default void removePaymentStage(String paymentStageId){
+        List<OrderPaymentStage> stages = fromArray(getPaymentStages()).filter(c -> !c.getId().equals(paymentStageId)).collect(Collectors.toList());
+        this.set("paymentStages",toArray(stages, OrderPaymentStage[]::new));
     }
 }
 
