@@ -8,12 +8,9 @@ export default class CustomerDao{
     this.name = 'customerDao';
     this.subject = new Rx.Subject();
     this.optionsSubject = new Rx.Subject();
-    this.rejectPartner = this.rejectPartner.bind(this);
     this.updateCustomer = this.updateCustomer.bind(this);
-    this.cancelOrder = this.cancelOrder.bind(this);
     this.ratePartner = this.ratePartner.bind(this);
     this.callPartner = this.callPartner.bind(this);
-    this.updateOrderPrice = this.updateOrderPrice.bind(this);
   }
 
   async updateCustomer({customer}){
@@ -21,22 +18,6 @@ export default class CustomerDao{
     const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: customer});
     Logger.info(`Customer ${customerId} updated`);
     return customerId;
-  }
-
-  async updateOrderPrice({orderId, price}) {
-    await this.client.invokeJSONCommand('customerController', 'updateOrderPrice', {orderId, price});
-  }
-
-  async cancelOrder({orderId}){
-    await this.client.invokeJSONCommand('customerController', 'cancelOrder', orderId);
-  }
-
-  async rejectPartner({orderId}){
-    await this.client.invokeJSONCommand('customerController', 'rejectPartner', orderId);
-  }
-
-  async customerCompleteOrder({orderId}){
-    await this.client.invokeJSONCommand('customerController', 'customerCompleteOrder', orderId);
   }
 
   async callPartner({orderId}){

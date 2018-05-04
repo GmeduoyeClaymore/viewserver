@@ -11,7 +11,8 @@ import moment from 'moment';
 import {cancelOrder, rejectResponse, acceptResponse, updateOrderAmount} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-const VISIBLE_STATUSES = ['RESPONDED', 'ACCEPTED'];
+const ACTIVE_NEGOTIATION_STATUSES = ['RESPONDED', 'ACCEPTED'];
+const CAN_UPDATE_AMOUNT_STATUSES = ['PLACED'];
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -50,11 +51,11 @@ const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated
 
 
 const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating, dispatch, showAll}) => {
-  return <Row>{partnerResponses.filter( res => showAll || !!~VISIBLE_STATUSES.indexOf(res.responseStatus)).map(
+  return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
     (response,idx)  => {
       const {partnerId, latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
-      return <Row key={idx} style={styles.view}>
+      return <Row key={idx} style={{...styles.view, marginBottom:10}}>
           <Image  resizeMode='stretch' source={{uri: imageUrl}} style={styles.partnerImage}/>
           <Col  size={20} style={{marginLeft: 10}}>
           <Text style={{...styles.subHeading,marginBottom: 5}}>{firstname + ' ' + lastname}</Text>
@@ -63,11 +64,11 @@ const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentT
             <Text>{moment(parseInt(estimatedDate)).format('ddd Do MMMM, h:mma')}</Text>
           </Col>
           <Col size={20}>
-            <AcceptPartner  busyUpdating={busyUpdating} style={{marginBottom:10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>
-            <RejectPartner  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>
+            <AcceptPartner disabled={'RESPONDED' !== responseStatus} busyUpdating={busyUpdating} style={{marginBottom:10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>
+            <RejectPartner disabled={'RESPONDED' !== responseStatus}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>
           </Col>
       </Row>
-    })}</Row>
+    })}</Col>
 }
 
 class OrderNegotiationPanel extends Component{
@@ -103,18 +104,19 @@ class OrderNegotiationPanel extends Component{
     if(!order){
       return null;
     }
+    const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
     return [<Grid style={{paddingLeft: 30, paddingTop: 10, marginBottom: 10}}>
             <Col size={32}>
               <Text style={{...styles.heading, marginTop:10}}>Advertised Rate</Text>
               <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
-              <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChange={this.updateAmountInState} placeholder="Enter updated amount"/>
+              { canUpdateOrderPrice ? <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChange={this.updateAmountInState} placeholder="Enter updated amount"/> : null}
             </Col>
-            {this.state.amount ? <Col size={20}>
-              <UpdateOrderPrice showAll={this.state.showAll} style={{marginTop:17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
+            {this.state.amount && canUpdateOrderPrice? <Col size={20}>
+              <UpdateOrderPrice style={{marginTop:17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
             </Col> : null}
           </Grid>
-          ,<PartnerAcceptRejectControl dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>, 
-        <Row style={{paddingLeft: 25}} onPress={this.toggleShow}><Text>{this.state.showAll ? "Hide rejected": "Show all..."}</Text></Row>];
+          ,<PartnerAcceptRejectControl showAll={this.state.showAll}  dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>, 
+        <Row style={{paddingLeft: 25}} onPress={this.toggleShow}><Text>{this.state.showAll ? "Hide rejected": "Show rejected"}</Text></Row>];
   }
 }
 

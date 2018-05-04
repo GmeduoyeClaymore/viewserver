@@ -12,9 +12,10 @@ export class SpinnerButton extends Component {
   render() {
     const {busy = false} = this.props;
     const disabled = this.props.disabled || busy;
+    const {style = {}, ...rest} = this.props;
 
     return (
-      <Button {...this.props} disabled={disabled}>
+      <Button {...rest} disabled={disabled} style={{...style, opacity: disabled ? 0.1 : 1}}>
         {this.props.children}
         {busy ? <Spinner size={IS_ANDROID ? 24 : 1} color={shotgun.btnDisabledClr} style={styles.spinner}/> : null}
       </Button>
