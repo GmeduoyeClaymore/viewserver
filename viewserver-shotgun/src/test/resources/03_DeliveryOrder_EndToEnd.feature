@@ -216,7 +216,7 @@ Feature: Delivery order scenarios
 	  | dimension_customerUserId | String | @userId         |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                              | orderDetails                         | orderContentTypeId | orderLocation                                | status | partnerResponses                                                                            |
-	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED | {"{client2_partnerController_registerPartner_result}" : {"partnerOrderStatus":"RESPONDED"}} |
+	  | RowAdd  |               | {client1_deliveryOrderController_createOrder_result} | ref://json/orders/deliveryOrder.json | 1                  | ref://json/orders/deliveryOrderLocation.json | PLACED | {"0" : {"partnerOrderStatus":"RESPONDED", "spreadPartnerId" : "{client2_partnerController_registerPartner_result}"}} |
 
   Scenario: Cancelling Response to order removes order from the responses list
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters

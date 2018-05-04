@@ -6,7 +6,7 @@ import {ProductImages} from 'common/assets/img/Images';
 
 const onChangeProduct = ({order, product, setState}) => {
   const {productId, name} = product;
-  setState({ selectedProduct: product, order: {...order, orderProduct: product, title: name, productId}});
+  setState({ selectedProduct: product, order: {...order, amount: product.price, orderProduct: product, title: name, productId}});
 };
 
 const ProductListItem = ({product, order, setState, selectedProduct = {}, index: i, dispatch}) => {

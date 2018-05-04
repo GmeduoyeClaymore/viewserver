@@ -158,7 +158,7 @@ class ControllerView extends Component{
             onRowClick={this.onRowClick.bind(this)}
             paginationWaitingView={LoadingScreen}
             emptyView={noItems}
-            pageSize={10}
+            pageSize={50}
             headerView={headerView}/></ErrorRegion>;
   }
 

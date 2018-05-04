@@ -93,8 +93,8 @@ public class JsonSummary implements ISummary {
     @Override
     public void onGroupEnter(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
-        Object bucketValue = ColumnHolderUtils.getValue(bucketHolder, rowId);
-        rowMap.put(bucketValue+"", rowId);
+
+        rowMap.put(groupId+"", rowId);
         context.markDirty(groupId);
     }
 
@@ -102,13 +102,14 @@ public class JsonSummary implements ISummary {
     public void onGroupLeave(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
         Object bucketValue = ColumnHolderUtils.getPreviousValue(bucketHolder, rowId);
-        rowMap.remove(bucketValue+"");
+        rowMap.remove(groupId + "");
         context.markDirty(groupId);
     }
 
     @Override
     public void onRowUpdate(int groupId, int rowId) {
         context.markDirty(groupId);
+
     }
 
     @Override
@@ -137,7 +138,7 @@ public class JsonSummary implements ISummary {
 
     private String getJson(int row) {
         jsonBuilder.setLength(0);
-        jsonBuilder.append('{');
+        jsonBuilder.append('[');
         TreeMap<Object, Integer> rowMap = rowMaps.get(row);
         boolean first = true;
         for (Map.Entry<Object, Integer> entry : rowMap.entrySet()) {
@@ -145,16 +146,17 @@ public class JsonSummary implements ISummary {
             if(bucketValue == null || "".equals(bucketValue) || "null".equals(bucketValue)){
                 continue;
             }
+
             int sourceRowId = entry.getValue();
+            if(ColumnHolderUtils.getValue(bucketHolder, sourceRowId) == null){
+                continue;
+            }
+
             if (!first) {
                 jsonBuilder.append(',');
             } else {
                 first = false;
             }
-            jsonBuilder.append('"');
-            jsonBuilder.append(String.format("%s",bucketValue));
-            jsonBuilder.append('"');
-            jsonBuilder.append(':');
             jsonBuilder.append('{');
             boolean isFirst = true;
             for (ColumnHolder valueHolder : valueHolders) {
@@ -171,7 +173,7 @@ public class JsonSummary implements ISummary {
             }
             jsonBuilder.append('}');
         }
-        jsonBuilder.append('}');
+        jsonBuilder.append(']');
         return jsonBuilder.toString();
     }
 

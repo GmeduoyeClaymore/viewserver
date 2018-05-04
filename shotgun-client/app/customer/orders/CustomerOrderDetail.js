@@ -48,7 +48,7 @@ const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, busyUpdating, d
 };
 
 
-const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating}) => {
+const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderContentTypeId, busyUpdating, dispatch}) => {
   return <Row>{partnerResponses.map(
     response  => {
       const {partnerId, latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, partnerOrderStatus} = response;
@@ -108,7 +108,7 @@ class CustomerOrderDetail extends Component{
         <PartnerAcceptRejectControl dispatch={dispatch} orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
         <Grid>
           <Row style={styles.row}><Text style={styles.heading}>Advertised Rate</Text></Row>
-          <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.isFixedPrice ?  '' : 'a day'}/>}</Row>
+          <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ' total'}/>}</Row>
         </Grid>
         <Grid>
           <Row style={styles.row}><CurrencyInput dispatch={dispatch} onValueChange={this.updateAmountInState}/><UpdateOrderPrice orderContentTypeId={order.orderContentTypeId}  dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/></Row>

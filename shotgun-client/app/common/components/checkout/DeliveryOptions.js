@@ -89,10 +89,10 @@ class DeliveryOptions extends Component {
                 <Col>
                   <CurrencyInput onValueChange={this.setAmount}/>
                 </Col>
-                <Button style={styles.periodButton} light={order.paymentType === 'DayRate'} onPress={() => this.setPaymentType('DayRate')}>
+                <Button style={styles.periodButton} light={order.paymentType !== 'DayRate'} onPress={() => this.setPaymentType('DayRate')}>
                   <Text style={styles.buttonText}>Day Rate</Text>
                 </Button>
-                <Button style={styles.periodButton} light={order.paymentType === 'Fixed'} onPress={() => this.setPaymentType('DayRate')}>
+                <Button style={styles.periodButton} light={order.paymentType !== 'Fixed'} onPress={() => this.setPaymentType('Fixed')}>
                   <Text style={styles.buttonText}>Fixed Price</Text>
                 </Button>
               </Row>
@@ -103,7 +103,7 @@ class DeliveryOptions extends Component {
         <ListItem padded style={{borderBottomWidth: 0}}>
           <CardIcon brand={payment.brand} /><Text>Use card</Text>
           <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(c, i) => this.setCard(paymentCards[i])}>
-            {paymentCards.map(c => <Picker.Item key={c.id} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
+            {paymentCards.map((c,idx) => <Picker.Item key={idx} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
           </Picker>
         </ListItem>
         <Text note style={styles.noteText}>You will not be charged until the job has been completed</Text>
@@ -118,8 +118,7 @@ class DeliveryOptions extends Component {
 }
 
 const validationSchema = {
-  requiredDate: yup.date().required(),
-  amount: yup.number().min(1).required()
+  requiredDate: yup.date().required()
 };
 
 const datePickerOptions = {

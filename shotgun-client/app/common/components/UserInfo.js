@@ -13,7 +13,9 @@ export class UserInfo extends Component{
 
   render(){
     const {user} = this.props;
-
+    if (!user){
+      return null;
+    }
     return <Grid>
       <Col>
         <Col>

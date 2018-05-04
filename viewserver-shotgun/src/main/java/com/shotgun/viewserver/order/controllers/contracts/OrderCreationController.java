@@ -36,6 +36,7 @@ public interface OrderCreationController {
         String orderId = ControllerUtils.generateGuid();
 
         order.set("orderId", orderId);
+        order.set("customerUserId", customerId);
 
         Record orderRecord = new Record();
 

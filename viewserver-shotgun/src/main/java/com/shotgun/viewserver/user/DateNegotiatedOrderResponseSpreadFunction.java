@@ -26,7 +26,7 @@ public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunctio
 
 
     public static String NAME = "getPartnerResponseIdsFromOrderDetail";
-    public static String PARTNER_ID_COLUMN = "partnerId";
+    public static String PARTNER_ID_COLUMN = "spreadPartnerId";
     public static String ESTIMATED_DATE_COLUMN = "estimatedDate";
     public static String PRICE_COLUMN = "price";
     public static String ORDER_DETAIL_WITHOUT_RESPONSES = "orderDetailWithoutResponses";

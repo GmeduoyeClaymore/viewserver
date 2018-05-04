@@ -47,7 +47,7 @@ public class LoginController {
     }
 
     @ControllerAction(path = "login", isSynchronous = true)
-    public String login(@ActionParam(name = "email", exampleValue = "1John.Customer@email.com")String email, @ActionParam(name = "password", exampleValue = "customer")String password){
+    public String login(@ActionParam(name = "email", exampleValue = "Steven.Brown@email.com")String email, @ActionParam(name = "password", exampleValue = "driver")String password){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         int userRowId = getUserRow(userTable, email.toLowerCase());

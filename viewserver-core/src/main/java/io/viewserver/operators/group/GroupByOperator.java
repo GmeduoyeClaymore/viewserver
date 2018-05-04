@@ -591,6 +591,7 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
         @Override
         public void markDirty(int groupId) {
             output.handleUpdate(groupId);
+            output.getCurrentChanges().markDirty(groupId,resultColumn.getColumnId());
         }
 
         @Override
