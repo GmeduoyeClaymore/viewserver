@@ -13,7 +13,6 @@ export const DELIVERY_ORDER_INITIAL_STATE =  {
   payment: undefined
 };
 
-/*
 export const RUBBISH_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
@@ -26,7 +25,6 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
   },
   payment: undefined
 };
-*/
 
 export const PERSONELL_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
@@ -76,6 +74,7 @@ export const PERSONELL_ORDER_INITIAL_STATE =  {
 };
 */
 
+/*
 
 export const RUBBISH_ORDER_INITIAL_STATE =  {
   selectedContentType: {
@@ -118,6 +117,7 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
   },
   payment: undefined
 };
+*/
 
 /*export const INITIAL_STATE = {
   totalPrice: undefined,
