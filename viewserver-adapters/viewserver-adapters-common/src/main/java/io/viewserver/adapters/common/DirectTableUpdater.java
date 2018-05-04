@@ -22,7 +22,7 @@ public class DirectTableUpdater implements IDatabaseUpdater{
     @Override
     public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
-            scheduleAddOrUpdateRow(tableName,schemaConfig,record);
+            scheduleAddOrUpdateRow(tableName,schemaConfig,record).subscribe();
             return;
         }
         IOperator operator = serverCatalog.getOperatorByPath(tableName);

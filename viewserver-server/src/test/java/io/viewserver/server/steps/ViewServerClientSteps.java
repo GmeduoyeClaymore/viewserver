@@ -449,6 +449,11 @@ public class ViewServerClientSteps {
                     Assert.assertTrue("Passed on the final time this is a pass", true);
                     return;
                 }
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 repeat(scenarioLablel, assertion, times, delay, counter + 1, continueIfPass);
             }
         } catch (Throwable ex) {
