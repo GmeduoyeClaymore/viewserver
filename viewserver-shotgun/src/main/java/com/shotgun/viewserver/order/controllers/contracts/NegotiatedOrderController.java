@@ -3,6 +3,7 @@ package com.shotgun.viewserver.order.controllers.contracts;
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
+import com.shotgun.viewserver.order.types.NegotiationResponse;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 import java.util.Date;
@@ -126,7 +127,9 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     fromArray(order.getResponses()).forEach(
                             res -> {
                                 if(!res.getPartnerId().equals(partnerId)){
-                                    notifyJobRejected(orderId,res.getPartnerId());
+                                    if(res.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)) {
+                                        notifyJobRejected(orderId, res.getPartnerId());
+                                    }
                                 }else{
                                     notifyJobAccepted(orderId,res.getPartnerId());
 

@@ -58,7 +58,7 @@ public class ViewServerClientContext {
         for(Map.Entry<Object, Object> prop : System.getProperties().entrySet()){
             result = result.replace(String.format("{%s}",prop.getKey() + ""),prop.getValue() + "");
         }
-        return result;
+        return TestUtils.replaceFileReferences(result);
     }
 
     public static String replaceParams(String result, Map<String, String> contextParams) {

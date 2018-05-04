@@ -35,6 +35,17 @@ public class TestUtils {
         return ControllerUtils.mapDefault(jsonStringFromFile);
     }
 
+    public static String replaceFileReferences(String value) {
+        if(value == null){
+            return null;
+        }
+        if (value.startsWith("ref://")) {
+            String fileReference = value.substring(6);
+            value = getJsonStringFromFile(fileReference);
+        }
+        return value;
+    }
+
 
     public static void replaceReferences(HashMap<String, Object> result) {
         for (Map.Entry<String, Object> entry : result.entrySet()) {

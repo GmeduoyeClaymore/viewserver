@@ -93,23 +93,20 @@ public class JsonSummary implements ISummary {
     @Override
     public void onGroupEnter(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
-
-        rowMap.put(groupId+"", rowId);
+        rowMap.put(rowId+"", rowId);
         context.markDirty(groupId);
     }
 
     @Override
     public void onGroupLeave(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
-        Object bucketValue = ColumnHolderUtils.getPreviousValue(bucketHolder, rowId);
-        rowMap.remove(groupId + "");
+        rowMap.remove(rowId + "");
         context.markDirty(groupId);
     }
 
     @Override
     public void onRowUpdate(int groupId, int rowId) {
         context.markDirty(groupId);
-
     }
 
     @Override
