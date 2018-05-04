@@ -113,7 +113,7 @@ public interface User extends DynamicJsonBackedObject{
     }
 
     default void setBankAccount(SavedBankAccount savedBankAccount){
-        this.set("savedBankAccount", savedBankAccount);
+        this.set("bankAccount", savedBankAccount);
     }
 }
 

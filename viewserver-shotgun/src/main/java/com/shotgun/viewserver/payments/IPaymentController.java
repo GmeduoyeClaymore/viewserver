@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.payments;
 
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.user.SavedBankAccount;
 import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.BankAccount;
@@ -23,6 +24,6 @@ public interface IPaymentController {
 
     void deletePaymentCard(String cardId);
 
-    void setBankAccount(PaymentBankAccount paymentBankAccount);
+    SavedBankAccount setBankAccount(PaymentBankAccount paymentBankAccount);
 }
 
