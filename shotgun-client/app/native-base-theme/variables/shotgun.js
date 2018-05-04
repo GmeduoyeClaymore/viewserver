@@ -10,7 +10,7 @@ const deviceWidth = Dimensions.get('window').width;
 const platformStyle = undefined;
 const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 375;
 
-export const colors = {
+ const colors = {
   brandPrimary: '#ffffff',
   brandSecondary: '#00a2ff',
   brandLight: '#647479',
