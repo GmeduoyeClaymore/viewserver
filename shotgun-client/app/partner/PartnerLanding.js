@@ -7,7 +7,7 @@ import PartnerAvailableOrders from './PartnerAvailableOrders';
 import PartnerAvailableOrderDetail from './PartnerAvailableOrderDetail';
 import PartnerOrderInProgress from './PartnerOrderInProgress';
 import PartnerSettings from './Settings/PartnerSettings';
-import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
+import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {partnerServicesRegistrationAction, getBankAccount, watchPosition} from 'partner/actions/PartnerActions';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {registerActionListener} from 'common/Listeners';
@@ -43,7 +43,6 @@ class PartnerLanding extends Component {
     dispatch(customerServicesRegistrationAction(client));
     dispatch(watchPosition());
     dispatch(getBankAccount());
-    dispatch(getPaymentCards());
   }
 
   render() {

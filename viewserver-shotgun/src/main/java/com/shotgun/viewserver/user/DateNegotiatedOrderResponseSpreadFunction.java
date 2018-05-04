@@ -30,13 +30,13 @@ public class DateNegotiatedOrderResponseSpreadFunction implements ISpreadFunctio
     public static String ESTIMATED_DATE_COLUMN = "estimatedDate";
     public static String PRICE_COLUMN = "price";
     public static String ORDER_DETAIL_WITHOUT_RESPONSES = "orderDetailWithoutResponses";
-    public static String PARTNER_ORDER_STATUS = "partnerOrderStatus";
+    public static String RESPONSE_STATUS = "responseStatus";
     private static List<Column> columns = new ArrayList<>();
 
 
     static{
         partnerId = new Column(PARTNER_ID_COLUMN, ContentType.String);
-        orderResponseStatus = new Column(PARTNER_ORDER_STATUS, ContentType.String);
+        orderResponseStatus = new Column(RESPONSE_STATUS, ContentType.String);
         estimatedDate = new Column(ESTIMATED_DATE_COLUMN,ContentType.Date);
         priceColumn = new Column(PRICE_COLUMN,ContentType.Date);
         orderDetailWithoutResponses = new Column(ORDER_DETAIL_WITHOUT_RESPONSES,ContentType.Json);

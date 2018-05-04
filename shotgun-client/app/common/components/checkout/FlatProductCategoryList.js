@@ -131,23 +131,24 @@ resourceDictionary.
 /*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
-  const {selectedContentType, selectedCategory} = initialProps;
-  const {productCategory: rootProductCategory} = selectedContentType;
-
+  let {selectedContentType, selectedCategory, productCategory} = initialProps;
+  const { rootProductCategory} = selectedContentType;
+  selectedCategory = selectedCategory || productCategory;
   const defaultOptions = {
     ...getDaoOptions(state, 'productCategoryDao'),
-    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory.categoryId
+    parentCategoryId: selectedCategory && selectedCategory.categoryId ? selectedCategory.categoryId : rootProductCategory
   };
 
   return {
     ...getNavigationProps(initialProps),
+    ...initialProps,
+    selectedCategory,
     rootProductCategory,
     selectedContentType,
     defaultOptions,
     categories: getDaoState(state, ['product', 'categories'], 'productCategoryDao'),
     busy: isAnyLoading(state, ['productDao', 'productCategoryDao']),
     errors: getLoadingErrors(state, ['productDao', 'productCategoryDao']),
-    ...initialProps
   };
 };
 

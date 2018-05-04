@@ -18,6 +18,7 @@
     "key": 0,
     "longitude": -0.1276248
   },
+  "customerUserId": "{userId}",
   "requiredDate": "2018-05-04T07:00:00.000Z",
   "description": "this is a brick layer order description",
   "orderStatus": "PLACED",

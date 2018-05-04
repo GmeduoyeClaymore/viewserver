@@ -7,7 +7,7 @@ import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.controllers.*;
-import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.user.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.reactor.IReactor;
@@ -30,21 +30,21 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         IMessagingController messagingController = getMessagingController();
         IMapsController mapsController = getMapsController();
         INexmoController nexmoController = getNexmoController();
-        PaymentController paymentController = getPaymentController();
+        IPaymentController paymentController = getPaymentController();
 
 
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater);
         VehicleController vehicleController = new VehicleController(databaseUpdater);
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
-        UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, mapsController, getServerReactor());
+        UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor());
         DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController);
 
         this.registerController(paymentController);
         this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new PartnerController( paymentController, userController, vehicleController, loginController, iImageController,this.getServerReactor()));
+        this.registerController(new PartnerController( paymentController, userController, vehicleController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));
         this.registerController(new CustomerController(paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(deliveryOrderController);
         this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
@@ -66,7 +66,7 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
 
 
     protected abstract INexmoController getNexmoController();
-    protected abstract PaymentController getPaymentController();
+    protected abstract IPaymentController getPaymentController();
     protected abstract IImageController getImageController();
     protected abstract IMessagingController getMessagingController() ;
     protected abstract IMapsController getMapsController() ;

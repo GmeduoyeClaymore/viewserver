@@ -25,9 +25,9 @@ public interface OrderTransformationController extends OrderUpdateController{
 
         if(tranformation.test(order)){
             updateOrderRecord(order);
+            afterTransform.accept(order);
         }
 
-        afterTransform.accept(order);
         return order;
     }
 

@@ -11,17 +11,22 @@ export class CurrencyInput extends Component{
 
   setAmount = (amountMask) => {
     const {onValueChange} = this.props;
-    const amount = this.refs.amountInput.getRawValue() * 100;
+    const amount = (this.refs.amountInput.getRawValue() * 100).toFixed();
     if (onValueChange){
       onValueChange(amount);
     }
     super.setState({amountMask});
   }
 
+  clear = () => {
+    super.setState({amountMask: undefined});
+  }
+
   render() {
     const {amountMask} = this.state;
-    return <TextInputMask ref={'amountInput'} underlineColorAndroid='transparent' style={styles.amountInput} type={'money'} placeholder='Enter amount'
-      options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount} {...this.props}/>;
+    const {style = {}, ...rest} = this.props;
+    return <TextInputMask ref={'amountInput'} underlineColorAndroid='transparent' style={{...styles.amountInput, ...style}} type={'money'} placeholder='Enter amount'
+      options={{ unit: '£', separator: '.', delimiter: ','}} value={amountMask} onChangeText={this.setAmount} {...rest}/>;
   }
 }
 

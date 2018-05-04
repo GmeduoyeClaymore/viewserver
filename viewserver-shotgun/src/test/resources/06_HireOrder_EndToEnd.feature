@@ -69,9 +69,9 @@ Feature: Hire order scenarios
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
-	  | dimension_partnerOrderStatus | String | RESPONDED |
+	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                          | orderDetails                     | partner_firstName | partner_lastName | orderLocation                            | partnerOrderStatus |
+	  | ~Action | orderId                                          | orderDetails                     | partner_firstName | partner_lastName | orderLocation                            | responseStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ref://json/orders/hireOrder.json | Modestas          | BrickLayer       | ref://json/orders/hireOrderLocation.json | RESPONDED          |
 
 
@@ -90,7 +90,7 @@ Feature: Hire order scenarios
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
-	  | dimension_partnerOrderStatus | String | RESPONDED |
+	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received terminally on report "orderResponses"
 	  | ~Action | orderId | orderDetails |
 
@@ -150,13 +150,13 @@ Feature: Hire order scenarios
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                          | partnerOrderStatus |
+	  | ~Action | orderId                                          | responseStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ACCEPTED           |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                          | partnerOrderStatus |
+	  | ~Action | orderId                                          | responseStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | DECLINED           |
 
   Scenario: Cancelling accepted response causes job to go back into responded state
@@ -184,13 +184,13 @@ Feature: Hire order scenarios
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                          | partnerOrderStatus |
+	  | ~Action | orderId                                          | responseStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | CANCELLED          |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                          | partnerOrderStatus |
+	  | ~Action | orderId                                          | responseStatus |
 	  | RowAdd  | {client1_hireOrderController_createOrder_result} | RESPONDED          |
 
   Scenario: Accepting response removes job from order request list for all

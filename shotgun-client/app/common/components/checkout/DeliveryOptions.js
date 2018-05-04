@@ -191,12 +191,11 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
-  const paymentCards = getDaoState(state, ['paymentCards'], 'paymentDao') || [];
-  const defaultPayment = paymentCards.find(c => c.id == user.stripeDefaultSourceId) || paymentCards[0];
+  const {paymentCards} = user;
+  const defaultPayment = paymentCards.find(c => c.isDefault) || paymentCards[0];
 
   return {
     ...initialProps,
-    errors: getOperationError(state, 'paymentDao', 'getPaymentCards' ),
     defaultPayment,
     paymentCards,
     user

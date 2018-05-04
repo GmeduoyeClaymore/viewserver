@@ -4,6 +4,7 @@ import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.setup.datasource.PaymentDataSource;
+import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.User;
 import com.stripe.Stripe;
 import com.stripe.model.*;
@@ -11,7 +12,6 @@ import com.stripe.net.RequestOptions;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
@@ -20,18 +20,18 @@ import io.viewserver.network.IChannel;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.netty.NettyChannel;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller(name = "paymentController")
-public class PaymentControllerImpl implements PaymentController {
+public class PaymentControllerImpl extends BasePaymentController implements IPaymentController {
     private static final Logger logger = LoggerFactory.getLogger(PaymentControllerImpl.class);
     private StripeApiKey apiKey;
     private IDatabaseUpdater iDatabaseUpdater;
@@ -40,25 +40,6 @@ public class PaymentControllerImpl implements PaymentController {
         this.apiKey = apiKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         Stripe.apiKey = apiKey.getPrivateKey();
-    }
-
-    public HashMap<String, Object> createPaymentCustomer(String emailAddress, PaymentCard paymentCard) {
-        String cardToken = createCardToken(paymentCard);
-        Map<String, Object> customerParams = new HashMap<>();
-        customerParams.put("email", emailAddress);
-        customerParams.put("source", cardToken);
-
-        try {
-            Customer customer = Customer.create(customerParams);
-            logger.debug("Added stripe payment customer with id {}", customer.getId());
-            HashMap<String, Object> result = new HashMap<>();
-            result.put("customerId", customer.getId());
-            result.put("defaultSourceId", customer.getDefaultSource());
-            return result;
-        } catch (Exception e) {
-            logger.error("There was a problem adding the payment customer", e);
-            throw new RuntimeException(e);
-        }
     }
 
     public String createPaymentAccount(User user, DeliveryAddress address, PaymentBankAccount paymentBankAccount) {
@@ -77,14 +58,14 @@ public class PaymentControllerImpl implements PaymentController {
             IPeerSession session = ControllerContext.Current().getPeerSession();
             IChannel channel = session.getChannel();
             String ip = "0.0.0.0";
-            if(channel instanceof NioSocketChannel){
+            if (channel instanceof NioSocketChannel) {
                 ip = ((NioSocketChannel) ((NettyChannel) channel).getChannel()).remoteAddress().getAddress().toString().substring(1);
             }
             tosAcceptance.put("ip", ip);
 
             Map<String, Object> dob = new HashMap<>();
             Calendar c = Calendar.getInstance();
-            if(user.getDob() == null){
+            if (user.getDob() == null) {
                 throw new RuntimeException("No DOB specified");
             }
             c.setTime(user.getDob());
@@ -140,9 +121,9 @@ public class PaymentControllerImpl implements PaymentController {
 
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
 
-        String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId",fromCustomerUserId);
-        String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId",toPartnerUserId);
-        int chargePercentage = (int) ControllerUtils.getColumnValue(userTable, "chargePercentage",toPartnerUserId);
+        String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId", fromCustomerUserId);
+        String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId", toPartnerUserId);
+        int chargePercentage = (int) ControllerUtils.getColumnValue(userTable, "chargePercentage", toPartnerUserId);
 
 
         try {
@@ -185,58 +166,7 @@ public class PaymentControllerImpl implements PaymentController {
         }
     }
 
-    @Override
-    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
-        try {
-            String customerToken = getStripeCustomerToken();
-            String cardToken = createCardToken(paymentCard);
-            Customer customer = Customer.retrieve(customerToken);
-            Map<String, Object> params = new HashMap<>();
-            params.put("source", cardToken);
-            customer.getSources().create(params);
-            logger.debug("Added stripe payment card with token {}", cardToken);
-            return cardToken;
-        } catch (Exception e) {
-            logger.error("There was a problem adding the payment card", e);
-            throw new RuntimeException(e);
-        }
-    }
 
-    @Override
-    @ControllerAction(path = "getPaymentCards", isSynchronous = false)
-    public List<Card> getPaymentCards() {
-        try {
-            User user = getUser();
-
-            if(user.getStripeCustomerId() == null){
-                return null;
-            }
-
-            HashMap<String, Object> sourcesParams = new HashMap<>();
-            sourcesParams.put("object", "card");
-            ExternalAccountCollection cards = Customer.retrieve(user.getStripeCustomerId()).getSources().list(sourcesParams);
-            logger.debug("Got {} stripe cards for customerToken {}", cards.getData().size(), user.getStripeCustomerId());
-            List<Card> cardsList = cards.getData().stream().map(a -> (Card) a).collect(Collectors.toList());
-            return cardsList;
-        } catch (Exception e) {
-            logger.error("There was a problem getting the payment cards", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public void deletePaymentCard(@ActionParam(name = "cardId") String cardId) {
-        try {
-            String customerToken = getStripeCustomerToken();
-            Customer customer = Customer.retrieve(customerToken);
-            customer.getSources().retrieve(cardId).delete();
-        } catch (Exception e) {
-            logger.error("There was a problem deleting the payment card", e);
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     @ControllerAction(path = "getBankAccount", isSynchronous = false)
@@ -245,12 +175,12 @@ public class PaymentControllerImpl implements PaymentController {
             User user = getUser();
             String stripeAccountId = user.getStripeAccountId();
 
-            if(stripeAccountId == null){
+            if (stripeAccountId == null) {
                 return null;
             }
 
             Account account = Account.retrieve(stripeAccountId, null);
-            BankAccount ac =(BankAccount)account.getExternalAccounts().getData().get(0);
+            BankAccount ac = (BankAccount) account.getExternalAccounts().getData().get(0);
             logger.debug("Got bank account for stripe account {}", stripeAccountId);
             return ac;
         } catch (Exception e) {
@@ -259,10 +189,19 @@ public class PaymentControllerImpl implements PaymentController {
         }
     }
 
-    private String getStripeCustomerToken() {
+    protected Customer createCustomer(Map<String, Object> params){
+        try{
+        return Customer.create(params);
+        } catch (Exception e) {
+            logger.error("There was a problem creating the payment customer", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected String getStripeCustomerToken() {
         User user = getUser();
         String stripeCustomerToken = user.getStripeCustomerId();
-        if(stripeCustomerToken == null){
+        if (stripeCustomerToken == null) {
             throw new RuntimeException("No stripe customerid specified for current user");
         }
         return stripeCustomerToken;
@@ -294,7 +233,7 @@ public class PaymentControllerImpl implements PaymentController {
         }
     }
 
-    private String createCardToken(PaymentCard paymentCard) {
+    protected String createCardToken(PaymentCard paymentCard) {
         RequestOptions requestOptions = RequestOptions.builder().setApiKey(this.apiKey.getPublicKey()).build();
 
         Map<String, Object> tokenParams = new HashMap<>();
@@ -316,7 +255,7 @@ public class PaymentControllerImpl implements PaymentController {
 
     private User getUser() {
         User user = (User) ControllerContext.get("user");
-        if(user == null){
+        if (user == null) {
             throw new RuntimeException("User must be logged in to get current payment cards");
         }
         return user;

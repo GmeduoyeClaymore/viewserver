@@ -70,9 +70,9 @@ Feature: Rubbish order scenarios
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
-	  | dimension_partnerOrderStatus | String | RESPONDED |
+	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                             | orderDetails                        | partner_firstName | partner_lastName | orderLocation                               | partnerOrderStatus |
+	  | ~Action | orderId                                             | orderDetails                        | partner_firstName | partner_lastName | orderLocation                               | responseStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | ref://json/orders/rubbishOrder.json | Modestas          | BrickLayer       | ref://json/orders/rubbishOrderLocation.json | RESPONDED          |
 
 
@@ -91,7 +91,7 @@ Feature: Rubbish order scenarios
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                         | Type   | Value     |
 	  | dimension_partnerId          | String | @userId   |
-	  | dimension_partnerOrderStatus | String | RESPONDED |
+	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received terminally on report "orderResponses"
 	  | ~Action | orderId | orderDetails |
 
@@ -151,13 +151,13 @@ Feature: Rubbish order scenarios
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                             | partnerOrderStatus |
+	  | ~Action | orderId                                             | responseStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | ACCEPTED           |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                             | partnerOrderStatus |
+	  | ~Action | orderId                                             | responseStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | DECLINED           |
 
   Scenario: Cancelling accepted response causes job to go back into responded state
@@ -185,13 +185,13 @@ Feature: Rubbish order scenarios
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                             | partnerOrderStatus |
+	  | ~Action | orderId                                             | responseStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | CANCELLED          |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
-	  | ~Action | orderId                                             | partnerOrderStatus |
+	  | ~Action | orderId                                             | responseStatus |
 	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | RESPONDED          |
 
   Scenario: Accepting response removes job from order request list for all

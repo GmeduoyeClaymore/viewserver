@@ -21,8 +21,8 @@ class ContentTypeSelect extends Component{
   }
 
   startOrder = () => {
-    const {history, next, paymentCards, ordersRoot, parentPath} = this.props;
-    if (paymentCards.length > 0) {
+    const {history, next, user, ordersRoot, parentPath} = this.props;
+    if (user.paymentCards.length > 0) {
       history.push(next);
     } else {
       history.push({pathname: `${ordersRoot}/Settings/UpdatePaymentCardDetails`, transition: 'left'}, {next: `${parentPath}`});
@@ -104,7 +104,7 @@ const styles = {
 const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
-    paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || []
+    user: getDaoState(state, ['user'], 'userDao')
   };
 };
 

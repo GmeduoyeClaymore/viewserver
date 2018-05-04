@@ -9,8 +9,7 @@ import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.PaymentCard;
-import com.shotgun.viewserver.payments.PaymentController;
-import io.viewserver.adapters.common.IDatabaseUpdater;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -28,13 +27,13 @@ public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
 
-    private PaymentController paymentController;
+    private IPaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
     private IMessagingController messagingController;
     private UserController userController;
     private INexmoController nexmoController;
 
-    public CustomerController(PaymentController paymentController,
+    public CustomerController(IPaymentController paymentController,
                               DeliveryAddressController deliveryAddressController,
                               IMessagingController messagingController,
                               UserController userController,
@@ -48,14 +47,10 @@ public class CustomerController {
     }
 
     @ControllerAction(path = "registerCustomer", isSynchronous = true)
-    public String registerCustomer(@ActionParam(name = "user")User user, @ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress, @ActionParam(name = "paymentCard")PaymentCard paymentCard){
+    public String registerCustomer(@ActionParam(name = "user")User user, @ActionParam(name = "deliveryAddress")DeliveryAddress deliveryAddress){
         log.debug("Registering customer: " + user.getEmail());
-        deliveryAddress.set("isDefault",true);
-        HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
-        user.set("stripeCustomerId",stripeResponse.get("customerId").toString());
-        user.set("stripeDefaultSourceId",stripeResponse.get("paymentToken").toString());
 
-        String international_format_number = (String) nexmoController.getInternationalFormatNumber(user.getContactNo());
+        String international_format_number = nexmoController.getInternationalFormatNumber(user.getContactNo());
         if(international_format_number == null){
             throw new RuntimeException("Unable to format user contact number " + user.getContactNo() + " is it valid?");
         }
@@ -63,6 +58,8 @@ public class CustomerController {
 
         String userId = userController.addOrUpdateUser(user);
         ControllerContext.set("userId", userId);
+
+        deliveryAddress.set("isDefault",true);
         deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
 
         log.debug("Registered customer: " + user.getEmail() + " with id " + userId);

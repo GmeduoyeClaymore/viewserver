@@ -92,7 +92,7 @@ export default class OrderSummaryDao{
 
   mapPartnerResponse(response){
     return {
-      partnerId: response.spreadpartnerId,
+      partnerId: response.spreadPartnerId,
       latitude: response.partner_latitude,
       longitude: response.partner_longitude,
       firstname: response.partner_firstName,
@@ -105,7 +105,7 @@ export default class OrderSummaryDao{
       ratingAvg: response.partner_ratingAvg,
       estimatedDate: response.estimatedDate,
       price: response.price,
-      partnerOrderStatus: response.partnerOrderStatus,
+      responseStatus: response.responseStatus,
     };
   }
 

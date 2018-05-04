@@ -6,13 +6,11 @@ import com.shotgun.viewserver.order.contracts.HireNotifications;
 import com.shotgun.viewserver.order.controllers.contracts.*;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.*;
-import com.shotgun.viewserver.payments.PaymentController;
-import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Controller(name = "hireOrderController")
@@ -22,10 +20,10 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     private DeliveryOrderController deliveryOrderController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IMapsController iMapsController;
-    private PaymentController paymentController;
+    private IPaymentController paymentController;
     private IMessagingController iMessagingController;
 
-    public HireOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, PaymentController paymentController, IMessagingController iMessagingController) {
+    public HireOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController) {
         this.deliveryOrderController = deliveryOrderController;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.iMapsController = iMapsController;
@@ -98,7 +96,7 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     }
 
     @Override
-    public PaymentController getPaymentController() {
+    public IPaymentController getPaymentController() {
         return paymentController;
     }
 

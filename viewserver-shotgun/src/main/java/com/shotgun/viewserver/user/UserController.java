@@ -5,11 +5,12 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.payments.PaymentCard;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.IImageController;
-import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.messaging.AppMessage;
@@ -21,6 +22,7 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -43,6 +45,7 @@ public class UserController implements UserTransformationController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private IImageController IImageController;
     private IMessagingController messagingController;
+    private IPaymentController paymentController;
     private IMapsController IMapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
@@ -50,11 +53,13 @@ public class UserController implements UserTransformationController {
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           IImageController IImageController,
                           IMessagingController messagingController,
+                          IPaymentController paymentController,
                           IMapsController IMapsController, IReactor reactor) {
         this.iDatabaseUpdater = iDatabaseUpdater;
 
         this.IImageController = IImageController;
         this.messagingController = messagingController;
+        this.paymentController = paymentController;
         this.IMapsController = IMapsController;
         this.reactor = reactor;
 
@@ -67,14 +72,42 @@ public class UserController implements UserTransformationController {
                     user.addRating(getUserId(), orderId, rating,comments, ratingType);
                     return true;
                 }, User.class);
+    }
 
+    @ControllerAction(path = "addPaymentCard", isSynchronous = false)
+    public void addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard){
+        this.transform(getUserId(),
+                user -> {
+                    String customerToken = user.getStripeCustomerId();
+                    SavedPaymentCard savedPaymentCard;
+                    if (customerToken == null) {
+                        HashMap<String, Object> stripeResponse = paymentController.createPaymentCustomer(user.getEmail(), paymentCard);
+                        user.set("stripeCustomerId", stripeResponse.get("stripeCustomerId").toString());
+                        savedPaymentCard = (SavedPaymentCard) stripeResponse.get("savedPaymentCard");
+                    } else {
+                        savedPaymentCard = paymentController.addPaymentCard(paymentCard);
+                    }
+
+                    user.addPaymentCard(savedPaymentCard);
+                    return true;
+                }, User.class);
+    }
+
+    @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
+    public void deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId){
+        this.transform(getUserId(),
+                user -> {
+                    paymentController.deletePaymentCard(cardId);
+                    user.deletePaymentCard(cardId);
+                    return true;
+                }, User.class);
     }
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
     public String updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
         String userId = getUserId();
-        user.set("userId",userId);
+        user.set("userId", userId);
 
         if (user.getImageData() != null) {
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";

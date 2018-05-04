@@ -37,6 +37,7 @@
     "line1": "123 Regent St",
     "longitude": -0.1382081
   },
+  "customerUserId": "{userId}",
   "requiredDate": "2018-05-03T10:14:49.424Z",
   "description": "this is a small van order",
   "orderStatus": "PLACED",

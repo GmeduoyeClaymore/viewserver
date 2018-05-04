@@ -3,7 +3,7 @@ package com.shotgun.viewserver.order.controllers.contracts;
 import com.shotgun.viewserver.order.contracts.PaymentNotifications;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
-import com.shotgun.viewserver.payments.PaymentController;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 
@@ -79,5 +79,5 @@ public interface StagedPaymentController extends OrderTransformationController, 
         return paymentId.get();
     }
 
-    PaymentController getPaymentController();
+    IPaymentController getPaymentController();
 }

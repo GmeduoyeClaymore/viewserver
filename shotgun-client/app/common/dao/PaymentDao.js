@@ -26,28 +26,17 @@ export default class PaymentDao{
   }
 
   deletePaymentCard = async({cardId}) => {
-    const promise = this.client.invokeJSONCommand('paymentController', 'deletePaymentCard', {cardId});
+    const promise = this.client.invokeJSONCommand('userController', 'deletePaymentCard', {cardId});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error(`Could not detect deletion of payment card ${cardId} in 5 seconds`));
     Logger.debug(`Deleted card ${cardId}`);
-    this.getPaymentCards();
     return paymentResponse;
   }
 
   addPaymentCard = async({paymentCard}) => {
-    const promise = this.client.invokeJSONCommand('paymentController', 'addPaymentCard', {paymentCard});
+    const promise = this.client.invokeJSONCommand('userController', 'addPaymentCard', {paymentCard});
     const paymentResponse =  await promise.timeoutWithError(5000, new Error('Could not detect creation of payment card in 5 seconds'));
     Logger.debug('Added card for customer');
-    this.getPaymentCards();
     return paymentResponse;
-  }
-
-  getPaymentCards = async() => {
-    const promise = this.client.invokeJSONCommand('paymentController', 'getPaymentCards');
-    const paymentCards =  await promise.timeoutWithError(5000, new Error('Could not get payment cards for customer in 5 seconds'));
-    Logger.debug(`Got stripe payment cards ${JSON.stringify(paymentCards)}`);
-    const result = {paymentCards};
-    this.updateState(result);
-    return result;
   }
 
   getBankAccount = async() => {

@@ -36,7 +36,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ESTIMATED_DATE_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PRICE_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN),
-                                        new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS),
+                                        new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.RESPONSE_STATUS),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ORDER_DETAIL_WITHOUT_RESPONSES, "orderDetails"),
                                         new IProjectionConfig.ProjectionColumn("customer_firstName"),
                                         new IProjectionConfig.ProjectionColumn("customer_lastName"),
@@ -72,7 +72,7 @@ public class OrderWithResponseDataSource {
                         new Dimension("dimension_orderId", "orderId", Cardinality.Byte, ContentType.String, true).withImported(),
                         new Dimension("dimension_customerUserId", "userId", Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_partnerId", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN, Cardinality.Int, ContentType.String),
-                        new Dimension("dimension_partnerOrderStatus", DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS, Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_responseStatus", DateNegotiatedOrderResponseSpreadFunction.RESPONSE_STATUS, Cardinality.Int, ContentType.String),
                         new Dimension("dimension_status", "status", Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_contentTypeId", "orderContentTypeId", Cardinality.Int, ContentType.Int, true).withImported(),
                         new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported()))

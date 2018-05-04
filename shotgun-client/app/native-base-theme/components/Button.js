@@ -79,7 +79,18 @@ export default (variables = variable) => {
       },
       backgroundColor: variables.brandDanger,
     },
-
+    '.accept': {
+      'NativeBase.Text': {
+        color: variables.brandPrimary,
+      },
+      backgroundColor: variables.brandSuccess,
+    },
+    '.reject': {
+      'NativeBase.Text': {
+        color: variables.brandPrimary,
+      },
+      backgroundColor: variables.brandWarning,
+    },
     '.track': {
       'NativeBase.Text': {
         color: variables.brandPrimary,

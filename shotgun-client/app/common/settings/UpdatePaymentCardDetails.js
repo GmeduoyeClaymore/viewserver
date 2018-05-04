@@ -36,7 +36,9 @@ class UpdatePaymentCardDetails extends Component {
   };
 
   render(){
-    const {history, busy, errors, user, paymentCards, valid} = this.props;
+    const {history, busy, errors, user, valid} = this.props;
+    const {paymentCards} = user;
+
     return <Container>
       <Header withButton>
         <Left>
@@ -55,7 +57,7 @@ class UpdatePaymentCardDetails extends Component {
                 <Text>{c.brand} ending {c.last4}</Text>
                 <Text note>expiry {c.expMonth}/{c.expYear}</Text>
               </View>
-              {c.id !== user.stripeDefaultSourceId && !busy ? <Icon name="trash" right style={styles.trashIcon} onPress={() => this.deleteCard(c.id)}/> : null}
+              {!c.isDefault && !busy ? <Icon name="trash" right style={styles.trashIcon} onPress={() => this.deleteCard(c.id)}/> : null}
             </ListItem>;
           })}
           <ListItem paddedTopBottom>
@@ -90,10 +92,9 @@ const styles = {
 const mapStateToProps = (state, initialProps) => ({
   ...initialProps,
   next: getNavigationProps(initialProps).next,
-  paymentCards: getDaoState(state, ['paymentCards'], 'paymentDao') || [],
   user: getDaoState(state, ['user'], 'userDao'),
-  errors: getOperationErrors(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}, {paymentDao: 'getPaymentCards'}]),
-  busy: isAnyOperationPending(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}, {paymentDao: 'getPaymentCards'}])
+  errors: getOperationErrors(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}]),
+  busy: isAnyOperationPending(state, [{paymentDao: 'addPaymentCard'}, {paymentDao: 'deletePaymentCard'}])
 });
 
 export default withExternalState(mapStateToProps)(UpdatePaymentCardDetails);

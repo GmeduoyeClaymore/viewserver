@@ -6,7 +6,7 @@ import Checkout from 'common/components/checkout/Checkout';
 import CustomerOrders from './orders/CustomerOrders';
 import CustomerOrderDetail from './orders/CustomerOrderDetail';
 import CustomerOrderInProgress from './orders/CustomerOrderInProgress';
-import {customerServicesRegistrationAction, getPaymentCards} from 'customer/actions/CustomerActions';
+import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
@@ -38,20 +38,7 @@ class CustomerLanding extends Component {
     const {dispatch, client, history, path} = this.props;
     registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
     dispatch(customerServicesRegistrationAction(client));
-    this.attemptPaymentCards(this.props);
     dispatch(watchPosition());
-  }
-
-  componentWillReceiveProps(props){
-    this.attemptPaymentCards(props);
-  }
-
-  attemptPaymentCards(props){
-    const {dispatch, user} = props;
-    if (!this.paymentCardsRequested && user){
-      dispatch(getPaymentCards());
-      this.paymentCardsRequested = true;
-    }
   }
 
   render() {

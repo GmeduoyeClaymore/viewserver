@@ -23,6 +23,8 @@ import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.table.ISchemaConfig;
 import io.viewserver.operators.table.TableKeyDefinition;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,10 @@ import java.util.List;
  * Created by bemm on 26/09/2014.
  */
 public class ColumnHolderUtils {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(ColumnHolderUtils.class);
+
     public static ColumnHolder createColumnHolder(String name, ColumnType type) {
         return createColumnHolder(name, type, null);
     }
@@ -140,11 +146,15 @@ public class ColumnHolderUtils {
             }
             case String: {
                 String string = ((IColumnString) columnHolder).getString(row);
-                if(string == null){
-                    return null;
+                if(string == null || "".equals(string)){
+                    return string;
                 }
                 if(castOutJson && columnHolder.getMetadata().getDataType() != null && columnHolder.getMetadata().getDataType().equals(ContentType.Json)){
-                    return ControllerUtils.mapDefault(string);
+                    try {
+                        return ControllerUtils.mapDefault(string);
+                    }catch (Exception ex){
+                        logger.error("Problem deserializin json column " + columnHolder.getName() + " value \"" + string + "\"",ex);
+                    }
                 }
                 return string;
             }

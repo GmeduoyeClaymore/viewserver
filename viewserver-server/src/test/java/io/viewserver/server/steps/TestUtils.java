@@ -42,16 +42,21 @@ public class TestUtils {
                 replaceReferences((HashMap) entry.getValue());
             } else if (entry.getValue() instanceof String) {
                 String value = (String) entry.getValue();
-                if (value.startsWith("ref://")) {
-                    String fileReference = value.substring(6);
-                    entry.setValue(getJsonStringFromFile(fileReference));
-                }
-                if (value.startsWith("objref://")) {
-                    String fileReference = value.substring(9);
-                    entry.setValue(getJsonObjectFromFile(fileReference));
-                }
+                entry.setValue(replaceReference(value));
             }
         }
+    }
 
+    public static String replaceReference(String value){
+        if (value.startsWith("ref://")) {
+            String fileReference = value.substring(6);
+            return getJsonStringFromFile(fileReference);
+        }
+        if (value.startsWith("objref://")) {
+            String fileReference = value.substring(9);
+            return getJsonStringFromFile(fileReference);
+        }
+
+        return  value;
     }
 }

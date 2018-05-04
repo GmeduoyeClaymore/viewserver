@@ -61,6 +61,7 @@ public interface UserTransformationController{
                 .addValue("lastModified", now)
                 .addValue("created", user.getCreated())
                 .addValue("ratings", user.getRatings())
+                .addValue("paymentCards", user.getPaymentCards())
                 .addValue("firstName", user.getFirstName())
                 .addValue("lastName", user.getLastName())
                 .addValue("dob", user.getDob())
@@ -73,7 +74,6 @@ public interface UserTransformationController{
                 .addValue("range", user.getRange())
                 .addValue("ratingAvg", user.getRatingAvg())
                 .addValue("stripeCustomerId", user.getStripeCustomerId())
-                .addValue("stripeDefaultSourceId", user.getStripeDefaultSourceId())
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl())
                 .addValue("chargePercentage", user.getChargePercentage());
