@@ -58,14 +58,14 @@ public class TestUtils {
         }
     }
 
-    public static String replaceReference(String value){
+    public static Object replaceReference(String value){
         if (value.startsWith("ref://")) {
             String fileReference = value.substring(6);
             return getJsonStringFromFile(fileReference);
         }
         if (value.startsWith("objref://")) {
             String fileReference = value.substring(9);
-            return getJsonStringFromFile(fileReference);
+            return getJsonObjectFromFile(fileReference);
         }
 
         return  value;

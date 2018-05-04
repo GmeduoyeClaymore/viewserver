@@ -94,6 +94,33 @@ const PartnerAcceptRejectControl = ({partnerResponses=[], orderId, orderStatus, 
     })}</Col>
 }
 
+
+const validationSchema = {
+  name: yup.string().required().max(30),
+  description: yup.string().required().max(30),
+};
+//PayForStage
+//RemovePaymentStage
+//StageQuantity
+class AddPaymentStage extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      amount: undefined,
+      name: undefined, 
+      description: undefined
+    }
+  }
+
+  render(){
+    <Row>
+         <ValidatingInput bold value={user.firstName} placeholder="Payment Stage Name" onChangeText={(value) => this.setState({firstName})} validationSchema={validationSchema.name} maxLength={30}/>
+    </Row>
+  }
+
+
+}
+
 class OrderNegotiationPanel extends Component{
   constructor(props) {
     super(props);
@@ -103,7 +130,6 @@ class OrderNegotiationPanel extends Component{
       showAll: false
     }
   }
-
 
   updateAmountInState = (amount) => {
     const {order} = this.props;
@@ -140,6 +166,66 @@ class OrderNegotiationPanel extends Component{
           </Grid>
           ,<PartnerAcceptRejectControl showAll={this.state.showAll}  dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>, 
         partnerResponses.length ? <Row style={{paddingLeft: 25}} onPress={this.toggleShow}><Text>{this.state.showAll ? "Hide rejected": "Show rejected"}</Text></Row> : null];
+  }
+}
+
+const PartnerPaymentStagesControl = ({paymentStages=[], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch,orderAmount, showAll}) => {
+  return <Col>{paymentStages.map(
+    (paymentStage,idx)  => {
+      const {quantity, name, description, paymentStageType, paymentStageStatus, id,lastUpdated} = paymentStage;
+      return <Row key={idx} style={{...styles.view, marginBottom:10}}>
+          <Col  size={40} style={{marginLeft: 10}}>
+            <Text style={{...styles.subHeading,marginBottom: 5}}>{name}</Text>
+            <Text>{description}</Text>
+          </Col>
+          <Col size={20}>
+            <StageQuantity quantity={quantity} paymentStageType={paymentStageType} totalAmount={orderAmount}/>
+          </Col>
+          <Col size={20}>
+            <RemovePaymentStage busyUpdating={busyUpdating} style={{marginBottom:10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} paymentStageId={id} dispatch={dispatch}/>
+            <PayForStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} paymentStageId={id} dispatch={dispatch}/>
+          </Col>
+      </Row>
+    })}<AddPaymentStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/></Col>
+}
+
+class OrderPaymentStagePanel extends Component{
+  constructor(props) {
+    super(props);
+    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+    this.state = {
+      amount: undefined,
+      showAll: false,
+      paymentStageType: 'percentage'
+    }
+  }
+
+  setPaymentStageType = (paymentStageType) => {
+    this.setState({paymentStageType});
+  }
+
+  render(){
+    const {busy, order, orderId, client, partnerResponses, errors, history, busyUpdating, dispatch} = this.props;
+    const {paymentStages = []} = order;
+    if(!order){
+      return null;
+    }
+    const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
+    return [<Grid style={{paddingLeft: 30, paddingTop: 10, marginBottom: 10}}>
+            <Col size={32}>
+            < Text style={{...styles.heading, marginTop:10}}>Add Payment Stages</Text>
+              {paymentStages.length ? null : 
+              <Row>
+                <Button style={styles.periodButton} light={this.state.paymentStageType === 'Fixed'} onPress={() => this.setPaymentStageType('Percentage')}>
+                  <Text style={styles.buttonText}>Percentage Stages</Text>
+                </Button>
+                <Button style={styles.periodButton} light={this.state.paymentStageType  === 'Percentage'} onPress={() => this.setPaymentStageType('Fixed')}>
+                  <Text style={styles.buttonText}>Fixed Stages</Text>
+                </Button> 
+              </Row>}
+            </Col>
+          </Grid>
+          ,<PartnerPaymentStagesControl paymentStageType={this.state.paymentStageType} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating}/>];
   }
 }
 
@@ -200,6 +286,11 @@ const styles = {
     marginTop:10,
     marginBottom:10
   },
+  periodButton: {
+    marginLeft: 5,
+    justifyContent: 'center',
+    width: 100
+  },
   view: {
     marginLeft: 30,
     flexWrap: 'wrap',
@@ -215,6 +306,9 @@ const styles = {
     fontSize: 14,
     fontWeight: 'bold'
 
+  },
+  buttonText: {
+    fontSize: 10
   },
   text: {
     marginRight: 5

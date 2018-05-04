@@ -243,7 +243,7 @@ public class ViewServerClientSteps {
             String paramName = record.get("Name");
             String paramValue = record.get("Value");
 
-            paramValue = TestUtils.replaceReference(paramValue);
+            paramValue = TestUtils.replaceReference(paramValue) + "";
             result.put(paramName,  clientContext.replaceParams(paramValue));
         }
         I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);
@@ -448,6 +448,11 @@ public class ViewServerClientSteps {
                 if(counter >= times -1){
                     Assert.assertTrue("Passed on the final time this is a pass", true);
                     return;
+                }
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 repeat(scenarioLablel, assertion, times, delay, counter + 1, continueIfPass);
             }
