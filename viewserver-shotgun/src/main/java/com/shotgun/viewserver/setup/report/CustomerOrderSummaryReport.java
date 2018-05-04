@@ -36,7 +36,7 @@ public class CustomerOrderSummaryReport {
                                         DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN,
                                         DateNegotiatedOrderResponseSpreadFunction.ESTIMATED_DATE_COLUMN,
                                         DateNegotiatedOrderResponseSpreadFunction.PRICE_COLUMN,
-                                        DateNegotiatedOrderResponseSpreadFunction.PARTNER_ORDER_STATUS,
+                                        DateNegotiatedOrderResponseSpreadFunction.RESPONSE_STATUS,
                                 })
                                 .withConnection("#input"),
                         new JoinNode("orderJoin")

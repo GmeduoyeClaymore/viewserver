@@ -77,7 +77,7 @@ export const rejectResponse = ({orderId, partnerId, orderContentTypeId}, continu
 };
 
 export const acceptResponse = ({orderId, partnerId, orderContentTypeId}, continueWith) => {
-  return invokeDaoCommand('orderDao', 'acceptPartner', {orderId, partnerId, orderContentTypeId}, continueWith);
+  return invokeDaoCommand('orderDao', 'acceptResponse', {orderId, partnerId, orderContentTypeId}, continueWith);
 };
 
 export const updateOrderAmount = ({orderId, amount, orderContentTypeId}, continueWith) => {

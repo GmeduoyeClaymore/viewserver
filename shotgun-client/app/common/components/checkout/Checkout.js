@@ -48,7 +48,7 @@ class Checkout extends Component {
     const {getNext} = this;
 
     return busy ? <LoadingScreen text="Loading"/> :
-      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'DeliveryOptions'}>
+      <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
         <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
         <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />

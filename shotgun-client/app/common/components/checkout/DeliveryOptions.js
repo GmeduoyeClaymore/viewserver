@@ -79,28 +79,6 @@ class DeliveryOptions extends Component {
             isVisible={isDatePickerVisible} onCancel={() => this.toggleDatePicker(false)} onConfirm={this.onChangeDate} {...datePickerOptions} minimumDate={resources.MinimumStartTimeOptions} />
         </ListItem>
 
-<<<<<<< HEAD
-        {resources.AllowFixedPrice ?
-          <ListItem padded>
-            <Grid>
-              <Row>
-                <Text>This job will cost</Text>
-              </Row>
-              <Row>
-                <Col>
-                  <CurrencyInput onValueChange={this.setAmount}/>
-                </Col>
-                <Button style={styles.periodButton} light={order.paymentType !== 'DayRate'} onPress={() => this.setPaymentType('DayRate')}>
-                  <Text style={styles.buttonText}>Day Rate</Text>
-                </Button>
-                <Button style={styles.periodButton} light={order.paymentType !== 'Fixed'} onPress={() => this.setPaymentType('Fixed')}>
-                  <Text style={styles.buttonText}>Fixed Price</Text>
-                </Button>
-              </Row>
-            </Grid>
-          </ListItem>
-          : null}
-=======
         <ListItem padded>
           <Grid>
             <Row>
@@ -119,7 +97,6 @@ class DeliveryOptions extends Component {
             </Row>
           </Grid>
         </ListItem>
->>>>>>> dcc2b15a201a68a40631b26470f1437cb13ed1de
 
         <ListItem padded style={{borderBottomWidth: 0}}>
           <CardIcon brand={payment.brand} /><Text>Use card</Text>
