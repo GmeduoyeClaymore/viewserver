@@ -24,8 +24,8 @@ export const partnerServicesRegistrationAction = (client, continueWith) => {
   };
 };
 
-export const startPaymentStage = ({orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith) => {
-  return invokeDaoCommand('orderDao', 'startPaymentStage', {orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith);
+export const startPaymentStage = ({orderId, orderContentTypeId, paymentStageId}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'startPaymentStage', {orderId, orderContentTypeId, paymentStageId}, continueWith);
 };
 
 export const completePaymentStage = ({orderId, paymentStageId, orderContentTypeId}, continueWith) => {
