@@ -288,11 +288,6 @@ public class ControllerActionEntry{
         if( Long.class == clazz || long.class == clazz) return Long.parseLong( value  + "");
         if( Float.class == clazz || float.class == clazz) return Float.parseFloat( value  + "");
         if( Double.class == clazz || double.class == clazz ) return Double.parseDouble( value  + "");
-        try{
-            return ConvertUtils.convert(value,clazz);
-        }catch (Exception ex){
-        }
-
         return null;
     }
 
