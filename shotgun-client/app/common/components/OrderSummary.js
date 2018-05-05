@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {Text, List, ListItem, Grid, Row} from 'native-base';
+import {Text, List, ListItem, Grid, Row, Col} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
@@ -27,11 +27,11 @@ class OrderSummary extends Component{
   renderItemDetails = () => {
     const {order} = this.props;
     return <ListItem padded style={{borderBottomWidth: 0}}>
-      <Grid>
-        <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
-        <Row><Text>{order.description}</Text></Row>
+      <Col>
+        <Row style={{flex: 1, minHeight: 60}}><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
+        <Row  style={{flex: 1}}><Text>{order.description}</Text></Row>
         {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
-      </Grid>
+      </Col>
     </ListItem>;
   }
 

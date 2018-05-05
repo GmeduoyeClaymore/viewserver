@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {connect} from 'custom-redux';
-import {Image} from 'react-native';
-import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem} from 'native-base';
-import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary} from 'common/components';
+import {connect, ReduxRouter, Route} from 'custom-redux';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem, Tab, View} from 'native-base';
+import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary, Tabs} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import MapDetails from './MapDetails';
@@ -16,14 +15,16 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Order Summary').
     delivery(() => 'Delivery Job').
-    rubbish(() => 'Rubbish Collection');
-/*eslint-disable */
+    rubbish(() => 'Rubbish Collection').
+  property('SupportsPaymentStages', false).
+    personell(true);
+/*eslint-enable */
 
 const  CancelOrder = ({orderId, busyUpdating, dispatch, ...rest}) => {
   const onCancelOrder = () => {
-      dispatch(cancelOrder({orderId}));
+    dispatch(cancelOrder({orderId}));
   };
-  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}}  busy={busyUpdating} fullWidth danger onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton> 
+  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}}  busy={busyUpdating} fullWidth danger onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton>;
 };
 
 class CustomerOrderDetail extends Component{
@@ -32,11 +33,16 @@ class CustomerOrderDetail extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
     this.state = {
       amount: undefined
-    }
+    };
   }
 
   beforeNavigateTo(){
     this.subscribeToOrderSummary(this.props);
+  }
+
+  goToTabNamed = (name) => {
+    const {history, path, orderId} = this.props;
+    history.replace({pathname: `${path}/${name}`, state: {orderId}});
   }
 
   subscribeToOrderSummary(props){
@@ -50,9 +56,10 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order, orderId, client, partnerResponses, errors, history, busyUpdating, dispatch} = this.props;
+    const {busy, order, orderId, errors, history, busyUpdating, dispatch, height, path} = this.props;
     const {resources} = this;
-    return busy || !order? <LoadingScreen text={ !busy && !order ? "Order \"" + orderId + "\" cannot be found" : "Loading Order..."}/> : <Container>
+    const {SupportsPaymentStages} = resources;
+    return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => history.goBack()}>
@@ -61,13 +68,24 @@ class CustomerOrderDetail extends Component{
         </Left>
         <Body><Title>{resources.PageTitle(order)}</Title></Body>
       </Header>
-      <Content padded>
-        <ErrorRegion errors={errors}/>
-        <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-        <CustomerNegotiationPanel {...this.props}/>
-        <CustomerStagedPaymentPanel {...this.props}/>
-        <OrderSummary order={order} client={client}/>
+      <Content>
+        <View style={{paddingLeft: 15, paddingRight: 15}}>
+          <ErrorRegion errors={errors}/>
+          <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
+          <CustomerNegotiationPanel {...this.props}/>
+          {!SupportsPaymentStages ? <OrderSummary {...this.props}/> : null }
+        </View>
+        {SupportsPaymentStages ?
+          [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
+            <Tab heading='Summary' onPress={() => this.goToTabNamed('Summary')}/>
+            <Tab heading='PaymentStages' onPress={() => this.goToTabNamed('PaymentStages')}/>
+          </Tabs>,
+          <ReduxRouter key="2"  name="CustomerOrdersRouter" {...this.props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
+            <Route path={'Summary'} component={OrderSummary} />
+            <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
+          </ReduxRouter>] : null}
       </Content>
+     
     </Container>;
   }
 }
@@ -75,15 +93,15 @@ class CustomerOrderDetail extends Component{
 const findOrderSummaryFromDao = (state, orderId, daoName) => {
   const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
   return  orderSummaries.find(o => o.orderId == orderId);
-}
+};
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  if(orderId == null){
+  if (orderId == null){
     return;
   }
-  let order = findOrderSummaryFromDao(state,orderId,'orderSummaryDao');
-  order = order || findOrderSummaryFromDao(state,orderId,'singleOrderSummaryDao');
+  let order = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
+  order = order || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
 
   const {partnerResponses} = order || {};
   
@@ -109,8 +127,8 @@ export default connect(
 
 const styles = {
   row: {
-    marginTop:10,
-    marginBottom:10
+    marginTop: 10,
+    marginBottom: 10
   },
   toggleStage: {
     marginRight: 5,
@@ -153,7 +171,7 @@ const styles = {
     fontSize: 30,
     lineHeight: 34,
     fontWeight: 'bold'
-  }, 
+  },
   smlprice: {
     fontSize: 15,
     fontWeight: 'bold'

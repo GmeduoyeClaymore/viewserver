@@ -87,7 +87,31 @@ export default class OrderSummaryDao{
       orderDetails,
     } = orderRow;
 
-    return {partnerResponses: !partnerResponses ? null : partnerResponses.map(this.mapPartnerResponse), ...orderDetails};
+    return {partnerResponses: !partnerResponses ? null : partnerResponses.map(this.mapPartnerResponse), ...this.addPartnerInfo(orderDetails, orderRow)};
+  }
+
+  addPartnerInfo(orderDetails, orderRow){
+    const {assignedPartner} = orderDetails;
+    if (!assignedPartner){
+      return orderDetails;
+    }
+    const partnerInfo  = {
+      latitude: orderRow.partner_latitude,
+      longitude: orderRow.partner_longitude,
+      firstName: orderRow.partner_firstName,
+      lastName: orderRow.partner_lastName,
+      email: orderRow.partner_email,
+      imageUrl: orderRow.partner_imageUrl,
+      online: orderRow.partner_online,
+      userStatus: orderRow.partner_userStatus,
+      statusMessage: orderRow.partner_statusMessage,
+      ratingAvg: orderRow.partner_ratingAvg,
+    };
+    const newAssignedPartner = {
+      ...assignedPartner,
+      ...partnerInfo
+    };
+    return {...orderDetails, assignedPartner: newAssignedPartner};
   }
 
   mapPartnerResponse(response){

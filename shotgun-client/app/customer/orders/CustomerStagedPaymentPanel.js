@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Text, Grid, Row, Col,  Item, Label, Spinner} from 'native-base';
+import {Button, Text, Grid, Row, Col,  Item, Label, Spinner, View} from 'native-base';
 import {SpinnerButton, Currency, ValidatingInput, ValidatingButton, Icon} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {addPaymentStage, removePaymentStage, payForPaymentStage} from 'customer/actions/CustomerActions';
@@ -12,7 +12,7 @@ const CAN_PAY_PAYMENT_STAGE_STATUS = ['Complete'];
 
 const validationSchemaBase = {
   name: yup.string().required().max(30),
-  description: yup.string().required().max(30),
+  description: yup.string().required().max(80),
 };
 
 const percentageValidationSchema = () => ({
@@ -89,14 +89,14 @@ class AddPaymentStageControl extends Component{
     const {paymentStageType, orderAmount} = this.props;
     const validationSchemaFactory = paymentStageType === 'Percentage' ? percentageValidationSchema : fixedPriceValidationSchema;
     const validationSchema = validationSchemaFactory(orderAmount);
-    return <Col>
+    return <Col style={{maxHeight: 280}}>
       <Item key="1" stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
         <Label>Name</Label>
         <ValidatingInput ref={rf => {this.nameInput = rf;}} bold style={{padding: 10}} padded value={this.state.name}placeholder="First fix electrics" onChangeText={(name) => this.setState({name})} validationSchema={validationSchema.name} maxLength={30}/>
       </Item>
       <Item key="2" stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
         <Label>Description</Label>
-        <ValidatingInput ref={rf => {this.descriptionInput = rf;}} bold style={{padding: 10}} padded value={this.state.description} placeholder="Complete all first fix of bathroom" onChangeText={(description) => this.setState({description})} validationSchema={validationSchema.name} maxLength={30}/>
+        <ValidatingInput ref={rf => {this.descriptionInput = rf;}} bold style={{padding: 10}} padded value={this.state.description} placeholder="Complete all first fix of bathroom" onChangeText={(description) => this.setState({description})} validationSchema={validationSchema.name} maxLength={80}/>
       </Item>
       <Item key="3" stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
         <Label>{paymentStageType === 'Percentage' ?  'Percentage' : 'Amount'}</Label>
@@ -111,7 +111,7 @@ const PartnerPaymentStagesControl = ({paymentStages = [], orderId, orderStatus, 
   return <Col>{paymentStages.map(
     (paymentStage, idx)  => {
       const {quantity, name, description, paymentStageType, paymentStageStatus, id, lastUpdated} = paymentStage;
-      return <Row key={idx} style={{marginBottom: 10, marginLeft: 3, width: '100%'}}>
+      return <Row key={idx} style={{marginBottom: 10, marginLeft: 3, width: '100%', flex: -1}}>
         <Col  size={50}>
           <Text style={{...styles.subHeading, marginBottom: 5}}>{name}</Text>
           <Text>{description}</Text>
@@ -144,17 +144,22 @@ export default class OrderPaymentStagePanel extends Component{
   }
 
   render(){
-    const {order, busyUpdating, dispatch} = this.props;
+    const {order, busyUpdating, dispatch, height} = this.props;
     const {paymentStages = []} = order;
     const canAddPaymentStages = !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(order.orderStatus);
     if (!order){
       return null;
     }
-    return [<Grid  key="1" style={{paddingTop: 10, marginBottom: 10}}>
-      <Col  key="2" size={32}>
-        < Text style={{...styles.heading, marginTop: 10, marginBottom: 10}}>{canAddPaymentStages ? 'Add Payment Stages' : 'Payment Stages'} </Text>
+    return <View style={{paddingLeft: 15, paddingRight: 15, flex: 1}}>
+      <Row  key="1" style={{paddingTop: 10, marginBottom: 10, flex: -1}}>
+        <Col  key="2" size={32}>
+          < Text style={{...styles.heading, marginTop: 10, marginBottom: 10}}>{canAddPaymentStages ? 'Add Payment Stages' : 'Payment Stages'} </Text>
+          
+        </Col>
+      </Row>
+      <Col style={{flex: 10}}>
         {paymentStages.length ? null :
-          <Row>
+          <Row style={{flex: -1, marginBottom: 10}}>
             <Button style={styles.toggleStage} light={this.state.paymentStageType === 'Fixed'} onPress={() => this.setPaymentStageType('Percentage')}>
               <Text style={styles.buttonText}>Percentage Stages</Text>
             </Button>
@@ -162,10 +167,10 @@ export default class OrderPaymentStagePanel extends Component{
               <Text style={styles.buttonText}>Fixed Stages</Text>
             </Button>
           </Row>}
+        <PartnerPaymentStagesControl key="3"
+          paymentStageType={this.state.paymentStageType} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating}/>
       </Col>
-    </Grid>,
-    <PartnerPaymentStagesControl key="3"
-      paymentStageType={this.state.paymentStageType} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating}/>];
+    </View>;
   }
 }
 

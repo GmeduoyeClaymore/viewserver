@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Button, Text, Col, Grid} from 'native-base';
+import {Button, Text, Col, Row} from 'native-base';
 import {Icon, AverageRating} from 'common/components';
 import {callPartner} from 'customer/actions/CustomerActions';
 import {callCustomer} from 'partner/actions/PartnerActions';
 import {Image} from 'react-native';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 export class UserInfo extends Component{
   onPressCall = async () => {
@@ -14,30 +15,24 @@ export class UserInfo extends Component{
   render(){
     const {user} = this.props;
 
-    return user ? <Grid>
-      <Col>
-        <Col>
-          <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.images}/>
-        </Col>
-        <Col>
-          <Text>{user.firstName} {user.lastName}</Text>
-          <AverageRating rating={user.ratingAvg}/>
-        </Col>
+    return user ? <Row>
+      <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.images}/>
+      <Col style={{flex: 1, alignContent: 'flex-start'}}>
+        <Text style={{textAlign: 'left'}}>{user.firstName} {user.lastName}</Text>
+        <AverageRating style={{textAlign: 'left'}} rating={user.ratingAvg}/>
       </Col>
-      <Col>
-        <Button fullWidth callButtonSml onPress={this.onPressCall}>
-          <Icon name="phone" paddedIcon/>
-          <Text uppercase={false}>Call</Text>
-        </Button>
-      </Col>
-    </Grid> : null;
+      <Button  style={{flex: 1}} fullWidth callButtonSml onPress={this.onPressCall}>
+        <Icon name="phone" paddedIcon/>
+        <Text uppercase={false}>Call</Text>
+      </Button>
+    </Row> : null;
   }
 }
 
 const styles = {
   images: {
     aspectRatio: 1,
-    borderRadius: 150,
+    borderRadius: shotgun.imageBorderRadius,
     width: 40,
     marginRight: 10
   },

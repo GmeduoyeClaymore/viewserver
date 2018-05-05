@@ -9,7 +9,7 @@ const deviceHeight = Dimensions.get('window').height - statusBarHeight;
 const deviceWidth = Dimensions.get('window').width;
 const platformStyle = undefined;
 const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 375;
-
+const imageBorderRadius =  platform === 'ios' ? 0 : 150;
  const colors = {
   brandPrimary: '#ffffff',
   brandSecondary: '#00a2ff',
@@ -33,7 +33,7 @@ const isIphoneX = platform === 'ios' && deviceHeight === 812 && deviceWidth === 
 
 export default {
   ...colors,
-
+  imageBorderRadius,
   // Text
   textColor: colors.brandDark,
   inverseTextColor: colors.brandPrimary,

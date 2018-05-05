@@ -4,6 +4,7 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -65,11 +66,11 @@ public class PaymentControllerTest {
         if(customerToken == null){
             throw new RuntimeException("specify customer id");
         }
-        PaymentCard paymentCard = new PaymentCard();
-        paymentCard.setCvc("123");
-        paymentCard.setExpMonth("12");
-        paymentCard.setExpYear("22");
-        paymentCard.setNumber("4242424242424242");
+        PaymentCard paymentCard = JSONBackedObjectFactory.create(PaymentCard.class);
+        paymentCard.set("cvc","123");
+        paymentCard.set("expMonth","12");
+        paymentCard.set("expYear","22");
+        paymentCard.set("number","4242424242424242");
         return paymentCard;
     }
 }

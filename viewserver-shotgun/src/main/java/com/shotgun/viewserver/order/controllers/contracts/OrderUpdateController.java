@@ -17,6 +17,7 @@ public interface OrderUpdateController {
         IRecord orderRecord = new Record().
                 addValue("orderId", order.getOrderId()).
                 addValue("status", order.getOrderStatus().name()).
+                addValue("assignedPartnerUserId", order.getPartnerUserId()).
                 addValue("lastModified", now).
                 addValue("orderDetails", order.serialize());
 

@@ -80,14 +80,14 @@ const  RejectPartner = ({orderId, partnerId, orderContentTypeId, busyUpdating, d
   const onRejectPartner = () => {
     dispatch(rejectResponse({orderId, partnerId, orderContentTypeId}));
   };
-  return <SpinnerButton {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0}}  padded busy={busyUpdating} fullWidth danger onPress={onRejectPartner}><Text uppercase={false}>Reject</Text></SpinnerButton>;
+  return <SpinnerButton {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}}  padded busy={busyUpdating} fullWidth danger onPress={onRejectPartner}><Text uppercase={false}>Reject</Text></SpinnerButton>;
 };
 
 const  AcceptPartner = ({orderId, partnerId, orderContentTypeId, busyUpdating, dispatch, style = {}, ...rest}) => {
   const onAcceptPartner = () => {
     dispatch(acceptResponse({orderId, partnerId, orderContentTypeId}));
   };
-  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0}} padded busy={busyUpdating} fullWidth accept onPress={onAcceptPartner}><Text uppercase={false}>Accept</Text></SpinnerButton>;
+  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} padded busy={busyUpdating} fullWidth accept onPress={onAcceptPartner}><Text uppercase={false}>Accept</Text></SpinnerButton>;
 };
 
 const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated, busyUpdating, dispatch, style = {},  ...rest}) => {
