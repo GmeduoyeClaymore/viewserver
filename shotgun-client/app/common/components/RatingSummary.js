@@ -7,6 +7,9 @@ import {Image} from 'react-native';
 
 export const RatingSummary = ({order, isPartner}) => {
   const {assignedPartner, customer} = order;
+  if (!assignedPartner){
+    return null;
+  }
   const name = isPartner ? assignedPartner.firstName : customer.firstName;
   const rating = isPartner ? assignedPartner.ratingAvg : customer.ratingAvg;
   const isComplete = order.orderStatus == OrderStatuses.COMPLETED;

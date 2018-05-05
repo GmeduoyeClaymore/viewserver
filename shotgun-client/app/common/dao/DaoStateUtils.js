@@ -23,6 +23,10 @@ export const getSnapshotComplete = (state, daoName) => {
   return state.getIn(['dao', daoName, 'snapshotComplete']);
 };
 
+export const getAllDaoCommandsStateObject = (state, daoName) => {
+  return state.getIn(['dao', daoName, 'commands']) || {};
+};
+
 export const getAllDaos = (state) => {
   return state.getIn(['dao']);
 };
@@ -50,6 +54,20 @@ export const getOperationError = (state, daoName, operationName, includeCleared)
   return status === 'fail' && (!cleared || includeCleared) ? message : undefined;
 };
 
+export const getAnyOperationError = (state, daoName, includeCleared) => {
+  const daoCommandStates = getAllDaoCommandsStateObject(state, daoName);
+  let result = '';
+  Object.values(daoCommandStates).forEach(
+    stateVal => {
+      const {status, message, cleared} = stateVal;
+      if ( status === 'fail' && (!cleared || includeCleared) ){
+        result = result + '\n' + message;
+      }
+    }
+  );
+  return result;
+};
+
 export const getLoadingError = (state, daoName, includeCleared) => {
   return getOperationError(state, 'updateSubscription', daoName, includeCleared);
 };
@@ -72,11 +90,6 @@ export const isAnyLoading = (state, daoNames) => {
 
 export const getLoadingMessage = (state, daoNames) => {
   return daoNames.map( nm => getDaoStatusMessage(nm, state)).join('\n');
-};
-
-export const findOrderSummaryFromDao = (state, orderId, daoName) => {
-  const orderSummaries = getDaoState(state, ['orders'], daoName) || [];
-  return orderSummaries.find(o => o.orderId == orderId);
 };
 
 const getDaoStatusMessage = (statusPair, state) => {

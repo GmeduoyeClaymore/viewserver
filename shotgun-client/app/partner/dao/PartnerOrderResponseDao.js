@@ -7,7 +7,7 @@ export default class PartnerOrderResponseDao{
     offset: 0,
     limit: 10,
     filterMode: 2,
-    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }],
     partnerId: '@userId',
     userId: undefined
   };

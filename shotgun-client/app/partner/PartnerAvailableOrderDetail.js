@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
 import {withExternalState} from 'custom-redux';
-import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError} from 'common/dao';
 import {Text, Container, Header, Left, Button, Body, Title, Content} from 'native-base';
-import {OrderSummary, PriceSummary, CurrencyInput, LoadingScreen, SpinnerButton, Icon} from 'common/components';
+import {OrderSummary, PriceSummary, LoadingScreen, Icon, ErrorRegion} from 'common/components';
 import {respondToOrder} from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import OrderSummaryDao from 'common/dao/OrderSummaryDao';
+import PartnerNegotiationPanel from './PartnerNegotiationPanel';
+import PartnerPaymentStagesPanel from './PartnerPaymentStagesPanel';
 import moment from 'moment';
 
 class PartnerAvailableOrderDetail extends Component{
@@ -14,35 +17,40 @@ class PartnerAvailableOrderDetail extends Component{
   }
 
   beforeNavigateTo(){
-    const {dispatch, orderId, order} = this.props;
-    if (order == undefined) {
-      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
-        orderId,
-        reportId: 'partnerOrderDetail'
-      }));
+    const {dispatch, orderId, order, responseParams} = this.props;
+    dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
+      orderId,
+      ...OrderSummaryDao.PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS
+    }));
+    if (order != undefined) {
+      if (responseParams){
+        const {order, history, dispatch, bankAccount, path} = this.props;
+        const {orderId,  orderContentTypeId} = order;
+        const {negotiationDate, negotiationAmount} = responseParams;
+        if (bankAccount) {
+          dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount,  () => history.push({pathname: path, state: {orderId}})));
+        }
+      }
     }
   }
 
-  setNegotiationAmount = (negotiationAmount) => {
-    this.setState({negotiationAmount});
-  }
-
-  onRespondPress = async() => {
-    const {order, history, dispatch, ordersRoot, bankAccount, parentPath, negotiationAmount} = this.props;
-    const {orderId, requiredDate, orderContentTypeId} = order;
-    const negotiationDate = moment(requiredDate).valueOf();
-
-
+  onRespondPress = async({negotiationAmount, negotiationDate}) => {
+    const {order, history, dispatch, bankAccount, parentPath, path} = this.props;
+    const {orderId, orderContentTypeId} = order;
     if (bankAccount) {
-      dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount,  () => history.push({pathname: `${ordersRoot}/PartnerMyOrders`, transition: 'left'})));
+      dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount,  () => history.push({pathname: path, state: {orderId}})));
     } else {
+      const next = {pathname: path, state: {orderId, responseParams: {negotiationDate, negotiationAmount} }, transition: 'left'};
       // user has no bank account set up so take them to set it up
-      history.push({pathname: `${parentPath}/Settings/UpdateBankAccountDetails`, transition: 'left'}, {next: `${parentPath}/Checkout`});
+      history.push({pathname: `${parentPath}/Settings/UpdateBankAccountDetails`, transition: 'left', state: {next}});
     }
   }
 
   render() {
-    const {order = {}, client, history, busy, busyUpdating} = this.props;
+    const {order = {}, client, history, busy, busyUpdating, dispatch, errors} = this.props;
+    const {responseInfo = {}, negotiatedResponseStatus} = order;
+    const negotiationAmount = this.props.negotiationAmount || order.amount;
+    const negotiationDate = this.props.negotiationDate || order.requiredDate;
 
     return busy ? <LoadingScreen text='Waiting for order'/> : <Container>
       <Header withButton>
@@ -54,16 +62,10 @@ class PartnerAvailableOrderDetail extends Component{
         <Body><Title>Order Summary</Title></Body>
       </Header>
       <Content>
+        <ErrorRegion errors={errors}/>
         <PriceSummary orderStatus={order.orderStatus} isPartner={true} price={order.amount}/>
-
-        {this.resources.AllowsNegotiation ?
-          [<Text note key='negotiationText'>or suggest a different price</Text>,
-            <CurrencyInput key='negotiationAmount' onValueChange = {this.setNegotiationAmount} placeholder='Enter amount'/>] :
-          null
-        }
-
-        <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.acceptButton} onPress={this.onRespondPress}><Text uppercase={false}>Request job</Text></SpinnerButton>
-
+        {this.resources.AllowsNegotiation ? <PartnerNegotiationPanel busyUpdating={busyUpdating} negotiatedResponseStatus={negotiatedResponseStatus} negotiationAmount={negotiationAmount} responseInfo={responseInfo} negotiationDate={negotiationDate} onOrderRespond={this.onRespondPress}/> : null}
+        {this.resources.AllowsStagedPayments ? <PartnerPaymentStagesPanel negotiatedResponseStatus={negotiatedResponseStatus}  order={order} busyUpdating={busyUpdating} dispatch={dispatch}/> : null}
         <OrderSummary order={order} client={client}/>
       </Content>
     </Container>;
@@ -88,25 +90,27 @@ const styles = {
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
 property('AllowsNegotiation', false).
-personell(true).
-rubbish(true)
+  personell(true).
+  rubbish(true).
+property('AllowsStagedPayments', false).
+  personell(true)
 /*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
-  const orderId = getNavigationProps(initialProps).orderId;
-  let order = findOrderSummaryFromDao(state, orderId, 'orderRequestDao');
-  order = order || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
-
+  const {orderId, responseParams} = getNavigationProps(initialProps);
+  const order = findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
+  const user = getDaoState(state, ['user'], 'userDao');
+  const {bankAccount} = user;
   return {
     ...initialProps,
-    errors: getOperationErrors(state, [{ partnerDao: 'acceptOrderRequest'}]),
-    user: getDaoState(state, ['user'], 'userDao'),
+    errors: getOperationErrors(state, [{ partnerDao: 'acceptOrderRequest'}]) + '\n' + getAnyOperationError(state, 'orderDao') + '\n' + getAnyOperationError(state, 'singleOrderSummaryDao'),
+    user,
     busyUpdating: isAnyOperationPending(state, [{ partnerDao: 'acceptOrderRequest'}, {partnerDao: 'updateOrderPrice'}]),
     busy: !order,
     order,
     orderId,
-    negotiationAmount: order ? order.amount : 0,
-    bankAccount: getDaoState(state, ['bankAccount'], 'paymentDao')
+    responseParams,
+    bankAccount
   };
 };
 

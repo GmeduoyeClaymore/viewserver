@@ -69,20 +69,25 @@ export const getRoutesForChildren = (children, routerPath) => {
   return result;
 };
 
+const defaultTransition = (action) => {
+  const {transition = 'immediate', ...rest} = action;
+  return {...rest, transition};
+};
+
 export const parseAction = (action, state) => {
   if (!action){
     return;
   }
   if (typeof action === 'string'){
-    return {
+    return defaultTransition({
       pathname: action,
       state
-    };
+    });
   }
-  return {
+  return defaultTransition({
     ...action,
     state: state == undefined ? action.state : state
-  };
+  });
 };
 
 export const parseRoute = (routerPath, route, state) => {

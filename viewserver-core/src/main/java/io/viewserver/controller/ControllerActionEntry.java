@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.*;
 import io.viewserver.command.ActionParam;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,7 @@ public class ControllerActionEntry{
     private boolean isFuture = false;
     private Method method;
     private Object controller;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = JacksonSerialiser.getInstance().getMapper();
     private ControllerAction an;
     private static TypeReference<HashMap<String,Object>> dictionaryType = new TypeReference<HashMap<String,Object>>() {};
     private static final Logger log = LoggerFactory.getLogger(ControllerActionEntry.class);
@@ -286,6 +288,11 @@ public class ControllerActionEntry{
         if( Long.class == clazz || long.class == clazz) return Long.parseLong( value  + "");
         if( Float.class == clazz || float.class == clazz) return Float.parseFloat( value  + "");
         if( Double.class == clazz || double.class == clazz ) return Double.parseDouble( value  + "");
+        try{
+            return ConvertUtils.convert(value,clazz);
+        }catch (Exception ex){
+        }
+
         return null;
     }
 

@@ -40,7 +40,7 @@ export default class PaymentDao{
   }
 
   setBankAccount = async({paymentBankAccount, address}) => {
-    const promise = this.client.invokeJSONCommand('partnerController', 'setBankAccount', {paymentBankAccount, address});
+    const promise = this.client.invokeJSONCommand('userController', 'setBankAccount', {paymentBankAccount, address});
     const result =  await promise.timeoutWithError(5000, new Error('Could set bank account in 5 seconds'));
     Logger.debug('Set bank account');
     return result;

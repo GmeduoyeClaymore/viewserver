@@ -8,6 +8,7 @@ import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'partner/dao/OrderRequestDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import PaymentDao from 'common/dao/PaymentDao';
+import moment from 'moment';
 
 export const partnerServicesRegistrationAction = (client, continueWith) => {
   return async (dispatch) => {
@@ -21,6 +22,14 @@ export const partnerServicesRegistrationAction = (client, continueWith) => {
     registerNakedDao(dispatch, new PaymentDao(client));
     registerNakedDao(dispatch, new PartnerDao(client), continueWith);
   };
+};
+
+export const startPaymentStage = ({orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'startPaymentStage', {orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith);
+};
+
+export const completePaymentStage = ({orderId, paymentStageId, orderContentTypeId}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'completePaymentStage', {orderId, paymentStageId, orderContentTypeId}, continueWith);
 };
 
 export const registerAndLoginPartner = (partner, vehicle, address, bankAccount, continueWith) => {
@@ -40,7 +49,7 @@ export const updateVehicle = (vehicle, continueWith) => {
 };
 
 export const respondToOrder = (orderId, orderContentTypeId, requiredDate, amount, continueWith) => {
-  return invokeDaoCommand('orderDao', 'respondToOrder', {orderId, orderContentTypeId, requiredDate, amount}, continueWith);
+  return invokeDaoCommand('orderDao', 'respondToOrder', {orderId, orderContentTypeId, requiredDate: requiredDate ? moment(requiredDate).valueOf() : undefined, amount}, continueWith);
 };
 
 export const acceptOrderRequest = (orderId, continueWith) => {

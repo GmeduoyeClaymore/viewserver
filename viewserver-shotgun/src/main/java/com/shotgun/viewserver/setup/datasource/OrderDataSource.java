@@ -117,7 +117,7 @@ public class OrderDataSource {
                         new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_orderId","orderId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
-                        new Dimension("dimension_assignedPartnerUserId","assignedPartnerUserId", Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_partnerId","assignedPartnerUserId", Cardinality.Int, ContentType.String),
                         new Dimension("dimension_status", "status",Cardinality.Int, ContentType.String,true),
                         new Dimension("dimension_contentTypeId", "orderContentTypeId",Cardinality.Int, ContentType.Int,true).withImported()
                 ))

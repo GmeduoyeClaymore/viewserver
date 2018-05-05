@@ -24,7 +24,12 @@ public class PartnerOrderSummaryReport {
                                         .withConnection("#input", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
                                 new CalcColNode("userCreatedThisOrderCalc")
-                                        .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
+                                        .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""),
+                                                new CalcColOperator.CalculatedColumn("responseStatus", "getResponseField(\"{@userId}\",\"responseStatus\",orderDetails)"),
+                                                new CalcColOperator.CalculatedColumn("responsePrice", "getResponseField(\"{@userId}\",\"price\",orderDetails)"),
+                                                new CalcColOperator.CalculatedColumn("responseDate", "getResponseField(\"{@userId}\",\"date\",orderDetails)")
+                                        )
                                         .withConnection("customerJoin"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

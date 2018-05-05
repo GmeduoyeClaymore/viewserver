@@ -1,0 +1,4 @@
+[
+  {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true},
+  {"brand": "MasterCard", "last4": "4141", "expMonth": 11, "expYear": 2025, "isDefault": false}
+]

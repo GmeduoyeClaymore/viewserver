@@ -78,11 +78,15 @@ class ReduxRouterClass extends Component{
   }
 
   keyboardWillShow = (event) => {
-    super.setState({keyboardOffset: event.endCoordinates.height});
+    if (this.isMountedComponentMounted){
+      super.setState({keyboardOffset: event.endCoordinates.height});
+    }
   };
 
   keyboardWillHide = () => {
-    super.setState({keyboardOffset: 0});
+    if (this.isMountedComponentMounted){
+      super.setState({keyboardOffset: 0});
+    }
   };
 
   handleRef(route, ref){

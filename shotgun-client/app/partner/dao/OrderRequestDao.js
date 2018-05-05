@@ -17,7 +17,7 @@ export default class OrderRequestDao{
   };
 
   static PARTNER_AVAILABLE_ORDERS_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }]
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }]
   };
 
   constructor(client, options = {}) {

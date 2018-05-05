@@ -125,6 +125,10 @@ public class JacksonSerialiser implements IJsonSerialiser {
         }
     }
 
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
     private class ParameterNamesModule extends SimpleModule {
         @Override
         public void setupModule(SetupContext context) {

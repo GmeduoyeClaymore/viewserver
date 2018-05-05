@@ -24,7 +24,7 @@ class PartnerMyOrders extends Component{
         <Body><Title>{`My Jobs ${isCompleted ? ' (Completed)' : ''}`}</Title></Body>
       </Header>
       <Tabs initialPage={isCustomer ? 1 : 0}  page={isCustomer ? 1 : 0} {...shotgun.tabsStyle}>
-        <Tab heading='Accepted' onPress={() => this.goToTabNamed('Accepted')}/>
+        <Tab heading='Responded' onPress={() => this.goToTabNamed('Accepted')}/>
         <Tab heading='Posted' onPress={() => this.goToTabNamed('Posted')}/>
       </Tabs>
       <ReduxRouter  name="PartnerOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Accepted' {...this.props} >

@@ -12,16 +12,14 @@ export default class OrderSummaryDao{
   };
 
   static PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }],
     reportId: 'partnerOrderSummary',
-    partnerId: '@userId',
     userId: undefined
   };
 
   static CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }, { name: 'orderId', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }],
     reportId: 'customerOrderSummary',
-    userId: '@userId',
     partnerId: undefined
   };
 
@@ -107,11 +105,19 @@ export default class OrderSummaryDao{
       statusMessage: orderRow.partner_statusMessage,
       ratingAvg: orderRow.partner_ratingAvg,
     };
+
+    const responseInfo = {
+      responseStatus: orderRow.responseStatus,
+      responsePrice: orderRow.responsePrice,
+      responseDate: orderRow.responseDate,
+    };
+
     const newAssignedPartner = {
       ...assignedPartner,
-      ...partnerInfo
+      ...partnerInfo,
     };
-    return {...orderDetails, assignedPartner: newAssignedPartner};
+
+    return {...orderDetails, assignedPartner: newAssignedPartner, responseInfo};
   }
 
   mapPartnerResponse(response){
@@ -142,7 +148,7 @@ export default class OrderSummaryDao{
   }
 
   transformOptions(options){
-    if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'partnerOrderSummary')){
+    if (typeof options.reportId === 'undefined' || (options.reportId !== 'customerOrderSummary' && options.reportId !== 'partnerOrderSummary' && options.reportId !== 'partnerOrderResponse')){
       throw new Error('reportId should be defined and be either customerOrderSummary or partnerOrderSummary');
     }
 

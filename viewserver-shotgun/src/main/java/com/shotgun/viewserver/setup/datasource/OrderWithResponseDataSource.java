@@ -17,11 +17,16 @@ public class OrderWithResponseDataSource {
         return new DataSource()
                 .withName(NAME)
                 .withNodes(
+                        new ProjectionNode("removeColsProjection")
+                                .withMode(IProjectionConfig.ProjectionMode.Exclusionary)
+                                .withProjectionColumns(
+                                    new IProjectionConfig.ProjectionColumn("dimension_partnerId")
+                                ).withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderDataSource.NAME)),
                         new SpreadNode("orderResponseSpread")
                                 .withInputColumn("orderDetails")
                                 .withRemoveInputColumn()
                                 .withSpreadFunction(DateNegotiatedOrderResponseSpreadFunction.NAME)
-                                .withConnection(IDataSourceRegistry.getDefaultOperatorPath(OrderDataSource.NAME), Constants.OUT, Constants.IN),
+                                .withConnection("removeColsProjection", Constants.OUT, Constants.IN),
                         new JoinNode("responsePartnerJoin")
                                 .withLeftJoinColumns(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN)
                                 .withLeftJoinOuter()

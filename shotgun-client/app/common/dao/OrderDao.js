@@ -110,6 +110,20 @@ export default class OrdersDao{
     Logger.info(`Order payment stage ${paymentStageId} removed`);
     return paymentStageId;
   }
+
+  completePaymentStage = async ({orderId, paymentStageId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'completePaymentStage', {orderId, paymentStageId});
+    Logger.info(`Order payment stage ${paymentStageId} complete`);
+    return paymentStageId;
+  }
+
+  startPaymentStage = async ({orderId, paymentStageId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'startPaymentStage', {orderId, paymentStageId});
+    Logger.info(`Order payment stage ${paymentStageId} complete`);
+    return paymentStageId;
+  }
 }
 
 OrdersDao.prototype.toJSON = function () {
