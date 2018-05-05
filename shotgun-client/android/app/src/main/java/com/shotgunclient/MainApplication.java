@@ -16,6 +16,7 @@ import com.facebook.soloader.SoLoader;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import java.util.Arrays;
 import java.util.List;
+import org.gamega.RNAsyncStoragePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new PickerPackage(),
             new RNImmediatePhoneCallPackage(),
+            new RNAsyncStoragePackage(),
             new FIRMessagingPackage(),
             new MapsPackage()
       );

@@ -1,6 +1,10 @@
 import Logger from 'common/Logger';
-import {AsyncStorage} from 'react-native';
+import {NativeModules, AsyncStorage  as DefaultAsyncStorage, Platform} from 'react-native';
 import invariant from 'invariant';
+
+//Async storage hangs on android sim so we swap it out here
+const AsyncStorage = Platform.OS === 'android' ? NativeModules.RNAsyncStorage : DefaultAsyncStorage;
+
 export default class PrincipalService {
   static userIdKey = '@shotgun:userId';
 

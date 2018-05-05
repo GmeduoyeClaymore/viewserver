@@ -37,7 +37,7 @@ class UpdatePaymentCardDetails extends Component {
 
   render(){
     const {history, busy, errors, user, valid} = this.props;
-    const {paymentCards} = user;
+    const {paymentCards = []} = user;
 
     return <Container>
       <Header withButton>
