@@ -62,17 +62,17 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client2" subscribed to report "orderResponses" with parameters
-	  | Name                         | Type   | Value     |
-	  | dimension_partnerId          | String | @userId   |
+	  | Name                     | Type   | Value     |
+	  | dimension_partnerId      | String | @userId   |
 	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                          | orderDetails                     | partner_firstName | partner_lastName | orderLocation                            | responseStatus |
-	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ref://json/orders/hireOrder.json | Modestas          | BrickLayer       | ref://json/orders/hireOrderLocation.json | RESPONDED          |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ref://json/orders/hireOrder.json | Modestas          | BrickLayer       | ref://json/orders/hireOrderLocation.json | RESPONDED      |
 
 
   Scenario: Cancelling Response to order removes order from the responses list
@@ -80,16 +80,16 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client2" controller "hireOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                            |
 	  | orderId | {client1_hireOrderController_createOrder_result} |
 	Given "client2" subscribed to report "orderResponses" with parameters
-	  | Name                         | Type   | Value     |
-	  | dimension_partnerId          | String | @userId   |
+	  | Name                     | Type   | Value     |
+	  | dimension_partnerId      | String | @userId   |
 	  | dimension_responseStatus | String | RESPONDED |
 	Then "client2" the following data is received terminally on report "orderResponses"
 	  | ~Action | orderId | orderDetails |
@@ -100,10 +100,10 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	When "client2" subscribed to report "orderRequest" with parameters
 	  | Name                    | Type    | Value  |
 	  | dimension_contentTypeId | Integer | 3      |
@@ -133,15 +133,15 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                   |
-	  | amount         | 100                                              |
+	  | amount       | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -151,28 +151,28 @@ Feature: Hire order scenarios
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                          | responseStatus |
-	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ACCEPTED           |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | ACCEPTED       |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                          | responseStatus |
-	  | RowAdd  | {client1_hireOrderController_createOrder_result} | DECLINED           |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | DECLINED       |
 
   Scenario: Cancelling accepted response causes job to go back into responded state
 	Given "client1" controller "hireOrderController" action "createOrder" invoked with data file "json/orders/createHireOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                   |
-	  | amount         | 100                                              |
+	  | amount       | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -185,28 +185,28 @@ Feature: Hire order scenarios
 	  | dimension_partnerId | String | @userId |
 	Then "client3" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                          | responseStatus |
-	  | RowAdd  | {client1_hireOrderController_createOrder_result} | CANCELLED          |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | CANCELLED      |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                          | responseStatus |
-	  | RowAdd  | {client1_hireOrderController_createOrder_result} | RESPONDED          |
+	  | RowAdd  | {client1_hireOrderController_createOrder_result} | RESPONDED      |
 
   Scenario: Accepting response removes job from order request list for all
 	Given "client1" controller "hireOrderController" action "createOrder" invoked with data file "json/orders/createHireOrder.json" with parameters
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                   |
-	  | amount         | 100                                              |
+	  | amount       | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -240,10 +240,10 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client3" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                   |
-	  | amount         | 100                                              |
+	  | amount       | 100                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -259,8 +259,8 @@ Feature: Hire order scenarios
 	  | order           | {client1_hireOrderController_generateOutboundDeliveryOrder_result} |
 	  | paymentMethodId | XXXX                                                               |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                                    |
-	  | orderId       | {client1_hireOrderController_createDeliveryOrder_result} |
+	  | Name         | Value                                                    |
+	  | orderId      | {client1_hireOrderController_createDeliveryOrder_result} |
 	  | requiredDate | "{now_date+1}"                                           |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name    | Value                                                    |
@@ -285,8 +285,8 @@ Feature: Hire order scenarios
 	  | order           | {client1_hireOrderController_generateInboundDeliveryOrder_result} |
 	  | paymentMethodId | XXXX                                                              |
 	Given "client4" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                                    |
-	  | orderId       | {client1_hireOrderController_createDeliveryOrder_result} |
+	  | Name         | Value                                                    |
+	  | orderId      | {client1_hireOrderController_createDeliveryOrder_result} |
 	  | requiredDate | "{now_date+1}"                                           |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name    | Value                                                    |
@@ -310,10 +310,10 @@ Feature: Hire order scenarios
 	  | Name             | Value                                              |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" controller "hireOrderController" action "respondToOrder" invoked with parameters
-	  | Name          | Value                                            |
-	  | orderId       | {client1_hireOrderController_createOrder_result} |
+	  | Name         | Value                                            |
+	  | orderId      | {client1_hireOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                   |
-	  | amount         | 105                                              |
+	  | amount       | 105                                              |
 	Given "client1" controller "hireOrderController" action "acceptResponse" invoked with parameters
 	  | Name      | Value                                              |
 	  | orderId   | {client1_hireOrderController_createOrder_result}   |
@@ -325,8 +325,8 @@ Feature: Hire order scenarios
 	  | Name                     | Type   | Value   |
 	  | dimension_customerUserId | String | @userId |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
-	  | ~Action | partner_email | orderId                                          | status    |
-	  | RowAdd  |               | {client1_hireOrderController_createOrder_result} | COMPLETED |
+	  | ~Action | partner_email                | orderId                                          | status    |
+	  | RowAdd  | modestasbricklayer@gmail.com | {client1_hireOrderController_createOrder_result} | COMPLETED |
 	When "client1" subscribed to report "paymentsReport" with parameters
 	  | Name                     | Type   | Value   |
 	  | dimension_paidFromUserId | String | @userId |

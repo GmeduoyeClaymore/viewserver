@@ -1,17 +1,24 @@
 package com.shotgun.viewserver.payments;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.setup.datasource.PaymentDataSource;
 import com.shotgun.viewserver.user.SavedBankAccount;
 import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.User;
 import com.stripe.model.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.Controller;
+import io.viewserver.datasource.IRecord;
+import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -98,9 +105,59 @@ public class MockPaymentController implements IPaymentController {
         return result;
     }
 
-    @Override
-    public String createCharge(int totalPrice, String paymentMethodId, String fromCustomerUserId, String toCustomerUserId, String description) {
-        return ControllerUtils.generateGuid();
+    public String createCharge(int totalPrice,
+                               String paymentMethodId,
+                               String fromCustomerUserId,
+                               String toPartnerUserId,
+                               String description) {
+
+
+        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+
+
+        String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId",fromCustomerUserId);
+        String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId",toPartnerUserId);
+        int chargePercentage = (int) ControllerUtils.getColumnValue(userTable, "chargePercentage",toPartnerUserId);
+
+
+        try {
+            //TODO is there a better way to do this without using big decimals all over the place?
+            BigDecimal chargeDecimal = BigDecimal.valueOf(chargePercentage).divide(BigDecimal.valueOf(100));
+            BigDecimal destinationAmount = BigDecimal.valueOf(totalPrice).subtract(BigDecimal.valueOf(totalPrice).multiply(chargeDecimal).setScale(0, RoundingMode.DOWN));
+            Map<String, Object> destinationParams = new HashMap<>();
+            destinationParams.put("account", toAccountId);
+            destinationParams.put("amount", destinationAmount);
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("amount", totalPrice);
+            params.put("currency", "gbp");
+            params.put("customer", stripeCustomerId);
+            params.put("source", paymentMethodId);
+            params.put("description", description);
+            params.put("destination", destinationParams);
+
+            String paymentid = ControllerUtils.generateGuid();
+            String chargeId = ControllerUtils.generateGuid();
+            IRecord paymentRecord = new Record().
+                    addValue("totalPrice", totalPrice).
+                    addValue("chargeId", chargeId).
+                    addValue("chargePercentage", chargePercentage).
+                    addValue("paymentId", paymentid).
+                    addValue("paymentMethodId", paymentMethodId).
+                    addValue("paidFromUserId", fromCustomerUserId).
+                    addValue("paidToUserId", toPartnerUserId).
+                    addValue("accountId", toAccountId).
+                    addValue("description", description);
+
+            iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord);
+
+            logger.debug("Created stripe charge {} with amount {} with {} sent to driver", chargeId, totalPrice, destinationAmount);
+
+            return paymentid;
+        } catch (Exception e) {
+            logger.error("There was a problem creating the charge", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private SavedPaymentCard mapStripeCardToSavedPaymentCard(PaymentCard paymentCard) {

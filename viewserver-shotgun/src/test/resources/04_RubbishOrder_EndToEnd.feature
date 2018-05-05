@@ -257,18 +257,18 @@ Feature: Rubbish order scenarios
 	  | dimension_customerUserId | String | @userId |
 	Then "client1" the following data is received eventually on report "customerOrderSummary"
 	  | ~Action | partner_email | orderId                                             | status    |
-	  | RowAdd  |               | {client1_rubbishOrderController_createOrder_result} | COMPLETED |
+	  | RowAdd  |  modestasbricklayer@gmail.com             | {client1_rubbishOrderController_createOrder_result} | COMPLETED |
 	When "client1" subscribed to report "paymentsReport" with parameters
 	  | Name                     | Type   | Value   |
 	  | dimension_paidFromUserId | String | @userId |
 	Given keyColumn is "paymentId"
 	Then "client1" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidToUserId                                       | paymentId                                                      | totalPrice |
-	  | RowAdd  |               | {client2_partnerController_registerPartner_result} | {client1_rubbishOrderController_customerCompleteAndPay_result} | 105        |
+	  | ~Action |  paidToUserId                                       | paymentId                                                      | totalPrice |
+	  | RowAdd  |  {client2_partnerController_registerPartner_result} | {client1_rubbishOrderController_customerCompleteAndPay_result} | 105        |
 	When "client2" subscribed to report "paymentsReport" with parameters
 	  | Name                   | Type   | Value   |
 	  | dimension_paidToUserId | String | @userId |
 	Then "client2" the following data is received eventually on report "paymentsReport"
-	  | ~Action | partner_email | paidFromUserId                                     | paymentId                                                      | totalPrice |
-	  | RowAdd  |               | {client1_partnerController_registerPartner_result} | {client1_rubbishOrderController_customerCompleteAndPay_result} | 105        |
+	  | ~Action | paidFromUserId                                     | paymentId                                                      | totalPrice |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | {client1_rubbishOrderController_customerCompleteAndPay_result} | 105        |
 
