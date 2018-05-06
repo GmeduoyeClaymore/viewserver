@@ -23,13 +23,14 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
 
     }
 
-    default void logDayComplete(){
+    default OrderPaymentStage logDayComplete(){
         Optional<OrderPaymentStage> activeDay = fromArray(getPaymentStages()).filter(c->c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Started)).findAny();
         if(!activeDay.isPresent()){
             throw new RuntimeException("Cannot find an open day to complete");
         }
         this.set("dayStarted", false);
         this.completePaymentStage(activeDay.get().getId());
+        return activeDay.get();
     }
 
     @Override

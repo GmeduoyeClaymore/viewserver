@@ -88,7 +88,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
         this.transform(
                 orderId,
                 order -> {
-                    order.logDayComplete();
+                    paymentStage.set(order.logDayComplete());
                     return true;
                 },
                 order -> {
