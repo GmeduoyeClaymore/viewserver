@@ -32,7 +32,7 @@ class OrderConfirmation extends Component{
       </Header>
       <Content>
         <PriceSummary orderStatus={OrderStatuses.PLACED} isPartner={false} price={order.amount}/>
-        <OrderSummary order={order} client={client}/>
+        <OrderSummary userCreatedThisOrder={true} order={order} client={client}/>
       </Content>
       <ErrorRegion errors={errors}/>
       <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>

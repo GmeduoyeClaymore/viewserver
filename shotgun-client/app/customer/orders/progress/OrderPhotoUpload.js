@@ -46,23 +46,13 @@ class OrderPhotoUpload extends Component{
   }
 
   render(){
-    const {next, orderItem, history} = this.props;
+    const {order, history} = this.props;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (
-      <Container>
-        <Header withButton>
-          <Left>
-            <Button onPress={() => history.goBack()}>
-              <Icon name='back-arrow'/>
-            </Button>
-          </Left>
-          <Body><Title>{resources.PageTitle}</Title></Body>
-        </Header>
-        <Content padded>
-          {orderItem.imageData != undefined ? <Grid onPress={showPicker}>
+          order.imageData != undefined ? <Grid onPress={showPicker}>
             <Row style={{justifyContent: 'center'}}>
-                <Image source={{uri: `data:image/jpeg;base64,${orderItem.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? width / 2 : width - 50 }]}/>
+                <Image source={{uri: `data:image/jpeg;base64,${order.imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? width / 2 : width - 50 }]}/>
                 <Button style={styles.imageButton} photoButton onPress={showPicker}>
                     <Grid>
                         <Row style={styles.imageButtonIconRow}>
@@ -74,9 +64,7 @@ class OrderPhotoUpload extends Component{
                     </Grid>
                 </Button>
             </Row>
-          </Grid> : null}
-       </Content>
-      </Container>
+          </Grid>: null
     );
   }
 }

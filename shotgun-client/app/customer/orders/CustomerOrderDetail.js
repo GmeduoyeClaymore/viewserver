@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Tab, View} from 'native-base';
 import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary, Tabs, RatingSummary} from 'common/components';
-import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, getDao} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import {cancelOrder} from 'customer/actions/CustomerActions';
@@ -12,6 +12,7 @@ import DeliveryAndRubbishCustomerOrderInProgress from './progress/DeliveryAndRub
 import PersonellCustomerOrderInProgress from './progress/PersonellCustomerOrderInProgress';
 import CustomerStagedPaymentPanel from './progress/CustomerStagedPaymentPanel';
 import CustomerHireOrderInProgress from './progress/CustomerHireOrderInProgress';
+import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
@@ -26,11 +27,11 @@ class CustomerOrderDetail extends Component{
   }
 
   subscribeToOrderSummary(props){
-    const {dispatch, orderId, order, isPendingOrderSummarySubscription} = props;
-    if (order == undefined && !isPendingOrderSummarySubscription) {
+    const {dispatch, orderId, order} = props;
+    if (!order) {
       dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
-        reportId: 'customerOrderSummary'
+        ...OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS
       }));
     }
   }
@@ -56,7 +57,7 @@ class CustomerOrderDetail extends Component{
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
             InProgressControls={InProgressControls}
             AcceptedControls={InProgressControls}
-            CompleteControls={[RatingSummary, OrderSummary]}
+            CompletedControls={[RatingSummary, OrderSummary]}
             CancelledControls={[RatingSummary, OrderSummary]}
           />
         </View>
@@ -74,6 +75,10 @@ const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
   if (orderId === null){
     throw new Error('Must specify an order id to navigate to this page');
+  }
+  const daoState = getDao(state, 'singleOrderSummaryDao');
+  if (!daoState){
+    return null;
   }
   const order = findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const {partnerResponses} = order || {};
@@ -101,8 +106,8 @@ const  CancelOrder = ({orderId, busyUpdating, dispatch, ...rest}) => {
 };
 
 const PaymentStagesAndSummary = (props) => {
+  const {history, path, orderId, height} = props;
   const goToTabNamed = (name) => {
-    const {history, path, orderId} = props;
     history.replace({pathname: `${path}/${name}`, state: {orderId}});
   };
   return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>

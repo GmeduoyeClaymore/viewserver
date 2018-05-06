@@ -8,6 +8,7 @@ import io.viewserver.expression.function.IUserDefinedFunction;
 import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class GetPartnerResponseField implements IUserDefinedFunction, IExpressio
             return null;
         }
         try {
-            return ControllerUtils.toString(any.get().get(responseField));
+            return any.get().get(responseField) + "";
         } catch (Exception e) {
            throw new RuntimeException(e);
         }

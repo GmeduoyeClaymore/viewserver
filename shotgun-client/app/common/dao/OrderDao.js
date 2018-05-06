@@ -141,14 +141,14 @@ export default class OrdersDao{
 
   logDayStart = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
-    this.client.invokeJSONCommand(controller, 'logDayStart', {orderId});
+    const paymentStageId = this.client.invokeJSONCommand(controller, 'logDayStarted', {orderId});
     Logger.info(`Order ${orderId} day started`);
     return paymentStageId;
   }
 
   logDayComplete = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
-    this.client.invokeJSONCommand(controller, 'logDayComplete', {orderId});
+    const paymentStageId = this.client.invokeJSONCommand(controller, 'logDayComplete', {orderId});
     Logger.info(`Order ${orderId} day completed`);
     return paymentStageId;
   }

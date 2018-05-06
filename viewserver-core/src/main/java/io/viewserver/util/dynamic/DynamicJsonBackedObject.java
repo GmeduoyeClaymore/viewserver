@@ -9,5 +9,5 @@ public interface DynamicJsonBackedObject {
 
     public Map<String,Object> getFields(String... excludedFields);
 
-    String get(String responseField);
+    Object get(String responseField);
 }

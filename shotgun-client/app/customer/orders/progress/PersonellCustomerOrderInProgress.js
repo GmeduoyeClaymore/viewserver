@@ -5,11 +5,11 @@ import {ReduxRouter, Route} from 'custom-redux';
 import CallButtons from './CallButtons';
 import OrderPhotoUpload from './OrderPhotoUpload';
 import MapDetails from './MapDetails';
-
+import PartnerDetails from 'common/components/UserInfo';
+import shotgun from 'native-base-theme/variables/shotgun';
 export default class PersonellCustomerOrderInProgress extends Component{
   constructor(props) {
     super(props);
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   goToTabNamed(name){
@@ -18,17 +18,15 @@ export default class PersonellCustomerOrderInProgress extends Component{
   }
   
   render() {
-    const {history} = this.props;
+    const {history, path} = this.props;
     const {goToTabNamed} = this;
     const page = history.location.pathname.endsWith('Directions')  ? 1 : 0;
     return <Grid>
-      <PartnerDetails {...this.props}/>
-      <CallButtons {...this.props}/>
       <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
         <Tab heading="Photos" onPress={() => goToTabNamed('OrderPhotoUpload')}/>
         <Tab heading="Directions" onPress={() => goToTabNamed('MapDetails')}/>
       </Tabs>
-      <ReduxRouter defaultRoute="OrderPhotoUpload">
+      <ReduxRouter {...this.props} path={path} defaultRoute="OrderPhotoUpload">
         <Route key="OrderPhotoUpload" path="OrderPhotoUpload" component={OrderPhotoUpload}/>
         <Route key="MapDetails" path="MapDetails" component={MapDetails}/>
       </ReduxRouter>

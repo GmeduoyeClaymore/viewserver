@@ -17,7 +17,7 @@ class CompleteControl extends Component {
   }
 }
 /*eslint-disable */
-resourceDictionary.
+resourceDictionary.a
   property('CompleteCaption', () => 'Complete').
     delivery((order) => `Complete Delivery - Pay (£${order.amountToPay})`).
     hire((order) => `Complete Hire - Pay (£${order.amountToPay})`).

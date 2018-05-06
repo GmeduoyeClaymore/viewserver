@@ -109,6 +109,9 @@ public class JsonSummary implements ISummary {
     @Override
     public void onGroupLeave(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
+        if(rowMap == null){
+            return;
+        }
         rowMap.remove(rowId + "");
         log.info("L3aving group - " + groupId);
         context.markDirty(groupId);

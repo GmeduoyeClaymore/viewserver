@@ -38,7 +38,7 @@ export default class OrderNegotiationPanel extends Component{
       return null;
     }
     const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
-    return [<Grid  key="1"  style={{paddingTop: 10, marginBottom: 10}}>
+    return [<Grid  key="1"  style={{paddingTop: 10, marginBottom: 10, paddingLeft: 10}}>
       <Col size={32}>
         <Text style={{...styles.heading, marginTop: 10}}>{canUpdateOrderPrice ? 'Advertised Rate' : 'Agreed Price'}</Text>
         <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
@@ -49,7 +49,7 @@ export default class OrderNegotiationPanel extends Component{
       </Col> : null}
     </Grid>,
     <PartnerAcceptRejectControl   key="2" showAll={this.state.showAll}  dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>,
-    partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row  key="3" onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null];
+    partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row style={{paddingLeft: 10}} key="3" onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null];
   }
 }
 

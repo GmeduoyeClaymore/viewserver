@@ -47,7 +47,7 @@ class PartnerLanding extends Component {
       <Redirect just to="/" history={history}/>;
     }
     return  busy ? <LoadingScreen text="Loading"/> :
-      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}>
+      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'cba5ae14-7bf2-4612-ab4c-202bd42be215'}}}>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
         <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>

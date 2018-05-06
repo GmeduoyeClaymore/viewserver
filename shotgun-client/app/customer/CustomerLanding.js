@@ -63,10 +63,10 @@ const mapStateToProps = (state, nextOwnProps) => {
   const {match: parentMatch} = nextOwnProps;
   return {
     parentMatch,
-    busy: isAnyLoading(state, ['paymentDao', 'userDao', 'contentTypeDao']),
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
     user: getDaoState(state, ['user'], 'userDao'),
-    ...nextOwnProps
+    ...nextOwnProps,
+    busy: isAnyLoading(state, ['paymentDao', 'userDao', 'contentTypeDao', 'singleOrderSummaryDao']),
   };
 };
 

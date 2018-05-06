@@ -27,7 +27,7 @@ const StartPaymentStage = ({ orderId, paymentStageId, onPaymentStageRemoved, ord
   return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0 }} success fullWidth onPress={onUpdateOrderAmount}><Text uppercase={false}>Start</Text></SpinnerButton>;
 };
 
-const PartnerPaymentStagesControl = ({ paymentStages = [], orderId, orderStatus, orderContentTypeId, paymentStageType, busyUpdating, dispatch, orderAmount, negotiatedResponseStatus }) => {
+const PartnerPaymentStagesControl = ({ paymentStages = [], orderId, orderStatus, orderContentTypeId, paymentStageType, busyUpdating, dispatch, orderAmount, negotiatedOrderStatus }) => {
   const hasStartedStage = paymentStages.find(c => c.paymentStageStatus === 'Started');
   return <Col>{paymentStages.map(
     (paymentStage, idx) => {
@@ -41,8 +41,8 @@ const PartnerPaymentStagesControl = ({ paymentStages = [], orderId, orderStatus,
           <StageQuantity quantity={quantity} paymentStageType={paymentStageType} orderAmount={orderAmount} />
         </Col>
         <Col size={15} >
-          {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedResponseStatus === 'ASSIGNED' && !hasStartedStage ? <StartPaymentStage busyUpdating={busyUpdating} style={{ marginBottom: 10 }} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
-          {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedResponseStatus === 'ASSIGNED' ? <CompletePaymentStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
+          {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedOrderStatus === 'ASSIGNED' && !hasStartedStage ? <StartPaymentStage busyUpdating={busyUpdating} style={{ marginBottom: 10 }} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
+          {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedOrderStatus === 'ASSIGNED' ? <CompletePaymentStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
           {paymentStageStatus === 'Complete' ? <Spinner style={{ height: 50, paddingRight: 15 }} /> : null}
           {paymentStageStatus === 'Paid' ? <Icon name='star' style={styles.star} /> : null}
         </Col>
@@ -64,15 +64,15 @@ export default class OrderPaymentStagePanel extends Component {
   }
 
   render() {
-    const { order, busyUpdating, dispatch, negotiatedResponseStatus } = this.props;
+    const { order, busyUpdating, dispatch} = this.props;
     const { paymentStages = [] } = order;
     if (!order || !paymentStages.length) {
       return null;
     }
-    return <View style={{ paddingLeft: 15, paddingRight: 15, flex: 1 }}>
+    return <View style={{ paddingLeft: 25, paddingRight: 15, flex: 1 }}>
       < Text style={{ ...styles.heading, marginTop: 10, marginBottom: 10 }}>Payment Stages</Text>
       <PartnerPaymentStagesControl
-        paymentStageType={this.state.paymentStageType} negotiatedResponseStatus={negotiatedResponseStatus} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating} />
+        paymentStageType={this.state.paymentStageType} negotiatedOrderStatus={order.negotiatedOrderStatus} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating} />
     </View>;
   }
 }

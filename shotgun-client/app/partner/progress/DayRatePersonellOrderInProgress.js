@@ -13,19 +13,17 @@ class DayRatePersonellOrderInProgress extends Component{
 
   logDayComplete = async() => {
     const {order, dispatch} = this.props;
-    dispatch(logDayComplete(order.orderId));
+    dispatch(logDayComplete(order.orderId, order.orderContentTypeId));
   };
 
   logDayStart = async() => {
     const {order, dispatch} = this.props;
-    dispatch(logDayStart(order.orderId));
+    dispatch(logDayStart(order.orderId, order.orderContentTypeId));
   };
 
   render() {
     const {order = {}, busyUpdating} = this.props;
-    
     return <View>
-      <Button fullWidth padded style={styles.startButton} onPress={this.onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button>
       {!order.dayStarted ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.logDayStart}><Text uppercase={false}>Start Day</Text></SpinnerButton> : null}
       {order.dayStarted  ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.completeButton} onPress={this.logDayComplete}><Text uppercase={false}>Complete Day</Text></SpinnerButton> : null}
     </View>;

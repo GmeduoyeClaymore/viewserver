@@ -107,7 +107,7 @@ class AddPaymentStageControl extends Component{
   }
 }
 
-const PartnerPaymentStagesControl = ({paymentStages = [], orderId, orderStatus, orderContentTypeId, paymentStageType, busyUpdating, dispatch, orderAmount}) => {
+const PartnerPaymentStagesControl = ({canAddPaymentStages, paymentStages = [], orderId, orderStatus, orderContentTypeId, paymentStageType, busyUpdating, dispatch, orderAmount}) => {
   return <Col>{paymentStages.map(
     (paymentStage, idx)  => {
       const {quantity, name, description, paymentStageType, paymentStageStatus, id, lastUpdated} = paymentStage;
@@ -127,7 +127,7 @@ const PartnerPaymentStagesControl = ({paymentStages = [], orderId, orderStatus, 
         </Col>
       </Row>;
     })}
-  {!!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(orderStatus) ? <AddPaymentStageControl orderAmount={orderAmount} busyUpdating={busyUpdating} paymentStageType={paymentStageType} orderId={orderId} orderContentTypeId={orderContentTypeId} dispatch={dispatch}/> : null}
+  {canAddPaymentStages ? <AddPaymentStageControl orderAmount={orderAmount} busyUpdating={busyUpdating} paymentStageType={paymentStageType} orderId={orderId} orderContentTypeId={orderContentTypeId} dispatch={dispatch}/> : null}
   </Col>;
 };
 
@@ -146,7 +146,7 @@ export default class OrderPaymentStagePanel extends Component{
   render(){
     const {order, busyUpdating, dispatch, height} = this.props;
     const {paymentStages = []} = order;
-    const canAddPaymentStages = !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(order.orderStatus);
+    const canAddPaymentStages = !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(order.orderStatus) && order.paymentType !== 'DAYRATE';
     if (!order){
       return null;
     }
@@ -158,7 +158,7 @@ export default class OrderPaymentStagePanel extends Component{
         </Col>
       </Row>
       <Col style={{flex: 10}}>
-        {paymentStages.length ? null :
+        {canAddPaymentStages && !paymentStages.length ? 
           <Row style={{flex: -1, marginBottom: 10}}>
             <Button style={styles.toggleStage} light={this.state.paymentStageType === 'Fixed'} onPress={() => this.setPaymentStageType('Percentage')}>
               <Text style={styles.buttonText}>Percentage Stages</Text>
@@ -166,9 +166,9 @@ export default class OrderPaymentStagePanel extends Component{
             <Button style={styles.toggleStage} light={this.state.paymentStageType  === 'Percentage'} onPress={() => this.setPaymentStageType('Fixed')}>
               <Text style={styles.buttonText}>Fixed Stages</Text>
             </Button>
-          </Row>}
+          </Row> : null}
         <PartnerPaymentStagesControl key="3"
-          paymentStageType={this.state.paymentStageType} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating}/>
+          paymentStageType={this.state.paymentStageType} canAddPaymentStages={canAddPaymentStages} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderAmount={order.amount} orderContentTypeId={order.orderContentTypeId} paymentStages={paymentStages} busyUpdating={busyUpdating}/>
       </Col>
     </View>;
   }

@@ -26,7 +26,12 @@ class PartnerNegotiationPanel extends Component {
     }
 
     respondToOrder = () => {
-      const {negotiationAmount, negotiationDate, onOrderRespond} = this.props;
+      let  {negotiationAmount, negotiationDate} = this.props;
+      const {onOrderRespond, order} = this.props;
+      const {responseInfo} = order;
+      const { responsePrice, responseDate} = responseInfo;
+      negotiationAmount = negotiationAmount || responsePrice || (order.amount);
+      negotiationDate = negotiationDate || responseDate || order.requiredDate;
       if (onOrderRespond){
         onOrderRespond({negotiationAmount, negotiationDate});
       }
@@ -37,7 +42,7 @@ class PartnerNegotiationPanel extends Component {
       let {negotiationAmount, negotiationDate} = this.props;
       const {responseInfo, customer} = order;
       const {responseStatus, responsePrice, responseDate} = responseInfo;
-      negotiationAmount = negotiationAmount || responsePrice || order.amount;
+      negotiationAmount = negotiationAmount || responsePrice || (order.amount / 100);
       negotiationDate = negotiationDate || responseDate || order.requiredDate;
       const {isDatePickerVisible} = this.state;
       const awaitingCustomerResponse = responseStatus === 'RESPONDED';
@@ -58,11 +63,11 @@ class PartnerNegotiationPanel extends Component {
           <Row>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Your Price</Label>
-              <CurrencyInput disabled={awaitingCustomerResponse} value={negotiationAmount / 100} style={{width: '100%'}} ref={ip => {this.amountInput = ip;}} onValueChange={this.setNegotiationAmount} placeholder="Enter your price"/>
+              <CurrencyInput disabled={awaitingCustomerResponse} value={negotiationAmount} style={{width: '100%'}} ref={ip => {this.amountInput = ip;}} onValueChange={this.setNegotiationAmount} placeholder="Enter your price"/>
             </Item>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Avialiability Date</Label>
-              <ValidatingInput  disabled={awaitingCustomerResponse} onPress={() => this.toggleDatePicker(true)} editable={false} bold
+              <ValidatingInput  disabled={awaitingCustomerResponse} onPress={() => this.toggleDatePicker(true)} editable={!awaitingCustomerResponse} bold
                 value={negotiationDate ? moment(negotiationDate).format('DD MMM YY') : undefined}
                 placeholder="Enter Availability Date" validateOnMount={negotiationDate !== undefined}
                 validationSchema={validationSchema.negotiationAmount} maxLength={10}/>
