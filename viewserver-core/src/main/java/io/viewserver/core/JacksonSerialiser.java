@@ -109,6 +109,9 @@ public class JacksonSerialiser implements IJsonSerialiser {
     }
 
     private <T> T internalDeserialise(String json, JavaType type) {
+        if(json == null || "".equals(json)){
+            return null;
+        }
         ObjectReader reader = readers.get(type);
         if (reader == null) {
             reader = mapper.reader(type);

@@ -85,7 +85,38 @@ export default class OrderSummaryDao{
       orderDetails,
     } = orderRow;
 
-    return {partnerResponses: !partnerResponses ? null : Object.values(partnerResponses).map(this.mapPartnerResponse), ...this.addPartnerInfo(orderDetails, orderRow)};
+    let result = this.addCustomerInfo(orderDetails, orderRow);
+    result = this.addResponseInfo(result, orderRow);
+    result = this.addPartnerInfo(result, orderRow);
+    const partnerResponsesMapped = !partnerResponses ? null : Object.values(partnerResponses).map(this.mapPartnerResponse);
+    return {partnerResponses: partnerResponsesMapped, ...result};
+  }
+
+  addResponseInfo(orderDetails, orderRow){
+    const responseInfo = {
+      responseStatus: orderRow.responseStatus,
+      responsePrice: orderRow.responsePrice,
+      responseDate: orderRow.responseDate,
+    };
+    const result = {...orderDetails};
+    result.responseInfo = responseInfo;
+    return result;
+  }
+
+  addCustomerInfo(orderDetails, orderRow){
+    const customerInfo  = {
+      latitude: orderRow.customer_latitude,
+      longitude: orderRow.customer_longitude,
+      firstName: orderRow.customer_firstName,
+      lastName: orderRow.customer_lastName,
+      email: orderRow.customer_email,
+      imageUrl: orderRow.customer_imageUrl,
+      online: orderRow.customer_online,
+      userStatus: orderRow.customer_userStatus,
+      statusMessage: orderRow.customer_statusMessage,
+      ratingAvg: orderRow.customer_ratingAvg,
+    };
+    return {...orderDetails, customer: customerInfo};
   }
 
   addPartnerInfo(orderDetails, orderRow){
@@ -106,18 +137,12 @@ export default class OrderSummaryDao{
       ratingAvg: orderRow.partner_ratingAvg,
     };
 
-    const responseInfo = {
-      responseStatus: orderRow.responseStatus,
-      responsePrice: orderRow.responsePrice,
-      responseDate: orderRow.responseDate,
-    };
-
     const newAssignedPartner = {
       ...assignedPartner,
       ...partnerInfo,
     };
 
-    return {...orderDetails, assignedPartner: newAssignedPartner, responseInfo};
+    return {...orderDetails, assignedPartner: newAssignedPartner};
   }
 
   mapPartnerResponse(response){

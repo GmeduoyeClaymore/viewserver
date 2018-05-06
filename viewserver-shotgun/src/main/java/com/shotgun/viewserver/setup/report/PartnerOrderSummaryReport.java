@@ -23,7 +23,7 @@ public class PartnerOrderSummaryReport {
                                         .withRightJoinColumns("userId")
                                         .withConnection("#input", Constants.OUT, "left")
                                         .withConnection(IDataSourceRegistry.getDefaultOperatorPath(UserDataSource.NAME), Constants.OUT, "right"),
-                                new CalcColNode("userCreatedThisOrderCalc")
+                                new CalcColNode("orderCalcs")
                                         .withCalculations(
                                                 new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""),
                                                 new CalcColOperator.CalculatedColumn("responseStatus", "getResponseField(\"{@userId}\",\"responseStatus\",orderDetails)"),
@@ -34,6 +34,9 @@ public class PartnerOrderSummaryReport {
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
+                                                new IProjectionConfig.ProjectionColumn("responseStatus"),
+                                                new IProjectionConfig.ProjectionColumn("responsePrice"),
+                                                new IProjectionConfig.ProjectionColumn("responseDate"),
                                                 new IProjectionConfig.ProjectionColumn("partner_latitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_longitude"),
                                                 new IProjectionConfig.ProjectionColumn("partner_firstName"),
@@ -44,6 +47,16 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("partner_userStatus"),
                                                 new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                                 new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                                new IProjectionConfig.ProjectionColumn("customer_latitude"),
+                                                new IProjectionConfig.ProjectionColumn("customer_longitude"),
+                                                new IProjectionConfig.ProjectionColumn("customer_firstName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_lastName"),
+                                                new IProjectionConfig.ProjectionColumn("customer_email"),
+                                                new IProjectionConfig.ProjectionColumn("customer_imageUrl"),
+                                                new IProjectionConfig.ProjectionColumn("customer_online"),
+                                                new IProjectionConfig.ProjectionColumn("customer_userStatus"),
+                                                new IProjectionConfig.ProjectionColumn("customer_statusMessage"),
+                                                new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
                                                 new IProjectionConfig.ProjectionColumn("orderLocation"),
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
@@ -55,7 +68,7 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                                        .withConnection("userCreatedThisOrderCalc")
+                                                        .withConnection("orderCalcs")
                         )
                         .withOutput("orderSummaryProjection");
         }

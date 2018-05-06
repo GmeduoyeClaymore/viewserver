@@ -75,9 +75,7 @@ const mapStateToProps = (state, initialProps) => {
   if (orderId === null){
     throw new Error('Must specify an order id to navigate to this page');
   }
-  let order = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
-  order = order || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
-
+  const order = findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const {partnerResponses} = order || {};
   
   const errors = getOperationErrors(state, [{orderDao: 'cancelOrder'}, {orderDao: 'rejectResponse'}, {orderDao: 'updateOrderAmount'}, {orderDao: 'addPaymentStage'}, {orderDao: 'removePaymentStage'}, {orderDao: 'payForPaymentStage'}]);
@@ -127,8 +125,8 @@ resourceDictionary.
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('InProgressControls', [OrderSummary]).
     personell([PaymentStagesAndSummary, PersonellCustomerOrderInProgress]).
-    hire([CustomerHireOrderInProgress, OrderSummary]),
-    delivery([DeliveryAndRubbishCustomerOrderInProgress, OrderSummary]),
+    hire([CustomerHireOrderInProgress, OrderSummary]).
+    delivery([DeliveryAndRubbishCustomerOrderInProgress, OrderSummary]).
     rubbish([DeliveryAndRubbishCustomerOrderInProgress, OrderSummary])
 /*eslint-enable */
 

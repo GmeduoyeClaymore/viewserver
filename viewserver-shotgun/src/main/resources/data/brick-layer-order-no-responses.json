@@ -2,7 +2,7 @@
   "amount": 20000,
   "productId": "BrickLayer",
   "orderId": "{orderId}",
-  "negotiatedResponseStatus": "REQUESTED",
+  "negotiatedOrderStatus": "REQUESTED",
   "origin": {
     "googlePlaceId": "ChIJ64Z3QcUEdkgRu_XB2S70e60",
     "city": "London",

@@ -2,7 +2,7 @@
   "amount": 18000,
   "productId": "HouseHoldThreeQuarterVan",
   "orderId": "{orderId}",
-  "negotiatedResponseStatus": "REQUESTED",
+  "negotiatedOrderStatus": "REQUESTED",
   "origin": {
     "deliveryAddressId": "65e90f91-6873-4a06-b8c2-ef74f8a5eda4",
     "country": "United Kingdom",

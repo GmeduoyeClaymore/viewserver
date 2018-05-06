@@ -46,7 +46,7 @@ public interface NegotiatedOrder  extends BasicOrder {
 
     default NegotiatedOrder transitionTo(NegotiationOrderStatus status){
         NegotiationOrderStatus propertyValue = TransitionUtils.transition(this.getNegotiatedResponseStatus(),status);
-        this.set("negotiatedResponseStatus", propertyValue);
+        this.set("negotiatedOrderStatus", propertyValue);
         this.setOrderStatus(TransitionUtils.transition(this.getOrderStatus(),propertyValue.getOrderStatus()));
         return this;
     }

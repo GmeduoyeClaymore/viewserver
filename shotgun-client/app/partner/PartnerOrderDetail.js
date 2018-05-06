@@ -3,16 +3,17 @@ import {withExternalState} from 'custom-redux';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError} from 'common/dao';
 import {Text, Container, Header, Left, Button, Body, Title, Content} from 'native-base';
 import {OrderSummary, PriceSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary} from 'common/components';
+import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import {respondToOrder} from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import PartnerNegotiationPanel from './PartnerNegotiationPanel';
 import PartnerPaymentStagesPanel from './PartnerPaymentStagesPanel';
-import DayRatePerseonellOrderInProgressSummary from './progress/DayRatePerseonellOrderInProgressSummary';
-import PartnerJourneyOrderInProgressSummary from './progress/PartnerJourneyOrderInProgressSummary';
-import HireOrderInProgressSummary from './progress/HireOrderInProgressSummary';
+import DayRatePersonellOrderInProgress from './progress/DayRatePersonellOrderInProgress';
+import PartnerJourneyOrderInProgress from './progress/PartnerJourneyOrderInProgress';
+import HireOrderInProgress from './progress/HireOrderInProgress';
 
-class PartnerAvailableOrderDetail extends Component{
+class PartnerOrderDetail extends Component{
   constructor(props){
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
@@ -36,7 +37,7 @@ class PartnerAvailableOrderDetail extends Component{
     }
   }
 
-  onRespondPress = async({negotiationAmount, negotiationDate}) => {
+  onOrderRespond = async({negotiationAmount, negotiationDate}) => {
     const {order, history, dispatch, bankAccount, parentPath, path} = this.props;
     const {orderId, orderContentTypeId, customer} = order;
     if (bankAccount) {
@@ -49,10 +50,10 @@ class PartnerAvailableOrderDetail extends Component{
   }
 
   render() {
-    const {order = {}, client, history, busy, busyUpdating, dispatch, errors} = this.props;
-    const {onRespondPress, resources} = this;
+    const {order = {}, client, history, busy, orderId, busyUpdating, dispatch, errors} = this.props;
+    const {onOrderRespond, resources} = this;
     const {InProgressControls} = resources;
-    return busy ? <LoadingScreen text='Waiting for order'/> : <Container>
+    return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
       <Header withButton>
         <Left>
           <Button onPress={() => history.goBack({transition: 'right'})}>
@@ -64,15 +65,13 @@ class PartnerAvailableOrderDetail extends Component{
       <Content>
         <ErrorRegion errors={errors}/>
         <PriceSummary orderStatus={order.orderStatus} isPartner={true} price={order.amount}/>
-        <OrderLifecycleView {...{...this.props, onRespondPress}}
-          PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
-          InProgressControls={InProgressControls}
-          AcceptedControls={InProgressControls}
-          CompleteControls={[RatingSummary, OrderSummary]}
+        <OrderLifecycleView {...{...this.props, onOrderRespond}}
+          PlacedControls={[PartnerNegotiationPanel]}
+          InProgressControls={[InProgressControls]}
+          AcceptedControls={[InProgressControls]}
+          CompletedControls={[RatingSummary, OrderSummary]}
           CancelledControls={[OrderSummary]}
         />
-        {this.resources.AllowsNegotiation ? <PartnerNegotiationPanel onOrderRespond={onRespondPress}/> : null}
-        {this.resources.AllowsStagedPayments ? <PartnerPaymentStagesPanel negotiatedResponseStatus={negotiatedResponseStatus}  order={order} busyUpdating={busyUpdating} dispatch={dispatch}/> : null}
         <OrderSummary order={order} client={client}/>
       </Content>
     </Container>;
@@ -103,10 +102,10 @@ property('PageTitle', () => 'Order Summary').
   rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
 property('PlacedControls', [PartnerNegotiationPanel, OrderSummary]).
 property('InProgressControls').
-  personell(order => order.paymentType === 'DAYRATE' ? [DayRatePerseonellOrderInProgressSummary, PartnerPaymentStagesPanel] : [PartnerPaymentStagesPanel]).
-  hire(() => [HireOrderInProgressSummary]).
-  delivery(() => [PartnerJourneyOrderInProgressSummary]).
-  rubbish(() => [PartnerJourneyOrderInProgressSummary]);
+  personell(order => order.paymentType === 'DAYRATE' ? [DayRatePersonellOrderInProgress, PartnerPaymentStagesPanel] : [PartnerPaymentStagesPanel]).
+  hire(() => [HireOrderInProgress]).
+  delivery(() => [PartnerJourneyOrderInProgress]).
+  rubbish(() => [PartnerJourneyOrderInProgress]);
 /*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
@@ -127,5 +126,5 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default withExternalState(mapStateToProps)(PartnerAvailableOrderDetail);
+export default withExternalState(mapStateToProps)(PartnerOrderDetail);
 

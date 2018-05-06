@@ -8,12 +8,11 @@ class PartnerMyOrdersListView extends Component{
   NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs to do'}</Text>;
 
   RowView = ({item: order, isLast, isFirst, history, isCustomer, ordersRoot}) => {
-    const isOnRoute = order.orderStatus == OrderStatuses.INPROGRESS;
     let next;
     if (isCustomer){
-      next = isOnRoute ? `${ordersRoot}/CustomerOrderInProgress` : `${ordersRoot}/CustomerOrderDetail`;
+      next = `${ordersRoot}/CustomerOrderDetail`;
     } else {
-      next = isOnRoute ? `${ordersRoot}/PartnerOrderInProgress` : `${ordersRoot}/PartnerMyOrderDetail`;
+      next = `${ordersRoot}/PartnerMyOrderDetail`;
     }
     return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };

@@ -14,7 +14,7 @@
   "amount": 4000,
   "productId": "LargeVan",
   "orderId": "{orderId}",
-  "negotiatedResponseStatus": "RESPONDED",
+  "negotiatedOrderStatus": "RESPONDED",
   "origin": {
     "deliveryAddressId": "c0a10226-e719-4629-a284-b8eb234c5736",
     "country": "United Kingdom",

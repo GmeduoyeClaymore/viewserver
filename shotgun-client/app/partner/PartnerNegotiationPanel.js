@@ -6,8 +6,8 @@ import {ValidatingInput, ValidatingButton, CurrencyInput, Icon} from 'common/com
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import moment from 'moment';
-const WaitingResponse = () => (<Row  style={{padding: 5}}><Spinner style={{height: 15}}/><Text>{'Waiting for Custumer response..'}</Text></Row>);
-const ResponseAccepted = ({customer}) => (<Row  style={{padding: 5}}><Icon name='star' style={styles.star}/><Text style={{padding: 5}}>{`${customer.firstName} ${customer.lastName} Accepted`}</Text></Row>);
+const WaitingResponse = () => (<Row  style={{padding: 5}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for Custumer response..'}</Text></Row>);
+const Response = ({customer, hasAccepted}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={hasAccepted ? styles.starAccepted : styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${customer.firstName} ${customer.lastName} ${hasAccepted ? 'Accepted' : 'Declined'}`}</Text></Row>);
 
 class PartnerNegotiationPanel extends Component {
     state = {};
@@ -35,41 +35,40 @@ class PartnerNegotiationPanel extends Component {
     render() {
       const {busyUpdating, order} = this.props;
       let {negotiationAmount, negotiationDate} = this.props;
-      const {negotiatedResponseStatus, customer} = order;
-      negotiationAmount = negotiationAmount || order.amount;
-      negotiationDate = negotiationDate || order.requiredDate;
+      const {responseInfo, customer} = order;
+      const {responseStatus, responsePrice, responseDate} = responseInfo;
+      negotiationAmount = negotiationAmount || responsePrice || order.amount;
+      negotiationDate = negotiationDate || responseDate || order.requiredDate;
       const {isDatePickerVisible} = this.state;
-      const hasResponded = negotiatedResponseStatus === 'RESPONDED';
-      const isAccepted = negotiatedResponseStatus === 'ASSIGNED';
+      const awaitingCustomerResponse = responseStatus === 'RESPONDED';
+      const hasCustomerResponded = !!~['DECLINED', 'ACCEPTED'].indexOf(responseStatus);
+      const hasAccepted = responseStatus === 'ACCEPTED';
 
       const StatusControl = () => {
-        if (hasResponded){
-          return  <WaitingResponse/>;
+        if (awaitingCustomerResponse){
+          return  <WaitingResponse />;
         }
-        if (isAccepted){
-          return  <ResponseAccepted customer={customer}/>;
-        }
-        return <ValidatingButton busy={busyUpdating} fullWidth success onPress={this.respondToOrder} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={{negotiationAmount, negotiationDate}}>
+        return [hasCustomerResponded ? <Response key="1" customer={customer} hasAccepted={hasAccepted}/> : null, <ValidatingButton  key="2" busy={busyUpdating} fullWidth success onPress={this.respondToOrder} validateOnMount={!awaitingCustomerResponse} validationSchema={yup.object(validationSchema)} model={{negotiationAmount, negotiationDate}}>
           <Text uppercase={false}>Respond To Job</Text>
-        </ValidatingButton>;
+        </ValidatingButton>];
       };
 
       return (
-        <Col>
+        <Col style={{padding: 20}}>
           <Row>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Your Price</Label>
-              <CurrencyInput disabled={hasResponded} value={negotiationAmount} style={{width: '100%'}} ref={ip => {this.amountInput = ip;}} onValueChange={this.setNegotiationAmount} placeholder="Enter your price"/>
+              <CurrencyInput disabled={awaitingCustomerResponse} value={negotiationAmount / 100} style={{width: '100%'}} ref={ip => {this.amountInput = ip;}} onValueChange={this.setNegotiationAmount} placeholder="Enter your price"/>
             </Item>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Avialiability Date</Label>
-              <ValidatingInput  disabled={hasResponded} onPress={() => this.toggleDatePicker(true)} editable={false} bold
+              <ValidatingInput  disabled={awaitingCustomerResponse} onPress={() => this.toggleDatePicker(true)} editable={false} bold
                 value={negotiationDate ? moment(negotiationDate).format('DD MMM YY') : undefined}
                 placeholder="Enter Availability Date" validateOnMount={negotiationDate !== undefined}
                 validationSchema={validationSchema.negotiationAmount} maxLength={10}/>
-              <DatePicker disabled={hasResponded} isVisible={isDatePickerVisible} cannedDateOptions={[]}
+              {awaitingCustomerResponse ? null : <DatePicker disabled={awaitingCustomerResponse} isVisible={isDatePickerVisible} cannedDateOptions={[]}
                 onCancel={() => this.toggleDatePicker(false)}
-                onConfirm={(value) => this.onChangeDate(value)} {...datePickerOptions} />
+                onConfirm={(value) => this.onChangeDate(value)} {...datePickerOptions} />}
             </Item>
            
           </Row>
@@ -86,6 +85,20 @@ const styles = {
     fontSize: 30,
     padding: 2,
     color: shotgun.brandSuccess,
+  },
+  starAccepted: {
+    paddingTop: 10,
+    alignSelf: 'center',
+    fontSize: 30,
+    padding: 2,
+    color: shotgun.brandSuccess,
+  },
+  starDeclined: {
+    paddingTop: 10,
+    alignSelf: 'center',
+    fontSize: 30,
+    padding: 2,
+    color: shotgun.brandDanger,
   }
 };
 

@@ -5,7 +5,6 @@ import CustomerMenuBar from './CustomerMenuBar';
 import Checkout from 'common/components/checkout/Checkout';
 import CustomerOrders from './orders/CustomerOrders';
 import CustomerOrderDetail from './orders/CustomerOrderDetail';
-import CustomerOrderInProgress from './orders/CustomerOrderInProgress';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
@@ -48,13 +47,13 @@ class CustomerLanding extends Component {
       <Redirect just to="/" history={history}/>;
     }
     return busy ? <LoadingScreen text="Loading"/> :
-      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={'/CustomerOrders'}>
-        <Route path={'/Checkout'} component={Checkout}/>
-        <Route path={'/CustomerOrders'} exact component={CustomerOrders}/>
-        <Route path={'/Orders'} exact component={CustomerOrders}/>
-        <Route path={'/CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-        <Route path={'/Settings'} parentPath={path} component={CustomerSettings}/>
-        <Route path={'/UserRelationships'} component={UserRelationships}/>
+      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}>
+        <Route path={'Checkout'} component={Checkout}/>
+        <Route path={'CustomerOrders'} exact component={CustomerOrders}/>
+        <Route path={'Orders'} exact component={CustomerOrders}/>
+        <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'Settings'} parentPath={path} component={CustomerSettings}/>
+        <Route path={'UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,
       <CustomerMenuBar key='menuBar' {...this.props}/>];
   }

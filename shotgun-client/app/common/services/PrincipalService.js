@@ -28,7 +28,7 @@ export default class PrincipalService {
 
   static async removeUserIdFromDevice(){
     try {
-      await AsyncStorage.removeItem(PrincipalService.userIdKey);
+      await AsyncStorage.clear();
     } catch (error) {
       //TODO - error handling here
       Logger.error('Error removing user id from device' + error);
