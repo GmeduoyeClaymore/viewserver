@@ -85,7 +85,7 @@ export default class OrderSummaryDao{
       orderDetails,
     } = orderRow;
 
-    return {partnerResponses: !partnerResponses ? null : partnerResponses.map(this.mapPartnerResponse), ...this.addPartnerInfo(orderDetails, orderRow)};
+    return {partnerResponses: !partnerResponses ? null : Object.values(partnerResponses).map(this.mapPartnerResponse), ...this.addPartnerInfo(orderDetails, orderRow)};
   }
 
   addPartnerInfo(orderDetails, orderRow){

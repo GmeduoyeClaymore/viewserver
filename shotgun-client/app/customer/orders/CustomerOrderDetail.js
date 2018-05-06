@@ -1,32 +1,17 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
-import {Container, Header, Left, Button, Body, Title, Content, Text, Grid, Row, ListItem, Tab, View} from 'native-base';
-import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary, Tabs} from 'common/components';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Tab, View} from 'native-base';
+import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary, Tabs, RatingSummary} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import MapDetails from './MapDetails';
+import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import {cancelOrder} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
-import CustomerNegotiationPanel from './CustomerNegotiationPanel';
-import CustomerStagedPaymentPanel from './CustomerStagedPaymentPanel';
-
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('PageTitle', () => 'Order Summary').
-    delivery(() => 'Delivery Job').
-    rubbish(() => 'Rubbish Collection').
-  property('SupportsPaymentStages', false).
-    personell(true);
-/*eslint-enable */
-
-const  CancelOrder = ({orderId, busyUpdating, dispatch, ...rest}) => {
-  const onCancelOrder = () => {
-    dispatch(cancelOrder({orderId}));
-  };
-  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}}  busy={busyUpdating} fullWidth danger onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton>;
-};
-
+import CustomerNegotiationPanel from './placed/CustomerNegotiationPanel';
+import DeliveryAndRubbishCustomerOrderInProgress from './progress/DeliveryAndRubbishCustomerOrderInProgress';
+import PersonellCustomerOrderInProgress from './progress/PersonellCustomerOrderInProgress';
+import CustomerStagedPaymentPanel from './progress/CustomerStagedPaymentPanel';
+import CustomerHireOrderInProgress from './progress/CustomerHireOrderInProgress';
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
@@ -38,11 +23,6 @@ class CustomerOrderDetail extends Component{
 
   beforeNavigateTo(){
     this.subscribeToOrderSummary(this.props);
-  }
-
-  goToTabNamed = (name) => {
-    const {history, path, orderId} = this.props;
-    history.replace({pathname: `${path}/${name}`, state: {orderId}});
   }
 
   subscribeToOrderSummary(props){
@@ -58,7 +38,7 @@ class CustomerOrderDetail extends Component{
   render() {
     const {busy, order, orderId, errors, history, busyUpdating, dispatch, height, path} = this.props;
     const {resources} = this;
-    const {SupportsPaymentStages} = resources;
+    const {InProgressControls} = resources;
     return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
       <Header withButton>
         <Left>
@@ -72,20 +52,15 @@ class CustomerOrderDetail extends Component{
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
           <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-          <CustomerNegotiationPanel {...this.props}/>
-          {!SupportsPaymentStages ? <OrderSummary {...this.props}/> : null }
+          <OrderLifecycleView {...this.props}
+            PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
+            InProgressControls={InProgressControls}
+            AcceptedControls={InProgressControls}
+            CompleteControls={[RatingSummary, OrderSummary]}
+            CancelledControls={[RatingSummary, OrderSummary]}
+          />
         </View>
-        {SupportsPaymentStages ?
-          [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
-            <Tab heading='Summary' onPress={() => this.goToTabNamed('Summary')}/>
-            <Tab heading='PaymentStages' onPress={() => this.goToTabNamed('PaymentStages')}/>
-          </Tabs>,
-          <ReduxRouter key="2"  name="CustomerOrdersRouter" {...this.props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
-            <Route path={'Summary'} component={OrderSummary} />
-            <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
-          </ReduxRouter>] : null}
       </Content>
-     
     </Container>;
   }
 }
@@ -97,8 +72,8 @@ const findOrderSummaryFromDao = (state, orderId, daoName) => {
 
 const mapStateToProps = (state, initialProps) => {
   const orderId = getNavigationProps(initialProps).orderId;
-  if (orderId == null){
-    return;
+  if (orderId === null){
+    throw new Error('Must specify an order id to navigate to this page');
   }
   let order = findOrderSummaryFromDao(state, orderId, 'orderSummaryDao');
   order = order || findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
@@ -120,62 +95,44 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
+const  CancelOrder = ({orderId, busyUpdating, dispatch, ...rest}) => {
+  const onCancelOrder = () => {
+    dispatch(cancelOrder({orderId}));
+  };
+  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}}  busy={busyUpdating} fullWidth danger onPress={onCancelOrder}><Text uppercase={false}>Cancel</Text></SpinnerButton>;
+};
+
+const PaymentStagesAndSummary = (props) => {
+  const goToTabNamed = (name) => {
+    const {history, path, orderId} = props;
+    history.replace({pathname: `${path}/${name}`, state: {orderId}});
+  };
+  return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
+    <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
+    <Tab heading='PaymentStages' onPress={() => goToTabNamed('PaymentStages')}/>
+  </Tabs>,
+  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
+    <Route path={'Summary'} component={OrderSummary} />
+    <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
+  </ReduxRouter>];
+};
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+  property('PageTitle', () => 'Order Summary').
+    delivery((order) => `${order.orderProduct.name} Delivery`).
+    hire((order) => `${order.orderProduct.name}  Hire`).
+    personell((order) => `${order.orderProduct.name} Job`).
+    rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
+  property('InProgressControls', [OrderSummary]).
+    personell([PaymentStagesAndSummary, PersonellCustomerOrderInProgress]).
+    hire([CustomerHireOrderInProgress, OrderSummary]),
+    delivery([DeliveryAndRubbishCustomerOrderInProgress, OrderSummary]),
+    rubbish([DeliveryAndRubbishCustomerOrderInProgress, OrderSummary])
+/*eslint-enable */
+
 export default connect(
   mapStateToProps
 )(CustomerOrderDetail);
-
-
-const styles = {
-  row: {
-    marginTop: 10,
-    marginBottom: 10
-  },
-  toggleStage: {
-    marginRight: 5,
-    justifyContent: 'center',
-    flex: 1
-  },
-  view: {
-    marginLeft: 30,
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    marginTop: 5
-  },
-  heading: {
-    fontSize: 16
-  },
-  subHeading: {
-    fontSize: 14,
-    fontWeight: 'bold'
-
-  },
-  buttonText: {
-    fontSize: 10
-  },
-  text: {
-    marginRight: 5
-  },
-  star: {
-    fontSize: 15,
-    padding: 2,
-    color: shotgun.gold,
-  },
-  partnerImage: {
-    aspectRatio: 1,
-    width: 80,
-    height: 80,
-  },
-  price: {
-    fontSize: 30,
-    lineHeight: 34,
-    fontWeight: 'bold'
-  },
-  smlprice: {
-    fontSize: 15,
-    fontWeight: 'bold'
-  }
-};
-
 

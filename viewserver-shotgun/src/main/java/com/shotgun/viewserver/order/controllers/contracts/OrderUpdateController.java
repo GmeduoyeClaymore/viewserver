@@ -14,6 +14,8 @@ public interface OrderUpdateController {
     default void updateOrderRecord(BasicOrder order) {
         Date now = new Date();
 
+        order.set("amountToPay", order.calculateRemainder());
+
         IRecord orderRecord = new Record().
                 addValue("orderId", order.getOrderId()).
                 addValue("status", order.getOrderStatus().name()).

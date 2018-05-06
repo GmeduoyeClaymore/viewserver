@@ -9,8 +9,21 @@ import io.viewserver.controller.ControllerAction;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public interface StagedPaymentController extends OrderTransformationController, PaymentNotifications {
+public interface StagedPaymentController extends SinglePaymentOrderController, OrderTransformationController, PaymentNotifications {
 
+
+    @Override
+    default String customerCompleteAndPay(String orderId) {
+        String paymentId = SinglePaymentOrderController.super.customerCompleteAndPay(orderId);
+        this.transform(
+                orderId,
+                order -> {
+                    order.completeAllPaymentStages();
+                    return true; },
+                StagedPaymentOrder.class
+        );
+        return paymentId;
+    }
 
     @ControllerAction(path = "addPaymentStage", isSynchronous = true)
     default String addPaymentStage(

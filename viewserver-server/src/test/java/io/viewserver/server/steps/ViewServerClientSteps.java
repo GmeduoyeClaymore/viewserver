@@ -100,21 +100,22 @@ public class ViewServerClientSteps {
             String[] values = cells.get(2).split(",");
             Object[] typedValues = new Object[values.length];
             for (int j = 0; j < values.length; j++) {
+                String value = clientContext.replaceParams(values[j]);
                 switch (type.toLowerCase()) {
                     case "integer": {
-                        typedValues[j] = Integer.parseInt(values[j]);
+                        typedValues[j] = Integer.parseInt(value);
                         break;
                     }
                     case "double": {
-                        typedValues[j] = Double.parseDouble(values[j]);
+                        typedValues[j] = Double.parseDouble(value);
                         break;
                     }
                     case "boolean": {
-                        typedValues[j] = Boolean.parseBoolean(values[j]);
+                        typedValues[j] = Boolean.parseBoolean(value);
                         break;
                     }
                     case "string": {
-                        typedValues[j] = values[j];
+                        typedValues[j] = value;
                         break;
                     }
                     default: {

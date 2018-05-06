@@ -91,3 +91,29 @@ export const getBankAccount = (continueWith) => {
 export const setBankAccount = (paymentBankAccount, address, continueWith) => {
   return invokeDaoCommand('paymentDao', 'setBankAccount', {paymentBankAccount, address}, continueWith);
 };
+
+export const startJourney = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'startJourney', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const completeJourney = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'completeJourney', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const logDayStart = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'logDayStart', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const logDayComplete = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'logDayComplete', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const partner = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'logDayStart', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'markItemReady', {orderId, orderContentTypeId}, continueWith);
+};
+
+

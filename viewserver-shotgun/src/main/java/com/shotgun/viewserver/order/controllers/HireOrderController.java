@@ -43,6 +43,19 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
                 HireOrder.class
         );
     }
+
+    @ControllerAction(path = "offHireItem", isSynchronous = true)
+    public void offHireItem(@ActionParam(name = "orderId")String orderId) {
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(HireOrder.HireOrderStatus.OFFHIRE);
+                    return true;
+                },
+                HireOrder.class
+        );
+    }
+
     @ControllerAction(path = "startJourney", isSynchronous = true)
     public void startJourney(@ActionParam(name = "orderId")String orderId) {
         LinkedDeliveryOrderController.super.startJourney(orderId);

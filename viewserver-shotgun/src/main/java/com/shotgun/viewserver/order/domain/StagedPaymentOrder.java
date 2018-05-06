@@ -9,6 +9,7 @@ import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.viewserver.core.Utils.fromArray;
 import static io.viewserver.core.Utils.toArray;
@@ -81,6 +82,23 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         stage.set("lastUpdated",new Date());
     }
 
+
+    default Integer calculateRemainder(){
+        if(getOrderStatus().equals(OrderStatus.COMPLETED)){
+            return 0;
+        }
+        if(this.getPaymentType().equals(PaymentType.DAYRATE)){
+            Optional<OrderPaymentStage> paymentStage = fromArray(getPaymentStages()).filter(c -> c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Started)).findAny();
+            if(paymentStage.isPresent()){
+                return getAmountForStage(paymentStage.get().getId());
+            }
+            return 0;
+        }else{
+            int totalPaidForStages = fromArray(getPaymentStages()).mapToInt(stage -> getAmountForStage(stage.getId())).sum();
+            return getAmount() - totalPaidForStages;
+        }
+    }
+
     default OrderPaymentStage getOrderPaymentStage(String paymentStageId) {
         Optional<OrderPaymentStage> first = fromArray(getPaymentStages()).filter(c -> c.getId().equals(paymentStageId)).findFirst();
         if(!first.isPresent()){
@@ -92,6 +110,12 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
     default void removePaymentStage(String paymentStageId){
         List<OrderPaymentStage> stages = fromArray(getPaymentStages()).filter(c -> !c.getId().equals(paymentStageId)).collect(Collectors.toList());
         this.set("paymentStages",toArray(stages, OrderPaymentStage[]::new));
+    }
+
+    default void completeAllPaymentStages(){
+        fromArray(getPaymentStages()).forEach(
+                stage -> completePaymentStage(stage.getId())
+        );
     }
 }
 

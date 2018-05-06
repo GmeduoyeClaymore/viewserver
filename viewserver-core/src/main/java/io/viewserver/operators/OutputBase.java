@@ -131,7 +131,8 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     public void handleUpdate(int row) {
         ExecutionContext.AssertUpdateThread();
         if (!getRowTracker().isActive(row)) {
-            throw new IllegalStateException("Cannot handle update for inactive row " + row + " active rows are " + getRowTracker());
+            log.warn("Cannot handle update for inactive row " + row + " active rows are " + getRowTracker());
+            return;
         }
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){

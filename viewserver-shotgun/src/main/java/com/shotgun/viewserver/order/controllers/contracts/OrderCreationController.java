@@ -44,6 +44,8 @@ public interface OrderCreationController {
             return null;
         }
 
+        order.set("amountToPay", order.calculateRemainder());
+
         orderRecord
                 .addValue("orderId", orderId)
                 .addValue("paymentMethodId", paymentMethodId)

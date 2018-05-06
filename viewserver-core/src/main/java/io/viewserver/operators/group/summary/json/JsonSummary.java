@@ -23,6 +23,8 @@ import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 import io.viewserver.schema.column.chunked.ChunkedColumnString;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,6 +33,7 @@ import java.util.TreeMap;
  * Created by bemm on 27/10/2014.
  */
 public class JsonSummary implements ISummary {
+    private final Logger log;
     private String name;
     private final String bucketColumn;
     private final String[] valueColumns;
@@ -43,6 +46,7 @@ public class JsonSummary implements ISummary {
 
     public JsonSummary(String name, String bucketColumn, String... valueColumns) {
         this.name = name;
+        log = LoggerFactory.getLogger(JsonSummary.class.getName() + "-" + name);
         this.bucketColumn = bucketColumn;
         this.valueColumns = valueColumns;
     }
@@ -93,7 +97,12 @@ public class JsonSummary implements ISummary {
     @Override
     public void onGroupEnter(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
-        rowMap.put(rowId+"", rowId);
+        log.info("Entering group - " + groupId);
+        Object value = ColumnHolderUtils.getValue(bucketHolder, rowId);
+        if(value == null){
+            return;
+        }
+        rowMap.put(value+"", rowId);
         context.markDirty(groupId);
     }
 
@@ -101,11 +110,19 @@ public class JsonSummary implements ISummary {
     public void onGroupLeave(int groupId, int rowId) {
         TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
         rowMap.remove(rowId + "");
+        log.info("L3aving group - " + groupId);
         context.markDirty(groupId);
     }
 
     @Override
     public void onRowUpdate(int groupId, int rowId) {
+        TreeMap<Object, Integer> rowMap = rowMaps.get(groupId);
+        log.info("Entering group - " + groupId);
+        Object value = ColumnHolderUtils.getValue(bucketHolder, rowId);
+        if(value == null){
+            return;
+        }
+        rowMap.put(value+"", rowId);
         context.markDirty(groupId);
     }
 
@@ -135,7 +152,7 @@ public class JsonSummary implements ISummary {
 
     private String getJson(int row) {
         jsonBuilder.setLength(0);
-        jsonBuilder.append('[');
+        jsonBuilder.append('{');
         TreeMap<Object, Integer> rowMap = rowMaps.get(row);
         boolean first = true;
         for (Map.Entry<Object, Integer> entry : rowMap.entrySet()) {
@@ -149,11 +166,13 @@ public class JsonSummary implements ISummary {
                 continue;
             }
 
+
             if (!first) {
                 jsonBuilder.append(',');
             } else {
                 first = false;
             }
+            jsonBuilder.append("\"" + bucketValue + "\":");
             jsonBuilder.append('{');
             boolean isFirst = true;
             for (ColumnHolder valueHolder : valueHolders) {
@@ -170,7 +189,7 @@ public class JsonSummary implements ISummary {
             }
             jsonBuilder.append('}');
         }
-        jsonBuilder.append(']');
+        jsonBuilder.append('}');
         return jsonBuilder.toString();
     }
 

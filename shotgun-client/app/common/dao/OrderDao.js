@@ -124,6 +124,48 @@ export default class OrdersDao{
     Logger.info(`Order payment stage ${paymentStageId} complete`);
     return paymentStageId;
   }
+
+  startJourney = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'startJourney', {orderId});
+    Logger.info(`Order ${orderId} journey started`);
+    return paymentStageId;
+  }
+
+  completeJourney = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'completeJourney', {orderId});
+    Logger.info(`Order ${orderId} journey completed`);
+    return paymentStageId;
+  }
+
+  logDayStart = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'logDayStart', {orderId});
+    Logger.info(`Order ${orderId} day started`);
+    return paymentStageId;
+  }
+
+  logDayComplete = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'logDayComplete', {orderId});
+    Logger.info(`Order ${orderId} day completed`);
+    return paymentStageId;
+  }
+
+  offHireItem = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'offHireItem', {orderId});
+    Logger.info(`Order ${orderId} item off hired`);
+    return paymentStageId;
+  }
+
+  markItemReady = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    this.client.invokeJSONCommand(controller, 'markItemReady', {orderId});
+    Logger.info(`Order ${orderId} item marked ready`);
+    return paymentStageId;
+  }
 }
 
 OrdersDao.prototype.toJSON = function () {

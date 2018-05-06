@@ -53,7 +53,6 @@ class CustomerLanding extends Component {
         <Route path={'/CustomerOrders'} exact component={CustomerOrders}/>
         <Route path={'/Orders'} exact component={CustomerOrders}/>
         <Route path={'/CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-        <Route path={'/CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
         <Route path={'/Settings'} parentPath={path} component={CustomerSettings}/>
         <Route path={'/UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,

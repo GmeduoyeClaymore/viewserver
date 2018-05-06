@@ -26,11 +26,10 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
 @Controller(name = "messagingController")
 public class MockMessagingController implements IMessagingController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessagingController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MockMessagingController.class);
 
     private ListeningExecutorService service =  MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1,new ThreadFactoryBuilder().setNameFormat("messaging-controller-executor-%d").build()));
 
-    private static String MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
     private HashMap<String, AppMessage> messagesBySender = new HashMap<>();
     private HashMap<String, AppMessage> messagesByRecipient = new HashMap<>();
     private IDatabaseUpdater databaseUpdater;

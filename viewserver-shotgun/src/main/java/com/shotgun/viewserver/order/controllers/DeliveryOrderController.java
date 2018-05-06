@@ -8,6 +8,7 @@ import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderController;
 import com.shotgun.viewserver.order.controllers.contracts.SinglePaymentOrderController;
 import com.shotgun.viewserver.order.domain.DeliveryOrder;
+import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.payments.IPaymentController;
@@ -56,6 +57,7 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
                     throw new RuntimeException("Delivery order should have an origin");
                 }
                 deliveryAddressController.addOrUpdateDeliveryAddress(order.getOrigin());
+                order.transitionTo(JourneyOrder.JourneyOrderStatus.PENDINGSTART);
                 order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
                 rec.addValue("orderLocation", order.getOrigin());
                 return true;

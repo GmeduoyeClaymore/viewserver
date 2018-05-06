@@ -87,4 +87,10 @@ export const updateOrderAmount = ({orderId, amount, orderContentTypeId}, continu
   return invokeDaoCommand('orderDao', 'updateOrderAmount', {orderId, amount, orderContentTypeId}, continueWith);
 };
 
+export const offHireItem = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'offHireItem', {orderId, orderContentTypeId}, continueWith);
+};
 
+export const customerCompleteAndPay = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'customerCompleteAndPay', {orderId, orderContentTypeId}, continueWith);
+};

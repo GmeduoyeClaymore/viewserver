@@ -71,8 +71,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
         this.transform(
                 orderId,
                 order -> {
-                    Date date = new Date();
-                    paymentStageId.set(order.addPaymentStage(order.getAmount(), "Work started at " + date, String.format("Day rate work started at " + date), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started));
+                    paymentStageId.set(order.logDayStarted());
                     return true;
                 },
                 order -> {
@@ -89,12 +88,7 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
         this.transform(
                 orderId,
                 order -> {
-                    Optional<OrderPaymentStage> activeDay = fromArray(order.getPaymentStages()).filter(c->c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Started)).findAny();
-                    if(!activeDay.isPresent()){
-                        throw new RuntimeException("Cannot find an open day to complete");
-                    }
-                    paymentStage.set(activeDay.get());
-                    order.completePaymentStage(activeDay.get().getId());
+                    order.logDayComplete();
                     return true;
                 },
                 order -> {

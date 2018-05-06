@@ -29,7 +29,7 @@ class UserRelationshipMap extends Component{
   fitMap(newProps){
     try {
       if (!this.isMapReady()){
-        Logger.info('Abandoning fit map as map is not ready ' + error);
+        Logger.info('Abandoning fit map as map is not ready ');
         return;
       }
       const {map} = this;

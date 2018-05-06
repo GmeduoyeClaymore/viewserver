@@ -2,20 +2,16 @@ import React, {Component} from 'react';
 import {withExternalState, Route, ReduxRouter, Redirect} from 'custom-redux';
 import PartnerMenuBar from './PartnerMenuBar';
 import PartnerMyOrders from './PartnerMyOrders';
-import PartnerMyOrderDetail from './PartnerMyOrderDetail';
+import PartnerOrderDetail from './PartnerOrderDetail';
 import PartnerAvailableOrders from './PartnerAvailableOrders';
-import PartnerAvailableOrderDetail from './PartnerAvailableOrderDetail';
-import PartnerOrderInProgress from './PartnerOrderInProgress';
 import PartnerSettings from './Settings/PartnerSettings';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
-import {partnerServicesRegistrationAction, getBankAccount, watchPosition} from 'partner/actions/PartnerActions';
+import {partnerServicesRegistrationAction, watchPosition} from 'partner/actions/PartnerActions';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import Checkout from 'common/components/checkout/Checkout';
-import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
-import CustomerOrderInProgress from 'customer/orders/CustomerOrderInProgress';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -54,13 +50,10 @@ class PartnerLanding extends Component {
       [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'PartnerAvailableOrderDetail', state: {orderId: 'b3f31e64-3c17-442d-ab04-80d8a51ad729'}}}>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
-        <Route path={'PartnerAvailableOrderDetail'} exact component={PartnerAvailableOrderDetail}/>
+        <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
         <Route path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
-        <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
-        <Route path={'CustomerOrderInProgress'} exact component={CustomerOrderInProgress}/>
         <Route path={'Orders'} exact component={PartnerMyOrders}/>
         <Route path={'PartnerMyOrderDetail'} exact component={PartnerMyOrderDetail}/>
-        <Route path={'PartnerOrderInProgress'} exact component={PartnerOrderInProgress}/>
         <Route path={'Settings'} component={PartnerSettings}/>
         <Route path={'UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,

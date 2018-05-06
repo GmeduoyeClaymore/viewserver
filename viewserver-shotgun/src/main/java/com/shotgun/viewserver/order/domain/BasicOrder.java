@@ -16,6 +16,8 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
 
     Integer getAmount();
 
+    Integer getAmountToPay();
+
     String getCustomerUserId();
 
     String getPartnerUserId();
@@ -35,6 +37,13 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
     void setOrderStatus(OrderStatus status);
 
     Date getRequiredDate();
+
+    default Integer calculateRemainder(){
+        if(getOrderStatus().equals(OrderStatus.COMPLETED)){
+            return 0;
+        }
+        return getAmount();
+    }
 
     default void transitionTo(OrderStatus status){
         this.setOrderStatus(this.getOrderStatus().transitionTo(status));

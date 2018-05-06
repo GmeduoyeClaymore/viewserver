@@ -18,7 +18,7 @@ public interface SinglePaymentOrderController extends OrderTransformationControl
                 orderId,
                 order -> {
                     order.transitionTo(OrderStatus.COMPLETED);
-                    Integer amount = order.getAmount();
+                    Integer amount = order.getAmountToPay();
                     if(amount == null){
                         throw new RuntimeException("Cannot complete order as unable to get the amount " + orderId);
                     }

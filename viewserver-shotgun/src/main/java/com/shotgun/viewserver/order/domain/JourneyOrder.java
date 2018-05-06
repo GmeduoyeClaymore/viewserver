@@ -26,6 +26,8 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
         return transitionTo(JourneyOrderStatus.ENROUTE);
     }
 
+
+
     default JourneyOrder transitionTo(JourneyOrderStatus status){
         this.set("journeyOrderStatus", TransitionUtils.transition(getJourneyOrderStatus(), status));
         this.setOrderStatus(status.getOrderStatus());
@@ -55,6 +57,7 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
     String getPartnerId();
 
     public static enum JourneyOrderStatus implements OrderEnumBase<JourneyOrderStatus> {
+        PENDINGSTART(OrderStatus.ACCEPTED),
         ENROUTE(OrderStatus.INPROGRESS),
         PARTNERCOMPLETE(OrderStatus.INPROGRESS);
 
@@ -62,6 +65,7 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
         List<JourneyOrderStatus> permittedTo = new ArrayList<>();
 
         static {
+            PENDINGSTART.to(ENROUTE);
             ENROUTE.to(PARTNERCOMPLETE);
         }
 
