@@ -6,5 +6,5 @@
   },
   "requiredDate": "{now_date+1}",
   "estimatedNoDays": "10",
-  "amount" : "100"
+  "amount" : 100
 }
