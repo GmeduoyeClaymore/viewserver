@@ -87,14 +87,17 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         if(getOrderStatus().equals(OrderStatus.COMPLETED)){
             return 0;
         }
-        if(this.getPaymentType().equals(PaymentType.DAYRATE)){
-            Optional<OrderPaymentStage> paymentStage = fromArray(getPaymentStages()).filter(c -> c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Started)).findAny();
+        if(PaymentType.DAYRATE.equals(this.getPaymentType())){
+            Optional<OrderPaymentStage> paymentStage = fromArray(getPaymentStages()).filter(c -> (OrderPaymentStage.PaymentStageStatus.Started).equals(c.getPaymentStageStatus())).findAny();
             if(paymentStage.isPresent()){
                 return getAmountForStage(paymentStage.get().getId());
             }
             return 0;
         }else{
             int totalPaidForStages = fromArray(getPaymentStages()).mapToInt(stage -> getAmountForStage(stage.getId())).sum();
+            if(getAmount() == null){
+                throw new RuntimeException("Cannot calculate remainer as no amount has been specified on order");
+            }
             return getAmount() - totalPaidForStages;
         }
     }

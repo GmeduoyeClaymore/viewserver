@@ -4,5 +4,6 @@
   "orderProduct": {
     "productId" : "HouseHoldHalfVan"
   },
-  "requiredDate": "{now_date+1}"
+  "requiredDate": "{now_date+1}",
+  "amount" : 10000
 }

@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.viewserver.core.Utils.fromArray;
 
 @Controller(name = "personellOrderController")
-public class PersonellOrderController  implements NegotiationNotifications,PaymentNotifications, OrderTransformationController, OrderCreationController, NegotiatedOrderController, StagedPaymentController, SinglePaymentOrderController {
+public class PersonellOrderController  implements NegotiationNotifications,PaymentNotifications, OrderTransformationController, OrderCreationController, NegotiatedOrderController, StagedPaymentController {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonellOrderController.class);
 

@@ -13,7 +13,8 @@ public interface StagedPaymentController extends SinglePaymentOrderController, O
 
 
     @Override
-    default String customerCompleteAndPay(String orderId) {
+    @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
+    default String customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
         String paymentId = SinglePaymentOrderController.super.customerCompleteAndPay(orderId);
         this.transform(
                 orderId,

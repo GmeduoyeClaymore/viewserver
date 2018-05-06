@@ -5,7 +5,8 @@
   "country": "United Kingdom",
   "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
   "latitude": 51.4857236,
-  "longitude": -0.2123406
+  "longitude": -0.2123406,
+  "amount" : 10000
 }
 
 
