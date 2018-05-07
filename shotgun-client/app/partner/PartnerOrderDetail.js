@@ -66,8 +66,8 @@ class PartnerOrderDetail extends Component {
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
-        <PriceSummary orderStatus={order.orderStatus} isRatingCustomer={true} price={order.amount} />
-        <OrderLifecycleView {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
+        <PriceSummary orderStatus={order.orderStatus}price={order.amount} />
+        <OrderLifecycleView  isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
           PlacedControls={[PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}
           AcceptedControls={InProgressControls}

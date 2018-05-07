@@ -11,19 +11,19 @@ export const RatingSummary = ({order, isRatingCustomer}) => {
     return null;
   }
   const name = isRatingCustomer ?  customer.firstName : assignedPartner.firstName;
-  const rating = isRatingCustomer ?  order.ratingCustomer : order.ratintPartner;
-  const imageUri = isRatingCustomer ?  customer.imageUrl : assignedPartner.imageUrl;
+  const rating = isRatingCustomer ?  order.ratingCustomer : order.ratingPartner;
+  const imageUrl = isRatingCustomer ?  customer.imageUrl : assignedPartner.imageUrl;
   const isComplete = order.orderStatus == OrderStatuses.COMPLETED;
-  const isRated = rating > 0 && rating !== undefined;
+  const isRated = !!rating;
 
   if (!isComplete) {
     return null;
   }
 
   if (isRated) {
-    const stars = [...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
+    const stars = [...Array(rating.rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
     return <View style={styles.view}>
-      {imageUri ?
+      {imageUrl ?
         <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.images}/> : null}
       <Text style={styles.text}>You rated {name}</Text>{stars}
     </View>;

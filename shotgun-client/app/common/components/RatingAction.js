@@ -8,9 +8,9 @@ import {Icon, AverageRating} from 'common/components';
 const RatingAction = ({isRatingCustomer, order, dispatch}) => {
   const {assignedPartner, customer} = order;
   const name = isRatingCustomer ? customer.firstName : assignedPartner.firstName;
-  const rating = isRatingCustomer ? customer.ratingAvg : assignedPartner.ratingAvg;
+  const ratingObj = isRatingCustomer ?  order.ratingCustomer : order.ratingPartner;
   const existingRating = isRatingCustomer ? order.ratingCustomer :  order.ratingPartner;
-
+  const {rating} =  ratingObj || {};
   const onPressStar = (newRating) => {
     const ratingType = isRatingCustomer ? 'Customer' : 'Partner';
     const comments = '';

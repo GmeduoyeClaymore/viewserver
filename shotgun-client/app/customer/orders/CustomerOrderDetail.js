@@ -54,8 +54,8 @@ class CustomerOrderDetail extends Component{
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
           <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-          <PriceSummary orderStatus={order.orderStatus} isRatingCustomer={false} price={order.amount} />
-          <OrderLifecycleView  userCreatedThisOrder={true} {...this.props}
+          <PriceSummary orderStatus={order.orderStatus} price={order.amount} />
+          <OrderLifecycleView  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
             InProgressControls={InProgressControls}
             AcceptedControls={InProgressControls}
@@ -109,7 +109,7 @@ const  CancelOrder = ({orderId, busyUpdating, dispatch, ...rest}) => {
 
 const PaymentStagesAndSummary = (props) => {
   const {history, path, orderId, height, order} = props;
-  const shouldShowPaymentStagesTab = order.paymentType !== 'DAYRATE' || order.paymentStages.length;
+  const shouldShowPaymentStagesTab = order.paymentType !== 'DAYRATE' || (order.paymentStages && order.paymentStages.length);
   const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
   const goToTabNamed = (name) => {
     history.replace({pathname: `${path}/${name}`, state: {orderId}});

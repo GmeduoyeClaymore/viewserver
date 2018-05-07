@@ -33,7 +33,7 @@ public interface SinglePaymentOrderController extends OrderTransformationControl
                     return true;
                 },
                 order -> {
-                    notifyJobCompleted(order.getOrderId(), order.getCustomerUserId());
+                    notifyJobCompleted(order.getOrderId(), order.getPartnerUserId());
                 },
                 SinglePaymentOrder.class
         );
