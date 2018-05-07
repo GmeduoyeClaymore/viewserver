@@ -327,8 +327,10 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
                                         getOwner().getName(), rowId, outputRow, ColumnHolderUtils.getValue(sortColumnHolders[0], rowId),
                                         oldRank, newRank);
                             }
-                            output.handleRemove(outputRow);
-                            rowsToRemove.add(rowId);
+                            if(output.getRowTracker().isActive(outputRow)) {
+                                output.handleRemove(outputRow);
+                                rowsToRemove.add(rowId);
+                            }
                         }
                     }
                 } else if (newInRange && addedRows.contains(rowId)) {

@@ -70,7 +70,7 @@ public class MapsController implements IMapsController {
     @ControllerAction(path = "getDistanceAndDuration", isSynchronous = false)
     public DistanceAndDuration getDistanceAndDuration(DirectionRequest request){
         HashMap<String, Object> get = getResponse(request, ControllerUtils.execute("GET", DIRECTION_URL, request.toQueryString(controllerKey.getKey())),false);
-        return new DistanceAndDuration(get);
+        return DistanceAndDuration.from(get);
     }
     @Override
     @ControllerAction(path = "getLocationFromPostcode", isSynchronous = false)

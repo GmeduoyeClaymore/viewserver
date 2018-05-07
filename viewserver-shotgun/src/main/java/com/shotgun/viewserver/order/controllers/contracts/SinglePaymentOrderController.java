@@ -40,6 +40,14 @@ public interface SinglePaymentOrderController extends OrderTransformationControl
         return paymentId.get();
     }
 
+    @ControllerAction(path = "calculatePriceEstimate", isSynchronous = true)
+    public default Integer calculatePriceEstimate(@ActionParam(name = "order") BasicOrder order) {
+        if(order.getOrderProduct() == null){
+            throw new RuntimeException("Unable to calculate amount estimate as no product specified on order");
+        }
+        return order.getOrderProduct().getPrice();
+    }
+
     IPaymentController getPaymentController();
 
 

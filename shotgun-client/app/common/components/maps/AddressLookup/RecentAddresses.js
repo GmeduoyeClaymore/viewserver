@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import {Text, Row, List, View} from 'native-base';
+import {Text, Row, List, View, Col} from 'native-base';
 import {Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 
@@ -20,18 +20,18 @@ export default class RecentAddresses extends Component {
 
   render() {
     const {deliveryAddresses, onAddressSelected, homeAddress} = this.props;
-    return <View paddedLeft style={styles.resultsContainer}>
+    return <Col paddedLeft style={styles.resultsContainer}>
       {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
       {deliveryAddresses && deliveryAddresses.length ?
-        [<Text key='header' smallText>Recent addresses you have used</Text>,
-          <List key='list'>{this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}</List>] :
+        <Col><Text key='header' style={{marginBottom: 15}} smallText>Recent addresses you have used</Text>
+          <List key='list'>{this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}</List></Col> :
         <Text smallText>No recent addresses</Text>}
-    </View>;
+    </Col>;
   }
 }
 
 const HomeAddressItem = ({address = {}, onAddressSelected}) =>
-  <Row style={{paddingLeft: 23}} onPress={() => onAddressSelected(address)}>
+  <Row style={{height: 50, alignContent: 'center'}} onPress={() => onAddressSelected(address)}>
     <Icon name="location" paddedIcon originPin style={{alignSelf: 'flex-start', marginTop: 6}}/>
     <View>
       <Text style={{paddingBottom: 6}}>Home</Text>

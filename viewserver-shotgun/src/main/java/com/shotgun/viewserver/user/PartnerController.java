@@ -31,7 +31,6 @@ public class PartnerController {
     private static final Logger log = LoggerFactory.getLogger(PartnerController.class);
     private IPaymentController paymentController;
     private UserController userController;
-    private VehicleController vehicleController;
     private LoginController loginController;
     private IImageController IImageController;
     private DeliveryAddressController deliveryAddressController;
@@ -39,14 +38,12 @@ public class PartnerController {
 
     public PartnerController(IPaymentController paymentController,
                              UserController userController,
-                             VehicleController vehicleController,
                              LoginController loginController,
                              IImageController IImageController,
                              DeliveryAddressController deliveryAddressController,
                              IReactor reactor) {
         this.paymentController = paymentController;
         this.userController = userController;
-        this.vehicleController = vehicleController;
         this.loginController = loginController;
         this.IImageController = IImageController;
         this.deliveryAddressController = deliveryAddressController;
@@ -82,14 +79,9 @@ public class PartnerController {
             public void execute() {
                 try{
                     ControllerContext.create(context);
+                    user.set("vehicle",vehicle);
                     String userId = userController.addOrUpdateUser(user);
                     ControllerContext.set("userId",userId);
-                    if(vehicle != null){
-                        if(vehicle.getDimensions() != null) {
-                            vehicleController.addOrUpdateVehicle(vehicle);
-                        }
-                    }
-
                     address.set("isDefault",true);
                     deliveryAddressController.addOrUpdateDeliveryAddress(address);
 

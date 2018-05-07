@@ -113,4 +113,3 @@ export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'markItemReady', {orderId, orderContentTypeId}, continueWith);
 };
 
-

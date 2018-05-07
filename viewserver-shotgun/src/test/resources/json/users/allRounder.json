@@ -22,8 +22,8 @@
     "model": "Transit 100 T280 Fwd",
     "bodyStyle": "PANEL VAN",
     "selectedProductIds": [
-      "1SmallVan",
-      "2MediumVan"
+      "SmallVan",
+      "MediumVan"
     ]
   },
   "bankAccount": {

@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
+import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.order.controllers.contracts.*;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
@@ -8,7 +9,11 @@ import com.shotgun.viewserver.order.domain.DeliveryOrder;
 import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.payments.IPaymentController;
+import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.user.UserPersistenceController;
+import com.shotgun.viewserver.user.UserTransformationController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -16,8 +21,10 @@ import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.viewserver.core.Utils.fromArray;
+
 @Controller(name = "deliveryOrderController")
-public class DeliveryOrderController implements NegotiationNotifications, OrderCreationController, NegotiatedOrderController, SinglePaymentOrderController, JourneyBasedOrderController {
+public class DeliveryOrderController implements NegotiationNotifications, OrderCreationController,UserPersistenceController, NegotiatedOrderController, SinglePaymentOrderController, JourneyBasedOrderController {
 
     private static final Logger logger = LoggerFactory.getLogger(DeliveryOrderController.class);
 
@@ -64,6 +71,45 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
                     notifyJobAssigned(ord.getOrderId(),ord.getPartnerUserId());
                 }
             }
+        );
+    }
+
+    @ControllerAction(path = "acceptResponse", isSynchronous = true)
+    public void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+        this.transform(
+                orderId,
+                order -> {
+                    if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
+                        getLogger().warn(partnerId + " has not responded to this order aborting");
+                        return false;
+                    }
+                    User partner = getUserForId(partnerId,User.class);
+                    if(partner == null){
+                        throw new RuntimeException("Unable to find user for id " + partnerId);
+                    }
+                    Vehicle vehicle = partner.getVehicle();
+                    if(vehicle == null){
+                        throw new RuntimeException("In order to accept this order the partner must have a vehicle registered");
+                    }
+                    order.set("vehicle", vehicle);
+                    order.acceptResponse(partnerId);
+                    return  true;
+                },
+                order -> {
+                    fromArray(order.getResponses()).forEach(
+                            res -> {
+                                if(!res.getPartnerId().equals(partnerId)){
+                                    if(res.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)) {
+                                        notifyJobRejected(orderId, res.getPartnerId());
+                                    }
+                                }else{
+                                    notifyJobAccepted(orderId,res.getPartnerId());
+
+                                }
+                            }
+                    );
+                },
+                DeliveryOrder.class
         );
     }
 

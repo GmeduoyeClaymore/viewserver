@@ -35,7 +35,6 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
 
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater);
-        VehicleController vehicleController = new VehicleController(databaseUpdater);
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
         UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor());
         DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController);
@@ -44,14 +43,13 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         this.registerController(mapsController);
         this.registerController(loginController);
         this.registerController(userController);
-        this.registerController(new PartnerController( paymentController, userController, vehicleController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));
+        this.registerController(new PartnerController( paymentController, userController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));
         this.registerController(new CustomerController(paymentController, deliveryAddressController, messagingController, userController, nexmoController));
         this.registerController(deliveryOrderController);
         this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
         this.registerController(new PersonellOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController));
         this.registerController(new ProductOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
-        this.registerController(new RubbishOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController));
-        this.registerController(vehicleController);
+        this.registerController(new RubbishOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController));
         this.registerController(messagingController);
         this.registerController(deliveryAddressController);
         this.registerController(iImageController);

@@ -114,8 +114,8 @@ const validationSchema = {
   
 const datePickerOptions = {
   datePickerModeAndroid: 'calendar',
-  mode: 'datetime',
-  titleIOS: 'Select delivery time',
+  mode: 'date',
+  titleIOS: 'Select start date',
   maximumDate: moment().add(14, 'days').toDate()
 };
 

@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.LatLng;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
@@ -48,6 +49,7 @@ public interface User extends DynamicJsonBackedObject{
     Integer getChargePercentage();
     Double getRatingAvg();
     Boolean getOnline();
+    Vehicle getVehicle();
 
 
     default UserRating addRating(String fromUserId, String orderId, int rating, String comments, UserRating.RatingType type){
@@ -116,6 +118,7 @@ public interface User extends DynamicJsonBackedObject{
     default void setBankAccount(SavedBankAccount savedBankAccount){
         this.set("bankAccount", savedBankAccount);
     }
+
 }
 
 

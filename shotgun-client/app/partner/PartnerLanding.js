@@ -11,6 +11,7 @@ import {isAnyLoading, getDaoState} from 'common/dao';
 import {registerActionListener} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
+import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
 import Checkout from 'common/components/checkout/Checkout';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
@@ -47,12 +48,13 @@ class PartnerLanding extends Component {
       <Redirect just to="/" history={history}/>;
     }
     return  busy ? <LoadingScreen text="Loading"/> :
-      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'cba5ae14-7bf2-4612-ab4c-202bd42be215'}}}>
+      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'f75c1d96-cc7b-41ef-a86c-be7381307c83'}}}>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
         <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
         <Route path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
         <Route path={'Orders'} exact component={PartnerMyOrders}/>
+        <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'Settings'} component={PartnerSettings}/>
         <Route path={'UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,

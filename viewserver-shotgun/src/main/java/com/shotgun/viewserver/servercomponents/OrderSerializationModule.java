@@ -13,7 +13,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.ProductKey;
+import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.maps.DistanceAndDuration;
 import com.shotgun.viewserver.order.domain.LinkedDeliveryOrder;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.OrderProduct;
@@ -44,6 +46,8 @@ public class OrderSerializationModule extends SimpleModule {
         registerDynamicClass(SavedBankAccount.class);
         registerDynamicClass(DeliveryAddress.class);
         registerDynamicClass(Dimensions.class);
+        registerDynamicClass(DistanceAndDuration.class);
+        registerDynamicClass(Vehicle.class);
         addDeserializer(ProductKey.class, new ProductKeyDesSerialiser());
         addDeserializer(Date.class, new DateDesSerialiser());
 

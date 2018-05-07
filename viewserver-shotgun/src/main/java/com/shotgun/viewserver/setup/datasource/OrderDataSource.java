@@ -107,6 +107,7 @@ public class OrderDataSource {
                                         new IProjectionConfig.ProjectionColumn("orderDetails"),
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("contentType_dimension_contentTypeId", "dimension_contentTypeId"),
+                                        new IProjectionConfig.ProjectionColumn("product_dimension_productId", "dimension_productId"),
                                         new IProjectionConfig.ProjectionColumn("product_name", "productName"),
                                         new IProjectionConfig.ProjectionColumn("productCategory_path", "path"),
                                         new IProjectionConfig.ProjectionColumn("contentType_rootProductCategory", "contentTypeRootProductCategory"))
@@ -114,7 +115,7 @@ public class OrderDataSource {
 
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true),
+                        new Dimension("dimension_productId",Cardinality.Int, ContentType.String, true).withImported(),
                         new Dimension("dimension_orderId","orderId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_customerUserId","userId", Cardinality.Int, ContentType.String, true),
                         new Dimension("dimension_partnerId","assignedPartnerUserId", Cardinality.Int, ContentType.String),

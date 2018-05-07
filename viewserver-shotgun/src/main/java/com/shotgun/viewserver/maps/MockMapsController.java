@@ -48,6 +48,6 @@ public class MockMapsController implements IMapsController{
 
     @Override
     public DistanceAndDuration getDistanceAndDuration(DirectionRequest driving) {
-        return new DistanceAndDuration(10,10);
+        return DistanceAndDuration.from(10,10);
     }
 }

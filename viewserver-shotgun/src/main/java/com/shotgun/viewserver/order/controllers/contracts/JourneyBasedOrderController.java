@@ -2,6 +2,7 @@ package com.shotgun.viewserver.order.controllers.contracts;
 
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.order.contracts.JourneyNotifications;
+import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.command.ActionParam;
@@ -29,6 +30,15 @@ public interface JourneyBasedOrderController extends JourneyNotifications, Order
 
     }
 
+    @ControllerAction(path = "calculatePriceEstimate", isSynchronous = true)
+    public default Integer calculatePriceEstimate(@ActionParam(name = "order") JourneyOrder order) {
+        if(order.getOrderProduct() == null){
+            throw new RuntimeException("Unable to calculate amount estimate as no product specified on order");
+        }
+        DistanceAndDuration distanceAndDuration = order.getDistanceAndDuration() == null ? getDistanceAndDuration(order) : order.getDistanceAndDuration();
+        return JourneyOrder.amountCalc(distanceAndDuration);
+    }
+
     @ControllerAction(path = "completeJourney", isSynchronous = true)
     default void completeJourney(@ActionParam(name = "orderId")String orderId){
         this.transform(
@@ -47,8 +57,14 @@ public interface JourneyBasedOrderController extends JourneyNotifications, Order
 
     default DistanceAndDuration getDistanceAndDuration(JourneyOrder order) {
         LatLng[] fromTo = new LatLng[2];
-        fromTo[0] = order.getStartLocation();
-        fromTo[1] = order.getEndLocation();
+        if(order.getOrigin() == null){
+            throw new RuntimeException("Cannot calculate distance and duration as origin is null");
+        }
+        if(order.getDestination() == null){
+            throw new RuntimeException("Cannot calculate distance and duration as destination is null");
+        }
+        fromTo[0] = order.getOrigin().getLatLong();
+        fromTo[1] = order.getDestination().getLatLong();
         return  getMapsController().getDistanceAndDuration(new DirectionRequest(fromTo,"driving"));
     }
 

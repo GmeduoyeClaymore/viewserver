@@ -7,15 +7,28 @@ export default class VehicleDetails extends Component{
   }
   render(){
     const {order} = this.props;
-    const {vehicle = {}} = order;
-    <Col>
+    const {vehicle} = order;
+    if (!vehicle){
+      return null;
+    }
+    return <Col>
       <Row>
-        <Col>
+        <Col style={{marginLeft: 15}}>
           <Text style={styles.subTitle}>Vehicle</Text>
-          <Text style={styles.data}>{vehicle.vehicleMake} {vehicle.vehicleModel}, {vehicle.vehicleColour}</Text>
+          <Text style={styles.data}>{vehicle.make} {vehicle.model}, {vehicle.model}</Text>
           <Text style={styles.data}>{vehicle.registrationNumber}</Text>
         </Col>
       </Row>
     </Col>;
   }
 }
+
+const styles = {
+  subTitle: {
+    marginTop: 25,
+    marginBottom: 30,
+    fontSize: 13
+  },
+  data: {
+  }
+};

@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.types.OrderEnumBase;
 import com.shotgun.viewserver.maps.DistanceAndDuration;
 import com.shotgun.viewserver.maps.LatLng;
@@ -11,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
+
+    DeliveryAddress getOrigin();
+    DeliveryAddress getDestination();
 
     default JourneyOrder logJourneyEnd(Date date, LatLng location, DistanceAndDuration duration){
         this.set("journeyEnd",date);
@@ -34,17 +38,13 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
         return this;
     }
 
-    default int amountCalc(DistanceAndDuration duration) {
-        return duration.getDistance() * 10 + duration.getDuration() * 100;
+    static int amountCalc(DistanceAndDuration duration) {
+        return duration.getDistance();
     }
 
     DistanceAndDuration getDistanceAndDuration();
 
     JourneyOrderStatus getJourneyOrderStatus();
-
-    LatLng getStartLocation();
-
-    LatLng getEndLocation();
 
     Date getJourneyStart();
 

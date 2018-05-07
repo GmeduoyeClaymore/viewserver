@@ -32,7 +32,10 @@ public interface ClassInterpreter<T> {
     public static Set<Method> getAllMethods(Class<?> cl) {
         Set<Method> methods=new LinkedHashSet<>();
         for(Method meth : cl.getMethods()){
-            methods.add(meth);
+            final int mod = meth.getModifiers();
+            if(!Modifier.isPrivate(mod) && !Modifier.isStatic(mod)) {
+                methods.add(meth);
+            }
         }
         Map<Object,Set<Package>> types=new HashMap<>();
         final Set<Package> pkgIndependent = Collections.emptySet();
@@ -54,7 +57,7 @@ public interface ClassInterpreter<T> {
                     case Modifier.PRIVATE:
                         continue;
                 }
-                if(!Modifier.isPrivate(m.getModifiers())){
+                if(!Modifier.isPrivate(mod) && !Modifier.isStatic(mod)){
                     methods.add(m);
                 }
             }

@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.delivery.orderTypes.types;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shotgun.viewserver.maps.LatLng;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
 import java.util.Date;
@@ -20,5 +21,11 @@ public interface DeliveryAddress extends DynamicJsonBackedObject{
     String getCountry();
     String getLine2();
     Date getCreated();
+    default LatLng getLatLong(){
+        if(getLatitude() == null || getLongitude() == null){
+            throw new RuntimeException("Cannot get lat lng as latitude or/and longitude are null");
+        }
+        return new LatLng(getLatitude(), getLongitude());
+    }
 
 }

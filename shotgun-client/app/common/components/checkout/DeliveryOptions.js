@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import {Picker} from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
-import {getDaoState, getOperationError} from 'common/dao';
+import {getDaoState, getOperationError, getDaoCommandResult} from 'common/dao';
 import {ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary, CurrencyInput} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
+import {calculatePriceEstimate} from 'customer/actions/CustomerActions';
 import yup from 'yup';
 import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -33,9 +34,21 @@ class DeliveryOptions extends Component {
     this.setState({ order: {...order, amount}});
   }
 
+  componentWillReceiveProps(props){
+    const {estimatedPrice} = props;
+    if (estimatedPrice && estimatedPrice != this.props.estimatedPrice){
+      this.setAmount(estimatedPrice);
+    }
+  }
+
+  moveToNext = () => {
+    const {next, history} = this.props;
+    history.push(next);
+  }
+
   setPaymentType = (paymentType) => {
     const {order} = this.props;
-    this.setState({order: {...order, paymentType}});
+    this.setState({ order: {...order, paymentType}});
   }
 
   setCard = ({id: paymentId, brand, last4}) => {
@@ -46,6 +59,11 @@ class DeliveryOptions extends Component {
     super.setState({isDatePickerVisible});
   }
 
+  beforeNavigateTo = async() => {
+    const {order, dispatch} = this.props;
+    dispatch(calculatePriceEstimate(order));
+  }
+
   onChangeDate = (value) => {
     const {order} = this.props;
     this.setState({ order: {...order, requiredDate: value}});
@@ -54,7 +72,7 @@ class DeliveryOptions extends Component {
 
   render() {
     const {resources} = this;
-    const {paymentCards, errors, next, order, payment = {}, history} = this.props;
+    const {paymentCards, errors, order, payment = {}, history, estimatedPrice} = this.props;
     const {isDatePickerVisible} = this.state;
 
     return <Container>
@@ -86,12 +104,12 @@ class DeliveryOptions extends Component {
             </Row>
             <Row>
               <Col>
-                <CurrencyInput onValueChange={this.setAmount}/>
+                <CurrencyInput value={order.amount} onValueChange={this.setAmount}/>
               </Col>
-              {resources.AllowDayRate ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.FIXED} onPress={() => this.setPaymentType(PaymentTypes.DAYRATE)}>
+              {resources.AllowDayRate && resources.AllowFixedPrice ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.FIXED} onPress={() => this.setPaymentType(PaymentTypes.DAYRATE)}>
                 <Text style={styles.buttonText}>Day Rate</Text>
               </Button> : null }
-              {resources.AllowFixedPrice ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.DAYRATE} onPress={() => this.setPaymentType(PaymentTypes.FIXED)}>
+              {resources.AllowDayRate && resources.AllowFixedPrice ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.DAYRATE} onPress={() => this.setPaymentType(PaymentTypes.FIXED)}>
                 <Text style={styles.buttonText}>Fixed Price</Text>
               </Button> : null }
             </Row>
@@ -101,13 +119,13 @@ class DeliveryOptions extends Component {
         <ListItem padded style={{borderBottomWidth: 0}}>
           <CardIcon brand={payment.brand} /><Text>Use card</Text>
           <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(c, i) => this.setCard(paymentCards[i])}>
-            {paymentCards.map((c,idx) => <Picker.Item key={idx} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
+            {paymentCards.map((c, idx) => <Picker.Item key={idx} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
           </Picker>
         </ListItem>
         <Text note style={styles.noteText}>You will not be charged until the job has been completed</Text>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
+      <ValidatingButton fullWidth paddedBottom iconRight onPress={this.moveToNext} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow' />
       </ValidatingButton>
@@ -191,11 +209,13 @@ const styles = {
 
 const mapStateToProps = (state, initialProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
-  const {paymentCards} = user;
+  const estimatedPrice = getDaoCommandResult(state, 'calculatePriceEstimate', 'orderDao');
+  const {paymentCards = []} = user || {};
   const defaultPayment = paymentCards.find(c => c.isDefault) || paymentCards[0];
 
   return {
     ...initialProps,
+    estimatedPrice,
     defaultPayment,
     paymentCards,
     user

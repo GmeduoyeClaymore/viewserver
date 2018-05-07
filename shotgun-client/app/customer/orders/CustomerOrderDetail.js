@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
-import {Container, Header, Left, Button, Body, Title, Content, Text, Tab, View} from 'native-base';
+import {Container, Header, Left, Button, Body, Title, Content, Text, Tab, View, Spinner, Row} from 'native-base';
 import {Icon, LoadingScreen, ErrorRegion, SpinnerButton, OrderSummary, Tabs, RatingSummary, PriceSummary} from 'common/components';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, getDao, getAnyOperationError} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -8,12 +8,12 @@ import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import {cancelOrder} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import CustomerNegotiationPanel from './placed/CustomerNegotiationPanel';
-import DeliveryAndRubbishCustomerOrderInProgress from './progress/DeliveryAndRubbishCustomerOrderInProgress';
-import PersonellCustomerOrderInProgress from './progress/PersonellCustomerOrderInProgress';
 import CustomerStagedPaymentPanel from './progress/CustomerStagedPaymentPanel';
 import CustomerHireOrderInProgress from './progress/CustomerHireOrderInProgress';
 import CompleteControl from './progress/CompleteControl';
+import VehicleDetails from './progress/VehicleDetails';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
+const JourneyJobInProgress = (message) => ({order}) => ( order.journeyOrderStatus == 'ENROUTE' ? <Row  style={{paddingLeft: 25, paddingTop: 10, paddingBottom: 25}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{message}</Text></Row> : null);
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
@@ -54,13 +54,12 @@ class CustomerOrderDetail extends Component{
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
           <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-          <PriceSummary orderStatus={order.orderStatus} price={order.amount} />
-          <OrderLifecycleView  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
+          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount}  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
             InProgressControls={InProgressControls}
             AcceptedControls={InProgressControls}
-            CompletedControls={[RatingSummary, OrderSummary]}
-            CancelledControls={[RatingSummary, OrderSummary]}
+            CompletedControls={[PriceSummary, RatingSummary, OrderSummary]}
+            CancelledControls={[PriceSummary, RatingSummary, OrderSummary]}
           />
         </View>
       </Content>
@@ -133,10 +132,10 @@ resourceDictionary.
     personell((order) => `${order.orderProduct.name} Job`).
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('InProgressControls', [OrderSummary]).
-    personell([CompleteControl,PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
-    hire([CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
-    delivery([CompleteControl, DeliveryAndRubbishCustomerOrderInProgress, OrderSummary]).
-    rubbish([CompleteControl, DeliveryAndRubbishCustomerOrderInProgress, OrderSummary])
+    personell([PriceSummary, CompleteControl,PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
+    hire([PriceSummary,CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
+    delivery([PriceSummary,JourneyJobInProgress('Delivery In Progress'), CompleteControl, VehicleDetails, OrderSummary]).
+    rubbish([PriceSummary, JourneyJobInProgress('Collection In Progress'), CompleteControl, VehicleDetails, OrderSummary])
 /*eslint-enable */
 
 export default connect(

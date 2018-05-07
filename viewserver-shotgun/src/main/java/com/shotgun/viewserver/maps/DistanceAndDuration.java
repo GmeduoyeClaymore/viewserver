@@ -1,43 +1,42 @@
 package com.shotgun.viewserver.maps;
 
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class DistanceAndDuration {
-
-    private final int distance;
-    private final int duration;
-
-    public DistanceAndDuration(HashMap<String, Object> response) {
-        List<String> routes = (List<String>) response.get("routes");
+public interface DistanceAndDuration extends DynamicJsonBackedObject{
+    static DistanceAndDuration from(HashMap<String, Object> response) {
+        List<HashMap> routes = (List<HashMap>) response.get("routes");
         if(routes== null|| routes.size() == 0){
             throw new RuntimeException("No routes found");
         }
-        distance = parseDistance(response);
-        duration = parseDuration(response);
+        return from(parseLegValue(response, "distance"), parseLegValue(response, "duration"));
     }
 
-    public DistanceAndDuration(int distance, int duration) {
-        this.distance = distance;
-        this.duration = duration;
+    static DistanceAndDuration from(Integer distance, Integer duration) {
+        DistanceAndDuration result = JSONBackedObjectFactory.create(DistanceAndDuration.class);
+        result.set("distance",distance);
+        result.set("duration",duration);
+        return result;
     }
 
-    public int getDistance() {
-        return distance;
-    }
+    public Integer getDistance();
+    public Integer getDuration();
 
-    public int getDuration() {
-        return duration;
-    }
-
-    private int parseDuration(HashMap<String, Object> response) {
-        throw new NotImplementedException();
-    }
-
-    private int parseDistance(HashMap<String, Object> response) {
-        throw new NotImplementedException();
-        //return 0;
+    static Integer parseLegValue(HashMap<String, Object> response, String variableName) {
+        List<HashMap> routes = (List<HashMap>) response.get("routes");
+        if(routes== null|| routes.size() == 0){
+            throw new RuntimeException("No routes found");
+        }
+        int total = 0;
+        for(HashMap route : routes){
+            for(HashMap leg : (List<HashMap>)route.get("legs") ){
+                total += (Integer)((HashMap)leg.get(variableName)).get("value");
+            }
+        }
+        return total;
     }
 }

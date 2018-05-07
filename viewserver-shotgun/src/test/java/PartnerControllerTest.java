@@ -14,13 +14,13 @@ public class PartnerControllerTest {
 
     @Before
     public void createSut(){
-        sut = new PartnerController(null,null,null,null,null,null, null);
+        sut = new PartnerController(null,null,null,null,null, null);
     }
 
     @Test
     public  void canRegisterDriver() throws NoSuchMethodException, IOException {
         ControllerRegistration reg = new ControllerRegistration(sut);
-        String vehicle = "{\"dimensions\":{\"height\":2385,\"width\":1974,\"length\":2582,\"weight\":1073,\"volumeMetresCubed\":12},\"vehicleId\":null,\"registrationNumber\":\"YA61AYB\",\"colour\":\"White\",\"make\":\"Ford\",\"model\":\"Transit 100 T280 Fwd\",\"bodyStyle\":\"PANEL VAN\",\"selectedProductIds\":[\"1SmallVan\",\"2MediumVan \"]}";
+        String vehicle = "{\"dimensions\":{\"height\":2385,\"width\":1974,\"length\":2582,\"weight\":1073,\"volumeMetresCubed\":12},\"vehicleId\":null,\"registrationNumber\":\"YA61AYB\",\"colour\":\"White\",\"make\":\"Ford\",\"model\":\"Transit 100 T280 Fwd\",\"bodyStyle\":\"PANEL VAN\",\"selectedProductIds\":[\"SmallVan\",\"MediumVan \"]}";
         ObjectMapper mapper = new ObjectMapper();
         mapper.readValue(vehicle, Vehicle.class);
     }

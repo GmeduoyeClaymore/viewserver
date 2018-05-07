@@ -53,7 +53,7 @@ export default class VehiclesDaoContext{
 
   extendDao(dao){
     dao.addOrUpdateVehicle = async({vehicle}) =>{
-      const promise = this.client.invokeJSONCommand('vehicleController', 'addOrUpdateVehicle', vehicle);
+      const promise = this.client.invokeJSONCommand('userController', 'addOrUpdateVehicle', vehicle);
       const result =  await promise.timeoutWithError(5000, new Error('Could not update vehicle in 5 seconds'));
       Logger.debug('Updated vehicle');
       return result;

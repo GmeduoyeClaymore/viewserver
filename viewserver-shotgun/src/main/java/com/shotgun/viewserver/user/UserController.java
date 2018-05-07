@@ -5,11 +5,16 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.VanProducts;
+import com.shotgun.viewserver.constants.VanVolumes;
+import com.shotgun.viewserver.delivery.Dimensions;
+import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.controllers.contracts.RatedOrderController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.IPaymentController;
+import com.shotgun.viewserver.setup.datasource.VehicleDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.constants.TableNames;
@@ -25,6 +30,7 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -98,6 +104,37 @@ public class UserController implements UserTransformationController, RatedOrderC
                 }, User.class);
 
         return cardId.get();
+    }
+
+    @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
+    public void addOrUpdateVehicle(Vehicle vehicle) {
+        String userId = getUserId();
+        this.transform(
+                userId,
+                user -> {
+                    user.set("vehicle",vehicle);
+                    return true;
+                },
+                User.class
+        );
+    }
+
+    public static List<String> getValidProductsVehicle(Dimensions dimensions) {
+        log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolume()));
+
+        if (dimensions.getVolume() < VanVolumes.MediumVan) {
+            log.debug("This is the volume of small van");
+            return Arrays.asList(VanProducts.SmallVan);
+        } else if (dimensions.getVolume() < VanVolumes.LargeVan) {
+            log.debug("This is the volume of medium van");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan);
+        } else if (dimensions.getVolume() < VanVolumes.Luton) {
+            log.debug("This is the volume of large van");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan);
+        } else {
+            log.debug("This is the volume of luton");
+            return Arrays.asList(VanProducts.SmallVan, VanProducts.MediumVan, VanProducts.LargeVan, VanProducts.Luton);
+        }
     }
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)

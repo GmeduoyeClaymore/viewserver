@@ -131,16 +131,16 @@ export default class OrdersDao{
 
   startJourney = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
-    this.client.invokeJSONCommand(controller, 'startJourney', {orderId});
+    const stage = await this.client.invokeJSONCommand(controller, 'startJourney', {orderId});
     Logger.info(`Order ${orderId} journey started`);
-    return paymentStageId;
+    return stage;
   }
 
   completeJourney = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
-    this.client.invokeJSONCommand(controller, 'completeJourney', {orderId});
+    const stage = await this.client.invokeJSONCommand(controller, 'completeJourney', {orderId});
     Logger.info(`Order ${orderId} journey completed`);
-    return paymentStageId;
+    return stage;
   }
 
   logDayStart = async ({orderId, orderContentTypeId}) =>  {
@@ -176,6 +176,13 @@ export default class OrdersDao{
     this.client.invokeJSONCommand(controller, 'markItemReady', {orderId});
     Logger.info(`Order ${orderId} item marked ready`);
     return paymentStageId;
+  }
+
+  calculatePriceEstimate = async ({order}) =>  {
+    const controller = this.getControllerForOrder(order.orderContentTypeId);
+    const calculatedPrice = this.client.invokeJSONCommand(controller, 'calculatePriceEstimate', {order});
+    Logger.info(`Orderprice ${calculatedPrice} has been calculated item marked ready`);
+    return calculatedPrice;
   }
 }
 

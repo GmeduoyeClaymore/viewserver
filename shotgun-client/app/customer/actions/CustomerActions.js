@@ -94,3 +94,7 @@ export const offHireItem = (orderId, orderContentTypeId, continueWith) => {
 export const customerCompleteAndPay = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'customerCompleteAndPay', {orderId, orderContentTypeId}, continueWith);
 };
+
+export const calculatePriceEstimate = (order, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'calculatePriceEstimate', {order, orderContentTypeId}, continueWith);
+};

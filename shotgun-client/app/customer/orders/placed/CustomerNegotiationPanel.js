@@ -34,7 +34,7 @@ export default class OrderNegotiationPanel extends Component{
 
   render(){
     const { order, partnerResponses, busyUpdating, dispatch} = this.props;
-    if (!order){
+    if (!order || !partnerResponses){
       return null;
     }
     const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);

@@ -26,7 +26,6 @@ class ReduxRouterClass extends Component{
     this.handleBack = this.handleBack.bind(this);
     this.getHeight = this.getHeight.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
-    setStateIfIsMounted(this);
   }
 
   componentWillMount () {

@@ -1,8 +1,8 @@
 {
   "1": {
     "selectedProductIds": [
-      "1SmallVan",
-      "2MediumVan"
+      "SmallVan",
+      "MediumVan"
     ],
     "numAvailableForOffload": 3
   },
