@@ -12,7 +12,7 @@ class PartnerMyOrdersListView extends Component{
     if (isCustomer){
       next = `${ordersRoot}/CustomerOrderDetail`;
     } else {
-      next = `${ordersRoot}/PartnerMyOrderDetail`;
+      next = `${ordersRoot}/PartnerOrderDetail`;
     }
     return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
   };

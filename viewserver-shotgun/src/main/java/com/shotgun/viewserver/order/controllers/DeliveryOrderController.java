@@ -2,11 +2,8 @@ package com.shotgun.viewserver.order.controllers;
 
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.maps.IMapsController;
-import com.shotgun.viewserver.order.controllers.contracts.JourneyBasedOrderController;
-import com.shotgun.viewserver.order.controllers.contracts.OrderCreationController;
+import com.shotgun.viewserver.order.controllers.contracts.*;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
-import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderController;
-import com.shotgun.viewserver.order.controllers.contracts.SinglePaymentOrderController;
 import com.shotgun.viewserver.order.domain.DeliveryOrder;
 import com.shotgun.viewserver.order.domain.JourneyOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;

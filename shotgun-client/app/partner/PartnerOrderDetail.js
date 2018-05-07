@@ -66,8 +66,8 @@ class PartnerOrderDetail extends Component {
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
-        <PriceSummary orderStatus={order.orderStatus} isPartner={true} price={order.amount} />
-        <OrderLifecycleView {...{ ...this.props, onOrderRespond }}
+        <PriceSummary orderStatus={order.orderStatus} isRatingCustomer={true} price={order.amount} />
+        <OrderLifecycleView {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
           PlacedControls={[PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}
           AcceptedControls={InProgressControls}
@@ -79,28 +79,15 @@ class PartnerOrderDetail extends Component {
   }
 }
 
-const styles = {
-  suggestText: {
-    width: '100%',
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    textAlign: 'center',
-    padding: 10
-  },
-  acceptButton: {
-    marginTop: 20,
-    marginBottom: 10
-  }
-};
-
 const PaymentStagesAndSummary = (props) => {
-  const {history, path, orderId, height} = props;
+  const {history, path, orderId, height, order} = props;
   const goToTabNamed = (name) => {
     history.replace({pathname: `${path}/${name}`, state: {orderId}});
   };
+  const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
   return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
     <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
-    <Tab heading='Payment Stages' onPress={() => goToTabNamed('PaymentStages')}/>
+    {order.paymentStages && order.paymentStages.length ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')}/> : null}
   </Tabs>,
   <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />

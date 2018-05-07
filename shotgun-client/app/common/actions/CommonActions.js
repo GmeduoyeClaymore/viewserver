@@ -69,6 +69,10 @@ export const callUser = (userId, continueWith) => {
   return invokeDaoCommand('userRelationshipDao', 'callUser', {userId}, continueWith);
 };
 
+export const rateUserOrder = ({orderId, rating, comments, ratingType}, continueWith) => {
+  return invokeDaoCommand('orderDao', 'rateUserOrder', {orderId, rating, comments, ratingType}, continueWith);
+};
+
 export const commonServicesRegistrationAction = (client) => {
   return (dispatch) => {
     register(dispatch, new UserDao(client));

@@ -50,7 +50,7 @@ public interface User extends DynamicJsonBackedObject{
     Boolean getOnline();
 
 
-    default void addRating(String fromUserId, String orderId, int rating, String comments, UserRating.RatingType type){
+    default UserRating addRating(String fromUserId, String orderId, int rating, String comments, UserRating.RatingType type){
         Optional<UserRating> result = fromArray(getRatings()).filter(c->c.getOrderId().equals(orderId)).findAny();
         UserRating userRating;
         if(result.isPresent()){
@@ -76,6 +76,7 @@ public interface User extends DynamicJsonBackedObject{
             int sum = fromArray(getRatings()).map(UserRating::getRating).mapToInt(Integer::intValue).sum();
             this.set("ratingAvg", (double)sum/(double)length);
         }
+        return userRating;
     }
 
     default void addPaymentCard(SavedPaymentCard savedPaymentCard){

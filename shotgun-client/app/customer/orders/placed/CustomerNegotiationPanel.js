@@ -100,7 +100,7 @@ const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated
 const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch, showAll}) => {
   return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
     (response, idx)  => {
-      const {partnerId, latitude, longitude, firstname, lastname, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
+      const {partnerId, latitude, longitude, firstName, lastName, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
       const canRespond = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(orderStatus) && responseStatus === 'RESPONDED';
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
       const imageStyle = styles.partnerImage;
@@ -108,7 +108,7 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
       return <Row key={idx} style={{...styles.view, marginBottom: 10}}>
         <Image style={{...imageStyle, ...statusStyle}}  resizeMode='stretch' source={{uri: imageUrl}}/>
         <Col  size={50} style={{marginLeft: 10}}>
-          <Text style={{...styles.subHeading, marginBottom: 5}}>{firstname + ' ' + lastname}</Text>
+          <Text style={{...styles.subHeading, marginBottom: 5}}>{firstName + ' ' + lastName}</Text>
           {!!~ratingAvg ? <Row style={{marginBottom: 8, marginTop: 8}}>{stars}</Row> : <Text>No Ratings</Text>}
           <Currency value={price} style={styles.price}/>
           <Text>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>

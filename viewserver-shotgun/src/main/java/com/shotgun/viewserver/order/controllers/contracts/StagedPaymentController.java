@@ -97,7 +97,7 @@ public interface StagedPaymentController extends SinglePaymentOrderController, O
                     return true;
                 },
                 order -> {
-                    notifyPaymentStagePaid(order.getOrderId(), order.getCustomerUserId(), order.getOrderPaymentStage(paymentStageId).getName());
+                    notifyPaymentStagePaid(order.getOrderId(), order.getPartnerUserId(), order.getOrderPaymentStage(paymentStageId).getName());
                 },
                 StagedPaymentOrder.class
         );

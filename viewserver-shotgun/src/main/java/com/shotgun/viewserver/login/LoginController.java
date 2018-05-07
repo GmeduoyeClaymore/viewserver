@@ -100,7 +100,7 @@ public class LoginController {
         KeyedTable keyedTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         HashMap<String, Object> userRow = keyedTable.getRowObject(new TableKey(userId));
         if(userRow == null){
-            throw new RuntimeException(String.format("Unable to user for id %s",userId));
+            throw new RuntimeException(String.format("Unable to find user for id %s",userId));
         }
         return JSONBackedObjectFactory.create(userRow, User.class);
     }

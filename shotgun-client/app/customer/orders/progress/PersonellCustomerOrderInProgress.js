@@ -20,7 +20,7 @@ export default class PersonellCustomerOrderInProgress extends Component{
   render() {
     const {history, path} = this.props;
     const {goToTabNamed} = this;
-    const page = history.location.pathname.endsWith('Directions')  ? 1 : 0;
+    const page = history.location.pathname.endsWith('MapDetails')  ? 1 : 0;
     return <Grid>
       <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
         <Tab heading="Photos" onPress={() => goToTabNamed('OrderPhotoUpload')}/>

@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.order.controllers.contracts.RatedOrderController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.payments.IPaymentController;
@@ -24,7 +25,6 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -44,7 +44,7 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 
 @Controller(name = "userController")
-public class UserController implements UserTransformationController {
+public class UserController implements UserTransformationController, RatedOrderController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private IImageController IImageController;
     private IMessagingController messagingController;
@@ -226,7 +226,7 @@ public class UserController implements UserTransformationController {
             String formattedStatus = status.toLowerCase();
             String fromUserName = getUsername(userId, userTable);
             AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withAction(createActionUri(userId))
+                    .withAction(createUserActionUri(userId))
                     .withFromTo(userId, targetUserId)
                     .message(String.format("Shotgun friend request", formattedStatus), String.format("Shotgun user %s has %s your friendship", fromUserName, formattedStatus)).build();
             ListenableFuture future = messagingController.sendMessageToUser(builder);
@@ -248,7 +248,7 @@ public class UserController implements UserTransformationController {
         }
     }
 
-    private String createActionUri(String targetUserId) {
+    private String createUserActionUri(String targetUserId) {
         return String.format("shotgun://Landing/UserRelationships/RelationshipView/DetailX/SelectedUser%sX", targetUserId);
     }
 
@@ -306,5 +306,10 @@ public class UserController implements UserTransformationController {
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    @Override
+    public IMessagingController getMessagingController() {
+        return this.messagingController;
     }
 }

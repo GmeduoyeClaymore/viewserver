@@ -3,6 +3,8 @@ package com.shotgun.viewserver.order.domain;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.types.OrderContentType;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.Date;
 import java.util.Optional;
@@ -19,8 +21,12 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
         }
         Date date = new Date();
         this.set("dayStarted", true);
-        return addPaymentStage(getAmount(), "Work started at " + date, String.format("Day rate work started at " + date), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
+        return addPaymentStage(getAmount(), "Day Rate Work " + formatDate(date), String.format("Day rate work started at " + formatTime(date)), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
 
+    }
+
+    default String formatDate(Date date) {
+        return new DateTime(date).toString(DateTimeFormat.longDate());
     }
 
     default OrderPaymentStage logDayComplete(){
@@ -28,9 +34,16 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
         if(!activeDay.isPresent()){
             throw new RuntimeException("Cannot find an open day to complete");
         }
+        Date dayStarted = activeDay.get().getLastUpdated();
+        Date date = new Date();
+        activeDay.get().set("description","Day rate work started at " + formatTime(dayStarted) + " till " + formatTime(date));
         this.set("dayStarted", false);
         this.completePaymentStage(activeDay.get().getId());
         return activeDay.get();
+    }
+
+    default String formatTime(Date dayStarted) {
+        return new DateTime(dayStarted).toString("HH:mm:ss");
     }
 
     @Override

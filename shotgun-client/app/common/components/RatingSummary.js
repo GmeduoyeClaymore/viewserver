@@ -5,15 +5,16 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {RatingAction, Icon} from 'common/components';
 import {Image} from 'react-native';
 
-export const RatingSummary = ({order, isPartner}) => {
+export const RatingSummary = ({order, isRatingCustomer}) => {
   const {assignedPartner, customer} = order;
   if (!assignedPartner){
     return null;
   }
-  const name = isPartner ? assignedPartner.firstName : customer.firstName;
-  const rating = isPartner ? assignedPartner.ratingAvg : customer.ratingAvg;
+  const name = isRatingCustomer ?  customer.firstName : assignedPartner.firstName;
+  const rating = isRatingCustomer ?  order.ratingCustomer : order.ratintPartner;
+  const imageUri = isRatingCustomer ?  customer.imageUrl : assignedPartner.imageUrl;
   const isComplete = order.orderStatus == OrderStatuses.COMPLETED;
-  const isRated = rating !== 0 && rating !== undefined;
+  const isRated = rating > 0 && rating !== undefined;
 
   if (!isComplete) {
     return null;
@@ -22,13 +23,13 @@ export const RatingSummary = ({order, isPartner}) => {
   if (isRated) {
     const stars = [...Array(rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
     return <View style={styles.view}>
-      {!isPartner ?
-        <Image source={{uri: assignedPartner.imageUrl}} resizeMode='contain' style={styles.images}/> : null}
+      {imageUri ?
+        <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.images}/> : null}
       <Text style={styles.text}>You rated {name}</Text>{stars}
     </View>;
   }
 
-  return <RatingAction isPartner={isPartner} order={order}/>;
+  return <RatingAction isRatingCustomer={isRatingCustomer} order={order}/>;
 };
 
 const styles = {

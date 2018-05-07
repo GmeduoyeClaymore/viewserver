@@ -2,20 +2,25 @@ import React from 'react';
 import {Text, View} from 'native-base';
 import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {rateCustomer} from 'partner/actions/PartnerActions';
-import {ratePartner} from 'customer/actions/CustomerActions';
-import {Icon} from 'common/components';
+import {rateUserOrder} from 'common/actions/CommonActions';
+import {Icon, AverageRating} from 'common/components';
 
-const RatingAction = ({isPartner, order, dispatch}) => {
+const RatingAction = ({isRatingCustomer, order, dispatch}) => {
   const {assignedPartner, customer} = order;
-  const name = isPartner ? assignedPartner.firstName : customer.firstName;
-  const rating = isPartner ? assignedPartner.ratingAvg : customer.ratingAvg;
+  const name = isRatingCustomer ? customer.firstName : assignedPartner.firstName;
+  const rating = isRatingCustomer ? customer.ratingAvg : assignedPartner.ratingAvg;
+  const existingRating = isRatingCustomer ? order.ratingCustomer :  order.ratingPartner;
 
   const onPressStar = (newRating) => {
-    const ratingFunc = isPartner ? rateCustomer : ratePartner;
-    const action = ratingFunc(order.orderId, newRating);
+    const ratingType = isRatingCustomer ? 'Customer' : 'Partner';
+    const comments = '';
+    const action = rateUserOrder({orderId: order.orderId, rating: newRating, comments, ratingType});
     dispatch(action);
   };
+
+  if (existingRating){
+    return <AverageRating rating={rating} text={`${name} Rating`}/>;
+  }
 
   return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>
     <View style={styles.starView}>

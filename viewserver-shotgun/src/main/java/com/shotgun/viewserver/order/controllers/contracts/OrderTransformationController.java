@@ -31,29 +31,6 @@ public interface OrderTransformationController extends OrderUpdateController{
         return order;
     }
 
-    default <T extends BasicOrder> T getOrderForId(String orderId, Class<T> orderClass) {
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-
-        int currentRow = orderTable.getRow(new TableKey(orderId));
-        if(currentRow == -1){
-            throw new RuntimeException("Unable to find order for key:" + orderId);
-        }
-
-        Object orderDetails = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow);
-
-        if(orderDetails == null){
-            throw new RuntimeException("no orderDetails field found in order row - " + orderId);
-        }
-
-        String orderDetailsString = orderDetails.toString();
-
-        T order = JSONBackedObjectFactory.create(orderDetailsString, orderClass);
-
-        if(order == null){
-            throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
-        }
-        return order;
-    }
 
 
 }

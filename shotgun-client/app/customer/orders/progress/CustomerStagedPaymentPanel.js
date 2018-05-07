@@ -6,7 +6,7 @@ import {addPaymentStage, removePaymentStage, payForPaymentStage} from 'customer/
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 
-const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED'];
+const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED', 'INPROGRESS'];
 const CAN_MODIFY_PAYMENT_STAGE_STATUS = ['None'];
 const CAN_PAY_PAYMENT_STAGE_STATUS = ['Complete'];
 
@@ -146,7 +146,7 @@ export default class OrderPaymentStagePanel extends Component{
   render(){
     const {order, busyUpdating, dispatch, height} = this.props;
     const {paymentStages = []} = order;
-    const canAddPaymentStages = !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(order.orderStatus) && order.paymentType !== 'DAYRATE';
+    const canAddPaymentStages = !order.blockPaymentStageAddition && order.paymentType !== 'DAYRATE';
     if (!order){
       return null;
     }
@@ -158,7 +158,7 @@ export default class OrderPaymentStagePanel extends Component{
         </Col>
       </Row>
       <Col style={{flex: 10}}>
-        {canAddPaymentStages && !paymentStages.length ? 
+        {canAddPaymentStages && !paymentStages.length ?
           <Row style={{flex: -1, marginBottom: 10}}>
             <Button style={styles.toggleStage} light={this.state.paymentStageType === 'Fixed'} onPress={() => this.setPaymentStageType('Percentage')}>
               <Text style={styles.buttonText}>Percentage Stages</Text>

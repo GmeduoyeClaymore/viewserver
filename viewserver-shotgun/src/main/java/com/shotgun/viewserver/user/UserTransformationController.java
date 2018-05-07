@@ -25,6 +25,9 @@ public interface UserTransformationController{
 
 
     default <T extends User> T transform(String userId, Predicate<T> tranformation, Class<T> orderClass){
+        if(userId == null){
+            throw new RuntimeException("User id is required");
+        }
         return transform(userId,tranformation,c->{}, orderClass);
     }
     default <T extends User> T transform(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
@@ -44,7 +47,7 @@ public interface UserTransformationController{
 
         HashMap<String, Object> userRow = userTable.getRowObject(new TableKey(userId));
         if(userRow == null){
-            throw new RuntimeException(String.format("Unable to user for id %s",userId));
+            throw new RuntimeException(String.format("Unable to find user for id %s",userId));
         }
         return JSONBackedObjectFactory.create(userRow, userClass);
     }

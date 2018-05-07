@@ -49,6 +49,10 @@ export default class OrdersDao{
     return  resources.Controller;
   }
 
+  rateUserOrder = async({orderId, rating, comments, ratingType}) => {
+    await this.client.invokeJSONCommand('userController', 'addOrUpdateRating', {orderId,  rating, comments, ratingType});
+  };
+
   createOrder = async ({order, paymentId}) => {
     const controller = this.getControllerForOrder(order.orderContentTypeId);
     const orderId = await this.client.invokeJSONCommand(controller, 'createOrder', {paymentId, order});
@@ -151,6 +155,13 @@ export default class OrdersDao{
     const paymentStageId = this.client.invokeJSONCommand(controller, 'logDayComplete', {orderId});
     Logger.info(`Order ${orderId} day completed`);
     return paymentStageId;
+  }
+
+  customerCompleteAndPay = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    const paymentId = this.client.invokeJSONCommand(controller, 'customerCompleteAndPay', {orderId});
+    Logger.info(`Order ${orderId} day completed`);
+    return paymentId;
   }
 
   offHireItem = async ({orderId, orderContentTypeId}) =>  {

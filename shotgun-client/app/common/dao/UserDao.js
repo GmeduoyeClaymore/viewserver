@@ -91,6 +91,7 @@ export default class UserDaoContext{
       await navigator.geolocation.getCurrentPosition((position) => this.watchPositionOnSuccess(position), this.watchPositionOnError, {enableHighAccuracy: true});
       this.watchId = navigator.geolocation.watchPosition((position) => this.watchPositionOnSuccess(position), this.watchPositionOnError, this.locationOptions);
     };
+
     dao.stopWatchingPosition = async () => {
       navigator.geolocation.clearWatch(this.watchId);
     };

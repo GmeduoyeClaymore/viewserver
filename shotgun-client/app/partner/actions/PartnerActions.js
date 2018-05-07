@@ -68,9 +68,6 @@ export const completeOrderRequest = (orderId, continueWith) => {
   return invokeDaoCommand('partnerDao', 'completeOrderRequest', {orderId}, continueWith);
 };
 
-export const rateCustomer = (orderId, rating, continueWith) => {
-  return invokeDaoCommand('partnerDao', 'rateCustomer', {orderId, rating}, continueWith);
-};
 
 export const callCustomer = (orderId, continueWith) => {
   return invokeDaoCommand('partnerDao', 'callCustomer', {orderId}, continueWith);
@@ -115,6 +112,5 @@ export const partner = (orderId, orderContentTypeId, continueWith) => {
 export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'markItemReady', {orderId, orderContentTypeId}, continueWith);
 };
-
 
 

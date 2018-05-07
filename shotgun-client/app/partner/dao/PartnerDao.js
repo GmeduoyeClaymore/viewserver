@@ -28,29 +28,9 @@ export default class PartnerDao{
     return partnerId;
   }
 
-  acceptOrderRequest = async({orderId}) => {
-    await this.client.invokeJSONCommand('partnerController', 'acceptOrder', {orderId});
-  }
-
-  startOrderRequest = async({orderId}) => {
-    await this.client.invokeJSONCommand('partnerController', 'startOrder', {orderId});
-  }
-
-  cancelOrderRequest = async({orderId}) => {
-    await this.client.invokeJSONCommand('partnerController', 'cancelOrder', {orderId});
-  }
-
-  completeOrderRequest = async({orderId}) => {
-    await this.client.invokeJSONCommand('partnerController', 'completeOrder', {orderId});
-  }
-
   callCustomer = async({orderId}) => {
     const customerPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getCustomerVirtualNumber', orderId);
     PhoneCallService.call(customerPhoneNumber);
-  }
-
-  rateCustomer = async({orderId, rating}) => {
-    await this.client.invokeJSONCommand('orderController', 'addCustomerRating', {orderId,  rating});
   }
 
   getVehicleDetails = async({registrationNumber}) => {
