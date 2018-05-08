@@ -158,7 +158,7 @@ Feature: Rubbish order scenarios
 	  | dimension_partnerId | String | @userId |
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                             | responseStatus |
-	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | DECLINED           |
+	  | RowAdd  | {client1_rubbishOrderController_createOrder_result} | REJECTED           |
 
   Scenario: Cancelling accepted response causes job to go back into responded state
 	Given "client1" controller "rubbishOrderController" action "createOrder" invoked with data file "json/orders/createRubbishOrder.json" with parameters

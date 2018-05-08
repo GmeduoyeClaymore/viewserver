@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.messaging;
 
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+
 import java.util.HashMap;
 
 /**
@@ -10,34 +12,34 @@ public class AppMessageBuilder {
     AppMessage message;
 
     public AppMessageBuilder() {
-        message = new AppMessage();
+        message = JSONBackedObjectFactory.create(AppMessage.class);
     }
 
     public AppMessageBuilder withFromTo(String from,String to){
-        message.setToUserId(to);
-        message.setFromUserId(from);
+        message.set("toUserId",to);
+        message.set("fromUserId",from);
         return this;
     }
 
     public AppMessageBuilder withDefaults(){
-        message.setSound("default");
-        message.setPriority("high");
+        message.set("sound","default");
+        message.set("priority","high");
         return this;
     }
 
     public AppMessageBuilder to(String token){
-        message.setTo(token);
+        message.set("to",token);
         return this;
     }
 
     public AppMessageBuilder withAction(String action){
-        message.setAction(action);
+        message.set("action",action);
         return this;
     }
 
     public AppMessageBuilder message(String title,String body){
-        message.setTitle(title);
-        message.setBody(body);
+        message.set("title",title);
+        message.set("body",body);
         return this;
     }
 

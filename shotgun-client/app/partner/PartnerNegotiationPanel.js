@@ -6,7 +6,7 @@ import {ValidatingInput, ValidatingButton, CurrencyInput, Icon} from 'common/com
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import moment from 'moment';
-const WaitingResponse = () => (<Row  style={{padding: 5}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for Custumer response..'}</Text></Row>);
+const WaitingResponse = () => (<Row  style={{padding: 5, marginTop: 15}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for Custumer response..'}</Text></Row>);
 const Response = ({customer, hasAccepted}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={hasAccepted ? styles.starAccepted : styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${customer.firstName} ${customer.lastName} ${hasAccepted ? 'Accepted' : 'Declined'}`}</Text></Row>);
 
 class PartnerNegotiationPanel extends Component {

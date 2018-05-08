@@ -22,6 +22,8 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
 
     String getPartnerUserId();
 
+    String getTitle();
+
     String getDescription();
 
     OrderStatus getOrderStatus();

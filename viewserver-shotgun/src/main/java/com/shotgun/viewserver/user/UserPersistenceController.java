@@ -51,6 +51,7 @@ public interface UserPersistenceController{
                 .addValue("type", user.getType())
                 .addValue("vehicle", user.getVehicle())
                 .addValue("online", user.getOnline())
+                .addValue("pendingMessages", user.getPendingMessages())
                 .addValue("range", user.getRange())
                 .addValue("ratingAvg", user.getRatingAvg())
                 .addValue("stripeCustomerId", user.getStripeCustomerId())
