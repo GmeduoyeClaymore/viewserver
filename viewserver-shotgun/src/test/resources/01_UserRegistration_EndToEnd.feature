@@ -47,12 +47,12 @@ Feature: User registration scenarios
 	  | ColumnAdd | Bool        | dimension_online     |
 	  | ColumnAdd | Json        | bankAccount          |
 	  | ColumnAdd | Json        | paymentCards         |
-	  | ColumnAdd | vehicle     | Json                 |
+	  | ColumnAdd | Json     | vehicle                 |
 	Then "client2" the following data is received eventually on report "userReport"
 	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
 	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | 0.0      | 0.0       |        |          | True   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
 
-  Scenario: Newly registered users can be seen by each otherß
+  Scenario: Newly registered users can be seen by each other
 
   Scenario: Can see partner for product in userProduct report
 	Given "client1" report parameters
