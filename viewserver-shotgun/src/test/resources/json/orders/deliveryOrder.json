@@ -15,7 +15,8 @@
   "orderProduct": {
     "productId" : "CommercialThreeQuarterVan"
   },
-  "requiredDate": "01/01/2017"
+  "requiredDate": "01/01/2017",
+  "amount": 100
 }
 
 
