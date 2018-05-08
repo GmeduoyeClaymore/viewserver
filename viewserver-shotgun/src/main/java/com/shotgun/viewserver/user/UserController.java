@@ -73,15 +73,6 @@ public class UserController implements UserTransformationController, RatedOrderC
         this.reactor = reactor;
     }
 
-    @ControllerAction(path = "addOrUpdateRating", isSynchronous = true)
-    public void addOrUpdateRating(@ActionParam(name = "userId") String userId, @ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating, @ActionParam(name = "comments") String comments, @ActionParam(name = "ratingType") UserRating.RatingType ratingType) {
-        this.transform(userId,
-                user -> {
-                    user.addRating(getUserId(), orderId, rating, comments, ratingType);
-                    return true;
-                }, User.class);
-    }
-
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
     public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
         AtomicReference<String> cardId = new AtomicReference<>();

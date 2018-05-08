@@ -9,6 +9,8 @@ import com.shotgun.viewserver.user.UserTransformationController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 public interface RatedOrderController extends UserTransformationController, OrderUpdateController,RatingNotifications {
 
     @ControllerAction(path = "addOrUpdateRating", isSynchronous = true)
@@ -18,7 +20,7 @@ public interface RatedOrderController extends UserTransformationController, Orde
 
         this.transform(userId,
                 user -> {
-                    UserRating userRating = user.addRating(userId, orderId, rating, comments, ratingType);
+                    UserRating userRating = user.addRating(getUserId(), orderId, rating, comments, ratingType);
                     order.set("rating" + ratingType.name(), userRating);
                     updateOrderRecord(order);
                     return true;

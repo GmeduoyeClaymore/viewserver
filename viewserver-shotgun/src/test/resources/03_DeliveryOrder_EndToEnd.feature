@@ -442,3 +442,105 @@ Feature: Delivery order scenarios
 	  | ~Action | paidFromUserId                                     | paymentId                                                       |
 	  | RowAdd  | {client1_partnerController_registerPartner_result} | {client1_deliveryOrderController_customerCompleteAndPay_result} |
 
+
+  Scenario: Can add rating for users
+	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
+	  | Name             | Value                                              |
+	  | param_customerId | {client1_partnerController_registerPartner_result} |
+	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name         | Value                                                |
+	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
+	  | requiredDate | "{now_date+1}"                                       |
+	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	  | Name      | Value                                                |
+	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
+	  | partnerId | {client2_partnerController_registerPartner_result}   |
+	Given "client2" controller "deliveryOrderController" action "startJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "deliveryOrderController" action "completeJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client1" controller "deliveryOrderController" action "customerCompleteAndPay" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                                |
+	  | orderId    | {client1_deliveryOrderController_createOrder_result} |
+	  | userId     | {client1_partnerController_registerPartner_result}   |
+	  | rating     | 5                                                    |
+	  | comments   | "Foo comment"                                        |
+	  | ratingType | Customer                                             |
+	Given keyColumn is "userId"
+	When "client1" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client1" the following data is received eventually on report "userReport"
+	  | ~Action |  | ratings                                                                      | ratingAvg | userId                                             |
+	  | RowAdd  |  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"}} | 5.0       | {client1_partnerController_registerPartner_result} |
+
+
+  Scenario: Can add multiple ratings for users
+	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
+	  | Name             | Value                                              |
+	  | param_customerId | {client1_partnerController_registerPartner_result} |
+	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name         | Value                                                |
+	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
+	  | requiredDate | "{now_date+1}"                                       |
+	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	  | Name      | Value                                                |
+	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
+	  | partnerId | {client2_partnerController_registerPartner_result}   |
+	Given "client2" controller "deliveryOrderController" action "startJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "deliveryOrderController" action "completeJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client1" controller "deliveryOrderController" action "customerCompleteAndPay" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                                |
+	  | orderId    | {client1_deliveryOrderController_createOrder_result} |
+	  | userId     | {client1_partnerController_registerPartner_result}   |
+	  | rating     | 5                                                    |
+	  | comments   | "Foo comment"                                        |
+	  | ratingType | Customer                                             |
+	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
+	  | Name             | Value                                              |
+	  | param_customerId | {client1_partnerController_registerPartner_result} |
+	Given "client2" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
+	  | Name         | Value                                                |
+	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
+	  | requiredDate | "{now_date+1}"                                       |
+	Given "client1" controller "deliveryOrderController" action "acceptResponse" invoked with parameters
+	  | Name      | Value                                                |
+	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
+	  | partnerId | {client2_partnerController_registerPartner_result}   |
+	Given "client2" controller "deliveryOrderController" action "startJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "deliveryOrderController" action "completeJourney" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client1" controller "deliveryOrderController" action "customerCompleteAndPay" invoked with parameters
+	  | Name    | Value                                                |
+	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Given "client2" controller "userController" action "addOrUpdateRating" invoked with parameters
+	  | Name       | Value                                                |
+	  | orderId    | {client1_deliveryOrderController_createOrder_result} |
+	  | userId     | {client1_partnerController_registerPartner_result}   |
+	  | rating     | 2                                                    |
+	  | comments   | "Foo comment"                                        |
+	  | ratingType | Customer                                             |
+	Given keyColumn is "userId"
+	When "client1" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client1" the following data is received eventually on report "userReport"
+	  | ~Action |  | ratings                                                                                                                                                   | ratingAvg | userId                                             |
+	  | RowAdd  |  | { "0" : {"fromUserId":"{client2_partnerController_registerPartner_result}"} ,  "1" : {"fromUserId":"{client2_partnerController_registerPartner_result}"}} | 3.5       | {client1_partnerController_registerPartner_result} |
+
+
