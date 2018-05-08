@@ -26,6 +26,7 @@ class ReduxRouterClass extends Component {
     this.handleBack = this.handleBack.bind(this);
     this.getHeight = this.getHeight.bind(this);
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
+    setStateIfIsMounted(this);
   }
 
   componentWillMount() {
@@ -100,10 +101,10 @@ class ReduxRouterClass extends Component {
     this.transitionManager.initializeActualComponent(route, actualComponentRef);
   }
 
-  getHeight() {
-    const { height: initialHeight = shotgun.deviceHeight } = this.props;
-    const { keyboardOffset } = this.state;
-    return initialHeight - keyboardOffset;
+  getHeight(){
+    const {height: initialHeight = shotgun.deviceHeight, hasFooter = false} = this.props;
+    const {keyboardOffset} = this.state;
+    return initialHeight - keyboardOffset + (hasFooter && keyboardOffset > 0 ? shotgun.footerHeight : 0);
   }
 
   render() {

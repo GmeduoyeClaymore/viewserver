@@ -5,7 +5,7 @@ import {Spinner, Text} from 'native-base';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 
-class OrderItems extends Component {
+class CustomerMyOrdersListView extends Component {
   NoItems = () => <Text empty>No jobs to display</Text>;
 
   RowView = ({item: order, isLast, isFirst, history, parentPath, orderStatusResolver}) => {
@@ -15,6 +15,7 @@ class OrderItems extends Component {
 
   getDefaultOptions = (isCompleted) => ({
     ...OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS,
+    userId: '@userId',
     isCompleted
   });
 
@@ -49,4 +50,4 @@ const resourceDictionary = new ContentTypes.ResourceDictionary().
     rubbish(getRubbishFriendlyOrderStatusName);
     /*eslint-enable */
 
-export default OrderItems;
+export default CustomerMyOrdersListView;

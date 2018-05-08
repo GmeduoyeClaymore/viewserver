@@ -52,7 +52,7 @@ class ContentTypeSelect extends Component{
           </Grid>
           <Text note style={{marginTop: 20}}>{selectedContentType !== undefined ? selectedContentType.description : null}</Text>
         </Content>
-        <ValidatingButton fullWidth paddedBottom iconRight onPress={this.startOrder}
+        <ValidatingButton fullWidth paddedBottomLeftRight iconRight onPress={this.startOrder}
           validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedContentType}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>

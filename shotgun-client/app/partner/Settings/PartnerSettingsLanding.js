@@ -3,9 +3,9 @@ import {Button, Text, Content, List, ListItem, Header, Container, Body, Title, C
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
-import {Icon, AverageRating} from 'common/components';
+import {AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
-import UserStatusControl from 'common/components/relationships/UserStatusControl';
+import {AppImages} from 'common/assets/img/Images';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Partner Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
@@ -36,31 +36,28 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
     <Content padded keyboardShouldPersistTaps="always">
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
-          <UserStatusControl/>
-        </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <Text style={styles.text}>Personal details</Text>
-          <Icon style={styles.icon} name='one-person'/>
+          <Image source={AppImages.onePerson} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/PartnerMyOrders`)}>
           <Text style={styles.text}>Completed and Rejected Jobs</Text>
-          <Icon style={{paddingRight: 10}} name='two-people'/>
+          <Image source={AppImages.jobs} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdatePaymentCardDetails`)}>
           <Text style={styles.text}>Payment cards</Text>
-          <Icon style={{paddingRight: 10}} name='payment'/>
+          <Image source={AppImages.payment} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateBankAccountDetails`)}>
           <Text style={styles.text}>Bank Details</Text>
-          <Icon style={{paddingRight: 10}} name='payment'/>
+          <Image source={AppImages.bank} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/ConfigureServices`)}>
           <Text style={styles.text}>Configure Services</Text>
-          <Icon style={styles.icon} name='dashed'/>
+          <Image source={AppImages.cog} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>
-          <Icon style={styles.icon} name='feedback'/>
+          <Image source={AppImages.feedback} style={styles.icon}/>
         </ListItem>
       </List>
       <Button fullWidth paddedTopBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
@@ -79,8 +76,10 @@ const styles = {
     marginTop: 5
   },
   icon: {
-    fontSize: 24,
-    paddingRight: 10
+    resizeMode: 'contain',
+    height: 50,
+    position: 'absolute',
+    right: 10
   }
 };
 

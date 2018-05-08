@@ -3,8 +3,8 @@ import {withExternalState} from 'custom-redux';
 import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
-import {OrderSummary, PriceSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {OrderSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
+import CustomerPriceSummary from 'customer/orders/CustomerPriceSummary';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 class OrderConfirmation extends Component{
@@ -19,7 +19,7 @@ class OrderConfirmation extends Component{
   }
 
   render(){
-    const {client, errors, busy, order, history, selectedContentType} = this.props;
+    const {client, errors, busy, order, history} = this.props;
 
     return <Container>
       <Header withButton>
@@ -31,11 +31,11 @@ class OrderConfirmation extends Component{
         <Body><Title>{this.resources.PageTitle({product: order.orderProduct})}</Title></Body>
       </Header>
       <Content>
-        <PriceSummary orderStatus={OrderStatuses.PLACED} isPartner={false} price={order.amount}/>
+        <CustomerPriceSummary order={order}/>
         <OrderSummary userCreatedThisOrder={true} order={order} client={client}/>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottom><Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
+      <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottomLeftRight><Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
     </Container>;
   }
 }

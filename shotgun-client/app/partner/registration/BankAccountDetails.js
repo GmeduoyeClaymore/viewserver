@@ -38,7 +38,7 @@ const BankAccountDetails = ({bankAccount, history, setState, dispatch}) => {
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Partner/Registration/PartnerAccountType')} validationSchema={yup.object(validationSchema)} model={bankAccount}>
+    <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={() => history.push('/Partner/Registration/PartnerAccountType')} validationSchema={yup.object(validationSchema)} model={bankAccount}>
       <Text uppercase={false}>Continue</Text>
       <Icon next name='forward-arrow'/>
     </ValidatingButton>

@@ -1,6 +1,16 @@
 export const AppImages = {
   launch: require('./launch.png'),
-  spanner: require('./spanner.png')
+  spanner: require('./spanner.png'),
+  cog: require('./cog.png'),
+  bank: require('./bank.png'),
+  availableJobs: require('./available-jobs.png'),
+  onePerson: require('./one-person.png'),
+  twoPeople: require('./two-people.png'),
+  feedback: require('./feedback.png'),
+  address: require('./address.png'),
+  payment: require('./payment.png'),
+  list: require('./list.png'),
+  jobs: require('./jobs.png'),
 };
 
 export const ProductImages = {
@@ -17,10 +27,22 @@ export const ProductImages = {
   MediumVan: require('./productCategory/1Vans/medium-van.png'),
   LargeVan: require('./productCategory/1Vans/large-van.png'),
   LutonLorry: require('./productCategory/1Vans/luton-lorry.png'),
+
+  HouseHoldQuarterVan: require('./productCategory/2HouseHoldWaste/waste-quarter.png'),
+  HouseHoldHalfVan: require('./productCategory/2HouseHoldWaste/waste-half.png'),
+  HouseHoldThreeQuarterVan: require('./productCategory/2HouseHoldWaste/waste-three-quarters.png'),
+  HouseHoldFullVan: require('./productCategory/2HouseHoldWaste/waste-full.png'),
+  CommercialHoldQuarterVan: require('./productCategory/2HouseHoldWaste/waste-quarter.png'),
+  CommercialHoldHalfVan: require('./productCategory/2HouseHoldWaste/waste-half.png'),
+  CommercialThreeQuarterVan: require('./productCategory/2HouseHoldWaste/waste-three-quarters.png'),
+  CommercialFullVan: require('./productCategory/2HouseHoldWaste/waste-full.png')
 };
 
 
-export const CategoryImages = {};
+export const CategoryImages = {
+  '2CommercialWaste': require('./productCategory/commercial-waste.png'),
+  '2HouseHoldWaste': require('./productCategory/household-waste.png')
+};
 
 export const ContentTypeImages = {
   1: require('./contentType/1.png'),

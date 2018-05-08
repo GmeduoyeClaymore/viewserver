@@ -2,24 +2,22 @@ import React from 'react';
 import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
 import {Image} from 'react-native';
-import {Icon} from 'common/components';
 import {AppImages} from 'common/assets/img/Images';
 
 const PartnerMenuBar = ({history, path}) => {
   return <Footer>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Icon name='list'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerAvailableOrders`})}><Image source={AppImages.spanner} style={styles.image}/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerMyOrders`})}><Icon name='jobs'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Icon style={{marginLeft: 10, marginRight: 10}} name='two-people'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Icon name='one-person'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Image source={AppImages.list} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerAvailableOrders`})}><Image source={AppImages.availableJobs} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerMyOrders`})}><Image source={AppImages.jobs} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Image source={AppImages.onePerson} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Image source={AppImages.cog} style={styles.image}/></Button></FooterTab>
   </Footer>;
 };
 
 const styles = {
   image: {
     resizeMode: 'contain',
-    height: '100%',
-    width: '100%',
+    height: 30
   }
 };
 

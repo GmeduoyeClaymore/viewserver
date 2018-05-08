@@ -9,13 +9,15 @@ class CompleteControl extends Component {
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
+
+  onCompletePress = async() => {
+    const {order, dispatch} = this.props;
+    dispatch(customerCompleteAndPay(order.orderId, order.orderContentTypeId));
+  };
+
   render() {
-    const {order, busyUpdating, dispatch} = this.props;
-    const {resources} = this;
-    const onCompletePress = async() => {
-      dispatch(customerCompleteAndPay(order.orderId, order.orderContentTypeId));
-    };
-    return  <SpinnerButton busy={busyUpdating} paddedBottom fullWidth onPress={onCompletePress}><Text uppercase={false}>{resources.CompleteCaption(order)}</Text></SpinnerButton>;
+    const {order, busyUpdating} = this.props;
+    return  <SpinnerButton busy={busyUpdating} fullWidth paddedBottom onPress={this.onCompletePress}><Text uppercase={false}>{this.resources.CompleteCaption(order)}</Text></SpinnerButton>;
   }
 }
 /*eslint-disable */

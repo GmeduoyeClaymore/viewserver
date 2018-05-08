@@ -69,7 +69,7 @@ class UpdatePaymentCardDetails extends Component {
         </List>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={this.addCard} disabled={!valid}>
+      <SpinnerButton paddedBottomLeftRight fullWidth iconRight busy={busy} onPress={this.addCard} disabled={!valid}>
         <Text uppercase={false}>Add new card</Text>
       </SpinnerButton>
     </Container>;

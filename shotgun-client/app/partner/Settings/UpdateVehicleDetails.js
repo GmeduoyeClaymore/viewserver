@@ -79,7 +79,7 @@ class UpdateVehicleDetails extends Component {
         </Grid>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight busy={busy}
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight busy={busy}
         onPress={this.onUpdateVehicle}
         validationSchema={yup.object(validationSchema)} model={vehicle}>
         <Text uppercase={false}>Update vehicle</Text>

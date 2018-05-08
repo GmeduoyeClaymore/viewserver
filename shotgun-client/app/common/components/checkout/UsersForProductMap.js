@@ -62,7 +62,7 @@ class UsersForProductMap extends Component{
         <UserRelationshipsControl {...this.props} width={contentWidth}  client={client} geoLocation={origin} selectedProduct={orderProduct} onPressAssignUser={assignDeliveryToUser}/>
         <ErrorRegion errors={errors} />
       </Row>
-      <Button fullWidth paddedBottom iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
+      <Button fullWidth paddedBottomLeftRight iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>

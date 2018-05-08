@@ -98,7 +98,7 @@ class UpdateUserDetails extends Component{
           </Row>
         </Grid>
       </Content>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy}
         onPress={this.onUpdateDetails} validationSchema={yup.object(validationSchema)} model={unsavedUser}>
         <Text uppercase={false}>Update details</Text>
       </ValidatingButton>

@@ -78,7 +78,7 @@ class ItemDetails extends Component{
           </Button> : null}
           <ValidatingInput style={styles.detailsInput} value={order.description} multiline={true} placeholder={resources.InputPlaceholder} onChangeText={(value) => onChangeValue('description', value)} validateOnMount={true} validationSchema={validationSchema.description} maxLength={200}/>
         </Content>
-        <ValidatingButton fullWidth iconRight paddedBottom onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
+        <ValidatingButton fullWidth iconRight paddedBottomLeftRight onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
           <Text uppercase={false}>Continue</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>

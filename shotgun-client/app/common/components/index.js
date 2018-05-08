@@ -5,7 +5,7 @@ export {LoadingScreen} from './LoadingScreen';
 export {OrderListItem} from './OrderListItem';
 export {OrderSummary} from './OrderSummary';
 export {PagingListView} from './PagingListView';
-export {PriceSummary} from './PriceSummary';
+export {PriceSummary} from '../../customer/orders/CustomerPriceSummary';
 export {RatingAction} from './RatingAction';
 export {RatingSummary} from './RatingSummary';
 export {SpinnerButton} from './SpinnerButton';

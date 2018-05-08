@@ -125,7 +125,7 @@ class DeliveryOptions extends Component {
         <Text note style={styles.noteText}>You will not be charged until the job has been completed</Text>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton fullWidth paddedBottom iconRight onPress={this.moveToNext} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
+      <ValidatingButton fullWidth paddedBottomLeftRight iconRight onPress={this.moveToNext} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow' />
       </ValidatingButton>

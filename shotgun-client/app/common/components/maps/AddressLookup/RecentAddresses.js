@@ -21,10 +21,10 @@ export default class RecentAddresses extends Component {
   render() {
     const {deliveryAddresses, onAddressSelected, homeAddress} = this.props;
     return <Col paddedLeft style={styles.resultsContainer}>
+      <Text key='header' style={{marginBottom: 15}} smallText>Recent addresses you have used</Text>
       {homeAddress ? <HomeAddressItem address={homeAddress} onAddressSelected={onAddressSelected}/> : null}
       {deliveryAddresses && deliveryAddresses.length ?
-        <Col><Text key='header' style={{marginBottom: 15}} smallText>Recent addresses you have used</Text>
-          <List key='list'>{this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}</List></Col> :
+        <List key='list'>{this.getOrderedAddresses(deliveryAddresses).map((ad, idx) => <Address address={ad} key={idx} onAddressSelected={onAddressSelected}/>)}</List> :
         <Text smallText>No recent addresses</Text>}
     </Col>;
   }
@@ -32,14 +32,17 @@ export default class RecentAddresses extends Component {
 
 const HomeAddressItem = ({address = {}, onAddressSelected}) =>
   <Row style={{height: 50, alignContent: 'center'}} onPress={() => onAddressSelected(address)}>
-    <Icon name="location" paddedIcon originPin style={{alignSelf: 'flex-start', marginTop: 6}}/>
     <View>
-      <Text style={{paddingBottom: 6}}>Home</Text>
+      <Text style={styles.homeAddres}>Home</Text>
       <Text smallText>{`${address.line1}, ${address.postCode}`}</Text>
     </View>
   </Row>;
 
 const styles = {
+  homeAddres: {
+    paddingBottom: 6,
+    fontWeight: 'bold'
+  },
   resultsContainer: {
     marginTop: 0,
     paddingTop: shotgun.contentPadding

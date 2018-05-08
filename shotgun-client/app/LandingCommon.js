@@ -30,7 +30,7 @@ class LandingCommon extends Component {
     if (errors){
       return <Content contentContainerStyle={styles.contentStyle}>
         <Text>Unable to find your user details. Please sign out and log back in {errors}</Text>
-        <Button fullWidth paddedBottom signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
+        <Button fullWidth paddedBottomLeftRight signOutButton onPress={() => signOut(history)}><Text uppercase={false}>Sign out</Text></Button>
       </Content>;
     }
 

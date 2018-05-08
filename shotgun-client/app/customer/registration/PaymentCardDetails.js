@@ -47,7 +47,7 @@ class PaymentCardDetails extends Component {
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton paddedBottom fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
+      <SpinnerButton paddedBottomLeftRight fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </SpinnerButton>

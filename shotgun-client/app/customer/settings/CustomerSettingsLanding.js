@@ -4,7 +4,8 @@ import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Icon, AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
-import {Linking} from 'react-native';
+import {Image, Linking} from 'react-native';
+import {AppImages} from 'common/assets/img/Images';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Customer Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
@@ -32,19 +33,19 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
       <List>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <Text style={styles.text}>Personal details</Text>
-          <Icon style={styles.icon} name='one-person'/>
+          <Image source={AppImages.onePerson} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateAddressDetails`)}>
           <Text style={styles.text}>Home address</Text>
-          <Icon style={styles.icon} name='address'/>
+          <Image source={AppImages.address} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdatePaymentCardDetails`)}>
           <Text style={styles.text}>Payment cards</Text>
-          <Icon style={{paddingRight: 10}} name='payment'/>
+          <Image source={AppImages.payment} style={styles.icon}/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
           <Text style={styles.text}>Give us feedback</Text>
-          <Icon style={styles.icon} name='feedback'/>
+          <Image source={AppImages.feedback} style={styles.icon}/>
         </ListItem>
       </List>
       <Button fullWidth paddedTopBottom signOutButton onPress={signOut}><Text uppercase={false}>Sign out</Text></Button>
@@ -57,8 +58,10 @@ const styles = {
     fontSize: 16
   },
   icon: {
-    fontSize: 24,
-    paddingRight: 10
+    resizeMode: 'contain',
+    height: 50,
+    position: 'absolute',
+    right: 10
   }
 };
 
