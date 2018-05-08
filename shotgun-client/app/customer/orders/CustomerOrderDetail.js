@@ -41,7 +41,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order, orderId, errors, history} = this.props;
+    const {busy, order, orderId, errors, history,dispatch} = this.props;
     const {resources} = this;
     const {InProgressControls} = resources;
     return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
@@ -56,7 +56,6 @@ class CustomerOrderDetail extends Component{
       <Content>
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
-          <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
           <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
             InProgressControls={[...InProgressControls]}
