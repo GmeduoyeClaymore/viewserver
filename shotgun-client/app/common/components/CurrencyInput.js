@@ -33,6 +33,11 @@ export class CurrencyInput extends Component{
     this.setState({formattedPrice});
   }
 
+  clear(){
+    this.clearFormattedPriceValue();
+    this.setState({price: undefined});
+  }
+
   setFormattedPriceValue(){
     const {disabled} = this.props;
     if (disabled){

@@ -101,7 +101,7 @@ const CancelResponse = ({ orderId, orderContentTypeId, partnerId, busyUpdating, 
   const onCancelResponse = () => {
     dispatch(cancelResponseCustomer(orderId, orderContentTypeId, partnerId));
   };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 10, height: 25, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
 };
 
 
@@ -122,8 +122,9 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
           <Text>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
         </Col>
         <Col size={23}>
-          {canRespond && response.responseStatus === 'ACCEPTED' ? <CancelResponse busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/> : null}
-          {!canRespond ? null : <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>}
+     
+          <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>
+          {responseStatus === 'ACCEPTED' ? <CancelResponse busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/> : null}
           {!canRespond ? null : <RejectPartner disabled={!canRespond}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>}
         </Col>
       </Row>;

@@ -66,12 +66,12 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "cancelResponseCustomer", isSynchronous = true)
-    default void cancelResponse(@ActionParam(name = "orderId")String orderId,  @ActionParam(name = "orderId")String partnerId){
+    default void cancelResponseCustomer(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
         this.transform(
                 orderId,
                 order -> {
                     if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
-                        getLogger().info(partnerId + "Has already responded to this order aborting");
+                        getLogger().info(partnerId + " Cannot find a response from partner aborting");
                         return false;
                     }
                     order.cancelResponse(partnerId);

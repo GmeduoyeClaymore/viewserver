@@ -56,8 +56,8 @@ class CustomerOrderDetail extends Component{
           <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
           <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount}  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
-            InProgressControls={InProgressControls}
-            AcceptedControls={InProgressControls}
+            InProgressControls={[...InProgressControls]}
+            AcceptedControls={[CustomerNegotiationPanel, ...InProgressControls]}
             CompletedControls={[PriceSummary, RatingSummary, OrderSummary]}
             CancelledControls={[PriceSummary, RatingSummary, OrderSummary]}
           />
