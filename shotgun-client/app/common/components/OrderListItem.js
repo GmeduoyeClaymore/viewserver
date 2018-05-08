@@ -5,6 +5,7 @@ import {getDaoState} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary, Currency} from 'common/components';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
+import {PaymentTypes} from 'common/constants/PaymentTypes';
 
 /*eslint-enable */
 import {connect} from 'custom-redux';
@@ -27,7 +28,7 @@ class OrderListItem extends Component {
             <OriginDestinationSummary order={order}/>
           </Col>
           <Col size={35}>
-            <Currency decimals={0} value={order.amount} style={styles.price} suffix={order.paymentType === 'DAYRATE' ? 'p/d' : undefined}/>
+            <Currency decimals={0} value={order.amount} style={styles.price} suffix={order.paymentType === PaymentTypes.DAYRATE ? 'p/d' : undefined}/>
           </Col>
         </Row>
         <Row size={25}>

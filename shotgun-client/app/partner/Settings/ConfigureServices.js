@@ -61,7 +61,7 @@ class ConfigureServices extends Component{
         </Grid>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.updateServices} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.updateServices} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
         <Text uppercase={false}>Save</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>

@@ -80,7 +80,7 @@ class UpdateBankAccountDetails extends Component {
         </Grid>
       </Content>
       <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight busy={busy} validateOnMount={true}
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight busy={busy} validateOnMount={true}
         onPress={this.onSetBankAccount}
         validationSchema={yup.object(validationSchema)} model={{...unsavedBankAccount, dob: unsavedBankAccount}}>
         <Text uppercase={false}>Set Bank Account</Text>

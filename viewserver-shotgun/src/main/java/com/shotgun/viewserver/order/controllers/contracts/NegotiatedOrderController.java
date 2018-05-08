@@ -150,7 +150,7 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     return  true;
                 },
                 order -> {
-                    if(order.getNegotiatedResponseStatus().equals(NegotiatedOrder.NegotiationOrderStatus.RESPONDED)){
+                    if(NegotiatedOrder.NegotiationOrderStatus.RESPONDED.equals(order.getNegotiatedResponseStatus())){
                         fromArray(order.getResponses()).forEach(
                                 res -> {
                                     notifyJobCancelled(orderId, res.getPartnerId());

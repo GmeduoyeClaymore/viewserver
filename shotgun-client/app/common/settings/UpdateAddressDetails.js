@@ -93,7 +93,7 @@ class HomeAddressDetails  extends Component{
         </Grid>
       </Content> : null}
       <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} busy={busy}
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy}
         onPress={this.onUpdateAddress} validationSchema={yup.object(validationSchema)}
         model={unSavedDeliveryAddress}>
         <Text uppercase={false}>Update Address</Text>

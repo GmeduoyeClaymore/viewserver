@@ -256,6 +256,9 @@ export default (variables = variable) => {
       marginRight: variables.contentPadding
     },
     '.paddedBottom': {
+      marginBottom: variables.contentPadding
+    },
+    '.paddedBottomLeftRight': {
       marginLeft: variables.contentPadding,
       marginRight: variables.contentPadding,
       marginBottom: variables.contentPadding

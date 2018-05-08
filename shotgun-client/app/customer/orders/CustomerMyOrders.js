@@ -4,9 +4,9 @@ import {Tabs, LoadingScreen} from 'common/components';
 import {Container, Header, Body, Title, Tab} from 'native-base';
 import {getDao} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
-import CustomerOrderItems from './CustomerOrderItems';
+import CustomerMyOrdersListView from './CustomerMyOrdersListView';
 
-class CustomerOrders extends Component{
+class CustomerMyOrders extends Component{
   goToTabNamed = (name) => {
     const {history, path} = this.props;
     history.replace({pathname: `${path}/${name}`});
@@ -24,8 +24,8 @@ class CustomerOrders extends Component{
         <Tab heading='Complete' onPress={() => this.goToTabNamed('Complete')}/>
       </Tabs>
       {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Live'>
-        <Route path={'Live'} parentPath={parentPath}  isCompleted={false} component={CustomerOrderItems} />
-        <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={CustomerOrderItems} />
+        <Route path={'Live'} parentPath={parentPath} isCompleted={false} component={CustomerMyOrdersListView} />
+        <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={CustomerMyOrdersListView} />
       </ReduxRouter> : <LoadingScreen text="Waiting for order data.."/>}
     </Container>;
   }
@@ -38,4 +38,4 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
-export default connect(mapStateToProps)(CustomerOrders);
+export default connect(mapStateToProps)(CustomerMyOrders);

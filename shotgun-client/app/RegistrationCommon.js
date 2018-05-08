@@ -10,21 +10,12 @@ export default RegistrationCommon = ({history}) => {
       <Text subTitle>Create and work on jobs for the building, waste and delivery trades</Text>
     </View>
     <View style={styles.productSelectView}>
-      <Grid>
-        <Row>
-          <Col size={45}>
-            <Row size={35}><Button large onPress={() => history.push('/Customer/Registration')}><Icon name='schedule-delivery'/></Button></Row>
-            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Create a job</Text></Row>
-          </Col>
-          <Col size={10}>
-            <Row style={styles.orRow}><Text>or</Text></Row>
-          </Col>
-          <Col size={45}>
-            <Row size={35}><Button large onPress={() => history.push('/Partner/Registration')}><Icon name='drive'/></Button></Row>
-            <Row size={65} style={styles.productSelectTextRow}><Text style={styles.productSelectText}>Work on a job</Text></Row>
-          </Col>
-        </Row>
-      </Grid>
+      <Button style={[styles.productSelectButton, {marginBottom: shotgun.contentPadding}]} light onPress={() => history.push('/Customer/Registration')}>
+        <Text style={styles.productSelectText} uppercase={false}>Create a job</Text>
+      </Button>
+      <Button style={styles.productSelectButton} light onPress={() => history.push('/Partner/Registration')}>
+        <Text style={styles.productSelectText} uppercase={false}>Work on a job</Text>
+      </Button>
     </View>
   </Content>;
 };
@@ -49,19 +40,14 @@ const styles = {
     justifyContent: 'flex-start',
     paddingTop: 30
   },
-  orRow: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingTop: 30
-  },
-  productSelectTextRow: {
-    justifyContent: 'center',
-    alignItems: 'flex-start'
+  productSelectButton: {
+    width: '100%',
+    height: 80,
+    justifyContent: 'center'
   },
   productSelectText: {
     fontSize: 18,
     fontWeight: 'bold',
-    width: '80%',
     textAlign: 'center'
   }
 };

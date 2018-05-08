@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { withExternalState, ReduxRouter, Route} from 'custom-redux';
 import { resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError } from 'common/dao';
-import { Text, Container, Header, Left, Button, Body, Title, Content, Tab } from 'native-base';
-import { OrderSummary, PriceSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
+import {Container, Header, Left, Button, Body, Title, Content, Tab } from 'native-base';
+import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
 import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import { respondToOrder } from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import PartnerNegotiationPanel from './PartnerNegotiationPanel';
 import PartnerPaymentStagesPanel from './PartnerPaymentStagesPanel';
+import PartnerPriceSummary from './PartnerPriceSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
 import DayRatePersonellOrderInProgress from './progress/DayRatePersonellOrderInProgress';
 import PartnerJourneyOrderInProgress from './progress/PartnerJourneyOrderInProgress';
@@ -66,7 +67,7 @@ class PartnerOrderDetail extends Component {
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
-        <PriceSummary orderStatus={order.orderStatus}price={order.amount} isPartner={true} />
+        <PartnerPriceSummary order={order}/>
         <OrderLifecycleView  isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
           PlacedControls={[PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}

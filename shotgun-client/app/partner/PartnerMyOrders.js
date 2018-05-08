@@ -29,6 +29,11 @@ class PartnerMyOrders extends Component{
     };
   }
 
+  getOrdersWhereIAmTheCustomerOptions = () => {
+    const {isCompleted} = this.props;
+    return {...OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS, isCompleted, userId: '@userId'};
+  }
+
   getHeading = (heading) => {
     if (heading === 'Responded' && this.props.isCompleted){
       return 'Rejected';
@@ -40,11 +45,6 @@ class PartnerMyOrders extends Component{
       return 'Completed for Me';
     }
     return heading;
-  }
-
-  getOrdersWhereIAmTheCustomerOptions = () => {
-    const {isCompleted} = this.props;
-    return {...OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS, isCompleted, userId: '@userId'};
   }
 
   render() {

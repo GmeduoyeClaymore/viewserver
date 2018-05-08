@@ -65,7 +65,7 @@ const AddressDetails  = ({address = {}, history, next, parentPath, setState, dis
         </Row>
       </Grid>
     </Content>
-    <ValidatingButton paddedBottom fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={address}>
+    <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(validationSchema)} model={address}>
       <Text uppercase={false}>Continue</Text>
       <Icon name='forward-arrow' next/>
     </ValidatingButton>
