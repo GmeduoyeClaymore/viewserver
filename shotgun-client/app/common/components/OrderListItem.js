@@ -2,32 +2,32 @@ import React, {Component} from 'react';
 import {Text, ListItem, Grid, Col, Row} from 'native-base';
 import moment from 'moment';
 import {getDaoState} from 'common/dao';
-import {OrderStatuses, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary, Currency} from 'common/components';
-import * as ContentTypes from 'common/constants/ContentTypes';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
+
+/*eslint-enable */
 import {connect} from 'custom-redux';
 
 class OrderListItem extends Component {
   constructor(props) {
     super(props);
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
   render() {
-    const {order, history, next, isLast, isFirst} = this.props;
+    const {order, history, next, isLast, isFirst, orderStatusResolver} = this.props;
     const isInProgress = order.orderStatus == OrderStatuses.INPROGRESS;
 
     return <ListItem style={[styles.order, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: order.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
-          <Col size={60}>
+          <Col size={80}>
+            <Text style={styles.name} numberOfLines={1}>{order.orderProduct.name}</Text>
             <OriginDestinationSummary order={order}/>
           </Col>
-          <Col size={40}>
-            <Text style={styles.price} numberOfLines={1}>{order.orderProduct.name}</Text>
-            <Currency value={order.amount} style={styles.price}/>
+          <Col size={35}>
+            <Currency decimals={0} value={order.amount} style={styles.price} suffix={order.paymentType === 'DAYRATE' ? 'p/d' : undefined}/>
           </Col>
         </Row>
         <Row size={25}>
@@ -36,24 +36,14 @@ class OrderListItem extends Component {
               {order.requiredDate ? [<Icon paddedIcon key='icon' name="delivery-time"/>, <Text key='text'>{moment(order.requiredDate).format('Do MMM, h:mma')}</Text>] : null}
             </Row>
           </Col>
-          <Col size={40} style={styles.orderStatusRow}>
-            <Text note numberOfLines={1} style={styles.orderStatus}>{this.resources.OrderStatusResolver(order)}</Text>
-          </Col>
+          {orderStatusResolver ? <Col size={40} style={styles.orderStatusRow}>
+            <Text note numberOfLines={1} style={styles.orderStatus}>{!orderStatusResolver ? null : orderStatusResolver(order)}</Text>
+          </Col> : null}
         </Row>
       </Grid>
     </ListItem>;
   }
 }
-
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary().
-  property('OrderStatusResolver', getProductBasedFriendlyOrderStatusName).
-    delivery(getDeliveryFriendlyOrderStatusName).
-    rubbish(getRubbishFriendlyOrderStatusName).
-  property('supportsFromTime', true).
-  property('supportsTillTime', true).
-    rubbish(false);
-/*eslint-enable */
 
 const styles = {
   order: {
@@ -86,8 +76,15 @@ const styles = {
     fontWeight: 'bold',
     padding: 0,
     margin: 0,
+    marginTop: 15,
     lineHeight: 20,
     alignSelf: 'flex-end'
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    alignSelf: 'flex-start'
   },
   orderStatusRow: {
     justifyContent: 'center'

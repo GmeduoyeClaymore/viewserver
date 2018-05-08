@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { View } from 'react-native-animatable';
-import {BackHandler, Keyboard} from 'react-native';
+import { BackHandler, Keyboard } from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
 import Logger from 'common/Logger';
-import {LoadingScreen} from 'common/components';
+import { LoadingScreen } from 'common/components';
 import { memoize } from '../memoize';
 import removeProperties from '../removeProperties';
 import NavigationContainerTranslator from './utils/NavigationContainerTranslator';
@@ -11,13 +11,13 @@ import NavigationTransformation from './utils/NavigationTransformation';
 import TransitionManager from './utils/TransitionManager';
 import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
-import invariant  from 'invariant';
+import invariant from 'invariant';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Container} from 'native-base';
-import {setStateIfIsMounted} from 'custom-redux';
+import { Container } from 'native-base';
+import { setStateIfIsMounted } from 'custom-redux';
 
-class ReduxRouterClass extends Component{
-  constructor(props){
+class ReduxRouterClass extends Component {
+  constructor(props) {
     super(props);
     invariant(props.path, 'All routers must have a path');
     this.transitionManager = new TransitionManager(props.name, this.forceUpdate.bind(this));
@@ -28,9 +28,9 @@ class ReduxRouterClass extends Component{
     this.handleActualComponentRef = this.handleActualComponentRef.bind(this);
   }
 
-  componentWillMount () {
-    const {resizeForKeyboard = false} = this.props;
-    super.setState({keyboardOffset: 0});
+  componentWillMount() {
+    const { resizeForKeyboard = false } = this.props;
+    super.setState({ keyboardOffset: 0 });
 
     if (resizeForKeyboard) {
       Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
@@ -41,106 +41,108 @@ class ReduxRouterClass extends Component{
     Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
   }
 
-  componentDidMount(){
-    if (this.props.name === 'AppRouter'){
+  componentDidMount() {
+    if (this.props.name === 'AppRouter') {
       BackHandler.addEventListener('hardwareBackPress', this.handleBack);
     }
     this.performTransition(undefined, this.props);
   }
 
-  componentWillUnmount(){
-    if (this.props.name === 'AppRouter'){
+  componentWillUnmount() {
+    if (this.props.name === 'AppRouter') {
       BackHandler.removeEventListener('hardwareBackPress', this.handleBack);
     }
     Logger.info("Throwing redux router away as for some reason we don't think we need it anymore ");
   }
 
-  handleBack(){
+  handleBack() {
     const { historyOverrideFactory } = this.props;
     const history = historyOverrideFactory();
     history.goBack();
     return true;
   }
 
-  async componentDidUpdate(oldProps){
+  async componentDidUpdate(oldProps) {
     this.transitionManager.log('Component did update');
     this.performTransition(oldProps, this.props);
   }
 
-  async performTransition(oldProps = {}, newProps){
+  async performTransition(oldProps = {}, newProps) {
     const newNavigationContainerTranslator = newProps.navigationContainerTranslator;
     const oldNavigationContainerTranslator = oldProps.navigationContainerTranslator;
     const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator, newNavigationContainerTranslator.defaultRoute, newNavigationContainerTranslator.routerPath);
-    if (diff){
+    if (diff) {
       this.transitionManager.performTransition(diff, newNavigationContainerTranslator.defaultRoute.pathname, newNavigationContainerTranslator.routerPath);
     }
   }
 
   keyboardWillShow = (event) => {
-    if (this.isMountedComponentMounted){
-      super.setState({keyboardOffset: event.endCoordinates.height});
+    if (this.isMountedComponentMounted) {
+      super.setState({ keyboardOffset: event.endCoordinates.height });
     }
   };
 
   keyboardWillHide = () => {
-    if (this.isMountedComponentMounted){
-      super.setState({keyboardOffset: 0});
+    if (this.isMountedComponentMounted) {
+      super.setState({ keyboardOffset: 0 });
     }
   };
 
-  handleRef(route, ref){
+  handleRef(route, ref) {
     this.transitionManager.initialize(route, ref);
   }
 
-  isRemoved(route){
+  isRemoved(route) {
     this.transitionManager.isRemoved(route);
   }
 
-  handleActualComponentRef(route, actualComponentRef){
+  handleActualComponentRef(route, actualComponentRef) {
     this.transitionManager.initializeActualComponent(route, actualComponentRef);
   }
 
-  getHeight(){
-    const {height: initialHeight = shotgun.deviceHeight, hasFooter = false} = this.props;
-    const {keyboardOffset} = this.state;
-    return initialHeight - keyboardOffset + (hasFooter && keyboardOffset > 0 ? shotgun.footerHeight : 0);
+  getHeight() {
+    const { height: initialHeight = shotgun.deviceHeight } = this.props;
+    const { keyboardOffset } = this.state;
+    return initialHeight - keyboardOffset;
   }
 
   render() {
-    const {width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground} = this.props;
+    const { width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground } = this.props;
     const height = this.getHeight();
 
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator'] );
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'name', 'navigationContainerTranslator']);
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
-    const result =  <Container>
+    const result = <Container>
       {routesToRender.length ? routesToRender.map(
         (rt) => {
-          const {componentProps, match, navContainerOverride} = rt;
-          const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement} = componentProps;
+          const { componentProps, match, navContainerOverride } = rt;
+          const { component: ComponentForRoute, ...otherPropsDeclaredOnRouteElement } = componentProps;
           const history = historyOverrideFactory(navContainerOverride);
-          const {location} = history;
+          const { location } = history;
           const isInBackground = !matchPath(location.pathname, rt.path);
-          let  completeProps = { ...reduxRouterPropertiesToPassToEachRoute, parentPath};
-          completeProps = { ...completeProps, route: rt, path: rt.path, isInBackground};
-          completeProps = { ...completeProps, ...otherPropsDeclaredOnRouteElement};
-          completeProps = { ...completeProps, height, width, isInBackground};
-          completeProps = { ...completeProps, match, navContainerOverride, history, location};
+          let completeProps = { ...reduxRouterPropertiesToPassToEachRoute, parentPath };
+          completeProps = { ...completeProps, route: rt, path: rt.path, isInBackground };
+          completeProps = { ...completeProps, ...otherPropsDeclaredOnRouteElement };
+          completeProps = { ...completeProps, height, width, isInBackground };
+          completeProps = { ...completeProps, match, navContainerOverride, history, location };
           return this.isRemoved(rt) ? null : <View
             useNativeDriver={true}
-            style={{ position: 'absolute',
+            style={{
+              position: 'absolute',
               ...style,
               height, width,
               left: 0,
               backgroundColor: shotgun.brandPrimary,
               zIndex: rt.index,
-              top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width}} key={rt.path} ref={ref => {this.handleRef(rt, ref);}}>
-            <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => {this.handleActualComponentRef(rt, ref);} : undefined}  {...completeProps}/>
+              top: 0, minHeight: height, minWidth: width, maxHeight: height, maxWidth: width
+            }} key={rt.path} ref={ref => { this.handleRef(rt, ref); }}>
+            <ComponentForRoute ref={ComponentForRoute.prototype.render ? ref => { this.handleActualComponentRef(rt, ref); } : undefined}  {...completeProps} />
           </View>;
         }
-      ) : <LoadingScreen text="Navigating..."/>}
+      ) : <LoadingScreen text="Navigating..." />}
     </Container>;
 
-    if (!routesToRender.length){
+    if (!routesToRender.length) {
       Logger.info(`${isInBackground} - No routes found to match the path ${navigationContainerTranslator.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
     }
 
@@ -151,13 +153,13 @@ class ReduxRouterClass extends Component{
 const navigateFactory = (getNewContainer, setState, dispatch) => (action, state, continueWith) => {
   const parsedAction = RouteUtils.parseAction(action, state);
 
-  const newnavigationContainer =  getNewContainer(parsedAction);
-  if (newnavigationContainer){
+  const newnavigationContainer = getNewContainer(parsedAction);
+  if (newnavigationContainer) {
     if (!parsedAction || parsedAction.dismissKeyboard != false) {
       Keyboard.dismiss();
     }
 
-    setState({navigationContainer: newnavigationContainer}, continueWith, dispatch);
+    setState({ navigationContainer: newnavigationContainer }, continueWith, dispatch);
   }
 };
 
@@ -166,16 +168,16 @@ const mapStateToProps = () => {
     const routesInScope = RouteUtils.getRoutesForChildren(children, path);
     try {
       return new NavigationContainerTranslator(navigationContainer || NavigationContainerTranslator.createDefaultNavigation(path), path, defaultRoute, routesInScope);
-    } catch (error){
+    } catch (error) {
       throw new Error('Issue initing nav container translator for ' + name + ' - ' + error);
     }
   });
-  
-  const fromProps = (props)=> {
-    if (!props){
+
+  const fromProps = (props) => {
+    if (!props) {
       return;
     }
-    const {navigationContainer, path, defaultRoute, children, name, navContainerOverride} = props;
+    const { navigationContainer, path, defaultRoute, children, name, navContainerOverride } = props;
     return memoizedFactory(navContainerOverride || navigationContainer, path, defaultRoute, children, name);
   };
 
@@ -184,10 +186,10 @@ const mapStateToProps = () => {
       invariant(setState, 'Set state must be defined');
       const navContainerOverride = navigationContextOverride && navigationContextOverride.version >= navigationContainer.version ? navigationContextOverride : navigationContainer;
       const tranformation = new NavigationTransformation(navContainerOverride);
-      const replace = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.replace(action);}, setState, dispatch);
+      const replace = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.replace(action); }, setState, dispatch);
       const goBack = navigateFactory((action) => tranformation.goBack(action), setState, dispatch);
-      const just = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.just(action);}, setState, dispatch);
-      const push = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.next(action);}, setState, dispatch);
+      const just = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.just(action); }, setState, dispatch);
+      const push = navigateFactory((action) => { invariant(action, 'Action must be defined'); return tranformation.next(action); }, setState, dispatch);
       const location = tranformation.location;
       return {
         location,
@@ -200,11 +202,11 @@ const mapStateToProps = () => {
   );
 
   return (state, props) => {
-    const {setState, dispatch} = props;
+    const { setState, dispatch } = props;
     const navigationContainerTranslator = fromProps(props);
-    const historyOverrideFactory =  navigationContextOverride => memoizedHistoryFactory(navigationContextOverride, navigationContainerTranslator.navContainer, setState, dispatch);
-    const {location} = navigationContainerTranslator;
-    
+    const historyOverrideFactory = navigationContextOverride => memoizedHistoryFactory(navigationContextOverride, navigationContainerTranslator.navContainer, setState, dispatch);
+    const { location } = navigationContainerTranslator;
+
     return {
       navigationContainerTranslator,
       ...props,

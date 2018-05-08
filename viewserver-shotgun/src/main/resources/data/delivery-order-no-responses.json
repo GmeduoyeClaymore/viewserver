@@ -6,6 +6,7 @@
   "amount": 4000,
   "productId": "LargeVan",
   "orderId": "{orderId}",
+  "paymentType" : "FIXED",
   "negotiatedOrderStatus": "REQUESTED",
   "origin": {
     "deliveryAddressId": "c0a10226-e719-4629-a284-b8eb234c5736",

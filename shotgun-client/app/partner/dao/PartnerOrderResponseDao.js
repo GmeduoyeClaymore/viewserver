@@ -1,6 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 export default class PartnerOrderResponseDao{
   static DEFAULT_OPTIONS = {
@@ -27,7 +28,7 @@ export default class PartnerOrderResponseDao{
     return  this._name;
   }
 
-  getReportContext({orderId, isCompleted}){
+  getReportContext({orderId, responseStatuses, isCompleted}){
     const reportContext =  {
       reportId: 'orderResponses',
       dimensions: {},
@@ -36,10 +37,15 @@ export default class PartnerOrderResponseDao{
 
     reportContext.dimensions.dimension_partnerId = ['@userId'];
 
-    if (isCompleted !== undefined) {
+    if (responseStatuses) {
       //TODO - use the OrderStatus enum for these values
-      reportContext.dimensions.dimension_partnerOrderStatus = isCompleted == true ? ['CUSTOMERCOMPLETE'] : ['REQUESTED', 'RESPONDED', 'ASSIGNED', 'STARTED', 'PARTNERCOMPLETE'];
+      reportContext.dimensions.dimension_responseStatus = responseStatuses;
     }
+
+    if (isCompleted !== undefined) {
+      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP];
+    }
+
 
     if (orderId !== undefined){
       reportContext.dimensions.dimension_orderId = orderId;
@@ -59,7 +65,7 @@ export default class PartnerOrderResponseDao{
   }
 
   mapOrderResponse(orderResponse){
-    const {orderDetails} = orderResponse;
+    const {orderDetails, responseStatus} = orderResponse;
 
     const assignedPartner = orderDetails.assignedPartner ? {
       ...orderDetails.assignedPartner,
@@ -71,6 +77,7 @@ export default class PartnerOrderResponseDao{
 
     return {
       ...orderDetails,
+      responseStatus,
       assignedPartner,
       userCreatedThisOrder: orderResponse.userCreatedThisOrder || false,
       customer: {
@@ -82,12 +89,12 @@ export default class PartnerOrderResponseDao{
     };
   }
 
-  createSubscriptionStrategy({isCompleted, orderId}, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext({isCompleted, orderId}), dataSink);
+  createSubscriptionStrategy({responseStatuses, orderId, isCompleted}, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext({responseStatuses, orderId, isCompleted}), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['orderId', 'isCompleted']);
+    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['orderId', 'responseStatuses', 'isCompleted']);
   }
 
   transformOptions(options){

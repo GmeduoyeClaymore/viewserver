@@ -10,102 +10,25 @@ export const OrderStatuses = {
   CANCELLED: 'CANCELLED'
 };
 
-export const getDeliveryFriendlyOrderStatusName = (order) => {
-  switch (order.orderStatus){
-  case OrderStatuses.PLACED:
-    return 'Awaiting Partner';
-  case OrderStatuses.ACCEPTED:
-    return 'Partner assigned';
-  case OrderStatuses.INPROGRESS:
-    return 'On it\'s ways';
-  case OrderStatuses.COMPLETED:
+export const getFriendlyOrderStatusName = (noun) =>  (order) => {
+  switch (order.negotiatedOrderStatus){
+  case 'REQUESTED':
+    return `Awaiting ${noun}`;
+  case 'RESPONDED':
+    return `${noun} Responded`;
+  case 'ASSIGNED':
+    return `${noun} Assigned`;
+  case 'STARTED':
+    return 'Job In Progress';
+  case 'PARTNERCOMPLETE':
+    return `${noun} Finished`;
+  case 'CUSTOMERCOMPLETE':
     return 'Complete';
-  case OrderStatuses.CANCELLED:
-    return 'Cancelled';
   default:
-    return 'Unknown status';
+    return 'Unknown status - ' + order.negotiatedOrderStatus;
   }
 };
 
-export const getRubbishFriendlyOrderStatusName = (order) => {
-  switch (order.orderStatus){
-  case OrderStatuses.PLACED:
-    return 'Awaiting Partner';
-  case OrderStatuses.ACCEPTED:
-    return 'Partner assigned';
-  case OrderStatuses.INPROGRESS:
-    return 'On it\'s ways';
-  case OrderStatuses.COMPLETED:
-    return 'Complete';
-  case OrderStatuses.CANCELLED:
-    return 'Cancelled';
-  default:
-    return 'Unknown status';
-  }
-};
-
-export const getProductBasedFriendlyOrderStatusName = (order) => {
-  const {productName} = order.orderProduct;
-
-  switch (order.orderStatus){
-  case OrderStatuses.PLACED:
-    return 'Awaiting ' + productName;
-  case OrderStatuses.ACCEPTED:
-    return productName + ' assigned';
-  case OrderStatuses.INPROGRESS:
-    return productName + ' on their way';
-  case OrderStatuses.COMPLETED:
-    return 'Complete';
-  case OrderStatuses.CANCELLED:
-    return 'Cancelled';
-  default:
-    return 'Unknown status';
-  }
-};
-
-export const getPossibleStatuses = ({
-  orderSummaryStatus,
-  iAmTheCustomer,
-  doubleComplete}) => {
-  invariant(orderSummaryStatus, 'orderSummaryStatus must be defined');
-
-  if (orderSummaryStatus == OrderStatuses.PLACED){
-    if (iAmTheCustomer){
-      return [OrderStatuses.CANCELLED];
-    }
-    return [OrderStatuses.ACCEPTED];
-  }
-
-  if (orderSummaryStatus == OrderStatuses.ACCEPTED){
-    if (iAmTheCustomer){
-      return [OrderStatuses.PLACED, OrderStatuses.CANCELLED];
-    }
-    return [ OrderStatuses.INPROGRESS];
-  }
-
-  if (orderSummaryStatus == OrderStatuses.INPROGRESS){
-    if (iAmTheCustomer){
-      return doubleComplete ? [OrderStatuses.COMPLETEDBYCUSTOMER] : [];
-    }
-    return [doubleComplete ? OrderStatuses.COMPLETEDBYPARTNER : OrderStatuses.COMPLETED];
-  }
-
-  if (orderSummaryStatus == OrderStatuses.COMPLETEDBYCUSTOMER){
-    if (iAmTheCustomer){
-      return [];
-    }
-    return doubleComplete ? [OrderStatuses.COMPLETED] : [];
-  }
-
-  if (orderSummaryStatus == OrderStatuses.COMPLETEDBYPARTNER){
-    if (iAmTheCustomer){
-      return doubleComplete ? [OrderStatuses.COMPLETED] : [];
-    }
-    return [];
-  }
-  if (orderSummaryStatus == OrderStatuses.COMPLETED){
-    return [];
-  }
-  throw new Error('Unrecognized order summary status ' + orderSummaryStatus);
-};
-
+export const getDeliveryFriendlyOrderStatusName = getFriendlyOrderStatusName('Driver');
+export const getRubbishFriendlyOrderStatusName = getFriendlyOrderStatusName('Collector');
+export const getProductBasedFriendlyOrderStatusName = (order) => getFriendlyOrderStatusName(order.orderProduct.name)(order);

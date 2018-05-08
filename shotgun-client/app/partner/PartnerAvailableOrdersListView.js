@@ -5,8 +5,8 @@ import OrderRequestDao from 'partner/dao/OrderRequestDao';
 
 export default class PartnerAvailableOrdersListView extends Component {
   NoItems = () => <Text empty>No jobs available</Text>;
-  RowView = ({item: order, isLast, isFirst, history, parentPath}) =>
-    <OrderListItem history={history} order={order} key={order.orderId} isLast={isLast} isFirst={isFirst} next={`${parentPath}/PartnerOrderDetail`}/>;
+  RowView = ({item: order, isLast, isFirst, history, parentPath, orderStatusResolver}) =>
+    <OrderListItem history={history} order={order} key={order.orderId} isLast={isLast} orderStatusResolver={orderStatusResolver} isFirst={isFirst} next={`${parentPath}/PartnerOrderDetail`}/>;
 
   getDefaultOptions = (contentType, contentTypeOptions) => {
     return {
@@ -19,12 +19,13 @@ export default class PartnerAvailableOrdersListView extends Component {
   };
 
   render() {
-    const {history, parentPath, contentType, contentTypeOptions} = this.props;
+    const {history, parentPath, contentType, contentTypeOptions, orderStatusResolver} = this.props;
 
     return <PagingListView
       daoName='orderRequestDao'
       parentPath={parentPath}
       history={history}
+      orderStatusResolver={orderStatusResolver}
       dataPath={['orders']}
       rowView={this.RowView}
       options={this.getDefaultOptions(contentType, contentTypeOptions)}

@@ -5,6 +5,7 @@
     "partnerId": "{assignedPartnerUserId}",
     "responseStatus": "ACCEPTED"
   },
+  "paymentType" : "FIXED",
   "responses": [
     {
       "date": "2018-05-03T18:13:32.592+01:00",

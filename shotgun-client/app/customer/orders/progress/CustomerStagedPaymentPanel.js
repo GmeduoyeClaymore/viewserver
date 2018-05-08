@@ -96,7 +96,7 @@ class AddPaymentStageControl extends Component{
       </Item>
       <Item key="2" stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
         <Label>Description</Label>
-        <ValidatingInput ref={rf => {this.descriptionInput = rf;}} bold style={{padding: 10}} padded value={this.state.description} placeholder="Complete all first fix of bathroom" onChangeText={(description) => this.setState({description})} validationSchema={validationSchema.name} maxLength={80}/>
+        <ValidatingInput ref={rf => {this.descriptionInput = rf;}} bold style={{padding: 10}} padded value={this.state.description} placeholder="Complete all first fix of bathroom" onChangeText={(description) => this.setState({description})} validationSchema={validationSchema.description} maxLength={150}/>
       </Item>
       <Item key="3" stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
         <Label>{paymentStageType === 'Percentage' ?  'Percentage' : 'Amount'}</Label>
@@ -108,7 +108,7 @@ class AddPaymentStageControl extends Component{
 }
 
 const PartnerPaymentStagesControl = ({canAddPaymentStages, paymentStages = [], orderId, orderStatus, orderContentTypeId, paymentStageType, busyUpdating, dispatch, orderAmount}) => {
-  return <Col>{paymentStages.map(
+  return <Col style={{marginRight: 15}}>{paymentStages.map(
     (paymentStage, idx)  => {
       const {quantity, name, description, paymentStageType, paymentStageStatus, id, lastUpdated} = paymentStage;
       return <Row key={idx} style={{marginBottom: 10, marginLeft: 3, width: '100%', flex: -1}}>

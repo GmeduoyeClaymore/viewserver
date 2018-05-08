@@ -1,38 +1,34 @@
 import React, {Component} from 'react';
 import {PagingListView, OrderListItem} from 'common/components';
 import {Text, Spinner} from 'native-base';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
-import OrderSummaryDao from 'common/dao/OrderSummaryDao';
+
 
 class PartnerMyOrdersListView extends Component{
-  NoItems = ({isCustomer}) => <Text empty>{isCustomer ? 'You have no posted jobs' : 'You have no jobs to do'}</Text>;
+  NoItems = ({emptyCaption}) => <Text empty>{emptyCaption}</Text>;
 
-  RowView = ({item: order, isLast, isFirst, history, isCustomer, ordersRoot}) => {
+  RowView = ({item: order, isLast, isFirst, history, isCustomer, ordersRoot, orderStatusResolver}) => {
     let next;
     if (isCustomer){
       next = `${ordersRoot}/CustomerOrderDetail`;
     } else {
       next = `${ordersRoot}/PartnerOrderDetail`;
     }
-    return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst}/>;
+    return <OrderListItem history={history} order={order} key={order.orderId} next={next} isLast={isLast} isFirst={isFirst} orderStatusResolver={orderStatusResolver}/>;
   };
 
-  getOptions = (isCustomer, isCompleted) => ({
-    ...(isCustomer ? OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS : {}),
-    isCompleted
-  });
-
   render(){
-    const {history, ordersRoot, isCustomer, isCompleted} = this.props;
+    const {history, ordersRoot, isCustomer, options, daoName, emptyCaption, orderStatusResolver} = this.props;
 
     return <PagingListView
-      daoName={isCustomer ? 'orderSummaryDao' : 'partnerOrderResponseDao'}
+      daoName={daoName}
       dataPath={['orders']}
       rowView={this.RowView}
       history={history}
       ordersRoot={ordersRoot}
       isCustomer={isCustomer}
-      options={this.getOptions(isCustomer, isCompleted)}
+      emptyCaption={emptyCaption}
+      orderStatusResolver={orderStatusResolver}
+      options={options}
       paginationWaitingView={() => <Spinner />}
       emptyView={this.NoItems}
       pageSize={10}

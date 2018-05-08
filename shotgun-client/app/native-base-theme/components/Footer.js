@@ -43,6 +43,7 @@ export default (variables = variable) => {
         },
         '.full': {
           height: variables.footerHeight,
+          backgroundColor: 'white',
           paddingBottom: variables.footerPaddingBottom,
           flex: 1
         },

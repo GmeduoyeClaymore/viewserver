@@ -7,6 +7,7 @@
       "responseStatus": "RESPONDED"
     }
   ],
+  "paymentType" : "FIXED",
   "distanceAndDuration": {
     "distance": 11039,
     "duration": 2220

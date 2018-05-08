@@ -47,7 +47,7 @@ class CustomerLanding extends Component {
       <Redirect just to="/" history={history}/>;
     }
     return busy ? <LoadingScreen text="Loading"/> :
-      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}>
+      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute="CustomerOrders" /*defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}*/>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'CustomerOrders'} exact component={CustomerOrders}/>
         <Route path={'Orders'} exact component={CustomerOrders}/>

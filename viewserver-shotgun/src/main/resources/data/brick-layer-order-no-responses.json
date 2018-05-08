@@ -3,6 +3,7 @@
   "productId": "BrickLayer",
   "orderId": "{orderId}",
   "negotiatedOrderStatus": "REQUESTED",
+  "paymentType" : "DAYRATE",
   "origin": {
     "googlePlaceId": "ChIJ64Z3QcUEdkgRu_XB2S70e60",
     "city": "London",

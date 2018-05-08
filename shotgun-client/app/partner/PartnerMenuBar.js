@@ -18,7 +18,7 @@ const PartnerMenuBar = ({history, path}) => {
 const styles = {
   image: {
     resizeMode: 'contain',
-    height: '65%',
+    height: '100%',
     width: '100%',
   }
 };
