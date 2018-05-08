@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.LatLng;
+import com.shotgun.viewserver.messaging.AppMessage;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
@@ -28,6 +29,7 @@ public interface User extends DynamicJsonBackedObject{
     }
 
     UserRating[] getRatings();
+    AppMessage[] getPendingMessages();
     SavedPaymentCard[] getPaymentCards();
     SavedBankAccount getBankAccount();
     Double getLatitude();
@@ -52,7 +54,7 @@ public interface User extends DynamicJsonBackedObject{
     Vehicle getVehicle();
 
 
-    default UserRating addRating(String fromUserId, String orderId, int rating, String comments, UserRating.RatingType type){
+    default UserRating addRating(String fromUserId,String title,String orderId, int rating, String comments, UserRating.RatingType type){
         Optional<UserRating> result = fromArray(getRatings()).filter(c->c.getOrderId().equals(orderId)).findAny();
         UserRating userRating;
         if(result.isPresent()){
@@ -64,6 +66,8 @@ public interface User extends DynamicJsonBackedObject{
         userRating.set("fromUserId",fromUserId);
         userRating.set("orderId",orderId);
         userRating.set("rating",rating);
+        userRating.set("title",title);
+        userRating.set("updatedDate",new Date());
         userRating.set("comments",comments);
         userRating.set("ratingType",type);
         UserRating response = userRating;
@@ -81,6 +85,15 @@ public interface User extends DynamicJsonBackedObject{
         return userRating;
     }
 
+    default void clearPendingMessages(){
+        this.set("pendingMessages", null);
+    }
+
+    default void addPendingMessage(AppMessage savedPaymentCard){
+        List<AppMessage> pendingMessages = toList(this.getPendingMessages());
+        pendingMessages.add(savedPaymentCard);
+        this.set("pendingMessages",toArray(pendingMessages, AppMessage[]::new));
+    }
     default void addPaymentCard(SavedPaymentCard savedPaymentCard){
         List<SavedPaymentCard> savedPaymentCards = toList(this.getPaymentCards());
         savedPaymentCards.add(savedPaymentCard);
@@ -118,6 +131,7 @@ public interface User extends DynamicJsonBackedObject{
     default void setBankAccount(SavedBankAccount savedBankAccount){
         this.set("bankAccount", savedBankAccount);
     }
+
 
 }
 

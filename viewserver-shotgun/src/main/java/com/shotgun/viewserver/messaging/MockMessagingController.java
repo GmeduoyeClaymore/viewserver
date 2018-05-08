@@ -53,9 +53,11 @@ public class MockMessagingController implements IMessagingController {
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
+            message.set("to",currentToken);
+            persistMessage(message);
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
-            message.setTo(currentToken);
+
             sendPayload(message);
             return format;
         }));
@@ -79,6 +81,11 @@ public class MockMessagingController implements IMessagingController {
             databaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
             return userRecord;
         }));
+    }
+
+    @Override
+    public IDatabaseUpdater getDatabaseUpdater() {
+        return databaseUpdater;
     }
 
 

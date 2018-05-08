@@ -17,7 +17,7 @@ const CompletePaymentStage = ({ orderId, paymentStageId, onPaymentStageRemoved, 
   const onUpdateOrderAmount = () => {
     dispatch(completePaymentStage({ orderId, paymentStageId, orderContentTypeId }, onPaymentStageRemoved));
   };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0 }} fullWidth success onPress={onUpdateOrderAmount}><Text uppercase={false}>Complete</Text></SpinnerButton>;
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0 }} fullWidth success onPress={onUpdateOrderAmount}><Text uppercase={false}>Comp</Text></SpinnerButton>;
 };
 
 const StartPaymentStage = ({ orderId, paymentStageId, onPaymentStageRemoved, orderContentTypeId, busyUpdating, dispatch, ...rest }) => {

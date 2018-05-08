@@ -15,7 +15,7 @@ export const getFriendlyOrderStatusName = (noun) =>  (order) => {
   case 'REQUESTED':
     return `Awaiting ${noun}`;
   case 'RESPONDED':
-    return `${noun} Responded`;
+    return order.responses.length > 1 ?  `${order.responses.length} ${noun} responses` : `${noun} Responded`;
   case 'ASSIGNED':
     return `${noun} Assigned`;
   case 'STARTED':

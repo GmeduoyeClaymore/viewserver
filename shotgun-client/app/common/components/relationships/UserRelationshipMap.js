@@ -107,7 +107,7 @@ class UserRelationshipMap extends Component{
       fitMap(this.props);
     }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
       {selectedUser && me ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={getLocations(this.props)} strokeWidth={3} /> : null}
-      {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
+      {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '-' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;
   }
 }

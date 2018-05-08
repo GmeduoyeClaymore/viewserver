@@ -91,6 +91,9 @@ class AddressLookup extends Component {
 
   render() {
     const {deliveryAddresses = [], addressLabel, homeAddress, history, height, width, path, selectedTabIndex, client, tabs, me, addressSearchText, suggestedPlaces = [], errors, hasLookedUpAddresses, busy, addressPath} = this.props;
+    if (!addressLabel){
+      return null;
+    }
     return (
       <Container>
         <Header withButton>

@@ -1,38 +1,82 @@
 import React, {Component} from 'react';
-import {TextInputMask} from 'react-native-masked-text';
+import { TextInput } from 'react-native';
 
+export const formatPrice = (price) => {
+  if (!price || price === 'undefined'){
+    return undefined;
+  }
+  return `£${(parseFloat(price + '')).toFixed(2)}`;
+};
 export class CurrencyInput extends Component{
   constructor(props){
     super(props);
+
+    this.setFormattedPriceValue = this.setFormattedPriceValue.bind(this);
+    this.clearFormattedPriceValue = this.clearFormattedPriceValue.bind(this);
+    this.setFormattedPriceValueFromProps = this.setFormattedPriceValueFromProps.bind(this);
+    this.onValueChanged = this.onValueChanged.bind(this);
     this.state = {
-      amountMask: undefined
+      formattedPrice: undefined
     };
   }
 
-  setAmount = (amountMask) => {
-    const {onValueChange} = this.props;
-    const amount = (this.inputMask.getRawValue() * 100).toFixed();
-    if (onValueChange){
-      onValueChange(amount);
+  componentDidMount(){
+    this.setFormattedPriceValueFromProps(this.props);
+  }
+
+  componentWillReceiveProps(newProps){
+    this.setFormattedPriceValueFromProps(newProps);
+  }
+  setFormattedPriceValueFromProps(newProps){
+    const {initialPrice} = newProps;
+    const formattedPrice = formatPrice(initialPrice / 100);
+    this.setState({formattedPrice});
+  }
+
+  clear(){
+    this.clearFormattedPriceValue();
+    this.setState({price: undefined});
+  }
+
+  setFormattedPriceValue(){
+    const {disabled} = this.props;
+    if (disabled){
+      return;
     }
-    super.setState({amountMask});
-  }
-
-  componentWillReceiveProps(props){
-    if (this.props.value != props.value && this.inputMask){
-      super.setState({amountMask: props.value / 100});
+    const { onValueChanged } = this.props;
+    const {price } = this.state;
+    const formattedPrice = formatPrice(price);
+    if (onValueChanged){
+      onValueChanged(parseFloat(price) * 100);
     }
+    this.setState({formattedPrice});
   }
 
-  clear = () => {
-    super.setState({amountMask: undefined});
+  clearFormattedPriceValue(){
+    const {disabled} = this.props;
+    if (disabled){
+      return;
+    }
+    this.setState({formattedPrice: undefined});
   }
 
-  render() {
-    const {amountMask} = this.state;
-    const {style = {}, disabled, ...rest} = this.props;
-    return <TextInputMask ref={ref => {this.inputMask = ref;}} underlineColorAndroid='transparent' style={{...styles.amountInput, ...style}} type={'money'} placeholder='Enter amount'
-      options={{ unit: '£', separator: '.', delimiter: ','}}  onChangeText={this.setAmount} customTextInputProps={rest} editable={!disabled} {...rest} value={amountMask}/>;
+  onValueChanged(t){
+    console.log(t);
+    this.setState({price: t});
+  }
+
+  render(){
+    const {formattedPrice} = this.state;
+    const {style = {}, ...rest} = this.props;
+    return <TextInput
+      keyboardType='phone-pad'
+      {...rest}
+      value={formattedPrice}
+      style={{...style, fontWeight: 'bold', fontSize: 17, paddingTop: 5, paddingBottom: 5}}
+      onFocus={this.clearFormattedPriceValue}
+      onBlur={this.setFormattedPriceValue}
+      onChangeText={this.onValueChanged}
+    />;
   }
 }
 

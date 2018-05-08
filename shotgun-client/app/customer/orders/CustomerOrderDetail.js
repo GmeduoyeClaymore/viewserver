@@ -56,11 +56,19 @@ class CustomerOrderDetail extends Component{
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
           <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount}  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
+<<<<<<< HEAD
             PlacedControls={[CustomerNegotiationPanel, CancelControl, OrderSummary]}
             InProgressControls={InProgressControls}
             AcceptedControls={InProgressControls}
             CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
             CancelledControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
+=======
+            PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
+            InProgressControls={[...InProgressControls]}
+            AcceptedControls={[CustomerNegotiationPanel, ...InProgressControls]}
+            CompletedControls={[PriceSummary, RatingSummary, OrderSummary]}
+            CancelledControls={[PriceSummary, RatingSummary, OrderSummary]}
+>>>>>>> 2d3c72cb2eb8ec4645eb701ab224993c86e3c5be
           />
         </View>
       </Content>

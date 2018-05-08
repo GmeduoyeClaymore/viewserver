@@ -113,3 +113,7 @@ export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'markItemReady', {orderId, orderContentTypeId}, continueWith);
 };
 
+export const cancelResponsePartner = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'cancelResponsePartner', {orderId, orderContentTypeId}, continueWith);
+};
+

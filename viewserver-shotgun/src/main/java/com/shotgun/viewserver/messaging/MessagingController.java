@@ -2,6 +2,8 @@ package com.shotgun.viewserver.messaging;
 
 import com.google.common.util.concurrent.*;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.user.UserPersistenceController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
@@ -29,7 +31,7 @@ import static com.shotgun.viewserver.user.UserController.waitForUser;
  * Created by Gbemiga on 17/01/18.
  */
 @Controller(name = "messagingController")
-public class MessagingController implements IMessagingController {
+public class MessagingController implements IMessagingController, UserPersistenceController {
 
     private static final Logger logger = LoggerFactory.getLogger(MessagingController.class);
 
@@ -53,15 +55,35 @@ public class MessagingController implements IMessagingController {
     @Override
     public ListenableFuture sendMessageToUser(AppMessage message){
         KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+
+        if(message.getFromUserId() == null){
+            throw new RuntimeException("From user id must be specified");
+        }
+        if(message.getToUserId() == null){
+            throw new RuntimeException("To user id must be specified");
+        }
+
+
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
+            message.set("to",currentToken);
+            persistMessage(message);
+            if(currentToken == null){
+                String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
+                logger.info(result);
+                User user = getUserForId(message.getToUserId(),User.class);
+                user.addPendingMessage(message);
+                return result;
+            }
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
-            message.setTo(currentToken);
+
             sendPayload(message.toSimpleMessage());
             return format;
         }));
     }
+
+
 
     @Override
     @ControllerAction(path = "updateUserToken")
@@ -79,6 +101,16 @@ public class MessagingController implements IMessagingController {
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
             iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+
+            User user = (User) ControllerContext.get("user");
+            if(user.getPendingMessages() != null){
+                for(AppMessage message : user.getPendingMessages()){
+                    message.set("to",token);
+                    sendPayload(message.toSimpleMessage());
+                }
+                user.clearPendingMessages();
+                addOrUpdateUser(user);
+            }
             return userRecord;
         }));
     }
@@ -97,6 +129,15 @@ public class MessagingController implements IMessagingController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public IDatabaseUpdater getDatabaseUpdater(){
+        return iDatabaseUpdater;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return logger;
     }
 }
 

@@ -20,7 +20,7 @@ public interface RatedOrderController extends UserTransformationController, Orde
 
         this.transform(userId,
                 user -> {
-                    UserRating userRating = user.addRating(getUserId(), orderId, rating, comments, ratingType);
+                    UserRating userRating = user.addRating(getUserId(),order.getTitle(),orderId, rating, comments, ratingType);
                     order.set("rating" + ratingType.name(), userRating);
                     updateOrderRecord(order);
                     return true;

@@ -72,7 +72,7 @@ class DeliveryOptions extends Component {
 
   render() {
     const {resources} = this;
-    const {paymentCards, errors, order, payment = {}, history, estimatedPrice} = this.props;
+    const {paymentCards, errors, order, payment = {}, history} = this.props;
     const {isDatePickerVisible} = this.state;
 
     return <Container>
@@ -104,7 +104,7 @@ class DeliveryOptions extends Component {
             </Row>
             <Row>
               <Col>
-                <CurrencyInput value={order.amount} onValueChange={this.setAmount}/>
+                <CurrencyInput initialPrice={order.amount} onValueChanged={this.setAmount} placeholder="Price of job"/>
               </Col>
               {resources.AllowDayRate && resources.AllowFixedPrice ? <Button style={styles.periodButton} light={order.paymentType === PaymentTypes.FIXED} onPress={() => this.setPaymentType(PaymentTypes.DAYRATE)}>
                 <Text style={styles.buttonText}>Day Rate</Text>

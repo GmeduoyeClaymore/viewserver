@@ -20,7 +20,6 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
         this.set("journeyEnd",date);
         this.set("endLocation",location);
         this.set("distanceAndDuration",duration);
-        this.set("amount",amountCalc(duration));
         return transitionTo(JourneyOrderStatus.PARTNERCOMPLETE);
     }
 

@@ -1,87 +1,24 @@
 package com.shotgun.viewserver.messaging;
 
 import com.shotgun.viewserver.ControllerUtils;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 
 import javax.naming.event.ObjectChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AppMessage {
-    private String to;
-    private String fromUserId;
-    private String toUserId;
-    private String priority;
-    private String title;
-    private String body;
-    private String sound;
-    private String action;
-
-    public String getFromUserId() {
-        return fromUserId;
-    }
-
-    public void setFromUserId(String from) {
-        this.fromUserId = from;
-    }
-
-    public String getToUserId() {
-        return toUserId;
-    }
-
-    public void setToUserId(String toUserId) {
-        this.toUserId = toUserId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getSound() {
-        return sound;
-    }
-
-    public void setSound(String sound) {
-        this.sound = sound;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
+public interface AppMessage extends DynamicJsonBackedObject {
+    public String getFromUserId();
+    public String getToUserId();
+    public String getTitle();
+    public String getBody();
+    public String getSound();
+    public String getTo();
+    public String getPriority();
+    public String getAction();
 
 
-    public String toAndroidMessage() {
+    default String toAndroidMessage() {
         HashMap<String, Object> body = new HashMap<String, Object>();
         HashMap<String, Object> customNotificationBody = new HashMap<>();
         customNotificationBody.put("title", getTitle());
@@ -99,7 +36,7 @@ public class AppMessage {
         return ControllerUtils.toString(body);
     }
 
-    public String toSimpleMessage() {
+    default String toSimpleMessage() {
         HashMap<String, Object> body = new HashMap<String, Object>();
         HashMap<String, Object> customNotificationBody = new HashMap<>();
         customNotificationBody.put("title", getTitle());
@@ -115,16 +52,5 @@ public class AppMessage {
         body.put("data", customNotification);
         body.put("to", getTo());
         return ControllerUtils.toString(body);
-    }
-    @Override
-    public String toString() {
-        return "AppMessage{" +
-                "to='" + to + '\'' +
-                ", priority=" + priority +
-                ", title='" + title + '\'' +
-                ", action='" + action + '\'' +
-                ", body='" + body + '\'' +
-                ", sound='" + sound + '\'' +
-                '}';
     }
 }

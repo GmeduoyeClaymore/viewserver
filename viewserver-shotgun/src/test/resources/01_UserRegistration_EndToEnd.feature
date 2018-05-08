@@ -47,6 +47,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | Bool        | dimension_online     |
 	  | ColumnAdd | Json        | bankAccount          |
 	  | ColumnAdd | Json        | paymentCards         |
+	  | ColumnAdd | Json        | pendingMessages         |
 	  | ColumnAdd | Json     | vehicle                 |
 	Then "client2" the following data is received eventually on report "userReport"
 	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
