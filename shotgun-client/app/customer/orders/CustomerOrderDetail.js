@@ -10,6 +10,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import CustomerNegotiationPanel from './placed/CustomerNegotiationPanel';
 import CustomerStagedPaymentPanel from './progress/CustomerStagedPaymentPanel';
 import CustomerHireOrderInProgress from './progress/CustomerHireOrderInProgress';
+import CustomerJourneyOrderInProgress from './progress/CustomerJourneyOrderInProgress';
 import CompleteControl from './progress/CompleteControl';
 import VehicleDetails from './progress/VehicleDetails';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
@@ -54,7 +55,7 @@ class CustomerOrderDetail extends Component{
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
           <CancelOrder dispatch={dispatch} orderId={order.orderId} busyUpdating={busyUpdating} />
-          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount}  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
+          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
             InProgressControls={[...InProgressControls]}
             AcceptedControls={[CustomerNegotiationPanel, ...InProgressControls]}
@@ -134,8 +135,8 @@ resourceDictionary.
   property('InProgressControls', [OrderSummary]).
     personell([PriceSummary, CompleteControl,PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([PriceSummary,CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
-    delivery([PriceSummary,JourneyJobInProgress('Delivery In Progress'), CompleteControl, VehicleDetails, OrderSummary]).
-    rubbish([PriceSummary, JourneyJobInProgress('Collection In Progress'), CompleteControl, VehicleDetails, OrderSummary])
+    delivery([PriceSummary, JourneyJobInProgress('Delivery In Progress'), CompleteControl, CustomerJourneyOrderInProgress,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    rubbish([PriceSummary, JourneyJobInProgress('Collection In Progress'),CompleteControl ,CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
 /*eslint-enable */
 
 export default connect(

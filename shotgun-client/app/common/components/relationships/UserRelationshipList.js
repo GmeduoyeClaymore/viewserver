@@ -51,7 +51,7 @@ const mapStateToProps = (state, initialProps) => {
     if (relationshipStatus === 'ACCEPTED'){
       PhoneCallService.call(user.contactNo);
     } else {
-      dispatch(callUser({userId}));
+      dispatch(callUser(userId));
     }
   };
   return {

@@ -1,4 +1,4 @@
-import {Row, Text, Col} from 'native-base';
+import {Row, Text, View} from 'native-base';
 import React, {Component} from 'react';
 
 export default class VehicleDetails extends Component{
@@ -11,15 +11,10 @@ export default class VehicleDetails extends Component{
     if (!vehicle){
       return null;
     }
-    return <Col>
-      <Row>
-        <Col style={{marginLeft: 15}}>
-          <Text style={styles.subTitle}>Vehicle</Text>
-          <Text style={styles.data}>{vehicle.make} {vehicle.model}, {vehicle.model}</Text>
-          <Text style={styles.data}>{vehicle.registrationNumber}</Text>
-        </Col>
-      </Row>
-    </Col>;
+    return <View style={{marginLeft: 30, marginTop: 15, flexDirection: 'column'}}>
+      <Text style={styles.data}>{vehicle.make} {vehicle.model}, {vehicle.model}</Text>
+      <Text style={styles.data}>{vehicle.registrationNumber}</Text>
+    </View>;
   }
 }
 

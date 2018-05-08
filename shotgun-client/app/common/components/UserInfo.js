@@ -1,20 +1,19 @@
 import React, {Component} from 'react';
 import {Button, Text, Col, Row} from 'native-base';
 import {Icon, AverageRating} from 'common/components';
-import {callPartner} from 'customer/actions/CustomerActions';
-import {callCustomer} from 'partner/actions/PartnerActions';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {callUser} from 'common/actions/CommonActions';
+
 
 export class UserInfo extends Component{
   onPressCall = async () => {
-    const {dispatch, isPartner, orderId} = this.props;
-    dispatch(isPartner ? callCustomer(orderId) : callPartner(orderId));
+    const {dispatch, user} = this.props;
+    dispatch(callUser(user.userId));
   };
 
   render(){
     const {user} = this.props;
-
     return user ? <Row>
       <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.images}/>
       <Col style={{flex: 1, alignContent: 'flex-start'}}>

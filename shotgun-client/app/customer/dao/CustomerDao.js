@@ -10,7 +10,6 @@ export default class CustomerDao{
     this.optionsSubject = new Rx.Subject();
     this.updateCustomer = this.updateCustomer.bind(this);
     this.ratePartner = this.ratePartner.bind(this);
-    this.callPartner = this.callPartner.bind(this);
   }
 
   async updateCustomer({customer}){
@@ -18,11 +17,6 @@ export default class CustomerDao{
     const customerId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: customer});
     Logger.info(`Customer ${customerId} updated`);
     return customerId;
-  }
-
-  async callPartner({orderId}){
-    const partnerPhoneNumber = await this.client.invokeJSONCommand('phoneCallController', 'getPartnerVirtualNumber', orderId);
-    PhoneCallService.call(partnerPhoneNumber);
   }
 
   async ratePartner({orderId, rating}){
