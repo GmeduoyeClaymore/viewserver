@@ -164,6 +164,20 @@ export default class OrdersDao{
     return paymentId;
   }
 
+  cancelResponsePartner = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    const result = this.client.invokeJSONCommand(controller, 'cancelResponsePartner', {orderId});
+    Logger.info(`Response to  ${orderId} from partner cancelled`);
+    return result;
+  }
+
+  cancelResponseCustomer = async ({orderId, partnerId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    const result = this.client.invokeJSONCommand(controller, 'cancelResponseCustomer', {orderId, partnerId});
+    Logger.info(`Response to  ${orderId} from partner cancelled`);
+    return result;
+  }
+
   offHireItem = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
     this.client.invokeJSONCommand(controller, 'offHireItem', {orderId});

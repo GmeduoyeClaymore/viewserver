@@ -30,6 +30,7 @@ public interface NegotiationResponse extends DynamicJsonBackedObject {
             NONE.to(RESPONDED);
             DECLINED.to(RESPONDED,REJECTED);
             REJECTED.to(RESPONDED);
+            CANCELLED.to(RESPONDED);
         }
 
 

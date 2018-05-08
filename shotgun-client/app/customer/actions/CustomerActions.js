@@ -98,3 +98,7 @@ export const customerCompleteAndPay = (orderId, orderContentTypeId, continueWith
 export const calculatePriceEstimate = (order, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'calculatePriceEstimate', {order, orderContentTypeId}, continueWith);
 };
+
+export const cancelResponseCustomer = (order, orderContentTypeId, partnerId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'cancelResponseCustomer', {order, orderContentTypeId, partnerId}, continueWith);
+};

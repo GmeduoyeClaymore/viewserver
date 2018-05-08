@@ -4,7 +4,7 @@ import {Text, Grid, Row, Spinner, Col} from 'native-base';
 import {Icon, SpinnerButton, CurrencyInput, Currency} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import moment from 'moment';
-import {rejectResponse, acceptResponse, updateOrderAmount} from 'customer/actions/CustomerActions';
+import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 export default class OrderNegotiationPanel extends Component{
@@ -42,7 +42,7 @@ export default class OrderNegotiationPanel extends Component{
       <Col size={32}>
         <Text style={{...styles.heading, marginTop: 10}}>{canUpdateOrderPrice ? 'Advertised Rate' : 'Agreed Price'}</Text>
         <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
-        { canUpdateOrderPrice ? <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChange={this.updateAmountInState} placeholder="Enter updated amount"/> : null}
+        { canUpdateOrderPrice ? <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChanged={this.updateAmountInState} placeholder="Enter updated amount"/> : null}
       </Col>
       {this.state.amount && canUpdateOrderPrice ? <Col size={20}>
         <UpdateOrderPrice style={{marginTop: 17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
@@ -97,6 +97,14 @@ const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated
   return <SpinnerButton {...rest} padded busy={busyUpdating} style={{...style, alignSelf: 'flex-end', flex: 1, maxHeight: 45,  marginRight: 0, marginLeft: 0}}  fullWidth success onPress={onUpdateOrderAmount}><Text uppercase={false}>Update</Text></SpinnerButton>;
 };
 
+const CancelResponse = ({ orderId, orderContentTypeId, partnerId, busyUpdating, dispatch, ...rest }) => {
+  const onCancelResponse = () => {
+    dispatch(cancelResponseCustomer(orderId, orderContentTypeId, partnerId));
+  };
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 10, height: 25, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
+};
+
+
 const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch, showAll}) => {
   return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
     (response, idx)  => {
@@ -114,8 +122,9 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
           <Text>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
         </Col>
         <Col size={23}>
-          <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>
-          <RejectPartner disabled={!canRespond}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>
+          {canRespond && response.responseStatus === 'ACCEPTED' ? <CancelResponse busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/> : null}
+          {!canRespond ? null : <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>}
+          {!canRespond ? null : <RejectPartner disabled={!canRespond}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>}
         </Col>
       </Row>;
     })}</Col>;

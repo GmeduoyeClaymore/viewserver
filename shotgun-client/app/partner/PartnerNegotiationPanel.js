@@ -2,11 +2,21 @@ import React, { Component } from 'react';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import {withExternalState} from 'custom-redux';
 import {Text, Row, Col,  Item, Label, Spinner} from 'native-base';
-import {ValidatingInput, ValidatingButton, CurrencyInput, Icon} from 'common/components';
+import {ValidatingInput, ValidatingButton, CurrencyInput, Icon, SpinnerButton} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import moment from 'moment';
-const WaitingResponse = () => (<Row  style={{padding: 5, marginTop: 15}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for Custumer response..'}</Text></Row>);
+import { cancelResponsePartner } from 'partner/actions/PartnerActions';
+
+const CancelResponse = ({ orderId, orderContentTypeId, busyUpdating, dispatch, ...rest }) => {
+  const onCancelResponse = () => {
+    dispatch(cancelResponsePartner(orderId, orderContentTypeId));
+  };
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 10, height: 25 }} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
+};
+
+
+const WaitingResponse = (props) => (<Row  style={{padding: 5, marginTop: 15}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for custumer response..'}</Text><CancelResponse {...props}/></Row>);
 const Response = ({customer, hasAccepted}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={hasAccepted ? styles.starAccepted : styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${customer.firstName} ${customer.lastName} ${hasAccepted ? 'Accepted' : 'Declined'}`}</Text></Row>);
 
 class PartnerNegotiationPanel extends Component {
@@ -42,7 +52,7 @@ class PartnerNegotiationPanel extends Component {
       let {negotiationAmount, negotiationDate} = this.props;
       const {responseInfo, customer} = order;
       const {responseStatus, responsePrice, responseDate} = responseInfo;
-      negotiationAmount = negotiationAmount || responsePrice || (order.amount / 100);
+      negotiationAmount = negotiationAmount || responsePrice || (order.amount);
       negotiationDate = negotiationDate || responseDate || order.requiredDate;
       const {isDatePickerVisible} = this.state;
       const awaitingCustomerResponse = responseStatus === 'RESPONDED';
@@ -51,7 +61,7 @@ class PartnerNegotiationPanel extends Component {
 
       const StatusControl = () => {
         if (awaitingCustomerResponse){
-          return  <WaitingResponse />;
+          return  <WaitingResponse orderId={order.orderId} orderContentTypeId={order.orderContentTypeId} {...this.props} />;
         }
         return [hasCustomerResponded ? <Response key="1" customer={customer} hasAccepted={hasAccepted}/> : null, <ValidatingButton  key="2" busy={busyUpdating} fullWidth success onPress={this.respondToOrder} validateOnMount={!awaitingCustomerResponse} validationSchema={yup.object(validationSchema)} model={{negotiationAmount, negotiationDate}}>
           <Text uppercase={false}>Respond To Job</Text>
@@ -63,7 +73,7 @@ class PartnerNegotiationPanel extends Component {
           <Row>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Your Price</Label>
-              <CurrencyInput disabled={awaitingCustomerResponse} value={negotiationAmount} style={{width: '100%'}} ref={ip => {this.amountInput = ip;}} onValueChange={this.setNegotiationAmount} placeholder="Enter your price"/>
+              <CurrencyInput disabled={awaitingCustomerResponse} initialPrice={negotiationAmount} style={{width: '100%', paddingTop: 10, paddingBottom: 10}} ref={ip => {this.amountInput = ip;}} onValueChanged={this.setNegotiationAmount} placeholder="Enter your price"/>
             </Item>
             <Item stackedLabel  style={{marginLeft: 4, marginRight: 10, flex: 1, marginBottom: 10}} >
               <Label>Avialiability Date</Label>

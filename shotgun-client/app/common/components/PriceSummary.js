@@ -11,7 +11,7 @@ export class PriceSummary extends Component{
     const getCustomerHeading = () => isComplete ? 'You were charged' : 'You will be charged';
     const getPartnerHeading = () => isComplete ? 'You were paid' : 'You will be paid';
 
-    return <Grid>
+    return <Grid style={{marginTop: 10, marginBottom: 10}}>
       <Row style={styles.row}><Text style={styles.heading}>{isPartner ? getPartnerHeading() : getCustomerHeading()}</Text></Row>
       <Row style={styles.row}>{!price ? <Spinner/> : <Currency value={price} style={styles.price}/>}</Row>
     </Grid>;
