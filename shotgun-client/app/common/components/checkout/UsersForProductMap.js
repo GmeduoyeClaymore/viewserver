@@ -19,11 +19,11 @@ class UsersForProductMap extends Component{
 
   getLocationTextInput = (address, addressKey, placeholder) => {
     return  <Row>
-      {address && address.line1 !== undefined ? <Col size={30}>
+      {address && address.line1 !== undefined ? <Col size={30} style={{maxWidth: 150}}>
         <TextInput placeholder='flat/business'  multiline={false} style={{paddingTop: 0, textAlignVertical: 'top'}} underlineColorAndroid='transparent' placeholderTextColor={shotgun.silver} value={address.flatNumber}  onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={10}/>
       </Col> : null}
-      <Col size={70}>
-        <Text numberOfLines={1} style={address && address.line1 ? {} : styles.locationTextPlaceholder} onPress={() => this.doAddressLookup(placeholder, addressKey)}>{addressToText(address) || placeholder}</Text>
+      <Col size={70}  onPress={() => this.doAddressLookup(placeholder, addressKey)}>
+        <Text numberOfLines={1} style={address && address.line1 ? {} : styles.locationTextPlaceholder}>{addressToText(address) || placeholder}</Text>
       </Col>
     </Row>;
   }

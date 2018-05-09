@@ -17,8 +17,9 @@ const AddressDetails  = ({address = {}, history, next, parentPath, setState, dis
   const getLocationText = (location = {}, placeholder) => {
     const style = location.line1 ? {} : styles.locationTextPlaceholder;
     const text = location.line1 ? location.line1 : placeholder;
-    return <Text style={[styles.line1Text, style]} onPress={() => doAddressLookup(placeholder)}>{text}</Text>;
+    return <Text style={[styles.line1Text, style]}>{text}</Text>;
   };
+  const addressPlaceholder = 'Search for your home address';
 
   return <Container>
     <Header withButton>
@@ -33,9 +34,9 @@ const AddressDetails  = ({address = {}, history, next, parentPath, setState, dis
       <Grid>
         <Row>
           <Col>
-            <Item stackedLabel>
+            <Item stackedLabel  onPress={() => doAddressLookup(addressPlaceholder)}>
               <Label>Street Address</Label>
-              {getLocationText(address, 'Search for your home address')}
+              {getLocationText(address, addressPlaceholder)}
             </Item>
           </Col>
         </Row>

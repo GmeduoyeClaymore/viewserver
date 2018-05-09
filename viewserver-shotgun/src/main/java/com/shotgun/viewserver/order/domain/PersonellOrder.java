@@ -1,7 +1,9 @@
 package com.shotgun.viewserver.order.domain;
 
+import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.order.types.OrderContentType;
+import com.shotgun.viewserver.order.types.TransitionUtils;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -21,6 +23,7 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
         }
         Date date = new Date();
         this.set("dayStarted", true);
+        this.setOrderStatus(OrderStatus.INPROGRESS);
         return addPaymentStage(getAmount(), "Day Rate Work " + formatDate(date), String.format("Day rate work started at " + formatTime(date)), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
 
     }

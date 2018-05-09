@@ -32,7 +32,7 @@ class HomeAddressDetails  extends Component{
   getLocationText = (location = {}, placeholder) => {
     const style = location.line1 ? {} : styles.locationTextPlaceholder;
     const text = location.line1 ? location.line1 : placeholder;
-    return <Text style={[styles.line1Text, style]} onPress={() => this.doAddressLookup(placeholder)}>{text}</Text>;
+    return <Text style={[styles.line1Text, style]}>{text}</Text>;
   }
 
   render() {
@@ -51,7 +51,7 @@ class HomeAddressDetails  extends Component{
         <Grid>
           <Row>
             <Col>
-              <Item stackedLabel>
+              <Item stackedLabel  onPress={() => this.doAddressLookup('Search for your home address')}>
                 <Label>Street Address</Label>
                 {this.getLocationText(unSavedDeliveryAddress, 'Search for your home address')}
               </Item>

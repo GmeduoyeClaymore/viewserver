@@ -107,7 +107,9 @@ export default (variables = variable) => {
       },
       color: variables.inputColor,
       flex: 1,
-      top: Platform.OS === 'ios' ? 1.5 : undefined,
+      /*top: Platform.OS === 'ios' ? 1.5 : undefined,*/
+      paddingTop: Platform.OS === 'ios' ? 10 : undefined,
+      paddingBottom: Platform.OS === 'ios' ? 10 : undefined,
       fontSize: variables.inputFontSize,
       lineHeight: variables.inputLineHeight,
     },

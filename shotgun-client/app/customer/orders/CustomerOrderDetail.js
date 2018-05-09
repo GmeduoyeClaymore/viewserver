@@ -43,7 +43,7 @@ class CustomerOrderDetail extends Component{
   render() {
     const {busy, order, orderId, errors, history,dispatch} = this.props;
     const {resources} = this;
-    const {InProgressControls} = resources;
+    const {InProgressControls, AcceptedControls} = resources;
     return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
       <Header withButton>
         <Left>
@@ -58,8 +58,8 @@ class CustomerOrderDetail extends Component{
           <ErrorRegion errors={errors}/>
           <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
             PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
-            InProgressControls={[...InProgressControls]}
-            AcceptedControls={[CustomerNegotiationPanel, ...InProgressControls]}
+            InProgressControls={InProgressControls}
+            AcceptedControls={AcceptedControls}
             CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
             CancelledControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
           />
@@ -126,6 +126,11 @@ resourceDictionary.
     hire((order) => `${order.orderProduct.name}  Hire`).
     personell((order) => `${order.orderProduct.name} Job`).
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
+  property('AcceptedControls', [OrderSummary]).
+    personell([CustomerNegotiationPanel, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
+    hire([CustomerNegotiationPanel,CancelControl, OrderSummary]).
+    delivery([CustomerNegotiationPanel, JourneyJobInProgress('Delivery In Progress'),CancelControl,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    rubbish([CustomerNegotiationPanel, JourneyJobInProgress('Collection In Progress'), ,CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
   property('InProgressControls', [OrderSummary]).
     personell([CustomerPriceSummary, CompleteControl, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([CustomerPriceSummary,CompleteControl,CancelControl, CustomerHireOrderInProgress, OrderSummary]).

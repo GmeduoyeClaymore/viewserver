@@ -29,8 +29,10 @@ export class CurrencyInput extends Component{
   }
   setFormattedPriceValueFromProps(newProps){
     const {initialPrice} = newProps;
-    const formattedPrice = formatPrice(initialPrice / 100);
-    this.setState({formattedPrice});
+    if (this.props.initialPrice != newProps.initialPrice){
+      const formattedPrice = formatPrice(initialPrice / 100);
+      this.setState({formattedPrice});
+    }
   }
 
   clear(){
@@ -40,7 +42,7 @@ export class CurrencyInput extends Component{
 
   setFormattedPriceValue(){
     const {disabled} = this.props;
-    if (disabled){
+    if (disabled == true){
       return;
     }
     const { onValueChanged } = this.props;
@@ -54,7 +56,7 @@ export class CurrencyInput extends Component{
 
   clearFormattedPriceValue(){
     const {disabled} = this.props;
-    if (disabled){
+    if (disabled == true){
       return;
     }
     this.setState({formattedPrice: undefined});
