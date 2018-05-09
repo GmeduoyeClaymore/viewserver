@@ -13,20 +13,32 @@ const LATITUDE_DELTA = 0.00322;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class UserRelationshipMap extends Component{
-  constructor(props){
-    super(props);
-    this.fitMap = debounce(this.fitMap.bind(this), 1000);
-    this.isMapReady = this.isMapReady.bind(this);
-    this.getLocations = this.getLocations.bind(this);
-  }
-  
-
-  isMapReady(){
-    const {map} = this;
-    return map && map.state && map.state.isReady;
+  componentDidMount(){
+    if (this.map){
+      this.fitMap(this.props);
+    }
   }
 
-  fitMap(newProps){
+  componentDidUpdate(oldProps){
+    const {relatedUsers} = oldProps;
+    const {getLocations} = this;
+
+    if (!isEqual(getLocations(oldProps), getLocations(this.props))){
+      if (this.mvd){
+        this.mvd.fetchAndRenderRoute();
+      }
+    } else {
+      if (!isEqual(relatedUsers, this.props.relatedUsers)){
+        this.fitMap(this.props);
+      }
+    }
+  }
+
+  isMapReady = () => {
+    return this.map && this.map.state && this.map.state.isReady;
+  }
+
+  fitMap = debounce((newProps) => {
     try {
       if (!this.isMapReady()){
         Logger.info('Abandoning fit map as map is not ready ');
@@ -52,30 +64,9 @@ class UserRelationshipMap extends Component{
     } catch (error){
       Logger.info('Encountered error in fit map ' + error);
     }
-  }
+  }, 1000);
 
-  componentDidMount(){
-    if (this.map){
-      this.fitMap(this.props);
-    }
-  }
-
-  componentDidUpdate(oldProps){
-    const {relatedUsers} = oldProps;
-    const {getLocations} = this;
-   
-    if (!isEqual(getLocations(oldProps), getLocations(this.props))){
-      if (this.mvd){
-        this.mvd.fetchAndRenderRoute();
-      }
-    } else {
-      if (!isEqual(relatedUsers, this.props.relatedUsers)){
-        this.fitMap(this.props);
-      }
-    }
-  }
-
-  getLocations(props){
+  getLocations = (props) => {
     const {me, selectedUser} = props;
     const result = [];
     if (me && me.latitude && me.longitude){
@@ -95,7 +86,7 @@ class UserRelationshipMap extends Component{
     me = geoLocation && geoLocation.latitude ? geoLocation : me;
     const {fitMap, getLocations} = this;
     const {latitude, longitude} = me;
-    
+
     const initialRegion = {
       latitude,
       longitude,
@@ -105,7 +96,7 @@ class UserRelationshipMap extends Component{
 
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {
       fitMap(this.props);
-    }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true} >
+    }} region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
       {selectedUser && me ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={getLocations(this.props)} strokeWidth={3} /> : null}
       {relatedUsers.map( (user, i) => <MapView.Marker key={user.userId + '-' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}><UserMarker user={user} /></MapView.Marker>)}
     </MapView>;

@@ -108,7 +108,6 @@ class DeliveryMap extends Component{
     }
   }
 
-
   fitMap = debounce(() => {
     const {destination, origin} = this.props;
     if ((origin.line1 !== undefined && destination.line1 !== undefined) && this.map) {

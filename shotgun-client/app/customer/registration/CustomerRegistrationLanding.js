@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, Button, Container, Grid, Col, Row} from 'native-base';
 import {Image} from 'react-native';
 import {Icon} from 'common/components';
-import {AppImages} from 'common/assets/img/Images';
+const launchImage = require('common/assets/img/launch.png');
 
 export default CustomerRegistrationLanding = ({history}) => {
   return <Container padded>
@@ -12,7 +12,7 @@ export default CustomerRegistrationLanding = ({history}) => {
     <Grid>
       <Row size={50}>
         <Col>
-          <Image source={AppImages.launch} style={styles.image}/>
+          <Image source={launchImage} style={styles.image}/>
         </Col>
       </Row>
       <Row size={50}>
