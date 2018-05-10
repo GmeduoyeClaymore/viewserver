@@ -10,6 +10,7 @@ import CustomerNegotiationPanel from './placed/CustomerNegotiationPanel';
 import CustomerPriceSummary from './CustomerPriceSummary';
 import CustomerStagedPaymentPanel from './progress/CustomerStagedPaymentPanel';
 import CustomerHireOrderInProgress from './progress/CustomerHireOrderInProgress';
+import CustomerJourneyOrderInProgress from './progress/CustomerJourneyOrderInProgress';
 import CompleteControl from './progress/CompleteControl';
 import CancelControl from './progress/CancelControl';
 import VehicleDetails from './progress/VehicleDetails';
@@ -40,7 +41,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order, orderId, errors, history} = this.props;
+    const {busy, order, orderId, errors, history,dispatch} = this.props;
     const {resources} = this;
     const {InProgressControls} = resources;
     return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
@@ -55,10 +56,10 @@ class CustomerOrderDetail extends Component{
       <Content>
         <View style={{paddingLeft: 15, paddingRight: 15}}>
           <ErrorRegion errors={errors}/>
-          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount}  isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
-            PlacedControls={[CustomerNegotiationPanel, CancelControl, OrderSummary]}
-            InProgressControls={InProgressControls}
-            AcceptedControls={InProgressControls}
+          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
+            PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
+            InProgressControls={[...InProgressControls]}
+            AcceptedControls={[CustomerNegotiationPanel, ...InProgressControls]}
             CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
             CancelledControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
           />
@@ -127,9 +128,9 @@ resourceDictionary.
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('InProgressControls', [OrderSummary]).
     personell([CustomerPriceSummary, CompleteControl, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
-    hire([CustomerPriceSummary,CompleteControl, CancelControl, CustomerHireOrderInProgress, OrderSummary]).
-    delivery([CustomerPriceSummary,JourneyJobInProgress('Delivery In Progress'), CompleteControl, CancelControl, VehicleDetails, OrderSummary]).
-    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'), CompleteControl, CancelControl, VehicleDetails, OrderSummary])
+    hire([CustomerPriceSummary,CompleteControl,CancelControl, CustomerHireOrderInProgress, OrderSummary]).
+    delivery([CustomerPriceSummary, JourneyJobInProgress('Delivery In Progress'), CompleteControl,CancelControl, CustomerJourneyOrderInProgress,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'),CompleteControl ,CancelControl, CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
 /*eslint-enable */
 
 export default connect(

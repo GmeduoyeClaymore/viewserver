@@ -95,7 +95,7 @@ export default class UserRelationshipDaoContext{
     };
 
     dao.callUser = async ({userId}) => {
-      const virtualContactNo = await this.client.invokeJSONCommand('phoneCallController', 'getVirtualNumber', userId);
+      const virtualContactNo = await this.client.invokeJSONCommand('phoneCallController', 'getVirtualNumber', {userId});
       PhoneCallService.call(virtualContactNo);
     };
   }

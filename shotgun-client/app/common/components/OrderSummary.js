@@ -15,7 +15,10 @@ class OrderSummary extends Component{
   }
 
   renderMap = () => {
-    const {order = {}, client} = this.props;
+    const {order = {}, client, hideMap} = this.props;
+    if (hideMap == true){
+      return null;
+    }
     const {origin, destination} = order;
     const mapWidth = shotgun.deviceWidth - 50;
     const mapHeight = mapWidth / 2;
@@ -36,7 +39,7 @@ class OrderSummary extends Component{
   }
 
   render() {
-    const {order, userCreatedThisOrder} = this.props;
+    const {order, userCreatedThisOrder, dispatch} = this.props;
     const {assignedPartner, customer, orderProduct, requiredDate} = order;
 
     return <List>
@@ -49,7 +52,7 @@ class OrderSummary extends Component{
 
       {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
         <Icon paddedIcon name="one-person"/>
-        <UserInfo orderid={order.orderId} user={userCreatedThisOrder ? assignedPartner : customer} isPartner={!userCreatedThisOrder}/>
+        <UserInfo dispatch={dispatch} orderid={order.orderId} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer} isPartner={!userCreatedThisOrder}/>
       </ListItem> : null}
 
       {orderProduct ? <ListItem padded>

@@ -101,7 +101,7 @@ const CancelResponse = ({ orderId, orderContentTypeId, partnerId, busyUpdating, 
   const onCancelResponse = () => {
     dispatch(cancelResponseCustomer(orderId, orderContentTypeId, partnerId));
   };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text uppercase={false}>Cancel</Text></SpinnerButton>;
 };
 
 

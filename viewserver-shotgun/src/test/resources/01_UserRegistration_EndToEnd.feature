@@ -86,6 +86,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | String      | imageUrl             |
 	  | ColumnAdd | Bool        | online               |
 	  | ColumnAdd | String      | statusMessage        |
+	  | ColumnAdd | Json      | ratings            |
 	  | ColumnAdd | Double      | ratingAvg            |
 	  | ColumnAdd | Double      | distance             |
 	  | ColumnAdd | Int         | rank                 |

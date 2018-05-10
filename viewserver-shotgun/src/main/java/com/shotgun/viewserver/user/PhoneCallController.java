@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.user;
 
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.order.controllers.contracts.OrderTransformationController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
@@ -21,7 +22,7 @@ import java.util.Date;
 
 
 @Controller(name = "phoneCallController")
-public class PhoneCallController {
+public class PhoneCallController implements OrderTransformationController{
     private static final Logger log = LoggerFactory.getLogger(PhoneCallController.class);
     private IDatabaseUpdater iDatabaseUpdater;
 
@@ -29,34 +30,8 @@ public class PhoneCallController {
         this.iDatabaseUpdater = iDatabaseUpdater;
     }
 
-    @ControllerAction(path = "getCustomerVirtualNumber", isSynchronous = true)
-    public String getCustomerVirtualNumber(String orderId) {
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-
-        String driverId = (String) ControllerContext.get("userId");
-        String customerId = (String) ControllerUtils.getColumnValue(orderTable, "userId", orderId);
-
-        ArrayList<String> availablePhoneNumbers = assignPhoneNumbers(orderId, customerId, driverId);
-        return availablePhoneNumbers.get(0);
-    }
-
-    @ControllerAction(path = "getDriverVirtualNumber", isSynchronous = true)
-    public String getDriverVirtualNumber(String orderId) {
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
-
-        String customerId = (String) ControllerContext.get("userId");
-        String deliveryId = (String) ControllerUtils.getColumnValue(orderTable, "deliveryId", orderId);
-        String driverId = (String) ControllerUtils.getColumnValue(deliveryTable, "driverId", deliveryId);
-
-        ArrayList<String> availablePhoneNumbers = assignPhoneNumbers(orderId, customerId, driverId);
-        return availablePhoneNumbers.get(1);
-    }
-
     @ControllerAction(path = "getVirtualNumber", isSynchronous = true)
     public String getVirtualNumber(@ActionParam(name = "userId")String userId) {
-        KeyedTable deliveryTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_TABLE_NAME);
-
         String customerId = (String) ControllerContext.get("userId");
         ArrayList<String> availablePhoneNumbers = assignPhoneNumbers(null, customerId, userId);
         return availablePhoneNumbers.get(1);
@@ -119,5 +94,10 @@ public class PhoneCallController {
         }
 
         return availableNumbers;
+    }
+
+    @Override
+    public IDatabaseUpdater getDatabaseUpdater() {
+        return iDatabaseUpdater;
     }
 }
