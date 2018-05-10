@@ -8,7 +8,6 @@ import yup from 'yup';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
-import {CategoryImages} from 'common/assets/img/Images';
 
 class FlatProductCategoryList extends Component{
   constructor(props){
@@ -21,7 +20,7 @@ class FlatProductCategoryList extends Component{
  
     return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
       <Button style={{height: 'auto'}} large active={highlightedCategory && highlightedCategory.categoryId == row.categoryId} onPress={() => this.highlightCategory(row)}>
-        <Image source={CategoryImages[row.categoryId]} style={styles.image}/>
+        <Icon name={row.categoryId}/>
       </Button>
       <Text style={styles.productSelectText}>{category}</Text>
     </View>;
@@ -104,11 +103,6 @@ const validationSchema = {
 };
 
 const styles = {
-  image: {
-    resizeMode: 'contain',
-    height: '70%',
-    width: '100%',
-  },
   productSelectText: {
     width: '100%',
     marginTop: 5,

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect, ReduxRouter, Route} from 'custom-redux';
 import {Container, Header, Left, Button, Body, Title, Content, Text, Tab, View, Spinner, Row} from 'native-base';
 import {Icon, LoadingScreen, ErrorRegion, OrderSummary, Tabs, RatingSummary} from 'common/components';
-import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, getDao, getAnyOperationError} from 'common/dao';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getDao, getAnyOperationError} from 'common/dao';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
 import shotgun from 'native-base-theme/variables/shotgun';

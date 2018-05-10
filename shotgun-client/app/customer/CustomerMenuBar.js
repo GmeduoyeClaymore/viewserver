@@ -1,25 +1,16 @@
 import React from 'react';
 import {connect} from 'custom-redux';
 import {Button, Footer, FooterTab} from 'native-base';
-import {Image} from 'react-native';
-import {AppImages} from 'common/assets/img/Images';
+import {Icon} from 'common/components';
 
 const CustomerMenuBar = ({history, path}) => {
   return <Footer>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Image source={AppImages.list} style={styles.image}/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/CustomerMyOrders`})}><Image source={AppImages.jobs} style={styles.image}/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Image source={AppImages.onePerson} style={styles.image}/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Image source={AppImages.cog} style={styles.image}/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Icon name='list'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/CustomerOrders`})}><Icon name='jobs'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Icon style={{marginLeft: 10, marginRight: 10}} name='one-person'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Icon name='cog'/></Button></FooterTab>
   </Footer>;
 };
-
-const styles = {
-  image: {
-    resizeMode: 'contain',
-    height: 30
-  }
-};
-
 
 const mapStateToProps = (state, initialProps) => {
   return {

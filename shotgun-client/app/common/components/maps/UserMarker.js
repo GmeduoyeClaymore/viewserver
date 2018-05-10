@@ -1,54 +1,36 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
+import {Icon} from 'common/components';
 
-export default UserMarker = ({user}) => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.bubble}>
-        <Text numberOfLines={1} style={styles.product}>{user.firstName + ' ' + user.lastName}</Text>
-      </View>
-      <View style={styles.arrowBorder} />
-      <View style={styles.arrow} />
-    </View>
-  );
+export default UserMarker = ({user, productId}) => {
+  //TODO - second ternary shouldn't be needed it's just because the test data sometiems doesn't have selected content types
+  const icon = productId ? productId : (user.selectedContentTypes ? `content-type-${Object.keys(user.selectedContentTypes)[0]}` : 'one-person');
+
+  return [
+    <View key='bubble' mapBubble style={styles.bubble}>
+      <Icon name={icon} style={styles.icon}/>
+      <Text numberOfLines={1} style={styles.text}>{`${user.firstName} ${user.lastName}`}</Text>
+    </View>,
+    <View key='arrow' mapArrow style={styles.arrow}/>];
 };
 
 const styles = {
-  container: {
-    flexDirection: 'column',
-    alignSelf: 'flex-start'
-  },
   bubble: {
-    flex: 0,
+    borderColor: shotgun.brandDark,
+    width: 100,
     flexDirection: 'row',
-    alignSelf: 'flex-start',
-    backgroundColor: shotgun.brandSecondary,
-    padding: 2,
-    borderRadius: 3,
-    borderColor: shotgun.brandSecondary,
-    borderWidth: 0.5,
-    width: 75
+    overflow: 'hidden'
   },
-  product: {
-    color: shotgun.brandDark,
-    fontSize: 10,
-    fontWeight: 'bold'
+  text: {
+    width: 65,
+    fontSize: 10
   },
   arrow: {
-    backgroundColor: 'transparent',
-    borderWidth: 4,
-    borderColor: 'transparent',
-    borderTopColor: shotgun.brandSecondary,
-    alignSelf: 'center',
-    marginTop: -9,
+    borderTopColor: shotgun.brandDark
   },
-  arrowBorder: {
-    backgroundColor: 'transparent',
-    borderWidth: 4,
-    borderColor: 'transparent',
-    borderTopColor: shotgun.brandSecondary,
-    alignSelf: 'center',
-    marginTop: -0.5,
-  },
+  icon: {
+    fontSize: 16,
+    marginRight: 5
+  }
 };

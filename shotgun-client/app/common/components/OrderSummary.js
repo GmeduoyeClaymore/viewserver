@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {Text, List, ListItem, Grid, Row, Col} from 'native-base';
+import {Text, List, ListItem, Row, Col} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
@@ -52,7 +52,7 @@ class OrderSummary extends Component{
 
       {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
         <Icon paddedIcon name="one-person"/>
-        <UserInfo dispatch={dispatch} orderid={order.orderId} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer} isPartner={!userCreatedThisOrder}/>
+        <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
 
       {orderProduct ? <ListItem padded>

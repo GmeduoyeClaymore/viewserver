@@ -86,7 +86,7 @@ public class UserRelationshipReport {
                                 new IProjectionConfig.ProjectionColumn("relatedToUser_statusMessage", "statusMessage")
                         ),
                         new FilterNode("meFilter")
-                                .withExpression("userId != \"{@userId}\"")
+                                .withExpression("userId != \"{@userId}\" && type == \"partner\"")
                                 .withConnection("userProjection")
                 );
         }

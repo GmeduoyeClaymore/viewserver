@@ -13,19 +13,8 @@ import {isEqual, debounce} from 'lodash';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {addressToText} from 'common/components/maps/MapUtils';
 
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary().
-  property('supportsDestination', false).
-    delivery(true).
-  property('supportsOrigin', true);
-
 class DeliveryMap extends Component{
   stateKey = 'checkout';
-
-  constructor(props){
-    super(props);
-    ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
-  }
 
   componentDidMount(){
     const {isInBackground} = this.props;
@@ -35,17 +24,12 @@ class DeliveryMap extends Component{
     this.subscribeToUsersForProduct(this.getOptionsFromProps(this.props));
   }
 
-  componentWillReceiveProps(newProps){
-    const {oldOptions, isInBackground} = newProps;
-    if (isInBackground){
-      return;
-    }
-    const newOptions = this.getOptionsFromProps(newProps);
-    if (!isEqual(newOptions, oldOptions)){
-      this.subscribeToUsersForProduct(newOptions);
-    }
+  componentDidUpdate(oldProps){
     const {destination, origin} = this.props;
-    if (destination != newProps.destination || origin != newProps.origin){
+    if (destination != oldProps.destination || origin != oldProps.origin){
+      if (this.mvd){
+        this.mvd.fetchAndRenderRoute();
+      }
       this.fitMap();
     }
   }
@@ -74,7 +58,7 @@ class DeliveryMap extends Component{
   getLocationText = (address, addressKey, placeholder) => {
     return  <Item style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
       <Icon name="pin" style={styles.inputPin} originPin />
-      {address.line1 !== undefined ? <Col size={30} style={{}}>
+      {address.line1 !== undefined ? <Col size={30}>
         <Input placeholder='flat/business' style={styles.flatInput} value={address.flatNumber} placeholderTextColor={shotgun.silver} onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
       </Col> : null}
       <Col size={70}>
@@ -84,8 +68,8 @@ class DeliveryMap extends Component{
   }
 
   setDurationAndDistance = ({distance, duration}) => {
-    const {order, setStateWithPath, dispatch} = this.props;
-    setStateWithPath({distance: Math.round(distance),  duration: Math.round(duration)}, ['order','distanceAndDuration'], undefined,  dispatch);
+    const {setStateWithPath, dispatch} = this.props;
+    setStateWithPath({distance: Math.round(distance),  duration: Math.round(duration)}, ['order', 'distanceAndDuration'], undefined,  dispatch);
     this.fitMap();
   }
 
@@ -94,35 +78,31 @@ class DeliveryMap extends Component{
     history.push(`${parentPath}/AddressLookup`, {addressLabel, addressPath: ['order', addressKey]});
   }
 
-  getOriginAndDestination = () => {
-    const {destination, origin} = this.props;
-    return {destination, origin};
-  }
-
-  componentDidUpdate(oldProps){
-    if (!isEqual(this.getOriginAndDestination(oldProps), this.getOriginAndDestination(this.props))){
-      if (this.mvd){
-        this.mvd.fetchAndRenderRoute();
-      }
-      this.fitMap();
-    }
-  }
-
-
   fitMap = debounce(() => {
     const {destination, origin} = this.props;
-    if ((origin.line1 !== undefined && destination.line1 !== undefined) && this.map) {
-      this.map.fitToCoordinates([{latitude: origin.latitude, longitude: origin.longitude}, {latitude: destination.latitude, longitude: destination.longitude}], {
-        edgePadding: { top: 250, right: 100, bottom: 150, left: 100 },
+    const coordinates = [];
+
+    if (origin.line1 != undefined){
+      coordinates.push({latitude: origin.latitude, longitude: origin.longitude});
+    }
+
+    if (destination.line1 != undefined){
+      coordinates.push({latitude: destination.latitude, longitude: destination.longitude});
+    }
+
+    if (this.map && coordinates.length == 2) {
+      this.map.fitToCoordinates(coordinates, {
+        edgePadding: { top: 450, right: 100, bottom: 150, left: 100 },
         animated: true,
       });
     }
-  }, 1000)
+  }, 500)
 
   render(){
-    const {fitMap, setDurationAndDistance, getLocationText, resources} = this;
-    const {supportsOrigin, supportsDestination} = resources;
-    const {destination, origin, isTransitioning, showDirections, disableDoneButton, client, me, next, errors, usersWithProduct, history, order} = this.props;
+    const {destination, origin, isTransitioning, client, me, next, distanceAndDuration, usersWithProduct, history, order} = this.props;
+    const {distance, duration} = distanceAndDuration;
+    const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
+    const disableDoneButton = origin.line1 == undefined || !distance || !duration || destination.line1 == undefined || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
     if (!me){
       return <LoadingScreen text="Waiting for user ..."/>;
@@ -145,21 +125,21 @@ class DeliveryMap extends Component{
         <Row>
           <Row style={styles.inputRowHolder}>
             <Col>
-              {supportsOrigin ? this.getLocationText(origin, 'origin', 'Pick-up location') : null}
-              {supportsDestination ? this.getLocationText(destination, 'destination', 'Drop-off location') : null}
+              {this.getLocationText(origin, 'origin', 'Pick-up location')}
+              {this.getLocationText(destination, 'destination', 'Drop-off location')}
             </Col>
           </Row>
           {isTransitioning ? <LoadingScreen text="Screen transitioning...."/> :
             <MapView ref={c => { this.map = c; }} style={{ flex: 1 }} onMapReady={this.fitMap} initialRegion={initialRegion}
               showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
               {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={this.setDurationAndDistance} strokeWidth={3} /> : null}
-              {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-              {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }}><AddressMarker address={destination.line1} /></MapView.Marker> : null}
+              {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+              {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={destination.line1} color={shotgun.brandDark} /></MapView.Marker> : null}
               {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={`userWithProduct${user.userId}`}  coordinate={{ ...user }}><ProductMarker product={order.orderProduct} /></MapView.Marker>)}
             </MapView>}
         </Row>
       </Grid>
-      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton(supportsDestination, supportsOrigin)}>
+      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false} style={{alignSelf: 'center'}}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>
@@ -218,15 +198,15 @@ const styles = {
 const mapStateToProps = (state, initialProps) => {
   const {selectedContentType, order} = initialProps;
   const {destination = {}, origin = {}, distanceAndDuration = {}} = order;
-  const {distance,duration} = distanceAndDuration;
-  const showDirections = origin.line1 !== undefined && destination.line1 !== undefined;
-  const disableDoneButton = (supportsDestination, supportsOrigin) => origin.line1 == undefined || supportsDestination && !distance || supportsDestination && !duration || (supportsDestination && destination.line1 == undefined) || (!supportsDestination && !supportsOrigin) || (origin.latitude && origin.longitude && origin.longitude == destination.longitude);
 
   return {
     ...initialProps,
     state,
     me: getDaoState(state, ['user'], 'userDao'),
-    selectedContentType, destination, origin, showDirections, disableDoneButton,
+    selectedContentType,
+    distanceAndDuration,
+    destination,
+    origin,
     usersWithProduct: getDaoState(state, ['users'], 'userRelationshipDao') || []
   };
 };
