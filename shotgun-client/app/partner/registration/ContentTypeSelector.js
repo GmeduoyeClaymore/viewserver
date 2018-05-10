@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Icon} from 'common/components';
 import {resolveDetailsControl} from './ContentTypeDetailRegistry';
-import {Image, View } from 'react-native';
+import {View} from 'react-native';
 import {Button, Text} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import ReactNativeModal from 'react-native-modal';
@@ -9,7 +9,6 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
 import {isEqual} from 'lodash';
 import Immutable from 'seamless-immutable';
-import {ContentTypeImages} from 'common/assets/img/Images';
 
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 /*eslint-disable */
@@ -123,7 +122,7 @@ class ContentTypeSelector extends Component{
     return [
       <View key='button'>
         <Button style={styles.contentTypeButton} large active={selected} onPress={this.handleSelectContentType}>
-          <Image source={ContentTypeImages[contentType.contentTypeId]} style={styles.contentTypeIcon}/>
+          <Icon name={`content-type-${contentType.contentTypeId}`}/>
         </Button>
         <Text style={styles.contentTypeButtonText}>{contentType.name}</Text>
       </View>,

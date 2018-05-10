@@ -52,7 +52,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateBankAccountDetails`)}>
           <Text style={styles.text}>Bank Details</Text>
-          <Icon style={{paddingRight: 10}} name='bank-account'/>
+          <Icon style={{paddingRight: 10, fontSize: 26}} name='bank-account'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/ConfigureServices`)}>
           <Text style={styles.text}>Configure Services</Text>

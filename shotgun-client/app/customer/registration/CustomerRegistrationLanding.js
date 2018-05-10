@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, Button, Container, Grid, Col, Row} from 'native-base';
 import {Image} from 'react-native';
 import {Icon} from 'common/components';
-const launchImage = require('common/assets/img/launch.png');
+const launchImage = require('common/assets/launch.png');
 
 export default CustomerRegistrationLanding = ({history}) => {
   return <Container padded>
