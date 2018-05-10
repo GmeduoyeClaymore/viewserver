@@ -165,7 +165,7 @@ public class ExecutionContext implements IExecutionContext{
         int count = inputOperators.size();
         for (int i = 0; i < count; i++) {
             IInputOperator iInputOperator = inputOperators.get(i);
-            if(inputOperators!=null) {
+            if(iInputOperator!=null) {
                 iInputOperator.inputReady();
             }
         }

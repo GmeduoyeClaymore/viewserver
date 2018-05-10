@@ -7,6 +7,9 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.IMessage;
 import io.viewserver.network.*;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
+import rx.Observable;
+import rx.Observer;
+import rx.observables.AsyncOnSubscribe;
 
 /**
  * Created by Gbemiga on 15/12/17.
@@ -92,6 +95,21 @@ public class MockSession implements IPeerSession {
     @Override
     public void addDisconnectionHandler(PeerSession.IDisconnectionHandler disconnectionHandler) {
 
+    }
+
+    @Override
+    public Observable onDisconnect() {
+        return Observable.create(new AsyncOnSubscribe<Object, Object>() {
+            @Override
+            protected Object generateState() {
+                return null;
+            }
+
+            @Override
+            protected Object next(Object o, long l, Observer<Observable<?>> observer) {
+                return null;
+            }
+        });
     }
 
     @Override

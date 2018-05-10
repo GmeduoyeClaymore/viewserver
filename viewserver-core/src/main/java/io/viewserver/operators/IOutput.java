@@ -20,6 +20,7 @@ import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.schema.Schema;
+import io.viewserver.schema.column.IRowFlags;
 import rx.Observable;
 
 /**
@@ -27,6 +28,8 @@ import rx.Observable;
  */
 public interface IOutput extends IActiveRowTracker {
     //be careful when using this it will start spamming alot of objects if you subscribe
+    Observable<OperatorEvent> observable(String... observedcolumns);
+    Observable<OperatorEvent> observable(IRowFlags flags);
     Observable<OperatorEvent> observable();
 
     String getName();

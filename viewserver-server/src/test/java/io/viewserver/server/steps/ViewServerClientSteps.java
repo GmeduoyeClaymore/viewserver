@@ -129,19 +129,23 @@ public class ViewServerClientSteps {
     }
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
-    public void I_subscribe_to_report(String clientName, String reportId) throws InterruptedException {
+    public void I_subscribe_to_report(String clientName, String reportId){
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
         CountDownLatch subscribeLatch = new CountDownLatch(1);
         trySubscribe(clientName,reportId, subscribeLatch);
-        subscribeLatch.await(timeout, timeUnit);
+        try {
+            subscribeLatch.await(timeout, timeUnit);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
     }
 
     @When("^\"([^\"]*)\" subscribed to report \"([^\"]*)\" with parameters$")
-    public void subscribedToReportWithParameters(String clientName, String reportName, DataTable parameters) throws Throwable {
+    public void subscribedToReportWithParameters(String clientName, String reportName, DataTable parameters){
         report_parameters(clientName,parameters);
         dimension_filters(clientName,parameters);
         I_subscribe_to_report(clientName,reportName);
@@ -150,15 +154,23 @@ public class ViewServerClientSteps {
     @Given("^\"(.*)\" report parameters$")
     public void report_parameters(String clientName, DataTable parameters) {
         ClientConnectionContext ctxt = clientContext.get(clientName);
-        setValuesFromDataTable(parameters, (name, valuesList, excluded) -> ctxt.getReportContext().getParameterValues().put(name, valuesList), c->!c.getCells().get(0).startsWith("dimension_"));
+        if(parameters != null) {
+            setValuesFromDataTable(parameters, (name, valuesList, excluded) -> ctxt.getReportContext().getParameterValues().put(name, valuesList), c -> !c.getCells().get(0).startsWith("dimension_"));
+        }else{
+            clientContext.get(clientName).getReportContext().getParameterValues().clear();
+        }
     }
 
     @And("^\"(.*)\" dimension filters$")
     public void dimension_filters(String clientName, DataTable filters) {
-        ClientConnectionContext ctxt = clientContext.get(clientName);
-        ctxt.getReportContext().getDimensionValues().clear();
-        setValuesFromDataTable(filters, (name, valuesList, excluded) ->
-                ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList,excluded)), c-> c.getCells().get(0).startsWith("dimension_"));
+        if(filters != null) {
+            ClientConnectionContext ctxt = clientContext.get(clientName);
+            ctxt.getReportContext().getDimensionValues().clear();
+            setValuesFromDataTable(filters, (name, valuesList, excluded) ->
+                    ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList, excluded)), c -> c.getCells().get(0).startsWith("dimension_"));
+        }else{
+            clientContext.get(clientName).getReportContext().getDimensionValues().clear();
+        }
     }
 
 
@@ -382,6 +394,30 @@ public class ViewServerClientSteps {
         repeat("Receiving schema " + records, () -> the_following_schema_is_received(clientName,reportId,records), 5, 500, 0, false);
     }
 
+    @Then("^\"([^\"]*)\" the following notifications are received$")
+    public void the_following_data_notifications_are_received(String clientName,  DataTable records) {
+        the_following_data_notifications_are_received_with_key_column(clientName, "fromUserId",records);
+    }
+
+    @Then("^\"([^\"]*)\" the following notifications are received with key column \"([^\"]*)\"$")
+    public void the_following_data_notifications_are_received_with_key_column(String clientName,String keyColumn, DataTable records) {
+        subscribedToReportWithParameters(clientName,"notificationsReport", null);
+        String originalKeyCol = this.keyColumn;
+        keycolumnIs(keyColumn);
+        the_following_data_is_received_eventually(clientName, "notificationsReport", records);
+        this.keyColumn = originalKeyCol;
+    }
+
+
+    @Then("^\"([^\"]*)\" the following notifications are received terminally$")
+    public void the_following_data_notifications_are_received_terminally(String clientName,  DataTable records) {
+        subscribedToReportWithParameters(clientName,"notificationsReport", null);
+        String originalKeyCol = this.keyColumn;
+        keycolumnIs("fromUserId");
+        the_following_data_is_received_terminally(clientName, "notificationsReport", records);
+        this.keyColumn = originalKeyCol;
+    }
+
     @Then("^\"([^\"]*)\" the following schema is received on report \"([^\"]*)\"$")
     public void the_following_schema_is_received(String clientName,String reportId, List<Map<String, String>> records) {
         try {
@@ -410,7 +446,7 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following data is received on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
-    public void the_following_data_is_received(String clientName,String reportId,String rowKey, DataTable records) {
+    public void the_following_data_is_received(String clientName,String reportId,String keyColumn, DataTable records) {
         try {
             ClientConnectionContext connectionContext = clientContext.get(clientName);
             String name = "report" + reportId;
@@ -430,9 +466,9 @@ public class ViewServerClientSteps {
                 Map<String, String> row = clientContext.replaceParams(record);
                 TestUtils.replaceReferences((HashMap)row);
                 clientContext.replaceParams(row);
-                validationRows.add(ValidationUtils.toRow(row, rowKey));
+                validationRows.add(ValidationUtils.toRow(row, keyColumn));
             }
-            operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, rowKey);
+            operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, keyColumn);
         } catch (Exception ex) {
             throw ex;
         }
@@ -471,7 +507,7 @@ public class ViewServerClientSteps {
     }
 
     @Given("^keyColumn is \"([^\"]*)\"$")
-    public void keycolumnIs(String arg0) throws Throwable {
+    public void keycolumnIs(String arg0){
         this.keyColumn = arg0;
     }
 

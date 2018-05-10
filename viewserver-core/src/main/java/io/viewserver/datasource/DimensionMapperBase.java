@@ -89,14 +89,14 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
 
     @Override
     public String lookupString(String dimensionNamespace, String dimensionName, int id) {
-        return lookupString(getLookup(dimensionNamespace, dimensionName), id);
+        return lookupString(getLookup(dimensionNamespace, dimensionName, ContentType.String), id);
     }
 
     protected abstract String lookupString(Object lookup, int id);
 
     @Override
     public byte lookupByte(String dimensionNamespace, String dimensionName, int id) {
-        return lookupByte(getLookup(dimensionNamespace, dimensionName), id);
+        return lookupByte(getLookup(dimensionNamespace, dimensionName, ContentType.Byte), id);
     }
 
     protected abstract byte lookupByte(Object lookup, int id);
@@ -115,37 +115,37 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
     }
 
     @Override
-    public NullableBool lookupNullableBool(String dimensionNamespace, String dimensionName, int id) {
+    public NullableBool lookupNullableBool(String dimensionNamespace, String dimensionName,int id) {
         return nullableBoolValues[id];
     }
 
     @Override
     public short lookupShort(String dimensionNamespace, String dimensionName, int id) {
-        return lookupShort(getLookup(dimensionNamespace, dimensionName), id);
+        return lookupShort(getLookup(dimensionNamespace, dimensionName, ContentType.Short), id);
     }
 
     protected abstract short lookupShort(Object lookup, int id);
 
     @Override
     public int lookupInt(String dimensionNamespace, String dimensionName, int id) {
-        return lookupInt(getLookup(dimensionNamespace, dimensionName), id);
+        return lookupInt(getLookup(dimensionNamespace, dimensionName, ContentType.Int), id);
     }
 
     protected abstract int lookupInt(Object lookup, int id);
 
     @Override
-    public long lookupLong(String dimensionNamespace, String dimensionName, int id) {
-        return lookupLong(getLookup(dimensionNamespace, dimensionName), id);
+    public long lookupLong(String dimensionNamespace, String dimensionName,int id) {
+        return lookupLong(getLookup(dimensionNamespace, dimensionName, ContentType.Long), id);
     }
 
     protected abstract long lookupLong(Object lookup, int id);
 
     @Override
-    public _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, int id) {
+    public _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, ContentType dimensionContentType,int id) {
         throw new UnsupportedOperationException("Tidy this stuff up man!");
     }
 
-    protected Object getLookup(String dimensionNamespace, String dimensionName) {
+    protected Object getLookup(String dimensionNamespace, String dimensionName, ContentType contentType) {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         LookupKey key2 = getLookupKey("global", dimensionName);
         Object lookup = lookups.get(key);
@@ -153,7 +153,8 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
             lookup = lookups.get(key2);
         }
         if (lookup == null) {
-            throw new IllegalArgumentException("There is no dimension registered as " + key + " or " + key2);
+            LookupKey newKey  = this.registerDimension(dimensionNamespace, dimensionName, contentType);
+            return lookups.get(newKey);
         }
         return lookup;
     }

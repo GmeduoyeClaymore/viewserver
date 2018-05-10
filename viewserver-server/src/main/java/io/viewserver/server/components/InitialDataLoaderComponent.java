@@ -74,7 +74,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         }
         if(creationConfig.getOperator().equals(CreationStrategy.WAIT)){
             logger.info("Waiting for table - " + tableOperator);
-            return this.serverCatalog.getOperatorObservable(tableOperator).map(c-> {
+            return this.serverCatalog.waitForOperatorAtThisPath(tableOperator).map(c-> {
                 logger.info("Found table - " + tableOperator);
                 return getOperator(c);
             });
@@ -125,7 +125,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
 
         if(creationConfig.getCatalog().equals(CreationStrategy.WAIT)){
             logger.info("Waiting for catalog - " + catalogPath);
-            return this.serverCatalog.getOperatorObservable(catalogPath).map(
+            return this.serverCatalog.waitForOperatorAtThisPath(catalogPath).map(
                     cat -> {
                         logger.info("Found catalog - " + catalogPath);
                         return (ICatalog)cat;

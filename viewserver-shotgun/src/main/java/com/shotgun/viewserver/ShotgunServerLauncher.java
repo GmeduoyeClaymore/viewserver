@@ -35,6 +35,7 @@ import java.util.function.Predicate;
 
 import static com.shotgun.viewserver.PropertyUtils.loadProperties;
 
+
 public class ShotgunServerLauncher{
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
     private BasicServer server;
@@ -60,6 +61,7 @@ public class ShotgunServerLauncher{
         container.addComponent(BasicSubscriptionComponent.class);
         container.addComponent(ShotgunApplicationGraph.class);
         container.addComponent(InitialDataLoaderComponent.class);
+        container.addComponent(UserOrderNotificationComponent.class);
         container.addComponent(BasicServer.class);
     }
 
@@ -165,6 +167,7 @@ public class ShotgunServerLauncher{
         }
 
         server = container.getComponent(BasicServer.class);
+        server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));
         server.start();
         ExecutionContext.blockThreadAssertion  = false;
     }

@@ -43,6 +43,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         Map<String, ReportDefinition> reportDefinitions = new HashMap<>();
         reportDefinitions.put(CustomerOrderSummaryReport.ID, CustomerOrderSummaryReport.getReportDefinition());
         reportDefinitions.put(PartnerOrderSummaryReport.ID, PartnerOrderSummaryReport.getReportDefinition());
+        reportDefinitions.put(NotificationsReport.ID, NotificationsReport.getReportDefinition());
         reportDefinitions.put(ProductCategoryReport.ID, ProductCategoryReport.getReportDefinition());
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(OperatorAndConnectionReport.ID, OperatorAndConnectionReport.getReportDefinition());

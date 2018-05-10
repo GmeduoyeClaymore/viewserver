@@ -19,10 +19,15 @@ package io.viewserver.datasource;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.core.NullableBool;
 import io.viewserver.execution.ExecutionPlanRunner;
 import io.viewserver.execution.IExecutionPlanRunner;
+import io.viewserver.execution.InvalidReportContextException;
+import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.plan.DataSourceExecutionPlan;
+import io.viewserver.messages.common.ValueLists;
+import io.viewserver.operators.index.IndexOperator;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
@@ -75,6 +80,62 @@ public class DataSourceHelper {
         columnMetadata.setCardinality(cardinality);
         columnHolder.setMetadata(columnMetadata);
         return columnHolder;
+    }
+
+    public static IndexOperator.QueryHolder[] getQueryHolders(IDataSource dataSource, List<ReportContext.DimensionValue> dimensionValues, DimensionMapper dimensionMapper) {
+        final IndexOperator.QueryHolder[] queryHolders = new IndexOperator.QueryHolder[dimensionValues.size()];
+        int i = 0;
+        for (ReportContext.DimensionValue dimensionFilter : dimensionValues) {
+            //TODO - handle case where dimension does not exist in the data source
+            Dimension dimension = dataSource.getDimension(dimensionFilter.getName());
+            if(dimension == null){
+                throw new RuntimeException("Unable to find dimension named " + dimensionFilter.getName() + " in data source " + dataSource.getName());
+            }
+
+            IndexOperator.QueryHolder queryHolder = getQueryHolder(dataSource.getName(), dimensionMapper, dimensionFilter, dimension);
+            queryHolders[i++] = queryHolder;
+        }
+        return queryHolders;
+    }
+
+    public static IndexOperator.QueryHolder getQueryHolder(String dimensionNameSpace, DimensionMapper dimensionMapper, ReportContext.DimensionValue dimensionFilter, Dimension dimension) {
+        if(dimension == null){
+            throw new InvalidReportContextException(String.format("Could not find the dimension %s in the data source", dimensionFilter.getName()));
+        }
+
+        final ValueLists.IValueList values = dimensionFilter.getValues();
+        int[] mappedValues = new int[values.size()];
+        for (int j = 0; j < mappedValues.length; j++) {
+            final Object value;
+            if (values instanceof ValueLists.IBooleanList) {
+                if (dimension.getContentType() == ContentType.NullableBool) {
+                    value = NullableBool.fromBoolean(((ValueLists.IBooleanList) values).get(j));
+                    // commenting out the following, as I can't see a path that gets us to here - the report context
+                    // has no capability for dealing with nullable booleans as it stands
+//                    } else if (value == null) {
+//                        value = NullableBool.Null;
+                } else {
+                    value = ((ValueLists.IBooleanList) values).get(j);
+                }
+            } else if (values instanceof ValueLists.IIntegerList) {
+                value = ((ValueLists.IIntegerList)values).get(j);
+            } else if (values instanceof ValueLists.ILongList) {
+                value = ((ValueLists.ILongList)values).get(j);
+            } else if (values instanceof ValueLists.IFloatList) {
+                value = ((ValueLists.IFloatList)values).get(j);
+            } else if (values instanceof ValueLists.IDoubleList) {
+                value = ((ValueLists.IDoubleList)values).get(j);
+            } else if (values instanceof ValueLists.IStringList) {
+                value = ((ValueLists.IStringList)values).get(j);
+            } else {
+                throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
+            }
+            mappedValues[j] = dimensionMapper.map(dimension.isGlobal() ? "global" : dimensionNameSpace, dimension.getName(),dimension.getContentType(), value);
+        }
+
+        return dimensionFilter.isExclude()
+                ? IndexOperator.QueryHolder.exclude(dimensionFilter.getName(), mappedValues)
+                : IndexOperator.QueryHolder.include(dimensionFilter.getName(), mappedValues);
     }
 
 

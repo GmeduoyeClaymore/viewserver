@@ -67,7 +67,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IMessagingController getMessagingController() {
-        return new MessagingController(messagingApiKey, this.databaseUpdater);
+        return new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog());
         //return new MockMessagingController(databaseUpdater);
     }
 

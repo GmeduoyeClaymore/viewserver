@@ -166,8 +166,8 @@ public class ControllerCatalog extends InputOperatorBase implements ICatalog{
     }
 
     @Override
-    public Observable<IOperator> waitForOperator(String name) {
-        return catalogHolder.waitForOperator(name);
+    public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
+        return catalogHolder.waitForOperatorInThisCatalog(name);
     }
 
 

@@ -106,6 +106,12 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
             return outputName;
         }
 
+        List<IndexOperator.QueryHolder> queryHolders = this.queryHolders;
+
+        return getNameForQueryHolders(queryHolders);
+    }
+
+    public static String getNameForQueryHolders(List<IndexOperator.QueryHolder> queryHolders) {
         ArrayList<String> configStrings = new ArrayList<>();
 
         for (IndexOperator.QueryHolder queryHolder : queryHolders) {

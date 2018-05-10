@@ -8,13 +8,12 @@ import org.slf4j.Logger;
 
 public interface OrderNotificationContract {
 
-    default void sendMessage(String orderId, String toUserId, String title, String body) {
+    default void sendMessage(String orderId,String fromUserId, String toUserId, String title, String body) {
         try {
-            String userId = (String)ControllerContext.get("userId");
             AppMessage builder = new AppMessageBuilder().withDefaults()
                     .withAction(createActionUri(orderId))
                     .message(title, body)
-                    .withFromTo(userId, toUserId)
+                    .withFromTo(fromUserId, toUserId)
                     .build();
             getMessagingController().sendMessageToUser(builder);
         }catch (Exception ex){
@@ -22,8 +21,13 @@ public interface OrderNotificationContract {
         }
     }
 
+    default void sendMessage(String orderId, String toUserId, String title, String body) {
+        sendMessage(orderId, (String) ControllerContext.get("userId"), toUserId, title,body);
+    }
+
+
     default String createActionUri(String orderId){
-        return String.format("shotgun://DriverOrderDetail/%s", orderId);
+        return String.format("shotgun://PartnerOrderDetail/%s", orderId);
     }
     Logger getLogger();
     IMessagingController getMessagingController();

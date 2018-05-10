@@ -9,6 +9,7 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
@@ -33,9 +34,11 @@ public class MockMessagingController implements IMessagingController {
     private HashMap<String, AppMessage> messagesBySender = new HashMap<>();
     private HashMap<String, AppMessage> messagesByRecipient = new HashMap<>();
     private IDatabaseUpdater databaseUpdater;
+    private ICatalog catalog;
 
-    public MockMessagingController(IDatabaseUpdater databaseUpdater) {
+    public MockMessagingController(IDatabaseUpdater databaseUpdater, ICatalog catalog) {
         this.databaseUpdater = databaseUpdater;
+        this.catalog = catalog;
     }
 
     public void clear(){
@@ -50,11 +53,11 @@ public class MockMessagingController implements IMessagingController {
 
     @Override
     public ListenableFuture sendMessageToUser(AppMessage message){
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             message.set("to",currentToken);
-            persistMessage(message);
+            persistMessage(message, false);
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
 
@@ -71,7 +74,7 @@ public class MockMessagingController implements IMessagingController {
             throw new RuntimeException("Invalid empty token specified");
         }
         String userId = (String) ControllerContext.get("userId");
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);

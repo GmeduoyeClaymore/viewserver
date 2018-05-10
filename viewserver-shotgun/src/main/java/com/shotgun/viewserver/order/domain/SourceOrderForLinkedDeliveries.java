@@ -6,7 +6,6 @@ import com.shotgun.viewserver.user.User;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
 public interface SourceOrderForLinkedDeliveries extends BasicOrder{
-    DeliveryAddress getOrigin();
     DeliveryAddress getProductAddress();
     String getOutboundDeliveryId();
     String getInboundDeliveryId();

@@ -20,7 +20,6 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.CatalogHolder;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
-import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
@@ -139,8 +138,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     }
 
     @Override
-    public Observable<IOperator> getOperatorObservable(String name) {
-        return catalogHolder.getOperatorObservable(name);
+    public Observable<IOperator> waitForOperatorAtThisPath(String name) {
+        return catalogHolder.waitForOperatorAtThisPath(name);
     }
 
     @Override
@@ -290,8 +289,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     }
 
     @Override
-    public Observable<IOperator> waitForOperator(String name) {
-        return catalogHolder.waitForOperator(name);
+    public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
+        return catalogHolder.waitForOperatorInThisCatalog(name);
     }
 
     @Override
@@ -424,8 +423,8 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         }
 
         @Override
-        public Observable<IOperator> getOperatorObservable(String name) {
-            return catalogHolder.getOperatorObservable(name);
+        public Observable<IOperator> waitForOperatorAtThisPath(String name) {
+            return catalogHolder.waitForOperatorAtThisPath(name);
         }
 
         @Override
@@ -454,11 +453,11 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         }
 
         @Override
-        public Observable<IOperator> waitForOperator(String name) {
+        public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
             if(catalogHolder == null){
                 throw new RuntimeException("How can this be !!!");
             }
-            return catalogHolder.waitForOperator(name);
+            return catalogHolder.waitForOperatorInThisCatalog(name);
         }
 
         @Override

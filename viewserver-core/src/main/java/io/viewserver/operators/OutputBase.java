@@ -24,6 +24,8 @@ import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.schema.Schema;
+import io.viewserver.schema.column.ColumnHolder;
+import io.viewserver.schema.column.IRowFlags;
 import io.viewserver.util.ViewServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +34,9 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import static io.viewserver.core.Utils.fromArray;
 import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 
 /**
@@ -67,16 +68,31 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         owner.getExecutionContext().getMetadataRegistry().registerOutput(this);
         this.subject = PublishSubject.create();
     }
-    //be careful when using this it will start spamming alot of objects if you subscribe
+    @Override
+    public Observable<OperatorEvent>  observable(String... observedColumns){
+        List<String> columns = Arrays.asList(observedColumns);
+        return observable(columnId -> {
+            Schema schema = getSchema();
+            ColumnHolder col = schema.getColumnHolder(columnId);
+            return columns.contains(col.getName());
+        });
+    }
+
     @Override
     public Observable<OperatorEvent>  observable(){
+        return observable((IRowFlags)null);
+    }
+
+    @Override
+    //be careful when using this it will start spamming alot of objects if you subscribe
+    public Observable<OperatorEvent>  observable(IRowFlags flags){
 
 
         Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
             try{
                 IRowSequence rows = (this.getAllRows());
                 while(rows.moveNext()){
-                    HashMap<String, Object> rowDetails = getRowDetails(getProducer(), rows.getRowId(), null);
+                    HashMap<String, Object> rowDetails = getRowDetails(getProducer(), rows.getRowId(), flags);
                     subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
                 }
                 subscriber.onCompleted();
@@ -86,6 +102,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
         return Observable.concat(snapshot,subject.onBackpressureBuffer(100));
     }
+
 
     public String getName() {
         return name;

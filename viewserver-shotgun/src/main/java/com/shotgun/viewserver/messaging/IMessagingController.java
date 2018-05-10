@@ -8,6 +8,8 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.ControllerAction;
 
+import java.util.Date;
+
 public interface IMessagingController {
     void sendMessage(AppMessage message);
 
@@ -16,11 +18,14 @@ public interface IMessagingController {
     @ControllerAction(path = "updateUserToken")
     ListenableFuture updateUserToken(String token);
 
-    default void persistMessage(AppMessage message) {
+    default void persistMessage(AppMessage message, boolean sentRemotely) {
         Record messageRec = new Record();
         messageRec.addValue("messageId", ControllerUtils.generateGuid());
         messageRec.addValue("fromUserId", message.getFromUserId());
         messageRec.addValue("toUserId", message.getToUserId());
+        messageRec.addValue("title", message.getTitle());
+        messageRec.addValue("sentTime", new Date());
+        messageRec.addValue("sentRemotely",sentRemotely);
         messageRec.addValue("message", message);
 
         getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, UserDataSource.getDataSource().getSchema(), messageRec);

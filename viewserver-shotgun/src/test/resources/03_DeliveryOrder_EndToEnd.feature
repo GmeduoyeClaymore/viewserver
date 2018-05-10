@@ -6,12 +6,14 @@ Feature: Delivery order scenarios
 	Given a client named "client2" connected to "{client2.url}"
 	Given a client named "client3" connected to "{client3.url}"
 	Given a client named "client4" connected to "{client4.url}"
+	Given a client named "client5" connected to "{client5.url}"
 	Given keyColumn is "orderId"
 	Given "client1" All data sources are built
 	Given "client1" controller "partnerController" action "registerPartner" invoked with data file "json/users/allRounder.json"
 	Given "client2" controller "partnerController" action "registerPartner" invoked with data file "json/users/brickLayerRegistration.json"
 	Given "client3" controller "partnerController" action "registerPartner" invoked with data file "json/users/plastererRegistration.json"
 	Given "client4" controller "partnerController" action "registerPartner" invoked with data file "json/users/groundWorkerRegistration.json"
+	Given "client5" controller "partnerController" action "registerPartner" invoked with data file "json/users/allRounder.json"
 
 
   Scenario: User can create delivery order and see it in their posted order list but not in their request list
@@ -85,6 +87,17 @@ Feature: Delivery order scenarios
 	  | ColumnAdd | customer_ratingAvg             | Double      |
 	Then "client1" the following data is received terminally on report "orderRequest"
 	  | ~Action | partner_email | orderId |
+	Then "client5" the following notifications are received
+	  | ~Action | fromUserId                                         | toUserId                                           | message.title               |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | {client5_partnerController_registerPartner_result} | "Shotgun - New Job Listing" |
+	Then "client1" the following notifications are received terminally
+	  | ~Action | fromUserId | toUserId | message.title |
+	Then "client2" the following notifications are received terminally
+	  | ~Action | fromUserId | toUserId | message.title |
+	Then "client3" the following notifications are received terminally
+	  | ~Action | fromUserId | toUserId | message.title |
+	Then "client4" the following notifications are received terminally
+	  | ~Action | fromUserId | toUserId | message.title |
 
 
   Scenario: Other users can see newly created job in their list
@@ -139,14 +152,24 @@ Feature: Delivery order scenarios
 	  | Name         | Value                                                |
 	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                       |
+	Then "client1" the following notifications are received
+	  | ~Action | fromUserId                                         | message.title          |
+	  | RowAdd  | {client2_partnerController_registerPartner_result} | "Shotgun job response" |
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name         | Value                                                |
 	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                       |
+	Then "client1" the following notifications are received
+	  | ~Action | fromUserId                                         | message.title          |
+	  | RowAdd  | {client2_partnerController_registerPartner_result} | "Shotgun job response" |
+	  | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
 	Given "client1" controller "deliveryOrderController" action "rejectResponse" invoked with parameters
 	  | Name      | Value                                                |
 	  | orderId   | {client1_deliveryOrderController_createOrder_result} |
 	  | partnerId | {client3_partnerController_registerPartner_result}   |
+	Then "client3" the following notifications are received
+	  | ~Action | fromUserId                                         | message.title            |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | "Shotgun offer rejected" |
 	Given "client3" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
@@ -163,6 +186,11 @@ Feature: Delivery order scenarios
 	  | Name         | Value                                                |
 	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+2}"                                       |
+	Then "client1" the following notifications are received
+	  | ~Action | fromUserId                                         | message.title          |
+	  | RowAdd  | {client2_partnerController_registerPartner_result} | "Shotgun job response" |
+	  | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
+	  | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
 	Given "client3" subscribed to report "orderResponses" with parameters
 	  | Name                | Type   | Value   |
 	  | dimension_partnerId | String | @userId |
@@ -179,6 +207,7 @@ Feature: Delivery order scenarios
 	  | Name         | Value                                                |
 	  | orderId      | {client1_deliveryOrderController_createOrder_result} |
 	  | requiredDate | "{now_date+1}"                                       |
+
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                     | Type   | Value     |
 	  | dimension_partnerId      | String | @userId   |
@@ -229,6 +258,10 @@ Feature: Delivery order scenarios
 	Given "client2" controller "deliveryOrderController" action "cancelResponsePartner" invoked with parameters
 	  | Name    | Value                                                |
 	  | orderId | {client1_deliveryOrderController_createOrder_result} |
+	Then "client1" the following notifications are received with key column "title"
+	  | ~Action | fromUserId                                         | title                      |
+	  | RowAdd  | {client2_partnerController_registerPartner_result} | Shotgun job response       |
+	  | RowAdd  | {client2_partnerController_registerPartner_result} | Shotgun response cancelled |
 	Given "client2" subscribed to report "orderResponses" with parameters
 	  | Name                     | Type   | Value     |
 	  | dimension_partnerId      | String | @userId   |
@@ -304,6 +337,12 @@ Feature: Delivery order scenarios
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                              | responseStatus |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | REJECTED       |
+	Then "client2" the following notifications are received
+	  | ~Action | fromUserId                                         | title                  |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | Shotgun offer rejected |
+	Then "client3" the following notifications are received
+	  | ~Action | fromUserId                                         | title                  |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | Shotgun offer accepted |
 
 
   Scenario: Cancelling accepted response causes job to go back into responded state
@@ -337,6 +376,10 @@ Feature: Delivery order scenarios
 	Then "client2" the following data is received eventually on report "orderResponses"
 	  | ~Action | orderId                                              | responseStatus |
 	  | RowAdd  | {client1_deliveryOrderController_createOrder_result} | RESPONDED      |
+	Then "client2" the following notifications are received with key column "title"
+	  | ~Action | fromUserId                                         | title                          |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | Shotgun offer rejected  |
+	  | RowAdd  | {client1_partnerController_registerPartner_result} | Shotgun job back on the market |
 
   Scenario: Accepting response removes job from order request list for all
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters

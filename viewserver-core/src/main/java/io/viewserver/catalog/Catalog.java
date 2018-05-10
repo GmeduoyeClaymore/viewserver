@@ -103,8 +103,8 @@ public class Catalog extends InputOperatorBase implements ICatalog {
         return catalogHolder.getOperator(name);
     }
 
-    public Observable<IOperator> getOperatorObservable(String name) {
-        return catalogHolder.getOperatorObservable(name);
+    public Observable<IOperator> waitForOperatorAtThisPath(String name) {
+        return catalogHolder.waitForOperatorAtThisPath(name);
     }
 
     @Override
@@ -139,8 +139,8 @@ public class Catalog extends InputOperatorBase implements ICatalog {
     }
 
     @Override
-    public Observable<IOperator> waitForOperator(String name) {
-        return catalogHolder.waitForOperator(name);
+    public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
+        return catalogHolder.waitForOperatorInThisCatalog(name);
     }
 
     @Override

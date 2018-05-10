@@ -27,21 +27,15 @@ public class CustomerController {
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
 
-    private IPaymentController paymentController;
     private DeliveryAddressController deliveryAddressController;
-    private IMessagingController messagingController;
     private UserController userController;
     private INexmoController nexmoController;
 
-    public CustomerController(IPaymentController paymentController,
-                              DeliveryAddressController deliveryAddressController,
-                              IMessagingController messagingController,
+    public CustomerController(DeliveryAddressController deliveryAddressController,
                               UserController userController,
                               INexmoController nexmoController) {
 
-        this.paymentController = paymentController;
         this.deliveryAddressController = deliveryAddressController;
-        this.messagingController = messagingController;
         this.userController = userController;
         this.nexmoController = nexmoController;
     }
@@ -65,43 +59,5 @@ public class CustomerController {
         log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
         return userId;
     }
-
-
-
-    private void notifyStatusChanged(String orderId, String orderDriverId, String status) {
-        try {
-            String formattedStatus = status.toLowerCase();
-            AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withAction(createActionUri(orderId, status))
-                    .withFromTo(getUserId(),orderDriverId)
-                    .message(String.format("Shotgun order %s", formattedStatus), String.format("Shotgun order has been %s by the customer", formattedStatus)).build();
-            ListenableFuture future = messagingController.sendMessageToUser(builder);
-
-            Futures.addCallback(future, new FutureCallback<Object>() {
-                @Override
-                public void onSuccess(Object o) {
-                    log.debug("Message sent successfully");
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    log.error("There was a problem sending the notification", throwable);
-                }
-            });
-
-        }catch (Exception ex){
-            log.error("There was a problem sending the notification", ex);
-        }
-    }
-
-    private String createActionUri(String orderId, String status){
-        switch (status) {
-            case "INPROGRESS":
-                return String.format("shotgun://DriverOrderInProgress/%s", orderId);
-            default:
-                return String.format("shotgun://DriverOrderDetail/%s", orderId);
-        }
-    }
-
 
 }

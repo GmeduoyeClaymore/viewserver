@@ -8,6 +8,7 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
@@ -41,10 +42,12 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
     private MessagingApiKey messagingApiKey;
     private IDatabaseUpdater iDatabaseUpdater;
+    private ICatalog catalog;
 
-    public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater) {
+    public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater, ICatalog catalog) {
         this.messagingApiKey = messagingApiKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.catalog = catalog;
     }
 
     @Override
@@ -54,7 +57,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
     @Override
     public ListenableFuture sendMessageToUser(AppMessage message){
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
         if(message.getFromUserId() == null){
             throw new RuntimeException("From user id must be specified");
@@ -67,18 +70,20 @@ public class MessagingController implements IMessagingController, UserPersistenc
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             message.set("to",currentToken);
-            persistMessage(message);
+            User user = getUserForId(message.getToUserId(),User.class);
             if(currentToken == null){
                 String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
                 logger.info(result);
-                User user = getUserForId(message.getToUserId(),User.class);
                 user.addPendingMessage(message);
                 return result;
             }
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
-
-            sendPayload(message.toSimpleMessage());
+            boolean sendRemotely = !user.getOnline();
+            if(sendRemotely){
+                sendPayload(message.toSimpleMessage());
+            }
+            persistMessage(message, sendRemotely);
             return format;
         }));
     }
@@ -93,7 +98,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             throw new RuntimeException("Invalid empty token specified");
         }
         String userId = (String) ControllerContext.get("userId");
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);

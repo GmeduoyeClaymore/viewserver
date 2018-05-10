@@ -16,6 +16,7 @@
 
 package io.viewserver.report;
 
+import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.nodes.GroupByNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +28,13 @@ import java.util.Map;
 /**
  * Created by bemm on 31/10/2014.
  */
-public class ReportDefinition extends GraphDefinitionBase<ReportDefinition>
-        implements IParameterisedGraphDefinition, ICalculatingGraphDefinition, IMeasuringGraphDefinition {
+public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> implements IParameterisedGraphDefinition, ICalculatingGraphDefinition, IMeasuringGraphDefinition {
     private static final Logger log = LoggerFactory.getLogger(ReportDefinition.class);
     private String id;
     private String name;
     private final Map<String, ParameterDefinition> parameters = new LinkedHashMap<>();
     private final Map<String, CalculationDefinition> calculations = new LinkedHashMap<>();
+    private final Map<String, DefaultDimensionValues> defaultDimensionValues = new LinkedHashMap<>();
     private Map<String, MeasureDefinition> measures = new LinkedHashMap<>();
     private String dataSource;
 
@@ -48,6 +49,10 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition>
     @Override
     public Map<String, ParameterDefinition> getParameters() {
         return parameters;
+    }
+
+    public Map<String, DefaultDimensionValues> getDefaultDimensionValues() {
+        return defaultDimensionValues;
     }
 
     @Override
@@ -72,10 +77,23 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition>
     public ReportDefinition withNonRequiredParameter(String name, String label, Class type,Object... validValues) {
         return withParameter(name,label,type,false,validValues);
     }
+
     public ReportDefinition withParameter(String name, String label, Class type,boolean isRequired,Object... validValues) {
         parameters.put(name, new ParameterDefinition(name, label, type, isRequired, validValues));
         return this;
     }
+
+
+    public <TValue> ReportDefinition withDefaultDimensionValues(String name, ReportContext.DimensionValue... dimensionValues) {
+        defaultDimensionValues.put(name, new DefaultDimensionValues(name, dimensionValues));
+        return this;
+    }
+
+    public <TValue> ReportDefinition withDefaultDimensionValues(DefaultDimensionValues values) {
+        defaultDimensionValues.put(values.getName(), values);
+        return this;
+    }
+
 
 
     public ReportDefinition withParameters(ParameterDefinition... parameters) {

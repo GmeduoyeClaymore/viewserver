@@ -13,7 +13,7 @@
   },
   "customerUserId": "{param_customerId}",
   "orderProduct": {
-    "productId" : "CommercialThreeQuarterVan"
+    "productId" : "MediumVan"
   },
   "requiredDate": "01/01/2017",
   "amount": 100

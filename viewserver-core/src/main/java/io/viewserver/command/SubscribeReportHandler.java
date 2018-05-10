@@ -27,11 +27,14 @@ import io.viewserver.messages.command.ISubscribeReportCommand;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
+import io.viewserver.report.DefaultDimensionValues;
 import io.viewserver.report.ReportContextRegistry;
+import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,6 +64,8 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
             Options options = Options.fromMessage(data.getOptions());
+            ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
+            enhance(definition,reportContext);
             substituteParamValues(peerSession, reportContext, options);
 
             log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
@@ -89,6 +94,15 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
         }
     }
 
+
+    private void enhance(ReportDefinition definition, ReportContext reportContext) {
+        for(DefaultDimensionValues par : definition.getDefaultDimensionValues().values()){
+            for(ReportContext.DimensionValue dimensionValue: par.getValues()){
+                reportContext.getDimensionValues().add(dimensionValue);
+            }
+        }
+    }
+
     private void substituteParamValues(IPeerSession peerSession, ReportContext reportContext, Options options) {
         ValueLists.StringList stringList = new ValueLists.StringList();
         stringList.add(peerSession.getCatalogName());
@@ -102,7 +116,8 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
                 reportContext.setParameterValue("@" + entry.getKey(), stringList);
             }
 
-            for (ReportContext.DimensionValue str : reportContext.getDimensionValues()) {
+            List<ReportContext.DimensionValue> dimensionValues = reportContext.getDimensionValues();
+            for (ReportContext.DimensionValue str : dimensionValues) {
                 int index = 0;
                 for(Object val : str.getValues().toArray()){
                     if(val instanceof String && val.toString().startsWith("@")){

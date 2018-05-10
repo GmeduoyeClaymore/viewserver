@@ -75,10 +75,7 @@ public class ValidationUtils {
         }
 
         ValidationAction valAction = ValidationAction.valueOf(actionName.substring(3));
-        String idString = row.get(keyColumnName);
-        if("".equals(idString) || idString == null){
-            throw new RuntimeException("Row " + row + " does not contain a field named " + keyColumnName);
-        }
+        validateRowHasKey(row, keyColumnName);
 
         HashMap<String,Object>  values = getValues(row,0);
         HashMap<String,Object>  previous = getValues(row,1);
@@ -97,6 +94,16 @@ public class ValidationUtils {
             }
         }
         return new ValidationOperatorRow(values,new HashMap<>(),valAction);
+    }
+
+    public static void validateRowHasKey(Map<String, String> row, String keyColumnName) {
+        String[] parts = keyColumnName.split(",");
+        for(String part : parts){
+            String idString = row.get(part);
+            if("".equals(idString) || idString == null){
+                throw new RuntimeException("Row " + row + " does not contain a field named " + keyColumnName);
+            }
+        }
     }
 
     public static  ValidationOperatorColumn toColumn(Map<String,String> column){

@@ -29,7 +29,6 @@ import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
-import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -156,8 +155,8 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
     }
 
     @Override
-    public Observable<IOperator> waitForOperator(String name) {
-        return catalogHolder.waitForOperator(name);
+    public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
+        return catalogHolder.waitForOperatorInThisCatalog(name);
     }
 
     @Override

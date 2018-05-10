@@ -10,6 +10,11 @@ public interface NegotiationNotifications extends OrderNotificationContract {
         User user = (User) ControllerContext.get("user");
         sendMessage(orderId,partnerId,  "Shotgun job back on the market", String.format("%s job has just come back onto the market" , user.getFirstName() + " " + user.getLastName() ));
     }
+
+    default void notifyJobBackOnTheMarket(String orderId,String customerId,String partnerId) {
+        sendMessage(orderId,customerId, partnerId,  "Shotgun job back on the market", "A job you responded to has just come back onto the market" );
+    }
+
     default void notifyJobAccepted(String orderId, String partnerId) {
         User user = (User) ControllerContext.get("user");
         sendMessage(orderId,partnerId,  "Shotgun offer accepted", String.format("%s has  just accepted your offer", user.getFirstName() + " " + user.getLastName()));

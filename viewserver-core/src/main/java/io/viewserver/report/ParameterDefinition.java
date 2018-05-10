@@ -16,6 +16,11 @@
 
 package io.viewserver.report;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static io.viewserver.core.Utils.toArray;
+
 /**
  * Created by bemm on 31/10/2014.
  */
@@ -83,3 +88,6 @@ public class ParameterDefinition<TType> {
         this.validValues = validValues;
     }
 }
+
+
+

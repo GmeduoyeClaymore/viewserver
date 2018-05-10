@@ -38,7 +38,7 @@ public interface ICatalog {
 
     IOperator getOperatorByPath(String name);
 
-    rx.Observable<IOperator> getOperatorObservable(String name);
+    rx.Observable<IOperator> waitForOperatorAtThisPath(String path);
 
     void unregisterOperator(IOperator operator);
 
@@ -50,7 +50,7 @@ public interface ICatalog {
 
     void removeChild(ICatalog childCatalog);
 
-    rx.Observable<IOperator> waitForOperator(String name);
+    rx.Observable<IOperator> waitForOperatorInThisCatalog(String name);
 
     rx.Observable<ICatalog> waitForChild(String name);
 

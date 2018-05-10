@@ -42,7 +42,7 @@ public interface IDimensionMapper {
 
     long lookupLong(String dimensionNamespace, String dimensionName, int id);
 
-    _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, int id);
+    _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName,ContentType dimensionContentType, int id);
 
     void clear();
 }

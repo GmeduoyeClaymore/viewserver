@@ -47,11 +47,11 @@ Feature: User registration scenarios
 	  | ColumnAdd | Bool        | dimension_online     |
 	  | ColumnAdd | Json        | bankAccount          |
 	  | ColumnAdd | Json        | paymentCards         |
-	  | ColumnAdd | Json        | pendingMessages         |
-	  | ColumnAdd | Json     | vehicle                 |
+	  | ColumnAdd | Json        | pendingMessages      |
+	  | ColumnAdd | Json        | vehicle              |
 	Then "client2" the following data is received eventually on report "userReport"
-	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
-	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | 0.0      | 0.0       |        |          | True   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
+	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | True   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
 
   Scenario: Newly registered users can be seen by each other
 
@@ -86,13 +86,16 @@ Feature: User registration scenarios
 	  | ColumnAdd | String      | imageUrl             |
 	  | ColumnAdd | Bool        | online               |
 	  | ColumnAdd | String      | statusMessage        |
-	  | ColumnAdd | Json      | ratings            |
+	  | ColumnAdd | Json        | ratings              |
 	  | ColumnAdd | Double      | ratingAvg            |
 	  | ColumnAdd | Double      | distance             |
 	  | ColumnAdd | Int         | rank                 |
 	Then "client1" the following data is received eventually on report "usersForProductAll"
-	  | ~Action | contactNo   | distance | email                        | firstName | id | imageUrl | initiatedByMe | lastName   | latitude | longitude | market | notional | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
-	  | RowAdd  | 07966265016 | 0.0      | modestasbricklayer@gmail.com | Modestas  |    |          | Null          | BrickLayer | 0.0      | 0.0       |        |          | true   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+	  | ~Action | type    | userId                                             |
+	  | RowAdd  | partner | {client2_partnerController_registerPartner_result} |
+	  | RowAdd  | partner | 3ABCD23                                            |
+	  | RowAdd  | partner | 3ABCD22                                            |
+	  | RowAdd  | partner | 3ABCD24                                            |
 
   Scenario: Can add payment card for user
 	Given "client1" controller "userController" action "addPaymentCard" invoked with parameters

@@ -23,15 +23,12 @@ import io.viewserver.core.Utils;
 import io.viewserver.operators.IOperator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.operators.IOutput;
-import io.viewserver.operators.rx.RxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by nick on 14/10/15.
@@ -100,7 +97,7 @@ public class CatalogHolder implements ICatalog {
     }
 
     @Override
-    public Observable<IOperator> getOperatorObservable(String name) {
+    public Observable<IOperator> waitForOperatorAtThisPath(String name) {
         int slash = name.indexOf('/');
         ICatalog catalog = this;
         if (slash == 0) {
@@ -114,7 +111,7 @@ public class CatalogHolder implements ICatalog {
     private Observable<IOperator> getFromPath(ICatalog operator,String[] parts, int index){
         String part = parts[index];
         if(index == parts.length -1){
-            return operator.waitForOperator(part);
+            return operator.waitForOperatorInThisCatalog(part);
         }
         return operator.waitForChild(part).flatMap(c-> getFromPath(c,parts, index+1));
     }
@@ -171,7 +168,7 @@ public class CatalogHolder implements ICatalog {
 
 
     @Override
-    public Observable<IOperator> waitForOperator(String name) {
+    public Observable<IOperator> waitForOperatorInThisCatalog(String name) {
         if(operatorsByName.containsKey(name)){
             return rx.Observable.just(operatorsByName.get(name));
         }

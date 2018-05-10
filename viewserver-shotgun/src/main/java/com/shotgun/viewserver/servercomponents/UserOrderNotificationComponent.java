@@ -1,4 +1,163 @@
 package com.shotgun.viewserver.servercomponents;
 
-public class UserOrderNotificationComponent {
+import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.maps.LatLng;
+import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.contracts.OrderNotificationContract;
+import com.shotgun.viewserver.order.domain.BasicOrder;
+import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.UserDataSource;
+import com.shotgun.viewserver.user.ProductSpreadFunction;
+import com.shotgun.viewserver.user.User;
+import io.viewserver.datasource.DataSource;
+import io.viewserver.datasource.DataSourceHelper;
+import io.viewserver.datasource.IDataSourceRegistry;
+import io.viewserver.execution.ReportContext;
+import io.viewserver.execution.nodes.IndexOutputNode;
+import io.viewserver.expression.function.Distance;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.IOutput;
+import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.server.components.IBasicServerComponents;
+import io.viewserver.server.components.IDataSourceServerComponents;
+import io.viewserver.server.components.IServerComponent;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Subscription;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class UserOrderNotificationComponent implements IServerComponent, OrderNotificationContract {
+    private IDataSourceServerComponents components;
+    private IBasicServerComponents basicServerComponents;
+    private static final Logger log = LoggerFactory.getLogger(UserOrderNotificationComponent.class);
+    private List<Subscription> subscriptions = new ArrayList<>();
+    private HashMap<String,Subscription> subscriptionsByUserId = new HashMap<>();
+    private IMessagingController messagingController;
+
+    public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents) {
+        this.components = components;
+        this.basicServerComponents = basicServerComponents;
+        this.messagingController = controllersComponents.getMessagingController();
+    }
+
+    @Override
+    public void start() {
+        String operatorPath = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, DataSource.TABLE_NAME);
+        rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(operatorPath);
+        log.info("Waiting for user operator " + operatorPath);
+        this.subscriptions.add(result.subscribe(operator -> {
+            log.info("Found for user operator "  + operatorPath);
+            listenForUsers(operator);
+        }));
+    }
+
+    private void listenForUsers(IOperator operator) {
+
+        IOutput out = operator.getOutput("out");
+        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "range", "latitude", "longitude").
+                filter(ev-> Arrays.asList(EventType.ROW_ADD,EventType.ROW_UPDATE).contains(ev.getEventType())).subscribe(ev -> {
+            onUserAdded((HashMap)ev.getEventData());
+        }));
+        this.subscriptions.add(out.observable("userId").
+                filter(ev-> Arrays.asList(EventType.ROW_REMOVE).contains(ev.getEventType())).subscribe(ev -> {
+            onUserRemoved((HashMap)ev.getEventData());
+        }));
+    }
+
+    private void onUserAdded(HashMap userMap) {
+        User user = JSONBackedObjectFactory.create(userMap, User.class);
+        log.info("Found for user - " + user.getUserId());
+        listenForUserProducts(user);
+    }
+    private void onUserRemoved(HashMap userMap) {
+        User user = JSONBackedObjectFactory.create(userMap, User.class);
+        if(subscriptionsByUserId.containsKey(user.getUserId())){
+            subscriptionsByUserId.get(user.getUserId()).unsubscribe();
+        }
+    }
+
+    private void listenForUserProducts(User user) {
+        if(subscriptionsByUserId.containsKey(user.getUserId())){
+            subscriptionsByUserId.get(user.getUserId()).unsubscribe();
+        }
+        this.components.onDataSourcesBuilt(OrderDataSource.NAME,UserDataSource.NAME).subscribe(c-> {
+            rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(IDataSourceRegistry.getOperatorPath(OrderDataSource.NAME, DataSource.INDEX_NAME));
+
+            List<String> productIds  = ProductSpreadFunction.getProductIds(user.getSelectedContentTypes());
+            if(productIds.size() == 0){
+                log.info("No products found for user " + user.getUserId() + " no notifications will be sent");
+                return;
+            }
+            log.info("Found for user - " + user.getUserId()  + " with products " + String.join(",",productIds));
+            IndexOperator.QueryHolder[] queryHolders = DataSourceHelper.getQueryHolders(components.getDataSourceRegistry().get(OrderDataSource.NAME), Arrays.asList(getDimensionsForProductIds(productIds)),basicServerComponents.getExecutionContext().getDimensionMapper());
+            AtomicReference<Subscription> subscribe1 = new AtomicReference<>();
+            Subscription subscribe = result.subscribe(operator -> {
+                String nameForQueryHolders = IndexOutputNode.getNameForQueryHolders(Arrays.asList(queryHolders));
+                log.info("Subscribing user - " + user.getUserId() + " to index output " + nameForQueryHolders);
+                IOutput out = ((IndexOperator) operator).getOrCreateOutput(nameForQueryHolders, queryHolders);
+                subscribe1.set(out.observable("orderId", "orderDetails").
+                        filter(ev -> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).subscribe(ev -> {
+                    HashMap eventData = (HashMap) ev.getEventData();
+                    BasicOrder order = JSONBackedObjectFactory.create((HashMap) eventData.get("orderDetails"), BasicOrder.class);
+                    log.info("Found order - " + order.getOrderId() + " for user " + user.getUserId() + " with products " + String.join(",", productIds));
+                    notifyUserOfNewOrder(order, user);
+                }, err -> log.error("Issue subscribing to orders {}", err)));
+
+                this.subscriptions.add(subscribe1.get());
+            }, err -> log.error("Issue subscribing to users {}", err));
+
+
+            subscriptionsByUserId.put(user.getUserId(), new Subscription() {
+                @Override
+                public void unsubscribe() {
+                    if(subscribe1.get() != null){
+                        subscribe1.get().unsubscribe();
+                    }
+                    if(subscribe != null){
+                        subscribe.unsubscribe();
+                    }
+                }
+
+                @Override
+                public boolean isUnsubscribed() {
+                    return false;
+                }
+            });});
+    }
+
+    private ReportContext.DimensionValue getDimensionsForProductIds(List<String> productIds) {
+        return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
+    }
+
+    private void notifyUserOfNewOrder(BasicOrder order, User user) {
+        LatLng userHome = user.getLocation();
+        DeliveryAddress origin = order.getOrigin();
+        double k1 = Distance.distance(userHome.getLatitude(), userHome.getLongitude(), origin.getLatitude(), origin.getLongitude(), "K");
+        boolean k   = k1 <= user.getRange();
+        if(k){
+            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job Listing", "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you");
+        }
+;    }
+
+    @Override
+    public void stop() {
+        this.subscriptions.forEach(c-> c.unsubscribe());
+    }
+
+    @Override
+    public Logger getLogger() {
+        return log;
+    }
+
+    @Override
+    public IMessagingController getMessagingController() {
+        return messagingController;
+    }
 }

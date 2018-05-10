@@ -26,6 +26,9 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +54,7 @@ public abstract class PeerSession implements IPeerSession {
     private final Set<DeserialiserOperator> deserialisers = new HashSet<>();
     private boolean isTornDown;
     private int nextCommandId = 0;
+    private Subject disconnectSubject;
 
     protected PeerSession(IChannel channel, IExecutionContext  executionContext, ICatalog systemCatalog, Network network, int connectionId,
                           IMessageManager messageManager) {
@@ -60,7 +64,7 @@ public abstract class PeerSession implements IPeerSession {
         this.systemCatalog = systemCatalog;
         this.connectionId = connectionId;
         this.messageManager = messageManager;
-
+        this.disconnectSubject = PublishSubject.create();
         messageManager.setPeerSession(this);
     }
 
@@ -153,6 +157,7 @@ public abstract class PeerSession implements IPeerSession {
     @Override
     public void fireDisconnection() {
         Set<IDisconnectionHandler> disconnectionHandlers = this.disconnectionHandlers;
+        disconnectSubject.onNext(null);
         if (disconnectionHandlers != null) {
             disconnectionHandlersCopy.addAll(disconnectionHandlers);
             int count = disconnectionHandlersCopy.size();
@@ -161,6 +166,7 @@ public abstract class PeerSession implements IPeerSession {
             }
             disconnectionHandlersCopy.clear();
         }
+
     }
 
     @Override
@@ -185,6 +191,12 @@ public abstract class PeerSession implements IPeerSession {
                 authenticationHandler.handle(this, authenticationToken);
             }
         }
+    }
+
+
+    @Override
+    public Observable onDisconnect() {
+        return disconnectSubject;
     }
 
     @Override

@@ -27,7 +27,6 @@ import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.shotgun.viewserver.user.UserController.waitForUser;
 
@@ -70,7 +69,7 @@ public class LoginController {
         rx.Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME);
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
         return ListenableFutureObservable.to(
-                datasources.flatMap(obj -> systemcatalog.getOperatorObservable(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
+                datasources.flatMap(obj -> systemcatalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
                                 rec -> {
@@ -90,11 +89,23 @@ public class LoginController {
         return iDatabaseUpdater.scheduleAddOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
+    private void setUserOffLine(String userId) {
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("online", false)
+                .addValue("userStatus", UserStatus.OFFLINE.name());
+
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+    }
+
     private String setupContext(String userId,IPeerSession session) {
+        session.onDisconnect().take(1).subscribe(c-> setUserOffLine(userId));
         ControllerContext.set("userId", userId,session);
         ControllerContext.setFactory("user", () -> getUser(userId), session);
         return userId;
     }
+
+
 
     private User getUser(String userId) {
         KeyedTable keyedTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);

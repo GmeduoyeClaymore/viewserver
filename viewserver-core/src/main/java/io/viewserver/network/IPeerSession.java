@@ -22,6 +22,7 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.messages.IMessage;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
+import rx.Observable;
 
 /**
  * Created by bemm on 07/10/2014.
@@ -58,6 +59,8 @@ public interface IPeerSession {
     IMessageManager getMessageManager();
 
     void addDisconnectionHandler(PeerSession.IDisconnectionHandler disconnectionHandler);
+
+    Observable onDisconnect();
 
     ICatalog getSystemCatalog();
 

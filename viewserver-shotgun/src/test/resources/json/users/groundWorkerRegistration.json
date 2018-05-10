@@ -8,6 +8,8 @@
     "password": "welcome",
     "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
+    "latitude": 51.4857236,
+    "longitude": -0.2123406,
     "selectedContentTypes": "objref://json/users/groundWorker_selectedContentTypes.json"
   },
   "bankAccount": {

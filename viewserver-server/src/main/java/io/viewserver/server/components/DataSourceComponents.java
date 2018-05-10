@@ -59,7 +59,7 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                 sb.append(",");
             }
             sb.append(ds);
-            observablesToWaitFor.add(dataSourceRegistry.getStatusChanged().filter(c-> c.getName().equals(ds) && isBuilt(dataSourceRegistry.get(ds))).take(1));
+            observablesToWaitFor.add(onDataSourceBuilt(ds));
         }
 
         log.info(String.format("WAITING - Data sources %s Waiting for %s",dataSourceName,sb));
@@ -72,6 +72,32 @@ public class DataSourceComponents implements IDataSourceServerComponents{
             }
         };
         return Observable.zip(observablesToWaitFor, onCompletedAll);
+    }
+
+    @Override
+    public Observable<Object> onDataSourcesBuilt(String... toWaitFor) {
+        List<Observable<IDataSource>> observablesToWaitFor = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for(String ds : toWaitFor){
+            if(sb.length() > 0){
+                sb.append(",");
+            }
+            sb.append(ds);
+            observablesToWaitFor.add(onDataSourceBuilt(ds));
+        }
+
+        FuncN<?> onCompletedAll = new FuncN<Object>() {
+            @Override
+            public Object call(Object... objects) {
+                log.info(String.format("COMPLETED FINISHED WAITING %s ",sb));
+                return true;
+            }
+        };
+        return Observable.zip(observablesToWaitFor, onCompletedAll);
+    }
+
+    public Observable<IDataSource> onDataSourceBuilt(String ds) {
+        return dataSourceRegistry.getStatusChanged().filter(c-> c.getName().equals(ds) && isBuilt(dataSourceRegistry.get(ds))).take(1);
     }
 
     private void runDataSource(final IDataSource dataSource) {

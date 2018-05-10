@@ -8,6 +8,8 @@ import io.viewserver.schema.column.IRowFlags;
 import java.util.HashMap;
 import java.util.List;
 
+import static io.viewserver.core.Utils.fromArray;
+
 public class OperatorEvent{
     private EventType eventType;
     private Object eventData;

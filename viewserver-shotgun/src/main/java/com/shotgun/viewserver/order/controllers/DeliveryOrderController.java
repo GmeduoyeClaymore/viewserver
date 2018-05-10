@@ -13,13 +13,17 @@ import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.user.User;
 import com.shotgun.viewserver.user.UserPersistenceController;
-import com.shotgun.viewserver.user.UserTransformationController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static io.viewserver.core.Utils.fromArray;
 
@@ -76,6 +80,7 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
 
     @ControllerAction(path = "acceptResponse", isSynchronous = true)
     public void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+        AtomicReference<List<NegotiationResponse>> respondedResponses = new AtomicReference<>();
         this.transform(
                 orderId,
                 order -> {
@@ -83,6 +88,7 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
                         getLogger().warn(partnerId + " has not responded to this order aborting");
                         return false;
                     }
+                    respondedResponses.set(Arrays.stream(order.getResponses()).filter(c -> c.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)).collect(Collectors.toList()));
                     User partner = getUserForId(partnerId,User.class);
                     if(partner == null){
                         throw new RuntimeException("Unable to find user for id " + partnerId);
@@ -96,12 +102,10 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
                     return  true;
                 },
                 order -> {
-                    fromArray(order.getResponses()).forEach(
+                    respondedResponses.get().forEach(
                             res -> {
                                 if(!res.getPartnerId().equals(partnerId)){
-                                    if(res.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)) {
-                                        notifyJobRejected(orderId, res.getPartnerId());
-                                    }
+                                    notifyJobRejected(orderId, res.getPartnerId());
                                 }else{
                                     notifyJobAccepted(orderId,res.getPartnerId());
 

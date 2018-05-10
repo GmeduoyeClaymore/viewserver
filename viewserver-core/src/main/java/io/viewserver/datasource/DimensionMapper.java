@@ -84,7 +84,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int mapString(String namespace, String dimensionName, String value) {
-        StringHashSet lookup = (StringHashSet) getLookup(namespace, dimensionName);
+        StringHashSet lookup = (StringHashSet) getLookup(namespace, dimensionName, ContentType.String);
         int index = lookup.addString(value);
         if (index < 0) {
             index = -index - 1;
@@ -100,7 +100,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int mapByte(String namespace, String dimensionName, byte value) {
-        ByteHashSet lookup = (ByteHashSet) getLookup(namespace, dimensionName);
+        ByteHashSet lookup = (ByteHashSet) getLookup(namespace, dimensionName, ContentType.Byte);
         int index = lookup.addByte(value);
         if (index < 0) {
             index = -index - 1;
@@ -116,7 +116,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int mapShort(String namespace, String dimensionName, short value) {
-        ShortHashSet lookup = (ShortHashSet) getLookup(namespace, dimensionName);
+        ShortHashSet lookup = (ShortHashSet) getLookup(namespace, dimensionName, ContentType.Short);
         int index = lookup.addShort(value);
         if (index < 0) {
             index = -index - 1;
@@ -132,7 +132,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int mapInt(String namespace, String dimensionName, int value) {
-        IntHashSet lookup = (IntHashSet) getLookup(namespace, dimensionName);
+        IntHashSet lookup = (IntHashSet) getLookup(namespace, dimensionName, ContentType.Int);
         int index = lookup.addInt(value);
         if (index < 0) {
             index = -index - 1;
@@ -148,7 +148,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public int mapLong(String namespace, String dimensionName, long value) {
-        LongHashSet lookup = (LongHashSet) getLookup(namespace, dimensionName);
+        LongHashSet lookup = (LongHashSet) getLookup(namespace, dimensionName, ContentType.Long);
         int index = lookup.addLong(value);
         if (index < 0) {
             index = -index - 1;
@@ -164,7 +164,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     public HashPrimitiveIterator getAllValues(String namespace, String dimensionName, ContentType contentType) {
-        Object lookup = getLookup(namespace, dimensionName);
+        Object lookup = getLookup(namespace, dimensionName, contentType);
         switch (contentType) {
             case Byte: {
                 return (HashPrimitiveIterator) ((ByteHashSet)lookup).iterator();

@@ -49,6 +49,8 @@ public interface UserPersistenceController{
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
                 .addValue("vehicle", user.getVehicle())
+                .addValue("latitude", user.getLatitude())
+                .addValue("longitude", user.getLongitude())
                 .addValue("online", user.getOnline())
                 .addValue("pendingMessages", user.getPendingMessages())
                 .addValue("range", user.getRange())

@@ -16,7 +16,6 @@
 
 package io.viewserver.operators;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import org.slf4j.Logger;
@@ -182,8 +181,8 @@ public abstract class OperatorBase implements IOperator {
         }
     }
 
-    public Observable<IOperator> getOperatorObservable(String name) {
-        return catalog.getOperatorObservable(name);
+    public Observable<IOperator> waitForOperatorAtThisPath(String name) {
+        return catalog.waitForOperatorAtThisPath(name);
     }
 
     protected void commit() {

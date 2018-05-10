@@ -34,11 +34,19 @@ public class ValidationOperatorRow {
     }
 
     public int getRowId(String rowKeyField) {
-        Object val = values.get(rowKeyField);
-        if(val == null){
-            throw new RuntimeException("Unable to find key field " + rowKeyField + " in row " + values);
+        StringBuilder sb = new StringBuilder();
+        String[] parts = rowKeyField.split(",");
+        for(String part : parts){
+            if(sb.length() > 0){
+                sb.append(",");
+            }
+            String idString = (String) values.get(part);
+            if("".equals(idString) || idString == null){
+                throw new RuntimeException("Row does not contain a field named " + part);
+            }
+            sb.append(idString);
         }
-        return ValidationUtils.rowKeyHash(val + "_" + action.name());
+        return ValidationUtils.rowKeyHash(sb + "_" + action.name());
     }
 
     public HashMap<String, Object> getValues() {

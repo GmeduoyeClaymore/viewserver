@@ -40,7 +40,7 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IMessagingController getMessagingController() {
-        return new MockMessagingController(databaseUpdater);
+        return new MockMessagingController(databaseUpdater, basicServerComponents.getServerCatalog());
     }
 
     @Override

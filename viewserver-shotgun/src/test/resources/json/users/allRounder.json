@@ -8,7 +8,9 @@
     "password": "welcome",
     "dob": "1990-04-16T15:06:13.000Z",
     "range": 50,
-    "selectedContentTypes": "objref://json/users/allRounder_selectedContentTypes.json"
+    "selectedContentTypes": "objref://json/users/allRounder_selectedContentTypes.json",
+    "latitude": 51.4857236,
+    "longitude": -0.2123406
   },
   "vehicle": {
     "dimensions": {

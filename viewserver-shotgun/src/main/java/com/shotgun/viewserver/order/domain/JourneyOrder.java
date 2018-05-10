@@ -13,7 +13,6 @@ import java.util.List;
 
 public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
 
-    DeliveryAddress getOrigin();
     DeliveryAddress getDestination();
 
     default JourneyOrder logJourneyEnd(Date date, LatLng location, DistanceAndDuration duration){

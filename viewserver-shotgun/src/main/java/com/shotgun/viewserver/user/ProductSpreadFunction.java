@@ -43,26 +43,33 @@ public class ProductSpreadFunction implements ISpreadFunction {
 
     @Override
     public List<Map.Entry<Column, Object[]>> getValues(int row, ColumnHolder columnHolder) {
-        List<String> productIdsList = new ArrayList<>();
         String contentTypeJSONString = (String) ColumnHolderUtils.getValue(columnHolder, row);
         if(contentTypeJSONString ==null || "".equals(contentTypeJSONString)){
             return new ArrayList<>();
         }
         HashMap<String, Object> contentTypeConfiguration = ControllerUtils.mapDefault(contentTypeJSONString);
-        for(Map.Entry<String, Object> str : contentTypeConfiguration.entrySet()){
-            Object contentTypeConfig = str.getValue();
-            if(contentTypeConfig != null){
-                Map<String,Object> config = (Map<String, Object>) contentTypeConfig;
-                Object productIdsForContentType = config.get("selectedProductIds");
-                if(productIdsForContentType != null){
-                    List<String> productIds = (List<String>) productIdsForContentType;
-                    productIdsList.addAll(productIds);
-                }
-            }
-        }
+        List<String> productIdsList = getProductIds(contentTypeConfiguration);
         List<HashMap.Entry<Column,Object[]>> result = new ArrayList<>();
         result.add(new HashMap.SimpleEntry(producId, productIdsList.toArray()));
         return result;
+    }
+
+    public static List<String> getProductIds(HashMap<String, Object> contentTypeConfiguration) {
+        List<String> productIdsList = new ArrayList<>();
+        if(contentTypeConfiguration != null) {
+            for (Map.Entry<String, Object> str : contentTypeConfiguration.entrySet()) {
+                Object contentTypeConfig = str.getValue();
+                if (contentTypeConfig != null) {
+                    Map<String, Object> config = (Map<String, Object>) contentTypeConfig;
+                    Object productIdsForContentType = config.get("selectedProductIds");
+                    if (productIdsForContentType != null) {
+                        List<String> productIds = (List<String>) productIdsForContentType;
+                        productIdsList.addAll(productIds);
+                    }
+                }
+            }
+        }
+        return productIdsList;
     }
 
 }
