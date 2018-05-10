@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { TextInput } from 'react-native';
+import {Input} from 'native-base';
 
 export const formatPrice = (price) => {
   if (!price || price === 'undefined'){
@@ -10,11 +10,6 @@ export const formatPrice = (price) => {
 export class CurrencyInput extends Component{
   constructor(props){
     super(props);
-
-    this.setFormattedPriceValue = this.setFormattedPriceValue.bind(this);
-    this.clearFormattedPriceValue = this.clearFormattedPriceValue.bind(this);
-    this.setFormattedPriceValueFromProps = this.setFormattedPriceValueFromProps.bind(this);
-    this.onValueChanged = this.onValueChanged.bind(this);
     this.state = {
       formattedPrice: undefined
     };
@@ -27,7 +22,8 @@ export class CurrencyInput extends Component{
   componentWillReceiveProps(newProps){
     this.setFormattedPriceValueFromProps(newProps);
   }
-  setFormattedPriceValueFromProps(newProps){
+
+  setFormattedPriceValueFromProps = (newProps) => {
     const {initialPrice} = newProps;
     if (this.props.initialPrice != newProps.initialPrice){
       const formattedPrice = formatPrice(initialPrice / 100);
@@ -35,12 +31,12 @@ export class CurrencyInput extends Component{
     }
   }
 
-  clear(){
+  clear = () => {
     this.clearFormattedPriceValue();
     this.setState({price: undefined});
   }
 
-  setFormattedPriceValue(){
+  setFormattedPriceValue = () => {
     const {disabled} = this.props;
     if (disabled == true){
       return;
@@ -54,7 +50,7 @@ export class CurrencyInput extends Component{
     this.setState({formattedPrice});
   }
 
-  clearFormattedPriceValue(){
+  clearFormattedPriceValue = () => {
     const {disabled} = this.props;
     if (disabled == true){
       return;
@@ -62,19 +58,18 @@ export class CurrencyInput extends Component{
     this.setState({formattedPrice: undefined});
   }
 
-  onValueChanged(t){
-    console.log(t);
+  onValueChanged = (t) => {
     this.setState({price: t});
   }
 
   render(){
     const {formattedPrice} = this.state;
     const {style = {}, ...rest} = this.props;
-    return <TextInput
+    return <Input
       keyboardType='phone-pad'
       {...rest}
       value={formattedPrice}
-      style={{...style, fontWeight: 'bold', fontSize: 17, paddingTop: 5, paddingBottom: 5}}
+      style={[style, styles.amountInput]}
       onFocus={this.clearFormattedPriceValue}
       onBlur={this.setFormattedPriceValue}
       onChangeText={this.onValueChanged}
@@ -84,9 +79,9 @@ export class CurrencyInput extends Component{
 
 const styles = {
   amountInput: {
-    borderBottomWidth: 0,
-    paddingLeft: 0,
-    fontSize: 18,
     fontWeight: 'bold',
+    fontSize: 20,
+    paddingTop: 10,
+    borderBottomWidth: 0,
   }
 };

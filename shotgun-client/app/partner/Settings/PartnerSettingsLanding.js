@@ -5,7 +5,7 @@ import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
 import {Icon, AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
-import UserStatusControl from 'common/components/relationships/UserStatusControl';
+//import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
 const feedbackSubject = '';//`Partner Feedback from ${DeviceInfo.getApplicationName()} version ${DeviceInfo.getReadableVersion()} running on ${DeviceInfo.getModel()}${DeviceInfo.isEmulator() ? ' emulator' : ''} ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
@@ -35,9 +35,9 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
-        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
+      {/*  <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <UserStatusControl/>
-        </ListItem>
+        </ListItem>*/}
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>

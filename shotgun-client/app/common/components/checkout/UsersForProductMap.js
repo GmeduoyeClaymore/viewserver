@@ -1,6 +1,6 @@
 import React, {Component}  from 'react';
 import {withExternalState} from 'custom-redux';
-import { Container, Button, Text, Grid, Col, Row, Header, Title, Body, Left, Item} from 'native-base';
+import { Container, Button, Text, Grid, Col, Row, Item, Input} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -18,7 +18,7 @@ class UsersForProductMap extends Component{
   getLocationText = (address, addressKey, placeholder) => {
     return  <Item style={styles.inputRow} onPress={() => this.doAddressLookup(placeholder, addressKey)}>
       <Icon name="pin" style={styles.inputPin} originPin />
-      {address && address.line1 !== undefined ? <Col size={30} style={{}}>
+      {address && address.line1 !== undefined ? <Col size={30}>
         <Input placeholder='flat/business' style={styles.flatInput} value={address.flatNumber} placeholderTextColor={shotgun.silver} onChangeText={(value) => this.onChangeText(addressKey, 'flatNumber', value)} validationSchema={validationSchema.flatNumber} maxLength={30}/>
       </Col> : null}
       <Col size={70}>
@@ -39,7 +39,7 @@ class UsersForProductMap extends Component{
 
   render(){
     const {order, errors, next, client, history} = this.props;
-    const {origin, orderProduct} = order;
+    const {origin} = order;
     const disableDoneButton = !origin || origin.line1 == undefined;
 
     return <Container>
@@ -53,7 +53,7 @@ class UsersForProductMap extends Component{
               {this.getLocationText(origin, 'origin', 'Enter job location')}
             </Col>
           </Row>
-          <UserRelationshipsControl {...this.props} client={client} geoLocation={origin} selectedProduct={orderProduct} onPressAssignUser={this.assignDeliveryToUser}/>
+          <UserRelationshipsControl {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
       </Grid>
@@ -77,17 +77,23 @@ const styles = {
     right: 15,
     zIndex: 2
   },
+  inputRow: {
+    backgroundColor: shotgun.brandPrimary,
+    padding: 10
+  },
   backButton: {
     position: 'absolute',
     left: 0,
     top: 6,
     zIndex: 2
   },
-  inputRow: {
-    marginBottom: 15,
-    backgroundColor: shotgun.brandPrimary,
-    borderWidth: 2,
-    padding: 10,
+  flatInput: {
+    padding: 0,
+    height: 12,
+    lineHeight: 18
+  },
+  inputPin: {
+    paddingRight: 15
   },
   locationTextPlaceholder: {
     color: shotgun.silver

@@ -2,14 +2,7 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import locationImg from 'common/assets/location.png';
 import MapView from 'react-native-maps';
 import React, {Component} from 'react';
-import {Dimensions} from 'react-native';
 import Logger from 'common/Logger';
-const {width, height} = Dimensions.get('window');
-
-
-const ASPECT_RATIO = width / height;
-const LATITUDE_DELTA = 0.0322;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export default class MapDetails extends Component{
   constructor(props){

@@ -12,9 +12,6 @@ import UserRelationshipDetail from './UserRelationshipDetail';
 const SubViewPath = 'RelationshipView/';
 
 class UserRelationships extends Component{
-  static InitialState = {
-    showAll: true
-  }
   constructor(props){
     super(props);
     this.UserViews = [
@@ -22,7 +19,6 @@ class UserRelationships extends Component{
       {'Detail': UserRelationshipDetail, hidden: true},
     ];
   }
-
 
   componentWillReceiveProps = (newProps) => {
     const {distance} = newProps;
@@ -74,23 +70,6 @@ class UserRelationships extends Component{
     }
   }
 
-  goToTabNamed = (name) => {
-    const {history, path} = this.props;
-    history.replace( `${path}/${SubViewPath}${name}X`);
-  }
-
-  getSelectedTabIndex = () => {
-    const {history} = this.props;
-    const currentPath = history.location.pathname;
-    const indexOf =  currentPath.lastIndexOf(SubViewPath);
-    if (!~indexOf){
-      return 0;
-    }
-    const viewKey = currentPath.substring(indexOf + SubViewPath.length, currentPath.length - 1);
-    const selectedIndex = this.UserViews.findIndex(c => Object.keys(c)[0] === viewKey);
-    return !!~selectedIndex ? selectedIndex : 0;
-  }
-
   setShowAll = (showAll) => {
     this.setState({showAll}, () => this.updateSubscription());
   }
@@ -101,7 +80,7 @@ class UserRelationships extends Component{
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return    <Grid>
+    return <Grid>
       <Row>
         <Row style={styles.showAllView}>
           <Button style={styles.showAllButton} light={showAll} onPress={() => this.setShowAll(false)}>
@@ -112,7 +91,7 @@ class UserRelationships extends Component{
           </Button>
         </Row>
 
-        <ReduxRouter  name="UserRelationshipRouter" defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions}  selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
+        <ReduxRouter  name="UserRelationshipRouter" defaultRoute={`${SubViewPath}${Object.keys(UserViews[0])[0]}X`} {...this.props}  userRelationshipBasePath={path}  path={path} options={oldOptions} selectedUser={selectedUser} setSelectedUser={this.setSelectedUser}>
           {UserViews.map( (c) => <Route key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
         </ReduxRouter>
       </Row>
@@ -155,6 +134,7 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 export const UserRelationshipsControl =  withExternalState(mapStateToProps)(UserRelationships);
+
 export class UserRelationshipsStandalone extends Component{
   constructor(props){
     super(props);
@@ -162,9 +142,7 @@ export class UserRelationshipsStandalone extends Component{
 
   render(){
     return <View style={{ flex: 1}}>
-      <Header>
-        <Body><Title>{'Nearby Users'}</Title></Body>
-      </Header>
+      <Title style={{backgroundColor: 'transparent', position: 'absolute', top: 10, zIndex: 3}}>{'Nearby Users'}</Title>
       <UserRelationshipsControl {...this.props}/>
     </View>;
   }

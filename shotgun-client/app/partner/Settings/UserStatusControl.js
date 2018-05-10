@@ -22,10 +22,6 @@ class UserRelationships extends Component{
     }
   }
 
-  setSelectedUser(selectedUser){
-    this.setState({selectedUser, selectedTabIndex: 2});
-  }
-
   updateStatusMessage(statusMessage){
     this.setState({statusMessage});
   }

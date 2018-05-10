@@ -64,7 +64,7 @@ class UserRelationshipMap extends Component{
     } catch (error){
       Logger.info('Encountered error in fit map ' + error);
     }
-  }, 1000);
+  }, 200);
 
   getLocations = (props) => {
     const {me, selectedUser} = props;
@@ -81,9 +81,8 @@ class UserRelationshipMap extends Component{
   }
 
   render(){
-    const {relatedUsers = [], setSelectedUser, geoLocation, height, width, isTransitioning} = this.props;
-    let {me} = this.props;
-    me = geoLocation && geoLocation.latitude ? geoLocation : me;
+    const {relatedUsers = [], setSelectedUser, me, height, width, isTransitioning, order = {}} = this.props;
+    const {origin = {}} = order;
     const {latitude, longitude} = me;
 
     const initialRegion = {
@@ -94,10 +93,11 @@ class UserRelationshipMap extends Component{
     };
 
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {this.fitMap(this.props);}}
-      region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuidlings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
-      {relatedUsers.map( (user, i) =>
-        <MapView.Marker key={user.userId + '-' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }}>
-          <UserMarker user={user} />
+      region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
+      {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
+      {relatedUsers.map((user, i) =>
+        <MapView.Marker key={user.userId + '-' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }} anchor={{ x: 0.5, y: 1 }}>
+          <UserMarker user={user} productId={order ? order.productId : undefined} />
         </MapView.Marker>)}
     </MapView>;
   }
