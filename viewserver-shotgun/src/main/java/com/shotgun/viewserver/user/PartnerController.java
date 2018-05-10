@@ -80,7 +80,7 @@ public class PartnerController {
                 try{
                     ControllerContext.create(context);
                     user.set("vehicle",vehicle);
-                    String userId = userController.addOrUpdateUser(user);
+                    String userId = userController.addOrUpdateUser(user, user.getPassword());
                     ControllerContext.set("userId",userId);
                     address.set("isDefault",true);
                     deliveryAddressController.addOrUpdateDeliveryAddress(address);

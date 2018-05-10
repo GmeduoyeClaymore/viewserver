@@ -31,14 +31,14 @@ public interface UserTransformationController extends UserPersistenceController{
     }
     default <T extends User> T transform(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
 
-        T order = getUserForId(userId, orderClass);
+        T user = getUserForId(userId, orderClass);
 
-        if(tranformation.test(order)){
-            addOrUpdateUser(order);
+        if(tranformation.test(user)){
+            addOrUpdateUser(user, null);
         }
 
-        afterTransform.accept(order);
-        return order;
+        afterTransform.accept(user);
+        return user;
     }
 
 

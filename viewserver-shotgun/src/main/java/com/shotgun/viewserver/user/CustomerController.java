@@ -56,7 +56,7 @@ public class CustomerController {
         }
         user.set("contactNo",international_format_number);
 
-        String userId = userController.addOrUpdateUser(user);
+        String userId = userController.addOrUpdateUser(user, user.getPassword());
         ControllerContext.set("userId", userId);
 
         deliveryAddress.set("isDefault",true);

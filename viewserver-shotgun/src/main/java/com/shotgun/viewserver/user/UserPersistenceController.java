@@ -28,7 +28,7 @@ public interface UserPersistenceController{
     }
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
-    default String addOrUpdateUser(@ActionParam(name = "user") User user) {
+    default String addOrUpdateUser(@ActionParam(name = "user") User user, @ActionParam(name = "password") String password) {
         getLogger().debug("addOrUpdateUser user: " + user.getEmail());
         if(user.getUserId() == null) {
             user.set("userId", ControllerUtils.generateGuid());
@@ -45,7 +45,6 @@ public interface UserPersistenceController{
                 .addValue("lastName", user.getLastName())
                 .addValue("dob", user.getDob())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
-                .addValue("password", ControllerUtils.encryptPassword(user.getPassword()))
                 .addValue("contactNo", user.getContactNo())
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
@@ -58,6 +57,10 @@ public interface UserPersistenceController{
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl())
                 .addValue("chargePercentage", user.getChargePercentage());
+
+        if(password != null){
+            userRecord.addValue("password", ControllerUtils.encryptPassword(password));
+        }
 
         getDatabaseUpdater().addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
         return user.getUserId();

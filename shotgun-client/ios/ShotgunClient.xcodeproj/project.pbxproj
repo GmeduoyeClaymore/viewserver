@@ -1014,7 +1014,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 3DYD5U82S8;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1887,7 +1887,8 @@
 			baseConfigurationReference = 9748DF0FE1F116ACB65A0632 /* Pods-ShotgunClient.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
@@ -1908,8 +1909,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "3ba159c6-26a3-481c-8419-f7bbb6f090ae";
+				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1920,8 +1921,9 @@
 			baseConfigurationReference = 1BB90B387A975FC449EE9CA2 /* Pods-ShotgunClient.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3DYD5U82S8;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1941,8 +1943,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "3ba159c6-26a3-481c-8419-f7bbb6f090ae";
+				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

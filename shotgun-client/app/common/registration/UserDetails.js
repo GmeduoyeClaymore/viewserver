@@ -104,7 +104,7 @@ class UserDetails extends Component{
             <Col>
               <Item stackedLabel>
                 <Label>Date of birth</Label>
-                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={false} bold
+                <ValidatingInput onPress={() => this.toggleDatePicker(true)} editable={true} bold
                   value={user.dob ? moment(user.dob).format('DD MMM YY') : undefined}
                   placeholder="Enter Date Of Birth" validateOnMount={user.dob !== undefined}
                   validationSchema={partnervalidationSchema.dob} maxLength={30}/>

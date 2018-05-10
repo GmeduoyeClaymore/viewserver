@@ -179,7 +179,7 @@ public class UserController implements UserTransformationController, RatedOrderC
             String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
             user.set("imageUrl", imageUrl);
         }
-        return this.addOrUpdateUser(user);
+        return this.addOrUpdateUser(user, null);
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)

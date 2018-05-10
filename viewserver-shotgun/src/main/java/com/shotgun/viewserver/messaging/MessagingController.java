@@ -109,7 +109,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
                     sendPayload(message.toSimpleMessage());
                 }
                 user.clearPendingMessages();
-                addOrUpdateUser(user);
+                addOrUpdateUser(user, null);
             }
             return userRecord;
         }));
