@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, TouchableHighlight, Image} from 'react-native';
+import {View, TouchableHighlight} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions, getNavigationProps, getDaoState} from 'common/dao';
@@ -7,15 +7,13 @@ import {withExternalState, Redirect} from 'custom-redux';
 import ProductListItem from './ProductListItem';
 import yup from 'yup';
 
-import {CategoryImages} from 'common/assets/img/Images';
-
 class ProductCategoryList extends Component{
   rowView = ({item: row}) => {
     const {categoryId, category} = row;
  
     return <TouchableHighlight key={categoryId} style={{flex: 1, flexDirection: 'row'}} onPress={() => this.navigateToCategory(row)} underlayColor={'#EEEEEE'}>
       <View style={{flexDirection: 'row', flex: 1, padding: 0}}>
-        <Image source={CategoryImages[row.categoryId]} style={styles.image}/>
+        <Icon name={row.categoryId}/>
         <Text>{`${category}`}</Text>
       </View>
     </TouchableHighlight>;
@@ -84,11 +82,6 @@ const validationSchema = {
 };
 
 const styles = {
-  image: {
-    resizeMode: 'contain',
-    height: '70%',
-    width: '100%',
-  },
   pagingListView: {
     backgroundColor: '#FFFFFF',
     marginTop: 10
