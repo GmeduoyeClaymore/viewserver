@@ -157,6 +157,20 @@ export default class OrdersDao{
     return paymentStageId;
   }
 
+  partnerStartJob = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    const paymentStageId = this.client.invokeJSONCommand(controller, 'partnerStartJob', {orderId});
+    Logger.info(`Order ${orderId} has started job`);
+    return paymentStageId;
+  }
+
+  partnerCompleteJob = async ({orderId, orderContentTypeId}) =>  {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    const paymentStageId = this.client.invokeJSONCommand(controller, 'partnerCompleteJob', {orderId});
+    Logger.info(`Order ${orderId} has completed job`);
+    return paymentStageId;
+  }
+
   customerCompleteAndPay = async ({orderId, orderContentTypeId}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
     const paymentId = this.client.invokeJSONCommand(controller, 'customerCompleteAndPay', {orderId});

@@ -109,7 +109,7 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
   return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
     (response, idx)  => {
       const {partnerId, latitude, longitude, firstName, lastName, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
-      const canRespond = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(orderStatus) && responseStatus === 'RESPONDED';
+      const canRespond = responseStatus === 'RESPONDED';
       const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
       const imageStyle = styles.partnerImage;
       const statusStyle = ResponseStatusStyles[responseStatus] || ResponseStatusStyles.REJECTED;
@@ -123,7 +123,7 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
         </Col>
         <Col size={23}>
      
-          <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>
+          {!canRespond ? null : <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>}
           {responseStatus === 'ACCEPTED' ? <CancelResponse busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/> : null}
           {!canRespond ? null : <RejectPartner disabled={!canRespond}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>}
         </Col>

@@ -117,7 +117,7 @@ export default class Dao {
 
       this.rowEventSubscription =  (this.daoContext.adapt ?  this.daoContext.adapt(this.rowEventObservable) : this.rowEventObservable).subscribe((ev) => {
         if (this.dataSink.isSnapshotComplete || ev.Type == RxDataSink.DATA_RESET) {
-          this.subject.next(this.daoContext.mapDomainEvent(this.dataSink));
+          this.subject.next(this.daoContext.mapDomainEvent(this.dataSink, ev));
         }
       });
 

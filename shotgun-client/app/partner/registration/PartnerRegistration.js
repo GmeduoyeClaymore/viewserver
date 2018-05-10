@@ -10,6 +10,7 @@ import AddressLookup from 'common/components/maps/AddressLookup';
 import {registerNakedDao, register} from 'common/actions/CommonActions';
 import PartnerDao from 'partner/dao/PartnerDao';
 import ContentTypeDao from 'common/dao/ContentTypeDao';
+import NotificationsDao from 'common/dao/NotificationsDao';
 import {INITIAL_STATE} from './PartnerRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
@@ -26,6 +27,7 @@ class PartnerRegistration extends Component {
     const {dispatch, client} = this.props;
     registerNakedDao(dispatch, new PartnerDao(client));
     register(dispatch, new ContentTypeDao(client));
+    register(dispatch, new NotificationsDao(client));
     register(dispatch, new ProductCategoryDao(client));
     register(dispatch, new UserRelationshipDao(client));
     register(dispatch, new ProductDao(client), {});

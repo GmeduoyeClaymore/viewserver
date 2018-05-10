@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withExternalState, ReduxRouter, Route} from 'custom-redux';
 import { resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError } from 'common/dao';
-import {Container, Header, Left, Button, Body, Title, Content, Tab } from 'native-base';
+import {Container, Header, Left, Button, Body, Title, Content, Tab, Row, Text} from 'native-base';
 import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
-import OrderLifecycleView from 'common/components/orders/OrderLifecycleView';
+import PartnerOrderLifecycleView from 'common/components/orders/PartnerOrderLifecycleView';
 import { respondToOrder } from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
@@ -12,8 +12,11 @@ import PartnerPaymentStagesPanel from './PartnerPaymentStagesPanel';
 import PartnerPriceSummary from './PartnerPriceSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
 import DayRatePersonellOrderInProgress from './progress/DayRatePersonellOrderInProgress';
+import FixedPersonellOrderInProgress from './progress/FixedPersonellOrderInProgress';
 import PartnerJourneyOrderInProgress from './progress/PartnerJourneyOrderInProgress';
 import HireOrderInProgress from './progress/HireOrderInProgress';
+
+const ResponseRejected = ({order}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${order.customer.firstName} ${order.customer.lastName} Rejected`}</Text></Row>);
 
 class PartnerOrderDetail extends Component {
   constructor(props) {
@@ -41,7 +44,7 @@ class PartnerOrderDetail extends Component {
 
   onOrderRespond = async ({ negotiationAmount, negotiationDate }) => {
     const { order, history, dispatch, bankAccount, parentPath, path } = this.props;
-    const { orderId, orderContentTypeId, customer } = order;
+    const { orderId, orderContentTypeId } = order;
     if (bankAccount) {
       dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount, () => history.push({ pathname: path, state: { orderId } })));
     } else {
@@ -52,7 +55,7 @@ class PartnerOrderDetail extends Component {
   }
 
   render() {
-    const { order = {}, client, history, busy, orderId, busyUpdating, dispatch, errors } = this.props;
+    const { order = {},  history, busy, orderId, errors } = this.props;
     const { onOrderRespond, resources } = this;
     const { InProgressControlsFactory } = resources;
     const InProgressControls = InProgressControlsFactory ? InProgressControlsFactory(order) : null;
@@ -67,18 +70,28 @@ class PartnerOrderDetail extends Component {
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
-        <PartnerPriceSummary order={order}/>
-        <OrderLifecycleView  isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
-          PlacedControls={[PartnerNegotiationPanel, OrderSummary]}
+        <PartnerOrderLifecycleView  isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
+          PlacedControls={[PartnerPriceSummary, PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}
+          RejectedControls={[ResponseRejected, OrderSummary]}
           AcceptedControls={InProgressControls}
-          CompletedControls={[RatingSummary, OrderSummary]}
-          CancelledControls={[OrderSummary]}
+          CompletedControls={[PartnerPriceSummary, RatingSummary, OrderSummary]}
+          CancelledControls={[PartnerPriceSummary, OrderSummary]}
         />
       </Content>
     </Container>;
   }
 }
+
+const styles = {
+  starDeclined: {
+    paddingTop: 10,
+    alignSelf: 'center',
+    fontSize: 30,
+    padding: 2,
+    color: shotgun.brandDanger,
+  }
+};
 
 const PaymentStagesAndSummary = (props) => {
   const {history, path, orderId, height, order} = props;
@@ -99,9 +112,9 @@ const PaymentStagesAndSummary = (props) => {
 
 const getControlsFromOrder = (order) => {
   if (order.paymentType === 'DAYRATE'){
-    return [DayRatePersonellOrderInProgress, PaymentStagesAndSummary];
+    return [PartnerPriceSummary, DayRatePersonellOrderInProgress, PaymentStagesAndSummary];
   }
-  return [PaymentStagesAndSummary];
+  return [PartnerPriceSummary, FixedPersonellOrderInProgress, PaymentStagesAndSummary];
 };
 
 /*eslint-disable */
@@ -115,9 +128,9 @@ resourceDictionary.
   property('PlacedControls', [PartnerNegotiationPanel, OrderSummary]).
   property('InProgressControlsFactory').
     personell(getControlsFromOrder).
-    hire(() => [HireOrderInProgress]).
-    delivery(() => [PartnerJourneyOrderInProgress]).
-    rubbish(() => [PartnerJourneyOrderInProgress]);
+    hire(() => [PartnerPriceSummary, HireOrderInProgress]).
+    delivery(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]).
+    rubbish(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]);
 /*eslint-enable */
 
 

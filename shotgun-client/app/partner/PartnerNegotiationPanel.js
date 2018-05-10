@@ -12,11 +12,11 @@ const CancelResponse = ({ orderId, orderContentTypeId, busyUpdating, dispatch, .
   const onCancelResponse = () => {
     dispatch(cancelResponsePartner(orderId, orderContentTypeId));
   };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 10, height: 25 }} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
+  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 10, maxHeight: 25 }} danger fullWidth onPress={onCancelResponse}><Text style={{fontSize: 8}} uppercase={false}>Cancel</Text></SpinnerButton>;
 };
 
 
-const WaitingResponse = (props) => (<Row  style={{padding: 5, marginTop: 15}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for custumer response..'}</Text><CancelResponse {...props}/></Row>);
+const WaitingResponse = (props) => (<Row  style={{padding: 5, marginTop: 15,  height: 25 }}><Spinner style={{height: 15, marginRight: 10}}/><Text>{'Waiting for custumer response..'}</Text><CancelResponse {...props}/></Row>);
 const Response = ({customer, hasAccepted}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={hasAccepted ? styles.starAccepted : styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${customer.firstName} ${customer.lastName} ${hasAccepted ? 'Accepted' : 'Declined'}`}</Text></Row>);
 
 class PartnerNegotiationPanel extends Component {

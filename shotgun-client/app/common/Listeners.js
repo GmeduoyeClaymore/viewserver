@@ -39,15 +39,15 @@ export const registerActionListener = (handler) => {
       //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
       //notif._notificationType is available for iOS platfrom
       switch (notif._notificationType) {
-      case NotificationType.Remote:
-        notif.finish(RemoteNotificationResult.NewData); //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-        break;
-      case NotificationType.NotificationResponse:
-        notif.finish();
-        break;
-      case NotificationType.WillPresent:
-        notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
-        break;
+        case NotificationType.Remote:
+          notif.finish(RemoteNotificationResult.NewData); //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+          break;
+        case NotificationType.NotificationResponse:
+          notif.finish();
+          break;
+        case NotificationType.WillPresent:
+          notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
+          break;
       }
       if (notif.opened_from_tray) {
         handler(notif.aps.category);

@@ -105,8 +105,12 @@ export const logDayComplete = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'logDayComplete', {orderId, orderContentTypeId}, continueWith);
 };
 
-export const partner = (orderId, orderContentTypeId, continueWith) => {
-  return invokeDaoCommand('orderDao', 'logDayStart', {orderId, orderContentTypeId}, continueWith);
+export const partnerStartJob = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'partnerStartJob', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const partnerCompleteJob = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'partnerCompleteJob', {orderId, orderContentTypeId}, continueWith);
 };
 
 export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
@@ -115,5 +119,13 @@ export const markItemReady = (orderId, orderContentTypeId, continueWith) => {
 
 export const cancelResponsePartner = (orderId, orderContentTypeId, continueWith) => {
   return invokeDaoCommand('orderDao', 'cancelResponsePartner', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const onJobStart = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'onJobStart', {orderId, orderContentTypeId}, continueWith);
+};
+
+export const onJobComplete = (orderId, orderContentTypeId, continueWith) => {
+  return invokeDaoCommand('orderDao', 'onJobComplete', {orderId, orderContentTypeId}, continueWith);
 };
 
