@@ -27,20 +27,9 @@ class OrderSummary extends Component{
     </ListItem>;
   }
 
-  renderItemDetails = () => {
-    const {order} = this.props;
-    return <ListItem padded style={{borderBottomWidth: 0}}>
-      <Col>
-        <Row style={{flex: 1, minHeight: 60}}><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
-        <Row  style={{flex: 1}}><Text>{order.description}</Text></Row>
-        {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
-      </Col>
-    </ListItem>;
-  }
-
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, orderProduct, requiredDate} = order;
+    const {assignedPartner, customer, requiredDate} = order;
 
     return <List>
       {this.renderMap()}
@@ -55,11 +44,13 @@ class OrderSummary extends Component{
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
 
-      {orderProduct ? <ListItem padded>
-        {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
-        <Text>{orderProduct.name}</Text>
-      </ListItem> : null}
-      {this.renderItemDetails()}
+      <ListItem padded last>
+        <Col>
+          <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
+          <Row><Text>{order.description}</Text></Row>
+          {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
+        </Col>
+      </ListItem>
     </List>;
   }
 }

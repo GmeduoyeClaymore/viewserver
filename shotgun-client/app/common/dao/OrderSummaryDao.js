@@ -48,7 +48,7 @@ export default class OrderSummaryDao{
     };
 
     if (isCompleted !== undefined) {
-      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP];
+      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.INPROGRESS];
     }
 
     if (orderId !== undefined){
