@@ -8,7 +8,8 @@ import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import UserRelationshipDetail from './UserRelationshipDetail';
-
+import {Platform} from 'react-native';
+const IS_ANDROID = Platform.OS === 'android';
 const SubViewPath = 'RelationshipView/';
 
 class UserRelationships extends Component{
@@ -82,7 +83,7 @@ class UserRelationships extends Component{
     }
     return <Grid>
       <Row>
-        <Row style={styles.showAllView}>
+        <Row style={{...styles.showAllView, marginTop: IS_ANDROID ? 0 : 15 }}>
           <Button style={styles.showAllButton} light={showAll} onPress={() => this.setShowAll(false)}>
             <Text style={styles.buttonText}>Friends</Text>
           </Button>
@@ -103,7 +104,7 @@ const styles = {
   showAllView: {
     position: 'absolute',
     top: 10,
-    right: 15,
+    right: 5,
     zIndex: 3
   },
   showAllButton: {
@@ -142,7 +143,7 @@ export class UserRelationshipsStandalone extends Component{
 
   render(){
     return <View style={{ flex: 1}}>
-      <Title style={{backgroundColor: 'transparent', position: 'absolute', top: 10, zIndex: 3}}>{'Nearby Users'}</Title>
+      <Title style={{backgroundColor: 'transparent', position: 'absolute', top: IS_ANDROID ? 10 : 25, zIndex: 3, marginLeft: 5, marginRight: 5}}>{'Nearby Users'}</Title>
       <UserRelationshipsControl {...this.props}/>
     </View>;
   }

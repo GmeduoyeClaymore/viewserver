@@ -7,6 +7,8 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {addressToText} from 'common/components/maps/MapUtils';
 import {UserRelationshipsControl} from 'common/components/relationships/UserRelationships';
+import {Platform} from 'react-native';
+const IS_ANDROID = Platform.OS === 'android';
 
 class UsersForProductMap extends Component{
   onChangeText = async(location, field, value) => {
@@ -72,7 +74,7 @@ const validationSchema = {
 const styles = {
   inputRowHolder: {
     position: 'absolute',
-    top: 65,
+    top: IS_ANDROID ? 65 : 85,
     left: 15,
     right: 15,
     zIndex: 2

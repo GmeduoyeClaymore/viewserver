@@ -1,5 +1,5 @@
 import React from 'react';
-import {UIManager, View, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {UIManager, View, TouchableWithoutFeedback, Keyboard, Platform} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {Text, StyleProvider, Root, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
@@ -68,7 +68,7 @@ class App extends React.Component {
       </View>
     </ReactNativeModal>,
     <TouchableWithoutFeedback key='root' onPress={() => Keyboard.dismiss()}><Root>
-      <StyleProvider style={getTheme(shotgun)}>
+      <StyleProvider style={{...getTheme(shotgun)}}>
         <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
           <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
           <Route path="Root" exact component={LandingCommon}/>

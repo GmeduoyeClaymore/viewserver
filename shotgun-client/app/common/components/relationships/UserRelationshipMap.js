@@ -57,7 +57,7 @@ class UserRelationshipMap extends Component{
       Logger.info(`Calling fit map for ${filteredUsers.length} users`);
       if (filteredUsers.length){
         map.fitToCoordinates(filteredUsers, {
-          edgePadding: { top: 50, right: 100, bottom: 250, left: 100 },
+          edgePadding: { top: 150, right: 100, bottom: 200, left: 100 },
           animated: false,
         });
       }
