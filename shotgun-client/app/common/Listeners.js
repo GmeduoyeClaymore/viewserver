@@ -36,31 +36,38 @@ export const registerActionListener = (handler) => {
       //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
       //notif._notificationType is available for iOS platfrom
       switch (notif._notificationType) {
-        case NotificationType.Remote:
-          notif.finish(RemoteNotificationResult.NewData); //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-          break;
-        case NotificationType.NotificationResponse:
-          notif.finish();
-          break;
-        case NotificationType.WillPresent:
-          notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
-          break;
+      case NotificationType.Remote:
+        notif.finish(RemoteNotificationResult.NewData); //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+        break;
+      case NotificationType.NotificationResponse:
+        notif.finish();
+        break;
+      case NotificationType.WillPresent:
+        notif.finish(WillPresentNotificationResult.All); //other types available: WillPresentNotificationResult.None
+        break;
       }
       if (notif.opened_from_tray) {
-        if(notif.aps){ /// For some reason remote notifications populate this strange object with the action
-          handler(notif.aps.category);
-        }
-        else{
-          handler(notif.action);
-        }
+        handler(getActionFromNotification(notif));
       }
     } else {
       Logger.debug('Notification', notif);
       if (notif.opened_from_tray) {
-        handler(notif.click_action);
+        handler(getActionFromNotification(notif));
       }
     }
   });
+};
+
+export const getActionFromNotification = notif => {
+  if (Platform.OS === 'ios') {
+    if (notif.aps){ /// For some reason remote notifications populate this strange object with the action
+      return notif.aps.category;
+    }
+    return notif.action;
+  }
+  if (notif.opened_from_tray) {
+    return notif.click_action;
+  }
 };
 
 

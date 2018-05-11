@@ -4,7 +4,8 @@ import {SpinnerButton, Currency, Icon} from 'common/components';
 import {removePaymentStage, payForPaymentStage} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import AddPaymentStageControl from './AddPaymentStageControl';
-
+import {Platform} from 'react-native';
+const IS_ANDROID = Platform.OS === 'android';
 const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED', 'INPROGRESS'];
 const CAN_MODIFY_PAYMENT_STAGE_STATUS = ['None'];
 const CAN_PAY_PAYMENT_STAGE_STATUS = ['Complete'];
@@ -66,8 +67,8 @@ export default class CustomerStagedPaymentPanel extends Component{
               </SpinnerButton> :
               null}
 
-            {paymentStageStatus === 'Started' ?  [<Spinner size={25} key='spinner' color={shotgun.brandSuccess} style={styles.waitingSpinner}/>, <Text key='text' style={styles.successText}>In Progress</Text>] : null}
-            {paymentStageStatus === 'Paid' ? [<Icon name='checkmark' style={styles.checkmark}/>, <Text key='text' style={styles.successText}>Paid</Text>] : null}
+            {paymentStageStatus === 'Started' ?  [<Spinner  size={ IS_ANDROID ? 25 : 1} key='spinner' color={shotgun.brandSuccess} style={styles.waitingSpinner}/>, <Text key='text' style={styles.successText}>In Progress</Text>] : null}
+            {paymentStageStatus === 'Paid' ? [<Icon  name='checkmark' style={styles.checkmark}/>, <Text key='text2' style={styles.successText}>Paid</Text>] : null}
           </Col>
         </Row>;
       });

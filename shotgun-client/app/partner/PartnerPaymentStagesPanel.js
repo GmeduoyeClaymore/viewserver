@@ -7,6 +7,7 @@ import shotgun from 'native-base-theme/variables/shotgun';
 const CAN_START_PAYMENT_STAGE_STATUS = ['None'];
 const CAN_COMPLETE_PAYMENT_STAGE_STATUS = ['Started'];
 
+const CAN_START_PAYMENT_STAGE_ORDER_STATUS = ['STARTED', 'ASSIGNED'];
 const StageQuantity = ({ quantity, paymentStageType, orderAmount }) => {
   const isPercent = paymentStageType === 'Percentage';
   const currencyTotal = isPercent ? orderAmount * (quantity / 100) : quantity;
@@ -41,8 +42,8 @@ const PartnerPaymentStagesControl = ({ paymentStages = [], orderId, orderStatus,
           <StageQuantity quantity={quantity} paymentStageType={paymentStageType} orderAmount={orderAmount} />
         </Col>
         <Col size={15} >
-          {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedOrderStatus === 'ASSIGNED' && !hasStartedStage ? <StartPaymentStage busyUpdating={busyUpdating} style={{ marginBottom: 10 }} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
-          {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && negotiatedOrderStatus === 'ASSIGNED' ? <CompletePaymentStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
+          {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) && !hasStartedStage ? <StartPaymentStage busyUpdating={busyUpdating} style={{ marginBottom: 10 }} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
+          {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) ? <CompletePaymentStage busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} paymentStageId={id} dispatch={dispatch} /> : null}
           {paymentStageStatus === 'Complete' ? <Spinner style={{ height: 50, paddingRight: 15 }} /> : null}
           {paymentStageStatus === 'Paid' ? <Icon name='star' style={styles.star} /> : null}
         </Col>

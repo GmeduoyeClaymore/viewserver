@@ -184,7 +184,9 @@ export default class Connection {
 
     disconnect(eventHandlers) {
       this._forcedClose = true;
-      this.socket.onclose = eventHandlers.onSuccess;
+      if (eventHandlers){
+        this.socket.onclose = eventHandlers.onSuccess;
+      }
       this.socket.close();
     }
     

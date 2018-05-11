@@ -1,5 +1,5 @@
 import React from 'react';
-import {UIManager, View, TouchableWithoutFeedback, Keyboard, Platform} from 'react-native';
+import {UIManager, View, TouchableWithoutFeedback, Keyboard, AppState} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {Text, StyleProvider, Root, Spinner} from 'native-base';
 import {Provider} from 'react-redux';
@@ -36,6 +36,9 @@ class App extends React.Component {
     this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
+    this.state = {
+      appState: AppState.currentState
+    };
   }
 
   async componentWillMount(){
@@ -47,6 +50,21 @@ class App extends React.Component {
     const {client} = this;
     const {dispatch} = this.props;
     dispatch(loginServicesRegistrationAction(client));
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'inactive'){
+      this.client.disconnect();
+    }
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this.client.connect();
+    }
+    this.setState({appState: nextAppState});
   }
   
   render() {

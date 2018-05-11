@@ -8,7 +8,7 @@ import PartnerSettings from './Settings/PartnerSettings';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {partnerServicesRegistrationAction, watchPosition} from 'partner/actions/PartnerActions';
 import {isAnyLoading, getDaoState} from 'common/dao';
-import {registerActionListener} from 'common/Listeners';
+import {registerActionListener, getActionFromNotification} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
@@ -16,6 +16,7 @@ import Checkout from 'common/components/checkout/Checkout';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
+import FCM from 'react-native-fcm';
 
 class PartnerLanding extends Component {
   constructor(props) {
@@ -28,7 +29,14 @@ class PartnerLanding extends Component {
     Logger.info('Mounting partner landing');
     this.loadData();
     const {history, path} = this.props;
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
+    const handler = (actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri);
+    registerActionListener(handler);
+    FCM.getInitialNotification().then(notif => {
+      if (notif){
+        Logger.info('Got initial notificaton: ' + JSON.stringify(notif));
+        handler(getActionFromNotification(notif));
+      }
+    });
   }
 
   loadData(){

@@ -10,10 +10,11 @@ import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
 import {isAnyLoading, getDaoState} from 'common/dao';
 import {LoadingScreen} from 'common/components';
-import {registerActionListener} from 'common/Listeners';
+import {registerActionListener, getActionFromNotification} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import shotgun from 'native-base-theme/variables/shotgun';
+import FCM from 'react-native-fcm';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -35,9 +36,16 @@ class CustomerLanding extends Component {
 
   beforeNavigateTo() {
     const {dispatch, client, history, path} = this.props;
-    registerActionListener((actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri));
     dispatch(customerServicesRegistrationAction(client));
     dispatch(watchPosition());
+    const handler = (actionUri) => NotificationActionHandlerService.handleAction(history, path, actionUri);
+    registerActionListener(handler);
+    FCM.getInitialNotification().then(notif => {
+      if (notif){
+        Logger.info('Got initial notificaton: ' + JSON.stringify(notif));
+        handler(getActionFromNotification(notif));
+      }
+    });
   }
 
   render() {

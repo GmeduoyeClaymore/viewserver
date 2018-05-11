@@ -16,6 +16,10 @@ export default class Network {
     return this.connection.connect(autoReconnect);
   }
 
+  disconnect = () => {
+    this.connection.disconnect();
+  }
+
   get connected(){
     return this.connection.connected;
   }
