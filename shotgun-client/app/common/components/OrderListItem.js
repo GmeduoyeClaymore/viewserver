@@ -18,8 +18,17 @@ class OrderListItem extends Component {
   render() {
     const {order, history, next, isLast, isFirst, orderStatusResolver} = this.props;
     const isInProgress = order.orderStatus == OrderStatuses.INPROGRESS;
+    const isAccepted = order.orderStatus == OrderStatuses.ACCEPTED;
+    const responded = order.negotiatedOrderStatus == OrderStatuses.RESPONDED;
+    let armbandStyle;
 
-    return <ListItem style={[styles.order, isInProgress ? styles.orderOnRoute : undefined, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
+    if (isInProgress || isAccepted){
+      armbandStyle = styles.statusGreen;
+    } else if (responded){
+      armbandStyle = styles.statusAmber;
+    }
+
+    return <ListItem style={[styles.order, armbandStyle, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: order.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
@@ -57,8 +66,14 @@ const styles = {
     borderBottomWidth: 0.5,
     borderColor: shotgun.silver
   },
-  orderOnRoute: {
-    borderColor: shotgun.gold,
+  statusGreen: {
+    borderColor: shotgun.brandSuccess,
+    borderWidth: 10,
+    paddingRight: 5,
+    paddingLeft: 15
+  },
+  statusAmber: {
+    borderColor: shotgun.brandWarning,
     borderWidth: 10,
     paddingRight: 5,
     paddingLeft: 15

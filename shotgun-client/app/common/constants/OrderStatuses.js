@@ -1,5 +1,3 @@
-import invariant from 'invariant';
-
 export const OrderStatuses = {
   PLACED: 'PLACED',
   ACCEPTED: 'ACCEPTED',
@@ -8,6 +6,7 @@ export const OrderStatuses = {
   CANCELLED: 'CANCELLED',
   COMPLETEDBYPARTNER: 'COMPLETEDBYPARTNER',
   COMPLETEDBYCUSTOMER: 'COMPLETEDBYCUSTOMER',
+  RESPONDED: 'RESPONDED'
 };
 
 export const getFriendlyOrderStatusName = (noun) =>  (order) => {

@@ -2,14 +2,21 @@ import {Icon} from 'common/components';
 import {Text, View} from 'native-base';
 import React from 'react';
 
-export const AverageRating = ({rating, text = 'No Ratings Yet'}) => {
+export const AverageRating = ({rating, text = 'No Ratings Yet', decimalPlaces = 1}) => {
   return rating > 0 ?
-    <View style={{flex: 1, flexWrap: 'nowrap', flexDirection: 'row'}}><Icon name='star' key='star' avgStar/><Text numberOfLines={1} key='text' style={styles.averageText}>{rating.toFixed(1)}</Text></View> :
-    <Text style={styles.averageText}>{text}</Text>;
+    <View style={styles.averageView}>
+      <Icon name='star' avgStar/>
+      <Text numberOfLines={1} note style={styles.averageText}>{rating.toFixed(decimalPlaces)}</Text>
+    </View> :
+    <Text note>{text}</Text>;
 };
 
 const styles = {
+  averageView: {
+    flexWrap: 'nowrap',
+    flexDirection: 'row',
+  },
   averageText: {
-    fontSize: 10
+    alignSelf: 'center'
   }
 };
