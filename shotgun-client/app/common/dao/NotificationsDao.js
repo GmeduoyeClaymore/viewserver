@@ -27,7 +27,7 @@ export default class NotificationsDaoContext{
   }
 
   get canSubscribeWithoutLogin(){
-    return true;
+    return false;
   }
 
   get name(){

@@ -18,7 +18,7 @@ public class NotificationsReport {
                 .withParameter("@now", "Now", long[].class)
                 .withNodes(
                         new FilterNode("pastMessagesFilter")
-                                .withExpression("isBefore(sentTime, {@now}l) == false")
+                                .withExpression("isAfter(sentTime, {@now}l) == true")
                                 .withConnection("#input")
 
                 )

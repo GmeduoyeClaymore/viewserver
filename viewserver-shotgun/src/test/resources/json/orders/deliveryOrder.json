@@ -15,7 +15,7 @@
   "orderProduct": {
     "productId" : "MediumVan"
   },
-  "requiredDate": "01/01/2017",
+  "requiredDate": "{now_date+1}",
   "amount": 100
 }
 
