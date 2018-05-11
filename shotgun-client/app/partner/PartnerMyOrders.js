@@ -30,7 +30,7 @@ class PartnerMyOrders extends Component{
   }
 
   getOrdersWhereIAmTheCustomerOptions = () => {
-    const {isCompleted} = this.props;
+    const {isCompleted = false} = this.props;
     return {...OrderSummaryDao.CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS, isCompleted, userId: '@userId'};
   }
 
@@ -39,10 +39,10 @@ class PartnerMyOrders extends Component{
       return 'Rejected';
     }
     if (heading === 'Posted' && this.props.isCompleted){
-      return 'Completed by Me';
+      return 'Completed for Me';
     }
     if (heading === 'Accepted' && this.props.isCompleted){
-      return 'Completed for Me';
+      return 'Completed by Me';
     }
     return heading;
   }

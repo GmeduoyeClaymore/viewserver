@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Subscription;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -164,6 +165,8 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         notificationsForUser.add(orderId);
     }
 
+    DecimalFormat df = new DecimalFormat("#.00");
+
     private ReportContext.DimensionValue getDimensionsForProductIds(List<String> productIds) {
         return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
     }
@@ -178,7 +181,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         double k1 = Distance.distance(userHome.getLatitude(), userHome.getLongitude(), origin.getLatitude(), origin.getLongitude(), "K");
         boolean k   = k1 <= user.getRange();
         if(k || disableDistanceCheck){
-            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job Listing", "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you", false);
+            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job - £" + df.format(order.getAmount()/100), "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you", false);
         }
 ;    }
 

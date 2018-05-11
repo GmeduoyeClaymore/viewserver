@@ -26,9 +26,9 @@ public interface RatedOrderController extends UserTransformationController, Orde
                 },
                 user -> {
                     if(ratingType.equals(UserRating.RatingType.Customer)){
-                        notifyPartnerRated(orderId,userId);
+                        notifyPartnerHasEnteredRating(orderId,userId);
                     }else{
-                        notifyCustomerRated(orderId,userId);
+                        notifyCustomerHasEnteredRating(orderId,userId);
                     }
                 }, User.class);
     }

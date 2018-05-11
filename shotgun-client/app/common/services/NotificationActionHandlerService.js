@@ -4,7 +4,7 @@ export default class NotificationActionHandlerService {
   static async handleAction(history, baseUrl, actionUri){
     const parsedOrderActionUri = NotificationActionHandlerService.parseOrderActionUri(actionUri);
     if (parsedOrderActionUri){
-      const route = parsedOrderActionUri[1];
+      const route = parsedOrderActionUri[1].replace('~', '/');
       const orderId = parsedOrderActionUri[2];
 
       history.push(`${baseUrl}/${route}`, {orderId});
@@ -16,7 +16,7 @@ export default class NotificationActionHandlerService {
 
   static parseOrderActionUri(actionUri){
     Logger.debug(`Received notification action ${actionUri}`);
-    return actionUri.match(/^shotgun:\/\/(\w+)\/?([\w-]+)?$/);
+    return actionUri.match(/^^shotgun:\/\/([^\/]+)\/?([\w-]+)?$/);
   }
 
   static parseRelationshipActionUri(actionUri){

@@ -2,18 +2,23 @@ package com.shotgun.viewserver.order.controllers.contracts;
 
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
+import com.shotgun.viewserver.order.contracts.PaymentNotifications;
+import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
+import com.shotgun.viewserver.order.domain.SinglePaymentOrder;
 import com.shotgun.viewserver.order.types.NegotiationResponse;
+import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
 import static io.viewserver.core.Utils.fromArray;
 
 
-public interface NegotiatedOrderController extends OrderUpdateController, NegotiationNotifications, OrderTransformationController {
+public interface NegotiatedOrderController extends OrderUpdateController, NegotiationNotifications, OrderTransformationController, PaymentNotifications {
 
     @ControllerAction(path = "updateOrderAmount", isSynchronous = true)
     default void updateOrderAmount(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "amount") Integer amount) {
@@ -209,6 +214,41 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                 NegotiatedOrder.class
         );
     }
+
+    @ControllerAction(path = "calculatePriceEstimate", isSynchronous = true)
+    public default Integer calculatePriceEstimate(@ActionParam(name = "order") BasicOrder order) {
+        if(order.getOrderProduct() == null){
+            throw new RuntimeException("Unable to calculate amount estimate as no product specified on order");
+        }
+        return order.getOrderProduct().getPrice();
+    }
+
+
+    @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
+    public default String customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
+        AtomicReference<String> paymentId = new AtomicReference<>();
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.CUSTOMERCOMPLETE);
+                    Integer amount = order.getAmountToPay();
+                    if(amount == null){
+                        throw new RuntimeException("Cannot complete order as unable to get the amount " + orderId);
+                    }
+                    paymentId.set(getPaymentController().createCharge(amount,order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()));
+                    updateOrderRecord(order);
+                    return true;
+                },
+                order -> {
+                    notifyJobCompleted(order.getOrderId(), order.getPartnerUserId());
+                },
+                NegotiatedOrder.class
+        );
+        return paymentId.get();
+    }
+
+    IPaymentController getPaymentController();
+
 
 
 }

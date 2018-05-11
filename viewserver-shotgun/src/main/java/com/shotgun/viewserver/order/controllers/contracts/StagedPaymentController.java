@@ -9,13 +9,13 @@ import io.viewserver.controller.ControllerAction;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public interface StagedPaymentController extends SinglePaymentOrderController, OrderTransformationController, PaymentNotifications {
+public interface StagedPaymentController extends NegotiatedOrderController, OrderTransformationController, PaymentNotifications {
 
 
     @Override
     @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
     default String customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
-        String paymentId = SinglePaymentOrderController.super.customerCompleteAndPay(orderId);
+        String paymentId = NegotiatedOrderController.super.customerCompleteAndPay(orderId);
         this.transform(
                 orderId,
                 order -> {
