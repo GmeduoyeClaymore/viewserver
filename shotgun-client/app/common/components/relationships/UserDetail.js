@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {UserInfo, Tabs} from 'common/components';
 import UserContentTypeDetail from './UserContentTypeDetail';
@@ -15,10 +15,10 @@ class UserDetail extends Component{
     history.push({pathname: userRelationshipBasePath, transition: 'immediate'});
   }
 
-  onUpdateRelationship = (targetUserId, relationshipStatus, relationshipType) => {
-    const {dispatch, user} = this.props;
+  onUpdateRelationship = (relationshipStatus, relationshipType) => {
+    const {dispatch, selectedUser} = this.props;
 
-    dispatch(updateRelationship({targetUserId: user.userId, relationshipStatus, relationshipType}));
+    dispatch(updateRelationship({targetUserId: selectedUser.userId, relationshipStatus, relationshipType}));
   }
 
   getActionButton = (relationshipStatus, label) => {
@@ -30,21 +30,21 @@ class UserDetail extends Component{
   }
 
   getStatusButton = () => {
-    const {user} = this.props;
+    const {selectedUser} = this.props;
 
-    if (user.relationshipStatus === 'ACCEPTED'){
+    if (selectedUser.relationshipStatus === 'ACCEPTED'){
       return this.getActionButton('UNKNOWN', 'Un-Friend');
     }
-    if (user.relationshipStatus === 'REQUESTED'){
-      if (!user.initiatedByMe){
-        return <View  style={style}>{this.getActionButton('ACCEPTED', 'Accept Request')}{this.getActionButton('UNKNOWN', 'Ignore Request')}</View>;
+    if (selectedUser.relationshipStatus === 'REQUESTED'){
+      if (!selectedUser.initiatedByMe){
+        return <View style={style}>{this.getActionButton('ACCEPTED', 'Accept Request')}{this.getActionButton('UNKNOWN', 'Ignore Request')}</View>;
       }
       return this.getActionButton('UNKNOWN', 'Cancel Request');
     }
-    if (!user.relationshipStatus || user.relationshipStatus === 'UNKNOWN'){
+    if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
       return this.getActionButton('REQUESTED', 'Add as friend');
     }
-    return 'Unknown ' + user.relationshipStatus;
+    return 'Unknown ' + selectedUser.relationshipStatus;
   }
 
   goToTabNamed = (name) => {
@@ -68,14 +68,16 @@ class UserDetail extends Component{
         <Text style={styles.infoText}>{ `${Math.round(selectedUser.distance)} km away`}</Text>
 
         <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
-          <Tab heading="Completed Jobs" onPress={() => this.goToTabNamed('CompletedJobs')}/>
+          <Tab heading="Completed Jobs" onPress={() => this.goToTabNamed('Ratings')}/>
           <Tab heading="Skills" onPress={() => this.goToTabNamed('Skills')}/>
         </Tabs>
 
-        <ReduxRouter {...this.props} path={path} defaultRoute="Ratings">
-          <Route key="Ratings" path="Ratings" component={UserRatingsDetail} user={selectedUser}/>
-          <Route key="Skills" path="Skills" component={UserContentTypeDetail} selectedContentTypes={selectedUser.selectedContentTypes}/>
-        </ReduxRouter>
+        <ScrollView key='scrollView' style={{flex: 1}}>
+          <ReduxRouter {...this.props} path={path}defaultRoute="Ratings">
+            <Route key="Ratings" path="Ratings" component={UserRatingsDetail} user={selectedUser}/>
+            <Route key="Skills" path="Skills" component={UserContentTypeDetail} selectedContentTypes={selectedUser.selectedContentTypes}/>
+          </ReduxRouter>
+        </ScrollView>
       </Grid>
       {this.getStatusButton()}
       <Button fullWidth cancelButton onPress={this.handleCancel}>
