@@ -5,24 +5,25 @@ import io.viewserver.execution.Options;
 import io.viewserver.network.IPeerSession;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SubscriptionUtils {
     public static void substituteParamsInFilterExpression(IPeerSession session, Options options) {
-        ConcurrentHashMap<String, Object> params = ControllerContext.getParams(session);
+        Set<String> params = ControllerContext.getParamNames(session);
         if (params != null) {
-            substituteParamsInFilterExpression(params,options);
+            substituteParamsInFilterExpression(params,options, session);
 
         }
     }
-    public static void substituteParamsInFilterExpression(ConcurrentHashMap<String, Object> params, Options options) {
+    public static void substituteParamsInFilterExpression(Set<String> params, Options options, IPeerSession session) {
         String filterExpression = options.getFilterExpression();
         if (filterExpression != null && filterExpression.contains("@")) {
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                Object value = entry.getValue();
-                String key = entry.getKey();
-                if (value != null && filterExpression.contains(String.format("\"@%s\"", key))) {
-                    options.setFilterExpression(filterExpression.replace("@" + key, value.toString()));
+            for (String param : params) {
+
+                Object value = ControllerContext.get(param,session);
+                if (value != null && filterExpression.contains(String.format("\"@%s\"", param))) {
+                    options.setFilterExpression(filterExpression.replace("@" + param, value.toString()));
                 }
             }
         }

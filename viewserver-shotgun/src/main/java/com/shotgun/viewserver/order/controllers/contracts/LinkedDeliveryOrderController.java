@@ -21,10 +21,10 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
         LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
         SourceOrderForLinkedDeliveries parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), SourceOrderForLinkedDeliveries.class);
         if(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Outbound)){
-            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item has been delivered",  String.format("%s has  just delivered %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item has been delivered",  String.format("%s has  just delivered %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()),false);
         }
         else{
-            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item has been sent back",  String.format("%s has  just received your item back %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item has been sent back",  String.format("%s has  just received your item back %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()),false);
         }
     }
 
@@ -34,10 +34,10 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
         LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
         SourceOrderForLinkedDeliveries parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), SourceOrderForLinkedDeliveries.class);
         if(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Outbound)){
-            sendMessage(orderId,parentOrder.getCustomerUserId(),  "Your item is on the way",  String.format("%s has  just picked up your %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+            sendMessage(orderId,parentOrder.getCustomerUserId(),  "Your item is on the way",  String.format("%s has  just picked up your %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()), true);
         }
         else{
-            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item is on the way back",  String.format("%s has  just picked up your %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()));
+            sendMessage(orderId,parentOrder.getPartnerUserId(),  "Your item is on the way back",  String.format("%s has  just picked up your %s", user.getFirstName() + " " + user.getLastName(), parentOrder.getDescription()),false);
         }
     }
 

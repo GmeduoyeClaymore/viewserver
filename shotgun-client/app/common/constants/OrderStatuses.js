@@ -5,9 +5,9 @@ export const OrderStatuses = {
   ACCEPTED: 'ACCEPTED',
   INPROGRESS: 'INPROGRESS',
   COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
   COMPLETEDBYPARTNER: 'COMPLETEDBYPARTNER',
   COMPLETEDBYCUSTOMER: 'COMPLETEDBYCUSTOMER',
-  CANCELLED: 'CANCELLED'
 };
 
 export const getFriendlyOrderStatusName = (noun) =>  (order) => {
@@ -20,6 +20,8 @@ export const getFriendlyOrderStatusName = (noun) =>  (order) => {
     return `${noun} Assigned`;
   case 'STARTED':
     return 'Job In Progress';
+  case 'CANCELLED':
+    return 'Job Cancelled';
   case 'PARTNERCOMPLETE':
     return `${noun} Finished`;
   case 'CUSTOMERCOMPLETE':

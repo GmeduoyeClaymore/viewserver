@@ -1,6 +1,5 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
-import com.shotgun.viewserver.order.contracts.PaymentNotifications;
 import com.shotgun.viewserver.order.contracts.RatingNotifications;
 import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.user.User;
@@ -26,7 +25,11 @@ public interface RatedOrderController extends UserTransformationController, Orde
                     return true;
                 },
                 user -> {
-                    notifyUserRated(orderId,userId);
+                    if(ratingType.equals(UserRating.RatingType.Customer)){
+                        notifyPartnerRated(orderId,userId);
+                    }else{
+                        notifyCustomerRated(orderId,userId);
+                    }
                 }, User.class);
     }
 

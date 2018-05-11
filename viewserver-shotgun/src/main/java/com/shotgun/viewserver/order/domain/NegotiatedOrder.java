@@ -115,12 +115,24 @@ public interface NegotiatedOrder  extends BasicOrder {
         this.set("responses",responses);
     }
 
+    default void cancel(){
+        this.transitionTo(NegotiatedOrder.NegotiationOrderStatus.CANCELLED);
+        NegotiationResponse[] responses = getResponses();
+        fromArray(responses).forEach(
+                res -> {
+                    NegotiationResponse fill = res;
+                    fill.transitionTo(NegotiationResponse.NegotiationResponseStatus.CANCELLED);
+                }
+        );
+    }
+
     public static enum NegotiationOrderStatus implements OrderEnumBase<NegotiationOrderStatus> {
         REQUESTED(OrderStatus.PLACED),
         RESPONDED(OrderStatus.PLACED),
         ASSIGNED(OrderStatus.ACCEPTED),
         STARTED(OrderStatus.INPROGRESS),
         PARTNERCOMPLETE(OrderStatus.INPROGRESS),
+        CANCELLED(OrderStatus.CANCELLED),
         CUSTOMERCOMPLETE(OrderStatus.COMPLETED);
 
         List<NegotiationOrderStatus> permittedFrom = new ArrayList<>();
@@ -129,9 +141,9 @@ public interface NegotiatedOrder  extends BasicOrder {
         private OrderStatus orderStatus;
 
         static{
-            REQUESTED.to(RESPONDED,ASSIGNED);
-            RESPONDED.to(ASSIGNED,REQUESTED);
-            ASSIGNED.to(STARTED,RESPONDED);
+            REQUESTED.to(RESPONDED,ASSIGNED,CANCELLED);
+            RESPONDED.to(ASSIGNED,REQUESTED,CANCELLED);
+            ASSIGNED.to(STARTED,RESPONDED,CANCELLED);
             STARTED.to(PARTNERCOMPLETE);
             PARTNERCOMPLETE.to(CUSTOMERCOMPLETE);
         }

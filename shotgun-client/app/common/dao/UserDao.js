@@ -36,8 +36,8 @@ export default class UserDaoContext{
     return 'userDao';
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

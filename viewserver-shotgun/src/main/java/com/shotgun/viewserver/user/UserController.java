@@ -27,6 +27,7 @@ import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import com.shotgun.viewserver.setup.datasource.UserRelationshipDataSource;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -58,12 +59,13 @@ public class UserController implements UserTransformationController, RatedOrderC
     private IMapsController IMapsController;
     private IDatabaseUpdater iDatabaseUpdater;
     private IReactor reactor;
+    private ICatalog catalog;
 
     public UserController(IDatabaseUpdater iDatabaseUpdater,
                           IImageController IImageController,
                           IMessagingController messagingController,
                           IPaymentController paymentController,
-                          IMapsController IMapsController, IReactor reactor) {
+                          IMapsController IMapsController, IReactor reactor, ICatalog catalog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
 
         this.IImageController = IImageController;
@@ -71,6 +73,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         this.paymentController = paymentController;
         this.IMapsController = IMapsController;
         this.reactor = reactor;
+        this.catalog = catalog;
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
@@ -300,6 +303,12 @@ public class UserController implements UserTransformationController, RatedOrderC
                     return true;
                 }, User.class);
     }
+
+    @Override
+    public KeyedTable getUserTable() {
+        return (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
+    }
+
 
     public static rx.Observable<Map<String, Object>> waitForUser(final String userId, KeyedTable userTable) {
 

@@ -24,8 +24,8 @@ export default class DeliveryAddressDao{
     return 'deliveryAddressDao';
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

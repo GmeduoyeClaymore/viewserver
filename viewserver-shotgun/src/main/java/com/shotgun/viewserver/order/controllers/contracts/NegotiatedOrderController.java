@@ -153,12 +153,44 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
         );
     }
 
+    @ControllerAction(path = "partnerStartJob", isSynchronous = true)
+    public default void partnerStartJob(@ActionParam(name = "orderId")String orderId){
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.STARTED);
+                    return true;
+                },
+                order -> {
+                    notifyPartnerStartJob(orderId,order);
+                },
+                NegotiatedOrder.class
+        );
+    }
+
+
+    @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)
+    public default void partnerCompleteJob(@ActionParam(name = "orderId")String orderId){
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.PARTNERCOMPLETE);
+                    return true;
+                },
+                order -> {
+                    notifyPartnerStartJob(orderId,order);
+                },
+                NegotiatedOrder.class
+        );
+
+    }
+
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
     default void cancelOrder(@ActionParam(name = "orderId") String orderId) {
         this.transform(
                 orderId,
                 order -> {
-                    order.transitionTo(OrderStatus.CANCELLED);
+                    order.cancel();
                     return true;
                 },
                 order -> {

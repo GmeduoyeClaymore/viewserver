@@ -14,6 +14,9 @@ export default class PartnerPriceSummary extends Component{
     } else if (orderStatus == OrderStatuses.COMPLETED){
       return 'You were paid';
     }
+    if (orderStatus == OrderStatuses.CANCELLED){
+      return 'Job cancelled';
+    }
 
     return 'You will be paid';
   }

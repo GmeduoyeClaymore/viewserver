@@ -7,6 +7,8 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import moment from 'moment';
 import { cancelResponsePartner } from 'partner/actions/PartnerActions';
+import { Platform } from 'react-native';
+const IS_ANDROID = Platform.OS === 'android';
 
 class PartnerNegotiationPanel extends Component {
   state = {};
@@ -24,7 +26,7 @@ class PartnerNegotiationPanel extends Component {
     this.setState({negotiationAmount});
   }
 
-  respondToOrder = (onOrderRespond, negotiationAmount, negotiationDate) => {
+    respondToOrder = (onOrderRespond, negotiationAmount, negotiationDate) => {
     if (onOrderRespond){
       onOrderRespond({negotiationAmount, negotiationDate});
     }
@@ -71,7 +73,7 @@ class PartnerNegotiationPanel extends Component {
 
         {awaitingCustomerResponse ?
           <Row>
-            <Spinner size={30} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
+            <Spinner size={IS_ANDROID ? 30 : 1} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
             <Text style={{alignSelf: 'center'}}>Awaiting customer response</Text>
 
             <SpinnerButton style={styles.cancelButton} danger fullWidth onPress={this.onCancelResponse}>

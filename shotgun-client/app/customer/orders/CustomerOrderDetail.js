@@ -30,6 +30,12 @@ class CustomerOrderDetail extends Component{
     this.subscribeToOrderSummary(this.props);
   }
 
+  componentWillReceiveProps(newProps){
+    if (newProps.orderId != this.props.orderId){
+      this.subscribeToOrderSummary(newProps);
+    }
+  }
+
   subscribeToOrderSummary(props){
     const {dispatch, orderId, order} = props;
     if (!order) {
@@ -132,10 +138,10 @@ resourceDictionary.
     delivery([CustomerNegotiationPanel, JourneyJobInProgress('Delivery In Progress'),CancelControl,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
     rubbish([CustomerNegotiationPanel, JourneyJobInProgress('Collection In Progress'), CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
   property('InProgressControls', [OrderSummary]).
-    personell([CustomerPriceSummary, CompleteControl, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
-    hire([CustomerPriceSummary,CompleteControl,CancelControl, CustomerHireOrderInProgress, OrderSummary]).
-    delivery([CustomerPriceSummary, JourneyJobInProgress('Delivery In Progress'), CompleteControl,CancelControl, CustomerJourneyOrderInProgress,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
-    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'),CompleteControl ,CancelControl, CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
+    personell([CustomerPriceSummary, CompleteControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
+    hire([CustomerPriceSummary,CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
+    delivery([CustomerPriceSummary, JourneyJobInProgress('Delivery In Progress'), CompleteControl, CustomerJourneyOrderInProgress,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'),CompleteControl , CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
 /*eslint-enable */
 
 export default connect(

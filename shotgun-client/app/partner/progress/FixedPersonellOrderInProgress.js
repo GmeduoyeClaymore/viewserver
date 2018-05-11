@@ -6,6 +6,10 @@ import {getDaoState, isAnyOperationPending} from 'common/dao';
 import {partnerStartJob, partnerCompleteJob} from 'partner/actions/PartnerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 
+
+const CAN_START_STATUSES = ['ASSIGNED'];
+const CAN_COMPLETE_STATUSES = ['STARTED'];
+
 class FixedPersonellOrderInProgress extends Component{
   constructor(props){
     super(props);
@@ -24,8 +28,8 @@ class FixedPersonellOrderInProgress extends Component{
   render() {
     const {order = {}, busyUpdating} = this.props;
     return <View>
-      {!order.dayStarted ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onJobComplete}><Text uppercase={false}>Start Job</Text></SpinnerButton> : null}
-      {order.dayStarted  ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.completeButton} onPress={this.onJobStart}><Text uppercase={false}>Complete Job</Text></SpinnerButton> : null}
+      {!!~CAN_START_STATUSES.indexOf(order.negotiatedOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onJobStart}><Text uppercase={false}>Start Job</Text></SpinnerButton> : null}
+      {!!~CAN_COMPLETE_STATUSES.indexOf(order.negotiatedOrderStatus)  ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.completeButton} onPress={this.onJobComplete}><Text uppercase={false}>Complete Job</Text></SpinnerButton> : null}
     </View>;
   }
 }

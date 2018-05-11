@@ -2,6 +2,8 @@ package com.shotgun.viewserver.setup.datasource;
 
 
 import io.viewserver.datasource.*;
+import io.viewserver.execution.nodes.CalcColNode;
+import io.viewserver.operators.calccol.CalcColOperator;
 
 import java.util.Arrays;
 

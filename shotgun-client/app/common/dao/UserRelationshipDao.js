@@ -51,8 +51,8 @@ export default class UserRelationshipDaoContext{
     return baseReportContext;
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){
