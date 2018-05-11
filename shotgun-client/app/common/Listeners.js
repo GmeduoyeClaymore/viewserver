@@ -29,9 +29,6 @@ export const registerActionListener = (handler) => {
 
   FCM.on(FCMEvent.Notification, notif => {
     console.log('Notification', notif);
-    if (notif.local_notification) {
-      return;
-    }
 
     if (Platform.OS === 'ios') {
       //optional
@@ -50,7 +47,12 @@ export const registerActionListener = (handler) => {
           break;
       }
       if (notif.opened_from_tray) {
-        handler(notif.aps.category);
+        if(notif.aps){ /// For some reason remote notifications populate this strange object with the action
+          handler(notif.aps.category);
+        }
+        else{
+          handler(notif.action);
+        }
       }
     } else {
       Logger.debug('Notification', notif);

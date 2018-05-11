@@ -21,8 +21,8 @@ export default class RxDataSink extends DataSink(null){
   static CONFIG_ERROR_CLEARED = 'ConfigErrorCleared';
 
 
-  constructor(){
-    super();
+  constructor(name){
+    super(name);
     this._dataSinkUpdated = new Rx.Subject();
     this.hasSchemaLoaded = false;
   }

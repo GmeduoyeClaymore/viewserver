@@ -54,8 +54,8 @@ export default class PartnerOrderResponseDao{
     return reportContext;
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

@@ -74,8 +74,8 @@ export default class OrderRequestDao{
     return baseReportContext;
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

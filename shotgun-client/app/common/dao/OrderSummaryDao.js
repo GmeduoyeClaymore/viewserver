@@ -69,8 +69,8 @@ export default class OrderSummaryDao{
     return reportContext;
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

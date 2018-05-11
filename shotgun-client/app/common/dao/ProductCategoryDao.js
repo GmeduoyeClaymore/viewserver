@@ -34,8 +34,8 @@ export default class ProductCategoryDaoContext{
     };
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   mapDomainEvent(dataSink){

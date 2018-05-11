@@ -34,8 +34,8 @@ export default class NotificationsDaoContext{
     return 'notificationsDao';
   }
 
-  createDataSink(){
-    return new RxDataSink();
+  createDataSink = () => {
+    return new RxDataSink(this._name);
   }
 
   transformOptions(options){

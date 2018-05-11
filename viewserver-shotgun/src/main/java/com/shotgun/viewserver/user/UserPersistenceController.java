@@ -5,6 +5,7 @@ import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.operators.table.KeyedTable;
@@ -18,7 +19,8 @@ import java.util.HashMap;
 public interface UserPersistenceController{
 
     default <T extends User> T getUserForId(String userId, Class<T> userClass) {
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+
+        KeyedTable userTable = getUserTable();
 
         HashMap<String, Object> userRow = userTable.getRowObject(new TableKey(userId));
         if(userRow == null){
@@ -69,6 +71,8 @@ public interface UserPersistenceController{
     }
 
     IDatabaseUpdater getDatabaseUpdater();
+
+    KeyedTable getUserTable();
 
     Logger getLogger();
 }

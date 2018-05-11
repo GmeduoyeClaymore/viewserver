@@ -36,8 +36,8 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater);
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
-        UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor());
-        DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController);
+        UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor(), basicServerComponents.getServerCatalog());
+        DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController, basicServerComponents.getServerCatalog());
 
         this.registerController(paymentController);
         this.registerController(mapsController);

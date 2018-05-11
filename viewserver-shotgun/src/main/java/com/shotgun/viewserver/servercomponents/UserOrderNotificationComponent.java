@@ -23,6 +23,7 @@ import io.viewserver.server.components.IBasicServerComponents;
 import io.viewserver.server.components.IDataSourceServerComponents;
 import io.viewserver.server.components.IServerComponent;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Subscription;
@@ -38,13 +39,22 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private IBasicServerComponents basicServerComponents;
     private static final Logger log = LoggerFactory.getLogger(UserOrderNotificationComponent.class);
     private List<Subscription> subscriptions = new ArrayList<>();
+    private List<String> notifiedOrders = new ArrayList<>();
     private HashMap<String,Subscription> subscriptionsByUserId = new HashMap<>();
     private IMessagingController messagingController;
+    private boolean disableDistanceCheck;
+    private HashMap<String,List<String>> notifiedOrdersByUser;
 
     public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents) {
         this.components = components;
         this.basicServerComponents = basicServerComponents;
         this.messagingController = controllersComponents.getMessagingController();
+        notifiedOrdersByUser = new HashMap<>();
+    }
+
+    public UserOrderNotificationComponent disableDistanceCheck(){
+        this.disableDistanceCheck = true;
+        return this;
     }
 
     @Override
@@ -106,6 +116,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                         filter(ev -> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).subscribe(ev -> {
                     HashMap eventData = (HashMap) ev.getEventData();
                     BasicOrder order = JSONBackedObjectFactory.create((HashMap) eventData.get("orderDetails"), BasicOrder.class);
+                    if(hasNotificationForUser(order.getOrderId(), user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id
+                        log.info("Already notified of " + order.getOrderId() + " not doing it again");
+                        return;
+                    }
+                    setNotificationForUser(order.getOrderId(), user.getUserId());
                     log.info("Found order - " + order.getOrderId() + " for user " + user.getUserId() + " with products " + String.join(",", productIds));
                     notifyUserOfNewOrder(order, user);
                 }, err -> log.error("Issue subscribing to orders {}", err)));
@@ -132,17 +147,38 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             });});
     }
 
+    private boolean hasNotificationForUser(String orderId, String userId) {
+        List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
+        if(notificationsForUser == null){
+            return false;
+        }
+        return notificationsForUser.contains(orderId);
+    }
+
+    private void setNotificationForUser(String orderId, String userId) {
+        List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
+        if(notificationsForUser == null){
+            notificationsForUser = new ArrayList<>();
+            this.notifiedOrdersByUser.put(userId,notificationsForUser);
+        }
+        notificationsforuser.add(orderid);
+    }
+
     private ReportContext.DimensionValue getDimensionsForProductIds(List<String> productIds) {
         return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
     }
 
     private void notifyUserOfNewOrder(BasicOrder order, User user) {
+        if(new DateTime(order.getRequiredDate()).isBeforeNow()){
+            log.info("Not resending historical order");
+            return;
+        }
         LatLng userHome = user.getLocation();
         DeliveryAddress origin = order.getOrigin();
         double k1 = Distance.distance(userHome.getLatitude(), userHome.getLongitude(), origin.getLatitude(), origin.getLongitude(), "K");
         boolean k   = k1 <= user.getRange();
-        if(k){
-            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job Listing", "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you");
+        if(k || disableDistanceCheck){
+            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job Listing", "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you", false);
         }
 ;    }
 

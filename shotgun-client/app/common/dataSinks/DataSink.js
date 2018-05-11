@@ -99,7 +99,7 @@ export default DataSink = (superclass) => class extends superclass {
       super.onTotalRowCount(count);
     }
     this.totalRowCount = count;
-    Logger.debug(this.name + ' - Total row count is - ' + this.totalRowCount);
+    Logger.info(this.name + ' - Total row count is - ' + this.totalRowCount);
   }
 
   onSchemaReset(){
@@ -119,7 +119,7 @@ export default DataSink = (superclass) => class extends superclass {
     this.rows.push(row);
     this.dirtyRows.push(rowId);
     this._orderedRows = undefined;
-    Logger.fine(this.name + ` - Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    Logger.info(this.name + ` - Row added - ${rowId} -  + ${JSON.stringify(row)}`);
   }
 
   onRowUpdated(rowId, row){
@@ -132,7 +132,7 @@ export default DataSink = (superclass) => class extends superclass {
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
     this._orderedRows = undefined;
-    Logger.fine(this.name + ' - Row updated - ' + JSON.stringify(row));
+    Logger.info(this.name + ' - Row updated - ' + JSON.stringify(row));
   }
 
   onRowRemoved(rowId){

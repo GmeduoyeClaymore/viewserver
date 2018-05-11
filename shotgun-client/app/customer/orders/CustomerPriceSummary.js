@@ -8,7 +8,9 @@ export default class PartnerPriceSummary extends Component{
   getHeading = () => {
     const {order} = this.props;
     const {orderStatus} = order;
-
+    if (orderStatus == OrderStatuses.CANCELLED){
+      return 'Job cancelled';
+    }
     if (orderStatus == OrderStatuses.PLACED){
       return 'Job advertised for';
     } else if (orderStatus == OrderStatuses.COMPLETED){

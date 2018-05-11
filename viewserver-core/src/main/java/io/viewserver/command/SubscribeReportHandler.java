@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SubscribeReportHandler extends ReportContextHandler<ISubscribeReportCommand> {
@@ -108,12 +109,13 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
         stringList.add(peerSession.getCatalogName());
         reportContext.setParameterValue("@catalogName", stringList);
 
-        ConcurrentHashMap<String, Object> params = ControllerContext.getParams(peerSession);
-        if(params != null){
-            for(Map.Entry<String,Object> entry : params.entrySet()){
+        Set<String> paramNames = ControllerContext.getParamNames(peerSession);
+        if(paramNames != null){
+            for(String name : paramNames){
                 stringList = new ValueLists.StringList();
-                stringList.add(entry.getValue().toString());
-                reportContext.setParameterValue("@" + entry.getKey(), stringList);
+                Object value = ControllerContext.get(name, peerSession);
+                stringList.add(value.toString());
+                reportContext.setParameterValue("@" + name, stringList);
             }
 
             List<ReportContext.DimensionValue> dimensionValues = reportContext.getDimensionValues();
@@ -123,7 +125,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
                     if(val instanceof String && val.toString().startsWith("@")){
                         log.info(String.format("Found controller context param %s in report context for dimension %s. Looking for value in controller context to replace it",val,str.getName()));
                         String parameterName = val.toString().substring(1);
-                        Object contextValue = params.get(parameterName);
+                        Object contextValue = ControllerContext.get(parameterName, peerSession);
                         if(contextValue != null){
                             log.info(String.format("Found controller context value %s for %s in controller context",contextValue,val));
                             setValueAtIndex(contextValue, index, str.getValues());
@@ -137,7 +139,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
 
         }
 
-        SubscriptionUtils.substituteParamsInFilterExpression(params, options);
+        SubscriptionUtils.substituteParamsInFilterExpression(paramNames, options, peerSession);
     }
 
 

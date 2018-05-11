@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.maps.IMapsController;
@@ -14,9 +15,11 @@ import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.user.User;
 import com.shotgun.viewserver.user.UserPersistenceController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,17 +40,20 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
     private DeliveryAddressController deliveryAddressController;
     private IPaymentController paymentController;
     private IMapsController mapsController;
+    private ICatalog systemCatalogue;
 
     public DeliveryOrderController(IDatabaseUpdater iDatabaseUpdater,
                                    IMessagingController messagingController,
                                    DeliveryAddressController deliveryAddressController,
                                    IPaymentController paymentController,
-                                   IMapsController mapsController) {
+                                   IMapsController mapsController,
+                                   ICatalog systemCatalogue) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
         this.deliveryAddressController = deliveryAddressController;
         this.paymentController = paymentController;
         this.mapsController = mapsController;
+        this.systemCatalogue = systemCatalogue;
     }
 
 
@@ -130,6 +136,11 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
     @Override
     public IDatabaseUpdater getDatabaseUpdater() {
         return iDatabaseUpdater;
+    }
+
+    @Override
+    public KeyedTable getUserTable() {
+        return (KeyedTable) systemCatalogue.getOperatorByPath(TableNames.USER_TABLE_NAME);
     }
 
     @Override

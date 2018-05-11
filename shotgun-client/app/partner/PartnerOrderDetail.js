@@ -42,6 +42,16 @@ class PartnerOrderDetail extends Component {
     }
   }
 
+  componentWillReceiveProps(newProps){
+    const { dispatch, orderId} = newProps;
+    if (newProps.orderId != this.props.orderId){
+      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
+        orderId,
+        ...OrderSummaryDao.PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS
+      }));
+    }
+  }
+
   onOrderRespond = async ({ negotiationAmount, negotiationDate }) => {
     const { order, history, dispatch, bankAccount, parentPath, path } = this.props;
     const { orderId, orderContentTypeId } = order;

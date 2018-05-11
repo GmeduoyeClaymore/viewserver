@@ -70,8 +70,12 @@ public class MessagingController implements IMessagingController, UserPersistenc
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             message.set("to",currentToken);
+
             User user = getUserForId(message.getToUserId(),User.class);
-            if(currentToken == null){
+
+            boolean sendRemotely = !user.getOnline();
+            persistMessage(message, sendRemotely);
+            if(currentToken == null && !user.getOnline()){
                 String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
                 logger.info(result);
                 user.addPendingMessage(message);
@@ -79,11 +83,10 @@ public class MessagingController implements IMessagingController, UserPersistenc
             }
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
-            boolean sendRemotely = !user.getOnline();
             if(sendRemotely){
                 sendPayload(message.toSimpleMessage());
             }
-            persistMessage(message, sendRemotely);
+
             return format;
         }));
     }
@@ -138,6 +141,11 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
     public IDatabaseUpdater getDatabaseUpdater(){
         return iDatabaseUpdater;
+    }
+
+    @Override
+    public KeyedTable getUserTable() {
+        return (KeyedTable) this.catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
     }
 
     @Override

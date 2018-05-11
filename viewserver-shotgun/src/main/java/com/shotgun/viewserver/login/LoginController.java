@@ -102,13 +102,14 @@ public class LoginController {
         session.onDisconnect().take(1).subscribe(c-> setUserOffLine(userId));
         ControllerContext.set("userId", userId,session);
         ControllerContext.setFactory("user", () -> getUser(userId), session);
+        ControllerContext.setFactory("now", () -> new Date().getTime(), session);
         return userId;
     }
 
 
 
     private User getUser(String userId) {
-        KeyedTable keyedTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable keyedTable = (KeyedTable) systemcatalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         HashMap<String, Object> userRow = keyedTable.getRowObject(new TableKey(userId));
         if(userRow == null){
             throw new RuntimeException(String.format("Unable to find user for id %s",userId));

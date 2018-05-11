@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 
 public interface OrderNotificationContract {
 
-    default void sendMessage(String orderId,String fromUserId, String toUserId, String title, String body) {
+    default void sendMessage(String orderId,String fromUserId, String toUserId, String title, String body, boolean sendingToCustomer) {
         try {
             AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withAction(createActionUri(orderId))
+                    .withAction(createActionUri(orderId, sendingToCustomer))
                     .message(title, body)
                     .withFromTo(fromUserId, toUserId)
                     .build();
@@ -21,13 +21,13 @@ public interface OrderNotificationContract {
         }
     }
 
-    default void sendMessage(String orderId, String toUserId, String title, String body) {
-        sendMessage(orderId, (String) ControllerContext.get("userId"), toUserId, title,body);
+    default void sendMessage(String orderId, String toUserId, String title, String body, boolean isGoingToCustomer) {
+        sendMessage(orderId, (String) ControllerContext.get("userId"), toUserId, title,body, isGoingToCustomer);
     }
 
 
-    default String createActionUri(String orderId){
-        return String.format("shotgun://PartnerOrderDetail/%s", orderId);
+    default String createActionUri(String orderId, boolean isCustomer){
+        return String.format("shotgun://%s/%s", isCustomer ? "CustomerOrderDetail" : "PartnerOrderDetail", orderId);
     }
     Logger getLogger();
     IMessagingController getMessagingController();
