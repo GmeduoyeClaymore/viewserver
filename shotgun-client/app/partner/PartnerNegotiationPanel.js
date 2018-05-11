@@ -11,26 +11,26 @@ import { Platform } from 'react-native';
 const IS_ANDROID = Platform.OS === 'android';
 
 class PartnerNegotiationPanel extends Component {
-    state = {};
-  
-    toggleDatePicker = (isDatePickerVisible) => {
-      super.setState({isDatePickerVisible});
-    }
+  state = {};
 
-    onChangeDate = (negotiationDate) => {
-      this.setState({negotiationDate});
-      this.toggleDatePicker(false);
-    }
+  toggleDatePicker = (isDatePickerVisible) => {
+    super.setState({isDatePickerVisible});
+  }
 
-    setNegotiationAmount = (negotiationAmount) => {
-      this.setState({negotiationAmount});
-    }
+  onChangeDate = (negotiationDate) => {
+    this.setState({negotiationDate});
+    this.toggleDatePicker(false);
+  }
+
+  setNegotiationAmount = (negotiationAmount) => {
+    this.setState({negotiationAmount});
+  }
 
     respondToOrder = (onOrderRespond, negotiationAmount, negotiationDate) => {
-      if (onOrderRespond){
-        onOrderRespond({negotiationAmount, negotiationDate});
-      }
+    if (onOrderRespond){
+      onOrderRespond({negotiationAmount, negotiationDate});
     }
+  }
 
   onCancelResponse = () => {
     const {dispatch, order} = this.props;
@@ -133,7 +133,7 @@ const validationSchema = {
   negotiationAmount: yup.number().required(),
   negotiationDate: yup.date().required()
 };
-  
+
 const datePickerOptions = {
   datePickerModeAndroid: 'calendar',
   mode: 'date',

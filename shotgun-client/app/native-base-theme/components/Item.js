@@ -219,8 +219,7 @@ export default (variables = variable) => {
       },
     },
     '.last': {
-      marginLeft: 0,
-      paddingLeft: variables.contentPadding,
+      borderBottomWidth: 0,
     },
     '.first': {
       marginLeft: 0,

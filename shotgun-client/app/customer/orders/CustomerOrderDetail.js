@@ -47,7 +47,7 @@ class CustomerOrderDetail extends Component{
   }
 
   render() {
-    const {busy, order, orderId, errors, history,dispatch} = this.props;
+    const {busy, order, orderId, errors, history, dispatch} = this.props;
     const {resources} = this;
     const {InProgressControls, AcceptedControls} = resources;
     return busy || !order ? <LoadingScreen text={ !busy && !order ? 'Order "' + orderId + '" cannot be found' : 'Loading Order...'}/> : <Container>
@@ -108,7 +108,7 @@ const mapStateToProps = (state, initialProps) => {
 };
 
 const PaymentStagesAndSummary = (props) => {
-  const {history, path, orderId, height, order} = props;
+  const {history, path, orderId, width, order} = props;
   const shouldShowPaymentStagesTab = order.paymentType !== 'DAYRATE' || (order.paymentStages && order.paymentStages.length);
   const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
   const goToTabNamed = (name) => {
@@ -118,7 +118,7 @@ const PaymentStagesAndSummary = (props) => {
     <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
     {shouldShowPaymentStagesTab ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')}/> : null}
   </Tabs>,
-  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
+  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props} height={1000 /*hack to get around a weird height issue when keyboard shown*/} width={width - shotgun.contentPadding} path={path} defaultRoute='Summary' hasFooter={true}>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
   </ReduxRouter>];
@@ -136,7 +136,7 @@ resourceDictionary.
     personell([CustomerNegotiationPanel, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([CustomerNegotiationPanel,CancelControl, OrderSummary]).
     delivery([CustomerNegotiationPanel, JourneyJobInProgress('Delivery In Progress'),CancelControl,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
-    rubbish([CustomerNegotiationPanel, JourneyJobInProgress('Collection In Progress'), ,CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    rubbish([CustomerNegotiationPanel, JourneyJobInProgress('Collection In Progress'), CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
   property('InProgressControls', [OrderSummary]).
     personell([CustomerPriceSummary, CompleteControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([CustomerPriceSummary,CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
