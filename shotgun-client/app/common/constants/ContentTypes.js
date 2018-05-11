@@ -6,6 +6,21 @@ export const RUBBISH = 2;
 export const SKIP = 4;
 export const PERSONELL = 5;
 
+export const getFriendlyContentTypeName = (contentTypeId) => {
+  switch (contentTypeId){
+  case DELIVERY:
+    return 'Delivery';
+  case HIRE:
+    return 'Hire';
+  case RUBBISH:
+    return 'Rubbish Collection';
+  case PERSONELL:
+    return 'Trades';
+  default:
+    return 'Unknown contentType - ' + contentTypeId;
+  }
+};
+
 export class ResourceDictionaryProperty{
   constructor(propertyName, resourceDictionary){
     this.propertyName = propertyName;

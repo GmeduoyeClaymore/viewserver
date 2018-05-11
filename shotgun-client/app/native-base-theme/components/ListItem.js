@@ -401,6 +401,10 @@ export default (variables = variable) => {
       paddingTop: variables.contentPadding,
       paddingBottom: variables.contentPadding
     },
+    '.paddedTopBottomNarrow': {
+      paddingTop: 15,
+      paddingBottom: 15
+    },
     '.paddedLeftRight': {
       paddingLeft: variables.contentPadding,
       paddingRight: variables.contentPadding,

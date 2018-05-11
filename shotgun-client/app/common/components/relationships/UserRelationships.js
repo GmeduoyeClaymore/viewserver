@@ -1,13 +1,13 @@
 import React, {Component}  from 'react';
 import { withExternalState, ReduxRouter, Route } from 'custom-redux';
-import {Button, Tab, View, Text, Row, Col, Grid, Switch, Header, Body, Title} from 'native-base';
+import {Content, Button, Tab, View, Text, Row, Col, Grid, Switch, Header, Body, Title} from 'native-base';
 import {Tabs, ErrorRegion, LoadingScreen} from 'common/components';
 import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
 import {updateRange, updateStatus} from 'common/actions/CommonActions';
-import UserRelationshipDetail from './UserRelationshipDetail';
+import UserDetail from './UserDetail';
 import {Platform} from 'react-native';
 const IS_ANDROID = Platform.OS === 'android';
 const SubViewPath = 'RelationshipView/';
@@ -17,7 +17,7 @@ class UserRelationships extends Component{
     super(props);
     this.UserViews = [
       {'Map': UserRelationshipMap},
-      {'Detail': UserRelationshipDetail, hidden: true},
+      {'Detail': UserDetail, hidden: true},
     ];
   }
 
@@ -81,7 +81,7 @@ class UserRelationships extends Component{
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
-    return <Grid>
+    return <Content><Grid>
       <Row>
         <Row style={{...styles.showAllView, marginTop: IS_ANDROID ? 0 : 15 }}>
           <Button style={styles.showAllButton} light={showAll} onPress={() => this.setShowAll(false)}>
@@ -96,7 +96,8 @@ class UserRelationships extends Component{
           {UserViews.map( (c) => <Route key={Object.keys(c)[0]} parentPath={parentPath} path={`${SubViewPath}${Object.keys(c)[0]}X`} contentType={c} component={c[Object.keys(c)[0]]} />)}
         </ReduxRouter>
       </Row>
-    </Grid>;
+    </Grid>
+    </Content>;
   }
 }
 

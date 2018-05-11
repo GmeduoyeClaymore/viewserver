@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Text, Col, Row} from 'native-base';
+import {Button, Text, Grid, Col, Row} from 'native-base';
 import {Icon, AverageRating} from 'common/components';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -13,23 +13,26 @@ export class UserInfo extends Component{
 
   render(){
     const {user, imageWidth = 40} = this.props;
-    return user ? <Row>
-      {user.imageUrl ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/> : null}
-      <Col style={styles.name}>
-        <Text style={{textAlign: 'left'}}>{user.firstName} {user.lastName}</Text>
-        <AverageRating style={{textAlign: 'left'}} rating={user.ratingAvg}/>
-      </Col>
-      <Button style={{flex: 1}} fullWidth callButton onPress={this.onPressCall}>
-        <Icon name="phone" paddedIcon/>
-        <Text uppercase={false}>Call</Text>
-      </Button>
-    </Row> : null;
+    return user ? <Grid>
+      <Row>
+        {user.imageUrl ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/> : null}
+        <Col style={styles.name}>
+          <Text>{user.firstName} {user.lastName}</Text>
+          <AverageRating rating={user.ratingAvg}/>
+        </Col>
+        <Col>
+          <Button fullWidth callButton onPress={this.onPressCall}>
+            <Icon name="phone" paddedIcon/>
+            <Text uppercase={false}>Call</Text>
+          </Button>
+        </Col>
+      </Row>
+    </Grid> : null;
   }
 }
 
 const styles = {
   name: {
-    flex: 1,
     alignContent: 'flex-start'
   },
   images: {
