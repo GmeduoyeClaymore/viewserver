@@ -161,7 +161,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             notificationsForUser = new ArrayList<>();
             this.notifiedOrdersByUser.put(userId,notificationsForUser);
         }
-        notificationsforuser.add(orderid);
+        notificationsForUser.add(orderId);
     }
 
     private ReportContext.DimensionValue getDimensionsForProductIds(List<String> productIds) {

@@ -47,8 +47,7 @@ export default class NotificationsDaoContext{
       const {row} = ev;
       const {message, sentRemotely} = row;
       if (!sentRemotely){
-        const {body, title, priority} = message;
-        FCM.presentLocalNotification({priority: 'high', body, title, show_in_foreground: true});
+        FCM.presentLocalNotification({...message, show_in_foreground: true});
       }
     }
     return dataSink.rows;
