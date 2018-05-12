@@ -28,6 +28,7 @@ import io.viewserver.execution.context.DataSourceExecutionPlanContext;
 import io.viewserver.execution.plan.DataSourceExecutionPlan;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
@@ -82,8 +83,8 @@ public class DataSourceHelper {
         return columnHolder;
     }
 
-    public static IndexOperator.QueryHolder[] getQueryHolders(IDataSource dataSource, List<ReportContext.DimensionValue> dimensionValues, DimensionMapper dimensionMapper) {
-        final IndexOperator.QueryHolder[] queryHolders = new IndexOperator.QueryHolder[dimensionValues.size()];
+    public static QueryHolderConfig[] getQueryHolders(IDataSource dataSource, List<ReportContext.DimensionValue> dimensionValues, DimensionMapper dimensionMapper) {
+        final QueryHolderConfig[] queryHolders = new QueryHolderConfig[dimensionValues.size()];
         int i = 0;
         for (ReportContext.DimensionValue dimensionFilter : dimensionValues) {
             //TODO - handle case where dimension does not exist in the data source
@@ -92,7 +93,7 @@ public class DataSourceHelper {
                 throw new RuntimeException("Unable to find dimension named " + dimensionFilter.getName() + " in data source " + dataSource.getName());
             }
 
-            IndexOperator.QueryHolder queryHolder = getQueryHolder(dataSource.getName(), dimensionMapper, dimensionFilter, dimension);
+            QueryHolderConfig queryHolder = new QueryHolderConfig(dimension,dimensionFilter.isExclude(), dimensionFilter.getValues().toArray());
             queryHolders[i++] = queryHolder;
         }
         return queryHolders;

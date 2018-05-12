@@ -52,8 +52,7 @@ public class PartnerController {
 
     @ControllerAction(path = "registerPartner", isSynchronous = false)
     public ListenableFuture<String> registerPartner(@ActionParam(name = "user")User user,
-                                                    @ActionParam(name = "vehicle")Vehicle vehicle,
-                                                    @ActionParam(name = "address")DeliveryAddress address){
+                                                    @ActionParam(name = "vehicle")Vehicle vehicle){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
@@ -82,9 +81,10 @@ public class PartnerController {
                     user.set("vehicle",vehicle);
                     String userId = userController.addOrUpdateUser(user, user.getPassword());
                     ControllerContext.set("userId",userId);
-                    address.set("isDefault",true);
-                    deliveryAddressController.addOrUpdateDeliveryAddress(address);
-
+                    if(user.getDeliveryAddress() != null) {
+                        user.getDeliveryAddress().set("isDefault", true);
+                        deliveryAddressController.addOrUpdateDeliveryAddress(user.getDeliveryAddress());
+                    }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     Observable.from(loginController.setUserId(userId)).subscribe(
                             res -> {

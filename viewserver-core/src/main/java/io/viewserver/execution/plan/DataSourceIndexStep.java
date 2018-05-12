@@ -44,6 +44,7 @@ public class DataSourceIndexStep implements IExecutionPlanStep<DataSourceExecuti
         if (options.contains(DataSourceOption.IsIndexed)
                 || !dimensions.isEmpty()) {
             nodes.add(new IndexNode(DataSource.INDEX_NAME)
+                    .withDatasourceName(dataSource.getName())
                     .withIndexedColumns(dimensions.stream().map(x -> x.getName()).collect(Collectors.toList()))
                     .withConnection(dataSource.getFinalOutput(), Constants.OUT, Constants.IN));
         }

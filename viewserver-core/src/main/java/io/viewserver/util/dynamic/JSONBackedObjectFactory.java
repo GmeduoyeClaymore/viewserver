@@ -12,8 +12,8 @@ public class JSONBackedObjectFactory {
         return Proxies.propertyMapping(classToCreate, new HashMap<>());
     }
 
-    public static <T> T create(String orderDetailsString, Class<T> classToCreate) {
-        return Proxies.propertyMapping(classToCreate, (Map<String, Object>) ControllerUtils.mapDefault(orderDetailsString));
+    public static <T> T create(String proxyString, Class<T> classToCreate) {
+        return Proxies.propertyMapping(classToCreate, (Map<String, Object>) ControllerUtils.mapDefault(proxyString));
     }
 
     public static <T> T create(Map<String, Object> propertyValues, Class<T> classToCreate) {

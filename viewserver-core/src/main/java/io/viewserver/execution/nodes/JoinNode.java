@@ -32,8 +32,8 @@ import java.util.List;
 public class JoinNode extends GraphNodeBase<JoinNode> {
     private String[] leftJoinColumns = new String[0];
     private String[] rightJoinColumns = new String[0];
-    private boolean isLeftJoinOuter;
-    private boolean isRightJoinOuter;
+    private String isLeftJoinOuter;
+    private String isRightJoinOuter;
     private IColumnNameResolver columnNameResolver;
     private boolean alwaysResolveNames;
     private String leftPrefix;
@@ -98,7 +98,7 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
 
             @Override
             public boolean isLeftJoinOuter() {
-                return isLeftJoinOuter;
+                return Boolean.parseBoolean(parameterHelper.substituteParameterValues(isLeftJoinOuter));
             }
 
             @Override
@@ -108,7 +108,7 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
 
             @Override
             public boolean isRightJoinOuter() {
-                return isRightJoinOuter;
+                return  Boolean.parseBoolean(parameterHelper.substituteParameterValues(isRightJoinOuter));
             }
 
             @Override
@@ -154,20 +154,20 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
     }
 
     public JoinNode withLeftJoinOuter() {
-        return withLeftJoinOuter(true);
+        return withLeftJoinOuter("true");
     }
 
-    public JoinNode withLeftJoinOuter(boolean shouldLeftOuter) {
+    public JoinNode withLeftJoinOuter(String shouldLeftOuter) {
         this.isLeftJoinOuter = shouldLeftOuter;
         return this;
     }
 
-    public JoinNode withRightJoinOuter(boolean shouldRightOuter) {
+    public JoinNode withRightJoinOuter(String shouldRightOuter) {
         this.isRightJoinOuter = shouldRightOuter;
         return this;
     }
     public JoinNode withRightJoinOuter() {
-        return withRightJoinOuter(true);
+        return withRightJoinOuter("true");
     }
 
     public IColumnNameResolver getColumnNameResolver() {
@@ -218,19 +218,19 @@ public class JoinNode extends GraphNodeBase<JoinNode> {
         this.rightJoinColumns = rightJoinColumns;
     }
 
-    public boolean isLeftJoinOuter() {
+    public String getLeftJoinOuter() {
         return isLeftJoinOuter;
     }
 
-    public void setLeftJoinOuter(boolean isLeftJoinOuter) {
+    public void setLeftJoinOuter(String isLeftJoinOuter) {
         this.isLeftJoinOuter = isLeftJoinOuter;
     }
 
-    public boolean isRightJoinOuter() {
+    public String getRightJoinOuter() {
         return isRightJoinOuter;
     }
 
-    public void setRightJoinOuter(boolean isRightJoinOuter) {
+    public void setRightJoinOuter(String isRightJoinOuter) {
         this.isRightJoinOuter = isRightJoinOuter;
     }
 

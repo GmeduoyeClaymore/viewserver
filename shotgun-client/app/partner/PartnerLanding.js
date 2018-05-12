@@ -13,6 +13,7 @@ import NotificationActionHandlerService from 'common/services/NotificationAction
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import CustomerOrderDetail from 'customer/orders/CustomerOrderDetail';
 import Checkout from 'common/components/checkout/Checkout';
+import UserDetail from 'common/components/relationships/UserDetail';
 import {LoadingScreen} from 'common/components';
 import Logger from 'common/Logger';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -63,6 +64,7 @@ class PartnerLanding extends Component {
         <Route path={'PartnerMyOrders'} exact component={PartnerMyOrders}/>
         <Route path={'Orders'} exact component={PartnerMyOrders}/>
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'UserDetail'} exact component={UserDetail}/>
         <Route path={'Settings'} component={PartnerSettings}/>
         <Route path={'UserRelationships'} component={UserRelationships}/>
       </ReduxRouter>,

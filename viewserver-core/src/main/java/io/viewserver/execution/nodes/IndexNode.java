@@ -29,6 +29,8 @@ import java.util.List;
 public class IndexNode extends GraphNodeBase<IndexNode> {
     String[] indexedColumns;
 
+    String datasourceName;
+
     public IndexNode(){super();}
 
     public IndexNode(String name) {
@@ -37,6 +39,11 @@ public class IndexNode extends GraphNodeBase<IndexNode> {
 
     public IndexNode withIndexedColumns(String... indexedColumns){
         this.indexedColumns = indexedColumns;
+        return this;
+    }
+
+    public IndexNode withDatasourceName(String datasourceName){
+        this.datasourceName = datasourceName;
         return this;
     }
 
@@ -49,12 +56,17 @@ public class IndexNode extends GraphNodeBase<IndexNode> {
     public Object getConfig(ParameterHelper parameterHelper) {
         return new IIndexConfig() {
             @Override
+            public String getDataSourceName() {
+                return datasourceName;
+            }
+
+            @Override
             public String[] getIndices() {
                 return indexedColumns;
             }
 
             @Override
-            public Output[] getOutputs() {
+            public OutputConfig[] getOutputs() {
                 return null;
             }
         };

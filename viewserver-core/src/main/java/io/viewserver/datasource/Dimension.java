@@ -18,6 +18,8 @@ package io.viewserver.datasource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Objects;
+
 /**
  * Created by bemm on 13/10/2014.
  */
@@ -140,4 +142,18 @@ public class Dimension {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Dimension dimension = (Dimension) o;
+        return global == dimension.global &&
+                Objects.equals(name, dimension.name);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(name, global);
+    }
 }

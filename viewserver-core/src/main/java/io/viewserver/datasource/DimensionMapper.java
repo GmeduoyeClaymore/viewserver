@@ -18,6 +18,7 @@ package io.viewserver.datasource;
 
 import io.viewserver.collections.*;
 import io.viewserver.core.NullableBool;
+import org.apache.commons.beanutils.ConvertUtils;
 
 
 public class DimensionMapper extends DimensionMapperBase {
@@ -68,7 +69,7 @@ public class DimensionMapper extends DimensionMapperBase {
                 return mapShort(namespace, dimensionName, (short) value);
             }
             case Int: {
-                int i = mapInt(namespace, dimensionName, value instanceof Integer ? ((Integer) value).intValue() : (int) value);
+                int i = mapInt(namespace, dimensionName, value instanceof Integer ? ((Integer) value).intValue() :  (int)ConvertUtils.convert(value, Integer.class));
                 return i;
             }
             case Long: {

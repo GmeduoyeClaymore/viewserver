@@ -102,7 +102,7 @@ Feature: Delivery order scenarios
 
   Scenario: Other users can see newly created job in their list
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
-	  | Name             | Value                                              |
+	  | Name             | Value                                               |
 	  | param_customerId | {client1_partnerController_registerPartner_result} |
 	Given "client2" subscribed to report "orderRequest" with parameters
 	  | Name                    | Type    | Value  |

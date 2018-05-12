@@ -49,30 +49,31 @@ Feature: User registration scenarios
 	  | ColumnAdd | Json        | paymentCards         |
 	  | ColumnAdd | Json        | pendingMessages      |
 	  | ColumnAdd | Json        | vehicle              |
+	  | ColumnAdd | Json        | relationships        |
+	  | ColumnAdd | String      | relationshipStatus   |
+
 	Then "client2" the following data is received eventually on report "userReport"
 	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
-	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | True   | 50    | 0    | -1.0      |                    | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
+	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | True   | 50    | 0    | -1.0      | UNKNOWN            | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
 
   Scenario: Newly registered users can be seen by each other
 
   Scenario: Can see partner for product in userProduct report
 	Given "client1" report parameters
 	  | Name           | Type    | Value |
-	  | showOutOfRange | String  | false |
+	  | showOutOfRange | String  | true |
 	  | showUnrelated  | String  | true  |
 	  | latitude       | Integer | 0     |
 	  | longitude      | Integer | 0     |
 	  | userId         | Integer | 0     |
 	  | maxDistance    | Integer | 0     |
-	Given "client1" dimension filters
-	  | Name                | Type   | Value      |
-	  | dimension_productId | String | BrickLayer |
+	  |productId | String | BrickLayer |
 	And "client1" paging from 0 to 100 by "userId" descending
-	When "client1" subscribed to report "usersForProductAll"
-	Then "client1" the following schema is received eventually on report "usersForProductAll"
+	When "client1" subscribed to report "usersForProduct"
+	Then "client1" the following schema is received eventually on report "usersForProduct"
 	  | ~Action   | ~ColumnType | ~Name                |
 	  | ColumnAdd | String      | relationshipStatus   |
-	  | ColumnAdd | Bool        | initiatedByMe        |
+	  | ColumnAdd | String      | relationshipType   |
 	  | ColumnAdd | String      | userId               |
 	  | ColumnAdd | String      | firstName            |
 	  | ColumnAdd | String      | lastName             |
@@ -90,100 +91,9 @@ Feature: User registration scenarios
 	  | ColumnAdd | Double      | ratingAvg            |
 	  | ColumnAdd | Double      | distance             |
 	  | ColumnAdd | Int         | rank                 |
-	Then "client1" the following data is received eventually on report "usersForProductAll"
+	Then "client1" the following data is received eventually on report "usersForProduct"
 	  | ~Action | type    | userId                                             |
 	  | RowAdd  | partner | {client2_partnerController_registerPartner_result} |
 	  | RowAdd  | partner | 3ABCD23                                            |
 	  | RowAdd  | partner | 3ABCD22                                            |
 	  | RowAdd  | partner | 3ABCD24                                            |
-
-  Scenario: Can add payment card for user
-	Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                    |
-	  | paymentCard | ref://json/payments/visaPaymentCard.json |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-	Then "client1" the following data is received eventually on report "userReport"
-	  | ~Action | paymentCards                                                                                    | userId                                             |
-	  | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
-
-  Scenario: Can add multiple payment cards for user
-	Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                    |
-	  | paymentCard | ref://json/payments/visaPaymentCard.json |
-	And "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                          |
-	  | paymentCard | ref://json/payments/masterCardPaymentCard.json |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-	Then "client1" the following data is received eventually on report "userReport"
-	  | ~Action | paymentCards                                                                                                                                                                                       | userId                                             |
-	  | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}, "1" : {"brand": "MasterCard", "last4": "4444", "expMonth": 8, "expYear": 2022, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
-
-  Scenario: Can delete payment card for user
-	Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                    |
-	  | paymentCard | ref://json/payments/visaPaymentCard.json |
-	And "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                          |
-	  | paymentCard | ref://json/payments/masterCardPaymentCard.json |
-	And "client1" controller "userController" action "deletePaymentCard" invoked with parameters
-	  | Name   | Value  |
-	  | cardId | "1234" |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-
-  Scenario: Can set default payment card for user
-	Given "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                    |
-	  | paymentCard | ref://json/payments/visaPaymentCard.json |
-	And "client1" controller "userController" action "addPaymentCard" invoked with parameters
-	  | Name        | Value                                          |
-	  | paymentCard | ref://json/payments/masterCardPaymentCard.json |
-	And "client1" controller "userController" action "setDefaultPaymentCard" invoked with parameters
-	  | Name   | Value  |
-	  | cardId | "12345 |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-	Then "client1" the following data is received eventually on report "userReport"
-	  | ~Action | paymentCards                                                                                                                                                                                       | userId                                             |
-	  | RowAdd  | { "0" : {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true}, "1" : {"brand": "MasterCard", "last4": "4444", "expMonth": 8, "expYear": 2022, "isDefault": true}} | {client1_partnerController_registerPartner_result} |
-
-
-  Scenario: Can add bank account for user
-	Given "client1" controller "userController" action "setBankAccount" invoked with parameters
-	  | Name               | Value                                                        |
-	  | paymentBankAccount | ref://json/payments/bankAccount1.json                        |
-	  | address            | ref://json/deliveryAddress/deliveryAddress12KinnoulRoad.json |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-	Then "client1" the following data is received eventually on report "userReport"
-	  | ~Action | bankAccount                                                                                | userId                                             |
-	  | RowAdd  | {"last4": "2345", "sortCode": "10-88-00", "bankName": "STRIPE TEST BANK", "country": "GB"} | {client1_partnerController_registerPartner_result} |
-
-
-  Scenario: Can update bank account for user
-	Given "client1" controller "userController" action "setBankAccount" invoked with parameters
-	  | Name               | Value                                                        |
-	  | paymentBankAccount | ref://json/payments/bankAccount1.json                        |
-	  | address            | ref://json/deliveryAddress/deliveryAddress12KinnoulRoad.json |
-	Given "client1" controller "userController" action "setBankAccount" invoked with parameters
-	  | Name               | Value                                                        |
-	  | paymentBankAccount | ref://json/payments/bankAccount2.json                        |
-	  | address            | ref://json/deliveryAddress/deliveryAddress12KinnoulRoad.json |
-	When "client1" subscribed to report "userReport" with parameters
-	  | Name             | Type   | Value   |
-	  | dimension_userId | String | @userId |
-	Then "client1" the following data is received eventually on report "userReport"
-	  | ~Action | bankAccount                                                                                | userId                                             |
-	  | RowAdd  | {"last4": "1116", "sortCode": "10-88-00", "bankName": "STRIPE TEST BANK", "country": "GB"} | {client1_partnerController_registerPartner_result} |
-
-
-
-
-

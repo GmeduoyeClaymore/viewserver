@@ -13,6 +13,7 @@ import java.util.Arrays;
  */
 public class UserDataSource {
     public static final String NAME = "user";
+    public static final Dimension dimension_userId = new Dimension("dimension_userId", "userId", Cardinality.Byte, ContentType.String, true);
 
     public static DataSource getDataSource() {
         return new DataSource()
@@ -32,6 +33,7 @@ public class UserDataSource {
                                         new Column("bankAccount",  ContentType.Json),
                                         new Column("vehicle",  ContentType.Json),
                                         new Column("paymentCards",  ContentType.Json),
+                                        new Column("relationships",  ContentType.Json),
                                         new Column("pendingMessages",  ContentType.Json),
                                         new Column("ratings",  ContentType.Json),
                                         new Column("ratingAvg",  ContentType.Double),
@@ -50,7 +52,7 @@ public class UserDataSource {
                                 ))
                                 .withKeyColumns("userId")
                 )
-                .withDimensions(Arrays.asList(new Dimension("dimension_userId","userId", Cardinality.Byte, ContentType.String),
+                .withDimensions(Arrays.asList(dimension_userId,
                         new Dimension("dimension_online","online", Cardinality.Byte, ContentType.Bool)))
                 .withOutput(DataSource.TABLE_NAME)
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);

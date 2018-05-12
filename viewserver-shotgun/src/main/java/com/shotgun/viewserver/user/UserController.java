@@ -239,17 +239,19 @@ public class UserController implements UserTransformationController, RatedOrderC
     @ControllerAction(path = "updateRelationship", isSynchronous = true)
     public void updateRelationship(@ActionParam(name = "targetUserId") String targetUserId, @ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus, @ActionParam(name = "relationshipType") UserRelationshipType relationshipType) {
         String userId = getUserId();
-
-        Record userRecord = new Record()
-                .addValue("relationshipId", constructKey(userId, targetUserId))
-                .addValue("fromUserId", userId)
-                .addValue("toUserId", targetUserId)
-                .addValue("relationshipStatus", userRelationshipStatus == null ? null : userRelationshipStatus.name())
-                .addValue("relationshipType", relationshipType == null ? null : relationshipType.name());
-
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_RELATIONSHIP_TABLE_NAME, UserRelationshipDataSource.getDataSource().getSchema(), userRecord);
-
-        notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
+        this.transform(
+                targetUserId,
+                targetUser -> {
+                    targetUser.addOrUpdateRelationship(userId,userRelationshipStatus.equals(UserRelationshipStatus.REQUESTED)  ? UserRelationshipStatus.REQUESTEDBYME : userRelationshipStatus,relationshipType);
+                    User meUser = getUserForId(userId,User.class);
+                    meUser.addOrUpdateRelationship(targetUserId,userRelationshipStatus,relationshipType);
+                    updateUser(meUser);
+                    return true;
+                },
+                user -> {
+                    notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
+                }, User.class
+        );
     }
 
     private void notifyRelationshipStatus(String userId, String targetUserId, String status, KeyedTable userTable) {
@@ -319,7 +321,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
             log.info("Waiting for user {}", userId);
-            return output.observable().filter(ev -> hasUserId(ev, userId)).take(1).timeout(30, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
+            return output.observable().filter(ev -> hasUserId(ev, userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output, userRowId, null));
     }

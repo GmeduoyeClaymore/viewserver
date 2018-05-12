@@ -20,11 +20,15 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.Dimension;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.factories.*;
 import io.viewserver.operators.*;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.union.UnionOperator;
@@ -118,7 +122,7 @@ public class TestMixerContext {
         IOutput out = null;
         if(operator instanceof  IndexOperator){
             String[] indexOutputDescriptorParts = outputName.split("#");
-            List<IndexOperator.QueryHolder> holders = new ArrayList<>();
+            List<QueryHolderConfig> holders = new ArrayList<>();
 
             for(int i=0;i<indexOutputDescriptorParts.length;i++){
                 String indexPartStr = indexOutputDescriptorParts[i];
@@ -128,14 +132,14 @@ public class TestMixerContext {
                 }
 
                 String[] split = indexParts[1].split(",");
-                int[] indexValues = new int[split.length];
+                Object[] indexValues = new Object[split.length];
 
                 for(int j=0;j<split.length;j++){
                     indexValues[j] = Integer.parseInt(split[j]);
                 }
-                holders.add(new IndexOperator.QueryHolder(indexParts[0], indexValues));
+                holders.add(new QueryHolderConfig(getDimension(indexParts[0]),false, indexValues));
             }
-            out = ((IndexOperator)operator).getOrCreateOutput(Constants.OUT + "_",holders.toArray(new IndexOperator.QueryHolder[holders.size()]) );
+            out = ((IndexOperator)operator).getOrCreateOutput(Constants.OUT + "_",holders.toArray(new QueryHolderConfig[holders.size()]) );
         }else{
             out = operator.getOutput(outputName);
         }
@@ -144,6 +148,10 @@ public class TestMixerContext {
             throw new RuntimeException("Operator named \"" + operatorName + "\" doesn't have an output named \"" + outputName + "\"");
         }
         return out;
+    }
+
+    private Dimension getDimension(String name) {
+        return new Dimension(name, Cardinality.Int, ContentType.Int);
     }
 
     public IOperator getOperator(String operatorName) {

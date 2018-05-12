@@ -183,11 +183,10 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     return true;
                 },
                 order -> {
-                    notifyPartnerStartJob(orderId,order);
+                    notifyPartnerCompleteJob(orderId,order);
                 },
                 NegotiatedOrder.class
         );
-
     }
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)

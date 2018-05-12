@@ -81,6 +81,7 @@ public class ExecutionPlanRunner implements IExecutionPlanRunner {
 
         Map<String, String> hashedOperatorNames = context.getDefaultNodeNames();
         int defaultNodeCount = hashedOperatorNames.size();
+        int duplicatedNodeNames = 0;
         HashSet<IGraphNode> hashedNodes = new HashSet<>();
         boolean nodesWereHashed;
         do {
@@ -135,11 +136,16 @@ public class ExecutionPlanRunner implements IExecutionPlanRunner {
 
                 String operatorName = node.getNameForOperatorSpec(context.shouldHashNames());
                 log.debug("Adding hashed operator name {} for {}",node.getName(), operatorName);
+                if(hashedOperatorNames.containsKey(node.getName())){
+                    log.debug("This graph contains two nodes with the same name. This really isnt a problem");
+                    duplicatedNodeNames++;
+                    continue;
+                }
                 hashedOperatorNames.put(node.getName(), operatorName);
                 context.setOperatorName(node.getName(), operatorName);
             }
         } while (nodesWereHashed);
-        if (hashedOperatorNames.size() != nodeCount + defaultNodeCount) {
+        if (hashedOperatorNames.size() + duplicatedNodeNames != nodeCount + defaultNodeCount) {
             throw new ViewServerException("Could not resolve all graph nodes - possible circular reference?");
         }
 

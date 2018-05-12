@@ -22,15 +22,18 @@ import io.viewserver.configurator.IOutputConfig;
  * Created by bemm on 31/10/2014.
  */
 public interface IIndexConfig extends IOutputConfig {
+
+    String getDataSourceName();
+
     String[] getIndices();
 
-    Output[] getOutputs();
+    OutputConfig[] getOutputs();
 
-    public static class Output {
+    public static class OutputConfig {
         private final String name;
-        private final IndexOperator.QueryHolder[] queryHolders;
+        private final QueryHolderConfig[] queryHolders;
 
-        public Output(String name, IndexOperator.QueryHolder[] queryHolders) {
+        public OutputConfig(String name, QueryHolderConfig[] queryHolders) {
             this.name = name;
             this.queryHolders = queryHolders;
         }
@@ -39,7 +42,7 @@ public interface IIndexConfig extends IOutputConfig {
             return name;
         }
 
-        public IndexOperator.QueryHolder[] getQueryHolders() {
+        public QueryHolderConfig[] getQueryHolders() {
             return queryHolders;
         }
     }

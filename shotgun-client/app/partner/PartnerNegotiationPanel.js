@@ -26,7 +26,7 @@ class PartnerNegotiationPanel extends Component {
     this.setState({negotiationAmount});
   }
 
-    respondToOrder = (onOrderRespond, negotiationAmount, negotiationDate) => {
+  respondToOrder = (onOrderRespond, negotiationAmount, negotiationDate) => {
     if (onOrderRespond){
       onOrderRespond({negotiationAmount, negotiationDate});
     }

@@ -15,6 +15,7 @@ import UserDao from 'common/dao/UserDao';
 export const customerServicesRegistrationAction = (client, continueWith) => {
   return async (dispatch) => {
     register(dispatch, new UserDao(client));
+    register(dispatch, new UserDao(client, 'singleUserDao'));
     const orderDao = registerNakedDao(dispatch, new OrderDao(client));
     registerNakedDao(dispatch, new PaymentDao(client));
     register(dispatch, new DeliveryAddressDao(client));

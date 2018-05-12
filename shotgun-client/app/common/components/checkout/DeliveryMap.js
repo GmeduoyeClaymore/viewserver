@@ -92,7 +92,7 @@ class DeliveryMap extends Component{
 
     if (this.map && coordinates.length == 2) {
       this.map.fitToCoordinates(coordinates, {
-        edgePadding: { top: 450, right: 100, bottom: 150, left: 100 },
+        edgePadding: { top: 100, right: 100, bottom: 150, left: 100 },
         animated: true,
       });
     }

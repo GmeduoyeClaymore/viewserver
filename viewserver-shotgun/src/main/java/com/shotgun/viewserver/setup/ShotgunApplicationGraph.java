@@ -50,10 +50,12 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
         reportDefinitions.put(PaymentsReport.ID, PaymentsReport.getReportDefinition());
         reportDefinitions.put(OrderResponseReport.ID, OrderResponseReport.getReportDefinition());
-        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS, UserRelationshipReport.getReportDefinition(false));
-        reportDefinitions.put(UserRelationshipReport.USER_RELATIONSHIPS + "All", UserRelationshipReport.getReportDefinition(true));
-        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, UserRelationshipReport.getUsersForProductReportDefinition(false));
-        reportDefinitions.put(UserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID + "All", UserRelationshipReport.getUsersForProductReportDefinition(true));
+        /*reportDefinitions.put(LegacyUserRelationshipReport.USER_RELATIONSHIPS, LegacyUserRelationshipReport.getReportDefinition(false));
+        reportDefinitions.put(LegacyUserRelationshipReport.USER_RELATIONSHIPS + "All", LegacyUserRelationshipReport.getReportDefinition(true));
+        reportDefinitions.put(LegacyUserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID, LegacyUserRelationshipReport.getUsersForProductReportDefinition(false));
+        reportDefinitions.put(LegacyUserRelationshipReport.USER_FOR_PRODUCT_REPORT_ID + "All", LegacyUserRelationshipReport.getUsersForProductReportDefinition(true));*/
+        reportDefinitions.put(UserProductRelationshipReport.ID, UserProductRelationshipReport.getReportDefinition());
+        reportDefinitions.put(UserRelationshipReport.ID, UserRelationshipReport.getReportDefinition());
         reportDefinitions.put(ContentTypeReport.ID, ContentTypeReport.getReportDefinition());
         return reportDefinitions;
     }

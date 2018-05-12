@@ -39,6 +39,7 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
     private ITableStorage tableStorage;
 
     public static String INDEX_PARAM_NAME = "index";
+    public static String INDEX_DATASOURCE_PARAM_NAME = "indexDataSource";
 
     public TestIndexOperatorFactory(IExecutionContext executionContext, ICatalog catalog) {
         this.executionContext = executionContext;
@@ -54,7 +55,7 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public IOperator create(String operatorName, Map<String, Object> context) {
-        IndexOperator index = new IndexOperator(operatorName, executionContext, catalog);
+        IndexOperator index = new IndexOperator(operatorName, executionContext, catalog, getiIndexConfig(context));
         configure(operatorName,context);
         return index;
     }
@@ -65,6 +66,11 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
         if(indexOperator == null){
             throw new RuntimeException("Unable to find operator named "  + operatorName + " in catalog");
         }
+        IIndexConfig config1 = getiIndexConfig(config);
+        indexOperator.configure(config1, new CommandResult());
+    }
+
+    public IIndexConfig getiIndexConfig(Map<String, Object> config) {
         List<String> indicies = new ArrayList<>();
 
         for(int i=0;i<10;i++){
@@ -73,17 +79,26 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
                 indicies.add(indexParamName);
             }
         }
-        indexOperator.configure(new IIndexConfig() {
+        return new IIndexConfig() {
+            @Override
+            public String getDataSourceName() {
+                String param = ITestOperatorFactory.getParam(INDEX_DATASOURCE_PARAM_NAME, config, String.class, true);
+                if (param == null) {
+                    return "dataSource";
+                }
+                return param;
+            }
+
             @Override
             public String[] getIndices() {
                 return indicies.toArray(new String[indicies.size()]);
             }
 
             @Override
-            public Output[] getOutputs() {
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
     }
 
 

@@ -70,7 +70,7 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> impl
         return this;
     }
 
-    public ReportDefinition withParameter(String name, String label, Class type,Object... validValues) {
+    public ReportDefinition withRequiredParameter(String name, String label, Class type, Object... validValues) {
         return withParameter(name,label,type,true,validValues);
     }
 

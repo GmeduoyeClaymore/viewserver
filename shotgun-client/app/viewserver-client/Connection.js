@@ -24,8 +24,9 @@ export default class Connection {
 
     connect(autoReconnect) {
       if (this._connectionPromise){
-        throw new Error('Cannot call reconnect multiple times on the same connection');
+        return this._connectionPromise;
       }
+      this._forcedClose = false;
       this._autoReconnect = autoReconnect;
       this._connectionPromise = new Promise((resolve, reject) => {
         this.tryConnect(1, resolve, reject);
@@ -48,7 +49,7 @@ export default class Connection {
       };
 
       this._socket.onerror = () => {
-        if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS){
+        if (attemptCounter === Connection.CONNECTING_RETRY_ATTEMPTS ){
           reject(`Unable to detect open web socket to ${this._uri} after ${Connection.CONNECTING_RETRY_ATTEMPTS} retries`);
         } else {
           Logger.info(`Attempt ${attemptCounter}/${Connection.CONNECTING_RETRY_ATTEMPTS} socket not connected. Socket state is ${this._socket.readyState} Trying again in ${Connection.CONNECTION_ATTEMPT_DELAY}ms`);
@@ -187,6 +188,7 @@ export default class Connection {
       if (eventHandlers){
         this.socket.onclose = eventHandlers.onSuccess;
       }
+      this._connectionPromise =  null;
       this.socket.close();
     }
     

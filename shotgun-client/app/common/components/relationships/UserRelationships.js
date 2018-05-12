@@ -67,7 +67,8 @@ class UserRelationships extends Component{
     this.setState({selectedUser});
     const {history, path} = this.props;
     if (selectedUser){
-      history.push(`${path}/${SubViewPath}DetailX`);
+      const {userId} = selectedUser;
+      history.push(`${path}/${SubViewPath}DetailX`, {userId});
     }
   }
 

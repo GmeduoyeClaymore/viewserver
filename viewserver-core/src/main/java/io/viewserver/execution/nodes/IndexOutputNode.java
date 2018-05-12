@@ -22,6 +22,8 @@ import io.viewserver.messages.config.IOperatorConfig;
 import io.viewserver.operators.index.IIndexConfig;
 import io.viewserver.operators.index.IndexOperator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.viewserver.operators.index.QueryHolderConfig;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -32,8 +34,9 @@ import java.util.List;
  * Created by paulg on 12/11/2014.
  */
 public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
-    private List<IndexOperator.QueryHolder> queryHolders = new ArrayList<>();
+    private List<QueryHolderConfig> queryHolders = new ArrayList<>();
     private String outputName;
+    private String dataSourceName;
 
     public IndexOutputNode() {
         super();
@@ -48,10 +51,16 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
         this.outputName = outputName;
     }
 
-    public IndexOutputNode withQueryHolders(IndexOperator.QueryHolder... queryHolders) {
+    public IndexOutputNode withQueryHolders(QueryHolderConfig... queryHolders) {
         this.queryHolders.addAll(Arrays.asList(queryHolders));
         return this;
     }
+
+    public IndexOutputNode withDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+        return this;
+    }
+
 
     @JsonIgnore
     @Override
@@ -63,41 +72,45 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
     public Object getConfig(ParameterHelper parameterHelper) {
         return new IIndexConfig() {
             @Override
+            public String getDataSourceName() {
+                return dataSourceName;
+            }
+
+            @Override
             public String[] getIndices() {
                 return null;
             }
 
             @Override
-            public Output[] getOutputs() {
-                return new Output[]{new Output(getConfigForOutputName(), queryHolders.toArray(new IndexOperator.QueryHolder[queryHolders.size()]))};
+            public OutputConfig[] getOutputs() {
+                return new OutputConfig[]{new OutputConfig(parameterHelper.substituteParameterValues(getConfigForOutputName()), getParameterizedQueryHolders(parameterHelper))};
             }
         };
     }
 
+    public QueryHolderConfig[] getParameterizedQueryHolders(ParameterHelper parameterHelper) {
+        QueryHolderConfig[] queryHolderConfigs = new QueryHolderConfig[queryHolders.size()];
+        int i=0;
+        for(QueryHolderConfig config : queryHolders){
+            Object[] newValues = config.getValues();
+            int j=0;
+            for(Object value : config.getValues()){
+                if(value instanceof String){
+                    newValues[j] = parameterHelper.substituteParameterValues((String)value);
+                }else{
+                    newValues[j] = value;
+                }
+                j++;
+            }
+            queryHolderConfigs[i] = new QueryHolderConfig(config.getDimension(),config.isExclude(),newValues);
+            i++;
+        }
+        return queryHolderConfigs;
+    }
+
     @Override
     protected IOperatorConfig getConfigDto(ParameterHelper parameterHelper) {
-        io.viewserver.messages.config.IIndexConfig indexConfigDto = MessagePool.getInstance().get(io.viewserver.messages.config.IIndexConfig.class);
-        io.viewserver.messages.config.IIndexConfig.IOutput outputDto = MessagePool.getInstance().get(io.viewserver.messages.config.IIndexConfig.IOutput.class)
-                .setName(getConfigForOutputName());
-        final List<io.viewserver.messages.config.IIndexConfig.IQueryHolder> queryHoldersList = outputDto.getQueryHolders();
-        int queryHolderCount = this.queryHolders.size();
-        for (int i = 0; i < queryHolderCount; i++) {
-            final IndexOperator.QueryHolder queryHolder = queryHolders.get(i);
-            io.viewserver.messages.config.IIndexConfig.IQueryHolder queryHolderDto = MessagePool.getInstance().get(io.viewserver.messages.config.IIndexConfig.IQueryHolder.class)
-                    .setColumnName(queryHolder.getColumnName())
-                    .setExclude(queryHolder.isExclude());
-            final List<Integer> valuesList = queryHolderDto.getValues();
-            final int[] values = queryHolder.getValues();
-            int valueCount = values.length;
-            for (int j = 0; j < valueCount; j++) {
-                valuesList.add(values[j]);
-            }
-            queryHoldersList.add(queryHolderDto);
-            queryHolderDto.release();
-        }
-        indexConfigDto.getOutputs().add(outputDto);
-        outputDto.release();
-        return indexConfigDto;
+        throw new NotImplementedException();
     }
 
     @JsonIgnore
@@ -106,26 +119,26 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
             return outputName;
         }
 
-        List<IndexOperator.QueryHolder> queryHolders = this.queryHolders;
+        List<QueryHolderConfig> queryHolders = this.queryHolders;
 
         return getNameForQueryHolders(queryHolders);
     }
 
-    public static String getNameForQueryHolders(List<IndexOperator.QueryHolder> queryHolders) {
+    public static String getNameForQueryHolders(List<QueryHolderConfig> queryHolders) {
         ArrayList<String> configStrings = new ArrayList<>();
 
-        for (IndexOperator.QueryHolder queryHolder : queryHolders) {
+        for (QueryHolderConfig queryHolder : queryHolders) {
             configStrings.add(queryHolder.toString());
         }
 
         return StringUtils.join(configStrings, ',');
     }
 
-    public List<IndexOperator.QueryHolder> getQueryHolders() {
+    public List<QueryHolderConfig> getQueryHolders() {
         return queryHolders;
     }
 
-    public void setQueryHolders(List<IndexOperator.QueryHolder> queryHolders) {
+    public void setQueryHolders(List<QueryHolderConfig> queryHolders) {
         this.queryHolders = queryHolders;
     }
 
@@ -135,5 +148,13 @@ public class IndexOutputNode extends GraphNodeBase<IndexOutputNode> {
 
     public void setOutputName(String outputName) {
         this.outputName = outputName;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 }

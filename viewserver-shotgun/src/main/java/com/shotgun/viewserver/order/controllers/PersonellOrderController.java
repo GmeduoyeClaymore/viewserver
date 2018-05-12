@@ -99,6 +99,21 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
         return paymentStage.get().getId();
     }
 
+    @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)
+    public void partnerCompleteJob(@ActionParam(name = "orderId")String orderId){
+        this.transform(
+                orderId,
+                order -> {
+                    order.partnerCompleteJob();
+                    return true;
+                },
+                order -> {
+                    notifyPartnerCompleteJob(orderId,order);
+                },
+                PersonellOrder.class
+        );
+    }
+
     @Override
     public Logger getLogger() {
         return logger;

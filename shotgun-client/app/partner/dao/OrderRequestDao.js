@@ -1,6 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 import {hasAnyOptionChanged} from 'common/dao';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 export default class OrderRequestDao{
   static DEFAULT_POSITION = {
@@ -53,7 +54,8 @@ export default class OrderRequestDao{
     const baseReportContext =  {
       reportId: 'orderRequest',
       dimensions: {
-        dimension_contentTypeId: [contentType.contentTypeId]
+        dimension_contentTypeId: [contentType.contentTypeId],
+        dimension_status: [OrderStatuses.PLACED]
       },
       excludedFilters: {
         dimension_customerUserId: '@userId'

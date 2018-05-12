@@ -23,6 +23,7 @@ import io.viewserver.execution.context.DimensionExecutionPlanContext;
 import io.viewserver.execution.nodes.IndexOutputNode;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 
 //TODO - this is currently the same as the dimensions step but I anticipate they will diverge
 public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutionPlanContext>{
@@ -42,48 +43,16 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
             return;
         }
 
-        final IndexOperator.QueryHolder[] queryHolders = new IndexOperator.QueryHolder[reportContext.getDimensionValues().size()];
+        final QueryHolderConfig[] queryHolders = new QueryHolderConfig[reportContext.getDimensionValues().size()];
         int i = 0;
+
         for (ReportContext.DimensionValue dimensionFilter : reportContext.getDimensionValues()) {
             Dimension dimension = dataSource.getDimension(dimensionFilter.getName());
-
-            final ValueLists.IValueList values = dimensionFilter.getValues();
-            int[] mappedValues = new int[values.size()];
-            for (int j = 0; j < mappedValues.length; j++) {
-                final Object value;
-                if (values instanceof ValueLists.IBooleanList) {
-                    if (dimension.getContentType() == ContentType.NullableBool) {
-                        value = NullableBool.fromBoolean(((ValueLists.IBooleanList) values).get(j));
-                        // commenting out the following, as I can't see a path that gets us to here - the report context
-                        // has no capability for dealing with nullable booleans as it stands
-//                    } else if (value == null) {
-//                        value = NullableBool.Null;
-                    } else {
-                        value = ((ValueLists.IBooleanList) values).get(j);
-                    }
-                } else if (values instanceof ValueLists.IIntegerList) {
-                    value = ((ValueLists.IIntegerList)values).get(j);
-                } else if (values instanceof ValueLists.ILongList) {
-                    value = ((ValueLists.ILongList)values).get(j);
-                } else if (values instanceof ValueLists.IFloatList) {
-                    value = ((ValueLists.IFloatList)values).get(j);
-                } else if (values instanceof ValueLists.IDoubleList) {
-                    value = ((ValueLists.IDoubleList)values).get(j);
-                } else if (values instanceof ValueLists.IStringList) {
-                    value = ((ValueLists.IStringList)values).get(j);
-                } else {
-                    throw new UnsupportedOperationException(String.format("Unsupported type of value list - %s", values.getClass().getName()));
-                }
-                mappedValues[j] = dimensionMapper.map(dataSource.getName(), dimension.getName(), dimension.getContentType(), value);
-            }
-
-            IndexOperator.QueryHolder queryHolder = dimensionFilter.isExclude()
-                    ? IndexOperator.QueryHolder.exclude(dimensionFilter.getName(), mappedValues)
-                    : IndexOperator.QueryHolder.include(dimensionFilter.getName(), mappedValues);
-            queryHolders[i++] = queryHolder;
+            queryHolders[i++] = new QueryHolderConfig(dimension,dimensionFilter.isExclude(), dimensionFilter.getValues() );
         }
 
         IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
+                .withDataSourceName(dataSource.getName())
                 .withQueryHolders(queryHolders);
 
         dimensionExecutionPlanContext.addNodes(indexNode);

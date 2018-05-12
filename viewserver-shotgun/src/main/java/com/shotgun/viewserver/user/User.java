@@ -30,6 +30,7 @@ public interface User extends DynamicJsonBackedObject{
 
     UserRating[] getRatings();
     AppMessage[] getPendingMessages();
+    UserRelationship[] getRelationships();
     SavedPaymentCard[] getPaymentCards();
     SavedBankAccount getBankAccount();
     Double getLatitude();
@@ -71,8 +72,9 @@ public interface User extends DynamicJsonBackedObject{
         userRating.set("comments",comments);
         userRating.set("ratingType",type);
         UserRating response = userRating;
-        List<UserRating> responses;
+
         if(!result.isPresent()){
+            List<UserRating> responses;
             responses = toList(this.getRatings());
             responses.add(response);
             this.set("ratings",toArray(responses, UserRating[]::new));
@@ -87,6 +89,27 @@ public interface User extends DynamicJsonBackedObject{
 
     default void clearPendingMessages(){
         this.set("pendingMessages", null);
+    }
+
+    default void addOrUpdateRelationship(String toUserId,UserRelationshipStatus relationshipStatus, UserRelationshipType relationshipType){
+        Optional<UserRelationship> result = fromArray(getRelationships()).filter(c->c.getToUserId().equals(toUserId)).findAny();
+        UserRelationship relationship;
+        if(result.isPresent()){
+            relationship = result.get();
+        }
+        else{
+            relationship = JSONBackedObjectFactory.create(UserRelationship.class);
+            relationship.set("toUserId",toUserId);
+        }
+        relationship.set("relationshipStatus",relationshipStatus);
+        relationship.set("relationshipType",relationshipType);
+
+        if(!result.isPresent()){
+            List relationships = toList(this.getRelationships());
+            relationships.add(relationship);
+            this.set("relationships",toArray(relationships, UserRelationship[]::new));
+        }
+
     }
 
     default void addPendingMessage(AppMessage savedPaymentCard){

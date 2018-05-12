@@ -4,10 +4,8 @@ import io.viewserver.Constants;
 import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.JoinNode;
-import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.filter.FilterOperator;
-import io.viewserver.operators.projection.IProjectionConfig;
 import io.viewserver.report.ReportDefinition;
 
 public class OperatorAndConnectionReport {
@@ -15,10 +13,10 @@ public class OperatorAndConnectionReport {
 
     public static ReportDefinition getReportDefinition() {
         return new ReportDefinition(ID, ID)
-                .withParameter("operatorPath", "OperatorName", String[].class)
-                .withParameter("@catalogName", "@catalogName", String[].class)
-                .withParameter("operatorPathField", "OperatorName", String[].class)
-                .withParameter("operatorPathPrefix", "Operator Path Prefic", String[].class)
+                .withRequiredParameter("operatorPath", "OperatorName", String[].class)
+                .withRequiredParameter("@catalogName", "@catalogName", String[].class)
+                .withRequiredParameter("operatorPathField", "OperatorName", String[].class)
+                .withRequiredParameter("operatorPathPrefix", "Operator Path Prefic", String[].class)
                 .withNodes(
                         new CalcColNode("mainOperatorCalc")
                                 .withCalculations(

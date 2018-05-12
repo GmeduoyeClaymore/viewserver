@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text,  Item, Label} from 'native-base';
-import {ValidatingInput, ValidatingButton} from 'common/components';
+import {ValidatingInput, ValidatingButton, CurrencyInput} from 'common/components';
 import {addPaymentStage} from 'customer/actions/CustomerActions';
 import yup from 'yup';
 
@@ -59,7 +59,7 @@ export default class AddPaymentStageControl extends Component{
 
       <Item stackedLabel last style={styles.item} >
         <Label>{paymentStageType === 'Percentage' ?  'Percentage' : 'Amount'}</Label>
-        <ValidatingInput ref={rf => {this.amountInput = rf;}} bold style={{padding: 10}} value={this.state.amount} placeholder="25" onChangeText={(amount) => this.setState({amount})} validationSchema={validationSchema.amount} maxLength={10}/>
+        <ValidatingInput control={paymentStageType === 'Percentage' ?  undefined : CurrencyInput} ref={rf => {this.amountInput = rf;}} bold style={{padding: 10}} value={this.state.amount} placeholder="25" onValueChanged={(amount) => this.setState({amount})} onChangeText={(amount) => this.setState({amount})} validationSchema={validationSchema.amount} maxLength={10}/>
       </Item>
 
       <ValidatingButton busy={busyUpdating} fullWidth success onPress={this.onAddPaymentStage} validationSchema={yup.object(validationSchema)} model={this.state}>

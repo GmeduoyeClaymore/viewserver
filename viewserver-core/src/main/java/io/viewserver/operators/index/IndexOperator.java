@@ -25,6 +25,7 @@ import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.operators.*;
 import io.viewserver.operators.sort.RadixSort;
 import io.viewserver.schema.Schema;
@@ -52,16 +53,17 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     private EWAHCompressedBitmap allRows = new EWAHCompressedBitmap();
     private final TIntObjectHashMap outputsByRowKey = new TIntObjectHashMap();
     private final TObjectIntHashMap rowKeysByOutput = new TObjectIntHashMap();
+    private String dataSourceName;
 
 
-    public IndexOperator(String name, IExecutionContext executionContext, ICatalog catalog) {
+    public IndexOperator(String name, IExecutionContext executionContext, ICatalog catalog, IIndexConfig indexConfig) {
         super(name, executionContext, catalog);
-
         input = new Input(Constants.IN, this);
         addInput(input);
         output = new IndexSummaryOutput(Constants.OUT, this);
         super.addOutput(output);
         register();
+        processConfig(indexConfig);
     }
 
     public IInput getInput() {
@@ -71,6 +73,11 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     @Override
     protected IIndexConfig mergePendingConfig(IIndexConfig pendingConfig, IIndexConfig newConfig) {
         return new IIndexConfig() {
+            @Override
+            public String getDataSourceName() {
+                return pendingConfig.getDataSourceName();
+            }
+
             @Override
             public String[] getIndices() {
                 ArrayList<String> indices = new ArrayList<>();
@@ -84,21 +91,27 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             }
 
             @Override
-            public Output[] getOutputs() {
-                ArrayList<Output> outputs = new ArrayList<>();
+            public OutputConfig[] getOutputs() {
+                ArrayList<OutputConfig> outputs = new ArrayList<>();
                 if (pendingConfig.getOutputs() != null) {
                     outputs.addAll(Arrays.asList(pendingConfig.getOutputs()));
                 }
                 if (newConfig.getOutputs() != null) {
                     outputs.addAll(Arrays.asList(newConfig.getOutputs()));
                 }
-                return outputs.toArray(new Output[outputs.size()]);
+                return outputs.toArray(new OutputConfig[outputs.size()]);
             }
         };
     }
 
+
+
     @Override
     protected void processConfig(IIndexConfig config) {
+        dataSourceName = config.getDataSourceName();
+        if(dataSourceName == null){
+            throw new RuntimeException("Data source name cannot be null");
+        }
         if (config.getIndices() != null) {
             for (String indexedColumn : config.getIndices()) {
                 this.indexedColumns.add(indexedColumn);
@@ -106,24 +119,47 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         }
     }
 
-    public IOutput getOrCreateOutput(String name, QueryHolder... queryHolders) {
-        Output output = (Output) getOutput(name);
+    public IOutput getOrCreateOutput(String name, QueryHolderConfig... queryHolders) {
+        Output output = (Output) super.getOutput(name);
         if (output == null) {
-            output = new Output(name, this, queryHolders);
+            output = new Output(name, this, mapToQueryHolders(queryHolders));
             int rowId = getIndexOutputs().size();
             outputsByRowKey.put(rowId,output);
             rowKeysByOutput.put(output,rowId);
             addOutput(output);
             if (input.getProducer() != null) {
-                int count = queryHolders.length;
+                int count = output.queryHolders.length;
                 for (int i = 0; i < count; i++) {
-                    queryHolders[i].setSchema(input.getProducer().getSchema());
+                    output.queryHolders[i].setSchema(input.getProducer().getSchema());
                 }
             }
             this.output.handleAdd(rowId);
         }
         return output;
     }
+
+    private QueryHolder[] mapToQueryHolders(QueryHolderConfig[] queryHolders) {
+        QueryHolder[] values = new QueryHolder[queryHolders.length];
+        int counter = 0;
+        for(QueryHolderConfig config : queryHolders){
+            QueryHolder queryHolder = new QueryHolder(config.getDimension().getName(), mapDimensionValues(config, this.getExecutionContext().getDimensionMapper()));
+            queryHolder.exclude = config.isExclude();
+            values[counter++] = queryHolder;
+        }
+        return values;
+    }
+
+    public int[] mapDimensionValues(QueryHolderConfig queryHolder,DimensionMapper mapper){
+        Object[] values = queryHolder.getValues();
+        int[] result = new int[values.length];
+        int count=0;
+        for(Object val : values){
+            result[count++] = mapper.map(queryHolder.getDimension().isGlobal() ? "global" : IndexOperator.this.dataSourceName, queryHolder.getDimension().getName(),queryHolder.getDimension().getContentType(),val );
+        }
+        return result;
+    }
+
+
 
     private List<Output> getIndexOutputs() {
         List<Output> result = new ArrayList<>();
@@ -690,6 +726,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
     public class IndexSummaryOutput extends OutputBase {
         public static final String NAME_COLUMN = "name";
+        public static final String MAPPED_NAME_COLUMN = "mappedName";
         public static final String VALUES = "values";
         private CatalogHolder catalogHolder;
 
@@ -697,6 +734,9 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             super(name, owner);
             ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(NAME_COLUMN, ColumnType.String);
             columnHolder.setColumn(new NameColumn());
+            getSchema().addColumn(columnHolder);
+            columnHolder = ColumnHolderUtils.createColumnHolder(MAPPED_NAME_COLUMN, ColumnType.String);
+            columnHolder.setColumn(new MappedNameColumn());
             getSchema().addColumn(columnHolder);
             ColumnHolder columnHolder1 = ColumnHolderUtils.createColumnHolder(VALUES, ColumnType.String);
             columnHolder1.setColumn(new ValuesColumn());
@@ -720,6 +760,35 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
             public String getString(int row) {
                 IOutput operator = (IOutput)outputsByRowKey.get(row);
                 return operator.getName();
+            }
+
+            @Override
+            public String getPreviousString(int row) {
+                return null;
+            }
+
+            @Override
+            public boolean supportsPreviousValues() {
+                return false;
+            }
+        }
+
+        private class MappedNameColumn extends ColumnStringBase {
+            public MappedNameColumn() {
+                super(MAPPED_NAME_COLUMN);
+            }
+
+            @Override
+            public String getString(int row) {
+                Output operator = (Output)outputsByRowKey.get(row);
+                StringBuilder stringBuilder = new StringBuilder();
+                for(QueryHolder holder : operator.queryHolders){
+                    if(stringBuilder.length() > 0){
+                        stringBuilder.append(",");
+                    }
+                    stringBuilder.append(holder.toString());
+                }
+                return stringBuilder.toString();
             }
 
             @Override

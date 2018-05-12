@@ -74,6 +74,15 @@ export default class CustomerStagedPaymentPanel extends Component{
       });
   };
 
+  getPaymentStageType = () => {
+    const {order} = this.props;
+    const {paymentStages = []} = order;
+    if (paymentStages.length){
+      return paymentStages[0].paymentStageType;
+    }
+    return this.state.paymentStageType;
+  }
+
   render(){
     const {order, busyUpdating, dispatch} = this.props;
     const {paymentStages = []} = order;
@@ -96,7 +105,7 @@ export default class CustomerStagedPaymentPanel extends Component{
         </Row> : null}
 
       {this.getPaymentStages()}
-      {canAddPaymentStages ? <AddPaymentStageControl order={order} busyUpdating={busyUpdating} paymentStageType={this.state.paymentStageType} dispatch={dispatch}/> : null}
+      {canAddPaymentStages ? <AddPaymentStageControl order={order} busyUpdating={busyUpdating} paymentStageType={this.getPaymentStageType()} dispatch={dispatch}/> : null}
     </View>;
   }
 }

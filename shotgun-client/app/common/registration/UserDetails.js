@@ -22,8 +22,8 @@ class UserDetails extends Component{
     ImageSelector.show({title: 'Select Image', onSelect: this.onSelectImage, options: imagePickerOptions});
   }
 
-  onChangeDob = (unsavedDob) => {
-    this.setState({unsavedDob});
+  onChangeDob = (value) => {
+    this.onChangeText('dob', value);
     this.toggleDatePicker(false);
   }
 
@@ -110,7 +110,7 @@ class UserDetails extends Component{
                   validationSchema={partnervalidationSchema.dob} maxLength={30}/>
                 <DatePicker isVisible={isDobDatePickerVisible} cannedDateOptions={[]}
                   onCancel={() => this.toggleDatePicker(false)}
-                  onConfirm={(value) => this.onChangeText('dob', value)} {...datePickerOptions} />
+                  onConfirm={this.onChangeDob} {...datePickerOptions} />
               </Item>
             </Col>
           </Row> : null}

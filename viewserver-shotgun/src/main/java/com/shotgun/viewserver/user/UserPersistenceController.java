@@ -47,6 +47,7 @@ public interface UserPersistenceController{
                 .addValue("lastName", user.getLastName())
                 .addValue("dob", user.getDob())
                 .addValue("selectedContentTypes", user.getSelectedContentTypes())
+                .addValue("relationships", user.getRelationships())
                 .addValue("contactNo", user.getContactNo())
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())

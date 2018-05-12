@@ -29,6 +29,7 @@ class PartnerRegistration extends Component {
     register(dispatch, new NotificationsDao(client));
     register(dispatch, new ProductCategoryDao(client));
     register(dispatch, new UserRelationshipDao(client));
+    register(dispatch, new UserRelationshipDao(client, 'singleUserRelationshipDao'));
     register(dispatch, new ProductDao(client), {});
   }
 

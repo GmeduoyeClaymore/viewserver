@@ -8,11 +8,29 @@ import {Tab, Text, Row, Grid, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {updateRelationship} from 'common/actions/CommonActions';
 import {withExternalState, ReduxRouter, Route} from 'custom-redux';
+import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getDao} from 'common/dao';
 
 class UserDetail extends Component{
   handleCancel = () => {
     const {history, userRelationshipBasePath} = this.props;
     history.push({pathname: userRelationshipBasePath, transition: 'immediate'});
+  }
+
+  beforeNavigateTo(){
+    this.subscribeToUser(this.props);
+  }
+
+  componentWillReceiveProps(newProps){
+    if (newProps.userId != this.props.userId){
+      this.subscribeToUser(newProps);
+    }
+  }
+
+  subscribeToUser = (props) => {
+    const {dispatch, userId, selectedUser} = props;
+    if (!selectedUser) {
+      dispatch(resetSubscriptionAction('singleUserDao', {userId}));
+    }
   }
 
   onUpdateRelationship = (relationshipStatus, relationshipType) => {
@@ -21,30 +39,35 @@ class UserDetail extends Component{
     dispatch(updateRelationship({targetUserId: selectedUser.userId, relationshipStatus, relationshipType}));
   }
 
-  getActionButton = (relationshipStatus, label) => {
+  getActionButton = (relationshipStatus, label, additionalProps) => {
     const {busy} = this.props;
 
-    return <Button fullWidth style={styles.statusButton} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
+    return <Button fullWidth style={styles.statusButton} {...additionalProps} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
       <Text uppercase={false}>{label}</Text>
     </Button>;
   }
 
   getStatusButton = () => {
     const {selectedUser} = this.props;
-
-    if (selectedUser.relationshipStatus === 'ACCEPTED'){
-      return this.getActionButton('UNKNOWN', 'Un-Friend');
+    const buttonsToRender = [];
+    if (selectedUser.relationshipStatus != 'BLOCKED'){
+      buttonsToRender.push(this.getActionButton('BLOCKED', 'Block User', {danger: true}));
     }
-    if (selectedUser.relationshipStatus === 'REQUESTED'){
-      if (!selectedUser.initiatedByMe){
-        return <View style={style}>{this.getActionButton('ACCEPTED', 'Accept Request')}{this.getActionButton('UNKNOWN', 'Ignore Request')}</View>;
-      }
-      return this.getActionButton('UNKNOWN', 'Cancel Request');
+    if (selectedUser.relationshipStatus === 'BLOCKED'){
+      buttonsToRender.push(this.getActionButton('UNKNOWN', 'UnBlock User'));
+    } else if (selectedUser.relationshipStatus === 'ACCEPTED'){
+      buttonsToRender.push(this.getActionButton('UNKNOWN', 'Un-Friend'));
+    } else if (selectedUser.relationshipStatus === 'REQUESTED'){
+      buttonsToRender.push(this.getActionButton('ACCEPTED', 'Accept Request'));
+      buttonsToRender.push(this.getActionButton('UNKNOWN', 'Ignore Request'));
+    } else if (selectedUser.relationshipStatus === 'REQUESTEDBYME'){
+      buttonsToRender.push(this.getActionButton('UNKNOWN', 'Cancel Request'));
+    } else if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
+      buttonsToRender.push(this.getActionButton('REQUESTED', 'Add as friend'));
+    } else {
+      return 'Unknown ' + selectedUser.relationshipStatus;
     }
-    if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
-      return this.getActionButton('REQUESTED', 'Add as friend');
-    }
-    return 'Unknown ' + selectedUser.relationshipStatus;
+    return buttonsToRender;
   }
 
   goToTabNamed = (name) => {
@@ -87,6 +110,26 @@ class UserDetail extends Component{
   }
 }
 
+const mapStateToProps = (state, initialProps) => {
+  const userId = getNavigationProps(initialProps).userId;
+  if (userId === null){
+    throw new Error('Must specify an user id to navigate to this page');
+  }
+  const daoState = getDao(state, 'singleUserDao');
+  if (!daoState){
+    return null;
+  }
+  const selectedUser = getDaoState(state, ['user'], 'singleUserDao');
+  const isPendingUserRelationshipSubscription = isAnyOperationPending(state, [{ singleUserDao: 'resetSubscription'}]);
+  return {
+    ...initialProps,
+    userId,
+    selectedUser,
+    isPendingUserRelationshipSubscription,
+    busy: isPendingUserRelationshipSubscription,
+  };
+};
+
 const styles = {
   modal: {
     margin: 0,
@@ -117,12 +160,6 @@ const styles = {
     color: shotgun.brandLight,
     fontSize: 16
   }
-};
-
-const mapStateToProps = (state, initialProps) => {
-  return {
-    ...initialProps
-  };
 };
 
 export default withExternalState(mapStateToProps)(UserDetail);

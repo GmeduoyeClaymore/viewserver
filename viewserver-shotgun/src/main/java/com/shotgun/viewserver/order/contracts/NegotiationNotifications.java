@@ -42,7 +42,6 @@ public interface NegotiationNotifications extends OrderNotificationContract {
         sendMessage(orderId,order.getCustomerUserId(),  "Shotgun job response",  String.format("%s has  just started your job", user.getFirstName() + " " + user.getLastName()), true);
     }
 
-
     default void notifyPartnerCompleteJob(String orderId, NegotiatedOrder order) {
         User user = (User) ControllerContext.get("user");
         sendMessage(orderId,order.getCustomerUserId(),  "Shotgun job response",  String.format("%s has  just completed your job", user.getFirstName() + " " + user.getLastName()), true);

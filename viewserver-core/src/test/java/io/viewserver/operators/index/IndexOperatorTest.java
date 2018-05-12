@@ -21,6 +21,9 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.Dimension;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.TestReactor;
@@ -44,6 +47,7 @@ import java.util.Random;
  * Created by bemm on 02/10/2014.
  */
 public class IndexOperatorTest {
+
     @Ignore
     public void benchmark() throws Exception {
         for (int x = 0; x < 5; x++) {
@@ -75,18 +79,24 @@ public class IndexOperatorTest {
             executionContext.commit();
             System.out.println("Took " + (System.nanoTime() - start) / 1000000f + "ms to populate table");
 
-            IndexOperator index = new IndexOperator("index", executionContext, catalog);
-            index.configure(new IIndexConfig() {
+
+            IIndexConfig config = new IIndexConfig() {
                 @Override
-                public String[] getIndices() {
-                    return new String[] { "market", "product" };
+                public String getDataSourceName() {
+                    return "dataSource";
                 }
 
                 @Override
-                public Output[] getOutputs() {
+                public String[] getIndices() {
+                    return new String[]{"market", "product"};
+                }
+
+                @Override
+                public OutputConfig[] getOutputs() {
                     return null;
                 }
-            }, new CommandResult());
+            };
+            IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
             table.getOutput().plugIn(index.getInput());
 
@@ -95,8 +105,8 @@ public class IndexOperatorTest {
             System.out.println("Took " + (System.nanoTime() - start) / 1000000f + "ms to index table");
 
             start = System.nanoTime();
-            IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1, 2, 3),
-                    new IndexOperator.QueryHolder("product", 1));
+            IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false, 1, 2, 3),
+                    new QueryHolderConfig(getDimension("product"), false,1));
             System.out.println("Took " + (System.nanoTime() - start) / 1000000f + "ms to query snapshot");
             indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
@@ -141,24 +151,29 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
             @Override
-            public String[] getIndices() {
-                return new String[] { "market" };
+            public String getDataSourceName() {
+                return "dataSource";
             }
 
             @Override
-            public Output[] getOutputs() {
+            public String[] getIndices() {
+                return new String[]{"market"};
+            }
+
+            @Override
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -204,24 +219,29 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
             @Override
-            public String[] getIndices() {
-                return new String[] { "market" };
+            public String getDataSourceName() {
+                return "dataSource";
             }
 
             @Override
-            public Output[] getOutputs() {
+            public String[] getIndices() {
+                return new String[]{"market"};
+            }
+
+            @Override
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -260,24 +280,28 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
+            @Override
+            public String getDataSourceName() {
+                return "dataSource";
+            }
+
             @Override
             public String[] getIndices() {
-                return new String[] { "market" };
+                return new String[]{"market"};
             }
 
             @Override
-            public Output[] getOutputs() {
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
-
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, IndexOperator.QueryHolder.exclude("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -311,24 +335,27 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
+            @Override
+            public String getDataSourceName() {
+                return "dataSource";
+            }
+
             @Override
             public String[] getIndices() {
-                return new String[] { "product" };
+                return new String[]{"product"};
             }
 
             @Override
-            public Output[] getOutputs() {
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
-
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
-
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, IndexOperator.QueryHolder.include("product", NullableBool.True.getNumericValue()));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("product"),false,NullableBool.True.getNumericValue()));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -356,24 +383,28 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
             @Override
-            public String[] getIndices() {
-                return new String[] { "market" };
+            public String getDataSourceName() {
+                return "dataSource";
             }
 
             @Override
-            public Output[] getOutputs() {
+            public String[] getIndices() {
+                return new String[]{"market"};
+            }
+
+            @Override
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
-
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -407,24 +438,28 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
+            @Override
+            public String getDataSourceName() {
+                return "dataSource";
+            }
+
             @Override
             public String[] getIndices() {
-                return new String[] { "market" };
+                return new String[]{"market"};
             }
 
             @Override
-            public Output[] getOutputs() {
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
-
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -456,24 +491,29 @@ public class IndexOperatorTest {
             }
         });
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
             @Override
-            public String[] getIndices() {
-                return new String[] { "market" };
+            public String getDataSourceName() {
+                return "dataSource";
             }
 
             @Override
-            public Output[] getOutputs() {
+            public String[] getIndices() {
+                return new String[]{"market"};
+            }
+
+            @Override
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
         table.getOutput().plugIn(index.getInput());
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("market", 1));
+        IOutput indexOutput = index.getOrCreateOutput("market_output", new QueryHolderConfig(getDimension("market"),false,1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
@@ -484,4 +524,9 @@ public class IndexOperatorTest {
 
         Assert.assertNull(catalog.getOperatorByPath("rec"));
     }
+
+    private Dimension getDimension(String name) {
+        return new Dimension(name, Cardinality.Int, ContentType.Int);
+    }
+
 }

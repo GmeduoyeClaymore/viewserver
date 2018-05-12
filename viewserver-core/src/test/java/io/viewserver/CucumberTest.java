@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 /**
  * Created by nick on 12/02/2015.
  */
-/*
 @Category(Spec.class)
 @RunWith(Cucumber.class)
 @CucumberOptions(
@@ -38,5 +37,5 @@ import org.junit.runner.RunWith;
         ,
         tags = {"~@ignore"}
 )
-public class CucumberTestXXXX {
-}*/
+public class CucumberTest {
+}

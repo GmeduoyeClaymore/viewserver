@@ -42,7 +42,8 @@ class UsersForProductMap extends Component{
   render(){
     const {order, errors, next, client, history} = this.props;
     const {origin} = order;
-    const disableDoneButton = !origin || origin.line1 == undefined;
+    const disableDoneButton = !origin || !origin.line1;
+    const geoLocation = !origin || !origin.line1 ? undefined : {latitude: origin.latitude, longitude: origin.longitude};
 
     return <Container>
       <Button transparent style={styles.backButton} onPress={() => history.goBack()} >
@@ -55,7 +56,7 @@ class UsersForProductMap extends Component{
               {this.getLocationText(origin, 'origin', 'Enter job location')}
             </Col>
           </Row>
-          <UserRelationshipsControl {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
+          <UserRelationshipsControl geoLocation={geoLocation} {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
       </Grid>

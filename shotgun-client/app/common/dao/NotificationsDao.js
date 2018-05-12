@@ -30,6 +30,10 @@ export default class NotificationsDaoContext{
     return false;
   }
 
+  get subscribeOnCreate(){
+    return false;
+  }
+
   get name(){
     return 'notificationsDao';
   }

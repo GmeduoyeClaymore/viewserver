@@ -43,8 +43,24 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         paymentStage.set("lastUpdated",new Date());
         paymentStages.add(paymentStage);
         this.set("blockPaymentStageAddition",blockPaymentStageAddition);
-        this.set("paymentStages",toArray(paymentStages, OrderPaymentStage[]::new));
+        this.set("paymentStages",validateStages(toArray(paymentStages, OrderPaymentStage[]::new)));
         return uuid.toString();
+    }
+
+    default OrderPaymentStage[] validateStages(OrderPaymentStage[] stages){
+        if(stages == null || stages.length <= 1){
+            return stages;
+        }
+        OrderPaymentStage.PaymentStageType type = stages[0].getPaymentStageType();
+        for(int i=1;i<stages.length;i++){
+            OrderPaymentStage stage = stages[i];
+            OrderPaymentStage.PaymentStageType paymentStageType = stage.getPaymentStageType();
+            if (type != paymentStageType){
+                throw new RuntimeException("Stage " + stage.getName() + " is of type " + paymentStageType + " which is different to the rest of the stages which are type " + type);
+            }
+        }
+        return stages;
+
     }
 
     default int getAmountForStage(String paymentStageId){

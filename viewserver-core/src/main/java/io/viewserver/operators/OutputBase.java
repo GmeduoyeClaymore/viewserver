@@ -140,7 +140,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
     }
 
-    private IOutput getProducer() {
+    protected IOutput getProducer() {
         return this;
     }
 

@@ -27,11 +27,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         this.getExecutionContext().getFunctionRegistry().register("containsProduct", ContainsProduct.class);
         this.getExecutionContext().getFunctionRegistry().register("getResponseField", GetPartnerResponseField.class);
         this.getExecutionContext().getFunctionRegistry().register("getOrderField", GetOrderField.class);
+        this.getExecutionContext().getFunctionRegistry().register("getRelationship", GetRelationship.class);
         this.getExecutionContext().getFunctionRegistry().register("isAfter", IsAfter.class);
         SpreadFunctionRegistry spreadColumnRegistry = this.getExecutionContext().getSpreadColumnRegistry();
         spreadColumnRegistry.register("getProductIdsFromContentTypeJSON", ProductSpreadFunction.class);
         spreadColumnRegistry.register("getCategoryIdsFromContentTypeJSON", CategorySpreadFunction.class);
         spreadColumnRegistry.register("getPartnerResponseIdsFromOrderDetail", DateNegotiatedOrderResponseSpreadFunction.class);
+        spreadColumnRegistry.register(UserRelationshipsSpreadFunction.NAME, UserRelationshipsSpreadFunction.class);
     }
 }
 

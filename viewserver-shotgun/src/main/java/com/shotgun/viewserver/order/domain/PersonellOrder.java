@@ -52,4 +52,11 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
     default OrderContentType getOrderContentType(){
         return OrderContentType.Personell;
     }
+
+    default void partnerCompleteJob(){
+        fromArray(getPaymentStages()).filter(c-> OrderPaymentStage.PaymentStageStatus.Started == c.getPaymentStageStatus()).forEach(
+                c-> c.transitionTo(OrderPaymentStage.PaymentStageStatus.Complete)
+        );
+        this.transitionTo(NegotiatedOrder.NegotiationOrderStatus.PARTNERCOMPLETE);
+    }
 }

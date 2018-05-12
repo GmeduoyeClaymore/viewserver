@@ -14,15 +14,16 @@ export default class UserRelationshipDaoContext{
     limit: 100,
     filterMode: 2,
     showUnrelated: true,
-    showOutOfRange: false,
+    showOutOfRange: true,
     position: UserRelationshipDaoContext.DEFAULT_POSITION,
     maxDistance: 0
   };
 
-  constructor(client, options = {}) {
+  constructor(client, name = 'userRelationshipDao', options = {}) {
     this.client = client;
     this.options = {...UserRelationshipDaoContext.OPTIONS, ...options};
     this.subscribeOnCreate = false;
+    this._name = name;
   }
 
   get defaultOptions(){
@@ -30,21 +31,21 @@ export default class UserRelationshipDaoContext{
   }
 
   get name(){
-    return 'userRelationshipDao';
+    return this._name;
   }
 
-  getReportContext({reportId, selectedProduct = {}, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = false, showOutOfRange = false}){
+  getReportContext({reportId, selectedProduct, position = UserRelationshipDaoContext.DEFAULT_POSITION, maxDistance = 0, showUnrelated = false, showOutOfRange = true}){
     const {latitude = 0, longitude = 0} = position;
     const baseReportContext =  {
-      reportId: reportId + (showUnrelated ? 'All' : ''),
+      reportId,
       dimensions: selectedProduct ? {
         dimension_productId: [selectedProduct.productId]
       } : undefined,
       parameters: {
         latitude,
         longitude,
-        maxDistance,
         showUnrelated,
+        maxDistance,
         showOutOfRange
       }
     };

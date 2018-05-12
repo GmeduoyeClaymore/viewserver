@@ -3,13 +3,14 @@ import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
 
 export default class UserDaoContext{
-  constructor(client, options = {}) {
+  constructor(client, name = 'userDao', options = {}) {
     this.client = client;
     this.options = options;
     this.getPositionAsPromise = this.getPositionAsPromise.bind(this);
     this.watchPositionOnSuccess = this.watchPositionOnSuccess.bind(this);
     this.watchPositionOnError = this.watchPositionOnError.bind(this);
     this.locationOptions = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10};
+    this._name = name;
   }
 
   get defaultOptions(){
@@ -23,17 +24,17 @@ export default class UserDaoContext{
     };
   }
 
-  getReportContext(){
+  getReportContext({userId = '@userId'}){
     return {
       reportId: 'userReport',
       dimensions: {
-        dimension_userId: ['@userId']
+        dimension_userId: [userId]
       }
     };
   }
 
   get name(){
-    return 'userDao';
+    return  this._name;
   }
 
   createDataSink = () => {
@@ -54,8 +55,8 @@ export default class UserDaoContext{
     return {...user, status: user.userStatus};
   }
 
-  createSubscriptionStrategy(_, dataSink){
-    return new ReportSubscriptionStrategy(this.client, this.getReportContext(), dataSink);
+  createSubscriptionStrategy(options, dataSink){
+    return new ReportSubscriptionStrategy(this.client, this.getReportContext(options), dataSink);
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions){

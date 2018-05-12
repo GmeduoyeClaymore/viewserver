@@ -113,7 +113,10 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
         if(paramNames != null){
             for(String name : paramNames){
                 stringList = new ValueLists.StringList();
-                Object value = ControllerContext.get(name, peerSession);
+                Object value = ControllerContext.getStatic(name, peerSession);
+                if(value == null){
+                    continue;
+                }
                 stringList.add(value.toString());
                 reportContext.setParameterValue("@" + name, stringList);
             }

@@ -23,7 +23,7 @@ class ContentTypeSelect extends Component{
     if (user.paymentCards.length > 0) {
       history.push(next);
     } else {
-      history.push({pathname: `${ordersRoot}/Settings/UpdatePaymentCardDetails`, transition: 'left'}, {next: `${parentPath}`});
+      history.replace({pathname: `${ordersRoot}/Settings/UpdatePaymentCardDetails`, transition: 'left'}, {next});
     }
   }
 

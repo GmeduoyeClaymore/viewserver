@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Input} from 'native-base';
+import {debounce} from 'lodash';
 
 export const formatPrice = (price) => {
   if (!price || price === 'undefined'){
@@ -13,6 +14,11 @@ export class CurrencyInput extends Component{
     this.state = {
       formattedPrice: undefined
     };
+    this.onUserDormantInControl = debounce(this.onUserDormantInControl, 500);
+  }
+
+  onUserDormantInControl = () => {
+    this.setFormattedPriceValue();
   }
 
   componentDidMount(){
@@ -60,6 +66,7 @@ export class CurrencyInput extends Component{
 
   onValueChanged = (t) => {
     this.setState({price: t});
+    this.onUserDormantInControl();
   }
 
   render(){

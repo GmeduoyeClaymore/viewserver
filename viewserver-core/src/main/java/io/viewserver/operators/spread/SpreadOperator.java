@@ -187,7 +187,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                 }
                 mapRow(row, ourRows, outputRow, isAdd);
             }
-            if(ints.length > maximimumRowIndex){
+            if(maximimumRowIndex > 0 && ints.length > maximimumRowIndex){
                 for(int i=maximimumRowIndex-1;i<ints.length;i++){
                     int intRowToRemove = ints[i];
                     inputToOutputMappings.remove(intRowToRemove);

@@ -57,7 +57,7 @@ export default class LoginDao{
 
   registerAndLoginPartner = async({partner, vehicle, address, bankAccount}) => {
     Logger.info(`Registering partner ${partner.email}`);
-    const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: partner, vehicle, bankAccount, address});
+    const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: {...partner, bankAccount, deliveryAddress: address}, vehicle});
     Logger.info(`Partner ${partnerId} registered`);
     await this.loginByUserId(partnerId);
     return partnerId;

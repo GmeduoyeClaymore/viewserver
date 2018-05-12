@@ -33,7 +33,7 @@ export default class OrderNegotiationPanel extends Component{
   }
 
   render(){
-    const { order, partnerResponses, busyUpdating, dispatch} = this.props;
+    const { order, partnerResponses, busyUpdating, dispatch, ordersRoot} = this.props;
     if (!order || !partnerResponses){
       return null;
     }
@@ -48,7 +48,7 @@ export default class OrderNegotiationPanel extends Component{
         <UpdateOrderPrice style={{marginTop: 17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
       </Col> : null}
     </Grid>,
-    <PartnerAcceptRejectControl   key="2" showAll={this.state.showAll}  dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>,
+    <PartnerAcceptRejectControl   key="2" showAll={this.state.showAll} ordersRoot={ordersRoot} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>,
     partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row style={{paddingLeft: 10}} key="3" onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null];
   }
 }
@@ -105,7 +105,7 @@ const CancelResponse = ({ orderId, orderContentTypeId, partnerId, busyUpdating, 
 };
 
 
-const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch, showAll}) => {
+const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch, showAll, ordersRoot}) => {
   return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
     (response, idx)  => {
       const {partnerId, latitude, longitude, firstName, lastName, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
@@ -114,7 +114,7 @@ const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus
       const imageStyle = styles.partnerImage;
       const statusStyle = ResponseStatusStyles[responseStatus] || ResponseStatusStyles.REJECTED;
       return <Row key={idx} style={{...styles.view, marginBottom: 10}}>
-        <Image style={{...imageStyle, ...statusStyle}}  resizeMode='stretch' source={{uri: imageUrl}}/>
+        <Image style={{...imageStyle, ...statusStyle}}  resizeMode='stretch' source={{uri: imageUrl}} onPress={() => history.push({pathname: `${ordersRoot}/UserDetai`, state: {userId: partnerId}, transition: 'bottom'})}/>
         <Col  size={50} style={{marginLeft: 10}}>
           <Text style={{...styles.subHeading, marginBottom: 5}}>{firstName + ' ' + lastName}</Text>
           {!!~ratingAvg ? <Row style={{marginBottom: 8, marginTop: 8}}>{stars}</Row> : <Text>No Ratings</Text>}

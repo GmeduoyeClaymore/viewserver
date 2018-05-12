@@ -12,6 +12,8 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.KeyedTable;
 
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,6 +26,7 @@ import rx.schedulers.Schedulers;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
 import static com.shotgun.viewserver.user.UserController.waitForUser;
@@ -43,11 +46,33 @@ public class MessagingController implements IMessagingController, UserPersistenc
     private MessagingApiKey messagingApiKey;
     private IDatabaseUpdater iDatabaseUpdater;
     private ICatalog catalog;
+    private ConcurrentHashMap<String,String> tokenToUserMap;
 
     public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater, ICatalog catalog) {
+        tokenToUserMap = new ConcurrentHashMap<>();
         this.messagingApiKey = messagingApiKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.catalog = catalog;
+        catalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).subscribe(
+                c-> c.getOutput("out").observable("userId","fcmToken").subscribe(
+                        tk -> recordUserToken(tk)
+                )
+        );
+    }
+
+    private void recordUserToken(OperatorEvent tk) {
+        HashMap eventData = (HashMap) tk.getEventData();
+        if(tk.getEventType().equals(EventType.ROW_ADD) || tk.getEventType().equals(EventType.ROW_UPDATE)){
+            if(eventData.get("fcmToken") != null){
+                tokenToUserMap.put((String)eventData.get("fcmToken"), (String)eventData.get("userId"));
+                return;
+            }
+        }
+        if(tk.getEventType().equals(EventType.ROW_REMOVE)){
+            if(eventData.get("fcmToken") != null) {
+                tokenToUserMap.put((String) eventData.get("fcmToken"), null);
+            }
+        }
     }
 
     @Override
@@ -101,6 +126,18 @@ public class MessagingController implements IMessagingController, UserPersistenc
             throw new RuntimeException("Invalid empty token specified");
         }
         String userId = (String) ControllerContext.get("userId");
+        String existingUserForToken = tokenToUserMap.get(token);
+
+        if(userId.equals(existingUserForToken)){
+            logger.info("User is already assigned this token aborting");
+            return Futures.immediateFuture(token);
+        }
+        if(existingUserForToken != null){
+            Record userRecord = new Record()
+                    .addValue("userId", existingUserForToken)
+                    .addValue("fcmToken", null);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        }
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");

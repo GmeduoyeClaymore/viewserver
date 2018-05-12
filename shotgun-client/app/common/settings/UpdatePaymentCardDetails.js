@@ -28,8 +28,8 @@ class UpdatePaymentCardDetails extends Component {
 
     dispatch(addPaymentCard(newPaymentCard, () => {
       if (next){
-        history.goBack();
-        //history.push(next);
+        //history.goBack();/ /Why would you do this ? This obviously doesn't do the same thing 
+        history.push(next);
       }
       this.ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined});
     }));
@@ -63,7 +63,7 @@ class UpdatePaymentCardDetails extends Component {
           <ListItem paddedTopBottom>
             <View style={{flex: 1}}>
               <Text style={styles.informationText}>{paymentCards.length > 0 ? 'Add a new card' : 'Add a credit or debit card so we can take payment for completed jobs'}</Text>
-              {paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} onChange={(details) => this.onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
+              {!paymentCards || !paymentCards.length || paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} onChange={(details) => this.onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
             </View>
           </ListItem>
         </List>

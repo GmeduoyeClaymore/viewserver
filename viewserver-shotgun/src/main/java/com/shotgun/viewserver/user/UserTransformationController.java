@@ -23,15 +23,15 @@ public interface UserTransformationController extends UserPersistenceController{
         TUSer call(TUSer order);
     }
 
-    default <T extends User> T transform(String userId, Predicate<T> tranformation, Class<T> orderClass){
+    default <T extends User> T transform(String userId, Predicate<T> tranformation, Class<T> userClass){
         if(userId == null){
             throw new RuntimeException("User id is required");
         }
-        return transform(userId,tranformation,c->{}, orderClass);
+        return transform(userId,tranformation,c->{}, userClass);
     }
-    default <T extends User> T transform(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
+    default <T extends User> T transform(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> userClass){
 
-        T user = getUserForId(userId, orderClass);
+        T user = getUserForId(userId, userClass);
 
         if(tranformation.test(user)){
             addOrUpdateUser(user, null);

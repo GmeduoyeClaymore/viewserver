@@ -111,6 +111,27 @@ public class ControllerContext implements AutoCloseable{
         }
     }
 
+    public static Object getStatic(String name, IPeerSession peerSession) {
+        synchronized (peerSession){
+            ConcurrentHashMap<String,Object> params = contextParams.get(peerSession);
+            if(params == null){
+                return null;
+            }
+            Object o = params.get(name);
+            if( o instanceof Callable){
+                if("now".equals(name)){
+                    try {
+                        return ((Callable)o).call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+            return o;
+        }
+    }
+
     public static Throwable Unwrap(Throwable e){
         if(e instanceof InvocationTargetException){
             return ((InvocationTargetException)e).getTargetException();

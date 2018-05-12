@@ -21,10 +21,14 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.Dimension;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.index.IIndexConfig;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
@@ -107,21 +111,23 @@ public class TableTest extends BenchmarkTestBase {
                 Table table = new Table("table", executionContext, catalog, schema, storage);
                 table.initialise(8);
 
-                IndexOperator index = new IndexOperator("index", executionContext, catalog);
-                index.configure(new IIndexConfig() {
+                IIndexConfig config = new IIndexConfig() {
                     @Override
-                    public String[] getIndices() {
-                        return new String[] {
-                                "market",
-                                "product"
-                        };
+                    public String getDataSourceName() {
+                        return "dataSource";
                     }
 
                     @Override
-                    public Output[] getOutputs() {
+                    public String[] getIndices() {
+                        return new String[]{"market","product"};
+                    }
+
+                    @Override
+                    public OutputConfig[] getOutputs() {
                         return null;
                     }
-                }, new CommandResult());
+                };
+                IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
                 table.getOutput().plugIn(index.getInput());
 
                 Random random = new Random(new Date().getTime());
@@ -156,7 +162,7 @@ public class TableTest extends BenchmarkTestBase {
 
                 storage.unloadAllRows(schema);
 
-                IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("product", 1));
+                IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new QueryHolderConfig(getDimension("product"),false,1));
                 indexOutput.plugIn(new ChangeRecorder("index_rec", executionContext, catalog).getInput());
 
                 benchmarks.startBenchmark("commit 2");
@@ -166,5 +172,9 @@ public class TableTest extends BenchmarkTestBase {
 //                Thread.sleep(5000);
             }
         }, 10);
+    }
+
+    private Dimension getDimension(String name) {
+        return new Dimension(name, Cardinality.Int, ContentType.Int);
     }
 }

@@ -36,7 +36,7 @@ public abstract class ConfigurableOperatorBase<TConfig> extends OperatorBase imp
     }
 
     @Override
-    public final void configure(TConfig config, CommandResult configureResult) {
+    public void configure(TConfig config, CommandResult configureResult) {
         if (this.pendingConfig != null) {
             try {
                 this.pendingConfig = mergePendingConfig(pendingConfig, config);

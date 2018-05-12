@@ -18,6 +18,7 @@ import io.viewserver.expression.function.Distance;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.server.components.IBasicServerComponents;
 import io.viewserver.server.components.IDataSourceServerComponents;
@@ -107,7 +108,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                 return;
             }
             log.info("Found for user - " + user.getUserId()  + " with products " + String.join(",",productIds));
-            IndexOperator.QueryHolder[] queryHolders = DataSourceHelper.getQueryHolders(components.getDataSourceRegistry().get(OrderDataSource.NAME), Arrays.asList(getDimensionsForProductIds(productIds)),basicServerComponents.getExecutionContext().getDimensionMapper());
+            QueryHolderConfig[] queryHolders = DataSourceHelper.getQueryHolders(components.getDataSourceRegistry().get(OrderDataSource.NAME), Arrays.asList(getDimensionsForProductIds(productIds)),basicServerComponents.getExecutionContext().getDimensionMapper());
             AtomicReference<Subscription> subscribe1 = new AtomicReference<>();
             Subscription subscribe = result.subscribe(operator -> {
                 String nameForQueryHolders = IndexOutputNode.getNameForQueryHolders(Arrays.asList(queryHolders));

@@ -47,7 +47,8 @@ class ItemDetails extends Component{
   }
 
   render(){
-    const {next, order, history, imageData} = this.props;
+    const {next, order, history} = this.props;
+    const {imageData} = order;
     let imageIsVertical = false;
     const {onSelectImage, showPicker, onChangeValue, resources} = this;
     return (

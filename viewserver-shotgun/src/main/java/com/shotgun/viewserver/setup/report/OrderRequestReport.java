@@ -1,11 +1,8 @@
 package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.*;
-import io.viewserver.Constants;
-import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.CalcColNode;
 import io.viewserver.execution.nodes.FilterNode;
-import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
@@ -17,11 +14,11 @@ public class OrderRequestReport {
         public static ReportDefinition getReportDefinition() {
                 return new ReportDefinition(ID, "orderRequest")
                         .withDataSource(OrderDataSource.NAME)
-                        .withParameter("partnerLatitude", "Partner Latitude Override", double[].class)
-                        .withParameter("partnerLongitude", "Partner Longitude Override", double[].class)
-                        .withParameter("maxDistance", "Maximum Distance Override", String[].class)
-                        .withParameter("@userId", "User Id", String[].class)
-                        .withParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
+                        .withRequiredParameter("partnerLatitude", "Partner Latitude Override", double[].class)
+                        .withRequiredParameter("partnerLongitude", "Partner Longitude Override", double[].class)
+                        .withRequiredParameter("maxDistance", "Maximum Distance Override", String[].class)
+                        .withRequiredParameter("@userId", "User Id", String[].class)
+                        .withRequiredParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                         .withNodes(
                                 new CalcColNode("distanceCalcCol")
                                         .withCalculations(

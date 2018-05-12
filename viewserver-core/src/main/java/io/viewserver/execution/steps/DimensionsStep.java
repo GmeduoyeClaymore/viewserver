@@ -24,6 +24,7 @@ import io.viewserver.execution.context.ReportExecutionPlanContext;
 import io.viewserver.execution.nodes.IndexOutputNode;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 
 import java.util.List;
 
@@ -46,9 +47,10 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
             return;
         }
 
-        final IndexOperator.QueryHolder[] queryHolders = getQueryHolders(dataSource, dimensionValues, this.dimensionMapper);
+        final QueryHolderConfig[] queryHolders = getQueryHolders(dataSource, dimensionValues, this.dimensionMapper);
 
         IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))
+                .withDataSourceName(dataSource.getName())
                 .withQueryHolders(queryHolders);
 
 

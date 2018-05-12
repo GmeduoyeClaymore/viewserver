@@ -16,7 +16,8 @@ import java.util.Arrays;
 public class
 UserProductDataSource {
     public static final String NAME = "userProduct";
-
+    public static final Dimension dimension_productId = new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported();
+    public static final Dimension dimension_userId = new Dimension("dimension_userId", Cardinality.Byte, ContentType.String, true).withImported();
     public static DataSource getDataSource() {
         return new DataSource()
                 .withName(NAME)
@@ -45,7 +46,7 @@ UserProductDataSource {
                                 .withConnection("productJoin")
                 )
                 .withDimensions(Arrays.asList(
-                        new Dimension("dimension_productId", Cardinality.Int, ContentType.String, true).withImported()))
+                        dimension_productId, dimension_userId))
                 .withOutput("projectionNode")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }

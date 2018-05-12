@@ -19,10 +19,14 @@ package io.viewserver;
 import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.Dimension;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.index.IIndexConfig;
 import io.viewserver.operators.index.IndexOperator;
+import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -59,18 +63,23 @@ public class MemoryMappedColumnTest {
         Table table = new Table("table", executionContext, catalog, schema, storage);
         table.initialise(100000000);
 
-        IndexOperator index = new IndexOperator("index", executionContext, catalog);
-        index.configure(new IIndexConfig() {
+        IIndexConfig config = new IIndexConfig() {
             @Override
-            public String[] getIndices() {
-                return new String[]{"market", "product"};
+            public String getDataSourceName() {
+                return "dataSource";
             }
 
             @Override
-            public Output[] getOutputs() {
+            public String[] getIndices() {
+                return new String[]{"market","product"};
+            }
+
+            @Override
+            public OutputConfig[] getOutputs() {
                 return null;
             }
-        }, new CommandResult());
+        };
+        IndexOperator index = new IndexOperator("index", executionContext, catalog, config);
 
         table.getOutput().plugIn(index.getInput());
 
@@ -95,11 +104,15 @@ public class MemoryMappedColumnTest {
 
         executionContext.commit();
 
-        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new IndexOperator.QueryHolder("product", 1));
+        IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new QueryHolderConfig(getDimension("product"),false, 1));
         indexOutput.plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
 
         executionContext.commit();
 
         new CountDownLatch(1).await();
+    }
+
+    private Dimension getDimension(String name) {
+        return new Dimension(name, Cardinality.Int, ContentType.Int);
     }
 }

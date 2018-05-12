@@ -37,7 +37,8 @@ public class IndexOperatorFactory extends ConfigurableOperatorFactoryBase<IIndex
 
     @Override
     public IOperator createOperator(String name, Configurator.ConfiguratorState state, Object config) {
-        return new IndexOperator(name, state.executionContext, state.catalog);
+        IIndexConfig indexConfig  = (IIndexConfig)config;
+        return new IndexOperator(name, state.executionContext, state.catalog, indexConfig);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class IndexOperatorFactory extends ConfigurableOperatorFactoryBase<IIndex
         IIndexConfig indexConfig = (IIndexConfig) config;
 
         if (indexConfig.getOutputs() != null) {
-            for (IIndexConfig.Output output : indexConfig.getOutputs()) {
+            for (IIndexConfig.OutputConfig output : indexConfig.getOutputs()) {
                 indexOperator.getOrCreateOutput(output.getName(), output.getQueryHolders());
             }
         }
