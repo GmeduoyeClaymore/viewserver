@@ -159,7 +159,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         }
     }
 
-    private void setPhoneNumberStatus(String status, String toNumber, String fromNumber) {
+    private void setPhoneNumberStatus(String status, String fromNumber, String toNumber) {
         KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         String toNumberTrim = toNumber.trim();
