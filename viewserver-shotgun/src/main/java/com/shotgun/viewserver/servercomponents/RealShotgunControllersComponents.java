@@ -11,10 +11,8 @@ import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
-import com.shotgun.viewserver.messaging.MockMessagingController;
 import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.payments.MockPaymentController;
-import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.NexmoController;
@@ -24,6 +22,7 @@ import io.viewserver.server.components.IBasicServerComponents;
 
 public class RealShotgunControllersComponents extends ShotgunControllersComponents {
 
+    private final MessagingController messagingController;
     private NexmoControllerKey controllerKey;
     private StripeApiKey stripeApiKey;
     private BasicAWSCredentials basicAWSCredentials;
@@ -47,11 +46,12 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
         this.messagingApiKey = messagingApiKey;
         this.mapsControllerKey = mapsControllerKey;
         this.vehicleDetailsApiKey = vehicleDetailsApiKey;
+        this.messagingController = new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog());
     }
 
     @Override
     protected INexmoController getNexmoController() {
-        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  getDatabaseUpdater());
+        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  getDatabaseUpdater(), messagingController);
     }
 
     @Override
@@ -67,8 +67,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IMessagingController getMessagingController() {
-        return new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog());
-        //return new MockMessagingController(databaseUpdater);
+        return this.messagingController;
     }
 
     @Override

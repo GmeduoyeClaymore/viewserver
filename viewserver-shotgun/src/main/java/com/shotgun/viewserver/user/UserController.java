@@ -10,6 +10,7 @@ import com.shotgun.viewserver.constants.VanVolumes;
 import com.shotgun.viewserver.delivery.Dimensions;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
+import com.shotgun.viewserver.order.contracts.UserNotificationContract;
 import com.shotgun.viewserver.order.controllers.contracts.RatedOrderController;
 import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.PaymentCard;
@@ -51,7 +52,7 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 
 
 @Controller(name = "userController")
-public class UserController implements UserTransformationController, RatedOrderController {
+public class UserController implements UserTransformationController, RatedOrderController, UserNotificationContract {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private IImageController IImageController;
     private IMessagingController messagingController;
@@ -253,7 +254,7 @@ public class UserController implements UserTransformationController, RatedOrderC
                     return true;
                 },
                 user -> {
-                    notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
+                    notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name());
                 }, User.class
         );
     }
@@ -269,36 +270,7 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
 
-    private void notifyRelationshipStatus(String userId, String targetUserId, String status, KeyedTable userTable) {
-        try {
-            String formattedStatus = status.toLowerCase();
-            String fromUserName = getUsername(userId, userTable);
-            AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withAction(createUserActionUri(userId, "UserDetail"))
-                    .withFromTo(userId, targetUserId)
-                    .message(String.format("Shotgun friend request", formattedStatus), String.format("Shotgun user %s has %s your friendship", fromUserName, formattedStatus)).build();
-            ListenableFuture future = messagingController.sendMessageToUser(builder);
 
-            Futures.addCallback(future, new FutureCallback<Object>() {
-                @Override
-                public void onSuccess(Object o) {
-                    log.debug("Message sent successfully");
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    log.error("There was a problem sending the notification", throwable);
-                }
-            });
-
-        } catch (Exception ex) {
-            log.error("There was a problem sending the notification", ex);
-        }
-    }
-
-    public String createUserActionUri(String userId, String urlSuffix){
-        return String.format("shotgunu://%s/%s", urlSuffix, userId);
-    }
 
     private String getUsername(String userId, KeyedTable userTable) {
         String firstName = (String) ControllerUtils.getColumnValue(userTable, "firstName", userId);

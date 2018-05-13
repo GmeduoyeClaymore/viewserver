@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.contracts.UserNotificationContract;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
@@ -27,19 +29,21 @@ import java.util.HashMap;
 
 
 @Controller(name = "nexmoController")
-public class NexmoController implements INexmoController {
+public class NexmoController implements INexmoController, UserNotificationContract {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
     private ICatalog systemCatalog;
     private NexmoControllerKey nexmoControllerKey;
     private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
+    private IMessagingController messagingController;
 
-    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater) {
+    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.nexmoControllerKey = nexmoControllerKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.messagingController = messagingController;
         this.createHttpServer(httpPort);
     }
 
@@ -80,6 +84,21 @@ public class NexmoController implements INexmoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public KeyedTable getUserTable() {
+        return (KeyedTable) systemCatalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
+    }
+
+    @Override
+    public Logger getLogger() {
+        return log;
+    }
+
+    @Override
+    public IMessagingController getMessagingController() {
+        return this.messagingController;
     }
 
     private class CallHandler implements HttpHandler {
@@ -148,21 +167,45 @@ public class NexmoController implements INexmoController {
         log.info(String.format("Attempting to find a user record with userPhoneNumber %s and virtual numnber %s", toNumberTrim, fromNumberTrim));
 
 
+        String fromUserId = null;
+        String toUserId = null;
+
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
             if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
+
+                fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+                toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+
                 log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
-                Record phoneNumberRecord = new Record().addValue("phoneNumber", virtualPhoneNumber).addValue("phoneNumberStatus", status);
+                Record phoneNumberRecord = new Record();
+                phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
+                phoneNumberRecord.addValue("phoneNumberStatus", status);
                 if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
                     status.equals(PhoneNumberStatuses.REJECTED.name()) ||
+                    status.equals(PhoneNumberStatuses.FAILED.name()) ||
+                    status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
+                    status.equals(PhoneNumberStatuses.BUSY.name()) ||
                     status.equals(PhoneNumberStatuses.CANCELLED.name())) {
-                    phoneNumberRecord.addValue("orderId", "");
+
+                    phoneNumberRecord.addValue("fromUserId", "");
+                    phoneNumberRecord.addValue("toUserId", "");
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                 }
 
                 iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
             }
+        }
+        log.info(String.format("Call from %s to %s has status %s",fromUserId,toUserId,status));
+        if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
+                status.equals(PhoneNumberStatuses.REJECTED.name()) ||
+                status.equals(PhoneNumberStatuses.FAILED.name()) ||
+                status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
+                status.equals(PhoneNumberStatuses.BUSY.name()) ||
+                status.equals(PhoneNumberStatuses.CANCELLED.name())) {
+            log.info(String.format("Call from %s to %s failed so notifying user",fromUserId,toUserId,status));
+            notifyMissedCall(fromUserId, toUserId);
         }
     }
 

@@ -15,7 +15,8 @@ public class PhoneNumberDataSource {
                 .withSchema(new SchemaConfig()
                                 .withColumns(Arrays.asList(
                                         new Column("phoneNumber", ContentType.String),
-                                        new Column("orderId",  ContentType.String),
+                                        new Column("fromUserId",  ContentType.String),
+                                        new Column("toUserId",  ContentType.String),
                                         new Column("userPhoneNumber", ContentType.String),
                                         new Column("phoneNumberStatus", ContentType.String),
                                         new Column("assignedTime",  ContentType.DateTime)
