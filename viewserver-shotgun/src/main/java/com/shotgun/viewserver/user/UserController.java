@@ -244,7 +244,11 @@ public class UserController implements UserTransformationController, RatedOrderC
                 targetUser -> {
                     targetUser.addOrUpdateRelationship(userId, getRelationshipStatus(userRelationshipStatus),relationshipType);
                     User meUser = getUserForId(userId,User.class);
-                    meUser.addOrUpdateRelationship(targetUserId,userRelationshipStatus,relationshipType);
+                    Optional<UserRelationship> relationship = meUser.findUserRelationship(targetUserId);
+                    if(relationship.isPresent() && relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)){
+                    }else{
+                        meUser.addOrUpdateRelationship(targetUserId,userRelationshipStatus,relationshipType);
+                    }
                     updateUser(meUser);
                     return true;
                 },
@@ -254,7 +258,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         );
     }
 
-    public UserRelationshipStatus getRelationshipStatus(@ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus) {
+    private UserRelationshipStatus getRelationshipStatus(UserRelationshipStatus userRelationshipStatus) {
         if(userRelationshipStatus.equals(UserRelationshipStatus.REQUESTED)){
             return UserRelationshipStatus.REQUESTEDBYME;
         }
@@ -264,12 +268,13 @@ public class UserController implements UserTransformationController, RatedOrderC
         return userRelationshipStatus;
     }
 
+
     private void notifyRelationshipStatus(String userId, String targetUserId, String status, KeyedTable userTable) {
         try {
             String formattedStatus = status.toLowerCase();
             String fromUserName = getUsername(userId, userTable);
             AppMessage builder = new AppMessageBuilder().withDefaults()
-                    .withAction(createUserActionUri(userId))
+                    .withAction(createUserActionUri(userId, "UserDetail"))
                     .withFromTo(userId, targetUserId)
                     .message(String.format("Shotgun friend request", formattedStatus), String.format("Shotgun user %s has %s your friendship", fromUserName, formattedStatus)).build();
             ListenableFuture future = messagingController.sendMessageToUser(builder);
@@ -291,8 +296,8 @@ public class UserController implements UserTransformationController, RatedOrderC
         }
     }
 
-    private String createUserActionUri(String targetUserId) {
-        return String.format("shotgun://Landing/UserRelationships/RelationshipView/DetailX/SelectedUser%sX", targetUserId);
+    public String createUserActionUri(String userId, String urlSuffix){
+        return String.format("shotgunu://%s/%s", urlSuffix, userId);
     }
 
     private String getUsername(String userId, KeyedTable userTable) {

@@ -2,7 +2,7 @@ import React, {Component}  from 'react';
 import { withExternalState, ReduxRouter, Route } from 'custom-redux';
 import {Content, Button, Tab, View, Text, Row, Col, Grid, Switch, Header, Body, Title} from 'native-base';
 import {Tabs, ErrorRegion, LoadingScreen} from 'common/components';
-import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getOperationError, getDaoOptions } from 'common/dao';
+import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getAnyOperationError, getDaoOptions } from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
@@ -123,13 +123,10 @@ const mapStateToProps = (state, initialProps) => {
   const options = getDaoOptions(state, 'userRelationshipDao') || {};
   const {searchText} = options;
 
-  const updateRelationshipError = getOperationError(state, 'userRelationshipDao', 'updateRelationship') || '';
-  const updateRelationshipSubscriptionError = getOperationError(state, 'userRelationshipDao', 'updateSubscription') || '';
-
   return {
     ...initialProps,
     searchText,
-    errors: updateRelationshipError + '\n' + updateRelationshipSubscriptionError,
+    errors: getAnyOperationError(state, 'userRelationshipDao'),
     me: getDaoState(state, ['user'], 'userDao'),
     relatedUsers: getDaoState(state, ['users'], 'userRelationshipDao') || [],
     busy: isAnyOperationPending(state, [{userRelationshipDao: 'updateSubscription'}])

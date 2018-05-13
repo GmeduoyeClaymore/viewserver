@@ -56,7 +56,7 @@ class UsersForProductMap extends Component{
               {this.getLocationText(origin, 'origin', 'Enter job location')}
             </Col>
           </Row>
-          <UserRelationshipsControl geoLocation={geoLocation} {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
+          <UserRelationshipsControl hideRelationships={disableDoneButton} geoLocation={geoLocation} {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
       </Grid>

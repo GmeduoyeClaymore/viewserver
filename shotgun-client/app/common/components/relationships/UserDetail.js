@@ -66,6 +66,7 @@ class UserDetail extends Component{
     } else if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
       buttonsToRender.push(this.getActionButton('REQUESTED', 'Add as friend'));
     } else if (selectedUser.relationshipStatus === 'BLOCKED'){
+      buttonsToRender.push(this.getActionButton('BLOCKED', 'Block User', {danger: true}));
     }
     else {
       return <Text>{'Unknown ' + selectedUser.relationshipStatus}</Text>;
@@ -74,8 +75,8 @@ class UserDetail extends Component{
   }
 
   goToTabNamed = (name) => {
-    const {history, path} = this.props;
-    history.replace({pathname: `${path}/${name}`});
+    const {history, path, userId} = this.props;
+    history.replace({pathname: `${path}/${name}`, state: {userId}});
   }
 
   getHeading = (heading) => {
@@ -86,7 +87,8 @@ class UserDetail extends Component{
   }
 
   render(){
-    const {path, history, dispatch, onPressAssignUser, handleCancel, selectedUser} = this.props;
+    const {path, history, dispatch, onPressAssignUser, selectedUser} = this.props;
+    const {handleCancel} = this;
     const page = history.location.pathname.endsWith('Skills')  ? 1 : 0;
 
     return selectedUser ? <ReactNativeModal isVisible={history.location.pathname.includes(path)} style={styles.modal}>
@@ -107,7 +109,7 @@ class UserDetail extends Component{
         </Tabs>
 
         <ScrollView key='scrollView' style={{flex: 1}}>
-          <ReduxRouter {...this.props} path={path}defaultRoute="Ratings">
+          <ReduxRouter {...this.props} path={path} defaultRoute="Ratings">
             <Route key="Ratings" path="Ratings" component={UserRatingsDetail} user={selectedUser}/>
             <Route key="Skills" path="Skills" component={UserContentTypeDetail} selectedContentTypes={selectedUser.selectedContentTypes}/>
           </ReduxRouter>

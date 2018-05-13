@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
 import {Input} from 'native-base';
 import {debounce} from 'lodash';
+import {Keyboard} from 'react-native';
 
 export const formatPrice = (price) => {
   if (!price || price === 'undefined'){
     return undefined;
   }
-  return `£${(parseFloat(price + '')).toFixed(2)}`;
+  const priceAsFloat = parseFloat(price + '');
+  if (isNaN(priceAsFloat)){
+    return undefined;
+  }
+  return `£${(priceAsFloat).toFixed(2)}`;
 };
 export class CurrencyInput extends Component{
   constructor(props){
@@ -14,11 +19,12 @@ export class CurrencyInput extends Component{
     this.state = {
       formattedPrice: undefined
     };
-    this.onUserDormantInControl = debounce(this.onUserDormantInControl, 500);
+    this.onUserDormantInControl = debounce(this.onUserDormantInControl, 1000);
   }
 
   onUserDormantInControl = () => {
     this.setFormattedPriceValue();
+    Keyboard.dismiss();
   }
 
   componentDidMount(){
@@ -57,10 +63,6 @@ export class CurrencyInput extends Component{
   }
 
   clearFormattedPriceValue = () => {
-    const {disabled} = this.props;
-    if (disabled == true){
-      return;
-    }
     this.setState({formattedPrice: undefined});
   }
 
@@ -71,12 +73,12 @@ export class CurrencyInput extends Component{
 
   render(){
     const {formattedPrice} = this.state;
-    const {style = {}, ...rest} = this.props;
+    const {style = {}, onValueChanged, placeholder} = this.props;
     return <Input
       keyboardType='phone-pad'
-      {...rest}
+      placeholder={placeholder}
       value={formattedPrice}
-      style={[style, styles.amountInput]}
+      style={styles.amountInput}
       onFocus={this.clearFormattedPriceValue}
       onBlur={this.setFormattedPriceValue}
       onChangeText={this.onValueChanged}

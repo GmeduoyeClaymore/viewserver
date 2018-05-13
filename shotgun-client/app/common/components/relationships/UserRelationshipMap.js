@@ -81,7 +81,7 @@ class UserRelationshipMap extends Component{
   }
 
   render(){
-    const {relatedUsers = [], setSelectedUser, me, height, width, isTransitioning, order = {}} = this.props;
+    const {relatedUsers = [], setSelectedUser, me, height, width, isTransitioning, order = {}, hideRelationships} = this.props;
     const {origin = {}} = order;
     const {latitude, longitude} = me;
 
@@ -95,7 +95,7 @@ class UserRelationshipMap extends Component{
     return isTransitioning ? <LoadingScreen text="Screen transitioning...."/> : <MapView ref={c => { this.map = c; }} style={{ flex: 1, height, width}} onMapReady={() => {this.fitMap(this.props);}}
       region={relatedUsers.length ? undefined : initialRegion} showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={false} >
       {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
-      {relatedUsers.map((user, i) =>
+      { hideRelationships ? null : relatedUsers.map((user, i) =>
         <MapView.Marker key={user.userId + '-' + i} onPress={() => setSelectedUser(user)} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }} anchor={{ x: 0.5, y: 1 }}>
           <UserMarker user={user} productId={order ? order.productId : undefined} />
         </MapView.Marker>)}

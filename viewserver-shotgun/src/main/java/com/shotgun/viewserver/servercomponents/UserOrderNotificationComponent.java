@@ -24,16 +24,21 @@ import io.viewserver.server.components.IBasicServerComponents;
 import io.viewserver.server.components.IDataSourceServerComponents;
 import io.viewserver.server.components.IServerComponent;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Scheduler;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class UserOrderNotificationComponent implements IServerComponent, OrderNotificationContract {
@@ -46,6 +51,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private IMessagingController messagingController;
     private boolean disableDistanceCheck;
     private HashMap<String,List<String>> notifiedOrdersByUser;
+    Executor notificationsExecutor = Executors.newSingleThreadExecutor(new NamedThreadFactory("notifications"));
 
     public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents) {
         this.components = components;
@@ -110,12 +116,12 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             log.info("Found for user - " + user.getUserId()  + " with products " + String.join(",",productIds));
             QueryHolderConfig[] queryHolders = DataSourceHelper.getQueryHolders(components.getDataSourceRegistry().get(OrderDataSource.NAME), Arrays.asList(getDimensionsForProductIds(productIds)),basicServerComponents.getExecutionContext().getDimensionMapper());
             AtomicReference<Subscription> subscribe1 = new AtomicReference<>();
-            Subscription subscribe = result.subscribe(operator -> {
+            Subscription subscribe = result.subscribeOn(Schedulers.from(notificationsExecutor)).subscribe(operator -> {
                 String nameForQueryHolders = IndexOutputNode.getNameForQueryHolders(Arrays.asList(queryHolders));
                 log.info("Subscribing user - " + user.getUserId() + " to index output " + nameForQueryHolders);
                 IOutput out = ((IndexOperator) operator).getOrCreateOutput(nameForQueryHolders, queryHolders);
                 subscribe1.set(out.observable("orderId", "orderDetails").
-                        filter(ev -> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).subscribe(ev -> {
+                        filter(ev -> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
                     HashMap eventData = (HashMap) ev.getEventData();
                     BasicOrder order = JSONBackedObjectFactory.create((HashMap) eventData.get("orderDetails"), BasicOrder.class);
                     if(hasNotificationForUser(order.getOrderId(), user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id

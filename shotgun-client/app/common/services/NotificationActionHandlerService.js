@@ -9,8 +9,12 @@ export default class NotificationActionHandlerService {
 
       history.push(`${baseUrl}/${route}`, {orderId});
     } else {
-      const parsedRelationshipActionUri = NotificationActionHandlerService.parseRelationshipActionUri(actionUri);
-      history.push(`${baseUrl}/UserRelationships/${parsedRelationshipActionUri[1]}`);
+      const parseUserActionUri = NotificationActionHandlerService.parseUserActionUri(actionUri);
+      if (parseUserActionUri){
+        const route = parseUserActionUri[1].replace('~', '/');
+        const userId = parseUserActionUri[2];
+        history.push(`${baseUrl}/${route}`, {userId});
+      }
     }
   }
 
@@ -19,8 +23,8 @@ export default class NotificationActionHandlerService {
     return actionUri.match(/^^shotgun:\/\/([^\/]+)\/?([\w-]+)?$/);
   }
 
-  static parseRelationshipActionUri(actionUri){
+  static parseUserActionUri(actionUri){
     Logger.debug(`Received notification action ${actionUri}`);
-    return actionUri.match(/^shotgun:\/\/Landing\/UserRelationships\/(.*)$/);
+    return actionUri.match(/^^shotgunu:\/\/([^\/]+)\/?([\w-]+)?$/);
   }
 }

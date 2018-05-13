@@ -39,7 +39,7 @@ public interface OrderPaymentStage extends DynamicJsonBackedObject {
 
 
         static{
-            None.to(Started);
+            None.to(Started, Complete);
             Started.to(Complete);
             Complete.to(Paid);
         }

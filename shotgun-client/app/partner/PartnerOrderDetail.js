@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { withExternalState, ReduxRouter, Route} from 'custom-redux';
+import { withExternalState, ReduxRouter, Route } from 'custom-redux';
 import { resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError } from 'common/dao';
-import {Container, Header, Left, Button, Body, Title, Content, Tab, Row, Text} from 'native-base';
+import { Container, Header, Left, Button, Body, Title, Content, Tab, Row, Text } from 'native-base';
 import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
 import PartnerOrderLifecycleView from 'common/components/orders/PartnerOrderLifecycleView';
 import { respondToOrder } from 'partner/actions/PartnerActions';
@@ -16,7 +16,7 @@ import FixedPersonellOrderInProgress from './progress/FixedPersonellOrderInProgr
 import PartnerJourneyOrderInProgress from './progress/PartnerJourneyOrderInProgress';
 import HireOrderInProgress from './progress/HireOrderInProgress';
 
-const ResponseRejected = ({order}) => (<Row  style={{padding: 5, marginBottom: 5}}><Icon name='star' style={styles.starDeclined  }/><Text style={{paddingTop: 15, paddingLeft: 5}}>{`${order.customer.firstName} ${order.customer.lastName} Rejected`}</Text></Row>);
+const ResponseRejected = ({ order }) => (<Row style={{ padding: 5, marginBottom: 5 }}><Icon name='star' style={styles.starDeclined} /><Text style={{ paddingTop: 15, paddingLeft: 5 }}>{`${order.customer.firstName} ${order.customer.lastName} Rejected`}</Text></Row>);
 
 class PartnerOrderDetail extends Component {
   constructor(props) {
@@ -42,9 +42,9 @@ class PartnerOrderDetail extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps){
-    const { dispatch, orderId} = newProps;
-    if (newProps.orderId != this.props.orderId){
+  componentWillReceiveProps(newProps) {
+    const { dispatch, orderId } = newProps;
+    if (newProps.orderId != this.props.orderId) {
       dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
         orderId,
         ...OrderSummaryDao.PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS
@@ -65,7 +65,7 @@ class PartnerOrderDetail extends Component {
   }
 
   render() {
-    const { order = {},  history, busy, orderId, errors } = this.props;
+    const { order, history, busy, orderId, errors } = this.props;
     const { onOrderRespond, resources } = this;
     const { InProgressControlsFactory } = resources;
     const InProgressControls = InProgressControlsFactory ? InProgressControlsFactory(order) : null;
@@ -80,7 +80,7 @@ class PartnerOrderDetail extends Component {
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
-        <PartnerOrderLifecycleView  isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false}}
+        <PartnerOrderLifecycleView isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false }}
           PlacedControls={[PartnerPriceSummary, PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}
           RejectedControls={[ResponseRejected, OrderSummary]}
@@ -104,16 +104,16 @@ const styles = {
 };
 
 const PaymentStagesAndSummary = (props) => {
-  const {history, path, orderId, height, order} = props;
+  const { history, path, orderId, height, order } = props;
   const goToTabNamed = (name) => {
-    history.replace({pathname: `${path}/${name}`, state: {orderId}});
+    history.replace({ pathname: `${path}/${name}`, state: { orderId } });
   };
   const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
-  return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
-    <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
-    {order.paymentStages && order.paymentStages.length ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')}/> : null}
+  return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages') ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages') ? 1 : 0}  {...shotgun.tabsStyle}>
+    <Tab heading='Summary' onPress={() => goToTabNamed('Summary')} />
+    {order.paymentStages && order.paymentStages.length ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')} /> : null}
   </Tabs>,
-  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
+  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={PartnerPaymentStagesPanel} />
   </ReduxRouter>];
@@ -121,7 +121,7 @@ const PaymentStagesAndSummary = (props) => {
 
 
 const getControlsFromOrder = (order) => {
-  if (order.paymentType === 'DAYRATE'){
+  if (order.paymentType === 'DAYRATE') {
     return [PartnerPriceSummary, DayRatePersonellOrderInProgress, PaymentStagesAndSummary];
   }
   return [PartnerPriceSummary, FixedPersonellOrderInProgress, PaymentStagesAndSummary];
@@ -131,16 +131,16 @@ const getControlsFromOrder = (order) => {
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', () => 'Order Summary').
-  delivery((order) => `${order.orderProduct.name} Delivery`).
-  hire((order) => `${order.orderProduct.name}  Hire`).
-  personell((order) => `${order.orderProduct.name} Job`).
-  rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
+    delivery((order) => `${order.orderProduct.name} Delivery`).
+    hire((order) => `${order.orderProduct.name}  Hire`).
+    personell((order) => `${order.orderProduct.name} Job`).
+    rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('PlacedControls', [PartnerNegotiationPanel, OrderSummary]).
   property('InProgressControlsFactory').
-    personell(getControlsFromOrder).
-    hire(() => [PartnerPriceSummary, HireOrderInProgress]).
-    delivery(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]).
-    rubbish(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]);
+  personell(getControlsFromOrder).
+  hire(() => [PartnerPriceSummary, HireOrderInProgress]).
+  delivery(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]).
+  rubbish(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]);
 /*eslint-enable */
 
 
@@ -149,12 +149,13 @@ const mapStateToProps = (state, initialProps) => {
   const order = findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const user = getDaoState(state, ['user'], 'userDao');
   const { bankAccount } = user;
+  const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
   return {
     ...initialProps,
     errors: getOperationErrors(state, [{ partnerDao: 'acceptOrderRequest' }]) + '\n' + getAnyOperationError(state, 'orderDao') + '\n' + getAnyOperationError(state, 'singleOrderSummaryDao'),
     user,
     busyUpdating: isAnyOperationPending(state, [{ partnerDao: 'acceptOrderRequest' }, { partnerDao: 'updateOrderPrice' }]),
-    busy: !order,
+    busy: isPendingOrderSummarySubscription,
     order,
     orderId,
     responseParams,

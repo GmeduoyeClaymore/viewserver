@@ -3,6 +3,8 @@ package io.viewserver.util.dynamic;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.JacksonSerialiser;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -11,6 +13,7 @@ import java.util.regex.Pattern;
 
 public final class PropertyMappingClassInterpreter {
 
+    private static final Logger logger = LoggerFactory.getLogger(PropertyMappingClassInterpreter.class);
     private static final ClassInterpreter<Map<String, Object>> cached = ClassInterpreter.cached(
             ClassInterpreter.mappingWith(PropertyMappingClassInterpreter::interpret));
 
@@ -70,11 +73,18 @@ public final class PropertyMappingClassInterpreter {
 //Convert value to string then into required object to coerce into the correct shape then cache result
         String jsonRepresentation = JacksonSerialiser.getInstance().serialise(value);
 
-        Object deserialise = JacksonSerialiser.getInstance().deserialise(jsonRepresentation, method.getReturnType());
 
-        target.put(info.getPropertyName(), deserialise);
+        try {
 
-        return deserialise;
+            Object deserialise = JacksonSerialiser.getInstance().deserialise(jsonRepresentation, method.getReturnType());
+
+            target.put(info.getPropertyName(), deserialise);
+
+            return deserialise;
+        }catch (Exception ex){
+            logger.debug("Problem deserializing {} on interface {}", info.getPropertyName(),info.getDeclaringType().getRawType().getName());
+            return null;
+        }
     }
 
     private static Object invokeExplicitJson(Method method, Object pr, Object[] args, Map<String, Object> propertyValues) {

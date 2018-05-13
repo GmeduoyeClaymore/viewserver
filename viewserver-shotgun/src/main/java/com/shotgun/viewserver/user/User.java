@@ -1,10 +1,10 @@
 package com.shotgun.viewserver.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.messaging.AppMessage;
+import com.shotgun.viewserver.order.types.TransitionUtils;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
@@ -94,7 +94,7 @@ public interface User extends DynamicJsonBackedObject{
     }
 
     default void addOrUpdateRelationship(String toUserId,UserRelationshipStatus relationshipStatus, UserRelationshipType relationshipType){
-        Optional<UserRelationship> result = fromArray(getRelationships()).filter(c->c.getToUserId().equals(toUserId)).findAny();
+        Optional<UserRelationship> result = findUserRelationship(toUserId);
         UserRelationship relationship;
         if(result.isPresent()){
             relationship = result.get();
@@ -103,7 +103,12 @@ public interface User extends DynamicJsonBackedObject{
             relationship = JSONBackedObjectFactory.create(UserRelationship.class);
             relationship.set("toUserId",toUserId);
         }
-        relationship.set("relationshipStatus",relationshipStatus);
+
+        UserRelationshipStatus existingStatus = relationship.getRelationshipStatus();
+        if(UserRelationshipStatus.BLOCKEDBYME.equals(existingStatus) && UserRelationshipStatus.BLOCKED.equals(relationshipStatus)){
+            relationshipStatus = UserRelationshipStatus.BLOCKEDBYME;
+        }
+        relationship.set("relationshipStatus", TransitionUtils.transition(relationship.getRelationshipStatus(),relationshipStatus));
         relationship.set("relationshipType",relationshipType);
 
         if(!result.isPresent()){
@@ -113,6 +118,10 @@ public interface User extends DynamicJsonBackedObject{
         }
         recalculateBlockedList();
 
+    }
+
+    default Optional<UserRelationship> findUserRelationship(String toUserId) {
+        return fromArray(getRelationships()).filter(c->c.getToUserId().equals(toUserId)).findAny();
     }
 
     default void recalculateBlockedList(){

@@ -54,7 +54,7 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
     }
 
     default void partnerCompleteJob(){
-        fromArray(getPaymentStages()).filter(c-> OrderPaymentStage.PaymentStageStatus.Started == c.getPaymentStageStatus()).forEach(
+        fromArray(getPaymentStages()).filter(c-> OrderPaymentStage.PaymentStageStatus.Started == c.getPaymentStageStatus() || OrderPaymentStage.PaymentStageStatus.None == c.getPaymentStageStatus()).forEach(
                 c-> c.transitionTo(OrderPaymentStage.PaymentStageStatus.Complete)
         );
         this.transitionTo(NegotiatedOrder.NegotiationOrderStatus.PARTNERCOMPLETE);

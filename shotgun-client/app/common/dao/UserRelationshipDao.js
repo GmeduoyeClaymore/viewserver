@@ -41,7 +41,7 @@ export default class UserRelationshipDaoContext{
       parameters: {
         latitude,
         longitude,
-        productId: selectedProduct.productId,
+        productId: selectedProduct ? selectedProduct.productId : undefined,
         showUnrelated,
         maxDistance,
         showOutOfRange

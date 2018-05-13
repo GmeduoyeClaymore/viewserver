@@ -38,6 +38,9 @@ public class GetOrderField implements IUserDefinedFunction, IExpressionString {
         }
         String orderDetailJson = orderDetailExpression.getString(row);
         HashMap order = ControllerUtils.mapDefault(orderDetailJson);
+        if(order == null){
+            return null;
+        }
         try {
             return ControllerUtils.toString(order.get(orderField));
         } catch (Exception e) {
