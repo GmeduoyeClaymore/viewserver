@@ -242,7 +242,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         this.transform(
                 targetUserId,
                 targetUser -> {
-                    targetUser.addOrUpdateRelationship(userId,userRelationshipStatus.equals(UserRelationshipStatus.REQUESTED)  ? UserRelationshipStatus.REQUESTEDBYME : userRelationshipStatus,relationshipType);
+                    targetUser.addOrUpdateRelationship(userId, getRelationshipStatus(userRelationshipStatus),relationshipType);
                     User meUser = getUserForId(userId,User.class);
                     meUser.addOrUpdateRelationship(targetUserId,userRelationshipStatus,relationshipType);
                     updateUser(meUser);
@@ -252,6 +252,16 @@ public class UserController implements UserTransformationController, RatedOrderC
                     notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name(), ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME));
                 }, User.class
         );
+    }
+
+    public UserRelationshipStatus getRelationshipStatus(@ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus) {
+        if(userRelationshipStatus.equals(UserRelationshipStatus.REQUESTED)){
+            return UserRelationshipStatus.REQUESTEDBYME;
+        }
+        if(userRelationshipStatus.equals(UserRelationshipStatus.BLOCKED)){
+            return UserRelationshipStatus.BLOCKEDBYME;
+        }
+        return userRelationshipStatus;
     }
 
     private void notifyRelationshipStatus(String userId, String targetUserId, String status, KeyedTable userTable) {

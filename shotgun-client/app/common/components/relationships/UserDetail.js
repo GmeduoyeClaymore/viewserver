@@ -13,7 +13,8 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 class UserDetail extends Component{
   handleCancel = () => {
     const {history, userRelationshipBasePath} = this.props;
-    history.push({pathname: userRelationshipBasePath, transition: 'immediate'});
+    //history.push({pathname: userRelationshipBasePath, transition: 'immediate'}); I don't think this makes sense this control is used everywhere not just on the user relationships page
+    history.goBack();
   }
 
   beforeNavigateTo(){
@@ -50,10 +51,10 @@ class UserDetail extends Component{
   getStatusButton = () => {
     const {selectedUser} = this.props;
     const buttonsToRender = [];
-    if (selectedUser.relationshipStatus != 'BLOCKED'){
+    if (selectedUser.relationshipStatus != 'BLOCKED' && selectedUser.relationshipStatus != 'BLOCKEDBYME'){
       buttonsToRender.push(this.getActionButton('BLOCKED', 'Block User', {danger: true}));
     }
-    if (selectedUser.relationshipStatus === 'BLOCKED'){
+    if (selectedUser.relationshipStatus === 'BLOCKEDBYME'){
       buttonsToRender.push(this.getActionButton('UNKNOWN', 'UnBlock User'));
     } else if (selectedUser.relationshipStatus === 'ACCEPTED'){
       buttonsToRender.push(this.getActionButton('UNKNOWN', 'Un-Friend'));
@@ -64,8 +65,10 @@ class UserDetail extends Component{
       buttonsToRender.push(this.getActionButton('UNKNOWN', 'Cancel Request'));
     } else if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
       buttonsToRender.push(this.getActionButton('REQUESTED', 'Add as friend'));
-    } else {
-      return 'Unknown ' + selectedUser.relationshipStatus;
+    } else if (selectedUser.relationshipStatus === 'BLOCKED'){
+    }
+    else {
+      return <Text>{'Unknown ' + selectedUser.relationshipStatus}</Text>;
     }
     return buttonsToRender;
   }
@@ -73,6 +76,13 @@ class UserDetail extends Component{
   goToTabNamed = (name) => {
     const {history, path} = this.props;
     history.replace({pathname: `${path}/${name}`});
+  }
+
+  getHeading = (heading) => {
+    if (heading === 'Ratings'){
+      return 'Completed Jobs';
+    }
+    return heading;
   }
 
   render(){
@@ -91,8 +101,9 @@ class UserDetail extends Component{
         <Text style={styles.infoText}>{ `${Math.round(selectedUser.distance)} km away`}</Text>
 
         <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
-          <Tab heading="Completed Jobs" onPress={() => this.goToTabNamed('Ratings')}/>
-          <Tab heading="Skills" onPress={() => this.goToTabNamed('Skills')}/>
+          {TabHeadings.map(
+            (heading, idx) => <Tab key={idx} heading={this.getHeading(heading)} onPress={() => this.goToTabNamed(heading)}/>
+          )}
         </Tabs>
 
         <ScrollView key='scrollView' style={{flex: 1}}>
@@ -110,21 +121,37 @@ class UserDetail extends Component{
   }
 }
 
+const TabHeadings = [
+  'Ratings',
+  'Skills'
+];
+
+const getSelectedTabIndex = (history, path) => {
+  if (!history || !history.location || !history.location.pathname){
+    return 0;
+  }
+  const result = TabHeadings.findIndex(th => history.location.pathname.includes(`${path}/${th}`));
+  return !!~result ? result : 0;
+};
+
 const mapStateToProps = (state, initialProps) => {
   const userId = getNavigationProps(initialProps).userId;
   if (userId === null){
     throw new Error('Must specify an user id to navigate to this page');
   }
   const daoState = getDao(state, 'singleUserDao');
+  const {history, path} = initialProps;
   if (!daoState){
     return null;
   }
   const selectedUser = getDaoState(state, ['user'], 'singleUserDao');
   const isPendingUserRelationshipSubscription = isAnyOperationPending(state, [{ singleUserDao: 'resetSubscription'}]);
+  const selectedTabIndex = getSelectedTabIndex(history, path);
   return {
     ...initialProps,
+    selectedTabIndex,
     userId,
-    selectedUser,
+    selectedUser: selectedUser && selectedUser.userId == userId ? selectedUser : undefined,
     isPendingUserRelationshipSubscription,
     busy: isPendingUserRelationshipSubscription,
   };

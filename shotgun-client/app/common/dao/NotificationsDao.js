@@ -31,7 +31,7 @@ export default class NotificationsDaoContext{
   }
 
   get subscribeOnCreate(){
-    return false;
+    return true;
   }
 
   get name(){

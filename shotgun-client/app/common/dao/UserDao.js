@@ -1,7 +1,7 @@
 import ReportSubscriptionStrategy from 'common/subscriptionStrategies/ReportSubscriptionStrategy';
 import Logger from 'common/Logger';
 import RxDataSink from 'common/dataSinks/RxDataSink';
-
+import {hasAnyOptionChanged} from 'common/dao';
 export default class UserDaoContext{
   constructor(client, name = 'userDao', options = {}) {
     this.client = client;
@@ -59,8 +59,8 @@ export default class UserDaoContext{
     return new ReportSubscriptionStrategy(this.client, this.getReportContext(options), dataSink);
   }
 
-  doesSubscriptionNeedToBeRecreated(previousOptions){
-    return !previousOptions;
+  doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
+    return !previousOptions || hasAnyOptionChanged(previousOptions, newOptions, ['userId']);
   }
 
   transformOptions(options){

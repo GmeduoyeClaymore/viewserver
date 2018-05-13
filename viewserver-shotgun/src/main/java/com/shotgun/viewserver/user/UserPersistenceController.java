@@ -56,6 +56,7 @@ public interface UserPersistenceController{
                 .addValue("longitude", user.getLongitude())
                 .addValue("online", user.getOnline())
                 .addValue("pendingMessages", user.getPendingMessages())
+                .addValue("blockedByUsers", user.getBlockedByUsers())
                 .addValue("range", user.getRange())
                 .addValue("ratingAvg", user.getRatingAvg())
                 .addValue("stripeCustomerId", user.getStripeCustomerId())

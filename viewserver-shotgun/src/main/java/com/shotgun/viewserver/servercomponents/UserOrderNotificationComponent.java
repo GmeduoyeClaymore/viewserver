@@ -73,7 +73,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private void listenForUsers(IOperator operator) {
 
         IOutput out = operator.getOutput("out");
-        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "range", "latitude", "longitude").
+        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "range", "latitude", "longitude", "relationships").
                 filter(ev-> Arrays.asList(EventType.ROW_ADD,EventType.ROW_UPDATE).contains(ev.getEventType())).subscribe(ev -> {
             onUserAdded((HashMap)ev.getEventData());
         }));
@@ -175,6 +175,10 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private void notifyUserOfNewOrder(BasicOrder order, User user) {
         if(new DateTime(order.getRequiredDate()).isBeforeNow()){
             log.info("Not resending historical order");
+            return;
+        }
+        if(user.isBlocked(order.getCustomerUserId())){
+            log.info("Not sending as user " + user.getUserId() + " is blocked by " + order.getCustomerUserId());
             return;
         }
         LatLng userHome = user.getLocation();

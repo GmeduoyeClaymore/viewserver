@@ -130,7 +130,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
         if(userId.equals(existingUserForToken)){
             logger.info("User is already assigned this token aborting");
-            return Futures.immediateFuture(token);
+            return Futures.immediateFuture(null);
         }
         if(existingUserForToken != null){
             Record userRecord = new Record()

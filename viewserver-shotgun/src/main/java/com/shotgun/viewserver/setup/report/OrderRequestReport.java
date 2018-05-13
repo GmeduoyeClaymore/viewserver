@@ -31,6 +31,9 @@ public class OrderRequestReport {
                                 new FilterNode("hasResponded")
                                         .withExpression("getResponseField(\"{@userId}\",\"responseStatus\",orderDetails) == null")
                                         .withConnection("distanceFilter"),
+                                new FilterNode("notIsBlocked")
+                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withConnection("hasResponded"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -66,7 +69,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                        .withConnection("hasResponded")
+                                        .withConnection("notIsBlocked")
                         )
                         .withOutput("orderRequestProjection");
         }

@@ -5,6 +5,7 @@ import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.Constants;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.nodes.CalcColNode;
+import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.JoinNode;
 import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.calccol.CalcColOperator;
@@ -31,6 +32,9 @@ public class PartnerOrderSummaryReport {
                                                 new CalcColOperator.CalculatedColumn("responseDate", "getResponseField(\"{@userId}\",\"date\",orderDetails)")
                                         )
                                         .withConnection("customerJoin"),
+                                new FilterNode("notIsBlocked")
+                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withConnection("orderCalcs"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -68,7 +72,7 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
                                                 new IProjectionConfig.ProjectionColumn("status")
                                         )
-                                                        .withConnection("orderCalcs")
+                                                        .withConnection("notIsBlocked")
                         )
                         .withOutput("orderSummaryProjection");
         }

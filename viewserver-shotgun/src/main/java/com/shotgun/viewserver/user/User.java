@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static io.viewserver.core.Utils.fromArray;
 import static io.viewserver.core.Utils.toArray;
@@ -30,6 +31,7 @@ public interface User extends DynamicJsonBackedObject{
 
     UserRating[] getRatings();
     AppMessage[] getPendingMessages();
+    String[] getBlockedByUsers();
     UserRelationship[] getRelationships();
     SavedPaymentCard[] getPaymentCards();
     SavedBankAccount getBankAccount();
@@ -109,7 +111,20 @@ public interface User extends DynamicJsonBackedObject{
             relationships.add(relationship);
             this.set("relationships",toArray(relationships, UserRelationship[]::new));
         }
+        recalculateBlockedList();
 
+    }
+
+    default void recalculateBlockedList(){
+        List<String> blockedList = fromArray(getRelationships()).filter(c->c.getRelationshipStatus().equals(UserRelationshipStatus.BLOCKED)).map(c->c.getToUserId()).collect(Collectors.toList());
+        this.set("blockByUsers", blockedList.toArray(new String[blockedList.size()]));
+    }
+
+    default boolean isBlocked(String partnerUserId){
+        if(this.getRelationships() == null){
+            return false;
+        }
+        return fromArray(getRelationships()).filter(c->c.getToUserId().equals(partnerUserId) && c.getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)).findAny().isPresent();
     }
 
     default void addPendingMessage(AppMessage savedPaymentCard){
@@ -154,6 +169,7 @@ public interface User extends DynamicJsonBackedObject{
     default void setBankAccount(SavedBankAccount savedBankAccount){
         this.set("bankAccount", savedBankAccount);
     }
+
 
 
 }

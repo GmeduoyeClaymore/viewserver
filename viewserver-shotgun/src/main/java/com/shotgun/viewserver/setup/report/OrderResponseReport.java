@@ -2,6 +2,7 @@ package com.shotgun.viewserver.setup.report;
 
 import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
 import io.viewserver.execution.nodes.CalcColNode;
+import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.projection.IProjectionConfig;
@@ -17,6 +18,9 @@ public class OrderResponseReport {
                                 new CalcColNode("userCreatedThisOrderCalc")
                                         .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
                                         .withConnection("#input"),
+                                new FilterNode("notIsBlocked")
+                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withConnection("userCreatedThisOrderCalc"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -42,7 +46,7 @@ public class OrderResponseReport {
                                                 new IProjectionConfig.ProjectionColumn("responseStatus"),
                                                 new IProjectionConfig.ProjectionColumn("userCreatedThisOrder")
                                         )
-                                        .withConnection("userCreatedThisOrderCalc")
+                                        .withConnection("notIsBlocked")
                         )
                         .withOutput("orderRequestProjection");
         }

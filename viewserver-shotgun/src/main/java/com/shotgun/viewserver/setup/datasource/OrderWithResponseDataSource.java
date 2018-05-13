@@ -46,6 +46,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn("customer_firstName"),
                                         new IProjectionConfig.ProjectionColumn("customer_lastName"),
                                         new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
+                                        new IProjectionConfig.ProjectionColumn("customer_relationships"),
                                         new IProjectionConfig.ProjectionColumn("responsePartner_userId", "partner_userId"),
                                         new IProjectionConfig.ProjectionColumn("responsePartner_latitude", "partner_latitude"),
                                         new IProjectionConfig.ProjectionColumn("responsePartner_longitude", "partner_longitude"),

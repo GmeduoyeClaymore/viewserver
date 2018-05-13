@@ -10,6 +10,7 @@ public enum UserRelationshipStatus  implements TransitionEnumBase<UserRelationsh
     ACCEPTED,
     REQUESTED,
     REQUESTEDBYME,
+    BLOCKEDBYME,
     BLOCKED,
     REJECTED;
 
@@ -21,6 +22,7 @@ public enum UserRelationshipStatus  implements TransitionEnumBase<UserRelationsh
         REQUESTEDBYME.to(REJECTED,BLOCKED);
         REQUESTED.to(REJECTED,BLOCKED);
         BLOCKED.to(UNKNOWN);
+        BLOCKEDBYME.to(UNKNOWN);
     }
 
     List<UserRelationshipStatus> permittedFrom = new ArrayList<>();
