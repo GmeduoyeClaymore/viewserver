@@ -84,7 +84,7 @@ public class TestIndexOperatorFactory implements ITestOperatorFactory{
             public String getDataSourceName() {
                 String param = ITestOperatorFactory.getParam(INDEX_DATASOURCE_PARAM_NAME, config, String.class, true);
                 if (param == null) {
-                    return "dataSource";
+                    return "global";
                 }
                 return param;
             }

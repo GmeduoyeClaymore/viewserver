@@ -120,7 +120,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     }
 
     public IOutput getOrCreateOutput(String name, QueryHolderConfig... queryHolders) {
-        Output output = (Output) super.getOutput(name);
+        Output output = (Output) this.getOutput(name);
         if (output == null) {
             output = new Output(name, this, mapToQueryHolders(queryHolders));
             int rowId = getIndexOutputs().size();

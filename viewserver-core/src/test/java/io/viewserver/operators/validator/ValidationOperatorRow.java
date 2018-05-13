@@ -40,7 +40,7 @@ public class ValidationOperatorRow {
             if(sb.length() > 0){
                 sb.append(",");
             }
-            String idString = (String) values.get(part);
+            String idString = values.get(part) + "";
             if("".equals(idString) || idString == null){
                 throw new RuntimeException("Row does not contain a field named " + part);
             }

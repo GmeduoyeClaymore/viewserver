@@ -23,6 +23,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.Cardinality;
 import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.Dimension;
+import io.viewserver.execution.nodes.IndexOutputNode;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.factories.*;
 import io.viewserver.operators.*;
@@ -139,7 +140,7 @@ public class TestMixerContext {
                 }
                 holders.add(new QueryHolderConfig(getDimension(indexParts[0]),false, indexValues));
             }
-            out = ((IndexOperator)operator).getOrCreateOutput(Constants.OUT + "_",holders.toArray(new QueryHolderConfig[holders.size()]) );
+            out = ((IndexOperator)operator).getOrCreateOutput(IndexOutputNode.getNameForQueryHolders(holders),holders.toArray(new QueryHolderConfig[holders.size()]) );
         }else{
             out = operator.getOutput(outputName);
         }
@@ -151,7 +152,7 @@ public class TestMixerContext {
     }
 
     private Dimension getDimension(String name) {
-        return new Dimension(name, Cardinality.Int, ContentType.Int);
+        return new Dimension(name, Cardinality.Int, ContentType.Int,true);
     }
 
     public IOperator getOperator(String operatorName) {
