@@ -20,12 +20,12 @@ public interface UserNotificationContract{
         ListenableFuture future = getMessagingController().sendMessageToUser(builder);
     }
 
-    default void notifyMissedCall(String userId, String targetUserId) {
+    default void notifyCallReceived(String userId, String targetUserId) {
         String fromUserName = getUsername(userId);
         AppMessage builder = new AppMessageBuilder().withDefaults()
                 .withAction(createUserActionUri(userId, "UserDetail"))
                 .withFromTo(userId, targetUserId)
-                .message("Shotgun missed call", String.format("Shotgun user %s has just attempted to call you", fromUserName)).build();
+                .message("Shotgun call", String.format("Shotgun user %s has just attempted to call you", fromUserName)).build();
         ListenableFuture future = getMessagingController().sendMessageToUser(builder);
     }
 

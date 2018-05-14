@@ -144,7 +144,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 try {
                     HashMap<String, String> parameters = getParameters(he.getRequestBody());
                     log.info("Event handler params - " + parameters.toString());
-                    setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"));
+                    setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"), parameters.get("duration"));
                 } catch (Exception ex) {
                     log.error("Could not handle Nexmo event", ex);
                 }
@@ -165,7 +165,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         }
     }
 
-    private void setPhoneNumberStatus(String status, String fromNumber, String toNumber) {
+    private void setPhoneNumberStatus(String status, String fromNumber, String toNumber, String callDuration) {
         KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         String toNumberTrim = toNumber.trim();
@@ -218,9 +218,10 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 status.equals(PhoneNumberStatuses.FAILED.name()) ||
                 status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
                 status.equals(PhoneNumberStatuses.BUSY.name()) ||
+                status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
                 status.equals(PhoneNumberStatuses.CANCELLED.name())) {
             log.info(String.format("Call from %s to %s failed so notifying user",fromUserId,toUserId,status));
-            notifyMissedCall(fromUserId, toUserId);
+            notifyCallReceived(fromUserId, toUserId);
         }
     }
 
