@@ -137,7 +137,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             systemCatalog.getExecutionContext().getReactor().scheduleTask(() -> {
                 try {
                     HashMap<String, String> parameters = getParameters(he.getRequestBody());
-                    log.debug("Event handler params - " + parameters.toString());
+                    log.info("Event handler params - " + parameters.toString());
                     setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"));
                 } catch (Exception ex) {
                     log.error("Could not handle Nexmo event", ex);
@@ -257,10 +257,11 @@ public class NexmoController implements INexmoController, UserNotificationContra
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
+            log.info("comparing {}=={}",userPhoneNumber, fromNumber);
             if (userPhoneNumber.equals(fromNumber)) {
                 proxyRoute.put("from", virtualPhoneNumber);
             }
-
+            log.info("comparing {}=={}",virtualPhoneNumber, toNumber);
             if (virtualPhoneNumber.equals(toNumber)) {
                 proxyRoute.put("to", getInternationalFormatNumber(userPhoneNumber));
             }
@@ -268,7 +269,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             proxyRoute.put("rowId", rows.getRowId());
         }
 
-        log.debug(String.format("Creating Nexmo proxy call from %s proxying virtual number %s to real number %s", fromNumber, toNumber, proxyRoute.get("to")));
+        log.info(String.format("Creating Nexmo proxy call from %s proxying virtual number %s to real number %s", fromNumber, toNumber, proxyRoute.get("to")));
 
         return proxyRoute;
     }
