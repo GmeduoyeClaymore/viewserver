@@ -195,11 +195,18 @@ public class NexmoController implements INexmoController, UserNotificationContra
                     phoneNumberRecord.addValue("fromUserId", "");
                     phoneNumberRecord.addValue("toUserId", "");
                     phoneNumberRecord.addValue("userPhoneNumber", "");
+                    if(fromUserId != null && toUserId != null) {
+                        releaseOtherNumbersFromCallSession(fromUserId, toUserId, status);
+                    }
                 }
 
                 iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
             }
         }
+
+
+
+
         log.info(String.format("Call from %s to %s has status %s",fromUserId,toUserId,status));
         if (status.equals(PhoneNumberStatuses.REJECTED.name()) ||
                 status.equals(PhoneNumberStatuses.FAILED.name()) ||
@@ -208,6 +215,36 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 status.equals(PhoneNumberStatuses.CANCELLED.name())) {
             log.info(String.format("Call from %s to %s failed so notifying user",fromUserId,toUserId,status));
             notifyMissedCall(fromUserId, toUserId);
+        }
+    }
+
+    private void releaseOtherNumbersFromCallSession(String fromUserId, String toUserId, String status) {
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
+        IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
+
+        while (rows.moveNext()) {
+            String tableFromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+            String tableToUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+            String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+            String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
+
+            log.info(String.format("Comparing %s==%s || %s==%s",fromUserId,tableFromUserId,toUserId,tableToUserId));
+
+            if (fromUserId.equals(tableFromUserId) && toUserId.equals(tableToUserId)) {
+
+                fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+                toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
+                Record phoneNumberRecord = new Record();
+                phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
+                phoneNumberRecord.addValue("phoneNumberStatus", status);
+                phoneNumberRecord.addValue("fromUserId", "");
+                phoneNumberRecord.addValue("toUserId", "");
+                phoneNumberRecord.addValue("userPhoneNumber", "");
+
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
+            }
         }
     }
 
