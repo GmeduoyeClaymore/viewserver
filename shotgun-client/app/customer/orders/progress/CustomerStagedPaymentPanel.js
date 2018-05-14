@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {View, Button, Text, Row, Col, Spinner} from 'native-base';
+import {View, Button, Text, Row, Col, Spinner, ListItem} from 'native-base';
 import {SpinnerButton, Currency, Icon} from 'common/components';
 import {removePaymentStage, payForPaymentStage} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import AddPaymentStageControl from './AddPaymentStageControl';
 import {Platform} from 'react-native';
-
 const IS_ANDROID = Platform.OS === 'android';
 const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED', 'INPROGRESS'];
 const CAN_MODIFY_PAYMENT_STAGE_STATUS = ['None'];
@@ -46,32 +45,34 @@ export default class CustomerStagedPaymentPanel extends Component{
         const isPercent = paymentStageType === 'Percentage';
         const currencyTotal = isPercent ? amount * (quantity / 100) : quantity;
 
-        return <Row key={idx} style={styles.paymentStageRow}>
-          <Col size={50}>
-            <Text style={styles.subHeading}>{name}</Text>
-            <Text>{description}</Text>
-          </Col>
-          <Col size={20} style={styles.amountColumn}>
-            <Currency value={currencyTotal} style={styles.smlprice}/>
-            {isPercent ? <Text style={styles.amountPercentage}>{` (${quantity}%)`}</Text> : null}
-          </Col>
-          <Col size={30}>
-            {!!~CAN_MODIFY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(orderStatus) ?
-              <SpinnerButton busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} padded danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
-                <Text uppercase={false}>Delete</Text>
-              </SpinnerButton> :
-              null}
+        return <ListItem key={idx} style={styles.paymentStageRow}>
+          <Row>
+            <Col size={50}>
+              <Text style={styles.subHeading}>{name}</Text>
+              <Text style={styles.description}>{description}</Text>
+            </Col>
+            <Col size={20} style={styles.amountColumn}>
+              <Currency value={currencyTotal} style={styles.smlprice}/>
+              {isPercent ? <Text style={styles.amountPercentage}>{` (${quantity}%)`}</Text> : null}
+            </Col>
+            <Col size={30}>
+              {!!~CAN_MODIFY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(orderStatus) ?
+                <SpinnerButton busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
+                  <Text uppercase={false}>Delete</Text>
+                </SpinnerButton> :
+                null}
 
-            {!!~CAN_PAY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) ?
-              <SpinnerButton busy={busyUpdating} style={styles.payButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
-                <Text uppercase={false}>Pay</Text>
-              </SpinnerButton> :
-              null}
+              {!!~CAN_PAY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) ?
+                <SpinnerButton busy={busyUpdating} style={styles.payButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
+                  <Text uppercase={false}>Pay</Text>
+                </SpinnerButton> :
+                null}
 
-            {paymentStageStatus === 'Started' ?  [<Spinner  size={ IS_ANDROID ? 25 : 1} key='spinner' color={shotgun.brandSuccess} style={styles.waitingSpinner}/>, <Text key='text' style={styles.successText}>In Progress</Text>] : null}
-            {paymentStageStatus === 'Paid' ? [<Icon  name='checkmark' style={styles.checkmark}/>, <Text key='text2' style={styles.successText}>Paid</Text>] : null}
-          </Col>
-        </Row>;
+              {paymentStageStatus === 'Started' ?  [<Spinner  size={ IS_ANDROID ? 25 : 1} key='spinner' color={shotgun.brandSuccess} style={styles.waitingSpinner}/>, <Text key='text' style={styles.successText}>In Progress</Text>] : null}
+              {paymentStageStatus === 'Paid' ? [<Icon  name='checkmark' style={styles.checkmark}/>, <Text key='text2' style={styles.successText}>Paid</Text>] : null}
+            </Col>
+          </Row>
+        </ListItem>;
       });
   };
 
@@ -114,8 +115,7 @@ export default class CustomerStagedPaymentPanel extends Component{
 const styles = {
   paymentStageRow: {
     marginBottom: 10,
-    marginLeft: 5,
-    flex: -1
+    marginLeft: 5
   },
   amountColumn: {
     alignContent: 'center',
@@ -141,7 +141,11 @@ const styles = {
   },
   subHeading: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    alignSelf: 'flex-start'
+  },
+  description: {
+    alignSelf: 'flex-start'
   },
   buttonText: {
     fontSize: 10

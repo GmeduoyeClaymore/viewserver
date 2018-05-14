@@ -76,13 +76,13 @@ export class CurrencyInput extends Component{
 
   render(){
     const {formattedPrice} = this.state;
-    const {style = {}, onValueChanged, placeholder} = this.props;
+    const {style = {}, placeholder} = this.props;
     return <Input
       keyboardType='phone-pad'
       placeholder={placeholder}
       placeholderTextColor={shotgun.silver}
       value={formattedPrice}
-      style={styles.amountInput}
+      style={[styles.amountInput, style]}
       onFocus={this.clearFormattedPriceValue}
       onBlur={this.setFormattedPriceValue}
       onChangeText={this.onValueChanged}

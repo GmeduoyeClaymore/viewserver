@@ -218,7 +218,8 @@ export default (variables = variable) => {
     },
 
     '.last': {
-      marginBottom: 0
+      marginBottom: 0,
+      borderBottomWidth: 0
     },
 
     '.avatar': {
@@ -400,6 +401,9 @@ export default (variables = variable) => {
     '.paddedTopBottom': {
       paddingTop: variables.contentPadding,
       paddingBottom: variables.contentPadding
+    },
+    '.paddedTop': {
+      paddingTop: variables.contentPadding
     },
     '.paddedTopBottomNarrow': {
       paddingTop: 15,

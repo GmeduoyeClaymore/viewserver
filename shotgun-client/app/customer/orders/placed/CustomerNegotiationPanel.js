@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
-import {Image, TouchableOpacity} from 'react-native';
-import {View, Text, Grid, Row, Spinner, Col} from 'native-base';
-import {Icon, SpinnerButton, CurrencyInput, Currency} from 'common/components';
+import {TouchableOpacity} from 'react-native';
+import {ListItem, View, Text, Grid, Row, Spinner, Col, Button} from 'native-base';
+import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, UserInfo} from 'common/components';
 import moment from 'moment';
 import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer} from 'customer/actions/CustomerActions';
-import shotgun from 'native-base-theme/variables/shotgun';
+import yup from 'yup';
+
+const ACTIVE_NEGOTIATION_STATUSES = ['RESPONDED', 'ACCEPTED'];
+const CAN_UPDATE_AMOUNT_STATUSES = ['PLACED'];
 
 export default class OrderNegotiationPanel extends Component{
   constructor(props) {
@@ -31,123 +34,136 @@ export default class OrderNegotiationPanel extends Component{
     }
   }
 
+  onUpdateOrderAmount = () => {
+    const {order, dispatch} = this.props;
+    const {orderId, orderContentTypeId} = order;
+    const {amount} = this.state;
+    dispatch(updateOrderAmount({orderId, orderContentTypeId, amount}, this.clearAmount));
+  }
+
+  onUserInfoPress = (partnerId) => {
+    const {ordersRoot, history} = this.props;
+
+    history.push({
+      pathname: `${ordersRoot}/UserDetail`,
+      state: {userId: partnerId},
+      transition: 'bottom'
+    });
+  }
+
+  onRejectPartner = (partnerId) => {
+    const {order, dispatch} = this.props;
+    const {orderId, orderContentTypeId} = order;
+    dispatch(rejectResponse({orderId, partnerId, orderContentTypeId}));
+  };
+
+  onAcceptPartner = (partnerId) => {
+    const {order, dispatch} = this.props;
+    const {orderId, orderContentTypeId} = order;
+    dispatch(acceptResponse({orderId, partnerId, orderContentTypeId}));
+  };
+
+  onCancelResponse = (partnerId) => {
+    const {order, dispatch} = this.props;
+    const {orderId, orderContentTypeId} = order;
+    dispatch(cancelResponseCustomer(orderId, orderContentTypeId, partnerId));
+  };
+
+  getPartnerResponses = () => {
+    const {partnerResponses, busyUpdating, dispatch} = this.props;
+    const {showAll} = this.state;
+
+    const filteredResponses = partnerResponses.filter(res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus));
+    return filteredResponses.map(
+      (response, idx)  => {
+        const {partnerId, estimatedDate, price, responseStatus} = response;
+        const canRespond = responseStatus === 'RESPONDED';
+
+        return <ListItem key={idx} paddedTopBottom last={idx == filteredResponses.length - 1}>
+          <Grid>
+            <Row style={styles.headerRow}>
+              <Currency value={price} style={styles.responseHeader}/>
+              <Text> to start </Text>
+              <Text style={styles.responseHeader}>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
+            </Row>
+            <Row>
+              <Col size={50}>
+                <TouchableOpacity onPress={() => this.onUserInfoPress(partnerId)}>
+                  <UserInfo dispatch={dispatch} user={response} imageWidth={60} showCallButton={false}/>
+                </TouchableOpacity>
+              </Col>
+              <Col size={50}>
+                {canRespond ? <SpinnerButton busy={busyUpdating} fullWidth style={styles.acceptButton} accept onPress={() => this.onAcceptPartner(partnerId)}>
+                  <Text uppercase={false}>Accept</Text>
+                </SpinnerButton> : null}
+
+                {canRespond ? <SpinnerButton busy={busyUpdating} fullWidth danger onPress={() => this.onRejectPartner(partnerId)}>
+                  <Text uppercase={false}>Reject</Text>
+                </SpinnerButton> : null}
+
+                {responseStatus === 'ACCEPTED' ?
+                  <SpinnerButton busy={busyUpdating} danger fullWidth onPress={() => this.onCancelResponse(partnerId)}>
+                    <Text uppercase={false}>Reject</Text>
+                  </SpinnerButton> : null}
+              </Col>
+            </Row>
+          </Grid>
+        </ListItem>;
+      });
+  };
+
   render(){
-    const { order, partnerResponses, busyUpdating, dispatch, ordersRoot, history} = this.props;
+    const {order, partnerResponses, busyUpdating, dispatch} = this.props;
+    const {amount, showAll} = this.state;
+    const hasRejected = partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length > 0;
+
     if (!order || !partnerResponses){
       return null;
     }
     const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
-    return <View padded><Grid>
-      <Col size={32}>
-        <Text style={{...styles.heading, marginTop: 10}}>{canUpdateOrderPrice ? 'Advertised Rate' : 'Agreed Price'}</Text>
-        <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
-        { canUpdateOrderPrice ? <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChanged={this.updateAmountInState} placeholder="Enter updated amount"/> : null}
-      </Col>
-      {this.state.amount && canUpdateOrderPrice ? <Col size={20}>
-        <UpdateOrderPrice style={{marginTop: 17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
-      </Col> : null}
-    </Grid>
-    <PartnerAcceptRejectControl showAll={this.state.showAll} history={history} ordersRoot={ordersRoot} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
-    {partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row style={{paddingLeft: 10}} onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null}</View>;
+
+    return <View padded>
+      <Grid style={styles.priceGrid}>
+        <Col size={45}>
+          <Text style={styles.heading}>{canUpdateOrderPrice ? 'Job advertised for' : 'Agreed Price'}</Text>
+          {!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}
+        </Col>
+        {canUpdateOrderPrice ?
+          [<Col size={30} style={{justifyContent: 'center'}}>
+            <CurrencyInput ref={ip => {this.amountInput = ip;}} style={styles.amountInput} dispatch={dispatch} onValueChanged={this.updateAmountInState} placeholder="Change price"/>
+          </Col>,
+          <Col size={25} style={{justifyContent: 'center'}}>
+            <ValidatingButton busy={busyUpdating} fullWidth success validationSchema={validationSchema.amount} model={amount} onPress={this.onUpdateOrderAmount}>
+              <Text uppercase={false}>Update</Text>
+            </ValidatingButton>
+          </Col>] : null}
+      </Grid>
+
+      {this.getPartnerResponses()}
+
+      {hasRejected ? <Button onPress={this.toggleShow}><Text uppercase={false}>{showAll ? 'Hide rejected' : 'Show rejected'}</Text></Button> : null}
+    </View>;
   }
 }
 
-const ACTIVE_NEGOTIATION_STATUSES = ['RESPONDED', 'ACCEPTED'];
-const CAN_UPDATE_AMOUNT_STATUSES = ['PLACED'];
-const rejectedImageStyle = {
-  borderColor: shotgun.brandDanger,
-  borderWidth: 4
-};
-const respondedImageStyle = {
-  borderColor: shotgun.brandWarning,
-  borderWidth: 4
-};
-
-const acceptedImageStyle = {
-  borderColor: shotgun.brandSuccess,
-  borderWidth: 4
-};
-
-const ResponseStatusStyles = {
-  RESPONDED: respondedImageStyle,
-  ACCEPTED: acceptedImageStyle,
-  REJECTED: rejectedImageStyle
-};
-
-
-const  RejectPartner = ({orderId, partnerId, orderContentTypeId, busyUpdating, dispatch, style = {}, ...rest}) => {
-  const onRejectPartner = () => {
-    dispatch(rejectResponse({orderId, partnerId, orderContentTypeId}));
-  };
-  return <SpinnerButton {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}}  padded busy={busyUpdating} fullWidth danger onPress={onRejectPartner}><Text uppercase={false}>Reject</Text></SpinnerButton>;
-};
-
-const  AcceptPartner = ({orderId, partnerId, orderContentTypeId, busyUpdating, dispatch, style = {}, ...rest}) => {
-  const onAcceptPartner = () => {
-    dispatch(acceptResponse({orderId, partnerId, orderContentTypeId}));
-  };
-  return <SpinnerButton  {...rest} disabledStyle={{opacity: 0.1}} style={{...style, alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} padded busy={busyUpdating} fullWidth accept onPress={onAcceptPartner}><Text uppercase={false}>Accept</Text></SpinnerButton>;
-};
-
-const  UpdateOrderPrice = ({orderId, orderContentTypeId, amount, onAmountUpdated, busyUpdating, dispatch, style = {},  ...rest}) => {
-  const onUpdateOrderAmount = () => {
-    dispatch(updateOrderAmount({orderId, orderContentTypeId, amount}, onAmountUpdated));
-  };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{...style, alignSelf: 'flex-end', flex: 1, maxHeight: 45,  marginRight: 0, marginLeft: 0}}  fullWidth success onPress={onUpdateOrderAmount}><Text uppercase={false}>Update</Text></SpinnerButton>;
-};
-
-const CancelResponse = ({ orderId, orderContentTypeId, partnerId, busyUpdating, dispatch, ...rest }) => {
-  const onCancelResponse = () => {
-    dispatch(cancelResponseCustomer(orderId, orderContentTypeId, partnerId));
-  };
-  return <SpinnerButton {...rest} padded busy={busyUpdating} style={{ alignSelf: 'flex-start', flex: 1, marginRight: 0, marginLeft: 0, width: '100%'}} danger fullWidth onPress={onCancelResponse}><Text uppercase={false}>Cancel</Text></SpinnerButton>;
-};
-
-
-const PartnerAcceptRejectControl = ({partnerResponses = [], orderId, orderStatus, orderContentTypeId, busyUpdating, dispatch, showAll, ordersRoot, history}) => {
-  return <Col>{partnerResponses.filter( res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).map(
-    (response, idx)  => {
-      const {partnerId, latitude, longitude, firstName, lastName, email, imageUrl, online, userStatus, statusMessage, ratingAvg, estimatedDate, price, responseStatus} = response;
-      const canRespond = responseStatus === 'RESPONDED';
-      const stars = [...Array(ratingAvg)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
-      const imageStyle = styles.partnerImage;
-      const statusStyle = ResponseStatusStyles[responseStatus] || ResponseStatusStyles.REJECTED;
-      return <Row key={idx} style={{...styles.view, marginBottom: 10}}>
-        <TouchableOpacity onPress={() => history.push({pathname: `${ordersRoot}/UserDetail`, state: {userId: partnerId}, transition: 'bottom'})}>
-          <Image style={{...imageStyle, ...statusStyle}}  resizeMode='stretch' source={{uri: imageUrl}} />
-        </TouchableOpacity>
-        <Col  size={50} style={{marginLeft: 10}}>
-          <Text style={{...styles.subHeading, marginBottom: 5}}>{firstName + ' ' + lastName}</Text>
-          {!!~ratingAvg ? <Row style={{marginBottom: 8, marginTop: 8}}>{stars}</Row> : <Text>No Ratings</Text>}
-          <Currency value={price} style={styles.price}/>
-          <Text>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
-        </Col>
-        <Col size={23}>
-     
-          {!canRespond ? null : <AcceptPartner disabled={!canRespond} busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/>}
-          {responseStatus === 'ACCEPTED' ? <CancelResponse busyUpdating={busyUpdating} style={{marginBottom: 10}} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId}  dispatch={dispatch}/> : null}
-          {!canRespond ? null : <RejectPartner disabled={!canRespond}  busyUpdating={busyUpdating} orderId={orderId} orderContentTypeId={orderContentTypeId} partnerId={partnerId} dispatch={dispatch}/>}
-        </Col>
-      </Row>;
-    })}</Col>;
+const validationSchema = {
+  amount: yup.number().required()
 };
 
 const styles = {
-  row: {
-    marginTop: 10,
-    marginBottom: 10
+  amountInput: {
+    fontSize: 16,
+    padding: 0
   },
   toggleStage: {
     marginRight: 5,
     justifyContent: 'center',
     flex: 1
   },
-  view: {
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    marginTop: 5
+  priceGrid: {
+  },
+  headerRow: {
+    marginBottom: 10
   },
   heading: {
     fontSize: 16
@@ -163,23 +179,16 @@ const styles = {
   text: {
     marginRight: 5
   },
-  star: {
-    fontSize: 15,
-    padding: 2,
-    color: shotgun.gold,
-  },
-  partnerImage: {
-    aspectRatio: 1,
-    width: 80,
-    height: 80,
+  acceptButton: {
+    marginBottom: 10
   },
   price: {
     fontSize: 30,
     lineHeight: 34,
     fontWeight: 'bold'
   },
-  smlprice: {
-    fontSize: 15,
+  responseHeader: {
+    fontSize: 18,
     fontWeight: 'bold'
   }
 };
