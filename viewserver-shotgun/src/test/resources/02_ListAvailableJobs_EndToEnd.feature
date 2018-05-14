@@ -53,5 +53,6 @@ Feature: List available job scenarios
       | ColumnAdd | customer_firstName             | String      |
       | ColumnAdd | customer_lastName              | String      |
       | ColumnAdd | customer_ratingAvg             | Double      |
+      | ColumnAdd | userCreatedThisOrder           | Bool        |
     Then "client1" the following data is received eventually on report "orderRequest"
       | ~Action | contentTypeContentTypeId | contentTypeDestination | contentTypeFromTime | contentTypeName | contentTypeNoItems | contentTypeNoPeople | contentTypeOrigin | contentTypePricingStrategy | contentTypeRootProductCategory | contentTypeTillTime | created | currentDistance | customerUserId | deliveryId | destinationCity | destinationFlatNumber | destinationLatitude | destinationLine1 | destinationLongitude | destinationPostCode | distance | duration | email | firstName | fixedPriceValue | from | id | imageUrl | initiatedByMe | isFixedPrice | lastName | latitude | longitude | market | notes | notional | online | orderId | originCity | originFlatNumber | originLatitude | originLine1 | originLongitude | originPostCode | path | productId | productImageUrl | productName | productProductId | range | rank | status | till | totalPrice |
