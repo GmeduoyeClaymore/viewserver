@@ -253,6 +253,8 @@ public class NexmoController implements INexmoController, UserNotificationContra
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         HashMap proxyRoute = new HashMap();
 
+        log.info(String.format("Examining contents of table to create proxy call from {} to {}", fromNumber, toNumber));
+
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
@@ -269,6 +271,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             proxyRoute.put("rowId", rows.getRowId());
         }
 
+        log.info(String.format("proxy route is from:%s to%s", proxyRoute.get("from"), proxyRoute.get("to")));
         log.info(String.format("Creating Nexmo proxy call from %s proxying virtual number %s to real number %s", fromNumber, toNumber, proxyRoute.get("to")));
 
         return proxyRoute;
