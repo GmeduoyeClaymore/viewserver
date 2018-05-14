@@ -116,7 +116,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                     String fromNumber = parameters.get("from");
                     String toNumber = parameters.get("to");
 
-                    log.debug("Call handler params - " + parameters.toString());
+                    log.info("Call handler params - " + parameters.toString());
                     String ncco = getConnectNcco(fromNumber, toNumber, systemCatalog).toString();
 
                     he.sendResponseHeaders(200, ncco.length());
@@ -262,7 +262,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             }
 
             if (virtualPhoneNumber.equals(toNumber)) {
-                proxyRoute.put("to", userPhoneNumber);
+                proxyRoute.put("to", getInternationalFormatNumber(userPhoneNumber));
             }
 
             proxyRoute.put("rowId", rows.getRowId());
