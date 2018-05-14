@@ -22,6 +22,7 @@ public class OrderRequestReport {
                         .withNodes(
                                 new CalcColNode("distanceCalcCol")
                                         .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""),
                                                 new CalcColOperator.CalculatedColumn("currentDistance", "distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"),
                                                 new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
                                         .withConnection("#input"),
@@ -67,7 +68,8 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("productName"),
                                                 new IProjectionConfig.ProjectionColumn("path"),
                                                 new IProjectionConfig.ProjectionColumn("contentTypeRootProductCategory"),
-                                                new IProjectionConfig.ProjectionColumn("status")
+                                                new IProjectionConfig.ProjectionColumn("status"),
+                                                new IProjectionConfig.ProjectionColumn("userCreatedThisOrder")
                                         )
                                         .withConnection("notIsBlocked")
                         )

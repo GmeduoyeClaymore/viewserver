@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import {withExternalState} from 'custom-redux';
-import {Text, Row, Col, Spinner, Item, Label} from 'native-base';
+import {Text, Row, View, Spinner, Item, Label} from 'native-base';
 import {ValidatingInput, ValidatingButton, CurrencyInput, Icon, SpinnerButton} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
@@ -53,7 +53,7 @@ class PartnerNegotiationPanel extends Component {
     const hasAccepted = responseStatus === 'ACCEPTED';
 
     return (
-      <Col style={{padding: 20}}>
+      <View padded>
         <Row>
           <Item stackedLabel style={styles.responseItem} >
             <Label>Your Price</Label>
@@ -91,7 +91,7 @@ class PartnerNegotiationPanel extends Component {
           <ValidatingButton busy={busyUpdating} fullWidth success onPress={() => this.respondToOrder(onOrderRespond, negotiationAmount, negotiationDate)} validateOnMount={!awaitingCustomerResponse} validationSchema={yup.object(validationSchema)} model={{negotiationAmount, negotiationDate}}>
             <Text uppercase={false}>Respond To Job</Text>
           </ValidatingButton> : null}
-      </Col>
+      </View>
     );
   }
 }
