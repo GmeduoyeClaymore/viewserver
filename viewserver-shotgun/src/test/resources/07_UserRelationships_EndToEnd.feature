@@ -43,8 +43,6 @@ Feature: User realtionship scenarios
 	Then "client1" the following data is received eventually on report "userRelationships"
 	  | ~Action | userId                                             | relationshipStatus |
 	  | RowAdd  | {client2_partnerController_registerPartner_result} | REQUESTED          |
-	  | RowAdd  | 2BBui                                              |                    |
-	  | RowAdd  | 2BBui1                                             |                    |
 	  | RowAdd  | 3ABCD22                                            |                    |
 	  | RowAdd  | 3ABCD23                                            |                    |
 	  | RowAdd  | 3ABCD24                                            |                    |

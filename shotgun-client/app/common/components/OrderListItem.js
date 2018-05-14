@@ -24,7 +24,7 @@ class OrderListItem extends Component {
 
     if (isInProgress || isAccepted){
       armbandStyle = styles.statusGreen;
-    } else if (responded){
+    } else if (responded && order.userCreatedThisOrder){
       armbandStyle = styles.statusAmber;
     }
 
