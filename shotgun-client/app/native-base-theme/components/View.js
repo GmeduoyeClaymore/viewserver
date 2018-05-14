@@ -5,6 +5,10 @@ export default (variables = variable) => {
     '.padder': {
       padding: variables.contentPadding
     },
+    '.padded': {
+      paddingLeft: variables.contentPadding,
+      paddingRight: variables.contentPadding
+    },
     '.column': {
       flexDirection: 'column'
     },

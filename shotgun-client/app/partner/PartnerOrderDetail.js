@@ -8,7 +8,7 @@ import { respondToOrder } from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import PartnerNegotiationPanel from './PartnerNegotiationPanel';
-import PartnerPaymentStagesPanel from './PartnerPaymentStagesPanel';
+import PartnerStagedPaymentPanel from './PartnerStagedPaymentPanel';
 import PartnerPriceSummary from './PartnerPriceSummary';
 import shotgun from 'native-base-theme/variables/shotgun';
 import DayRatePersonellOrderInProgress from './progress/DayRatePersonellOrderInProgress';
@@ -104,7 +104,7 @@ const styles = {
 };
 
 const PaymentStagesAndSummary = (props) => {
-  const { history, path, orderId, height, order } = props;
+  const { history, path, orderId, width, height, order } = props;
   const goToTabNamed = (name) => {
     history.replace({ pathname: `${path}/${name}`, state: { orderId } });
   };
@@ -113,9 +113,9 @@ const PaymentStagesAndSummary = (props) => {
     <Tab heading='Summary' onPress={() => goToTabNamed('Summary')} />
     {order.paymentStages && order.paymentStages.length ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')} /> : null}
   </Tabs>,
-  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} height={height - shotgun.tabHeight} path={path} defaultRoute='Summary'>
+  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />
-    <Route path={'PaymentStages'} component={PartnerPaymentStagesPanel} />
+    <Route path={'PaymentStages'} component={PartnerStagedPaymentPanel} />
   </ReduxRouter>];
 };
 

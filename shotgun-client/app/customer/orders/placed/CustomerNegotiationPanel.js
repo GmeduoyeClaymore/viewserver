@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Image, TouchableOpacity} from 'react-native';
-import {Text, Grid, Row, Spinner, Col} from 'native-base';
+import {View, Text, Grid, Row, Spinner, Col} from 'native-base';
 import {Icon, SpinnerButton, CurrencyInput, Currency} from 'common/components';
-import * as ContentTypes from 'common/constants/ContentTypes';
 import moment from 'moment';
 import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -38,7 +37,7 @@ export default class OrderNegotiationPanel extends Component{
       return null;
     }
     const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
-    return [<Grid  key="1"  style={{paddingTop: 10, marginBottom: 10, paddingLeft: 10}}>
+    return <View padded><Grid>
       <Col size={32}>
         <Text style={{...styles.heading, marginTop: 10}}>{canUpdateOrderPrice ? 'Advertised Rate' : 'Agreed Price'}</Text>
         <Row style={styles.row}>{!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}</Row>
@@ -47,9 +46,9 @@ export default class OrderNegotiationPanel extends Component{
       {this.state.amount && canUpdateOrderPrice ? <Col size={20}>
         <UpdateOrderPrice style={{marginTop: 17}} orderContentTypeId={order.orderContentTypeId} onAmountUpdated={this.clearAmount} dispatch={dispatch} orderId={order.orderId} amount={this.state.amount}/>
       </Col> : null}
-    </Grid>,
-    <PartnerAcceptRejectControl   key="2" showAll={this.state.showAll} history={history} ordersRoot={ordersRoot} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>,
-    partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row style={{paddingLeft: 10}} key="3" onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null];
+    </Grid>
+    <PartnerAcceptRejectControl showAll={this.state.showAll} history={history} ordersRoot={ordersRoot} dispatch={dispatch} orderId={order.orderId} orderStatus={order.orderStatus} orderContentTypeId={order.orderContentTypeId} partnerResponses={partnerResponses} busyUpdating={busyUpdating}/>
+    {partnerResponses.filter( res => !~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus)).length ? <Row style={{paddingLeft: 10}} onPress={this.toggleShow}><Text>{this.state.showAll ? 'Hide rejected' : 'Show rejected'}</Text></Row> : null}</View>;
   }
 }
 

@@ -17,7 +17,7 @@ class CompleteControl extends Component {
 
   render() {
     const {order, busyUpdating} = this.props;
-    return  <SpinnerButton busy={busyUpdating} fullWidth paddedBottom onPress={this.onCompletePress}><Text uppercase={false}>{this.resources.CompleteCaption(order)}</Text></SpinnerButton>;
+    return  <SpinnerButton busy={busyUpdating} fullWidth padded onPress={this.onCompletePress}><Text uppercase={false}>{this.resources.CompleteCaption(order)}</Text></SpinnerButton>;
   }
 }
 /*eslint-disable */

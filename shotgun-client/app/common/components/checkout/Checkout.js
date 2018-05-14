@@ -55,7 +55,7 @@ class Checkout extends Component {
       <Route stateKey={Checkout.stateKey} transition='left' path='ProductList' exact component={ProductList}  next={getNext('ProductList')} />
       <Route stateKey={Checkout.stateKey} transition='left' path='ItemDetails' exact component={ItemDetails}  next={getNext('ItemDetails')} />
       <Route stateKey={Checkout.stateKey} transition='left' path='OrderConfirmation' exact component={OrderConfirmation} next={getNext('ItemDetails')}/>
-      <Route stateKey={Checkout.stateKey} transition='left' path='UsersForProductMap' exact component={UsersForProductMap} next={getNext('UsersForProductMap')} />
+      <Route stateKey={Checkout.stateKey} transition='left' path='UsersForProductMap' exact component={UsersForProductMap} next={getNext('UsersForProductMap')} showAll={true} />
     </ReduxRouter>;
   }
 }

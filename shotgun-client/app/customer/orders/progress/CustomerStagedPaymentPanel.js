@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {View, Content, Button, Text, Row, Col, Spinner} from 'native-base';
+import {View, Button, Text, Row, Col, Spinner} from 'native-base';
 import {SpinnerButton, Currency, Icon} from 'common/components';
 import {removePaymentStage, payForPaymentStage} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import AddPaymentStageControl from './AddPaymentStageControl';
 import {Platform} from 'react-native';
+
 const IS_ANDROID = Platform.OS === 'android';
 const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED', 'INPROGRESS'];
 const CAN_MODIFY_PAYMENT_STAGE_STATUS = ['None'];
@@ -56,13 +57,13 @@ export default class CustomerStagedPaymentPanel extends Component{
           </Col>
           <Col size={30}>
             {!!~CAN_MODIFY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(orderStatus) ?
-              <SpinnerButton padded busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
+              <SpinnerButton busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} padded danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
                 <Text uppercase={false}>Delete</Text>
               </SpinnerButton> :
               null}
 
             {!!~CAN_PAY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) ?
-              <SpinnerButton padded busy={busyUpdating} style={styles.payButton} fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
+              <SpinnerButton busy={busyUpdating} style={styles.payButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
                 <Text uppercase={false}>Pay</Text>
               </SpinnerButton> :
               null}
@@ -92,7 +93,7 @@ export default class CustomerStagedPaymentPanel extends Component{
       return null;
     }
 
-    return <View>
+    return <View padded>
       <Text style={styles.heading}>{canAddPaymentStages ? 'Add Payment Stages' : 'Payment Stages'} </Text>
       {canAddPaymentStages && !paymentStages.length ?
         <Row style={styles.toggleStageRow}>
@@ -119,6 +120,9 @@ const styles = {
   amountColumn: {
     alignContent: 'center',
     alignItems: 'center'
+  },
+  amountPercentage: {
+    color: shotgun.brandLight
   },
   toggleStage: {
     marginRight: 5,
@@ -158,9 +162,6 @@ const styles = {
     alignSelf: 'center',
     fontSize: 30,
     color: shotgun.brandSuccess,
-  },
-  amountPercentage: {
-    color: shotgun.brandLight
   },
   payButton: {
     marginRight: 0,

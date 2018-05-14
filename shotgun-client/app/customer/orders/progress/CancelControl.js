@@ -18,7 +18,7 @@ export default class CancelControl extends Component {
 
   render() {
     const {busyUpdating} = this.props;
-    return <SpinnerButton disabledStyle={{opacity: 0.1}} busy={busyUpdating} fullWidth danger onPress={this.onCancelOrder}><Text uppercase={false}>{this.resources.CancelCaption}</Text></SpinnerButton>;
+    return <SpinnerButton disabledStyle={{opacity: 0.1}} busy={busyUpdating} padded fullWidth danger onPress={this.onCancelOrder}><Text uppercase={false}>{this.resources.CancelCaption}</Text></SpinnerButton>;
   }
 }
 

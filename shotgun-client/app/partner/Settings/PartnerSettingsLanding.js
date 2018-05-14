@@ -21,13 +21,13 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
     <Header>
       <Body style={{width: '100%'}}>
         <Row style={{width: '100%'}}>
-          <Col size={200}>
-            <Title>{user.firstName} {user.lastName}</Title>
+          <Col size={50}>
+            <Title numberOfLines={1}>{user.firstName} {user.lastName}</Title>
           </Col>
-          <Col  size={30}>
-            <View style={{flexDirection: 'column', justifyContent: 'center'}}><AverageRating rating={user.ratingAvg}/></View>
+          <Col size={30} style={styles.ratingCol}>
+            <AverageRating rating={user.ratingAvg}/>
           </Col>
-          <Col  size={30}>
+          <Col size={20} style={styles.imageCol}>
             {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
           </Col>
         </Row>
@@ -35,7 +35,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
     </Header>
     <Content padded keyboardShouldPersistTaps="always">
       <List>
-      {/*  <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
+        {/*  <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
           <UserStatusControl/>
         </ListItem>*/}
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateUserDetails`)}>
@@ -71,6 +71,13 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
 const styles = {
   text: {
     fontSize: 16
+  },
+  imageCol: {
+    alignItems: 'flex-end'
+  },
+  ratingCol: {
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   image: {
     aspectRatio: 1,

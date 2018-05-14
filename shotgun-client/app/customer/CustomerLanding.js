@@ -15,6 +15,7 @@ import NotificationActionHandlerService from 'common/services/NotificationAction
 import UserRelationships from 'common/components/relationships/UserRelationships';
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
+import Logger from 'common/Logger';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -61,7 +62,7 @@ class CustomerLanding extends Component {
         <Route path={'Orders'} exact component={CustomerMyOrders}/>
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'Settings'} parentPath={path} component={CustomerSettings}/>
-        <Route path={'UserRelationships'} component={UserRelationships}/>
+        <Route path={'UserRelationships'} component={UserRelationships} showAll={true}/>
       </ReduxRouter>,
       <CustomerMenuBar key='menuBar' {...this.props}/>];
   }
