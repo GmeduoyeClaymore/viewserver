@@ -1,1 +1,1 @@
-nohup java -jar  -Xmx4G -Xms4G -XX:StringTableSize=1000003 -Dlog4j.configurationFile=log4j/log4j2-prod.xml -Dviewserver.configurationFile=config-test.xml viewserver-shotgun-0.8.0-SNAPSHOT-jar-with-dependencies.jar $1 &
+nohup java -jar  -Xmx4G -Xms4G -XX:StringTableSize=1000003 -Dlog4j.configurationFile=log4j/log4j2-prod.xml -Dshotgun.environment=staging viewserver-shotgun-0.8.0-SNAPSHOT-jar-with-dependencies.jar $1 &
