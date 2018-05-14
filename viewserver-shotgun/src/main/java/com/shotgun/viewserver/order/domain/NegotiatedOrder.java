@@ -126,6 +126,18 @@ public interface NegotiatedOrder  extends BasicOrder {
         );
     }
 
+    default void assignJob(String partnerUserId){
+        NegotiationResponse negotiationResponse = JSONBackedObjectFactory.create(NegotiationResponse.class);
+        negotiationResponse.transitionTo(NegotiationResponse.NegotiationResponseStatus.ACCEPTED);
+        negotiationResponse.set("date",this.getRequiredDate());
+        negotiationResponse.set("partnerId",partnerUserId);
+        negotiationResponse.set("price",this.getAmount());
+        List<NegotiationResponse> responses = toList(this.getResponses());
+        responses.add(negotiationResponse);
+        this.set("responses",toArray(responses, NegotiationResponse[]::new));
+        this.set("assignedPartner", negotiationResponse);
+    }
+
     public static enum NegotiationOrderStatus implements OrderEnumBase<NegotiationOrderStatus> {
         REQUESTED(OrderStatus.PLACED),
         RESPONDED(OrderStatus.PLACED),

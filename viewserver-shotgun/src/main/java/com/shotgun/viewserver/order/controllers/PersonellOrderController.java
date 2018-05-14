@@ -53,7 +53,13 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
                         throw new RuntimeException("Job origin cannot be null");
                     }
                     deliveryAddressController.addOrUpdateDeliveryAddress(origin);
-                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+                    if(ord.getPartnerUserId() != null){
+                        order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.ASSIGNED);
+                        ord.assignJob(ord.getPartnerUserId());
+                    }else{
+                        order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+
+                    }
                     rec.addValue("orderLocation", origin);
                     return true;
                 },

@@ -73,6 +73,13 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
                 deliveryAddressController.addOrUpdateDeliveryAddress(order.getOrigin());
                 order.transitionTo(JourneyOrder.JourneyOrderStatus.PENDINGSTART);
                 order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+                if(ord.getPartnerUserId() != null){
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.ASSIGNED);
+                    ord.assignJob(ord.getPartnerUserId());
+                }else{
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
+
+                }
                 rec.addValue("orderLocation", order.getOrigin());
                 return true;
             },
