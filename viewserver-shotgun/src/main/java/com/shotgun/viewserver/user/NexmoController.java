@@ -174,9 +174,9 @@ public class NexmoController implements INexmoController, UserNotificationContra
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
-            log.info(String.format("Comparing %s==%s || %s==%s",userPhoneNumber,toNumberTrim,userPhoneNumber,fromNumberTrim));
+            log.info(String.format("Comparing %s==%s || %s==%s",userPhoneNumber,toNumberTrim,virtualPhoneNumber,fromNumberTrim));
 
-            if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
+            if (virtualPhoneNumber.equals(fromNumberTrim)) {
 
                 fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
                 toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
