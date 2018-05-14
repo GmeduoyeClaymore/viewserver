@@ -213,15 +213,17 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
 
 
-        log.info(String.format("Call from %s to %s has status %s",fromUserId,toUserId,status));
-        if (status.equals(PhoneNumberStatuses.REJECTED.name()) ||
-                status.equals(PhoneNumberStatuses.FAILED.name()) ||
-                status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
-                status.equals(PhoneNumberStatuses.BUSY.name()) ||
-                status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
-                status.equals(PhoneNumberStatuses.CANCELLED.name())) {
-            log.info(String.format("Call from %s to %s failed so notifying user",fromUserId,toUserId,status));
-            notifyCallReceived(fromUserId, toUserId);
+        if(fromUserId != null && toUserId != null) {
+            log.info(String.format("Call from %s to %s has status %s", fromUserId, toUserId, status));
+            if (status.equals(PhoneNumberStatuses.REJECTED.name()) ||
+                    status.equals(PhoneNumberStatuses.FAILED.name()) ||
+                    status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
+                    status.equals(PhoneNumberStatuses.BUSY.name()) ||
+                    status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
+                    status.equals(PhoneNumberStatuses.CANCELLED.name())) {
+                log.info(String.format("Call from %s to %s failed so notifying user", fromUserId, toUserId, status));
+                notifyCallReceived(fromUserId, toUserId);
+            }
         }
     }
 
