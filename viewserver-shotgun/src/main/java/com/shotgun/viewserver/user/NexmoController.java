@@ -259,12 +259,14 @@ public class NexmoController implements INexmoController, UserNotificationContra
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
-            log.info("comparing {}=={}",userPhoneNumber, fromNumber);
+            log.info("from comparing {}=={}",userPhoneNumber, fromNumber);
             if (userPhoneNumber.equals(fromNumber)) {
+                log.info("found from comparing {}=={}",userPhoneNumber, fromNumber);
                 proxyRoute.put("from", virtualPhoneNumber);
             }
-            log.info("comparing {}=={}",virtualPhoneNumber, toNumber);
+            log.info("to comparing {}=={}",virtualPhoneNumber, toNumber);
             if (virtualPhoneNumber.equals(toNumber)) {
+                log.info("to from comparing {}=={}",userPhoneNumber, fromNumber);
                 proxyRoute.put("to", getInternationalFormatNumber(userPhoneNumber));
             }
 
