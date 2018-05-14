@@ -81,9 +81,9 @@ class UserRelationshipMap extends Component{
   }
 
   render(){
-    const {relatedUsers = [], setSelectedUser, me, height, width, isTransitioning, order = {}, hideRelationships} = this.props;
+    const {relatedUsers = [], setSelectedUser, me, height, width, isTransitioning, order = {}, hideRelationships, geoLocation} = this.props;
     const {origin = {}} = order;
-    const {latitude, longitude} = me;
+    const {latitude, longitude} = geoLocation || me;
 
     const initialRegion = {
       latitude,

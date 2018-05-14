@@ -19,7 +19,7 @@ public class OrderResponseReport {
                                         .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
                                         .withConnection("#input"),
                                 new FilterNode("notIsBlocked")
-                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withExpression("!isBlocked(\"{@userId}\",customer_relationships)")
                                         .withConnection("userCreatedThisOrderCalc"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

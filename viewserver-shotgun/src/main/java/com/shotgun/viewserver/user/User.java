@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static io.viewserver.core.Utils.fromArray;
@@ -133,7 +134,13 @@ public interface User extends DynamicJsonBackedObject{
         if(this.getRelationships() == null){
             return false;
         }
-        return fromArray(getRelationships()).filter(c->c.getToUserId().equals(partnerUserId) && c.getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)).findAny().isPresent();
+        UserRelationship relationship = getRelationship(partnerUserId);
+        UserRelationshipStatus relationshipStatus = relationship.getRelationshipStatus();
+        return relationshipStatus.equals(UserRelationshipStatus.BLOCKED) || relationshipStatus.equals(UserRelationshipStatus.BLOCKEDBYME);
+    }
+
+    default UserRelationship getRelationship(String partnerUserId){
+        return fromArray(getRelationships()).filter(c-> c.getToUserId().equals(partnerUserId)).findAny().get();
     }
 
     default void addPendingMessage(AppMessage savedPaymentCard){

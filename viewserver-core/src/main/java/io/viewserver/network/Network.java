@@ -52,6 +52,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     private TObjectIntHashMap<IChannel> connectionIds = new TObjectIntHashMap<>(8, 0.75f, -1);
     private final SessionManager sessionManager;
     private final INetworkAdapter networkAdapter;
+    private boolean disconnectOnTimeout;
 
     public Network(CommandHandlerRegistry commandHandlerRegistry, IExecutionContext executionContext, ICatalog catalog,
                    INetworkAdapter networkAdapter) {
@@ -354,6 +355,10 @@ public class Network implements PeerSession.IDisconnectionHandler {
         networkAdapter.shutdown();
     }
 
+    public void setDisconnectOnTimeout(boolean disconnectOnTimeout) {
+        this.disconnectOnTimeout = disconnectOnTimeout;
+    }
+
     private class HeartbeatTask implements Runnable {
         private static final long interval = 5000;
         private final List<IPeerSession> sessions = new ArrayList<>();
@@ -380,8 +385,12 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         log.debug("Session {} timed out!", peerSession.getConnectionId());
                         // TODO: correctly handle client-to-server sessions
                         if (peerSession instanceof ServerToClientSession) {
-                            //log.debug("DISABLED FOR DEV!! Session {} timed out!", peerSession.getConnectionId());
-                            peerSession.fireDisconnection();
+                            if(disconnectOnTimeout){
+                                peerSession.fireDisconnection();
+                            }
+                            else{
+                                log.debug("DISCONNECT DISABLED FOR DEV!! Session {} timed out!", peerSession.getConnectionId());
+                            }
                         }
                     }
                     continue;

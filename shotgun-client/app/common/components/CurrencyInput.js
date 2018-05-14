@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Input} from 'native-base';
 import {debounce} from 'lodash';
 import {Keyboard} from 'react-native';
+import shotgun from 'native-base-theme/variables/shotgun';
 
 export const formatPrice = (price) => {
   if (!price || price === 'undefined'){
@@ -28,7 +29,9 @@ export class CurrencyInput extends Component{
   }
 
   componentDidMount(){
-    this.setFormattedPriceValueFromProps(this.props);
+    const {initialPrice} = this.props;
+    const formattedPrice = formatPrice(initialPrice / 100);
+    this.setState({formattedPrice});
   }
 
   componentWillReceiveProps(newProps){
@@ -37,7 +40,7 @@ export class CurrencyInput extends Component{
 
   setFormattedPriceValueFromProps = (newProps) => {
     const {initialPrice} = newProps;
-    if (this.props.initialPrice != newProps.initialPrice){
+    if (this.props.initialPrice != initialPrice){
       const formattedPrice = formatPrice(initialPrice / 100);
       this.setState({formattedPrice});
     }
@@ -77,6 +80,7 @@ export class CurrencyInput extends Component{
     return <Input
       keyboardType='phone-pad'
       placeholder={placeholder}
+      placeholderTextColor={shotgun.silver}
       value={formattedPrice}
       style={styles.amountInput}
       onFocus={this.clearFormattedPriceValue}

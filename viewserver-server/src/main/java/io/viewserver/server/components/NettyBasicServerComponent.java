@@ -36,9 +36,9 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
 
     private static final Logger log = LoggerFactory.getLogger(NettyBasicServerComponent.class);
 
-    private List<IEndpoint> endpointList;
-    private Network serverNetwork;
-    private IReactor serverReactor;
+    protected List<IEndpoint> endpointList;
+    protected Network serverNetwork;
+    protected IReactor serverReactor;
 
     public NettyBasicServerComponent(List<IEndpoint> endpointList) {
         this.endpointList = endpointList;

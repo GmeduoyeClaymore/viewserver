@@ -29,9 +29,9 @@ class UsersForProductMap extends Component{
     </Item>;
   }
 
-  assignDeliveryToUser = (deliveryUser) => {
+  assignDeliveryToUser = (assignedPartner) => {
     const {order, next, history}  = this.props;
-    this.setState({order: {...order, partnerId: deliveryUser.userId},  deliveryUser}, () => history.push(next));
+    this.setState({order: {...order, negotiatedOrderStatus: 'ASSIGNED', partnerUserId: assignedPartner.userId, assignedPartner}}, () => history.push(next));
   }
 
   doAddressLookup = (addressLabel, addressKey) => {

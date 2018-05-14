@@ -12,8 +12,11 @@ import java.util.List;
 
 public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
-    public ShotgunBasicServerComponents(List<IEndpoint> endpointList) {
+    private boolean disconnectOnTimeout;
+
+    public ShotgunBasicServerComponents(List<IEndpoint> endpointList, boolean disconnectOnTimeout) {
         super(endpointList);
+        this.disconnectOnTimeout = disconnectOnTimeout;
         JacksonSerialiser.getInstance().registerModules(
                 new Module[]{
                         new OrderSerializationModule()
@@ -24,10 +27,12 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     @Override
     public void start() {
         super.start();
+        this.serverNetwork.setDisconnectOnTimeout(disconnectOnTimeout);
         this.getExecutionContext().getFunctionRegistry().register("containsProduct", ContainsProduct.class);
         this.getExecutionContext().getFunctionRegistry().register("getResponseField", GetPartnerResponseField.class);
         this.getExecutionContext().getFunctionRegistry().register("getOrderField", GetOrderField.class);
         this.getExecutionContext().getFunctionRegistry().register("getRelationship", GetRelationship.class);
+        this.getExecutionContext().getFunctionRegistry().register("isBlocked", IsBlocked.class);
         this.getExecutionContext().getFunctionRegistry().register("isAfter", IsAfter.class);
         SpreadFunctionRegistry spreadColumnRegistry = this.getExecutionContext().getSpreadColumnRegistry();
         spreadColumnRegistry.register("getProductIdsFromContentTypeJSON", ProductSpreadFunction.class);

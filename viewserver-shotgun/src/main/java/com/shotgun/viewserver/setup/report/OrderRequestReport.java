@@ -32,7 +32,7 @@ public class OrderRequestReport {
                                         .withExpression("getResponseField(\"{@userId}\",\"responseStatus\",orderDetails) == null")
                                         .withConnection("distanceFilter"),
                                 new FilterNode("notIsBlocked")
-                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withExpression("!isBlocked(\"{@userId}\",customer_relationships)")
                                         .withConnection("hasResponded"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

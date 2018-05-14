@@ -6,7 +6,6 @@ import io.viewserver.expression.tree.IExpression;
 import io.viewserver.expression.tree.IExpressionBool;
 import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
-import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
 
 import static io.viewserver.core.Utils.fromArray;
 
-public class GetRelationship implements IUserDefinedFunction, IExpressionString {
+public class IsBlocked implements IUserDefinedFunction, IExpressionBool {
     private static final Logger log = LoggerFactory.getLogger(GetPartnerResponseField.class);
     private IExpressionString userIdField;
     private IExpressionString relationshipField;
@@ -22,7 +21,7 @@ public class GetRelationship implements IUserDefinedFunction, IExpressionString 
     @Override
     public void setParameters(IExpression... parameters) {
         if (parameters.length != 2) {
-            throw new IllegalArgumentException("Syntax: getRelationship(<userId (string)>,<relationships (json-string)>");
+            throw new IllegalArgumentException("Syntax: isBlocked(<userId (string)>,<relationships (json-string)>");
         }
         userIdField = (IExpressionString) parameters[0];
         relationshipField = (IExpressionString) parameters[1];
@@ -30,23 +29,22 @@ public class GetRelationship implements IUserDefinedFunction, IExpressionString 
 
     @Override
     public ColumnType getType() {
-        return ColumnType.String;
+        return ColumnType.Bool;
     }
 
     @Override
-    public String getString(int row) {
+    public boolean getBool(int row) {
         String userIdFieldString = userIdField.getString(row);
         if(userIdFieldString == null || "".equals(userIdFieldString)){
-            return null;
+            return false;
         }
         String userRelationshipFieldString = relationshipField.getString(row);
         UserRelationship[] relationships = JacksonSerialiser.getInstance().deserialise(userRelationshipFieldString,UserRelationship[].class);
         Optional<UserRelationship> relationship = fromArray(relationships).filter(c -> c.getToUserId().equals(userIdFieldString)).findAny();
         if(relationship.isPresent()){
-            return relationship.get().getRelationshipStatus().name();
+            UserRelationshipStatus relationshipStatus = relationship.get().getRelationshipStatus();
+            return relationshipStatus.equals(UserRelationshipStatus.BLOCKED) || relationshipStatus.equals(UserRelationshipStatus.BLOCKEDBYME);
         }
-        return UserRelationshipStatus.UNKNOWN.name();
+        return false;
     }
 }
-
-

@@ -19,7 +19,7 @@ const Login = (props) => {
   return (
     <div>
       <h1>Login To ViewServer</h1>
-      <LoginForm url="localhost:6060" username="foo" password="bar" {...props}/>
+      <LoginForm url="shotgun.ltd:6060" username="foo" password="bar" {...props}/>
     </div>
   );
 }

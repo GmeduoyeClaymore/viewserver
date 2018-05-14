@@ -34,13 +34,6 @@ class DeliveryOptions extends Component {
     this.setState({ order: {...order, amount}});
   }
 
-  componentWillReceiveProps(props){
-    const {estimatedPrice} = props;
-    if (estimatedPrice && estimatedPrice != this.props.estimatedPrice){
-      this.setAmount(estimatedPrice);
-    }
-  }
-
   moveToNext = () => {
     const {next, history} = this.props;
     history.push(next);
@@ -134,6 +127,7 @@ class DeliveryOptions extends Component {
 }
 
 const validationSchema = {
+  amount: yup.number().required(),
   requiredDate: yup.date().required()
 };
 
@@ -212,9 +206,10 @@ const mapStateToProps = (state, initialProps) => {
   const estimatedPrice = getDaoCommandResult(state, 'calculatePriceEstimate', 'orderDao');
   const {paymentCards = []} = user || {};
   const defaultPayment = paymentCards.find(c => c.isDefault) || paymentCards[0];
-
+  const {order} = initialProps;
   return {
     ...initialProps,
+    order: {...order, amount: order.amount || estimatedPrice},
     estimatedPrice,
     defaultPayment,
     paymentCards,

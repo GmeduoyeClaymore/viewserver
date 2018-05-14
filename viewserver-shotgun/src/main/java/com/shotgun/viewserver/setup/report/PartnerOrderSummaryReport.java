@@ -33,7 +33,7 @@ public class PartnerOrderSummaryReport {
                                         )
                                         .withConnection("customerJoin"),
                                 new FilterNode("notIsBlocked")
-                                        .withExpression("getRelationship(\"{@userId}\",customer_relationships) != \"BLOCKED\"")
+                                        .withExpression("!isBlocked(\"{@userId}\",customer_relationships)")
                                         .withConnection("orderCalcs"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)

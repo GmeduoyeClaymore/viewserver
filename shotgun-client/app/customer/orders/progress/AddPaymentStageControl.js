@@ -59,7 +59,7 @@ export default class AddPaymentStageControl extends Component{
 
       <Item stackedLabel last style={styles.item} >
         <Label>{paymentStageType === 'Percentage' ?  'Percentage' : 'Amount'}</Label>
-        <ValidatingInput control={paymentStageType === 'Percentage' ?  undefined : CurrencyInput} ref={rf => {this.amountInput = rf;}} bold style={{padding: 10}} value={this.state.amount} placeholder="25" onValueChanged={(amount) => this.setState({amount})} onChangeText={(amount) => this.setState({amount})} validationSchema={validationSchema.amount} maxLength={10}/>
+        <ValidatingInput control={paymentStageType === 'Percentage' ?  undefined : CurrencyInput} ref={rf => {this.amountInput = rf;}} bold style={{padding: 10}} value={this.state.amount} initialPrice={this.state.amount} placeholder={paymentStageType === 'Percentage' ?  '25' : '£2500.00'} onValueChanged={(amount) => this.setState({amount})} onChangeText={(amount) => this.setState({amount})} validationSchema={validationSchema.amount} maxLength={10}/>
       </Item>
 
       <ValidatingButton busy={busyUpdating} fullWidth success onPress={this.onAddPaymentStage} validationSchema={yup.object(validationSchema)} model={this.state}>

@@ -51,7 +51,7 @@ public class ShotgunServerLauncher{
     }
 
     private static void SharedConfig(MutablePicoContainer container){
-        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")));
+        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")), Boolean.parseBoolean(get("server.disconnectOnTimeout")));
         container.addComponent(basicServerComponent);
         container.addComponent(basicServerComponent.getServerCatalog());
         container.addComponent(basicServerComponent.getExecutionContext());
