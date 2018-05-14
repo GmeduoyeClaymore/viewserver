@@ -266,7 +266,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             }
             log.info("to comparing {}=={}",virtualPhoneNumber, toNumber);
             if (virtualPhoneNumber.equals(toNumber)) {
-                log.info("found to comparing {}=={}",userPhoneNumber, fromNumber);
+                log.info("found to comparing {}=={}",virtualPhoneNumber, toNumber);
                 proxyRoute.put("to", getInternationalFormatNumber(userPhoneNumber));
             }
 
