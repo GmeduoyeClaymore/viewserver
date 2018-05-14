@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {Text, List, ListItem, Row, Col} from 'native-base';
+import {View, Text, List, ListItem, Row, Content} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
@@ -31,7 +31,11 @@ class OrderSummary extends Component{
     const {order, userCreatedThisOrder, dispatch} = this.props;
     const {assignedPartner, customer, requiredDate} = order;
 
-    return <List>
+    return <Content><List>
+      {assignedPartner || !userCreatedThisOrder ? <ListItem paddedLeftRight paddedTop last>
+        <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
+      </ListItem> : null}
+
       {this.renderMap()}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>
@@ -39,18 +43,11 @@ class OrderSummary extends Component{
 
       {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
 
-      {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
-        <Icon paddedIcon name="one-person"/>
-        {!userCreatedThisOrder && customer.imageUrl != undefined ? <Image source={{uri: customer.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
-        <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
-      </ListItem> : null}
-
       <ListItem padded last>
-        <Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text>
         <Text>{order.description}</Text>
-          {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
+        {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
       </ListItem>
-    </List>;
+    </List></Content>;
   }
 }
 

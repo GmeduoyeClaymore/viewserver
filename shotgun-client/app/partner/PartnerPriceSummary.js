@@ -27,7 +27,7 @@ export default class PartnerPriceSummary extends Component{
 
     const suffix = paymentType === PaymentTypes.DAYRATE ? 'p/d' : undefined;
 
-    return <Grid>
+    return <Grid style={styles.grid}>
       <Row style={styles.row}><Text style={styles.heading}>{this.getHeading()}</Text></Row>
       <Row style={styles.row}>{!amount ? <Spinner/> : <Currency value={amount} style={styles.amount} suffix={suffix}/>}</Row>
     </Grid>;
@@ -35,6 +35,10 @@ export default class PartnerPriceSummary extends Component{
 }
 
 const styles = {
+  grid: {
+    marginBottom: 15,
+    flex: -1
+  },
   row: {
     justifyContent: 'center'
   },

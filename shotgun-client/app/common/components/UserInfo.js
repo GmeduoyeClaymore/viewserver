@@ -12,7 +12,7 @@ export class UserInfo extends Component{
   };
 
   render(){
-    const {user, imageWidth = 40} = this.props;
+    const {user, imageWidth = 40, showCallButton = true} = this.props;
     return user ? <Grid>
       <Row>
         {user.imageUrl ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/> : null}
@@ -20,12 +20,12 @@ export class UserInfo extends Component{
           <Text>{user.firstName} {user.lastName}</Text>
           <AverageRating rating={user.ratingAvg}/>
         </Col>
-        <Col>
+        {showCallButton ? <Col>
           <Button fullWidth callButton onPress={this.onPressCall}>
             <Icon name="phone" paddedIcon/>
             <Text uppercase={false}>Call</Text>
           </Button>
-        </Col>
+        </Col> : null}
       </Row>
     </Grid> : null;
   }
