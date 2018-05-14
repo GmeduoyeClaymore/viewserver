@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Controller(name = "nexmoController")
@@ -37,10 +38,12 @@ public class NexmoController implements INexmoController, UserNotificationContra
     private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
     private IMessagingController messagingController;
+    private ConcurrentHashMap<String,String> resolvedCache;
 
     public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
+        this.resolvedCache = new ConcurrentHashMap<>();
         this.nexmoControllerKey = nexmoControllerKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
@@ -54,6 +57,9 @@ public class NexmoController implements INexmoController, UserNotificationContra
             throw new RuntimeException("Phone number cannot be null");
         }
         try {
+            if(resolvedCache.containsKey(phoneNumber)){
+                return resolvedCache.get(phoneNumber);
+            }
 
             HashMap<String, String> params = new HashMap<>();
             params.put("api_key", nexmoControllerKey.getKey());
@@ -259,15 +265,17 @@ public class NexmoController implements INexmoController, UserNotificationContra
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
-            log.info("from comparing {}=={}",userPhoneNumber, fromNumber);
-            if (userPhoneNumber.equals(fromNumber)) {
-                log.info("found from comparing {}=={}",userPhoneNumber, fromNumber);
+            String internationalFormatNumber = getInternationalFormatNumber(userPhoneNumber);
+
+            log.info("from comparing {}=={}",internationalFormatNumber, fromNumber);
+            if (internationalFormatNumber.equals(fromNumber)) {
+                log.info("found from comparing {}=={}",internationalFormatNumber, fromNumber);
                 proxyRoute.put("from", virtualPhoneNumber);
             }
             log.info("to comparing {}=={}",virtualPhoneNumber, toNumber);
             if (virtualPhoneNumber.equals(toNumber)) {
                 log.info("found to comparing {}=={}",virtualPhoneNumber, toNumber);
-                proxyRoute.put("to", getInternationalFormatNumber(userPhoneNumber));
+                proxyRoute.put("to", internationalFormatNumber);
             }
 
             proxyRoute.put("rowId", rows.getRowId());
