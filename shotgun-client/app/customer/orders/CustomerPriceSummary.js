@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Grid, Row, Text, Spinner} from 'native-base';
+import {View, Row, Text, Spinner} from 'native-base';
 import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {Currency} from 'common/components';
 import {PaymentTypes} from 'common/constants/PaymentTypes';
 
-export default class PartnerPriceSummary extends Component{
+export default class CustomerPriceSummary extends Component{
   getHeading = () => {
     const {order} = this.props;
     const {orderStatus} = order;
@@ -26,16 +26,16 @@ export default class PartnerPriceSummary extends Component{
 
     const suffix = paymentType === PaymentTypes.DAYRATE ? 'p/d' : undefined;
 
-    return <Grid style={styles.grid}>
+    return <View style={styles.grid}>
       <Row style={styles.row}><Text style={styles.heading}>{this.getHeading()}</Text></Row>
       <Row style={styles.row}>{!amount ? <Spinner/> : <Currency value={amount} style={styles.amount} suffix={suffix}/>}</Row>
-    </Grid>;
+    </View>;
   }
 }
 
 const styles = {
   grid: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   row: {
     justifyContent: 'center'

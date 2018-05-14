@@ -32,8 +32,8 @@ class App extends React.Component {
   constructor() {
     super();
     registerTokenListener();
-    //this.client = new Client('ws://shotgun.ltd:6060/');
-    this.client = new Client('ws://192.168.0.20:6060/');
+    this.client = new Client('ws://shotgun.ltd:6060/');
+    //this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://192.168.0.5:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
@@ -59,7 +59,7 @@ class App extends React.Component {
   }
 
   _handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'inactive'){
+    if (nextAppState === 'background'){
       this.client.disconnect();
     }
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
