@@ -198,7 +198,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
     @Override
     public void stop() {
-        this.subscriptions.stream().forEach(c-> c.unsubscribe());
+        new ArrayList<>(this.subscriptions).forEach(c-> c.unsubscribe());
     }
 
     @Override
