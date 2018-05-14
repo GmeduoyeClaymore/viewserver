@@ -173,6 +173,9 @@ public class NexmoController implements INexmoController, UserNotificationContra
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+
+            log.info(String.format("Comparing %s==%s || %s==%s",userPhoneNumber,toNumberTrim,userPhoneNumber,fromNumberTrim));
+
             if (userPhoneNumber.equals(toNumberTrim) || userPhoneNumber.equals(fromNumberTrim)) {
 
                 fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
@@ -198,8 +201,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             }
         }
         log.info(String.format("Call from %s to %s has status %s",fromUserId,toUserId,status));
-        if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
-                status.equals(PhoneNumberStatuses.REJECTED.name()) ||
+        if (status.equals(PhoneNumberStatuses.REJECTED.name()) ||
                 status.equals(PhoneNumberStatuses.FAILED.name()) ||
                 status.equals(PhoneNumberStatuses.TIMEOUT.name()) ||
                 status.equals(PhoneNumberStatuses.BUSY.name()) ||
