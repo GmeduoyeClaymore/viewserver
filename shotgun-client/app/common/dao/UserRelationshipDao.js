@@ -16,7 +16,7 @@ export default class UserRelationshipDaoContext{
     showUnrelated: true,
     showOutOfRange: true,
     position: UserRelationshipDaoContext.DEFAULT_POSITION,
-    maxDistance: 0
+    maxDistance: 50
   };
 
   constructor(client, name = 'userRelationshipDao', options = {}) {

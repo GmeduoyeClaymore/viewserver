@@ -60,16 +60,14 @@ class CustomerOrderDetail extends Component{
         <Body><Title>{resources.PageTitle(order)}</Title></Body>
       </Header>
       <Content>
-        <View style={{paddingLeft: 15, paddingRight: 15}}>
-          <ErrorRegion errors={errors}/>
-          <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
-            PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
-            InProgressControls={InProgressControls}
-            AcceptedControls={AcceptedControls}
-            CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
-            CancelledControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
-          />
-        </View>
+        <ErrorRegion errors={errors}/>
+        <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
+          PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
+          InProgressControls={InProgressControls}
+          AcceptedControls={AcceptedControls}
+          CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
+          CancelledControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}
+        />
       </Content>
     </Container>;
   }
@@ -118,7 +116,7 @@ const PaymentStagesAndSummary = (props) => {
     <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
     {shouldShowPaymentStagesTab ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')}/> : null}
   </Tabs>,
-  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props} height={1000 /*hack to get around a weird height issue when keyboard shown*/} width={width - shotgun.contentPadding} path={path} defaultRoute='Summary' hasFooter={true}>
+  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props} height={1000 /*hack to get around a weird height issue when keyboard shown*/} width={width} path={path} defaultRoute='Summary' hasFooter={true}>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
   </ReduxRouter>];

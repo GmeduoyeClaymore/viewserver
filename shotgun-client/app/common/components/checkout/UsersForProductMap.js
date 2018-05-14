@@ -60,7 +60,7 @@ class UsersForProductMap extends Component{
           <ErrorRegion errors={errors} />
         </Row>
       </Grid>
-      <Button fullWidth paddedBottomLeftRight iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
+      <Button style={styles.nextButton} iconRight onPress={() => history.push(next)} disabled={disableDoneButton}>
         <Text uppercase={false}>Continue</Text>
         <Icon name='forward-arrow' next/>
       </Button>
@@ -83,6 +83,14 @@ const styles = {
   inputRow: {
     backgroundColor: shotgun.brandPrimary,
     padding: 10
+  },
+  nextButton: {
+    position: 'absolute',
+    bottom: 15,
+    left: 15,
+    right: 15,
+    zIndex: 2,
+    justifyContent: 'center'
   },
   backButton: {
     position: 'absolute',

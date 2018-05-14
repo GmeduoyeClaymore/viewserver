@@ -5,7 +5,7 @@ import {Icon} from 'common/components';
 
 export default UserMarker = ({user, productId}) => {
   //TODO - second ternary shouldn't be needed it's just because the test data sometiems doesn't have selected content types
-  const icon = productId ? productId : (user.selectedContentTypes ? `content-type-${Object.keys(user.selectedContentTypes)[0]}` : 'one-person');
+  const icon = productId ? productId : (user.selectedContentTypes && typeof user.selectedContentTypes == 'object'  ? `content-type-${Object.keys(user.selectedContentTypes)[0]}` : 'one-person');
 
   return [
     <View key='bubble' mapBubble style={styles.bubble}>

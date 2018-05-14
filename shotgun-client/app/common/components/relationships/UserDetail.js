@@ -12,8 +12,7 @@ import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigati
 
 class UserDetail extends Component{
   handleCancel = () => {
-    const {history, userRelationshipBasePath} = this.props;
-    //history.push({pathname: userRelationshipBasePath, transition: 'immediate'}); I don't think this makes sense this control is used everywhere not just on the user relationships page
+    const {history} = this.props;
     history.goBack();
   }
 
@@ -43,7 +42,7 @@ class UserDetail extends Component{
   getActionButton = (relationshipStatus, label, additionalProps) => {
     const {busy} = this.props;
 
-    return <Button fullWidth style={styles.statusButton} {...additionalProps} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
+    return <Button fullWidth style={styles.statusButton} key={label} {...additionalProps} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
       <Text uppercase={false}>{label}</Text>
     </Button>;
   }
@@ -62,7 +61,7 @@ class UserDetail extends Component{
       buttonsToRender.push(this.getActionButton('ACCEPTED', 'Accept Request'));
       buttonsToRender.push(this.getActionButton('UNKNOWN', 'Ignore Request'));
     } else if (selectedUser.relationshipStatus === 'REQUESTEDBYME'){
-      buttonsToRender.push(this.getActionButton('UNKNOWN', 'Cancel Request'));
+      buttonsToRender.push(this.getActionButton('UNKNOWN', 'Cancel Friend Request'));
     } else if (!selectedUser.relationshipStatus || selectedUser.relationshipStatus === 'UNKNOWN'){
       buttonsToRender.push(this.getActionButton('REQUESTED', 'Add as friend'));
     } else if (selectedUser.relationshipStatus === 'BLOCKED'){
@@ -100,7 +99,6 @@ class UserDetail extends Component{
         <Row style={styles.userInfoView}>
           <UserInfo dispatch={dispatch} user={selectedUser} imageWidth={60}/>
         </Row>
-        <Text style={styles.infoText}>{ `${Math.round(selectedUser.distance)} km away`}</Text>
 
         <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>
           {TabHeadings.map(

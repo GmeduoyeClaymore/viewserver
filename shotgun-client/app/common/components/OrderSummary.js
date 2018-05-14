@@ -41,15 +41,14 @@ class OrderSummary extends Component{
 
       {assignedPartner || !userCreatedThisOrder ? <ListItem padded>
         <Icon paddedIcon name="one-person"/>
+        {!userCreatedThisOrder && customer.imageUrl != undefined ? <Image source={{uri: customer.imageUrl}} resizeMode='contain' style={styles.image}/> : null}
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
 
       <ListItem padded last>
-        <Col>
-          <Row><Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text></Row>
-          <Row><Text>{order.description}</Text></Row>
+        <Text style={styles.itemDetailsTitle}>{this.resources.PageTitle()}</Text>
+        <Text>{order.description}</Text>
           {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
-        </Col>
       </ListItem>
     </List>;
   }
@@ -69,7 +68,8 @@ const styles = {
   },
   itemDetailsTitle: {
     color: shotgun.brandLight,
-    marginBottom: 10
+    paddingBottom: 20,
+    width: '100%'
   }
 };
 

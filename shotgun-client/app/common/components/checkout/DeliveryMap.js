@@ -135,7 +135,9 @@ class DeliveryMap extends Component{
               {showDirections ? <MapViewDirections ref={ref => {this.mvd = ref;}} client={client} locations={[origin, destination]} onReady={this.setDurationAndDistance} strokeWidth={3} /> : null}
               {origin.line1 ? <MapView.Marker identifier="origin" coordinate={{...origin}} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={origin.line1} /></MapView.Marker> : null}
               {destination.line1 ? <MapView.Marker identifier="destination" coordinate={{ ...destination }} anchor={{ x: 0.5, y: 1 }}><AddressMarker address={destination.line1} color={shotgun.brandDark} /></MapView.Marker> : null}
-              {usersWithProduct.map( user => <MapView.Marker key={user.userId} identifier={`userWithProduct${user.userId}`}  coordinate={{ ...user }}><ProductMarker product={order.orderProduct} /></MapView.Marker>)}
+              {usersWithProduct.map( (user, i) =>  <MapView.Marker key={user.userId + '-' + i} identifier={'userWithProduct' + user.userId}  coordinate={{ ...user }} anchor={{ x: 0.5, y: 1 }}>
+                <UserMarker user={user} productId={order ? order.productId : undefined} />
+              </MapView.Marker>)}
             </MapView>}
         </Row>
       </Grid>

@@ -44,8 +44,8 @@ public class UserRelationshipReport {
                                         new CalcColOperator.CalculatedColumn("currentDistance", "distance(isNull({latitude},latitude), isNull({longitude},longitude) , toUser_latitude, toUser_longitude, \"M\")"),
                                         new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distance(isNull({latitude},latitude), isNull({longitude},longitude) , toUser_latitude, toUser_longitude, \"M\"))"))
                                 .withConnection("relatedUserJoin"),
-                        new FilterNode("distanceFilter")
-                                .withExpression("currentDistanceFilter <= isNull({maxDistance},range)")
+                        new FilterNode("userFilter")
+                                .withExpression("currentDistanceFilter <= isNull({maxDistance},range) && toUser_type == \"partner\" && !isBlocked(\"{@userId}\", toUser_relationships)")
                                 .withConnection("distanceCalcCol"),
                         new ProjectionNode("userProjection")
                                 .withMode(IProjectionConfig.ProjectionMode.Exclusionary)
@@ -57,7 +57,7 @@ public class UserRelationshipReport {
                                         new IProjectionConfig.ProjectionColumn("toUser_stripeCustomerId"),
                                         new IProjectionConfig.ProjectionColumn("toUser_stripeAccountId")
                                 )
-                                .withConnection("distanceFilter"),
+                                .withConnection("userFilter"),
                         new ProjectionNode("userProjectionInclusionary")
                                 .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                 .withProjectionColumns(
