@@ -7,6 +7,14 @@ export default (variables = variable) => {
 
   const footerTabTheme = {
     'NativeBase.Button': {
+      '.light': {
+        backgroundColor: variables.brandPrimary,
+        borderWidth: 0,
+        borderColor: variables.silver,
+        'NativeBase.Text': {
+          fontWeight: 'normal'
+        }
+      },
       '.active': {
         'NativeBase.Text': {
           color: variables.tabBarActiveTextColor,
@@ -22,6 +30,7 @@ export default (variables = variable) => {
         backgroundColor: variables.tabActiveBgColor
       },
       flexDirection: null,
+      
       backgroundColor: 'transparent',
       borderColor: null,
       elevation: 0,
