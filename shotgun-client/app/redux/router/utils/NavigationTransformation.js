@@ -37,10 +37,6 @@ export default class NavigationTransformation{
     
   next(action){
     const newNavPointer = this.navContainer.navPointer + 1;
-    if (isEqual(action, this.location, true)){
-      Logger.info(`Action has already been added to the stack ${JSON.stringify(action)} ignoring next`);
-      return this.navContainer;
-    }
     const newStack = [...this.navigationStack];
     newStack[newNavPointer] = action;
     Logger.info(`After next new stack  from ${JSON.stringify(this.navContainer)} to ${JSON.stringify(newStack)}`);
@@ -54,10 +50,6 @@ export default class NavigationTransformation{
     
   replace(action){
     const newStack = [...this.navigationStack];
-    if (isEqual(action, this.location, true)){
-      Logger.info(`Action has already been added to the stack ${JSON.stringify(action)} ignoring replace`);
-      return this.navContainer;
-    }
     newStack[this.navContainer.navPointer] = action;
     return this.incrementVersionCounter().setIn(['navigationStack'], newStack);
   }

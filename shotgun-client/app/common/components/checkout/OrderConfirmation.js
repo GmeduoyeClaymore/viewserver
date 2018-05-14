@@ -43,9 +43,9 @@ class OrderConfirmation extends Component{
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
-property('PageTitle', ({product}) => `${product.name} Job`).
+property('PageTitle', ({product= {}}) => `${product.name} Job`).
   delivery(() => 'Delivery').
-  personell(({product}) => `${product.name} Job`).
+  personell(({product = {}}) => `${product.name} Job`).
   rubbish(() => 'Rubbish Collection').
 property('SubmitButtonCaption', 'Create Job').
   delivery('Create Delivery').

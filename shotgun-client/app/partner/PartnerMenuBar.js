@@ -7,7 +7,7 @@ const PartnerMenuBar = ({history, path}) => {
   return <Footer>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Checkout`})}><Icon name='list'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerAvailableOrders`})}><Icon name='available-jobs'/></Button></FooterTab>
-    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerMyOrders`})}><Icon name='jobs'/></Button></FooterTab>
+    <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/PartnerMyOrders`, transition: 'left'})}><Icon name='jobs'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/UserRelationships`})}><Icon name='one-person'/></Button></FooterTab>
     <FooterTab><Button transparent onPress={() => history.just({pathname: `${path}/Settings`})}><Icon name='cog'/></Button></FooterTab>
   </Footer>;

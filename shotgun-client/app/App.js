@@ -62,10 +62,11 @@ class App extends React.Component {
     if (nextAppState === 'background'){
       this.client.disconnect();
     }
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      this.client.connect();
+    if (nextAppState === 'active') {
+      if (!this.client.connected){
+        this.client.connect();
+      }
     }
-    this.setState({appState: nextAppState});
   }
   
   render() {

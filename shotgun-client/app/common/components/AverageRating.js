@@ -6,7 +6,7 @@ export const AverageRating = ({rating, text = 'No Ratings Yet', decimalPlaces = 
   return rating > 0 ?
     <View style={styles.averageView}>
       <Icon name='star' avgStar/>
-      <Text numberOfLines={1} note style={styles.averageText}>{rating.toFixed(decimalPlaces)}</Text>
+      <Text numberOfLines={1} note style={styles.averageText}>{rating && rating.toFixed ? rating.toFixed(decimalPlaces) : null}</Text>
     </View> :
     <Text note>{text}</Text>;
 };

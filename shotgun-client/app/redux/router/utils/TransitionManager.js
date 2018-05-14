@@ -46,6 +46,7 @@ export default class TransitionManager{
     if (componentRef === null){
       return;
     }
+    componentRef.stopAnimation();
     RouteUtils.ensureComponentIsNative(componentRef);
     const existingReference = this.initializedRouteElementReferences[route.path] || {};
     this.initializedRouteElementReferences[route.path] =  {...existingReference, componentRef, route};
@@ -87,7 +88,7 @@ export default class TransitionManager{
         }
       }
     );
-    this.log(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and diff are ${JSON.stringify(diffs.map(c=> c.pathname))}`);
+    this.log(`Performing transition for ${transitionPromises.length} elements. Keys are  "${keysToTransition.join(',')}" and diff are ${JSON.stringify(diffs)}`);
     await Promise.all(transitionPromises);
     return transitionPromises.length;
   }

@@ -152,7 +152,7 @@ const validationSchema = {
 
 const styles = {
   amountInput: {
-    fontSize: 12,
+    fontSize: 16,
     padding: 0
   },
   toggleStage: {

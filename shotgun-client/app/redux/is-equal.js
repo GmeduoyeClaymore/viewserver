@@ -1,7 +1,5 @@
-import {
-  isEqual as deepIsEqual
-}
-  from 'lodash';
+import {isEqual as deepIsEqual} from 'lodash';
+import removeProperties from './removeProperties';
 
 const getType = {};
 
@@ -46,6 +44,9 @@ export const isEqual = (objA, objB, deep, ignoreFuncs) => {
     objA = filterFunctions(objA);
     objB = filterFunctions(objB);
   }
+
+  objA = removeProperties(objA, ['style']);
+  objB = removeProperties(objB, ['style']);
   
   if (deep) {
     return deepIsEqual(objA, objB);
