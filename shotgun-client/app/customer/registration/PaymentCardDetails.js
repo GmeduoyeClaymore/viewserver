@@ -4,9 +4,9 @@ import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {registerCustomer} from 'customer/actions/CustomerActions';
 import {ErrorRegion, TermsAgreement, Icon, SpinnerButton} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import {isAnyOperationPending, getOperationError} from 'common/dao';
 
-class PaymentCardDetails extends Component {
+
+export default class PaymentCardDetails extends Component {
   constructor(props) {
     super(props);
 
@@ -28,12 +28,7 @@ class PaymentCardDetails extends Component {
 
   render(){
     const {onCardDetailsChange} = this;
-    const {history, busy, errors, user, deliveryAddress, dispatch, valid, paymentCard} = this.props;
-
-    const register = async() => {
-      dispatch(registerCustomer(user, deliveryAddress, paymentCard, () => history.push('/Root')));
-    };
-
+    const {history, busy, errors, valid, nextAction} = this.props;
     return <Container>
       <Header withButton>
         <Left>
@@ -47,7 +42,7 @@ class PaymentCardDetails extends Component {
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton paddedBottomLeftRight fullWidth iconRight busy={busy} onPress={register} disabled={!valid}>
+      <SpinnerButton paddedBottomLeftRight fullWidth iconRight busy={busy} onPress={nextAction.bind(this)} disabled={!valid}>
         <Text uppercase={false}>Continue</Text>
         <Icon next name='forward-arrow'/>
       </SpinnerButton>
@@ -56,10 +51,3 @@ class PaymentCardDetails extends Component {
   }
 }
 
-const mapStateToProps = (state, initialProps) => ({
-  ...initialProps,
-  errors: getOperationError(state, 'loginDao', 'registerAndLoginCustomer'),
-  busy: isAnyOperationPending(state, [{ loginDao: 'registerAndLoginCustomer'}])
-});
-
-export default withExternalState(mapStateToProps)(PaymentCardDetails);

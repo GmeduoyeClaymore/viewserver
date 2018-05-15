@@ -4,32 +4,18 @@ import {Text, Content, Header, Body, Container, Title, Left, Button, Grid, Row, 
 import yup from 'yup';
 import {ValidatingButton, ErrorRegion, Icon, TermsAgreement} from 'common/components';
 import {withExternalState} from 'custom-redux';
-import {getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, getOperationError} from 'common/dao';
+import {getDaoState, isAnyLoading, getLoadingErrors} from 'common/dao';
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from './ContentTypeSelector';
-import * as ContentTypes from 'common/constants/ContentTypes';
-import {registerAndLoginPartner} from 'partner/actions/PartnerActions';
 
 class PartnerAccountType extends Component{
   constructor(props){
     super(props);
-    this.register = this.register.bind(this);
   }
 
-  async register(){
-    const {user, bankAccount, address, dispatch, history} = this.props;
-    let {selectedContentTypes} = this.props;
-    let vehicle = {};
-    if (selectedContentTypes[ContentTypes.DELIVERY]){
-      vehicle = selectedContentTypes[ContentTypes.DELIVERY].vehicle;
-      selectedContentTypes = selectedContentTypes.setIn([ContentTypes.DELIVERY], selectedContentTypes[ContentTypes.DELIVERY].without(['vehicle']));
-    }
-    const persistedUser = user.setIn(['selectedContentTypes'], selectedContentTypes);
-    dispatch(registerAndLoginPartner(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
-  }
 
   render(){
-    const {history, contentTypes = [], selectedContentTypes = {}, errors, busy} = this.props;
+    const {history, contentTypes = [], selectedContentTypes = {}, errors, busy, nextAction} = this.props;
     return <Container>
       <Header withButton>
         <Left>
@@ -40,6 +26,7 @@ class PartnerAccountType extends Component{
         <Body><Title>Account Type</Title></Body>
       </Header>
       <Content keyboardShouldPersistTaps="always" padded>
+        <ErrorRegion errors={errors}/>
         <Grid>
           <Row>
             <Col>
@@ -56,8 +43,7 @@ class PartnerAccountType extends Component{
           </Row>
         </Grid>
       </Content>
-      <ErrorRegion errors={errors}/>
-      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy} onPress={this.register} validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy} onPress={nextAction.bind(this)}  validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
         <Text uppercase={false}>Register</Text>
         <Icon next name='forward-arrow'/>
       </ValidatingButton>
@@ -89,18 +75,16 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {errors = [], selectedContentTypes} = initialProps;
+  const {errors = [], selectedContentTypes, busy: initialBusy} = initialProps;
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const registrationErrors = getOperationError(state, 'loginDao', 'registerAndLoginPartner') || [];
-  const busy = isAnyOperationPending(state, [{ loginDao: 'registerAndLoginPartner'}]) ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']);
-
+  const busy = initialBusy ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']);
   return {
     ...initialProps,
     selectedContentTypes,
     contentTypes,
     busy,
-    errors: [loadingErrors, errors, registrationErrors].filter( c=> !!c).join('\n')
+    errors: [loadingErrors, errors].filter( c=> !!c).join('\n')
   };
 };
 

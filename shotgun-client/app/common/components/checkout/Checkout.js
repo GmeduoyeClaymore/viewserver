@@ -12,7 +12,6 @@ import AddressLookup from 'common/components/maps/AddressLookup';
 import {Route, ReduxRouter, withExternalState, removeProperties} from 'custom-redux';
 import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {PERSONELL_ORDER_INITIAL_STATE, RUBBISH_ORDER_INITIAL_STATE} from './CheckoutInitialState';
 
 class Checkout extends Component {
   static stateKey = 'customerCheckout';
@@ -22,6 +21,10 @@ class Checkout extends Component {
     super(props);
     Logger.info('Creating checkout component');
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
+  }
+
+  beforeNavigateTo(){
+    this.clearState();
   }
 
   componentWillUnmount(){
@@ -42,7 +45,7 @@ class Checkout extends Component {
   render() {
     const {path} = this.props;
     const customerProps = {...this.props, stateKey: Checkout.stateKey};
-    const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'parentPath']);
+    const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'clearState', 'clearStateAtPath', 'parentPath']);
     const {getNext} = this;
 
     return <ReduxRouter  name="CheckoutRouter" {...rest} path={path} defaultRoute={'ContentTypeSelect'}>
