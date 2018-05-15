@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Linking, Button, Text, View} from 'native-base';
+import {Linking, Button, Text, View, ListItem} from 'native-base';
 import {SpinnerButton, OriginDestinationSummary} from 'common/components';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
 import {startJourney, completeJourney} from 'partner/actions/PartnerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
-import MapView from 'react-native-maps';
-import MapViewDirections from 'common/components/maps/MapViewDirections';
-import AddressMarker from 'common/components/maps/AddressMarker';
+import MapViewStatic from 'common/components/maps/MapViewStatic';
 import Logger from 'common/Logger';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
@@ -58,37 +56,24 @@ class PartnerJourneyOrderInProgress extends Component{
   };
 
   render() {
-    const {order = {}, client, busyUpdating, user = {}, height, width} = this.props;
+    const {order = {}, client, busyUpdating} = this.props;
     const {origin, destination = {}} = order;
     const {resources} = this;
     const {StartButtonCaption = 'Start Job', StopButtonCaption = 'Stop Job'} = resources;
     
-    const {latitude, longitude} = user;
-    const initialPosition = {latitude, longitude};
-
-    const region = {
-      latitude,
-      longitude,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA
-    };
+    const mapWidth = shotgun.deviceWidth - 50;
+    const mapHeight = mapWidth / 2;
 
     return <View>
-      <Button fullWidth padded style={styles.startButton} onPress={this.onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button>
+      <Button fullWidth style={styles.startButton} padded onPress={this.onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button>
       {!!~CAN_START_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onJourneyStart}><Text uppercase={false}>{StartButtonCaption}</Text></SpinnerButton> : null}
       {!!~CAN_COMPLETE_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.completeButton} onPress={this.onJourneyComplete}><Text uppercase={false}>{StopButtonCaption}</Text></SpinnerButton> : null}
-      <View style={{paddingLeft: 25 }}>
+      <ListItem padded>
         <OriginDestinationSummary order={order}/>
-      </View>
-      <View style={{ padding: 10 }}>
-        <MapView style={{ height: height / 3, width: width / 1.05, padding: 10 }} ref={c => { map = c; }}  onMapReady={this.fitMap} initialRegion={region}
-          showsUserLocation={true} showsBuildings={false} showsPointsOfInterest={false} toolbarEnabled={false} showsMyLocationButton={true}>
-          <MapViewDirections client={client} locations={[initialPosition, origin]} strokeWidth={3} strokeColor={shotgun.brandSecondary}/>
-          {destination ? <MapViewDirections client={client} locations={[origin, destination]} strokeWidth={3} /> : null}
-          {origin ? <MapView.Marker coordinate={{...origin}}><AddressMarker address={origin.line1}/></MapView.Marker> : null}
-          {destination ? <MapView.Marker coordinate={{...destination}}><AddressMarker address={destination.line1}/></MapView.Marker> : null}
-        </MapView>
-      </View>
+      </ListItem>
+      <ListItem padded last>
+        <MapViewStatic client={client} width={mapWidth} height={mapHeight} origin={origin} destination={destination}/>
+      </ListItem>
     </View>;
   }
 }
@@ -104,11 +89,6 @@ resourceDictionary.
 
 const styles = {
   startButton: {
-    marginTop: shotgun.contentPadding,
-    marginBottom: 5
-  },
-  completeButton: {
-    marginTop: shotgun.contentPadding,
     marginBottom: 15
   }
 };

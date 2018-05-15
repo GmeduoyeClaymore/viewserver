@@ -16,7 +16,6 @@ import CancelControl from './progress/CancelControl';
 import VehicleDetails from './progress/VehicleDetails';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 
-const JourneyJobInProgress = (message) => ({order}) => ( order.journeyOrderStatus == 'ENROUTE' ? <Row  style={{paddingLeft: 25, paddingTop: 10, paddingBottom: 25}}><Spinner style={{height: 15, marginRight: 10}}/><Text>{message}</Text></Row> : null);
 class CustomerOrderDetail extends Component{
   constructor(props) {
     super(props);
@@ -122,6 +121,18 @@ const PaymentStagesAndSummary = (props) => {
   </ReduxRouter>];
 };
 
+const JourneyJobInProgress = (message) => ({order}) => ( order.journeyOrderStatus == 'ENROUTE' ? <View padded style={{flexDirection: 'row'}}>
+  <Spinner size={shotgun.isAndroid ? 30 : 1} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
+  <Text style={{alignSelf: 'center'}} numberOfLines={1}>{message}</Text></View> : null);
+
+const styles = {
+  waitingSpinner: {
+    height: 15,
+    marginRight: 10,
+    alignSelf: 'center'
+  }
+}
+
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
@@ -133,13 +144,13 @@ resourceDictionary.
   property('AcceptedControls', [OrderSummary]).
     personell([CustomerNegotiationPanel, CancelControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([CustomerNegotiationPanel,CancelControl, OrderSummary]).
-    delivery([CustomerNegotiationPanel, JourneyJobInProgress('Delivery In Progress'),CancelControl,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
+    delivery([CustomerNegotiationPanel, JourneyJobInProgress('Delivery In Progress'), CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
     rubbish([CustomerNegotiationPanel, JourneyJobInProgress('Collection In Progress'), CancelControl, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
   property('InProgressControls', [OrderSummary]).
     personell([CustomerPriceSummary, CompleteControl, PaymentStagesAndSummary/*, PersonellCustomerOrderInProgress*/]).
     hire([CustomerPriceSummary,CompleteControl, CustomerHireOrderInProgress, OrderSummary]).
     delivery([CustomerPriceSummary, JourneyJobInProgress('Delivery In Progress'), CompleteControl, CustomerJourneyOrderInProgress,VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>]).
-    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'),CompleteControl , CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
+    rubbish([CustomerPriceSummary, JourneyJobInProgress('Collection In Progress'), CompleteControl , CustomerJourneyOrderInProgress, VehicleDetails, props => <OrderSummary hideMap={true} {...props}/>])
 /*eslint-enable */
 
 export default connect(

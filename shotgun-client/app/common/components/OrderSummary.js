@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {View, Text, List, ListItem, Row, Content} from 'native-base';
+import {Text, List, ListItem, Row, Content} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
 import moment from 'moment';
 import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 class OrderSummary extends Component{
   constructor(props){
@@ -29,10 +30,11 @@ class OrderSummary extends Component{
 
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, requiredDate, orderProduct} = order;
+    const {assignedPartner, customer, requiredDate, orderStatus, orderProduct} = order;
+    const isComplete = orderStatus == OrderStatuses.COMPLETED;
 
     return <Content><List>
-      {assignedPartner || !userCreatedThisOrder ? <ListItem paddedLeftRight paddedTop last>
+      {!isComplete && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTop last>
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}

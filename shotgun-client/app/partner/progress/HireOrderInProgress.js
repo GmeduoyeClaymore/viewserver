@@ -43,7 +43,6 @@ class HireOrderInProgress extends Component{
 
 const styles = {
   startButton: {
-    marginTop: shotgun.contentPadding,
     marginBottom: 15
   }
 };

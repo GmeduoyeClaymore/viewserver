@@ -25,7 +25,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
             <Title numberOfLines={1} style={{alignSelf: 'flex-start'}}>{user.firstName} {user.lastName}</Title>
           </Col>
           <Col size={10} style={styles.ratingCol}>
-            <AverageRating rating={user.ratingAvg}/>
+            <AverageRating rating={user.ratingAvg} text={''}/>
           </Col>
           <Col size={20} style={styles.imageCol}>
             {user.imageUrl != undefined ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={styles.image}/> : null}

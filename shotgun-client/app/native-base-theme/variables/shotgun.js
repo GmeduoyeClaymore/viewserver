@@ -296,6 +296,8 @@ export default {
   listItemBorderWidth: 3 / PixelRatio.getPixelSizeForLayoutSize(1),
   contentPadding: 25,
 
+  isAndroid: platform === 'android',
+
   get darkenHeader() {
     return color(this.tabBgColor)
       .darken(0.03)
