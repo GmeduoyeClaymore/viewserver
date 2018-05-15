@@ -56,20 +56,10 @@ class PartnerLanding extends Component {
     const {busy, path, isLoggedIn, history, user, daosHaveBeenRegistered} = this.props;
     const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerMyOrders/Posted`, ordersRoot: `${path}`};
     if (!isLoggedIn){
-      <Redirect just to="/" history={history}/>;
+      return <Redirect just to="/" history={history}/>;
     }
-    return !daosHaveBeenRegistered ? <LoadingScreen text="Loading..."/> :
-      [<ReactNativeModal key='connectingModal'
-        isVisible={busy}
-        backdropOpacity={0.4}>
-        <View style={styles.modalContainer}>
-          <View style={styles.innerContainer}>
-            <Spinner/>
-            <Text>Loading Partner Landing Page...</Text>
-          </View>
-        </View>
-      </ReactNativeModal>,
-      <ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps}  defaultRoute="PartnerMyOrders"  /*defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'f75c1d96-cc7b-41ef-a86c-be7381307c83'}}}*/>
+    return busy ? <LoadingScreen text="Loading Partner Landing Screen ..."/> :
+      [<ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps}  defaultRoute="PartnerMyOrders"  /*defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'f75c1d96-cc7b-41ef-a86c-be7381307c83'}}}*/>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
         <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
@@ -78,7 +68,7 @@ class PartnerLanding extends Component {
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'UserDetail'} exact component={UserDetail}/>
         <Route path={'Settings'} component={PartnerSettings}/>
-        <Route path={'UserRelationships'} component={UserRelationships} showAll={true}/>
+        <Route path={'UserRelationships'} component={UserRelationships} justFriends={false}/>
       </ReduxRouter>,
       <PartnerMenuBar key='menuBar' {...this.props}/>];
   }

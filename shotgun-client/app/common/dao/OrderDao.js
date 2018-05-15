@@ -93,6 +93,13 @@ export default class OrdersDao{
     return orderId;
   };
 
+  updateOrderVisibility = async ({orderId, justForFriends, orderContentTypeId}) => {
+    const controller = this.getControllerForOrder(orderContentTypeId);
+    await this.client.invokeJSONCommand(controller, 'updateOrderVisibility', {orderId, justForFriends});
+    Logger.info(`Order ${orderId} justForFriends ${justForFriends} updated`);
+    return orderId;
+  };
+
   addPaymentStage = async ({orderId, orderContentTypeId, amount, name, description, paymentStageType}) =>  {
     const controller = this.getControllerForOrder(orderContentTypeId);
     const paymentStageId = await this.client.invokeJSONCommand(controller, 'addPaymentStage', {orderId, amount, name, description, paymentStageType});

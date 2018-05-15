@@ -32,6 +32,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         this.getExecutionContext().getFunctionRegistry().register("getResponseField", GetPartnerResponseField.class);
         this.getExecutionContext().getFunctionRegistry().register("getOrderField", GetOrderField.class);
         this.getExecutionContext().getFunctionRegistry().register("getRelationship", GetRelationship.class);
+        this.getExecutionContext().getFunctionRegistry().register("isOrderVisible", IsOrderVisible.class);
         this.getExecutionContext().getFunctionRegistry().register("isBlocked", IsBlocked.class);
         this.getExecutionContext().getFunctionRegistry().register("isAfter", IsAfter.class);
         SpreadFunctionRegistry spreadColumnRegistry = this.getExecutionContext().getSpreadColumnRegistry();

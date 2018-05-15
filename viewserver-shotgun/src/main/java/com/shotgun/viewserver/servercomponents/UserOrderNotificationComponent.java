@@ -9,6 +9,8 @@ import com.shotgun.viewserver.setup.datasource.OrderDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import com.shotgun.viewserver.user.ProductSpreadFunction;
 import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.user.UserRelationship;
+import com.shotgun.viewserver.user.UserRelationshipStatus;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.DataSourceHelper;
 import io.viewserver.datasource.IDataSourceRegistry;
@@ -28,7 +30,6 @@ import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Scheduler;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 
@@ -121,7 +122,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                 log.info("Subscribing user - " + user.getUserId() + " to index output " + nameForQueryHolders);
                 IOutput out = ((IndexOperator) operator).getOrCreateOutput(nameForQueryHolders, queryHolders);
                 subscribe1.set(out.observable("orderId", "orderDetails").
-                        filter(ev -> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
+                        filter(ev -> Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())).observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
                     HashMap eventData = (HashMap) ev.getEventData();
                     BasicOrder order = JSONBackedObjectFactory.create((HashMap) eventData.get("orderDetails"), BasicOrder.class);
                     if(hasNotificationForUser(order.getOrderId(), user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id
@@ -132,9 +133,12 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                         log.info("Partner already assigned not notifying the community of " + order.getOrderId());
                         return;
                     }
-                    setNotificationForUser(order.getOrderId(), user.getUserId());
+
                     log.info("Found order - " + order.getOrderId() + " for user " + user.getUserId() + " with products " + String.join(",", productIds));
-                    notifyUserOfNewOrder(order, user);
+                    NotificationStatus status = notifyUserOfNewOrder(order, user);
+                    if( NotificationStatus.NotSentDontRetry.equals(status) ||  NotificationStatus.Sent.equals(status)){
+                        setNotificationForUser(order.getOrderId(), user.getUserId());
+                    }
                 }, err -> log.error("Issue subscribing to orders {}", err)));
 
                 this.subscriptions.add(subscribe1.get());
@@ -182,23 +186,33 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
     }
 
-    private void notifyUserOfNewOrder(BasicOrder order, User user) {
+    private NotificationStatus notifyUserOfNewOrder(BasicOrder order, User user) {
         if(new DateTime(order.getRequiredDate()).isBeforeNow()){
             log.info("Not resending historical order");
-            return;
+            return NotificationStatus.NotSentDontRetry;
         }
         if(user.isBlocked(order.getCustomerUserId())){
             log.info("Not sending as user " + user.getUserId() + " is blocked by " + order.getCustomerUserId());
-            return;
+            return NotificationStatus.NotSentRetry;
         }
+
+        UserRelationship relationship = user.getRelationship(order.getPartnerUserId());
+        Boolean justForFriends = order.isJustForFriends();
+        if(justForFriends != null && justForFriends && (relationship == null || !UserRelationshipStatus.ACCEPTED.equals(relationship.getRelationshipStatus()))){
+            log.info("Not sending as order is just for friends and  " + user.getUserId() + " is not a friend of " + order.getCustomerUserId());
+            return  NotificationStatus.NotSentRetry;
+        }
+
         LatLng userHome = user.getLocation();
         DeliveryAddress origin = order.getOrigin();
         double k1 = Distance.distance(userHome.getLatitude(), userHome.getLongitude(), origin.getLatitude(), origin.getLongitude(), "K");
         boolean k   = k1 <= user.getRange();
         if(k || disableDistanceCheck){
             sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job - £" + df.format(order.getAmount()/100), "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you", false);
+            return  NotificationStatus.Sent;
         }
-;    }
+        return  NotificationStatus.NotSentRetry;
+    }
 
     @Override
     public void stop() {
@@ -213,5 +227,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     @Override
     public IMessagingController getMessagingController() {
         return messagingController;
+    }
+
+    enum NotificationStatus{
+        NotSentRetry,
+        NotSentDontRetry,
+        Sent
     }
 }
