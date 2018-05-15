@@ -13,10 +13,12 @@ import java.util.List;
 public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
     private boolean disconnectOnTimeout;
+    private int timeoutInterval;
 
-    public ShotgunBasicServerComponents(List<IEndpoint> endpointList, boolean disconnectOnTimeout) {
+    public ShotgunBasicServerComponents(List<IEndpoint> endpointList, boolean disconnectOnTimeout, int timeoutInterval) {
         super(endpointList);
         this.disconnectOnTimeout = disconnectOnTimeout;
+        this.timeoutInterval = timeoutInterval;
         JacksonSerialiser.getInstance().registerModules(
                 new Module[]{
                         new OrderSerializationModule()
@@ -28,6 +30,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     public void start() {
         super.start();
         this.serverNetwork.setDisconnectOnTimeout(disconnectOnTimeout);
+        this.serverNetwork.setTimeoutInterval(timeoutInterval);
         this.getExecutionContext().getFunctionRegistry().register("containsProduct", ContainsProduct.class);
         this.getExecutionContext().getFunctionRegistry().register("getResponseField", GetPartnerResponseField.class);
         this.getExecutionContext().getFunctionRegistry().register("getOrderField", GetOrderField.class);

@@ -16,7 +16,6 @@ import com.shotgun.viewserver.setup.loaders.H2RecordLoaderCollection;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.DirectTableUpdater;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
-import io.viewserver.adapters.firebase.FirebaseTableUpdater;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
 import io.viewserver.core.ExecutionContext;
@@ -52,7 +51,7 @@ public class ShotgunServerLauncher{
     }
 
     private static void SharedConfig(MutablePicoContainer container){
-        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")), Boolean.parseBoolean(get("server.disconnectOnTimeout")));
+        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")), Boolean.parseBoolean(get("server.disconnectOnTimeout")), Integer.parseInt(get("server.timeoutInterval")));
         container.addComponent(basicServerComponent);
         container.addComponent(basicServerComponent.getServerCatalog());
         container.addComponent(basicServerComponent.getExecutionContext());
