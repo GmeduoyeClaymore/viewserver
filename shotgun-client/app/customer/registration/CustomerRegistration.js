@@ -44,7 +44,7 @@ const mapStateToProps = (state, nextOwnProps) => {
     parentHistory,
     ...rest,
     errors: getOperationError(state, 'loginDao', 'registerAndLoginCustomer'),
-    busy: isAnyOperationPending(state, [{ loginDao: 'registerAndLoginCustomer'}])
+    busyUpdating: isAnyOperationPending(state, [{ loginDao: 'registerAndLoginCustomer'}])
   };
 };
 

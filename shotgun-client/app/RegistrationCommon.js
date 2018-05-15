@@ -11,10 +11,10 @@ export default RegistrationCommon = ({history}) => {
     </View>
     <View style={styles.productSelectView}>
       <Button style={[styles.productSelectButton, {marginBottom: shotgun.contentPadding}]} light onPress={() => history.push('/Customer/Registration')}>
-        <Text style={styles.productSelectText} uppercase={false}>Create a job</Text>
+        <Text style={styles.productSelectText} uppercase={false}>Looking for people?</Text>
       </Button>
       <Button style={styles.productSelectButton} light onPress={() => history.push('/Partner/Registration')}>
-        <Text style={styles.productSelectText} uppercase={false}>Work on a job</Text>
+        <Text style={styles.productSelectText} uppercase={false}>Looking for work?</Text>
       </Button>
     </View>
   </Content>;

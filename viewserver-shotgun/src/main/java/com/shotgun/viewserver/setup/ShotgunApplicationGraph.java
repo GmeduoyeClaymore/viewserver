@@ -48,6 +48,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         reportDefinitions.put(OrderRequestReport.ID, OrderRequestReport.getReportDefinition());
         reportDefinitions.put(OperatorAndConnectionReport.ID, OperatorAndConnectionReport.getReportDefinition());
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
+        reportDefinitions.put(ProductReport.ID, ProductReport.getReportDefinition());
         reportDefinitions.put(PaymentsReport.ID, PaymentsReport.getReportDefinition());
         reportDefinitions.put(OrderResponseReport.ID, OrderResponseReport.getReportDefinition());
         /*reportDefinitions.put(LegacyUserRelationshipReport.USER_RELATIONSHIPS, LegacyUserRelationshipReport.getReportDefinition(false));

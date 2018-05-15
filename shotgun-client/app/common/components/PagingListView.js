@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {ErrorRegion} from 'common/components';
 import {getOperationErrors, getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions, isAnyOperationPending, getSnapshotComplete} from 'common/dao';
 import Logger from 'common/Logger';
-import {List} from 'native-base';
+import {List, Row} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 class PagingListView extends Component {

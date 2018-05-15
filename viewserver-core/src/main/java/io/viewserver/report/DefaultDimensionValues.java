@@ -21,6 +21,11 @@ public class DefaultDimensionValues {
         values = new ArrayList<ReportContext.DimensionValue>();
     }
 
+    public DefaultDimensionValues withDimValue(Object... vals){
+        values.add(new ReportContext.DimensionValue(name,false,vals));
+        return this;
+    }
+
     public DefaultDimensionValues withValue(ReportContext.DimensionValue value){
         values.add(value);
         return this;

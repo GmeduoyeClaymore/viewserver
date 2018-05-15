@@ -3,7 +3,7 @@ import {Text, View} from 'native-base';
 import {connect} from 'custom-redux';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {rateUserOrder} from 'common/actions/CommonActions';
-import {Icon, AverageRating} from 'common/components';
+import {Icon, AverageRating, ValidatingInput} from 'common/components';
 
 const RatingAction = ({isRatingCustomer, order, dispatch}) => {
   const {assignedPartner, customer} = order;

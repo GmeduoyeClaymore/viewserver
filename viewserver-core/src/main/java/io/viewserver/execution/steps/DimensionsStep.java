@@ -55,7 +55,7 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
 
 
         reportExecutionPlanContext.addNodes(indexNode);
-        reportExecutionPlanContext.setInput(indexNode.getName(), indexNode.getConfigForOutputName());
+        reportExecutionPlanContext.setInput(indexNode.getName(), reportExecutionPlanContext.getParameterHelper().substituteParameterValues(indexNode.getConfigForOutputName()));
     }
 
 

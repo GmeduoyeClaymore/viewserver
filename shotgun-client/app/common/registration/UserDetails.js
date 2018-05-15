@@ -33,7 +33,7 @@ class UserDetails extends Component{
 
   render(){
     const {onChangeText} = this;
-    const {nextAction, user = {}, isDobDatePickerVisible, errors, history, next, submitButtonCaption = 'Save'} = this.props;
+    const {nextAction, user = {}, isDobDatePickerVisible, errors, history, next, submitButtonCaption = 'Save', busyUpdating} = this.props;
     const isPartner = user.type === 'partner';
 
     return <Container>
@@ -124,7 +124,7 @@ class UserDetails extends Component{
             </Col>
           </Row>
         </View>
-        <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
+        <ValidatingButton paddedBottomLeftRight busy={busyUpdating} fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
           <Text uppercase={false}>{!next ? submitButtonCaption : 'Continue'}</Text>
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
