@@ -13,7 +13,8 @@ class CustomerMyOrders extends Component{
   }
 
   render(){
-    const {history, path, height, parentPath, isOrdersDaoRegistered} = this.props;
+    const {history, path, height, parentPath, isOrdersDaoRegistered, ...rest} = this.props;
+    const routerHeight = height - shotgun.tabHeight;
 
     return <Container>
       <Header hasTabs>
@@ -23,7 +24,7 @@ class CustomerMyOrders extends Component{
         <Tab heading='Live Jobs' onPress={() => this.goToTabNamed('Live')}/>
         <Tab heading='Complete' onPress={() => this.goToTabNamed('Complete')}/>
       </Tabs>
-      {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...this.props}  height={height - shotgun.tabHeight} path={path} defaultRoute='Live'>
+      {isOrdersDaoRegistered ? <ReduxRouter  name="CustomerOrdersRouter" {...rest}  height={routerHeight} path={path} defaultRoute='Live'>
         <Route path={'Live'} parentPath={parentPath} isCompleted={false} component={CustomerMyOrdersListView} />
         <Route path={'Complete'} parentPath={parentPath}  isCompleted={true} component={CustomerMyOrdersListView} />
       </ReduxRouter> : <LoadingScreen text="Waiting for order data.."/>}

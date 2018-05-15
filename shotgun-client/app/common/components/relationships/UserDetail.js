@@ -162,12 +162,14 @@ const styles = {
     margin: 0,
     backgroundColor: shotgun.brandPrimary,
     borderRadius: 0,
+    paddingTop: shotgun.contentPadding,
     width: shotgun.deviceWidth,
     height: shotgun.deviceHeight,
   },
   userInfoView: {
-    height: 80,
-    padding: shotgun.contentPadding
+    height: 60,
+    paddingLeft: shotgun.contentPadding,
+    paddingRight: shotgun.contentPadding
   },
   userContentTypesView: {
     height: 10

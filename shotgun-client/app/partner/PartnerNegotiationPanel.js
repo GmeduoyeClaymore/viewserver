@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import {withExternalState} from 'custom-redux';
-import {Text, Row, View, Spinner, Item, Label} from 'native-base';
+import {Text, Row, View, Spinner, Item, Label, Col} from 'native-base';
 import {ValidatingInput, ValidatingButton, CurrencyInput, Icon, SpinnerButton} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
@@ -73,12 +73,17 @@ class PartnerNegotiationPanel extends Component {
 
         {awaitingCustomerResponse ?
           <Row>
-            <Spinner size={IS_ANDROID ? 30 : 1} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
-            <Text style={{alignSelf: 'center'}}>Awaiting customer response</Text>
-
-            <SpinnerButton style={styles.cancelButton} danger fullWidth onPress={this.onCancelResponse}>
-              <Text uppercase={false}>Withdraw offer</Text>
-            </SpinnerButton>
+            <Col width={50}>
+              <Row>
+                <Spinner size={IS_ANDROID ? 30 : 1} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
+                <Text style={{alignSelf: 'center'}} numberOfLines={1}>Awaiting customer response</Text>
+              </Row>
+            </Col>
+            <Col width={50}>
+              <SpinnerButton style={styles.cancelButton} danger fullWidth onPress={this.onCancelResponse}>
+                <Text uppercase={false}>Withdraw</Text>
+              </SpinnerButton>
+            </Col>
           </Row> : null}
 
         {hasCustomerResponded && !awaitingCustomerResponse ?
@@ -109,11 +114,10 @@ const styles = {
     paddingBottom: 10
   },
   cancelButton: {
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
     flex: 1,
     marginRight: 0,
-    marginLeft: 10,
-    width: 50
+    marginLeft: 10
   },
   waitingSpinner: {
     height: 15,

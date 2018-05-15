@@ -32,11 +32,11 @@ class OrderListItem extends Component {
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: order.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
-          <Col size={80}>
+          <Col size={70}>
             <Text style={styles.name} numberOfLines={1}>{order.orderProduct.name}</Text>
             <OriginDestinationSummary order={order}/>
           </Col>
-          <Col size={35}>
+          <Col size={30}>
             <Currency decimals={0} value={order.amount} style={styles.price} suffix={order.paymentType === PaymentTypes.DAYRATE ? 'p/d' : undefined}/>
           </Col>
         </Row>
@@ -92,8 +92,6 @@ const styles = {
     fontWeight: 'bold',
     padding: 0,
     margin: 0,
-    marginTop: 15,
-    lineHeight: 20,
     alignSelf: 'flex-end'
   },
   name: {
