@@ -17,7 +17,7 @@ export class UserInfo extends Component{
       <Row>
         {user.imageUrl ? <Image source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/> : null}
         <Col style={styles.name}>
-          <Text>{user.firstName} {user.lastName}</Text>
+          <Text numberOfLines={1}>{user.firstName} {user.lastName}</Text>
           <AverageRating rating={user.ratingAvg}/>
         </Col>
         {showCallButton ? <Col>
@@ -33,7 +33,7 @@ export class UserInfo extends Component{
 
 const styles = {
   name: {
-    alignContent: 'flex-start'
+    alignContent: 'center'
   },
   images: {
     aspectRatio: 1,
