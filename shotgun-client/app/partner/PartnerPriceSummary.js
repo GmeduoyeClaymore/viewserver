@@ -36,7 +36,7 @@ export default class PartnerPriceSummary extends Component{
 
 const styles = {
   grid: {
-    marginBottom: 15,
+    marginBottom: 15
   },
   row: {
     justifyContent: 'center'
