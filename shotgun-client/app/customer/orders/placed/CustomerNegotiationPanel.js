@@ -3,7 +3,7 @@ import {TouchableOpacity, Image} from 'react-native';
 import {ListItem, View, Text, Grid, Row, Spinner, Col, Button, Item, Label} from 'native-base';
 import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, UserInfo, AverageRating, Icon} from 'common/components';
 import moment from 'moment';
-import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer} from 'customer/actions/CustomerActions';
+import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer, updateOrderVisibility} from 'customer/actions/CustomerActions';
 import yup from 'yup';
 import shotgun from 'native-base-theme/variables/shotgun';
 
@@ -47,6 +47,12 @@ export default class OrderNegotiationPanel extends Component{
     const {orderId, orderContentTypeId} = order;
     const {amount} = this.state;
     dispatch(updateOrderAmount({orderId, orderContentTypeId, amount}, this.clearAmount));
+  }
+
+  showOrderToEveryone = () => {
+    const {order, dispatch} = this.props;
+    const {orderId, orderContentTypeId} = order;
+    dispatch(updateOrderVisibility({orderId, orderContentTypeId, justForFriends: false}, this.clearAmount));
   }
 
   onUserInfoPress = (partnerId) => {
@@ -157,6 +163,7 @@ export default class OrderNegotiationPanel extends Component{
               </ValidatingButton>
             </Col>
           </Row> : null}
+        {order.justForFriends ? <SpinnerButton style={{marginTop: 10}} busy={busyUpdating} info fullWidth onPress={() => this.showOrderToEveryone()}><Text uppercase={false}>Advertise to Everyone</Text></SpinnerButton> : null}
       </Grid>
 
       {this.getPartnerResponses()}

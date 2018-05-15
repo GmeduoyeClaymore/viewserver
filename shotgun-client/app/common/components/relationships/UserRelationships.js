@@ -45,14 +45,14 @@ class UserRelationships extends Component{
   }
 
   getOptionsFromProps = (props) => {
-    const {selectedProduct, me = {}, showAll} = props;
+    const {selectedProduct, me = {}, justFriends} = props;
     const {latitude, longitude} = me;
 
     return {
       reportId: selectedProduct ? 'usersForProduct' : 'userRelationships',
       selectedProduct,
       position: {latitude, longitude},
-      showUnrelated: showAll,
+      showUnrelated: !justFriends,
       columnsToSort: [{name: 'distance', direction: 'asc'},  {name: 'ratingAvg', direction: 'desc'}, {name: 'firstName', direction: 'asc'}, {name: 'lastName', direction: 'asc'}]
     };
   }
@@ -74,23 +74,23 @@ class UserRelationships extends Component{
     }
   }
 
-  setShowAll = (showAll) => {
-    this.setState({showAll}, () => this.updateSubscription());
+  setJustFriends = (justFriends) => {
+    this.setState({justFriends}, () => this.updateSubscription());
   }
 
   render(){
     const {UserViews} = this;
-    const {selectedUser, oldOptions, me, parentPath, path, showAll} = this.props;
+    const {selectedUser, oldOptions, me, parentPath, path, justFriends} = this.props;
     if (!me){
       return <LoadingScreen text="Loading.."/>;
     }
     return <Content><Grid>
       <Row>
         <Row style={{...styles.showAllView, marginTop: IS_ANDROID ? 0 : 15 }}>
-          <Button style={styles.showAllButton} light={showAll} onPress={() => this.setShowAll(false)}>
+          <Button style={styles.showAllButton} light={!justFriends} onPress={() => this.setJustFriends(true)}>
             <Text style={styles.buttonText}>Friends</Text>
           </Button>
-          <Button style={styles.showAllButton} light={!showAll} onPress={() => this.setShowAll(true)}>
+          <Button style={styles.showAllButton} light={justFriends} onPress={() => this.setJustFriends(false)}>
             <Text style={styles.buttonText}>Everyone</Text>
           </Button>
         </Row>

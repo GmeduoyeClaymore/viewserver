@@ -32,6 +32,18 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
         );
     }
 
+    @ControllerAction(path = "updateOrderVisibility", isSynchronous = true)
+    default void updateOrderVisibility(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "justForFriends") Boolean justForFriends) {
+        this.transform(
+                orderId,
+                order -> {
+                    order.set("justForFriends", justForFriends);
+                    return true;
+                },
+                NegotiatedOrder.class
+        );
+    }
+
 
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
     default void respondToOrder(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "requiredDate") Date requiredDate, @ActionParam(name = "amount") Integer amount) {

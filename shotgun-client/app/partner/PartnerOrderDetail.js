@@ -148,6 +148,9 @@ const mapStateToProps = (state, initialProps) => {
   const { orderId, responseParams } = getNavigationProps(initialProps);
   const order = findOrderSummaryFromDao(state, orderId, 'singleOrderSummaryDao');
   const user = getDaoState(state, ['user'], 'userDao');
+  if (!user){
+    return;
+  }
   const { bankAccount } = user;
   const isPendingOrderSummarySubscription = isAnyOperationPending(state, [{ singleOrderSummaryDao: 'resetSubscription'}]);
   return {

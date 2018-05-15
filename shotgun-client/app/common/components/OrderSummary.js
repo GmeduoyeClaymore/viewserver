@@ -35,7 +35,7 @@ class OrderSummary extends Component{
       {assignedPartner || !userCreatedThisOrder ? <ListItem paddedLeftRight paddedTop last>
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
-
+      {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}
       {this.renderMap()}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>

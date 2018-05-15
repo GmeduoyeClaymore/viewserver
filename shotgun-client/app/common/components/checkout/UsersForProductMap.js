@@ -40,7 +40,7 @@ class UsersForProductMap extends Component{
   }
 
   render(){
-    const {order, errors, next, client, history} = this.props;
+    const {order, errors, next, client, history, stateKey} = this.props;
     const {origin} = order;
     const disableDoneButton = !origin || !origin.line1;
     const geoLocation = !origin || !origin.line1 ? undefined : {latitude: origin.latitude, longitude: origin.longitude};
@@ -56,7 +56,7 @@ class UsersForProductMap extends Component{
               {this.getLocationText(origin, 'origin', 'Enter job location')}
             </Col>
           </Row>
-          <UserRelationshipsControl hideRelationships={disableDoneButton} geoLocation={geoLocation} {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
+          <UserRelationshipsControl stateKey={stateKey} hideRelationships={disableDoneButton} geoLocation={geoLocation} {...this.props} client={client} order={order} onPressAssignUser={this.assignDeliveryToUser}/>
           <ErrorRegion errors={errors} />
         </Row>
       </Grid>

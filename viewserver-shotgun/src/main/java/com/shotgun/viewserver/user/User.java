@@ -140,7 +140,7 @@ public interface User extends DynamicJsonBackedObject{
     }
 
     default UserRelationship getRelationship(String partnerUserId){
-        return fromArray(getRelationships()).filter(c-> c.getToUserId().equals(partnerUserId)).findAny().get();
+        return fromArray(getRelationships()).filter(c-> c.getToUserId().equals(partnerUserId)).findAny().orElse(null);
     }
 
     default void addPendingMessage(AppMessage savedPaymentCard){
