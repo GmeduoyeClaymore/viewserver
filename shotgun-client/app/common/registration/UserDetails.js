@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Input, Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
+import {Input, Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
 import yup from 'yup';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
+import {ValidatingInput, ValidatingButton, Icon, ImageSelector, ErrorRegion} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';
@@ -33,7 +33,7 @@ class UserDetails extends Component{
 
   render(){
     const {onChangeText} = this;
-    const {history, next, user, isDobDatePickerVisible} = this.props;
+    const {nextAction, user = {}, isDobDatePickerVisible, errors, history, next, submitButtonCaption = 'Save'} = this.props;
     const isPartner = user.type === 'partner';
 
     return <Container>
@@ -45,8 +45,9 @@ class UserDetails extends Component{
         </Left>
         <Body><Title>Your Details</Title></Body>
       </Header>
-      <Content keyboardShouldPersistTaps="always">
-        <Grid>
+      <Content keyboardShouldPersistTaps="always" disableKBDismissScroll={true} enableResetScrollToCoords={false}>
+        <ErrorRegion errors={errors}/>
+        <View>
           <Row>
             <Col width={isPartner ? 40 : 100}>
               <Row>
@@ -122,12 +123,13 @@ class UserDetails extends Component{
               </Item>
             </Col>
           </Row>
-        </Grid>
+        </View>
+        <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
+          <Text uppercase={false}>{!next ? submitButtonCaption : 'Continue'}</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
       </Content>
-      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
+  
     </Container>;
   }
 }

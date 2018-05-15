@@ -14,12 +14,18 @@ import {INITIAL_STATE} from './PartnerRegistrationInitialState';
 import ProductCategoryDao from 'common/dao/ProductCategoryDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
 import ProductDao from 'common/dao/ProductDao';
+import {nextAction} from './PartnerRegistrationUtils';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class PartnerRegistration extends Component {
   static InitialState = INITIAL_STATE;
   static stateKey = 'partnerRegistration';
   constructor() {
     super();
+  }
+
+  beforeNavigateTo(){
+    this.setState(PartnerRegistration.InitialState);
   }
 
   componentDidMount(){
@@ -34,24 +40,29 @@ class PartnerRegistration extends Component {
   }
 
   render() {
-    const partnerRegistrationProps = {...this.props, stateKey: PartnerRegistration.stateKey};
+    const partnerRegistrationProps = {...this.props, nextAction, submitButtonCaption: 'Register'};
     const {path} = this.props;
-    return <ReduxRouter  name="PartnerRegistrationRouter" resizeForKeyboard={true} {...partnerRegistrationProps} defaultRoute={'PartnerRegistrationLanding'}>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'PartnerRegistrationLanding'} exact component={PartnerRegistrationLanding}/>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'Login'} exact component={PartnerLogin}/>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'UserDetails'} next={`${path}/AddressDetails`} exact component={UserDetails}/>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'AddressDetails'} next={`${path}/PartnerAccountType`} exact component={AddressDetails}/>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup} showRecent={false}/>
-      <Route stateKey={PartnerRegistration.stateKey} transition='left' path={'PartnerAccountType'} exact component={PartnerAccountType}/>
+    const routeProps = {transition: 'left', stateKey: PartnerRegistration.stateKey};
+    return <ReduxRouter  name="PartnerRegistrationRouter" resizeForKeyboard={false} {...partnerRegistrationProps} defaultRoute={'PartnerRegistrationLanding'}>
+      <Route {...routeProps} path={'PartnerRegistrationLanding'} exact component={PartnerRegistrationLanding}/>
+      <Route {...routeProps} path={'Login'} exact component={PartnerLogin}/>
+      <Route {...routeProps} path={'UserDetails'} next={`${path}/PartnerAccountType`} exact component={UserDetails}/>
+      <Route {...routeProps} path={'AddressDetails'} next={`${path}/PartnerAccountType`} exact component={AddressDetails}/>
+      <Route {...routeProps} path={'AddressLookup'} exact component={AddressLookup} showRecent={false}/>
+      <Route {...routeProps} path={'PartnerAccountType'} exact component={PartnerAccountType}/>
     </ReduxRouter>;
   }
 }
 
 const mapStateToProps = (state, nextOwnProps) => {
   const {match: parentMatch} = nextOwnProps;
+  const errors = getOperationError(state, 'loginDao', 'registerAndLoginPartner') || '';
+  const busy = isAnyOperationPending(state, [{ loginDao: 'registerAndLoginPartner'}]);
   return {
     parentMatch,
-    ...nextOwnProps
+    ...nextOwnProps,
+    busy,
+    errors
   };
 };
 

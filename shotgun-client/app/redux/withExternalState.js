@@ -2,7 +2,7 @@
 import React from 'react';
 import NonReactStatics from 'hoist-non-react-statics';
 import {connect} from './connect';
-import {UPDATE_COMPONENT_STATE} from 'common/dao/ActionConstants';
+import {UPDATE_COMPONENT_STATE, CLEAR_COMPONENT_STATE} from 'common/dao/ActionConstants';
 import Logger from 'common/Logger';
 import removeProperties from './removeProperties';
 import invariant  from 'invariant';
@@ -52,6 +52,14 @@ const setStateWithPath = (stateKey, partialState, path, continueWith) => {
   return {type: UPDATE_COMPONENT_STATE(stateKey), path: [...getPath(stateKey), ...path], data: partialState, continueWith};
 };
 
+const clearState = (stateKey, continueWith) => {
+  return clearComponentStateAtPath(stateKey, [], continueWith);
+};
+
+const clearComponentStateAtPath = (stateKey, path, continueWith) => {
+  return {type: CLEAR_COMPONENT_STATE(stateKey), path: [...getPath(stateKey), ...path], continueWith};
+};
+
 const createSetState = (stateKey) => {
   return function(partialState, continueWith, dispatchArgument){
     invariant((this.props || dispatchArgument), "You're probably trying to use withExternalState on a stateless component. This means we cannot get dispatch from the props so either pass it in as the third argument to set state or make the component stateful");
@@ -68,13 +76,29 @@ const createSetStateWithPath = (stateKey) => {
   };
 };
 
+const createClearState = (stateKey) => {
+  return function(continueWith, dispatchArgument){
+    invariant((this.props || dispatchArgument), "You're probably trying to use withExternalState on a stateless component. This means we cannot get dispatch from the props so either pass it in as the third argument to set state or make the component stateful");
+    const {dispatch = dispatchArgument} = (this.props || {});
+    dispatch(clearState(stateKey, continueWith));
+  };
+};
+
+const createClearStateAtPath = (stateKey) => {
+  return function(path, continueWith, dispatchArgument){
+    invariant((this.props || dispatchArgument), "You're probably trying to use withExternalState on a stateless component. This means we cannot get dispatch from the props so either pass it in as the third argument to set state or make the component stateful");
+    const {dispatch = dispatchArgument} = (this.props || {});
+    dispatch(clearComponentStateAtPath(stateKey, path, continueWith));
+  };
+};
+
 /**
  * A public higher-order component to access the imperative API
  */
 
 
 const removeUnwantedProperties = (props) => (
-  removeProperties(props, ['stateKey', 'setState', 'setStateWithPath', 'propsFromStateToPassIntoComponent'])
+  removeProperties(props, ['stateKey', 'setState', 'setStateWithPath', 'clearState', 'clearStateAtPath', 'propsFromStateToPassIntoComponent'])
 );
 
 const createEither = ({
@@ -102,8 +126,12 @@ const wrapperFactory = (Component, {
     stateKey = superStateKeyOverride || stateKey;
     const newSetState = createSetState(stateKey);
     const setStateWithPath = createSetStateWithPath(stateKey);
+    const newClearState = createClearState(stateKey);
+    const newClearStateAtPath = createClearStateAtPath(stateKey);
     Component.prototype.setState =  newSetState;
-    return {setState: newSetState, setStateWithPath, Component, stateKey};
+    Component.prototype.clearState =  newClearState;
+    Component.prototype.clearStateAtPath =  newClearStateAtPath;
+    return {setState: newSetState, setStateWithPath, clearState: newClearState, clearStateAtPath: newClearStateAtPath, Component, stateKey};
   };
 
   const result = class ComponentWrapper extends React.Component{

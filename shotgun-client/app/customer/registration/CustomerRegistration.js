@@ -9,6 +9,8 @@ import {registerNakedDao} from 'common/actions/CommonActions';
 import {Route, ReduxRouter, withExternalState} from 'custom-redux';
 import {INITIAL_STATE} from './CustomerRegistrationInitialState';
 import AddressLookup from 'common/components/maps/AddressLookup';
+import {nextAction} from './CustomerRegistrationUtils';
+import {isAnyOperationPending, getOperationError} from 'common/dao';
 
 class CustomerRegistration extends Component {
   static InitialState = INITIAL_STATE;
@@ -23,13 +25,12 @@ class CustomerRegistration extends Component {
   }
 
   render() {
-    const {path} = this.props;
-    const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey};
-    return <ReduxRouter  name="CustomerRegistrationRouter" resizeForKeyboard={true} {...registrationProps} defaultRoute={'RegistrationLanding'}>
+    const registrationProps = {...this.props, stateKey: CustomerRegistration.stateKey, nextAction, submitButtonCaption: 'Register'};
+    return <ReduxRouter  name="CustomerRegistrationRouter" resizeForKeyboard={false} {...registrationProps} defaultRoute={'RegistrationLanding'}>
       <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'RegistrationLanding'} exact component={CustomerRegistrationLanding}/>
       <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'Login'} exact component={CustomerLogin}/>
-      <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'UserDetails'} exact component={UserDetails} next={`${path}/AddressDetails`}/>
-      <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'AddressDetails'} exact component={AddressDetails} next={`${path}/PaymentCardDetails`}/>
+      <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'UserDetails'} exact component={UserDetails}/>
+      <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'AddressDetails'} exact component={AddressDetails}/>
       <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'AddressLookup'} exact component={AddressLookup}/>
       <Route stateKey={CustomerRegistration.stateKey} transition='left' path={'PaymentCardDetails'} exact component={PaymentCardDetails}/>
     </ReduxRouter>;
@@ -41,9 +42,10 @@ const mapStateToProps = (state, nextOwnProps) => {
   return {
     parentMatch,
     parentHistory,
-    ...rest
+    ...rest,
+    errors: getOperationError(state, 'loginDao', 'registerAndLoginCustomer'),
+    busy: isAnyOperationPending(state, [{ loginDao: 'registerAndLoginCustomer'}])
   };
 };
-
 
 export default withExternalState(mapStateToProps)(CustomerRegistration);

@@ -97,12 +97,13 @@ class UpdateUserDetails extends Component{
             </Col>
           </Row>
         </Grid>
+        <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy}
+          onPress={this.onUpdateDetails} validationSchema={yup.object(validationSchema)} model={unsavedUser}>
+          <Text uppercase={false}>Update details</Text>
+        </ValidatingButton>
+        <ErrorRegion errors={errors}/>
       </Content>
-      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy}
-        onPress={this.onUpdateDetails} validationSchema={yup.object(validationSchema)} model={unsavedUser}>
-        <Text uppercase={false}>Update details</Text>
-      </ValidatingButton>
-      <ErrorRegion errors={errors}/>
+   
     </Container>;
   }
 }

@@ -51,7 +51,7 @@ class CustomerLanding extends Component {
 
   render() {
     const {busy, client, path, isLoggedIn, history} = this.props;
-    const completeProps = {client, ...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/Orders` };
+    const completeProps = {client, ...this.props, ordersRoot: path, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/Orders` };
     if (!isLoggedIn){
       <Redirect just to="/" history={history}/>;
     }

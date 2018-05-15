@@ -91,6 +91,7 @@ export default class Connection {
 
     handleSocketClosed(e){
       let reason;
+      this._isOpen = false;
       this._connectionSubject.next(false);
 
       switch (e.code){
