@@ -22,6 +22,7 @@ import io.viewserver.network.INetworkAdapter;
 import io.viewserver.network.INetworkMessageWheel;
 import io.viewserver.network.Network;
 import com.google.common.util.concurrent.*;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     private Thread runThread;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private final ListeningScheduledExecutorService executor;
+    private final ListeningExecutorService controllerExecutor;
     private final IReactorCommandWheel commandWheel;
     private int timeUntilNextLoop = LOOP_FREQUENCY;
     private ScheduledFuture<?> nextLoop;
@@ -62,6 +64,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
         loopTasksCopy = new PriorityBlockingQueue<>(8, getLoopTaskComparator());
 
         executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadScheduledExecutor(r -> runThread = new Thread(r, "reactor-" + name)));
+        controllerExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5,new NamedThreadFactory("controllers")));
 
         commandWheel = new SimpleReactorCommandWheel();
         commandWheel.registerReactorCommandListener(this);
@@ -333,23 +336,39 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
 
     @Override
     public void onNetworkMessage(IChannel channel, IMessage msg) {
-        ListenableFuture<?> future = executor.submit(() -> {
-            if (network.receiveMessage(channel, msg)) {
-                log.trace("Waking up reactor because of - {}",msg);
-                EventLoopReactor.this.wakeUp();
-            }
-            msg.release();
-        });
-        Futures.addCallback(future, new FutureCallback<Object>() {
-            @Override
-            public void onSuccess(Object result) {
-            }
+        if("genericJSON".equals(msg.getCommand().getCommand())){
+            ListenableFuture<?> future = controllerExecutor.submit(() ->
+                    network.receiveCommand(msg.getCommand(),network.getiPeerSession(channel))
+            );
+            Futures.addCallback(future, new FutureCallback<Object>() {
+                @Override
+                public void onSuccess(Object result) {
+                }
 
-            @Override
-            public void onFailure(Throwable t) {
-                log.error("Failed to handle network message:\n\r " + msg, t);
-            }
-        });
+                @Override
+                public void onFailure(Throwable t) {
+                    log.error("Failed to handle controller message:\n\r " + msg, t);
+                }
+            });
+        }else{
+            ListenableFuture<?> future = executor.submit(() -> {
+                if (network.receiveMessage(channel, msg)) {
+                    log.trace("Waking up reactor because of - {}",msg);
+                    EventLoopReactor.this.wakeUp();
+                }
+                msg.release();
+            });
+            Futures.addCallback(future, new FutureCallback<Object>() {
+                @Override
+                public void onSuccess(Object result) {
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    log.error("Failed to handle network message:\n\r " + msg, t);
+                }
+            });
+        }
     }
 
 

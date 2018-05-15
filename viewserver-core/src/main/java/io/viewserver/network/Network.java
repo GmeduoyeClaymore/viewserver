@@ -161,7 +161,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         networkAdapter.reset();
     }
 
-    private void receiveCommand(ICommand commandMessage, IPeerSession peerSession) {
+    public void receiveCommand(ICommand commandMessage, IPeerSession peerSession) {
         ICommandHandler commandHandler = commandHandlerRegistry.get(commandMessage.getCommand());
         if (commandHandler == null) {
             log.warn("Received unknown command {}.{} - '{}'", peerSession.getConnectionId(), commandMessage.getId(), commandMessage.getCommand());
@@ -281,8 +281,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     }
 
     public boolean receiveMessage(IChannel channel, IMessage message) {
-        int connectionId = connectionIds.get(channel);
-        IPeerSession peerSession = sessionManager.getSessionById(connectionId);
+        IPeerSession peerSession = getiPeerSession(channel);
         log.trace("Received message - {}",message);
         boolean needCommit = false;
         switch (message.getType()) {
@@ -326,6 +325,11 @@ public class Network implements PeerSession.IDisconnectionHandler {
         heartbeatTask.lastPings.put(peerSession, -1);
 
         return needCommit;
+    }
+
+    public IPeerSession getiPeerSession(IChannel channel) {
+        int connectionId = connectionIds.get(channel);
+        return sessionManager.getSessionById(connectionId);
     }
 
     private int getNextConnectionId() {

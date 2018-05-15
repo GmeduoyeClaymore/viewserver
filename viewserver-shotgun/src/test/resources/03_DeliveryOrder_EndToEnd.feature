@@ -80,6 +80,7 @@ Feature: Delivery order scenarios
       | ColumnAdd | partner_ratingAvg              | Double      |
       | ColumnAdd | rank                           | Int         |
       | ColumnAdd | requiredDate                   | DateTime    |
+      | ColumnAdd | lastModified                   | DateTime    |
       | ColumnAdd | productName                    | String      |
       | ColumnAdd | path                           | String      |
       | ColumnAdd | contentTypeRootProductCategory | String      |

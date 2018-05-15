@@ -75,8 +75,8 @@ public class NettyNetworkAdapter implements INetworkAdapter {
     @Override
     public void listen(IEndpoint endpoint) {
         if (parentGroup == null) {
-            parentGroup = new NioEventLoopGroup(1, new DefaultThreadFactory(String.format("io-%s-server-boss", reactor.getName())));
-            handlers = new NioEventLoopGroup(1, new DefaultThreadFactory(String.format("io-%s-server-worker", reactor.getName())));
+            parentGroup = new NioEventLoopGroup(4, new DefaultThreadFactory(String.format("io-%s-server-boss", reactor.getName())));
+            handlers = new NioEventLoopGroup(4, new DefaultThreadFactory(String.format("io-%s-server-worker", reactor.getName())));
         }
 
         ServerBootstrap serverBootstrap = ((INettyEndpoint) endpoint).getServerBootstrap(parentGroup, handlers, new ChannelInitializer<Channel>() {

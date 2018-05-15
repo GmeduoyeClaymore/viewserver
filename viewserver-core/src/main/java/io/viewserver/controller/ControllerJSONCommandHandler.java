@@ -9,7 +9,6 @@ import io.viewserver.network.IPeerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -20,11 +19,12 @@ import java.util.concurrent.Executors;
 public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSONCommand> {
     private static final Logger log = LoggerFactory.getLogger(ControllerJSONCommandHandler.class);
 
-    private ListeningExecutorService asyncExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setNameFormat("controller-command-handler-%d").build()));
-    private ListeningExecutorService currentThreadExecutor = MoreExecutors.newDirectExecutorService();
+    private ListeningExecutorService asyncExecutor = MoreExecutors.newDirectExecutorService();
+    private ListeningExecutorService reactorExecutor;
     public ControllerJSONCommandHandler(ControllerCatalog controllerCatalog) {
         super(IGenericJSONCommand.class);
         this.controllerCatalog = controllerCatalog;
+
     }
 
     private ControllerCatalog controllerCatalog;
@@ -87,7 +87,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     }
                 }
-            }, currentThreadExecutor);
+            }, getReactorExecutor());
 
         } catch(Exception e) {
             log.error("Failed to handle generic json command", e);
@@ -95,10 +95,17 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
         }
     }
 
+    private ListeningExecutorService getReactorExecutor() {
+        if(reactorExecutor == null){
+            reactorExecutor = (ListeningScheduledExecutorService)this.controllerCatalog.getExecutionContext().getReactor().getExecutor();
+        }
+        return reactorExecutor;
+    }
+
     private synchronized ListenableFuture<String> invoke(ControllerActionEntry entry, String payload,ControllerContext context) {
         if(entry.isSynchronous()){
             try(ControllerContext ctxt = ControllerContext.create(context)){
-                return entry.invoke(payload,ctxt,currentThreadExecutor);
+                return entry.invoke(payload,ctxt, getReactorExecutor());
             } catch (Exception e) {
                 throw new RuntimeException(ControllerContext.Unwrap(e));
             }
