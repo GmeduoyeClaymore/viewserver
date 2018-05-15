@@ -9,7 +9,7 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 
 class ContentTypeSelect extends Component{
   beforeNavigateTo(){
-    this.setState({});
+    this.clearState();
   }
   
   selectContentType = (selectedContentType) => {
