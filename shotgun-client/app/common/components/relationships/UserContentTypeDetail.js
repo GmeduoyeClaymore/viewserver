@@ -10,7 +10,7 @@ export default class UserContentTypeDetail extends Component{
     return Object.entries(selectedContentTypes).map(([contentTypeId, contentType]) => {
       const {selectedProductIds, selectedProductCategories} = contentType;
 
-      return <ListItem paddedTopBottomNarrow key={contentTypeId}>
+      return <ListItem padded key={contentTypeId} style={{flexWrap: 'wrap'}}>
         <Icon key='icon' style={styles.contentTypeIcon} name={`content-type-${contentTypeId}`}/>
         <Text key='text' >{getFriendlyContentTypeName(parseInt(contentTypeId, 10))}</Text>
 
@@ -27,6 +27,9 @@ export default class UserContentTypeDetail extends Component{
 }
 
 const styles = {
+  list: {
+    flexWrap: 'wrap'
+  },
   contentTypeIcon: {
     marginRight: 10,
     fontSize: 26

@@ -21,7 +21,7 @@ export const RatingSummary = ({order, isRatingCustomer}) => {
   }
 
   if (isRated) {
-    const stars = [...Array(rating.rating)].map((e, i) => <Icon name='star' key={i} style={styles.star}/>);
+    const stars = [...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>);
     return <View style={styles.view}>
       {imageUrl ?
         <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.images}/> : null}

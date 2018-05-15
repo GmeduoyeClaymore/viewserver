@@ -1,13 +1,21 @@
 import React, {Component} from 'react';
-import {TouchableOpacity} from 'react-native';
-import {ListItem, View, Text, Grid, Row, Spinner, Col, Button} from 'native-base';
-import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, UserInfo} from 'common/components';
+import {TouchableOpacity, Image} from 'react-native';
+import {ListItem, View, Text, Grid, Row, Spinner, Col, Button, Item, Label} from 'native-base';
+import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, UserInfo, AverageRating, Icon} from 'common/components';
 import moment from 'moment';
 import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer} from 'customer/actions/CustomerActions';
 import yup from 'yup';
+import shotgun from 'native-base-theme/variables/shotgun';
+
 
 const ACTIVE_NEGOTIATION_STATUSES = ['RESPONDED', 'ACCEPTED'];
 const CAN_UPDATE_AMOUNT_STATUSES = ['PLACED'];
+
+const ResponseStatusStyles = {
+  RESPONDED: shotgun.brandWarning,
+  ACCEPTED: shotgun.brandSuccess,
+  REJECTED: shotgun.brandDanger
+};
 
 export default class OrderNegotiationPanel extends Component{
   constructor(props) {
@@ -70,29 +78,37 @@ export default class OrderNegotiationPanel extends Component{
   };
 
   getPartnerResponses = () => {
-    const {partnerResponses, busyUpdating, dispatch} = this.props;
+    const {partnerResponses, busyUpdating, order} = this.props;
     const {showAll} = this.state;
 
     const filteredResponses = partnerResponses.filter(res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus));
     return filteredResponses.map(
       (response, idx)  => {
-        const {partnerId, estimatedDate, price, responseStatus} = response;
+        const {partnerId, estimatedDate, price, responseStatus, firstName, lastName, imageUrl, ratingAvg} = response;
         const canRespond = responseStatus === 'RESPONDED';
+        const statusColor = ResponseStatusStyles[responseStatus] || ResponseStatusStyles.REJECTED;
 
-        return <ListItem key={idx} paddedTopBottom last={idx == filteredResponses.length - 1}>
+        return <ListItem key={idx} padded paddedTopBottomNarrow>
           <Grid>
-            <Row style={styles.headerRow}>
-              <Currency value={price} style={styles.responseHeader}/>
-              <Text> to start </Text>
-              <Text style={styles.responseHeader}>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
+            <Row onPress={() => this.onUserInfoPress(partnerId)}>
+              {imageUrl && imageUrl != 'null' ? <Image source={{uri: imageUrl}} resizeMode='contain' style={styles.reponseImage}/> : null}
+              <Text style={[styles.responseHeader, {marginRight: 10, color: statusColor}]}>{`${firstName} ${lastName}`}</Text>
+              <AverageRating rating={ratingAvg}/>
             </Row>
             <Row>
-              <Col size={50}>
-                <TouchableOpacity onPress={() => this.onUserInfoPress(partnerId)}>
-                  <UserInfo dispatch={dispatch} user={response} imageWidth={60} showCallButton={false}/>
-                </TouchableOpacity>
+              <Col size={70}>
+                <Item stackedLabel last style={{paddingLeft: 0, marginLeft: 0}}>
+                  <Label style={{fontSize: 12, paddingTop: 5, marginTop: 5}}>Amount</Label>
+                  <Currency style={styles.responseHeader} value={price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>
+                </Item>
+
+                <Item stackedLabel last style={{paddingLeft: 0, marginLeft: 0}}>
+                  <Label style={{fontSize: 12}}>Start date</Label>
+                  <Text>{moment(parseInt(estimatedDate, 10)).format('ddd Do MMMM, h:mma')}</Text>
+                </Item>
               </Col>
-              <Col size={50}>
+
+              <Col size={30}>
                 {canRespond ? <SpinnerButton busy={busyUpdating} fullWidth style={styles.acceptButton} accept onPress={() => this.onAcceptPartner(partnerId)}>
                   <Text uppercase={false}>Accept</Text>
                 </SpinnerButton> : null}
@@ -122,26 +138,30 @@ export default class OrderNegotiationPanel extends Component{
     }
     const canUpdateOrderPrice = !!~CAN_UPDATE_AMOUNT_STATUSES.indexOf(order.orderStatus);
 
-    return <View padded>
+    return <View>
       <Grid style={styles.priceGrid}>
-        <Col size={45}>
+        <Row style={styles.row}>
           <Text style={styles.heading}>{canUpdateOrderPrice ? 'Job advertised for' : 'Agreed Price'}</Text>
+        </Row>
+        <Row style={styles.row}>
           {!order.amount ? <Spinner/> : <Currency value={order.amount} style={styles.price} suffix={order.paymentType == 'DayRate' ?  ' a day' : ''}/>}
-        </Col>
+        </Row>
         {canUpdateOrderPrice ?
-          [<Col size={30} style={{justifyContent: 'center'}}>
-            <CurrencyInput ref={ip => {this.amountInput = ip;}} style={styles.amountInput} dispatch={dispatch} onValueChanged={this.updateAmountInState} placeholder="Change price"/>
-          </Col>,
-          <Col size={25} style={{justifyContent: 'center'}}>
-            <ValidatingButton busy={busyUpdating} fullWidth success validationSchema={validationSchema.amount} model={amount} onPress={this.onUpdateOrderAmount}>
-              <Text uppercase={false}>Update</Text>
-            </ValidatingButton>
-          </Col>] : null}
+          <Row style={styles.changePriceRow}>
+            <Col size={70} style={styles.changePriceColumn}>
+              <CurrencyInput ref={ip => {this.amountInput = ip;}} dispatch={dispatch} onValueChanged={this.updateAmountInState} placeholder="Enter new price"/>
+            </Col>
+            <Col size={30} style={styles.changePriceColumn}>
+              <ValidatingButton busy={busyUpdating} fullWidth success validationSchema={validationSchema.amount} model={amount} onPress={this.onUpdateOrderAmount}>
+                <Text uppercase={false}>Update</Text>
+              </ValidatingButton>
+            </Col>
+          </Row> : null}
       </Grid>
 
       {this.getPartnerResponses()}
 
-      {hasRejected ? <Button onPress={this.toggleShow}><Text uppercase={false}>{showAll ? 'Hide rejected' : 'Show rejected'}</Text></Button> : null}
+      {hasRejected ? <Button onPress={this.toggleShow} padded light style={{alignSelf: 'flex-end', marginTop: 15, height: 35}}><Text uppercase={false}>{showAll ? '- Hide rejected' : '+ Show rejected'}</Text></Button> : null}
     </View>;
   }
 }
@@ -151,22 +171,30 @@ const validationSchema = {
 };
 
 const styles = {
-  amountInput: {
-    fontSize: 16,
-    padding: 0
-  },
   toggleStage: {
     marginRight: 5,
     justifyContent: 'center',
     flex: 1
   },
   priceGrid: {
+    paddingBottom: shotgun.contentPadding,
+    paddingLeft: shotgun.contentPadding,
+    paddingRight: shotgun.contentPadding,
+    borderBottomWidth: shotgun.listItemBorderWidth,
+    borderColor: shotgun.listBorderColor
   },
-  headerRow: {
-    marginBottom: 10
+  changePriceRow: {
+    marginTop: 15
+  },
+  changePriceColumn: {
+    justifyContent: 'center'
+  },
+  row: {
+    justifyContent: 'center'
   },
   heading: {
-    fontSize: 16
+    fontSize: 16,
+    alignSelf: 'center'
   },
   subHeading: {
     fontSize: 14,
@@ -175,9 +203,6 @@ const styles = {
   },
   buttonText: {
     fontSize: 10
-  },
-  text: {
-    marginRight: 5
   },
   acceptButton: {
     marginBottom: 10
@@ -189,7 +214,15 @@ const styles = {
   },
   responseHeader: {
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginRight: 10
+  },
+  reponseImage: {
+    aspectRatio: 1,
+    borderRadius: shotgun.imageBorderRadius,
+    marginRight: 10,
+    width: 30,
+    alignSelf: 'center'
   }
 };
 

@@ -293,6 +293,7 @@ export default {
   // Other
   borderRadiusBase: platform === 'ios' ? 5 : 2,
   borderWidth: 1 / PixelRatio.getPixelSizeForLayoutSize(1),
+  listItemBorderWidth: 3 / PixelRatio.getPixelSizeForLayoutSize(1),
   contentPadding: 25,
 
   get darkenHeader() {
