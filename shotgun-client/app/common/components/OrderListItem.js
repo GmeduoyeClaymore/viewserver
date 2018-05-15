@@ -33,7 +33,7 @@ class OrderListItem extends Component {
       <Grid>
         <Row size={75} style={styles.locationRow}>
           <Col size={70}>
-            <Text style={styles.name} numberOfLines={1}>{order.orderProduct.name}</Text>
+            <Text style={styles.name} numberOfLines={1}>{order.title}</Text>
             <OriginDestinationSummary order={order}/>
           </Col>
           <Col size={30}>

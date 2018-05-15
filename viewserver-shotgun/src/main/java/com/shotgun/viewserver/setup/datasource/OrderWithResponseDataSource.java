@@ -61,6 +61,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn("responsePartner_ratingAvg", "partner_ratingAvg"),
                                         new IProjectionConfig.ProjectionColumn("orderLocation"),
                                         new IProjectionConfig.ProjectionColumn("requiredDate"),
+                                        new IProjectionConfig.ProjectionColumn("lastModified"),
                                         new IProjectionConfig.ProjectionColumn("totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                         new IProjectionConfig.ProjectionColumn("orderId"),

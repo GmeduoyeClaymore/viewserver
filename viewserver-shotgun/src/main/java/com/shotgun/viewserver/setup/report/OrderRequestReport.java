@@ -64,6 +64,7 @@ public class OrderRequestReport {
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),
                                                 new IProjectionConfig.ProjectionColumn("requiredDate"),
+                                                new IProjectionConfig.ProjectionColumn("lastModified"),
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
                                                 new IProjectionConfig.ProjectionColumn("productName"),
                                                 new IProjectionConfig.ProjectionColumn("path"),

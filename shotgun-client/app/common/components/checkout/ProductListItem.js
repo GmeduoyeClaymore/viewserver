@@ -6,7 +6,7 @@ import {Icon} from 'common/components';
 
 const onChangeProduct = ({order, product, setState}) => {
   const {productId, name} = product;
-  setState({ selectedProduct: product, order: {...order, orderProduct: product, title: name, productId}});
+  setState({ selectedProduct: product, order: {...order, orderProduct: product, productId}});
 };
 
 const ProductListItem = ({product, order, setState, selectedProduct = {}, index: i, dispatch}) => {

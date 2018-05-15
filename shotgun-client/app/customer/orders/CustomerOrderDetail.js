@@ -57,7 +57,7 @@ class CustomerOrderDetail extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>{resources.PageTitle(order)}</Title></Body>
+        <Body><Title>{order.title}</Title></Body>
       </Header>
       <Content>
         <ErrorRegion errors={errors}/>

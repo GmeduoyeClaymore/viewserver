@@ -28,7 +28,7 @@ class OrderConfirmation extends Component{
             <Icon name='back-arrow'/>
           </Button>
         </Left>
-        <Body><Title>{this.resources.PageTitle({product: order.orderProduct})}</Title></Body>
+        <Body><Title>{order.title}</Title></Body>
       </Header>
       <Content>
         <CustomerPriceSummary order={order}/>

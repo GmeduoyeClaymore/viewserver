@@ -67,6 +67,7 @@ class ItemDetails extends Component{
               <Image source={{uri: `data:image/jpeg;base64,${imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
             </Row>
           </Grid> : null}
+          <ValidatingInput style={styles.titleInput}  bold placeholder="Enter job title" value={order.title} validateOnMount={order.title !== undefined} onChangeText={(value) => onChangeValue('title', value)} validationSchema={validationSchema.title} maxLength={30}/>
           {imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
             <Grid>
               <Row style={styles.imageButtonIconRow}>
@@ -90,13 +91,20 @@ class ItemDetails extends Component{
 }
 
 const validationSchema = {
-  description: yup.string().required().max(200)
+  title: yup.string().required().max(30),
+  description: yup.string().max(200)
 };
 
 const styles = {
   detailsInput: {
     height: 120,
     marginTop: 15,
+    textAlignVertical: 'top'
+  },
+  titleInput: {
+    height: 45,
+    marginTop: 15,
+    marginBottom: 15,
     textAlignVertical: 'top'
   },
   image: {

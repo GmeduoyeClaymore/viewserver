@@ -30,7 +30,8 @@ class ReduxRouterClass extends Component {
   }
 
   componentWillMount() {
-    const { resizeForKeyboard = false } = this.props;
+    let { resizeForKeyboard = false } = this.props;
+    resizeForKeyboard = resizeForKeyboard && !shotgun.platform == 'ios';
     super.setState({ keyboardOffset: 0 });
 
     if (resizeForKeyboard) {
@@ -73,6 +74,7 @@ class ReduxRouterClass extends Component {
     const oldNavigationContainerTranslator = oldProps.navigationContainerTranslator;
     const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator, newNavigationContainerTranslator.defaultRoute, newNavigationContainerTranslator.routerPath);
     if (diff) {
+      Keyboard.dismiss();
       this.transitionManager.performTransition(diff, newNavigationContainerTranslator.defaultRoute.pathname, newNavigationContainerTranslator.routerPath);
     }
   }
@@ -156,10 +158,6 @@ const navigateFactory = (getNewContainer, setState, dispatch) => (action, state,
 
   const newnavigationContainer = getNewContainer(parsedAction);
   if (newnavigationContainer) {
-    if (!parsedAction || parsedAction.dismissKeyboard != false) {
-      Keyboard.dismiss();
-    }
-
     setState({ navigationContainer: newnavigationContainer }, continueWith, dispatch);
   }
 };

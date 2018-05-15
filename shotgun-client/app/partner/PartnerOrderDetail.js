@@ -76,7 +76,7 @@ class PartnerOrderDetail extends Component {
             <Icon name='back-arrow' />
           </Button>
         </Left>
-        <Body><Title>{resources.PageTitle(order)}</Title></Body>
+        <Body><Title>{order.title}</Title></Body>
       </Header>
       <Content>
         <ErrorRegion errors={errors} />
@@ -133,7 +133,7 @@ resourceDictionary.
   property('PageTitle', () => 'Order Summary').
     delivery((order) => `${order.orderProduct.name} Delivery`).
     hire((order) => `${order.orderProduct.name}  Hire`).
-    personell((order) => `${order.orderProduct.name} Job`).
+    personell((order) => `${order.orderProduct.name} - ${order.orderProduct.name} Job`).
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('PlacedControls', [PartnerNegotiationPanel, OrderSummary]).
   property('InProgressControlsFactory').

@@ -12,13 +12,13 @@ export default class OrderSummaryDao{
   };
 
   static PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }, { name: 'lastModified', direction: 'desc' }],
     reportId: 'partnerOrderSummary',
     userId: undefined
   };
 
   static CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }, { name: 'lastModified', direction: 'desc' }],
     reportId: 'customerOrderSummary',
     partnerId: undefined
   };

@@ -133,6 +133,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                         log.info("Partner already assigned not notifying the community of " + order.getOrderId());
                         return;
                     }
+                    if(order.getCustomerUserId() == user.getUserId()){
+                        log.info("This is my job ignoring ");
+                        return;
+                    }
+
 
                     log.info("Found order - " + order.getOrderId() + " for user " + user.getUserId() + " with products " + String.join(",", productIds));
                     NotificationStatus status = notifyUserOfNewOrder(order, user);
