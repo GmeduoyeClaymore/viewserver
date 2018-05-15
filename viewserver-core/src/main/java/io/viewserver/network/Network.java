@@ -428,7 +428,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 }
 
                 long elapsed = now - lastResponse;
-                if (elapsed >= interval) {
+                if (elapsed >= timeoutInterval) {
                     lastPings.put(peerSession, now);
                     sendHeartbeat(peerSession, IHeartbeat.Type.Ping);
                 }
