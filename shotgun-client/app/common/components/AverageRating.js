@@ -5,7 +5,7 @@ import React from 'react';
 export const AverageRating = ({rating, text = 'No Ratings Yet', decimalPlaces = 1}) => {
   return rating > 0 ?
     <View style={styles.averageView}>
-      <Icon name='star' avgStar/>
+      <Icon name='star-full' avgStar/>
       <Text numberOfLines={1} note style={styles.averageText}>{rating && rating.toFixed ? rating.toFixed(decimalPlaces) : null}</Text>
     </View> :
     <Text note>{text}</Text>;

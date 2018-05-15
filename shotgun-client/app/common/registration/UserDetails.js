@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Input, Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
+import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button} from 'native-base';
 import yup from 'yup';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -123,11 +123,11 @@ class UserDetails extends Component{
             </Col>
           </Row>
         </Grid>
+        <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
+          <Text uppercase={false}>Continue</Text>
+          <Icon next name='forward-arrow'/>
+        </ValidatingButton>
       </Content>
-      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} onPress={() => history.push(next)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
-        <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
-      </ValidatingButton>
     </Container>;
   }
 }

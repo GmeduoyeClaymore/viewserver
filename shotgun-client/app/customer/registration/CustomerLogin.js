@@ -44,6 +44,7 @@ class CustomerLogin extends Component {
               <Item stackedLabel>
                 <Label>Email</Label>
                 <ValidatingInput bold value={email}
+                  keyboardType={'email-address'}
                   placeholder="email@email.com"
                   onChangeText={(value) => onChangeText('email', value)}
                   validationSchema={validationSchema.email}/>

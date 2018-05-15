@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, Row, Grid, Col, ListItem} from 'native-base';
+import {View, Text, Row, Grid, Col, ListItem} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -14,20 +14,20 @@ export default class UserRatingsDetail extends Component{
     }
 
     return ratings.map(rating => {
-      return <ListItem key={rating.orderId} paddedTopBottomNarrow>
+      return <ListItem key={rating.orderId} padded>
         <Grid>
-          <Col size={80}>
-            <Row>
-              <Text style={{marginBottom: 8}}>{rating.title}</Text>
-            </Row>
-            <Row style={{paddingRight: 10, marginBottom: 8}}>
+          <Col size={70}>
+            <Text numberOfLines={1} style={{alignSelf: 'flex-start'}}>{rating.title}</Text>
+
+            <View style={{flexDirection: 'row'}}>
               <Icon paddedIcon name="delivery-time"/>
               <Text>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
-            </Row>
+            </View>
           </Col>
-          <Col size={20}>
-            <Icon name='star' style={styles.star}/>
-            <Text numberOfLines={1} note style={styles.averageText}>{rating.rating.toFixed(0)}</Text>
+          <Col size={30}>
+            <Row>
+              {[...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>)}
+            </Row>
           </Col>
         </Grid>
       </ListItem>;
@@ -39,15 +39,9 @@ const styles = {
   noJobs: {
     marginTop: shotgun.contentPadding
   },
+
   star: {
-    fontSize: 40,
-    color: shotgun.gold,
-    position: 'absolute'
-  },
-  averageText: {
-    position: 'absolute',
-    right: 59,
-    top: 13,
-    zIndex: 2
+    fontSize: 15,
+    color: shotgun.gold
   }
 };

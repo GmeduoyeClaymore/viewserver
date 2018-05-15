@@ -42,7 +42,7 @@ class UserDetail extends Component{
   getActionButton = (relationshipStatus, label, additionalProps) => {
     const {busy} = this.props;
 
-    return <Button fullWidth style={styles.statusButton} key={label} {...additionalProps} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
+    return <Button padded fullWidth style={styles.statusButton} key={label} {...additionalProps} disabled={busy} onPress={() => this.onUpdateRelationship(relationshipStatus, 'COLLEAGUE')}>
       <Text uppercase={false}>{label}</Text>
     </Button>;
   }
@@ -92,7 +92,7 @@ class UserDetail extends Component{
 
     return selectedUser ? <ReactNativeModal isVisible={history.location.pathname.includes(path)} style={styles.modal}>
       <Grid>
-        {onPressAssignUser ? <Button fullWidth style={styles.actionButton}  onPress={() => {onPressAssignUser(selectedUser); handleCancel();}}>
+        {onPressAssignUser ? <Button padded fullWidth style={styles.actionButton}  onPress={() => {onPressAssignUser(selectedUser); handleCancel();}}>
           <Text uppercase={false}>Assign Job To User</Text>
         </Button> : null
         }
@@ -106,7 +106,7 @@ class UserDetail extends Component{
           )}
         </Tabs>
 
-        <ScrollView key='scrollView' style={{flex: 1}}>
+        <ScrollView key='scrollView'>
           <ReduxRouter {...this.props} path={path} defaultRoute="Ratings">
             <Route key="Ratings" path="Ratings" component={UserRatingsDetail} user={selectedUser}/>
             <Route key="Skills" path="Skills" component={UserContentTypeDetail} selectedContentTypes={selectedUser.selectedContentTypes}/>
@@ -114,7 +114,7 @@ class UserDetail extends Component{
         </ScrollView>
       </Grid>
       {this.getStatusButton()}
-      <Button fullWidth cancelButton onPress={this.handleCancel}>
+      <Button padded paddedBottom fullWidth cancelButton onPress={this.handleCancel}>
         <Text uppercase={false}>Close</Text>
       </Button>
     </ReactNativeModal> : null;
@@ -164,10 +164,10 @@ const styles = {
     borderRadius: 0,
     width: shotgun.deviceWidth,
     height: shotgun.deviceHeight,
-    padding: shotgun.contentPadding
   },
   userInfoView: {
-    height: 60
+    height: 80,
+    padding: shotgun.contentPadding
   },
   userContentTypesView: {
     height: 10
