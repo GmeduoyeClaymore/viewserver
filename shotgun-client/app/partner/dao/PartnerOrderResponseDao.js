@@ -84,7 +84,8 @@ export default class PartnerOrderResponseDao{
         userId: orderResponse.customer_userId,
         firstName: orderResponse.customer_firstName,
         lastName: orderResponse.customer_lastName,
-        ratingAvg: orderResponse.customer_ratingAvg
+        ratingAvg: orderResponse.customer_ratingAvg,
+        imageUrl: orderResponse.customer_imageUrl
       }
     };
   }

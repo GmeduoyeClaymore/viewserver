@@ -99,10 +99,10 @@ export default class CustomerStagedPaymentPanel extends Component{
       {canAddPaymentStages && !paymentStages.length ?
         <Row style={styles.toggleStageRow}>
           <Button style={styles.toggleStage} light={this.state.paymentStageType === 'Fixed'} onPress={() => this.setPaymentStageType('Percentage')}>
-            <Text style={styles.buttonText}>Percentage Stages</Text>
+            <Text style={styles.buttonText} uppercase={false}>% Stages</Text>
           </Button>
           <Button style={styles.toggleStage} light={this.state.paymentStageType  === 'Percentage'} onPress={() => this.setPaymentStageType('Fixed')}>
-            <Text style={styles.buttonText}>Fixed Stages</Text>
+            <Text style={styles.buttonText} uppercase={false}>Fixed Stages</Text>
           </Button>
         </Row> : null}
 
@@ -148,7 +148,7 @@ const styles = {
     alignSelf: 'flex-start'
   },
   buttonText: {
-    fontSize: 10
+    fontSize: 12
   },
   waitingSpinner: {
     height: 15,
