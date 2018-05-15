@@ -30,7 +30,7 @@ class OrderSummary extends Component{
 
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, requiredDate, orderStatus} = order;
+    const {assignedPartner, customer, requiredDate, orderStatus, orderProduct} = order;
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
 
     return <Content><List>
@@ -38,12 +38,14 @@ class OrderSummary extends Component{
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}
+      {orderProduct ? <ListItem padded>
+        {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
+        <Text>{`${orderProduct.name}`}</Text>
+      </ListItem> : null}
       {this.renderMap()}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>
       </ListItem>
-
-      {requiredDate ? <ListItem padded><Icon paddedIcon name="delivery-time"/><Text>{moment(requiredDate).format('dddd Do MMMM, h:mma')}</Text></ListItem> : null}
 
       <ListItem padded last>
         <Text>{order.description}</Text>

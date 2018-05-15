@@ -89,6 +89,7 @@ Feature: Personell order scenarios
 	  | ColumnAdd | partner_ratingAvg     | Double      |
 	  | ColumnAdd | orderDetails          | Json        |
 	  | ColumnAdd | requiredDate          | DateTime    |
+	  | ColumnAdd | lastModified          | DateTime    |
 	  | ColumnAdd | rank                  | Int         |
 	  | ColumnAdd | customer_firstName    | String      |
 	  | ColumnAdd | customer_lastName     | String      |

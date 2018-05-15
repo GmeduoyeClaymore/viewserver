@@ -47,6 +47,7 @@ Feature: List available job scenarios
       | ColumnAdd | partner_statusMessage          | String      |
       | ColumnAdd | partner_ratingAvg              | Double      |
       | ColumnAdd | requiredDate                   | DateTime    |
+      | ColumnAdd | lastModified                   | DateTime    |
       | ColumnAdd | productName                    | String      |
       | ColumnAdd | path                           | String      |
       | ColumnAdd | contentTypeRootProductCategory | String      |

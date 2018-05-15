@@ -71,6 +71,7 @@ public class CustomerOrderSummaryReport {
                                         new IProjectionConfig.ProjectionColumn("order_totalPrice", "totalPrice"),
                                         new IProjectionConfig.ProjectionColumn("order_orderContentTypeId","orderContentTypeId"),
                                         new IProjectionConfig.ProjectionColumn("order_orderDetails","orderDetails"),
+                                        new IProjectionConfig.ProjectionColumn("order_lastModified", "lastModified"),
                                         new IProjectionConfig.ProjectionColumn("order_orderId","orderId"),
                                         new IProjectionConfig.ProjectionColumn("order_status","status")
                                 ).withConnection("orderFieldsCalc")

@@ -9,6 +9,7 @@ import com.shotgun.viewserver.order.contracts.PaymentNotifications;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
 import com.shotgun.viewserver.order.domain.PersonellOrder;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
+import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.command.ActionParam;
@@ -68,6 +69,22 @@ public class PersonellOrderController  implements NegotiationNotifications,Payme
                         notifyJobAssigned(ord.getOrderId(),ord.getPartnerUserId());
                     }
                 }
+        );
+    }
+
+    @ControllerAction(path = "startPaymentStage", isSynchronous = true)
+    public void startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        this.transform(
+                orderId,
+                order -> {
+                    order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.STARTED);
+                    order.startPaymentStage(paymentStageId);
+                    return true;
+                },
+                order -> {
+                    notifyPaymentStageStarted(order.getOrderId(), order.getCustomerUserId(), order.getOrderPaymentStage(paymentStageId).getName());
+                },
+                PersonellOrder.class
         );
     }
 

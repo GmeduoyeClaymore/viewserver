@@ -43,6 +43,7 @@ public class OrderResponseReport {
                                                 new IProjectionConfig.ProjectionColumn("totalPrice"),
                                                 new IProjectionConfig.ProjectionColumn("orderContentTypeId"),
                                                 new IProjectionConfig.ProjectionColumn("orderDetails"),
+                                                new IProjectionConfig.ProjectionColumn("lastModified"),
                                                 new IProjectionConfig.ProjectionColumn("orderId"),
                                                 new IProjectionConfig.ProjectionColumn("responseStatus"),
                                                 new IProjectionConfig.ProjectionColumn("userCreatedThisOrder")
