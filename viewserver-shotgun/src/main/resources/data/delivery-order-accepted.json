@@ -51,7 +51,7 @@
     "longitude": -0.1382081
   },
   "customerUserId": "{userId}",
-  "requiredDate": "2018-05-03T10:14:49.424Z",
+  "requiredDate": "{requiredDate}",
   "description": "this is a small van order",
   "orderStatus": "ACCEPTED",
   "title": "Large Van",

@@ -97,7 +97,7 @@ class UserDetail extends Component{
         </Button> : null
         }
         <Row style={styles.userInfoView}>
-          <UserInfo dispatch={dispatch} user={selectedUser} imageWidth={60}/>
+          <UserInfo dispatch={dispatch} user={selectedUser} imageWidth={40}/>
         </Row>
 
         <Tabs initialPage={page} page={page}  {...shotgun.tabsStyle}>

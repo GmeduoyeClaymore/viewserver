@@ -18,7 +18,7 @@ export default class OrderSummaryDao{
   };
 
   static CUSTOMER_ORDER_SUMMARY_DEFAULT_OPTIONS = {
-    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }],
+    columnsToSort: [{ name: 'requiredDate', direction: 'asc' }],
     reportId: 'customerOrderSummary',
     partnerId: undefined
   };

@@ -37,7 +37,7 @@ export default class UserRatingsDetail extends Component{
 
 const styles = {
   noJobs: {
-    marginTop: shotgun.contentPadding
+    margin: shotgun.contentPadding
   },
 
   star: {
