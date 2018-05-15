@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {ScrollView} from 'react-native';
 import {Tabs, Icon} from 'common/components';
 import {Container, Header, Body, Title, Tab, Left, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -48,8 +49,9 @@ class PartnerMyOrders extends Component{
   }
 
   render() {
-    const {history, selectedTabIndex, isCompleted, canGoBack, height} = this.props;
+    const {history, selectedTabIndex, isCompleted, canGoBack, height, ...rest} = this.props;
     const {getAcceptedOptions, getRespondedAndDeclinedOptions, getOrdersWhereIAmTheCustomerOptions} = this;
+    const routerHeight = height - shotgun.tabHeight;
 
     return <Container>
       <Header hasTabs withButton={canGoBack}>
@@ -65,7 +67,7 @@ class PartnerMyOrders extends Component{
           (heading, idx) => <Tab key={idx} tabsStyle={{textAlign: 'center'}} heading={this.getHeading(heading)} onPress={() => this.goToTabNamed(heading)}/>
         )}
       </Tabs>
-      <ReduxRouter  name="PartnerOrdersRouter" height={height - shotgun.tabHeight} defaultRoute='Responded' {...this.props} >
+      <ReduxRouter  name="PartnerOrdersRouter" height={routerHeight} defaultRoute='Responded' {...rest} >
         <Route path={'Responded'} orderStatusResolver={getResponseStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} responded jobs`}  daoName='partnerOrderResponseDao' options={getRespondedAndDeclinedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
         <Route path={'Accepted'} orderStatusResolver={getOrderStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} accepted jobs`} daoName='partnerOrderResponseDao' options={getAcceptedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
         <Route path={'Posted'} orderStatusResolver={getCustomerBasedOrderStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} posted jobs`} daoName='orderSummaryDao' options={getOrdersWhereIAmTheCustomerOptions()} isCustomer={true} component={PartnerMyOrdersListView}/>

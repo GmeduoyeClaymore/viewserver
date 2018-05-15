@@ -31,7 +31,7 @@ class PartnerMyOrdersListView extends Component{
       options={options}
       paginationWaitingView={() => <Spinner />}
       emptyView={this.NoItems}
-      pageSize={10}
+      pageSize={3}
       headerView={() => null}
     />;
   }

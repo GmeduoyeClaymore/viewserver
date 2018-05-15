@@ -13,7 +13,8 @@ class PartnerAvailableOrders extends Component{
   }
 
   render(){
-    const { busy, selectedContentTypes = [], height, history, navContainerOverride, parentPath, path, contentTypeOptions, selectedContentTypeIndex} = this.props;
+    const {busy, selectedContentTypes = [], height, history, navContainerOverride, parentPath, path, contentTypeOptions, selectedContentTypeIndex} = this.props;
+    const routerHeight = height - shotgun.tabHeight;
 
     return busy ? <LoadingScreen text="Loading available jobs..." /> : <Container>
       <Header hasTabs>
@@ -23,7 +24,7 @@ class PartnerAvailableOrders extends Component{
         {selectedContentTypes.map(c => <Tab key={c.name} heading={c.name} onPress={() => this.goToTabNamed(c.contentTypeId)}/>)}
       </Tabs>
       {selectedContentTypes[0] ?
-        <ReduxRouter name="PartnerOrderRequestRouter" height={height - shotgun.tabHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
+        <ReduxRouter name="PartnerOrderRequestRouter" height={routerHeight} defaultRoute={`ContentTypeId${selectedContentTypes[0].contentTypeId}X`} {...{busy, selectedContentTypes, navContainerOverride, history, path, parentPath, contentTypeOptions}}>
           {selectedContentTypes.map(c => <Route key={c.contentTypeId} parentPath={parentPath} path={`ContentTypeId${c.contentTypeId}X`} contentType={c} component={PartnerAvailableOrdersListView} />)}
         </ReduxRouter> : null}
     </Container>;

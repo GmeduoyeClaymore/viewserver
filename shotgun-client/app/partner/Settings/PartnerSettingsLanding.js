@@ -19,12 +19,12 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
 
   return user ? <Container>
     <Header>
-      <Body style={{width: '100%'}}>
-        <Row style={{width: '100%'}}>
-          <Col size={50}>
-            <Title numberOfLines={1}>{user.firstName} {user.lastName}</Title>
+      <Body>
+        <Row>
+          <Col size={70}>
+            <Title numberOfLines={1} style={{alignSelf: 'flex-start'}}>{user.firstName} {user.lastName}</Title>
           </Col>
-          <Col size={30} style={styles.ratingCol}>
+          <Col size={10} style={styles.ratingCol}>
             <AverageRating rating={user.ratingAvg}/>
           </Col>
           <Col size={20} style={styles.imageCol}>

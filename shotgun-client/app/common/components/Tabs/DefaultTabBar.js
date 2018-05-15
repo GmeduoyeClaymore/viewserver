@@ -56,7 +56,7 @@ const DefaultTabBar = createReactClass({
       return (
         <Button style={{ flex: 1 }} key={name} onPress={() => onPressHandler(page)}>
           <TabHeading style={isTabActive ? activeTabStyle : tabStyle} active={isTabActive}>
-            <Text  key={name} style={isTabActive ? activeTextStyle : textStyle}>{name}</Text>
+            <Text numberOfLines={1}  key={name} style={isTabActive ? activeTextStyle : textStyle}>{name}</Text>
           </TabHeading>
         </Button>
       );
