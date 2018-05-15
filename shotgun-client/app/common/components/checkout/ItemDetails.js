@@ -62,12 +62,12 @@ class ItemDetails extends Component{
           <Body><Title>{resources.PageTitle}</Title></Body>
         </Header>
         <Content padded>
+        <ValidatingInput style={styles.titleInput}  bold placeholder="Enter job title" value={order.title} validateOnMount={order.title !== undefined} onChangeText={(value) => onChangeValue('title', value)} validationSchema={validationSchema.title} maxLength={30}/>
           {imageData != undefined ? <Grid onPress={showPicker}>
             <Row style={{justifyContent: 'center'}}>
               <Image source={{uri: `data:image/jpeg;base64,${imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
             </Row>
           </Grid> : null}
-          <ValidatingInput style={styles.titleInput}  bold placeholder="Enter job title" value={order.title} validateOnMount={order.title !== undefined} onChangeText={(value) => onChangeValue('title', value)} validationSchema={validationSchema.title} maxLength={30}/>
           {imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
             <Grid>
               <Row style={styles.imageButtonIconRow}>

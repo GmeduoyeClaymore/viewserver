@@ -40,7 +40,7 @@ class AddressLookup extends Component {
   goToTabNamed = (name, propOverride) => {
     const {history, path, addressLabel, addressPath} = propOverride || this.props;
     if (!history.location.pathname.endsWith(name)) {
-      history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}, dismissKeyboard: false});
+      history.replace({pathname: `${path}/${name}`, state: {addressLabel, addressPath}});
     }
   }
 

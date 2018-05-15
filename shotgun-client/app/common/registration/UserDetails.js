@@ -145,7 +145,7 @@ const datePickerOptions = {
 const styles = {
   image: {
     aspectRatio: 1.2,
-    borderRadius: 150,
+    borderRadius: shotgun.imageBorderRadius,
     width: 100
   },
   imageButton: {

@@ -36,6 +36,8 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     private final SessionManager sessionManager;
     private final INetworkAdapter networkAdapter;
     private boolean disconnectOnTimeout;
+    private PublishSubject<IChannel> channelsConnected;
 
     public Network(CommandHandlerRegistry commandHandlerRegistry, IExecutionContext executionContext, ICatalog catalog,
                    INetworkAdapter networkAdapter) {
@@ -60,7 +63,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         this.executionContext = executionContext;
         this.catalog = catalog;
         this.networkAdapter = networkAdapter;
-
+        this.channelsConnected = PublishSubject.create();
         this.sessionManager = new SessionManager(executionContext, catalog);
     }
 
@@ -278,6 +281,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         peerSession.addDisconnectionHandler(this);
         sessionManager.addSession(peerSession);
         heartbeatTask.sessions.add(peerSession);
+        this.channelsConnected.onNext(channel);
     }
 
     public boolean receiveMessage(IChannel channel, IMessage message) {
@@ -330,6 +334,26 @@ public class Network implements PeerSession.IDisconnectionHandler {
     public IPeerSession getiPeerSession(IChannel channel) {
         int connectionId = connectionIds.get(channel);
         return sessionManager.getSessionById(connectionId);
+    }
+
+    public rx.Observable<IPeerSession> waitForSession(IChannel channel){
+        int connectionId = connectionIds.get(channel);
+        if (connectionId != connectionIds.getNoEntryValue()) {
+            return Observable.just(getiPeerSession(channel));
+        }
+        return this.channelsConnected.filter(ch-> matches(ch,channel)).map(ch -> getiPeerSession(channel)).take(1);
+    }
+
+    private boolean matches(IChannel ch, IChannel channel) {
+        int connectionId = connectionIds.get(ch);
+        if (connectionId != connectionIds.getNoEntryValue()) {
+          return false;
+        }
+        int connectionId2 = connectionIds.get(channel);
+        if (connectionId2 != connectionIds.getNoEntryValue()) {
+            return false;
+        }
+        return connectionId == connectionId2;
     }
 
     private int getNextConnectionId() {

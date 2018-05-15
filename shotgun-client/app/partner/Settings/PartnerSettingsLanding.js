@@ -5,6 +5,7 @@ import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';
 import {Icon, AverageRating} from 'common/components';
 import {logOut, unregisterAllDaosAndResetComponentState} from 'common/actions/CommonActions';
+import shotgun from 'native-base-theme/variables/shotgun';
 //import UserStatusControl from 'common/components/relationships/UserStatusControl';
 //import DeviceInfo from 'react-native-device-info';
 
@@ -81,7 +82,7 @@ const styles = {
   },
   image: {
     aspectRatio: 1,
-    borderRadius: 150,
+    borderRadius: shotgun.imageBorderRadius,
     width: 50,
     marginTop: 5
   },

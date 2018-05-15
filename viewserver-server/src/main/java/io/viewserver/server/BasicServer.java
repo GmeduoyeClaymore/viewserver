@@ -29,11 +29,11 @@ public class BasicServer {
         this.reportServerComponents = reportServerComponents;
         this.initialDataLoaderComponent = initialDataLoaderComponent;
         registerComponent(this.basicServerComponents);
+        registerComponent(this.controllerComponents);
         registerComponent(this.basicSubscriptionComponent);
         registerComponent(this.dataSourceServerComponents);
         registerComponent(this.reportServerComponents);
         registerComponent(this.initialDataLoaderComponent);
-        registerComponent(this.controllerComponents);
     }
 
     BasicServer(List<IEndpoint> endpointList) {

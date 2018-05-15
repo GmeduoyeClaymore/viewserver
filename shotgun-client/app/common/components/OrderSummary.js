@@ -50,7 +50,9 @@ class OrderSummary extends Component{
       <ListItem padded last>
         <Text>{order.description}</Text>
         {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
+        {order.imageData !== undefined && order.imageData !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: `data:image/jpeg;base64,${order.imageData}`}} resizeMode='contain' style={styles.image}/></Row> : null}
       </ListItem>
+
     </List></Content>;
   }
 }

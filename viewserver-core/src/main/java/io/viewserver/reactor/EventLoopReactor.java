@@ -337,37 +337,21 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     @Override
     public void onNetworkMessage(IChannel channel, IMessage msg) {
         if("genericJSON".equals(msg.getCommand().getCommand())){
-            ListenableFuture<?> future = controllerExecutor.submit(() ->
-                    network.receiveCommand(msg.getCommand(),network.getiPeerSession(channel))
-            );
-            Futures.addCallback(future, new FutureCallback<Object>() {
-                @Override
-                public void onSuccess(Object result) {
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    log.error("Failed to handle controller message:\n\r " + msg, t);
-                }
-            });
+            controllerExecutor.submit(() -> network.waitForSession(channel).subscribe(c-> network.receiveCommand(msg.getCommand(),c), err -> {
+                log.error("Failed to handle controller message:\n\r " + msg, err);
+            }));
         }else{
-            ListenableFuture<?> future = executor.submit(() -> {
-                if (network.receiveMessage(channel, msg)) {
-                    log.trace("Waking up reactor because of - {}",msg);
-                    EventLoopReactor.this.wakeUp();
-                }
-                msg.release();
-            });
-            Futures.addCallback(future, new FutureCallback<Object>() {
-                @Override
-                public void onSuccess(Object result) {
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    log.error("Failed to handle network message:\n\r " + msg, t);
-                }
-            });
+            executor.submit(() -> network.waitForSession(channel).subscribe(
+                    c-> {
+                        if (network.receiveMessage(channel, msg)) {
+                            log.trace("Waking up reactor because of - {}",msg);
+                            EventLoopReactor.this.wakeUp();
+                        }
+                        msg.release();
+                    },
+                    err -> {
+                log.error("Failed to handle controller message:\n\r " + msg, err);
+            }));
         }
     }
 

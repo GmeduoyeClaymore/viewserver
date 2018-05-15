@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.BucketNames;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -28,6 +30,11 @@ public class ImageController implements IImageController {
         this.awsCredentials = awsCredentials;
     }
 
+    @ControllerAction(path = "saveOrderImage", isSynchronous = false)
+    public String saveOrderImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "imageData") String imageData){
+        String fileName = bucketName + "/" + ControllerUtils.generateGuid() + ".jpg";
+        return saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData);
+    }
     @Override
     @ControllerAction(path = "saveImage", isSynchronous = false)
     public String saveImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "fileName") String fileName, @ActionParam(name = "imageData") String imageData){
