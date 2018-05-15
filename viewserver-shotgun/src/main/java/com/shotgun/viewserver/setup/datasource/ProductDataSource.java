@@ -28,7 +28,12 @@ ProductDataSource {
                 .withName(NAME)
                 .withSchema(schema)
                 .withOutput(DataSource.TABLE_NAME)
-                .withDimensions(Arrays.asList(new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true)))
+                .withDimensions(
+                        Arrays.asList(
+                                new Dimension("dimension_productId","productId", Cardinality.Int, ContentType.String, true),
+                                new Dimension("dimension_categoryId","categoryId", Cardinality.Int, ContentType.String, true)
+
+                        ))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }

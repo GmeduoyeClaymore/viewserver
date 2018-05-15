@@ -75,10 +75,10 @@ const validationSchema = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const {errors = [], selectedContentTypes, busy: initialBusy} = initialProps;
+  const {errors = [], selectedContentTypes, busyUpdating} = initialProps;
   const contentTypes = getDaoState(state, ['contentTypes'], 'contentTypeDao');
   const loadingErrors = getLoadingErrors(state, ['contentTypeDao']) || [];
-  const busy = initialBusy ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']);
+  const busy = busyUpdating ||  isAnyLoading(state, ['contentTypeDao', 'partnerDao']);
   return {
     ...initialProps,
     selectedContentTypes,

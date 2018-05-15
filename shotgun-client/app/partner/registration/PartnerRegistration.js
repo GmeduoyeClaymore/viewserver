@@ -46,7 +46,7 @@ class PartnerRegistration extends Component {
     return <ReduxRouter  name="PartnerRegistrationRouter" resizeForKeyboard={false} {...partnerRegistrationProps} defaultRoute={'PartnerRegistrationLanding'}>
       <Route {...routeProps} path={'PartnerRegistrationLanding'} exact component={PartnerRegistrationLanding}/>
       <Route {...routeProps} path={'Login'} exact component={PartnerLogin}/>
-      <Route {...routeProps} path={'UserDetails'} next={`${path}/PartnerAccountType`} exact component={UserDetails}/>
+      <Route {...routeProps} path={'UserDetails'} next={`${path}/AddressDetails`} exact component={UserDetails}/>
       <Route {...routeProps} path={'AddressDetails'} next={`${path}/PartnerAccountType`} exact component={AddressDetails}/>
       <Route {...routeProps} path={'AddressLookup'} exact component={AddressLookup} showRecent={false}/>
       <Route {...routeProps} path={'PartnerAccountType'} exact component={PartnerAccountType}/>
@@ -57,11 +57,11 @@ class PartnerRegistration extends Component {
 const mapStateToProps = (state, nextOwnProps) => {
   const {match: parentMatch} = nextOwnProps;
   const errors = getOperationError(state, 'loginDao', 'registerAndLoginPartner') || '';
-  const busy = isAnyOperationPending(state, [{ loginDao: 'registerAndLoginPartner'}]);
+  const busyUpdating = isAnyOperationPending(state, [{ loginDao: 'registerAndLoginPartner'}]);
   return {
     parentMatch,
     ...nextOwnProps,
-    busy,
+    busyUpdating,
     errors
   };
 };

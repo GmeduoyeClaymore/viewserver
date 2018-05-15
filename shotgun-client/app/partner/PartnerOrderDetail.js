@@ -55,7 +55,7 @@ class PartnerOrderDetail extends Component {
   onOrderRespond = async ({ negotiationAmount, negotiationDate }) => {
     const { order, history, dispatch, bankAccount, parentPath, path } = this.props;
     const { orderId, orderContentTypeId } = order;
-    if (bankAccount) {
+    if (bankAccount && Object.keys(bankAccount).length) {
       dispatch(respondToOrder(orderId, orderContentTypeId, negotiationDate, negotiationAmount, () => history.push({ pathname: path, state: { orderId } })));
     } else {
       const next = { pathname: path, state: { orderId, responseParams: { negotiationDate, negotiationAmount } }, transition: 'left' };

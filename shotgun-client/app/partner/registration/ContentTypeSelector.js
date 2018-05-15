@@ -15,7 +15,7 @@ const resourceDictionary = new ContentTypes.ResourceDictionary();
 resourceDictionary.
   property('PageTitle', ({contentType}) => contentType.name).
     delivery(() => 'What vehicle have you got?').
-    personell(() => 'What skills do you have?').
+    personell(() => 'What can you do?').
     rubbish(() => 'Can you do commercial and household waste?');
 /*eslint-enable */
 

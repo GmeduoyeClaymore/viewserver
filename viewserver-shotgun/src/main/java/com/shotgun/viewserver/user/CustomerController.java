@@ -53,8 +53,10 @@ public class CustomerController {
         String userId = userController.addOrUpdateUser(user, user.getPassword());
         ControllerContext.set("userId", userId);
 
-        deliveryAddress.set("isDefault",true);
-        deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
+        if(deliveryAddress != null && deliveryAddress.getLine1() != null) {
+            deliveryAddress.set("isDefault", true);
+            deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
+        }
 
         log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
         return userId;
