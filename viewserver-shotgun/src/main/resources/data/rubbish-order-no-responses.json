@@ -15,7 +15,7 @@
     "longitude": -0.212341
   },
   "customerUserId": "{userId}",
-  "requiredDate": "2018-05-03T11:04:54.797Z",
+  "requiredDate": "{requiredDate}",
   "description": "this is a rubbish order",
   "orderStatus": "PLACED",
   "orderProduct": {
