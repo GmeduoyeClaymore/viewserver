@@ -28,7 +28,7 @@ export default class PartnerOrderResponseDao{
     return  this._name;
   }
 
-  getReportContext({orderId, responseStatuses, isCompleted}){
+  getReportContext({orderId, responseStatuses, isCompleted = false}){
     const reportContext =  {
       reportId: 'orderResponses',
       dimensions: {},
@@ -42,7 +42,7 @@ export default class PartnerOrderResponseDao{
       reportContext.dimensions.dimension_responseStatus = responseStatuses;
     }
 
-    if (isCompleted !== undefined) {
+    if (isCompleted !== undefined && !orderId) {
       reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP];
     }
 

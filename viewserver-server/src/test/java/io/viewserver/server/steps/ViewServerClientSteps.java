@@ -241,12 +241,16 @@ public class ViewServerClientSteps {
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\"$")
     public void controller_action_invoked_with_data_file(String clientName, String controllerName, String action, String dataFile) throws InterruptedException, ExecutionException, TimeoutException {
-        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, TestUtils.getJsonStringFromFile(dataFile), null);
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, TestUtils.getJsonStringFromFile(dataFile), null,null);
     }
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\" with parameters$")
     public void controller_action_invoked_with_data_file_with_parameters(String clientName, String controllerName, String action, String dataFile, List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
-        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile, records), null);
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile, records), null,null);
+    }
+    @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data file \"([^\"]*)\" with parameters and result name suffix \"([^\"]*)\"$")
+    public void controller_action_invoked_with_data_file_with_parameters(String clientName, String controllerName, String action, String dataFile, String resultNameSffix,List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, getJsonStringFromFile(dataFile, records), null,resultNameSffix);
     }
 
     @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with parameters$")
@@ -259,7 +263,20 @@ public class ViewServerClientSteps {
             paramValue = TestUtils.replaceReference(paramValue) + "";
             result.put(paramName,  clientContext.replaceParams(paramValue));
         }
-        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null);
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null, null);
+    }
+
+    @Given("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with parameters and result name suffix \"([^\"]*)\"$")
+    public void controller_action_invoked_with_data(String clientName, String controllerName, String action,String resultNameSffix, List<Map<String, String>> records) throws InterruptedException, ExecutionException, TimeoutException {
+        HashMap<String,Object> result = new HashMap<>();
+        for(Map<String,String> record : records){
+            String paramName = record.get("Name");
+            String paramValue = record.get("Value");
+
+            paramValue = TestUtils.replaceReference(paramValue) + "";
+            result.put(paramName,  clientContext.replaceParams(paramValue));
+        }
+        I_Invoke_Action_On_Controller_With_Data_With_Result(clientName, controllerName, action, JacksonSerialiser.getInstance().serialise(result), null, resultNameSffix);
     }
 
     private String getJsonStringFromFile(String dataFile, List<Map<String, String>> records) {
@@ -294,14 +311,14 @@ public class ViewServerClientSteps {
 
 
     @When("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
-    public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result) throws InterruptedException, ExecutionException, TimeoutException {
+    public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result, String resultNameSuffix) throws InterruptedException, ExecutionException, TimeoutException {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
 
         ListenableFuture<CommandResult> future = connectionContext.invokeJSONCommand(controllerName, action, data);
 
         CommandResult actual = future.get(timeout, timeUnit);
         Assert.assertTrue(actual.isStatus());
-        connectionContext.setResult(controllerName, action, actual.getMessage());
+        connectionContext.setResult(controllerName, action + (resultNameSuffix == null ? "" : resultNameSuffix), actual.getMessage());
         if (result != null) {
             Assert.assertEquals(result, actual.getMessage());
         }

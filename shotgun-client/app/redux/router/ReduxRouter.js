@@ -74,7 +74,9 @@ class ReduxRouterClass extends Component {
     const oldNavigationContainerTranslator = oldProps.navigationContainerTranslator;
     const diff = NavigationContainerTranslator.diff(oldNavigationContainerTranslator, newNavigationContainerTranslator, newNavigationContainerTranslator.defaultRoute, newNavigationContainerTranslator.routerPath);
     if (diff) {
-      Keyboard.dismiss();
+      if (this.props.primaryNavigation){
+        Keyboard.dismiss();
+      }
       this.transitionManager.performTransition(diff, newNavigationContainerTranslator.defaultRoute.pathname, newNavigationContainerTranslator.routerPath);
     }
   }
@@ -113,7 +115,7 @@ class ReduxRouterClass extends Component {
     const { width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground } = this.props;
     const height = this.getHeight();
 
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'clearState', 'clearStateAtPath', 'name', 'navigationContainerTranslator']);
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'primaryNavigation', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'clearState', 'clearStateAtPath', 'name', 'navigationContainerTranslator']);
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
     const result = <Container>
       {routesToRender.length ? routesToRender.map(

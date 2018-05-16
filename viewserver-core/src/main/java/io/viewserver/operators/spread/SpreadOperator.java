@@ -1,8 +1,10 @@
 package io.viewserver.operators.spread;
 
+import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TLongProcedure;
 import gnu.trove.set.hash.TIntHashSet;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
@@ -35,7 +37,7 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
     private String sourceColumn;
     private boolean removeInputColumn;
     private boolean retainSourceRow;
-
+    private TLongArrayList removedRows = new TLongArrayList(8, -1);
     public SpreadOperator(String name, IExecutionContext executionContext, ITableStorage tableStorage, ICatalog catalog, ISpreadFunctionRegistry spreadColumnRegistry) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
@@ -187,12 +189,14 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
                 }
                 mapRow(row, ourRows, outputRow, isAdd);
             }
-            if(maximimumRowIndex > 0 && ints.length > maximimumRowIndex){
-                for(int i=maximimumRowIndex-1;i<ints.length;i++){
+            if(ints.length > maximimumRowIndex){
+                for(int i=maximimumRowIndex;i<ints.length;i++){
                     int intRowToRemove = ints[i];
                     inputToOutputMappings.remove(intRowToRemove);
                     ourRows.remove(intRowToRemove);
-                    output.handleRemove(intRowToRemove);
+                    if(output.isRowActive(intRowToRemove)){
+                        output.handleRemove(intRowToRemove);
+                    }
                 }
             }
         }
@@ -209,17 +213,36 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
 
         @Override
         protected void onRowRemove(int row) {
-            TIntHashSet ourRows = spreadAssociations.get(row);
+            TIntHashSet ourRows = spreadAssociations.get((int)row);
+            if (ourRows == null) {
+                throw new RuntimeException("Attempting to remove a row that doesnt exist");
+            }
+            for(int i : ourRows.toArray()){
+                output.handleRemove(i);
+            }
+            removedRows.add(row);
+        }
+
+        @Override
+        public void onAfterCommit() {
+            super.onAfterCommit();
+            removedRows.forEach(removeRowProc);
+            removedRows.reset();
+        }
+
+        private final TLongProcedure removeRowProc = (row) -> {
+            TIntHashSet ourRows = spreadAssociations.get((int)row);
             if (ourRows == null) {
                 throw new RuntimeException("Attempting to remove a row that doesnt exist");
             }
             for(int i : ourRows.toArray()){
                 log.debug("Row {} has just been removed in remove",i);
                 inputToOutputMappings.remove(i);
-                output.handleRemove(i);
                 ourRows.remove(i);
             }
-        }
+            return true;
+        };
+
 
     }
 

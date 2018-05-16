@@ -59,7 +59,7 @@ class UpdateBankAccountDetails extends Component {
             <Col>
               <Item stackedLabel>
                 <Label>Account number</Label>
-                <ValidatingInput bold placeholder="123456789" value={unsavedBankAccount.accountNumber}
+                <ValidatingInput  keyboardType='phone-pad' bold placeholder="123456789" value={unsavedBankAccount.accountNumber}
                   validateOnMount={unsavedBankAccount.accountNumber !== undefined}
                   onChangeText={(value) => this.onChangeText('accountNumber', value)}
                   validationSchema={validationSchema.accountNumber} maxLength={8}/>
@@ -70,7 +70,7 @@ class UpdateBankAccountDetails extends Component {
             <Col>
               <Item stackedLabel>
                 <Label>Sort code</Label>
-                <ValidatingInput bold placeholder="12-34-56" value={unsavedBankAccount.sortCode}
+                <ValidatingInput  keyboardType='phone-pad' bold placeholder="12-34-56" value={unsavedBankAccount.sortCode}
                   validateOnMount={unsavedBankAccount.sortCode !== undefined}
                   onChangeText={(value) => this.onChangeText('sortCode', value)}
                   validationSchema={validationSchema.sortCode} maxLength={10}/>

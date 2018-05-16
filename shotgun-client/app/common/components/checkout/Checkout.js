@@ -49,7 +49,7 @@ class Checkout extends Component {
     const rest = removeProperties(customerProps, ['stateKey', 'setState', 'setStateWithPath', 'clearState', 'clearStateAtPath', 'parentPath']);
     const {getNext} = this;
 
-    return <ReduxRouter  name="CheckoutRouter" {...rest}  checkoutRoot={path} defaultRoute={'ContentTypeSelect'}>
+    return <ReduxRouter primaryNavigation={true}  name="CheckoutRouter" {...rest}  checkoutRoot={path} defaultRoute={'ContentTypeSelect'}>
       <Route stateKey={Checkout.stateKey} path={'ContentTypeSelect'} exact component={ContentTypeSelect} next={getNext('ContentTypeSelect')}/>
       <Route stateKey={Checkout.stateKey} transition='left' path='DeliveryMap' exact component={DeliveryMap} next={getNext('DeliveryMap')}/>
       <Route stateKey={Checkout.stateKey} transition='left' path='AddressLookup' exact component={AddressLookup} next={getNext('AddressLookup')} />

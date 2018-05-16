@@ -91,7 +91,7 @@ public class JsonSummary implements ISummary {
 
     @Override
     public void onGroupRemove(int groupId) {
-
+        rowMaps.remove(groupId);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JsonSummary implements ISummary {
             return;
         }
         rowMap.remove(rowId + "");
-        log.info("L3aving group - " + groupId);
+        log.info("Leaving group - " + groupId);
         context.markDirty(groupId);
     }
 

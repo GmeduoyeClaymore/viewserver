@@ -475,7 +475,7 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
                 log.warn("About to crap out with bad group ID! row={}, group={}", rowId, groupId);
                 log.warn(OutputPrinter.getOutput(input.getProducer(), true));
                 log.warn(OutputPrinter.getOutput(input.getProducer(), false));
-                return false;
+                throw new RuntimeException();
             }
             TIntHashSet rowsInGroup = groupIdToRowIds.get(groupId);
             rowsInGroup.remove(rowId);
