@@ -272,11 +272,13 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
     }
 
-    private void notifyUserOfNewOrder(String orderId, HashMap order, User user) {
+    private synchronized void notifyUserOfNewOrder(String orderId, HashMap order, User user) {
         String customerUserId = (String) order.get("customerUserId");
         String amount = df.format(Integer.parseInt(order.get("amount") + "") / 100);
         Object title = order.get("title");
-        sendMessage(orderId, customerUserId,user.getUserId(), "Shotgun - New Job - £" + amount, "A new job \"" + title + "\" has just been listed that may be of interest to you", false);
+        if(!hasNotificationForUser(orderId,user.getUserId())) {
+            sendMessage(orderId, customerUserId, user.getUserId(), "Shotgun - New Job - £" + amount, "A new job \"" + title + "\" has just been listed that may be of interest to you", false);
+        }
     }
 
     @Override
