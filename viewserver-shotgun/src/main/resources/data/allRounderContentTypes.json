@@ -1,7 +1,9 @@
 {
   "1": {
     "selectedProductIds": [
-      "MediumVan"
+      "SmallVan",
+      "MediumVan",
+      "LargeVan"
     ]
   },
   "2": {

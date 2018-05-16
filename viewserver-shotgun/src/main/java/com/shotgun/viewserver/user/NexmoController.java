@@ -310,7 +310,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         } else { //number not assigned tell the customer
             ncco.add("action", new JsonPrimitive("talk"));
             ncco.add("voiceName", new JsonPrimitive("Amy"));
-            ncco.add("text", new JsonPrimitive("Welcome to Shotgun. We're unable to connect your call at this moment. Please call  "));
+            ncco.add("text", new JsonPrimitive("Welcome to Shotgun. We're unable to connect your call at this moment. Please call later"));
         }
 
         JsonArray nccoArray = new JsonArray();

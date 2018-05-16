@@ -115,9 +115,13 @@ class ReduxRouterClass extends Component {
     const { width = shotgun.deviceWidth, historyOverrideFactory, navigationContainerTranslator, path: parentPath, style = {}, isInBackground } = this.props;
     const height = this.getHeight();
 
-    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'primaryNavigation', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'clearState', 'clearStateAtPath', 'name', 'navigationContainerTranslator']);
+    const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'style', 'primaryNavigation', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'clearState', 'clearStateAtPath', 'name', 'navigationContainerTranslator']);
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
-    const result = <Container>
+    const result = <View style={{
+      height, width,
+      backgroundColor: shotgun.brandPrimary,
+      minHeight: height, minWidth: width, maxHeight: height, maxWidth: width
+    }}>
       {routesToRender.length ? routesToRender.map(
         (rt) => {
           const { componentProps, match, navContainerOverride } = rt;
@@ -145,7 +149,7 @@ class ReduxRouterClass extends Component {
           </View>;
         }
       ) : <LoadingScreen text="Navigating..." />}
-    </Container>;
+    </View>;
 
     if (!routesToRender.length) {
       Logger.info(`${isInBackground} - No routes found to match the path ${navigationContainerTranslator.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);
