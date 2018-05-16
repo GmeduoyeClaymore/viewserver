@@ -33,7 +33,7 @@ export class UserInfo extends Component{
 
 const styles = {
   name: {
-    alignContent: 'center'
+    alignItems: 'center',
   },
   images: {
     aspectRatio: 1,

@@ -88,10 +88,10 @@ class UserRelationships extends Component{
       <Row>
         <Row style={{...styles.showAllView, marginTop: IS_ANDROID ? 0 : 15 }}>
           <Button style={styles.showAllButton} light={!justFriends} onPress={() => this.setJustFriends(true)}>
-            <Text style={styles.buttonText}>Friends</Text>
+            <Text style={styles.buttonText} uppercase={false}>Friends</Text>
           </Button>
           <Button style={styles.showAllButton} light={justFriends} onPress={() => this.setJustFriends(false)}>
-            <Text style={styles.buttonText}>Everyone</Text>
+            <Text style={styles.buttonText} uppercase={false}>Everyone</Text>
           </Button>
         </Row>
 
@@ -108,7 +108,7 @@ const styles = {
   showAllView: {
     position: 'absolute',
     top: 10,
-    right: 5,
+    right: 15,
     zIndex: 3
   },
   showAllButton: {

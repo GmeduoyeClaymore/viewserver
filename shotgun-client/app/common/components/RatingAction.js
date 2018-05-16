@@ -5,12 +5,14 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {rateUserOrder} from 'common/actions/CommonActions';
 import {Icon, AverageRating, ValidatingInput} from 'common/components';
 import yup from 'yup';
+
 const RatingAction = ({isRatingCustomer, order, dispatch, comments, setState}) => {
   const {assignedPartner, customer} = order;
   const name = isRatingCustomer ? customer.firstName : assignedPartner.firstName;
   const ratingObj = isRatingCustomer ?  order.ratingCustomer : order.ratingPartner;
   const existingRating = isRatingCustomer ? order.ratingCustomer :  order.ratingPartner;
   const {rating} =  ratingObj || {};
+
   const onPressStar = (newRating) => {
     const ratingType = isRatingCustomer ? 'Customer' : 'Partner';
     const action = rateUserOrder({orderId: order.orderId, rating: newRating, comments, ratingType});
@@ -21,8 +23,9 @@ const RatingAction = ({isRatingCustomer, order, dispatch, comments, setState}) =
     return <AverageRating rating={rating} text={`${name} Rating`}/>;
   }
 
-  return <View style={{alignItems: 'center'}}><Text style={{alignItems: 'center'}}>Rate {name}</Text>
-    <ValidatingInput bold placeholder="Bob was fantastic. Will certainly use him again.." value={comments} style={{textAlign:'center', justifyContent: 'center', margin: 15}} model={this.props} validateOnMount={comments !== undefined} onChangeText={(value) => setState({comments: value}, undefined, dispatch)} validationSchema={validationSchema.comments} maxLength={30}/>
+  return <View padded style={{alignItems: 'center'}}>
+    <Text style={{alignItems: 'center'}}>Rate {name}</Text>
+    <ValidatingInput bold placeholder="Bob was fantastic. Will use him again" value={comments} style={styles.comments} model={this.props} showIcons={false} validateOnMount={comments !== undefined} onChangeText={(value) => setState({comments: value}, undefined, dispatch)} validationSchema={validationSchema.comments} maxLength={30}/>
     <View style={styles.starView}>
       <Icon name='star' onPress={() => onPressStar(1)}
         style={[styles.star, rating > 0 ? styles.starFilled : styles.starEmpty]}/>
@@ -42,6 +45,9 @@ const validationSchema = {
 };
 
 const styles = {
+  comments: {
+    fontSize: 14
+  },
   starView: {
     flexWrap: 'wrap',
     alignItems: 'center',

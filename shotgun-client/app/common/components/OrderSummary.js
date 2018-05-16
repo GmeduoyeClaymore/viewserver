@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Image} from 'react-native';
-import {Text, List, ListItem, Row, Content} from 'native-base';
+import {Text, List, ListItem, Row, Content, View} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
-import moment from 'moment';
 import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
@@ -30,25 +29,31 @@ class OrderSummary extends Component{
 
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, requiredDate, orderStatus, orderProduct} = order;
+    const {assignedPartner, customer, orderStatus, orderProduct} = order;
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
 
     return <Content><List>
-      {!isComplete && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTop last>
+      {!isComplete && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTopBottom>
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}
-      {orderProduct ? <ListItem padded>
-        {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
-        <Text>{`${orderProduct.name}`}</Text>
+
+      {orderProduct ? <ListItem padded style={styles.productInfoRow}>
+        <Row>
+          {orderProduct.imageUrl ? <Icon paddedIcon name={orderProduct.imageUrl}/> : null}
+          <Icon paddedIcon name={orderProduct.productId}/>
+          <Text>{`${orderProduct.name}`}</Text>
+        </Row>
+        {order.description ? <View><Text style={styles.description}>{order.description}</Text></View> : null}
       </ListItem> : null}
-      {this.renderMap()}
-      <ListItem padded>
+
+      <ListItem padded last>
         <OriginDestinationSummary order={order}/>
       </ListItem>
 
+      {this.renderMap()}
+
       <ListItem padded last>
-        <Text>{order.description}</Text>
         {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
         {order.imageData !== undefined && order.imageData !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: `data:image/jpeg;base64,${order.imageData}`}} resizeMode='contain' style={styles.image}/></Row> : null}
       </ListItem>
@@ -60,8 +65,7 @@ class OrderSummary extends Component{
 const styles = {
   mapListItem: {
     justifyContent: 'center',
-    borderBottomWidth: 0,
-    marginTop: 20
+    paddingBottom: shotgun.contentPadding
   },
   image: {
     aspectRatio: 1.2,
@@ -73,6 +77,15 @@ const styles = {
     color: shotgun.brandLight,
     paddingBottom: 20,
     width: '100%'
+  },
+  productInfoRow: {
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
+  description: {
+    fontStyle: 'italic',
+    color: shotgun.brandLight,
+    paddingTop: 10
   }
 };
 

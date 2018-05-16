@@ -73,13 +73,13 @@ class PartnerNegotiationPanel extends Component {
 
         {awaitingCustomerResponse ?
           <Row>
-            <Col width={50}>
+            <Col width={60}>
               <Row>
                 <Spinner size={IS_ANDROID ? 30 : 1} color={shotgun.brandWarning} style={styles.waitingSpinner}/>
                 <Text style={{alignSelf: 'center'}} numberOfLines={1}>Awaiting customer response</Text>
               </Row>
             </Col>
-            <Col width={50}>
+            <Col width={40}>
               <SpinnerButton style={styles.cancelButton} danger fullWidth onPress={this.onCancelResponse}>
                 <Text uppercase={false}>Withdraw</Text>
               </SpinnerButton>
