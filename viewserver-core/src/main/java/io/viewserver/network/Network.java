@@ -347,11 +347,11 @@ public class Network implements PeerSession.IDisconnectionHandler {
 
     private boolean matches(IChannel ch, IChannel channel) {
         int connectionId = connectionIds.get(ch);
-        if (connectionId != connectionIds.getNoEntryValue()) {
+        if (connectionId == connectionIds.getNoEntryValue()) {
           return false;
         }
         int connectionId2 = connectionIds.get(channel);
-        if (connectionId2 != connectionIds.getNoEntryValue()) {
+        if (connectionId2 == connectionIds.getNoEntryValue()) {
             return false;
         }
         return connectionId == connectionId2;

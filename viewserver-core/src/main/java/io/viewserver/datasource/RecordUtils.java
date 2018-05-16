@@ -51,6 +51,7 @@ public class RecordUtils{
         }else{
             operator.updateRow(row, rowUpdater);
         }
+        logger.info("Finished adding record rec to operator " + operator.getPath());
     }
 
     public static TableKey getTableKey(IRecord rec, TableKeyDefinition tableKeyDefinition) {
