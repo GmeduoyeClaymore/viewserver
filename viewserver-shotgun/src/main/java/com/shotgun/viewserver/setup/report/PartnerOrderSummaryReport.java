@@ -29,11 +29,12 @@ public class PartnerOrderSummaryReport {
                                                 new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""),
                                                 new CalcColOperator.CalculatedColumn("responseStatus", "getResponseField(\"{@userId}\",\"responseStatus\",orderDetails)"),
                                                 new CalcColOperator.CalculatedColumn("responsePrice", "getResponseField(\"{@userId}\",\"price\",orderDetails)"),
-                                                new CalcColOperator.CalculatedColumn("responseDate", "getResponseField(\"{@userId}\",\"date\",orderDetails)")
+                                                new CalcColOperator.CalculatedColumn("responseDate", "getResponseField(\"{@userId}\",\"date\",orderDetails)"),
+                                                new CalcColOperator.CalculatedColumn("userCanSeeOrder", "isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)")
                                         )
                                         .withConnection("customerJoin"),
                                 new FilterNode("notIsBlocked")
-                                        .withExpression("isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)")
+                                        .withExpression("userCanSeeOrder")
                                         .withConnection("orderCalcs"),
                                 new ProjectionNode("orderSummaryProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
@@ -75,6 +76,7 @@ public class PartnerOrderSummaryReport {
                                         )
                                                         .withConnection("notIsBlocked")
                         )
+                        .withRequiredParameter("@userId", "User Id", String[].class)
                         .withOutput("orderSummaryProjection");
         }
 }

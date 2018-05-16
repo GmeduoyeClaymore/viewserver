@@ -154,7 +154,12 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){
             log.info("RX Subject Handling UPDATE - " +row);
-            subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(),row,null)));
+            subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(), row, new IRowFlags() {
+                @Override
+                public boolean isDirty(int columnId) {
+                    return getCurrentChanges().isDirty(row,columnId);
+                }
+            })));
         }
     }
 

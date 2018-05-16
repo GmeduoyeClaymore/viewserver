@@ -89,6 +89,7 @@ public class UserRelationshipReport {
                 .withRequiredParameter("latitude", "Latitude Override", double[].class)
                 .withRequiredParameter("longitude", "Longitude Override", double[].class)
                 .withRequiredParameter("maxDistance", "Max Distance Override", double[].class)
+                .withRequiredParameter("@userId", "User Id", String[].class)
                 .withOutput("userProjectionInclusionary");
     }
 }

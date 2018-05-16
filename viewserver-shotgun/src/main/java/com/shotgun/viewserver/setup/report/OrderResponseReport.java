@@ -18,9 +18,13 @@ public class OrderResponseReport {
                                 new CalcColNode("userCreatedThisOrderCalc")
                                         .withCalculations(new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""))
                                         .withConnection("#input"),
-                                new FilterNode("notIsBlocked")
-                                        .withExpression("isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)")
+                                new CalcColNode("orderVisibleCalc")
+                                        .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("userCanSeeOrder", "isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)"))
                                         .withConnection("userCreatedThisOrderCalc"),
+                                new FilterNode("notIsBlocked")
+                                        .withExpression("userCanSeeOrder")
+                                        .withConnection("orderVisibleCalc"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
@@ -50,6 +54,7 @@ public class OrderResponseReport {
                                         )
                                         .withConnection("notIsBlocked")
                         )
+                        .withRequiredParameter("@userId", "User Id", String[].class)
                         .withOutput("orderRequestProjection");
         }
 }

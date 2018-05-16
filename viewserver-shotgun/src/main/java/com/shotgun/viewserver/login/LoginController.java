@@ -2,6 +2,7 @@ package com.shotgun.viewserver.login;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.user.UserAppStatus;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.*;
@@ -28,6 +29,7 @@ import rx.observable.ListenableFutureObservable;
 
 import java.util.*;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
 import static com.shotgun.viewserver.user.UserController.waitForUser;
 
 /**
@@ -80,11 +82,22 @@ public class LoginController {
                 )));
     }
 
+    @ControllerAction(path = "background", isSynchronous = true)
+    public void background() {
+        setUserAppStatus(getUserId(), UserAppStatus.BACKGROUND);
+    }
+
+    @ControllerAction(path = "foreground", isSynchronous = true)
+    public void foreground() {
+        setUserAppStatus(getUserId(), UserAppStatus.FOREGROUND);
+    }
+
     private Observable<Boolean> setUserOnline(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("online", true)
-                .addValue("userStatus", UserStatus.ONLINE.name());
+                .addValue("userStatus", UserStatus.ONLINE.name())
+                .addValue("userAppStatus", UserAppStatus.FOREGROUND);
 
         return iDatabaseUpdater.scheduleAddOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
@@ -93,7 +106,16 @@ public class LoginController {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("online", false)
-                .addValue("userStatus", UserStatus.OFFLINE.name());
+                .addValue("userStatus", UserStatus.OFFLINE.name())
+                .addValue("userAppStatus", UserAppStatus.BACKGROUND);
+
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+    }
+
+    private void setUserAppStatus(String userId, UserAppStatus appStatus) {
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("userAppStatus", appStatus);
 
         iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }

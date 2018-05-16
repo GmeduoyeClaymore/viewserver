@@ -67,7 +67,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             Options options = Options.fromMessage(data.getOptions());
             ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
             enhance(definition,reportContext);
-            substituteParamValues(peerSession, reportContext, options);
+            substituteParamValues(peerSession, reportContext, options, definition);
 
             log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
@@ -104,14 +104,19 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
         }
     }
 
-    private void substituteParamValues(IPeerSession peerSession, ReportContext reportContext, Options options) {
+    private void substituteParamValues(IPeerSession peerSession, ReportContext reportContext, Options options, ReportDefinition definition) {
         ValueLists.StringList stringList = new ValueLists.StringList();
-        stringList.add(peerSession.getCatalogName());
-        reportContext.setParameterValue("@catalogName", stringList);
+        if(definition.hasParameter("@catalogName")) {
+            stringList.add(peerSession.getCatalogName());
+            reportContext.setParameterValue("@catalogName", stringList);
+        }
 
         Set<String> paramNames = ControllerContext.getParamNames(peerSession);
         if(paramNames != null){
             for(String name : paramNames){
+                if(!definition.hasParameter("@"+name)){
+                    continue;
+                }
                 stringList = new ValueLists.StringList();
                 Object value = ControllerContext.getStatic(name, peerSession);
                 if(value == null){

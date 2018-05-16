@@ -78,6 +78,7 @@ public class LegacyUserRelationshipReport {
                     .withNonRequiredParameter("productId", "Product ID", String[].class,false, "")
                     .withRequiredParameter("latitude", "Latitude Override", double[].class)
                     .withRequiredParameter("longitude", "Longitude Override", double[].class)
+                    .withRequiredParameter("@userId", "User ID", String[].class)
                     .withRequiredParameter("maxDistance", "Max Distance Override", double[].class)
                     .withNodes(nodes.toArray(new IGraphNode[nodes.size()]))
 

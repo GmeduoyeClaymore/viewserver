@@ -54,6 +54,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static io.viewserver.command.SubscribeReportHandler.enhance;
+import static io.viewserver.core.Utils.toArray;
 
 public class UserOrderNotificationComponent implements IServerComponent, OrderNotificationContract {
     private IDataSourceServerComponents components;
@@ -94,9 +95,20 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private void listenForUsers(IOperator operator) {
 
         IOutput out = operator.getOutput("out");
-        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "range", "latitude", "longitude", "relationships").
+        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "relationships").
                 filter(ev-> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).subscribe(ev -> {
             onUserAdded((HashMap)ev.getEventData());
+        }));
+        this.subscriptions.add(out.observable("userId", "selectedContentTypes", "relationships").
+                filter(ev-> Arrays.asList(EventType.ROW_UPDATE).contains(ev.getEventType())).subscribe(ev -> {
+
+            HashMap eventData = (HashMap) ev.getEventData();
+            if(eventData.containsKey("selectedContentTypes")){
+                log.info("Resubscribing user as content types have changed");
+                onUserAdded(eventData);
+            }else{
+                log.info("Not resubscribing user as content types have not changed");
+            }
         }));
         this.subscriptions.add(out.observable("userId").
                 filter(ev-> Arrays.asList(EventType.ROW_REMOVE).contains(ev.getEventType())).subscribe(ev -> {
@@ -123,8 +135,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         this.components.onDataSourcesBuilt(OrderDataSource.NAME,UserDataSource.NAME, OrderWithResponseDataSource.NAME).subscribe(c-> {
             rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(IDataSourceRegistry.getOperatorPath(OrderDataSource.NAME, DataSource.INDEX_NAME));
 
-            List<String> productIds  = ProductSpreadFunction.getProductIds(user.getSelectedContentTypes());
-            if(productIds.size() == 0){
+            if(user.getSelectedContentTypes() == null){
                 log.info("No products found for user " + user.getUserId() + " no notifications will be sent");
                 return;
             }
@@ -190,6 +201,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
         enhance(definition,reportContext);
 
+
         log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
         ObservableCommandResult systemExecutionPlanResult = new ObservableCommandResult();
@@ -222,9 +234,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         //| partnerLongitude         | Integer | 0       |          |
         ReportContext context = new ReportContext();
         context.setReportName("orderRequest");
+        List<String> productIds  = ProductSpreadFunction.getProductIds(user.getSelectedContentTypes());
         List<ReportContext.DimensionValue> dimensionValues = context.getDimensionValues();
         dimensionValues.add(new ReportContext.DimensionValue("dimension_customerUserId", true,user.getUserId()));
         dimensionValues.add(new ReportContext.DimensionValue("dimension_status", false,"PLACED"));
+        dimensionValues.add(new ReportContext.DimensionValue("dimension_productId", false,(Object[])toArray(productIds,String[]::new)));
         Map<String, ValueLists.IValueList> parameterValues = context.getParameterValues();
         parameterValues.put("showOutOfRange", ValueLists.valueListOf("true"));
         parameterValues.put("@userId", ValueLists.valueListOf(user.getUserId()));

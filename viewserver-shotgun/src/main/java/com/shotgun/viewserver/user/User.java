@@ -56,6 +56,8 @@ public interface User extends DynamicJsonBackedObject{
     Double getRatingAvg();
     Boolean getOnline();
     Vehicle getVehicle();
+    UserStatus getUserStatus();
+    UserAppStatus getUserAppStatus();
 
 
     default UserRating addRating(String fromUserId,String title,String orderId, int rating, String comments, UserRating.RatingType type){

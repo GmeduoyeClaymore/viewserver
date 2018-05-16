@@ -149,6 +149,10 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> impl
         return this;
     }
 
+    public boolean hasParameter(String name){
+        return this.parameters.containsKey(name);
+    }
+
     public String getDataSource() {
         return dataSource;
     }

@@ -22,6 +22,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
+import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.util.ViewServerException;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -59,6 +60,7 @@ public class KeyedTable extends Table {
 
         for (String keyColumn : tableKeyDefinition.getKeys()) {
             ColumnHolder keyHolder = this.getOutput().getSchema().getColumnHolder(keyColumn);
+            keyHolder.getMetadata().setFlag(ColumnFlags.KEY_COLUMN);
 
             // add the key column for the caller if it wasn't declared explicitly in the schema
             if (keyHolder == null) {

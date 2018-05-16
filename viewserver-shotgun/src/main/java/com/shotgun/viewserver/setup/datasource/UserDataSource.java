@@ -48,6 +48,7 @@ public class UserDataSource {
                                         new Column("imageUrl",  ContentType.String),
                                         new Column("online", ContentType.Bool),
                                         new Column("userStatus",  ContentType.String),
+                                        new Column("userAppStatus",  ContentType.String),
                                         new Column("statusMessage",  ContentType.String)
                                 ))
                                 .withKeyColumns("userId")

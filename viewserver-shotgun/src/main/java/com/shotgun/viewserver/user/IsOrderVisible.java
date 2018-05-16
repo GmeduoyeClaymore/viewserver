@@ -45,18 +45,17 @@ public class IsOrderVisible implements IUserDefinedFunction, IExpressionBool {
         String userRelationshipFieldString = relationshipField.getString(row);
         UserRelationship[] relationships = JacksonSerialiser.getInstance().deserialise(userRelationshipFieldString,UserRelationship[].class);
         Optional<UserRelationship> relationship = fromArray(relationships).filter(c -> c.getToUserId().equals(userIdFieldString)).findAny();
+        String orderDetailsString = orderDetailsField.getString(row);
+        BasicOrder order = JacksonSerialiser.getInstance().deserialise(orderDetailsString,BasicOrder.class);
         if(relationship.isPresent()){
             UserRelationshipStatus relationshipStatus = relationship.get().getRelationshipStatus();
             if(relationshipStatus.equals(UserRelationshipStatus.BLOCKED) || relationshipStatus.equals(UserRelationshipStatus.BLOCKEDBYME)){
                 return false;
             }
-            String orderDetailsString = orderDetailsField.getString(row);
-            BasicOrder order = JacksonSerialiser.getInstance().deserialise(orderDetailsString,BasicOrder.class);
             if(order.isJustForFriends()){
                 return relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.ACCEPTED);
             }
         }
-
-        return true;
+        return order.isJustForFriends() == null || !order.isJustForFriends();
     }
 }

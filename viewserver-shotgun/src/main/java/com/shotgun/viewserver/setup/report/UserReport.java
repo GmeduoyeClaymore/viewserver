@@ -29,6 +29,7 @@ public class UserReport {
                                         )
                                         .withConnection("relationshipCalc")
                         )
+                        .withRequiredParameter("@userId", "User Id", String[].class)
                         .withOutput("userProjection");
         }
 }

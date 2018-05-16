@@ -58,13 +58,15 @@ class App extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  _handleAppStateChange = (nextAppState) => {
+  _handleAppStateChange = async (nextAppState) => {
     if (nextAppState === 'background'){
-      this.client.disconnect();
+      await this.client.invokeJSONCommand('loginController', 'background');
     }
     if (nextAppState === 'active') {
       if (!this.client.connected){
-        this.client.connect();
+        await this.client.connect();
+      } else {
+        await this.client.invokeJSONCommand('loginController', 'foreground');
       }
     }
   }

@@ -1,6 +1,7 @@
 package io.viewserver.operators.rx;
 
 import io.viewserver.operators.IOutput;
+import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.IRowFlags;
@@ -47,9 +48,10 @@ public class OperatorEvent{
             if (columnHolder == null) {
                 continue;
             }
-            if (rowFlags != null && !rowFlags.isDirty(columnHolder.getColumnId())) {
+            if (rowFlags != null && !rowFlags.isDirty(columnHolder.getColumnId() )&& !columnHolder.getMetadata().isFlagged(ColumnFlags.KEY_COLUMN)) {
                 continue;
             }
+
             result.put(columnHolder.getName(), ColumnHolderUtils.getValue(columnHolder, row, true));
         }
         return result;

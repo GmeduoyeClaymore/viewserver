@@ -3,6 +3,7 @@ package com.shotgun.viewserver.messaging;
 import com.google.common.util.concurrent.*;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.user.User;
+import com.shotgun.viewserver.user.UserAppStatus;
 import com.shotgun.viewserver.user.UserPersistenceController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
@@ -98,9 +99,9 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
             User user = getUserForId(message.getToUserId(),User.class);
 
-            boolean sendRemotely = !user.getOnline();
+            boolean sendRemotely = isSendRemotely(user);
             persistMessage(message, sendRemotely);
-            if(currentToken == null && !user.getOnline()){
+            if(currentToken == null && isSendRemotely(user)){
                 String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
                 logger.info(result);
                 user.addPendingMessage(message);
@@ -116,6 +117,9 @@ public class MessagingController implements IMessagingController, UserPersistenc
         }));
     }
 
+    public boolean isSendRemotely(User user) {
+        return !user.getOnline() || !UserAppStatus.FOREGROUND.equals(user.getUserAppStatus());
+    }
 
 
     @Override

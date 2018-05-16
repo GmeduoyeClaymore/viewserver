@@ -22,4 +22,5 @@ package io.viewserver.schema.column;
 public class ColumnFlags {
     public static final int DATASOURCE_CALCULATION = 0;
     public static final int DIMENSION = 1;
+    public static final int KEY_COLUMN = 2;
 }

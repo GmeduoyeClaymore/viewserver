@@ -32,9 +32,13 @@ public class OrderRequestReport {
                                 new FilterNode("hasResponded")
                                         .withExpression("getResponseField(\"{@userId}\",\"responseStatus\",orderDetails) == null")
                                         .withConnection("distanceFilter"),
-                                new FilterNode("notIsBlocked")
-                                        .withExpression("isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)")
+                                new CalcColNode("orderVisibleCalc")
+                                        .withCalculations(
+                                                new CalcColOperator.CalculatedColumn("userCanSeeOrder", "isOrderVisible(\"{@userId}\",customer_relationships, orderDetails)"))
                                         .withConnection("hasResponded"),
+                                new FilterNode("notIsBlocked")
+                                        .withExpression("userCanSeeOrder")
+                                        .withConnection("orderVisibleCalc"),
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
