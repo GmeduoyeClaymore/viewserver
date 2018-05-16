@@ -17,15 +17,16 @@ export default class UserRatingsDetail extends Component{
       return <ListItem key={rating.orderId} padded>
         <Grid>
           <Col size={70}>
-            <Text numberOfLines={1} style={{alignSelf: 'flex-start'}}>{rating.title}</Text>
+            <Text numberOfLines={1} style={styles.title}>{rating.title}</Text>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={styles.time}>
               <Icon paddedIcon name="delivery-time"/>
               <Text>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
             </View>
+            {rating.comments ? <Text style={styles.comments}>{rating.comments}</Text> : null}
           </Col>
           <Col size={30}>
-            <Row>
+            <Row style={styles.starRow}>
               {[...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>)}
             </Row>
           </Col>
@@ -39,9 +40,24 @@ const styles = {
   noJobs: {
     margin: shotgun.contentPadding
   },
-
+  starRow: {
+    justifyContent: 'flex-end'
+  },
   star: {
     fontSize: 15,
     color: shotgun.gold
+  },
+  title: {
+    alignSelf: 'flex-start'
+  },
+  time: {
+    flexDirection: 'row',
+    paddingTop: 5
+  },
+  comments: {
+    alignSelf: 'flex-start',
+    color: shotgun.brandLight,
+    fontStyle: 'italic',
+    paddingTop: 10
   }
 };
