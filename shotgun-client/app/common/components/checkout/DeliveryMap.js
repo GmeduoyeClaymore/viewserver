@@ -4,13 +4,12 @@ import {Input, Container, Button, Text, Grid, Col, Row, Item} from 'native-base'
 import MapView from 'react-native-maps';
 import {Icon, LoadingScreen} from 'common/components';
 import AddressMarker from 'common/components/maps/AddressMarker';
-import ProductMarker from 'common/components/maps/ProductMarker';
+import UserMarker from 'common/components/maps/UserMarker';
 import MapViewDirections from 'common/components/maps/MapViewDirections';
 import {getDaoState, updateSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
 import {isEqual, debounce} from 'lodash';
-import * as ContentTypes from 'common/constants/ContentTypes';
 import {addressToText} from 'common/components/maps/MapUtils';
 
 class DeliveryMap extends Component{
@@ -92,7 +91,7 @@ class DeliveryMap extends Component{
 
     if (this.map && coordinates.length == 2) {
       this.map.fitToCoordinates(coordinates, {
-        edgePadding: { top: 100, right: 100, bottom: 150, left: 100 },
+        edgePadding: { top: 280, right: 100, bottom: 150, left: 100 },
         animated: true,
       });
     }

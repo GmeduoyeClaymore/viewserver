@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Image} from 'react-native';
 import {Text, List, ListItem, Row, Content, View} from 'native-base';
 import MapViewStatic from './maps/MapViewStatic';
-import {Icon, OriginDestinationSummary, UserInfo} from 'common/components';
+import {Icon, OriginDestinationSummary, UserInfo, VehicleInfo} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
@@ -29,7 +29,7 @@ class OrderSummary extends Component{
 
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, orderStatus, orderProduct} = order;
+    const {assignedPartner, customer, orderStatus, orderProduct, vehicle} = order;
     const isComplete = orderStatus == OrderStatuses.COMPLETED;
 
     return <Content><List>
@@ -37,6 +37,10 @@ class OrderSummary extends Component{
         <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}
+
+      {!isComplete && assignedPartner && userCreatedThisOrder && vehicle ? <ListItem paddedLeftRight paddedTop last>
+        <VehicleInfo order={order}/>
+      </ListItem> : null}
 
       {orderProduct ? <ListItem padded style={styles.productInfoRow}>
         <Row>
