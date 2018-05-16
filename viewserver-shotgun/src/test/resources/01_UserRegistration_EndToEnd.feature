@@ -51,6 +51,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | Json        | vehicle              |
 	  | ColumnAdd | Json        | relationships        |
 	  | ColumnAdd | String      | relationshipStatus   |
+	  | ColumnAdd | String      | userAppStatus   |
 
 	Then "client2" the following data is received eventually on report "userReport"
 	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
