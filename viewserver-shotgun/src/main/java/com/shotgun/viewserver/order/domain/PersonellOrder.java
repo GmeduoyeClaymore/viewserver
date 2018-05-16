@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static io.viewserver.core.Utils.fromArray;
 
-public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, NegotiatedOrder, DynamicJsonBackedObject, StagedPaymentOrder {
+public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, NegotiatedOrder, DynamicJsonBackedObject, StagedPaymentOrder, SupportsImageOrder {
 
     default String logDayStarted(){
         Optional<OrderPaymentStage> activeDay = fromArray(getPaymentStages()).filter(c->c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Started)).findAny();
@@ -59,4 +59,6 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
         );
         this.transitionTo(NegotiatedOrder.NegotiationOrderStatus.PARTNERCOMPLETE);
     }
+
+
 }

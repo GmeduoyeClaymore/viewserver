@@ -4,6 +4,7 @@ import { resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigat
 import { Container, Header, Left, Button, Body, Title, Content, Tab, Row, Text } from 'native-base';
 import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
 import PartnerOrderLifecycleView from 'common/components/orders/PartnerOrderLifecycleView';
+import OrderProgressPictures from 'common/components/orders/OrderProgressPictures';
 import { respondToOrder } from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
@@ -108,14 +109,34 @@ const PaymentStagesAndSummary = (props) => {
   const goToTabNamed = (name) => {
     history.replace({ pathname: `${path}/${name}`, state: { orderId } });
   };
-  const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
-  return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages') ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages') ? 1 : 0}  {...shotgun.tabsStyle}>
-    <Tab heading='Summary' onPress={() => goToTabNamed('Summary')} />
-    {order.paymentStages && order.paymentStages.length ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')} /> : null}
+  const TabHeadings = [
+    'Summary',
+    'Photos'
+  ];
+  if (order.paymentStages && order.paymentStages.length){
+    TabHeadings.push('PaymentStages');
+  }
+  const getSelectedTabIndex = (history, path) => {
+    if (!history || !history.location || !history.location.pathname){
+      return 0;
+    }
+    const result = TabHeadings.findIndex(th => history.location.pathname.includes(`${path}/${th}`));
+    return !!~result ? result : 0;
+  };
+  const getHeading = (heading) => {
+    if (heading === 'PaymentStages'){
+      return order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
+    }
+    return heading;
+  };
+  const selecedTabIndex = getSelectedTabIndex(history, path);
+  return [<Tabs key="1" initialPage={selecedTabIndex} page={selecedTabIndex}  {...shotgun.tabsStyle}>
+    {TabHeadings.map(th =>  <Tab heading={getHeading(th)} onPress={() => goToTabNamed(th)} />)}
   </Tabs>,
   <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={PartnerStagedPaymentPanel} />
+    <Route path={'Photos'} component={OrderProgressPictures} />
   </ReduxRouter>];
 };
 
@@ -124,7 +145,7 @@ const getControlsFromOrder = (order) => {
   if (order.paymentType === 'DAYRATE') {
     return [PartnerPriceSummary, DayRatePersonellOrderInProgress, PaymentStagesAndSummary];
   }
-  return [PartnerPriceSummary, FixedPersonellOrderInProgress, PaymentStagesAndSummary];
+  return [PartnerPriceSummary, FixedPersonellOrderInProgress,  PaymentStagesAndSummary];
 };
 
 /*eslint-disable */

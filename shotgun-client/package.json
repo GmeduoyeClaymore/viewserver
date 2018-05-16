@@ -31,6 +31,7 @@
     "react-native-easy-grid": "0.1.15",
     "react-native-exception-handler": "^2.7.1",
     "react-native-fcm": "11.2.0",
+    "react-native-image-carousel": "^0.4.4",
     "react-native-image-crop-picker": "0.19.1",
     "react-native-immediate-phone-call": "1.0.0",
     "react-native-maps": "0.18.3",

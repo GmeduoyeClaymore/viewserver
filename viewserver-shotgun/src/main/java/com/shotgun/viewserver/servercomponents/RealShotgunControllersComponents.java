@@ -62,7 +62,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IImageController getImageController() {
-        return new ImageController(basicAWSCredentials);
+        return new ImageController(basicAWSCredentials, databaseUpdater);
     }
 
     @Override
