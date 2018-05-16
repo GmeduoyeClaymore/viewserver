@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Linking, Button, Text, View, ListItem} from 'native-base';
+import {Linking} from 'react-native';
+import {Button, Text, View, ListItem} from 'native-base';
 import {SpinnerButton, OriginDestinationSummary} from 'common/components';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
 import {startJourney, completeJourney} from 'partner/actions/PartnerActions';
@@ -11,10 +12,6 @@ import * as ContentTypes from 'common/constants/ContentTypes';
 
 const CAN_START_JOURNEY_STATUSES = ['PENDINGSTART'];
 const CAN_COMPLETE_JOURNEY_STATUSES = ['ENROUTE'];
-
-const ASPECT_RATIO = shotgun.deviceWidth / shotgun.deviceHeight;
-const LATITUDE_DELTA = 0.0322;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class PartnerJourneyOrderInProgress extends Component{
   constructor(props){
@@ -65,8 +62,8 @@ class PartnerJourneyOrderInProgress extends Component{
     const mapHeight = mapWidth / 2;
 
     return <View>
-      <Button fullWidth style={styles.startButton} padded onPress={this.onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button>
-      {!!~CAN_START_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.startButton} onPress={this.onJourneyStart}><Text uppercase={false}>{StartButtonCaption}</Text></SpinnerButton> : null}
+      {!!~CAN_START_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded onPress={this.onJourneyStart}><Text uppercase={false}>{StartButtonCaption}</Text></SpinnerButton> : null}
+      {!!~CAN_COMPLETE_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <Button fullWidth padded style={styles.navigationButton} onPress={this.onNavigatePress}><Text uppercase={false}>Show navigation</Text></Button> : null}
       {!!~CAN_COMPLETE_JOURNEY_STATUSES.indexOf(order.journeyOrderStatus) ? <SpinnerButton busy={busyUpdating} fullWidth padded style={styles.completeButton} onPress={this.onJourneyComplete}><Text uppercase={false}>{StopButtonCaption}</Text></SpinnerButton> : null}
       <ListItem padded>
         <OriginDestinationSummary order={order}/>
@@ -88,7 +85,7 @@ resourceDictionary.
 /*eslint-enable */
 
 const styles = {
-  startButton: {
+  navigationButton: {
     marginBottom: 15
   }
 };

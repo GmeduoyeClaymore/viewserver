@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {ScrollView} from 'react-native';
 import {Tabs, Icon} from 'common/components';
 import {Container, Header, Body, Title, Tab, Left, Button} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';

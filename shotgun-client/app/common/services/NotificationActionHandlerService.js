@@ -20,11 +20,11 @@ export default class NotificationActionHandlerService {
 
   static parseOrderActionUri(actionUri){
     Logger.debug(`Received notification action ${actionUri}`);
-    return actionUri.match(/^^shotgun:\/\/([^\/]+)\/?([\w-]+)?$/);
+    return actionUri ? actionUri.match(/^^shotgun:\/\/([^\/]+)\/?([\w-]+)?$/) : undefined;
   }
 
   static parseUserActionUri(actionUri){
     Logger.debug(`Received notification action ${actionUri}`);
-    return actionUri.match(/^^shotgunu:\/\/([^\/]+)\/?([\w-]+)?$/);
+    return actionUri ? actionUri.match(/^^shotgunu:\/\/([^\/]+)\/?([\w-]+)?$/) : undefined;
   }
 }

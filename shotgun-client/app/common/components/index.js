@@ -22,3 +22,4 @@ export {CheckBox} from './CheckBox';
 export {CurrencyInput} from './CurrencyInput';
 export {OriginDestinationSummary} from './OriginDestinationSummary';
 export {UserInfo} from './UserInfo';
+export {VehicleInfo} from './VehicleInfo';
