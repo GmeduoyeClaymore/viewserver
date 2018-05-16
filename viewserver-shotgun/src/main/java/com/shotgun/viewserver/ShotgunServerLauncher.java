@@ -167,7 +167,7 @@ public class ShotgunServerLauncher{
         }
 
         server = container.getComponent(BasicServer.class);
-        server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class).disableDistanceCheck());
+        server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));
         server.start();
         ExecutionContext.blockThreadAssertion  = false;
     }

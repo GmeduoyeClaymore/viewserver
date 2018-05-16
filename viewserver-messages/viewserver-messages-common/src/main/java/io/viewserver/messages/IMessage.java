@@ -44,7 +44,6 @@ public interface IMessage<T> extends IPoolableMessage<T> {
 
     enum Type {
         Heartbeat,
-        Controller,
         Command,
         CommandResult,
         TableEvent

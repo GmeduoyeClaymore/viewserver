@@ -32,4 +32,6 @@ public interface IBasicServerComponents extends  IServerComponent{
     IJsonSerialiser getJsonSerialiser();
 
     ConnectionManager getConnectionManager();
+
+    void listen();
 }

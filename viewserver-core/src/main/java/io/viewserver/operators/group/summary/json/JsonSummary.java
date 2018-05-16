@@ -157,6 +157,9 @@ public class JsonSummary implements ISummary {
         jsonBuilder.setLength(0);
         jsonBuilder.append('{');
         TreeMap<Object, Integer> rowMap = rowMaps.get(row);
+        if(rowMap == null){
+            return null;
+        }
         boolean first = true;
         for (Map.Entry<Object, Integer> entry : rowMap.entrySet()) {
             Object bucketValue = entry.getKey();

@@ -336,7 +336,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
 
     @Override
     public void onNetworkMessage(IChannel channel, IMessage msg) {
-        if("genericJSON".equals(msg.getCommand().getCommand())){
+        if(msg.getType().equals(IMessage.Type.Command) && "genericJSON".equals(msg.getCommand().getCommand())){
             controllerExecutor.submit(() -> network.waitForSession(channel).subscribe(c-> network.receiveCommand(msg.getCommand(),c), err -> {
                 log.error("Failed to handle controller message:\n\r " + msg, err);
             }));

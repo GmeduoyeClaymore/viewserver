@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Shotgun Server - Bootstrap" type="Application" factoryName="Application">
+    <output_file path="$PROJECT_DIR$/viewserver_output.log" is_save="true" />
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.shotgun.viewserver.Main" />
     <option name="VM_PARAMETERS" value="-Xmx2G -Xms2G -XX:StringTableSize=1000003 -Dlog4j.configurationFile=log4j/log4j2-test.xml" />

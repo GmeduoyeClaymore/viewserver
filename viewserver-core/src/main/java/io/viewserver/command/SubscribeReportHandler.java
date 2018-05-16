@@ -96,7 +96,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
     }
 
 
-    private void enhance(ReportDefinition definition, ReportContext reportContext) {
+    public static void enhance(ReportDefinition definition, ReportContext reportContext) {
         for(DefaultDimensionValues par : definition.getDefaultDimensionValues().values()){
             for(ReportContext.DimensionValue dimensionValue: par.getValues()){
                 reportContext.getDimensionValues().add(dimensionValue);

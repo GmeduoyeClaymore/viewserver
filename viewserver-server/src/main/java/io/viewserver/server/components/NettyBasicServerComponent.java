@@ -60,11 +60,14 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
                         runtime.freeMemory(), runtime.maxMemory());
             }, 1, 3 * 60 * 1000);
             this.getExecutionContext().submit(() -> latch.countDown(),5);
-            endpointList.forEach(serverNetwork::listen);
             latch.await(10, TimeUnit.SECONDS);
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
         }
+    }
+
+    public void listen() {
+        endpointList.forEach(serverNetwork::listen);
     }
 
     @Override

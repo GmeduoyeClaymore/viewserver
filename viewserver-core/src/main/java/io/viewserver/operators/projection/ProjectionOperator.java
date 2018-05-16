@@ -24,6 +24,7 @@ import io.viewserver.changequeue.IMappedChangeQueue;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.ColumnHolder;
+import io.viewserver.schema.column.IRowFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,6 +120,22 @@ public class ProjectionOperator extends ConfigurableOperatorBase<IProjectionConf
         public Input(String name, IOperator owner) {
             super(name, owner);
         }
+
+        @Override
+        protected void onRowAdd(int row) {
+            output.handleAdd(row);
+        }
+
+        @Override
+        protected void onRowUpdate(int row, IRowFlags rowFlags) {
+            output.handleUpdate(row);
+        }
+
+        @Override
+        protected void onRowRemove(int row) {
+            output.handleRemove(row);
+        }
+
 
         @Override
         public void onSchemaResetRequested() {
@@ -225,6 +242,8 @@ public class ProjectionOperator extends ConfigurableOperatorBase<IProjectionConf
             super(name, owner);
             changeQueue = new ProjectionChangeQueue(this);
         }
+
+
 
         @Override
         public IColumnHolderFactory getColumnHolderFactory() {

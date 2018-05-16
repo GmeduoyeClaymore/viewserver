@@ -29,10 +29,10 @@ public class BasicServer {
         this.reportServerComponents = reportServerComponents;
         this.initialDataLoaderComponent = initialDataLoaderComponent;
         registerComponent(this.basicServerComponents);
-        registerComponent(this.controllerComponents);
-        registerComponent(this.basicSubscriptionComponent);
         registerComponent(this.dataSourceServerComponents);
         registerComponent(this.reportServerComponents);
+        registerComponent(this.controllerComponents);
+        registerComponent(this.basicSubscriptionComponent);
         registerComponent(this.initialDataLoaderComponent);
     }
 
@@ -58,6 +58,7 @@ public class BasicServer {
 
     public void start(){
         this.components.forEach(c-> c.call().start());
+        basicServerComponents.listen();
     }
 
     public void stop(){

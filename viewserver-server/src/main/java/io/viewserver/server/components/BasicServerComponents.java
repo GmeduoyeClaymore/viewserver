@@ -68,6 +68,10 @@ public class BasicServerComponents implements IBasicServerComponents {
     }
 
     @Override
+    public void listen() {
+    }
+
+    @Override
     public IExecutionContext getExecutionContext() {
         return serverExecutionContext;
     }

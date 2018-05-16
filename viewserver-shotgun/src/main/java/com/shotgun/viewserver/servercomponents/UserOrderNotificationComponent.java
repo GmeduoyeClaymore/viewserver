@@ -6,65 +6,79 @@ import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.OrderNotificationContract;
 import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.setup.datasource.OrderDataSource;
+import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import com.shotgun.viewserver.user.ProductSpreadFunction;
 import com.shotgun.viewserver.user.User;
 import com.shotgun.viewserver.user.UserRelationship;
 import com.shotgun.viewserver.user.UserRelationshipStatus;
+import io.viewserver.Constants;
+import io.viewserver.catalog.ICatalog;
+import io.viewserver.command.CommandResult;
+import io.viewserver.command.ObservableCommandResult;
 import io.viewserver.datasource.DataSource;
-import io.viewserver.datasource.DataSourceHelper;
 import io.viewserver.datasource.IDataSourceRegistry;
+import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
-import io.viewserver.execution.nodes.IndexOutputNode;
+import io.viewserver.execution.SystemReportExecutor;
+import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.expression.function.Distance;
+import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
-import io.viewserver.operators.index.IndexOperator;
-import io.viewserver.operators.index.QueryHolderConfig;
 import io.viewserver.operators.rx.EventType;
+import io.viewserver.report.ReportContextRegistry;
+import io.viewserver.report.ReportDefinition;
+import io.viewserver.report.ReportRegistry;
 import io.viewserver.server.components.IBasicServerComponents;
 import io.viewserver.server.components.IDataSourceServerComponents;
 import io.viewserver.server.components.IServerComponent;
+import io.viewserver.server.components.ReportServerComponents;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Emitter;
+import rx.Observable;
+import rx.Scheduler;
 import rx.Subscription;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static io.viewserver.command.SubscribeReportHandler.enhance;
 
 public class UserOrderNotificationComponent implements IServerComponent, OrderNotificationContract {
     private IDataSourceServerComponents components;
     private IBasicServerComponents basicServerComponents;
     private static final Logger log = LoggerFactory.getLogger(UserOrderNotificationComponent.class);
     private List<Subscription> subscriptions = new ArrayList<>();
-    private List<String> notifiedOrders = new ArrayList<>();
     private HashMap<String,Subscription> subscriptionsByUserId = new HashMap<>();
     private IMessagingController messagingController;
-    private boolean disableDistanceCheck;
+    private SystemReportExecutor systemReportExecutor;
     private HashMap<String,List<String>> notifiedOrdersByUser;
-    Executor notificationsExecutor = Executors.newSingleThreadExecutor(new NamedThreadFactory("notifications"));
+    Executor notificationsExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("notifications"));
+    private ReportContextRegistry reportContextRegistry;
+    private ReportRegistry reportRegistry;
 
-    public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents) {
+    public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents, ReportServerComponents reportServerComponents) {
         this.components = components;
         this.basicServerComponents = basicServerComponents;
         this.messagingController = controllersComponents.getMessagingController();
+
         notifiedOrdersByUser = new HashMap<>();
+        this.systemReportExecutor = reportServerComponents.getSystemReportExecutor();
+        this.reportContextRegistry = reportServerComponents.getReportContextRegistry();
+        this.reportRegistry = reportServerComponents.getReportRegistry();
     }
 
-    public UserOrderNotificationComponent disableDistanceCheck(){
-        this.disableDistanceCheck = true;
-        return this;
-    }
 
     @Override
     public void start() {
@@ -81,7 +95,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
         IOutput out = operator.getOutput("out");
         this.subscriptions.add(out.observable("userId", "selectedContentTypes", "range", "latitude", "longitude", "relationships").
-                filter(ev-> Arrays.asList(EventType.ROW_ADD,EventType.ROW_UPDATE).contains(ev.getEventType())).subscribe(ev -> {
+                filter(ev-> Arrays.asList(EventType.ROW_ADD).contains(ev.getEventType())).subscribe(ev -> {
             onUserAdded((HashMap)ev.getEventData());
         }));
         this.subscriptions.add(out.observable("userId").
@@ -106,7 +120,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         if(subscriptionsByUserId.containsKey(user.getUserId())){
             subscriptionsByUserId.get(user.getUserId()).unsubscribe();
         }
-        this.components.onDataSourcesBuilt(OrderDataSource.NAME,UserDataSource.NAME).subscribe(c-> {
+        this.components.onDataSourcesBuilt(OrderDataSource.NAME,UserDataSource.NAME, OrderWithResponseDataSource.NAME).subscribe(c-> {
             rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(IDataSourceRegistry.getOperatorPath(OrderDataSource.NAME, DataSource.INDEX_NAME));
 
             List<String> productIds  = ProductSpreadFunction.getProductIds(user.getSelectedContentTypes());
@@ -114,45 +128,42 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                 log.info("No products found for user " + user.getUserId() + " no notifications will be sent");
                 return;
             }
-            log.info("Found for user - " + user.getUserId()  + " with products " + String.join(",",productIds));
-            QueryHolderConfig[] queryHolders = DataSourceHelper.getQueryHolders(components.getDataSourceRegistry().get(OrderDataSource.NAME), Arrays.asList(getDimensionsForProductIds(productIds)),basicServerComponents.getExecutionContext().getDimensionMapper());
             AtomicReference<Subscription> subscribe1 = new AtomicReference<>();
-            Subscription subscribe = result.subscribeOn(Schedulers.from(notificationsExecutor)).subscribe(operator -> {
-                String nameForQueryHolders = IndexOutputNode.getNameForQueryHolders(Arrays.asList(queryHolders));
-                log.info("Subscribing user - " + user.getUserId() + " to index output " + nameForQueryHolders);
-                IOutput out = ((IndexOperator) operator).getOrCreateOutput(nameForQueryHolders, queryHolders);
-                subscribe1.set(out.observable("orderId", "orderDetails").
-                        filter(ev -> Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())).observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
-                    HashMap eventData = (HashMap) ev.getEventData();
-                    BasicOrder order = JSONBackedObjectFactory.create((HashMap) eventData.get("orderDetails"), BasicOrder.class);
-                    if(hasNotificationForUser(order.getOrderId(), user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id
-                        log.info("Already notified of " + order.getOrderId() + " not doing it again");
-                        return;
-                    }
-                    if(order.getPartnerUserId() != null){
-                        log.info("Partner already assigned not notifying the community of " + order.getOrderId());
-                        return;
-                    }
-                    if(order.getCustomerUserId() == user.getUserId()){
-                        log.info("This is my job ignoring ");
-                        return;
-                    }
+            Subscription subscribe = result.subscribe(operator -> {
+                getOrCreateOutput(user).subscribe(
+                        out -> {
+                            log.info(user.getUserId() + " is susbscribing to operator " + out.getOwner().getName() + " at path " + out.getOwner().getPath());
+                            subscribe1.set(out.observable("orderId", "orderDetails").observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
+                                log.info("Received data for - " + user.getUserId() + " event is " + ev.getEventType());
+                                if(Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())){
+                                    HashMap eventData = (HashMap) ev.getEventData();
+                                    String  orderId = (String) eventData.get("orderId");
+                                    HashMap orderDetails = (HashMap) eventData.get("orderDetails");
+                                    log.info("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
+                                    if(hasNotificationForUser(orderId, user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id
+                                        log.info("Already notified of " + orderId + " not doing it again");
+                                        return;
+                                    }
+                                    notifyUserOfNewOrder(orderId,orderDetails, user);
+                                    setNotificationForUser(orderId, user.getUserId());
+                                }
 
-                    log.info("Found order - " + order.getOrderId() + " for user " + user.getUserId() + " with products " + String.join(",", productIds));
-                    NotificationStatus status = notifyUserOfNewOrder(order, user);
-                    if( NotificationStatus.NotSentDontRetry.equals(status) ||  NotificationStatus.Sent.equals(status)){
-                        setNotificationForUser(order.getOrderId(), user.getUserId());
-                    }
-                }, err -> log.error("Issue subscribing to orders {}", err)));
+                            }, err -> log.error("Issue subscribing to orders {}", err)));
 
-                this.subscriptions.add(subscribe1.get());
+                            log.info("Adding subscription for - " + user.getUserId());
+                            this.subscriptions.add(subscribe1.get());
+                        },
+                        err -> log.error("Issue subscribing to report output",err)
+                );
+
             }, err -> log.error("Issue subscribing to users {}", err));
 
 
             subscriptionsByUserId.put(user.getUserId(), new Subscription() {
                 @Override
                 public void unsubscribe() {
+                    log.info("Unsubscribing " + user.getUserId());
                     if(subscribe1.get() != null){
                         subscribe1.get().unsubscribe();
                     }
@@ -166,6 +177,62 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                     return false;
                 }
             });});
+    }
+
+    private rx.Observable<IOutput> getOrCreateOutput(User user) {
+        Options options = new Options();
+        options.setLimit(100);
+        options.setOffset(0);
+        //    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }, { name: 'lastModified', direction: 'desc' }]
+        options.addSortColumn("requiredDate",true);
+        options.addSortColumn("lastModified",true);
+        ReportContext reportContext = createContext(user);
+        ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
+        enhance(definition,reportContext);
+
+        log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+
+        ObservableCommandResult systemExecutionPlanResult = new ObservableCommandResult();
+
+        ICatalog catalog = reportContextRegistry.getOrCreateCatalogForContext(reportContext);
+
+        return Observable.<IOutput>create(iOutputEmitter -> {
+
+            ReportContextExecutionPlanContext activeExecutionPlanContext = systemReportExecutor.executeContext(reportContext,
+                    basicServerComponents.getExecutionContext(),
+                    catalog,
+                    systemExecutionPlanResult);
+
+            systemExecutionPlanResult.observable().filter(c-> c.isSuccess()).take(1).timeout(4, TimeUnit.SECONDS , Observable.error(new RuntimeException("Unable to detect successful execcution plan subscription after 4 seconds"))).subscribe(c -> {
+                IOperator operatorByPath = catalog.getOperatorByPath(activeExecutionPlanContext.getInputOperator());
+                iOutputEmitter.onNext(operatorByPath.getOutput(Constants.OUT));
+            });
+
+        }, Emitter.BackpressureMode.BUFFER).subscribeOn(Schedulers.from(basicServerComponents.getExecutionContext().getReactor().getExecutor()));
+
+    }
+
+    private ReportContext createContext(User user) {
+        //| dimension_customerUserId | String  | @userId | exclude  |
+        //| dimension_status         | String  | PLACED  |          |
+        //| showOutOfRange           | String  | true    |          |
+        //| partnerLatitude          | Integer | 0       |          |
+        //| showUnrelated            | String  | true    |          |
+        //| maxDistance              | Integer | 0       |          |
+        //| partnerLongitude         | Integer | 0       |          |
+        ReportContext context = new ReportContext();
+        context.setReportName("orderRequest");
+        List<ReportContext.DimensionValue> dimensionValues = context.getDimensionValues();
+        dimensionValues.add(new ReportContext.DimensionValue("dimension_customerUserId", true,user.getUserId()));
+        dimensionValues.add(new ReportContext.DimensionValue("dimension_status", false,"PLACED"));
+        Map<String, ValueLists.IValueList> parameterValues = context.getParameterValues();
+        parameterValues.put("showOutOfRange", ValueLists.valueListOf("true"));
+        parameterValues.put("@userId", ValueLists.valueListOf(user.getUserId()));
+        parameterValues.put("partnerLatitude", ValueLists.valueListOf(0));
+        parameterValues.put("partnerLongitude", ValueLists.valueListOf(0));
+        parameterValues.put("showUnrelated", ValueLists.valueListOf("true"));
+        parameterValues.put("maxDistance", ValueLists.valueListOf(0));
+        return context;
     }
 
     private boolean hasNotificationForUser(String orderId, String userId) {
@@ -191,32 +258,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         return new ReportContext.DimensionValue("dimension_productId",false, productIds.toArray());
     }
 
-    private NotificationStatus notifyUserOfNewOrder(BasicOrder order, User user) {
-        if(new DateTime(order.getRequiredDate()).isBeforeNow()){
-            log.info("Not resending historical order");
-            return NotificationStatus.NotSentDontRetry;
-        }
-        if(user.isBlocked(order.getCustomerUserId())){
-            log.info("Not sending as user " + user.getUserId() + " is blocked by " + order.getCustomerUserId());
-            return NotificationStatus.NotSentRetry;
-        }
-
-        UserRelationship relationship = user.getRelationship(order.getPartnerUserId());
-        Boolean justForFriends = order.isJustForFriends();
-        if(justForFriends != null && justForFriends && (relationship == null || !UserRelationshipStatus.ACCEPTED.equals(relationship.getRelationshipStatus()))){
-            log.info("Not sending as order is just for friends and  " + user.getUserId() + " is not a friend of " + order.getCustomerUserId());
-            return  NotificationStatus.NotSentRetry;
-        }
-
-        LatLng userHome = user.getLocation();
-        DeliveryAddress origin = order.getOrigin();
-        double k1 = Distance.distance(userHome.getLatitude(), userHome.getLongitude(), origin.getLatitude(), origin.getLongitude(), "K");
-        boolean k   = k1 <= user.getRange();
-        if(k || disableDistanceCheck){
-            sendMessage(order.getOrderId(), order.getCustomerUserId(),user.getUserId(), "Shotgun - New Job - £" + df.format(order.getAmount()/100), "A new job \"" + order.getTitle() + "\" has just been listed that may be of interest to you", false);
-            return  NotificationStatus.Sent;
-        }
-        return  NotificationStatus.NotSentRetry;
+    private void notifyUserOfNewOrder(String orderId, HashMap order, User user) {
+        String customerUserId = (String) order.get("customerUserId");
+        String amount = df.format(Integer.parseInt(order.get("amount") + "") / 100);
+        Object title = order.get("title");
+        sendMessage(orderId, customerUserId,user.getUserId(), "Shotgun - New Job - £" + amount, "A new job \"" + title + "\" has just been listed that may be of interest to you", false);
     }
 
     @Override
