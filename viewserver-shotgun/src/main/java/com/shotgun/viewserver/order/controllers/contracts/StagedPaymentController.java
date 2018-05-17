@@ -41,7 +41,7 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
                     stagedPaymentId.set(order.addPaymentStage(amount, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None, true));
                     return true; },
                 order -> {
-                    notifyPaymentStageAdded(order.getOrderId(), order.getPartnerUserId(), name);
+                    notifyPaymentStageAdded(order.getOrderId(), order.getPartnerUserId(), name,order.getTitle());
                 },
                 StagedPaymentOrder.class
         );
