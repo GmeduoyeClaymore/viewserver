@@ -69,7 +69,7 @@ class PartnerLanding extends Component {
           </View>
         </View>
       </ReactNativeModal>,
-      <ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps}  defaultRoute="PartnerMyOrders"  /*defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'f75c1d96-cc7b-41ef-a86c-be7381307c83'}}}*/>
+      <ReduxRouter key='router' name="PartnerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps}  defaultRoute="PartnerAvailableOrders"  /*defaultRoute={{pathname: 'PartnerOrderDetail', state: {orderId: 'f75c1d96-cc7b-41ef-a86c-be7381307c83'}}}*/>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'PartnerAvailableOrders'} exact component={PartnerAvailableOrders}/>
         <Route path={'PartnerOrderDetail'} exact component={PartnerOrderDetail}/>
@@ -87,7 +87,7 @@ class PartnerLanding extends Component {
 const mapStateToProps = (state, nextOwnProps) => {
   const user = getDaoState(state, ['user'], 'userDao');
   const {match: parentMatch, isLoggedIn} = nextOwnProps;
-  const daosHaveBeenRegistered =  getDao(state, 'partnerOrderResponseDao') && getDao(state, 'orderSummaryDao');
+  const daosHaveBeenRegistered =  getDao(state, 'partnerOrderResponseDao') && getDao(state, 'orderSummaryDao') && getDao(state, 'userDao')  && getDao(state, 'contentTypeDao');
   return {
     ...nextOwnProps,
     daosHaveBeenRegistered,

@@ -40,10 +40,10 @@ class OrderSummary extends Component{
     const {order, userCreatedThisOrder, dispatch} = this.props;
     const {assignedPartner, customer, negotiatedOrderStatus, orderProduct, vehicle} = order;
     const isRejected = negotiatedOrderStatus == 'REJECTED';
-    const userForInfo = userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer;
+    const userForInfo = userCreatedThisOrder ? assignedPartner ? {...assignedPartner, userId: assignedPartner.partnerId} : undefined : customer;
 
     return <Content><List>
-      {!isRejected && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTopBottom onPress={() => this.onUserInfoPress(userForInfo)}>
+      {!isRejected && (userForInfo) ? <ListItem paddedLeftRight paddedTopBottom onPress={() => this.onUserInfoPress(userForInfo)}>
         <UserInfo dispatch={dispatch} user={userForInfo}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}

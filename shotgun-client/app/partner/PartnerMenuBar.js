@@ -5,7 +5,7 @@ import {Icon} from 'common/components';
 
 const OrderedRoutes = ['Checkout', 'PartnerAvailableOrders', 'PartnerMyOrders', 'UserRelationships', 'Settings'];
 
-const DefaultRoute = 'PartnerMyOrders';
+const DefaultRoute = 'PartnerAvailableOrders';
 
 const PartnerMenuBar = ({history, path}) => {
   const getSelectedRouteIndex = () => {

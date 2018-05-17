@@ -35,7 +35,7 @@ export default class PartnerStagedPaymentPanel extends Component {
   };
 
   getPaymentStages = () => {
-    const {order, busyUpdating} = this.props;
+    const {order, busyUpdating, hideActionButtons} = this.props;
     const {paymentStages = [], negotiatedOrderStatus, amount} = order;
 
     const hasStartedStage = paymentStages.find(c => c.paymentStageStatus === 'Started');
@@ -56,13 +56,13 @@ export default class PartnerStagedPaymentPanel extends Component {
               {isPercent ? <Text style={styles.amountPercentage}>{` (${quantity}%)`}</Text> : null}
             </Col>
             <Col size={30} >
-              {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) && !hasStartedStage ?
+              {!hideActionButtons && !!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) && !hasStartedStage ?
                 <SpinnerButton busy={busyUpdating} style={[styles.stageButton, {marginBottom: 10}]} padded fullWidth success onPress={() => this.onStartPaymentStage(id)}>
                   <Text uppercase={false}>Start</Text>
                 </SpinnerButton> :
                 null}
 
-              {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) ?
+              {!hideActionButtons && !!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) ?
                 <SpinnerButton busy={busyUpdating} style={styles.stageButton} fullWidth padded success onPress={() => this.onCompletePaymentStage(id)}>
                   <Text uppercase={false} adjustsFontSizeToFit allowFontScaling>Complete</Text>
                 </SpinnerButton> :

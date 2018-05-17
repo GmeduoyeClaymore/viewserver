@@ -137,7 +137,7 @@ const PaymentStagesAndSummary = (props) => {
   return [<Tabs key="1" initialPage={selecedTabIndex} page={selecedTabIndex}  {...shotgun.tabsStyle}>
     {TabHeadings.map(th =>  <Tab heading={getHeading(th)} onPress={() => goToTabNamed(th)} />)}
   </Tabs>,
-  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} images={images} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
+  <ReduxRouter key="2" name="CustomerOrdersRouter" hideActionButtons={order.paymentType === 'DAYRATE'} {...props} images={images} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={PartnerStagedPaymentPanel} />
     <Route path={'Photos'} component={OrderProgressPictures} />
