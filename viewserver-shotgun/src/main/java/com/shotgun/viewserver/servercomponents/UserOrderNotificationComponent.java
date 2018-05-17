@@ -156,8 +156,10 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                         log.info("Already notified of " + orderId + " not doing it again");
                                         return;
                                     }
-                                    notifyUserOfNewOrder(orderId,orderDetails, user);
-                                    setNotificationForUser(orderId, user.getUserId());
+                                    if(setNotificationForUser(orderId, user.getUserId())){
+                                        notifyUserOfNewOrder(orderId,orderDetails, user);
+                                    }
+                                    ;
                                 }
 
                             }, err -> log.error("Issue subscribing to orders {}", err)));
@@ -249,21 +251,18 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         return context;
     }
 
-    private boolean hasNotificationForUser(String orderId, String userId) {
-        List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
-        if(notificationsForUser == null){
-            return false;
-        }
-        return notificationsForUser.contains(orderId);
-    }
 
-    private void setNotificationForUser(String orderId, String userId) {
+    private synchronized boolean setNotificationForUser(String orderId, String userId) {
         List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
         if(notificationsForUser == null){
             notificationsForUser = new ArrayList<>();
             this.notifiedOrdersByUser.put(userId,notificationsForUser);
         }
-        notificationsForUser.add(orderId);
+        if(!notificationsForUser.contains(orderId)){
+            notificationsForUser.add(orderId);
+            return true;
+        }
+        return false;
     }
 
     DecimalFormat df = new DecimalFormat("#.00");
@@ -276,9 +275,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         String customerUserId = (String) order.get("customerUserId");
         String amount = df.format(Integer.parseInt(order.get("amount") + "") / 100);
         Object title = order.get("title");
-        if(!hasNotificationForUser(orderId,user.getUserId())) {
-            sendMessage(orderId, customerUserId, user.getUserId(), "Shotgun - New Job - £" + amount, "A new job \"" + title + "\" has just been listed that may be of interest to you", false);
-        }
+        sendMessage(orderId, customerUserId, user.getUserId(), "Shotgun - New Job - £" + amount, "A new job \"" + title + "\" has just been listed that may be of interest to you", false);
     }
 
     @Override

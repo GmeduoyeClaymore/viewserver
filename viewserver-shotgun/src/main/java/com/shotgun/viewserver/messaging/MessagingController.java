@@ -150,6 +150,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             if(user.getPendingMessages() != null){
                 for(AppMessage message : user.getPendingMessages()){
                     message.set("to",token);
+                    logger.info("Sending pending message {}", message);
                     sendPayload(message.toSimpleMessage());
                 }
                 user.clearPendingMessages();
@@ -162,6 +163,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
     public void sendPayload(String payload) {
         Map<String,String> headers = new HashMap<>();
+        logger.info("Sending message remotely {}", payload);
         headers.put("Authorization", "key=" + this.messagingApiKey.getApiKey());
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             String json = ControllerUtils.postToURL(MESSAGE_URL, payload, httpClient, headers);
