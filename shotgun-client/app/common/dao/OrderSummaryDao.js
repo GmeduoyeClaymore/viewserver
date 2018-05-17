@@ -105,7 +105,7 @@ export default class OrderSummaryDao{
 
   addCustomerInfo(orderDetails, orderRow){
     const customerInfo  = {
-      userId: orderRow.customer_orderId,
+      userId: orderRow.customer_userId,
       latitude: orderRow.customer_latitude,
       longitude: orderRow.customer_longitude,
       firstName: orderRow.customer_firstName,
