@@ -1,38 +1,38 @@
 package com.shotgun.viewserver.order.domain;
 
 import com.shotgun.viewserver.constants.OrderStatus;
-import com.shotgun.viewserver.order.types.NegotiationResponse;
-import com.shotgun.viewserver.order.types.OrderEnumBase;
-import com.shotgun.viewserver.order.types.TransitionEnumBase;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static io.viewserver.core.Utils.fromArray;
-import static io.viewserver.core.Utils.toArray;
-import static io.viewserver.core.Utils.toList;
+import static io.viewserver.core.Utils.*;
 
 public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject {
 
     OrderPaymentStage[] getPaymentStages();
 
-    default String addPaymentStage(int quantity, String name, String description, OrderPaymentStage.PaymentStageType stageType, OrderPaymentStage.PaymentStageStatus status){
-        if(fromArray(getPaymentStages()).anyMatch(c-> c.getName().equals(name))){
+    default String addPaymentStage(int quantity, String name, String description, OrderPaymentStage.PaymentStageType stageType, OrderPaymentStage.PaymentStageStatus status, boolean doLimitCheck){
+        if(getPaymentStage(name) != null){
             throw new RuntimeException("This order contains another payment stage called " + name);
         }
-        int totalForAllStages = fromArray(getPaymentStages()).mapToInt(stage -> stage.getQuantity()).sum();
-        int limit = stageType.equals(OrderPaymentStage.PaymentStageType.Percentage) ? 100 : getAmount();
-        boolean blockPaymentStageAddition = false;
-        if((totalForAllStages + quantity) >= limit){
-            quantity = limit - totalForAllStages;
-            blockPaymentStageAddition = true;
-        }
-
         List<OrderPaymentStage> paymentStages = toList(getPaymentStages());
         OrderPaymentStage paymentStage = JSONBackedObjectFactory.create(OrderPaymentStage.class);
+        if(doLimitCheck) {
+            int totalForAllStages = fromArray(getPaymentStages()).mapToInt(stage -> stage.getQuantity()).sum();
+            int limit = stageType.equals(OrderPaymentStage.PaymentStageType.Percentage) ? 100 : getAmount();
+            boolean blockPaymentStageAddition = false;
+            if ((totalForAllStages + quantity) >= limit) {
+                quantity = limit - totalForAllStages;
+                blockPaymentStageAddition = true;
+            }
+            this.set("blockPaymentStageAddition",blockPaymentStageAddition);
+        }
+
         UUID uuid = UUID.randomUUID();
         paymentStage.set("quantity",quantity);
         paymentStage.set("name",name);
@@ -42,9 +42,12 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         paymentStage.set("id",uuid.toString());
         paymentStage.set("lastUpdated",new Date());
         paymentStages.add(paymentStage);
-        this.set("blockPaymentStageAddition",blockPaymentStageAddition);
         this.set("paymentStages",validateStages(toArray(paymentStages, OrderPaymentStage[]::new)));
         return uuid.toString();
+    }
+
+    default OrderPaymentStage getPaymentStage(String name) {
+        return fromArray(getPaymentStages()).filter(c-> c.getName().equals(name)).findAny().orElse(null);
     }
 
     default OrderPaymentStage[] validateStages(OrderPaymentStage[] stages){

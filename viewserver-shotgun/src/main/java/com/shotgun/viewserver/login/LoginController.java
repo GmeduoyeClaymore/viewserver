@@ -92,6 +92,15 @@ public class LoginController {
         setUserAppStatus(getUserId(), UserAppStatus.FOREGROUND);
     }
 
+    @ControllerAction(path = "logOut", isSynchronous = true)
+    public void logOut() {
+        String userId = getUserId();
+        Record userRecord = new Record()
+                .addValue("userId", userId)
+                .addValue("fcmToken", null);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+    }
+
     private Observable<Boolean> setUserOnline(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)

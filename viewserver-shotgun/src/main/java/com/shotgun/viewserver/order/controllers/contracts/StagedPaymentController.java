@@ -38,7 +38,7 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
         this.transform(
                 orderId,
                 order -> {
-                    stagedPaymentId.set(order.addPaymentStage(amount, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None));
+                    stagedPaymentId.set(order.addPaymentStage(amount, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None, true));
                     return true; },
                 StagedPaymentOrder.class
         );

@@ -105,6 +105,7 @@ export default class LoginDao{
 
   logOut = async() => {
     await PrincipalService.removeUserIdFromDevice();
+    await this.client.invokeJSONCommand('loginController', 'logOut', {});
     this.updateState({isLoggedIn: false});
   }
 

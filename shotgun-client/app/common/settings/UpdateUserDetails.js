@@ -111,7 +111,6 @@ class UpdateUserDetails extends Component{
 const styles = {
   image: {
     aspectRatio: 1,
-    borderRadius: 150,
     width: 100
   }
 };
