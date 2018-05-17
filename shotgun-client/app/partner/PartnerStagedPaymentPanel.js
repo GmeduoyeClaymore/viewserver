@@ -47,24 +47,24 @@ export default class PartnerStagedPaymentPanel extends Component {
 
         return <ListItem key={idx} style={styles.paymentStageRow}>
           <Row>
-            <Col size={50}>
+            <Col size={35}>
               <Text style={styles.subHeading}>{name}</Text>
               <Text style={styles.description}>{description}</Text>
             </Col>
-            <Col size={20} style={styles.amountColumn}>
+            <Col size={35} style={styles.amountColumn}>
               <Currency value={currencyTotal} style={styles.smlprice}/>
               {isPercent ? <Text style={styles.amountPercentage}>{` (${quantity}%)`}</Text> : null}
             </Col>
             <Col size={30} >
               {!!~CAN_START_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) && !hasStartedStage ?
-                <SpinnerButton busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} padded fullWidth success onPress={() => this.onStartPaymentStage(id)}>
+                <SpinnerButton busy={busyUpdating} style={[styles.stageButton, {marginBottom: 10}]} padded fullWidth success onPress={() => this.onStartPaymentStage(id)}>
                   <Text uppercase={false}>Start</Text>
                 </SpinnerButton> :
                 null}
 
               {!!~CAN_COMPLETE_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_START_PAYMENT_STAGE_ORDER_STATUS.indexOf(negotiatedOrderStatus) ?
-                <SpinnerButton busy={busyUpdating} style={styles.payButton} fullWidth padded success onPress={() => this.onCompletePaymentStage(id)}>
-                  <Text uppercase={false}>Complete</Text>
+                <SpinnerButton busy={busyUpdating} style={styles.stageButton} fullWidth padded success onPress={() => this.onCompletePaymentStage(id)}>
+                  <Text uppercase={false} adjustsFontSizeToFit allowFontScaling>Complete</Text>
                 </SpinnerButton> :
                 null}
 
@@ -93,7 +93,7 @@ export default class PartnerStagedPaymentPanel extends Component {
 const styles = {
   paymentStageRow: {
     marginBottom: 10,
-    marginLeft: 5
+    paddingBottom: 15
   },
   amountColumn: {
     alignContent: 'center',
@@ -127,8 +127,8 @@ const styles = {
   },
   waitingSpinner: {
     height: 15,
-    marginBottom: 5,
     marginTop: 5,
+    marginBottom: 5,
     alignSelf: 'center'
   },
   successText: {
@@ -142,9 +142,9 @@ const styles = {
     fontSize: 30,
     color: shotgun.brandSuccess,
   },
-  payButton: {
+  stageButton: {
     marginRight: 0,
-    marginLeft: 0
+    marginLeft: 10,
   },
   smlprice: {
     fontSize: 15,

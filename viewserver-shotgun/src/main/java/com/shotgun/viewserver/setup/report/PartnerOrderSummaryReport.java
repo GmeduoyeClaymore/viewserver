@@ -52,6 +52,7 @@ public class PartnerOrderSummaryReport {
                                                 new IProjectionConfig.ProjectionColumn("partner_userStatus"),
                                                 new IProjectionConfig.ProjectionColumn("partner_statusMessage"),
                                                 new IProjectionConfig.ProjectionColumn("partner_ratingAvg"),
+                                                new IProjectionConfig.ProjectionColumn("customer_userId"),
                                                 new IProjectionConfig.ProjectionColumn("customer_latitude"),
                                                 new IProjectionConfig.ProjectionColumn("customer_longitude"),
                                                 new IProjectionConfig.ProjectionColumn("customer_firstName"),

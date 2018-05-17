@@ -134,8 +134,7 @@ const validationSchema = {
 const datePickerOptions = {
   datePickerModeAndroid: 'calendar',
   mode: 'datetime',
-  titleIOS: 'Select delivery time',
-  maximumDate: moment().add(14, 'days').toDate()
+  titleIOS: 'Select delivery time'
 };
 
 const ASAPWorkingDateOption = {

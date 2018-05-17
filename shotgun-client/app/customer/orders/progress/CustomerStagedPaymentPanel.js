@@ -57,13 +57,13 @@ export default class CustomerStagedPaymentPanel extends Component{
             </Col>
             <Col size={30}>
               {!!~CAN_MODIFY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) && !!~CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES.indexOf(orderStatus) ?
-                <SpinnerButton busy={busyUpdating} style={[styles.payButton, {marginBottom: 10}]} danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
+                <SpinnerButton busy={busyUpdating} style={[styles.stageButton]} danger fullWidth onPress={() => this.onRemovePaymentStage(id)}>
                   <Text uppercase={false}>Delete</Text>
                 </SpinnerButton> :
                 null}
 
               {!!~CAN_PAY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) ?
-                <SpinnerButton busy={busyUpdating} style={styles.payButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
+                <SpinnerButton busy={busyUpdating} style={styles.stageButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
                   <Text uppercase={false}>Pay</Text>
                 </SpinnerButton> :
                 null}
@@ -115,7 +115,7 @@ export default class CustomerStagedPaymentPanel extends Component{
 const styles = {
   paymentStageRow: {
     marginBottom: 10,
-    marginLeft: 5
+    paddingBottom: 15
   },
   amountColumn: {
     alignContent: 'center',
@@ -167,9 +167,9 @@ const styles = {
     fontSize: 30,
     color: shotgun.brandSuccess,
   },
-  payButton: {
+  stageButton: {
     marginRight: 0,
-    marginLeft: 0
+    marginLeft: 10
   },
   smlprice: {
     fontSize: 15,

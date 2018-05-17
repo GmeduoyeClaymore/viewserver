@@ -105,6 +105,7 @@ export default class OrderSummaryDao{
 
   addCustomerInfo(orderDetails, orderRow){
     const customerInfo  = {
+      userId: orderRow.customer_orderId,
       latitude: orderRow.customer_latitude,
       longitude: orderRow.customer_longitude,
       firstName: orderRow.customer_firstName,
@@ -148,6 +149,7 @@ export default class OrderSummaryDao{
   mapPartnerResponse(response){
     return {
       partnerId: response.spreadPartnerId,
+      userId: response.spreadPartnerId,
       latitude: response.partner_latitude,
       longitude: response.partner_longitude,
       firstName: response.partner_firstName,

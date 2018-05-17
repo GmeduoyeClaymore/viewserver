@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Row, Grid, Col, ListItem} from 'native-base';
+import {View, Text, ListItem, Button} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -21,28 +21,21 @@ export default class UserRatingsDetail extends Component{
         }
       };
       return <ListItem key={rating.orderId} padded>
-        <Grid style={{paddingBottom: 15}}>
-          <Col size={70}  onPress={showRatingImages}>
-            <View style={styles.comment}>
-              {rating.images ? <Icon paddedIcon name="camera"/> : null}
-              <Text numberOfLines={1} style={styles.title}>{rating.title}</Text>
-            </View>
-            <View style={styles.time}>
-              <Icon paddedIcon name="delivery-time"/>
-              <Text style={styles.timeText}>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
-            </View>
-            {rating.comments ? <Text style={styles.comments}>{rating.comments}</Text> : null}
-          </Col>
-          <Col size={30}>
-            <Row style={styles.starRow}>
-              {[...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>)}
-            </Row>
-          </Col>
-          <Col size={1}>
-            {rating.images ? <RatingImages ref={ref => {pictureControl = ref;}} images={rating.images}/> : undefined}
-          </Col>
-        </Grid>
- 
+        <View style={{flexDirection: 'column', width: '70%'}}>
+          <Text numberOfLines={1} style={styles.title}>{rating.title}</Text>
+          <View style={styles.time}>
+            <Icon paddedIcon name="delivery-time"/>
+            <Text>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
+          </View>
+          {rating.comments ? <Text style={styles.comments}>{rating.comments}</Text> : null}
+        </View>
+        <View style={{flexDirection: 'column', width: '30%'}}>
+          <View style={styles.starRow}>
+            {[...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>)}
+          </View>
+          {rating.images ? <Button light fullWidth style={styles.cameraButton} onPress={showRatingImages}><Icon style={styles.camera} name="camera"/></Button> : null}
+          {rating.images ? <RatingImages ref={ref => {pictureControl = ref;}} images={rating.images}/> : undefined}
+        </View>
       </ListItem>;
     });
   }
@@ -53,18 +46,15 @@ const styles = {
     margin: shotgun.contentPadding
   },
   starRow: {
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
   },
   star: {
     fontSize: 15,
     color: shotgun.gold
   },
   title: {
-    paddingTop: 2,
     alignSelf: 'flex-start'
-  },
-  timeText: {
-    paddingTop: 2,
   },
   time: {
     flexDirection: 'row',
@@ -78,5 +68,14 @@ const styles = {
     color: shotgun.brandLight,
     fontStyle: 'italic',
     paddingTop: 10
+  },
+  cameraButton: {
+    marginTop: 10,
+    height: 35
+  },
+  camera: {
+    fontSize: 15,
+    margin: 0,
+    padding: 0
   }
 };

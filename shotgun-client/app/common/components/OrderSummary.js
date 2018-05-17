@@ -6,7 +6,6 @@ import {Icon, OriginDestinationSummary, UserInfo, VehicleInfo} from 'common/comp
 import shotgun from 'native-base-theme/variables/shotgun';
 import {connect} from 'custom-redux';
 import * as ContentTypes from 'common/constants/ContentTypes';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 class OrderSummary extends Component{
   constructor(props){
@@ -27,18 +26,29 @@ class OrderSummary extends Component{
     </ListItem>;
   }
 
+  onUserInfoPress = (userForInfo) => {
+    const {ordersRoot, history} = this.props;
+
+    history.push({
+      pathname: `${ordersRoot}/UserDetail`,
+      state: {userId: userForInfo.userId},
+      transition: 'bottom'
+    });
+  }
+
   render() {
     const {order, userCreatedThisOrder, dispatch} = this.props;
-    const {assignedPartner, customer, orderStatus, orderProduct, vehicle} = order;
-    const isComplete = orderStatus == OrderStatuses.COMPLETED;
+    const {assignedPartner, customer, negotiatedOrderStatus, orderProduct, vehicle} = order;
+    const isRejected = negotiatedOrderStatus == 'REJECTED';
+    const userForInfo = userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer;
 
     return <Content><List>
-      {!isComplete && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTopBottom>
-        <UserInfo dispatch={dispatch} user={userCreatedThisOrder ? {...assignedPartner, userId: assignedPartner.partnerId} : customer} {...this.props}/>
+      {!isRejected && (assignedPartner || !userCreatedThisOrder) ? <ListItem paddedLeftRight paddedTopBottom onPress={() => this.onUserInfoPress(userForInfo)}>
+        <UserInfo dispatch={dispatch} user={userForInfo}/>
       </ListItem> : null}
       {order.justForFriends ? <ListItem padded><Icon paddedIcon name="one-person"/><Text>Job is visible just to friends</Text></ListItem> : null}
 
-      {!isComplete && assignedPartner && userCreatedThisOrder && vehicle ? <ListItem paddedLeftRight paddedTop last>
+      {assignedPartner && userCreatedThisOrder && vehicle ? <ListItem paddedLeftRight paddedTop last>
         <VehicleInfo order={order}/>
       </ListItem> : null}
 
