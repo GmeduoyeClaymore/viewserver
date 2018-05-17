@@ -64,7 +64,7 @@ export class ValidatingInput extends Component {
 
     return (
       <Item error={isInvalid} success={isValid} onPress={onPress} style={{borderBottomWidth: 0}}>
-        <Control autocorrect={false} autoCorrect={false} returnKeyType={'done'} {...rest} placeholderTextColor={shotgun.silver} onFocus={onPress} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
+        <Control blurOnSubmit={true}  autocorrect={false} autoCorrect={false} returnKeyType={'done'} {...rest} placeholderTextColor={shotgun.silver} onFocus={onPress} onChangeText={value => this.onChangeText(value)} onBlur={() => this.onBlur()}/>
         {showIcons && isValid ? <Icon name='checkmark' /> : null}
         {showIcons && isInvalid ? <Icon name='cross' /> : null}
       </Item>
