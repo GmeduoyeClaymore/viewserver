@@ -322,8 +322,6 @@ export default (variables = variable) => {
     '.callButton': {
       backgroundColor: variables.brandPrimary,
       borderWidth: 1,
-      borderTopLeftRadius: 0,
-      borderBottomLeftRadius: 0,
       borderColor: variables.silver,
       'NativeBase.Text': {
         color: variables.darkGreen

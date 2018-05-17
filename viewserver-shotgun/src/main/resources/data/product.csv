@@ -11,12 +11,10 @@ BrickLayer,Brick Layer,,1Workers,15000
 Plumber,Plumber,,1Workers,15000
 Plasterer,Plasterer,,1Workers,15000
 Labourer,Labourer,,1Workers,12000
-HouseHoldMin,Household Min. charge,100kg,2HouseHoldWaste,4000
 HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000
 HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000
 HouseHoldThreeQuarterVan,Household  Three Quarter van,750 kg,2HouseHoldWaste,18000
 HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,22000
-CommercialHoldMin,Commercial Min. charge,100kg,2CommercialWaste,5000
 CommercialHoldQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,9000
 CommercialHoldHalfVan,Commercial Half van,500 kg,2CommercialWaste,15000
 CommercialThreeQuarterVan,Commercial Three Quarter van,750 kg,2CommercialWaste,19000

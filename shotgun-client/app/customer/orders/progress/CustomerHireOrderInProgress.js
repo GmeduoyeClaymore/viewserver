@@ -4,7 +4,6 @@ import {Button, Text, View} from 'native-base';
 import {SpinnerButton} from 'common/components';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
 import {offHireItem} from 'customer/actions/CustomerActions';
-import shotgun from 'native-base-theme/variables/shotgun';
 import * as ContentTypes from 'common/constants/ContentTypes';
 class CustomerHireOrderInProgress extends Component{
   constructor(props){

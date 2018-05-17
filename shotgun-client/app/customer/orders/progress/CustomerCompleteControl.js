@@ -4,7 +4,7 @@ import {customerCompleteAndPay} from 'customer/actions/CustomerActions';
 import {Text} from 'native-base';
 import {SpinnerButton} from 'common/components';
 
-class CompleteControl extends Component {
+class CustomerCompleteControl extends Component {
   constructor(props) {
     super(props);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
@@ -17,7 +17,7 @@ class CompleteControl extends Component {
 
   render() {
     const {order, busyUpdating} = this.props;
-    return  <SpinnerButton busy={busyUpdating} fullWidth padded paddedBottom onPress={this.onCompletePress}><Text uppercase={false}>{this.resources.CompleteCaption(order)}</Text></SpinnerButton>;
+    return  <SpinnerButton busy={busyUpdating} fullWidth padded onPress={this.onCompletePress}><Text uppercase={false}>{this.resources.CompleteCaption(order)}</Text></SpinnerButton>;
   }
 }
 /*eslint-disable */
@@ -35,4 +35,4 @@ const format = (value) => {
   return  value ? currency + (value / 100).toFixed(2) : '';
 };
 
-export default CompleteControl;
+export default CustomerCompleteControl;

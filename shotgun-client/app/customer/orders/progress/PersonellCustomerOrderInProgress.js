@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {Grid, Tab} from 'native-base';
 import {Tabs} from 'common/components';
 import {ReduxRouter, Route} from 'custom-redux';
-import CallButtons from './CallButtons';
 import OrderPhotoUpload from './OrderPhotoUpload';
 import MapDetails from './MapDetails';
-import PartnerDetails from 'common/components/UserInfo';
 import shotgun from 'native-base-theme/variables/shotgun';
 export default class PersonellCustomerOrderInProgress extends Component{
   constructor(props) {

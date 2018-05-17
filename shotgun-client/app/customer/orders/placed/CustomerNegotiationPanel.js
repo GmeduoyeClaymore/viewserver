@@ -124,7 +124,7 @@ export default class OrderNegotiationPanel extends Component{
                 </SpinnerButton> : null}
 
                 {canRespond ? <SpinnerButton busy={busyUpdating} fullWidth danger onPress={() => this.onRejectPartner(partnerId)}>
-                  <Text uppercase={false}>Reject</Text>
+                  <Text uppercase={false}>Decline</Text>
                 </SpinnerButton> : null}
 
                 {responseStatus === 'ACCEPTED' ?
@@ -172,7 +172,7 @@ export default class OrderNegotiationPanel extends Component{
 
       {this.getPartnerResponses()}
 
-      {hasRejected ? <Button onPress={this.toggleShow} padded light style={{alignSelf: 'flex-end', marginTop: 15, height: 35}}><Text uppercase={false}>{showAll ? '- Hide rejected' : '+ Show rejected'}</Text></Button> : null}
+      {hasRejected ? <Button onPress={this.toggleShow} padded light style={{alignSelf: 'flex-end', marginTop: 15, height: 35}}><Text uppercase={false}>{showAll ? '- Hide declined' : '+ Show declined'}</Text></Button> : null}
     </View>;
   }
 }

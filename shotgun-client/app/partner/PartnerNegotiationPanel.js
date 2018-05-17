@@ -141,8 +141,7 @@ const validationSchema = {
 const datePickerOptions = {
   datePickerModeAndroid: 'calendar',
   mode: 'date',
-  titleIOS: 'Select start date',
-  maximumDate: moment().add(14, 'days').toDate()
+  titleIOS: 'Select start date'
 };
 
 export default withExternalState()(PartnerNegotiationPanel);

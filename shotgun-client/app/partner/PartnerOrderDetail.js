@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withExternalState, ReduxRouter, Route } from 'custom-redux';
 import { resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getOperationErrors, findOrderSummaryFromDao, getAnyOperationError } from 'common/dao';
-import { Container, Header, Left, Button, Body, Title, Content, Tab, Row, Text } from 'native-base';
+import { Container, Header, Left, Button, Body, Title, Content, Tab } from 'native-base';
 import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
 import PartnerOrderLifecycleView from 'common/components/orders/PartnerOrderLifecycleView';
 import OrderProgressPictures from 'common/components/orders/OrderProgressPictures';
@@ -16,8 +16,7 @@ import DayRatePersonellOrderInProgress from './progress/DayRatePersonellOrderInP
 import FixedPersonellOrderInProgress from './progress/FixedPersonellOrderInProgress';
 import PartnerJourneyOrderInProgress from './progress/PartnerJourneyOrderInProgress';
 import HireOrderInProgress from './progress/HireOrderInProgress';
-
-const ResponseRejected = ({ order }) => (<Row style={{ padding: 5, marginBottom: 5 }}><Icon name='star' style={styles.starDeclined} /><Text style={{ paddingTop: 15, paddingLeft: 5 }}>{`${order.customer.firstName} ${order.customer.lastName} Rejected`}</Text></Row>);
+import PartnerResponseRejected from './PartnerResponseRejected';
 
 class PartnerOrderDetail extends Component {
   constructor(props) {
@@ -86,7 +85,7 @@ class PartnerOrderDetail extends Component {
         <PartnerOrderLifecycleView isRatingCustomer={true} {...{ ...this.props, onOrderRespond, userCreatedThisOrder: false }}
           PlacedControls={[PartnerPriceSummary, PartnerNegotiationPanel, OrderSummary]}
           InProgressControls={InProgressControls}
-          RejectedControls={[ResponseRejected, OrderSummary]}
+          RejectedControls={[PartnerResponseRejected, OrderSummary]}
           AcceptedControls={InProgressControls}
           CompletedControls={[PartnerPriceSummary, RatingSummary, OrderSummary]}
           CancelledControls={[PartnerPriceSummary, OrderSummary]}

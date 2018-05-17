@@ -11,28 +11,17 @@ export class UserInfo extends Component{
     dispatch(callUser(user.userId));
   };
 
-  onUserInfoPress = () => {
-    const {ordersRoot, history, user} = this.props;
-
-    history.push({
-      pathname: `${ordersRoot}/UserDetail`,
-      state: {userId: user.userId},
-      transition: 'bottom'
-    });
-  }
-
   render(){
     const {user, imageWidth = 40, showCallButton = true} = this.props;
     return user ? <Grid>
       <Row>
-
-        {user.imageUrl ? <TouchableOpacity onPress={this.onUserInfoPress}><Image  source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/></TouchableOpacity> : null}
-        <Col style={styles.name} onPress={this.onUserInfoPress}>
+        {user.imageUrl ? <Image  source={{uri: user.imageUrl}} resizeMode='contain' style={[styles.images, {width: imageWidth}]}/> : null}
+        <Col style={styles.nameCol} onPress={this.onUserInfoPress}>
           <Text numberOfLines={1}>{user.firstName} {user.lastName}</Text>
           <AverageRating rating={user.ratingAvg}/>
         </Col>
-        {showCallButton ? <Col  >
-          <Button   style={{width: 150, marginLeft: 10}}fullWidth callButton onPress={this.onPressCall}>
+        {showCallButton ? <Col>
+          <Button  style={styles.callButton} fullWidth callButton onPress={this.onPressCall}>
             <Icon name="phone" paddedIcon/>
             <Text uppercase={false}>Call</Text>
           </Button>
@@ -43,8 +32,11 @@ export class UserInfo extends Component{
 }
 
 const styles = {
-  name: {
+  nameCol: {
     alignItems: 'center',
+  },
+  callButton: {
+    alignSelf: 'flex-end'
   },
   images: {
     aspectRatio: 1,
