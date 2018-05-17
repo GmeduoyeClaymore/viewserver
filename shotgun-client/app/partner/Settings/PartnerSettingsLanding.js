@@ -45,7 +45,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/PartnerMyOrders`)}>
           <Text style={styles.text}>Completed and Rejected Jobs</Text>
-          <Icon name='available-jobs'/>
+          <Icon style={{paddingRight: 10, fontSize: 24}} name='available-jobs'/>
         </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdatePaymentCardDetails`)}>
           <Text style={styles.text}>Payment cards</Text>
