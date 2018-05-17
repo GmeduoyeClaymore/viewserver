@@ -43,6 +43,7 @@ public class OrderWithResponseDataSource {
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.PARTNER_ID_COLUMN),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.RESPONSE_STATUS),
                                         new IProjectionConfig.ProjectionColumn(DateNegotiatedOrderResponseSpreadFunction.ORDER_DETAIL_WITHOUT_RESPONSES, "orderDetails"),
+                                        new IProjectionConfig.ProjectionColumn("customer_userId"),
                                         new IProjectionConfig.ProjectionColumn("customer_firstName"),
                                         new IProjectionConfig.ProjectionColumn("customer_lastName"),
                                         new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),

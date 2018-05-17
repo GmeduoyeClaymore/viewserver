@@ -28,6 +28,7 @@ public class OrderResponseReport {
                                 new ProjectionNode("orderRequestProjection")
                                         .withMode(IProjectionConfig.ProjectionMode.Inclusionary)
                                         .withProjectionColumns(
+                                                new IProjectionConfig.ProjectionColumn("customer_userId"),
                                                 new IProjectionConfig.ProjectionColumn("customer_firstName"),
                                                 new IProjectionConfig.ProjectionColumn("customer_lastName"),
                                                 new IProjectionConfig.ProjectionColumn("customer_ratingAvg"),
