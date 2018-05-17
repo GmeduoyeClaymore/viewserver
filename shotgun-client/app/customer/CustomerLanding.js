@@ -8,7 +8,7 @@ import CustomerOrderDetail from './orders/CustomerOrderDetail';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
-import {isAnyLoading, getDaoState} from 'common/dao';
+import {isAnyLoading, getDaoState, getDao} from 'common/dao';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener, getActionFromNotification} from 'common/Listeners';
 import NotificationActionHandlerService from 'common/services/NotificationActionHandlerService';
@@ -16,6 +16,8 @@ import UserRelationships from 'common/components/relationships/UserRelationships
 import shotgun from 'native-base-theme/variables/shotgun';
 import FCM from 'react-native-fcm';
 import Logger from 'common/Logger';
+import ReactNativeModal from 'react-native-modal';
+import {View, Spinner, Text} from 'native-base';
 
 //TODO - we should be able to put this in App.js but it doesn't work for some reason
 setLocale({
@@ -50,13 +52,22 @@ class CustomerLanding extends Component {
   }
 
   render() {
-    const {busy, client, path, isLoggedIn, history} = this.props;
+    const {busy, client, path, isLoggedIn, isConnected, history, daosHaveBeenRegistered} = this.props;
     const completeProps = {client, ...this.props, ordersRoot: path, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/Orders` };
-    if (!isLoggedIn){
+    if (!isLoggedIn && isConnected){
       return <Redirect just to="/" history={history}/>;
     }
-    return busy ? <LoadingScreen text="Loading Customer landing"/> :
-      [<ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute="Checkout" /*defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}*/>
+    return !daosHaveBeenRegistered ? <LoadingScreen text="Loading Customer landing"/> :
+      [<ReactNativeModal key='connectingModal'
+        isVisible={busy}
+        backdropOpacity={0.4}>
+        <View style={styles.modalContainer}>
+          <View style={styles.innerContainer}>
+            <Spinner/>
+            <Text>Loading Customer Landing Screen ...</Text>
+          </View>
+        </View>
+      </ReactNativeModal>, <ReduxRouter key='router' name="CustomerLandingRouter" resizeForKeyboard={true} hasFooter={true} {...completeProps} defaultRoute="UserRelationships" /*defaultRoute={{pathname: 'CustomerOrderDetail', state: {orderId: '2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9'}}}*/>
         <Route path={'Checkout'} component={Checkout}/>
         <Route path={'CustomerMyOrders'} exact component={CustomerMyOrders}/>
         <Route path={'Orders'} exact component={CustomerMyOrders}/>
@@ -68,10 +79,23 @@ class CustomerLanding extends Component {
   }
 }
 
+const styles = {
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    alignItems: 'center',
+  },
+};
+
+
 const mapStateToProps = (state, nextOwnProps) => {
   const {match: parentMatch} = nextOwnProps;
+  const daosHaveBeenRegistered =  getDao(state, 'contentTypeDao') && getDao(state, 'orderSummaryDao') && getDao(state, 'userDao');
   return {
     parentMatch,
+    daosHaveBeenRegistered,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
     user: getDaoState(state, ['user'], 'userDao'),
     ...nextOwnProps,
