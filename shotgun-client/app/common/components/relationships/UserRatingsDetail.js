@@ -21,7 +21,7 @@ export default class UserRatingsDetail extends Component{
         }
       };
       return <ListItem key={rating.orderId} padded>
-        <Grid>
+        <Grid style={{paddingBottom: 15}}>
           <Col size={70}  onPress={showRatingImages}>
             <View style={styles.comment}>
               {rating.images ? <Icon paddedIcon name="camera"/> : null}
@@ -29,7 +29,7 @@ export default class UserRatingsDetail extends Component{
             </View>
             <View style={styles.time}>
               <Icon paddedIcon name="delivery-time"/>
-              <Text>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
+              <Text style={styles.timeText}>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
             </View>
             {rating.comments ? <Text style={styles.comments}>{rating.comments}</Text> : null}
           </Col>
@@ -60,7 +60,11 @@ const styles = {
     color: shotgun.gold
   },
   title: {
+    paddingTop: 2,
     alignSelf: 'flex-start'
+  },
+  timeText: {
+    paddingTop: 2,
   },
   time: {
     flexDirection: 'row',

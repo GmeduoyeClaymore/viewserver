@@ -39,6 +39,7 @@ export default class RatingsImages extends Component{
       const {images: urls = []} = this.props;
       return (
         <Image
+          cache='force-cache'
           style={StyleSheet.absoluteFill}
           source={{ uri: urls[idx] }}
           resizeMode={'contain'}
@@ -49,15 +50,16 @@ export default class RatingsImages extends Component{
     render(){
       const {images: urls = []} = this.props;
       return <ImageCarousel
-        style={{marginTop: 10, marginBottom: 10, height: 360}}
+        style={{marginTop: 10, marginBottom: 10}}
         ref={car => {this._imageCarousel = car;}}
         renderContent={this._renderContent}
         renderHeader={this._renderHeader}
         renderFooter={this._renderFooter}>
         {[...urls].map(url => (
           <Image
+            cache='force-cache'
             key={url}
-            source={{ uri: url, width: 300 }}
+            source={{ uri: url}}
             resizeMode={'contain'}
           />
         ))}
@@ -78,7 +80,6 @@ const styles = {
   },
   image: {
     marginRight: 2,
-    height: 300,
     marginBottom: 10,
   },
   noJobs: {
