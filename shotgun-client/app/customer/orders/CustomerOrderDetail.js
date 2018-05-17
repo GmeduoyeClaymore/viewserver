@@ -14,6 +14,7 @@ import CustomerJourneyOrderInProgress from './progress/CustomerJourneyOrderInPro
 import CompleteControl from './progress/CompleteControl';
 import CancelControl from './progress/CancelControl';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
+import OrderProgressPictures from 'common/components/orders/OrderProgressPictures';
 
 class CustomerOrderDetail extends Component{
   constructor(props) {
@@ -105,18 +106,45 @@ const mapStateToProps = (state, initialProps) => {
 
 const PaymentStagesAndSummary = (props) => {
   const {history, path, orderId, width, order} = props;
-  const shouldShowPaymentStagesTab = order.paymentType !== 'DAYRATE' || (order.paymentStages && order.paymentStages.length);
-  const paymentTabHeading = order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
+
+  const TabHeadings = [
+    'Summary',
+  ];
+
+  if (order.orderStatus != 'ACCEPTED'){
+    TabHeadings.push('Photos');
+  }
+  if (order.paymentType !== 'DAYRATE' || (order.paymentStages && order.paymentStages.length)){
+    TabHeadings.push('PaymentStages');
+  }
+  const getSelectedTabIndex = (history, path) => {
+    if (!history || !history.location || !history.location.pathname){
+      return 0;
+    }
+    const result = TabHeadings.findIndex(th => history.location.pathname.includes(`${path}/${th}`));
+    return !!~result ? result : 0;
+  };
+  const getHeading = (heading) => {
+    if (heading === 'PaymentStages'){
+      return order.paymentType !== 'DAYRATE' ? 'Payment Stages' : 'Days Worked';
+    }
+    return heading;
+  };
+
+  const selecedTabIndex = getSelectedTabIndex(history, path);
+
+  const {images} = order;
+
   const goToTabNamed = (name) => {
     history.replace({pathname: `${path}/${name}`, state: {orderId}});
   };
-  return [<Tabs key="1" initialPage={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0} page={history.location.pathname.endsWith('PaymentStages')  ? 1 : 0}  {...shotgun.tabsStyle}>
-    <Tab heading='Summary' onPress={() => goToTabNamed('Summary')}/>
-    {shouldShowPaymentStagesTab ? <Tab heading={paymentTabHeading} onPress={() => goToTabNamed('PaymentStages')}/> : null}
+  return [<Tabs key="1" initialPage={selecedTabIndex} page={selecedTabIndex}  {...shotgun.tabsStyle}>
+    {TabHeadings.map(th =>  <Tab heading={getHeading(th)} onPress={() => goToTabNamed(th)} />)}
   </Tabs>,
-  <ReduxRouter key="2"  name="CustomerOrdersRouter" {...props} height={1000 /*hack to get around a weird height issue when keyboard shown*/} width={width} path={path} defaultRoute='Summary' hasFooter={true}>
+  <ReduxRouter key="2" images={images} name="CustomerOrdersRouter" {...props} height={1000 /*hack to get around a weird height issue when keyboard shown*/} width={width} path={path} defaultRoute='Summary' hasFooter={true}>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={CustomerStagedPaymentPanel} />
+    <Route path={'Photos'} component={OrderProgressPictures} />
   </ReduxRouter>];
 };
 
@@ -131,7 +159,7 @@ const styles = {
     marginRight: 10,
     alignSelf: 'center'
   }
-}
+};
 
 /*eslint-disable */
 const resourceDictionary = new ContentTypes.ResourceDictionary();

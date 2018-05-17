@@ -30,7 +30,7 @@ class ProductList extends Component{
       <Col style={styles.selectionControlColumn}>
         <SelectionControl productId={productId} selectedProductIds={selectedProductIds}/>
       </Col>
-      <Col>
+      <Col style={{paddingTop: 15}}>
         <Text>{name}</Text>
         <Text style={styles.productDescription}>{description}</Text>
       </Col>

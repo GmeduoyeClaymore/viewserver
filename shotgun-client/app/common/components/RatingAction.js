@@ -15,7 +15,7 @@ const RatingAction = ({isRatingCustomer, order, dispatch, comments, setState}) =
 
   const onPressStar = (newRating) => {
     const ratingType = isRatingCustomer ? 'Customer' : 'Partner';
-    const action = rateUserOrder({orderId: order.orderId, rating: newRating, comments, ratingType});
+    const action = rateUserOrder({orderId: order.orderId, images: order.images, orderContentTypeId: order.orderContentTypeId, rating: newRating, comments, ratingType});
     dispatch(action);
   };
 

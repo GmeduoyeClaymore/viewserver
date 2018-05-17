@@ -13,6 +13,7 @@ public interface UserRating extends DynamicJsonBackedObject {
     Date getUpdatedDate();
     String getTitle();
     String getOrderId();
+    String[] getImages();
     String getComments();
     String getFromUserId();
     Integer getRating();

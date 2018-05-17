@@ -87,6 +87,10 @@ export default class OrderNegotiationPanel extends Component{
     const {partnerResponses, busyUpdating, order} = this.props;
     const {showAll} = this.state;
 
+    if (!partnerResponses){
+      return null;
+    }
+
     const filteredResponses = partnerResponses.filter(res => showAll || !!~ACTIVE_NEGOTIATION_STATUSES.indexOf(res.responseStatus));
     return filteredResponses.map(
       (response, idx)  => {

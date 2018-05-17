@@ -49,8 +49,8 @@ export default class OrdersDao{
     return  resources.Controller;
   }
 
-  rateUserOrder = async({orderId, rating, comments, ratingType}) => {
-    await this.client.invokeJSONCommand('userController', 'addOrUpdateRating', {orderId,  rating, comments, ratingType});
+  rateUserOrder = async({orderId, rating, comments, ratingType, images}) => {
+    await this.client.invokeJSONCommand('userController', 'addOrUpdateRating', {orderId,  rating, comments, ratingType, images});
   };
 
   createOrder = async ({order, paymentId}) => {

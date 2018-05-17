@@ -63,6 +63,17 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
         return completeFileName;
     }
 
+    @ControllerAction(path = "deleteImage", isSynchronous = false)
+    public String deleteImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageUrl") String imageUrl) {
+        this.transform(orderId, order -> {
+                    order.removeImage(imageUrl);
+                    return true;
+                },
+                SupportsImageOrder.class
+        );
+        return imageUrl;
+    }
+
     @ControllerAction(path = "createOrder", isSynchronous = true)
     public String createOrder(@ActionParam(name = "paymentMethodId") String paymentMethodId, @ActionParam(name = "order") PersonellOrder order) {
         return this.create(

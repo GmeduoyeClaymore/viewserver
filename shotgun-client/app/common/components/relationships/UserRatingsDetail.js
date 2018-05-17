@@ -3,7 +3,7 @@ import {View, Text, Row, Grid, Col, ListItem} from 'native-base';
 import {Icon} from 'common/components';
 import moment from 'moment';
 import shotgun from 'native-base-theme/variables/shotgun';
-
+import RatingImages from './RatingImages';
 export default class UserRatingsDetail extends Component{
   render(){
     const {user} = this.props;
@@ -14,11 +14,19 @@ export default class UserRatingsDetail extends Component{
     }
 
     return ratings.map(rating => {
+      let pictureControl = undefined;
+      const showRatingImages = () => {
+        if (pictureControl){
+          pictureControl.showLightBox();
+        }
+      };
       return <ListItem key={rating.orderId} padded>
         <Grid>
-          <Col size={70}>
-            <Text numberOfLines={1} style={styles.title}>{rating.title}</Text>
-
+          <Col size={70}  onPress={showRatingImages}>
+            <View style={styles.comment}>
+              {rating.images ? <Icon paddedIcon name="camera"/> : null}
+              <Text numberOfLines={1} style={styles.title}>{rating.title}</Text>
+            </View>
             <View style={styles.time}>
               <Icon paddedIcon name="delivery-time"/>
               <Text>{moment(rating.updatedDate).format('Do MMM YYYY')}</Text>
@@ -30,7 +38,11 @@ export default class UserRatingsDetail extends Component{
               {[...Array(rating.rating)].map((e, i) => <Icon name='star-full' key={i} style={styles.star}/>)}
             </Row>
           </Col>
+          <Col size={1}>
+            {rating.images ? <RatingImages ref={ref => {pictureControl = ref;}} images={rating.images}/> : undefined}
+          </Col>
         </Grid>
+ 
       </ListItem>;
     });
   }
@@ -53,6 +65,9 @@ const styles = {
   time: {
     flexDirection: 'row',
     paddingTop: 5
+  },
+  comment: {
+    flexDirection: 'row',
   },
   comments: {
     alignSelf: 'flex-start',

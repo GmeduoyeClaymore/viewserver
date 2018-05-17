@@ -27,10 +27,12 @@ class PartnerOrderDetail extends Component {
 
   beforeNavigateTo() {
     const { dispatch, orderId, order, responseParams } = this.props;
-    dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
-      orderId,
-      ...OrderSummaryDao.PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS
-    }));
+    if (!order){
+      dispatch(resetSubscriptionAction('singleOrderSummaryDao', {
+        orderId,
+        ...OrderSummaryDao.PARTNER_ORDER_SUMMARY_DEFAULT_OPTIONS
+      }));
+    }
     if (order != undefined) {
       if (responseParams) {
         const { order, history, dispatch, bankAccount, path } = this.props;
@@ -111,8 +113,10 @@ const PaymentStagesAndSummary = (props) => {
   };
   const TabHeadings = [
     'Summary',
-    'Photos'
   ];
+  if (order.orderStatus != 'ACCEPTED'){
+    TabHeadings.push('Photos');
+  }
   if (order.paymentStages && order.paymentStages.length){
     TabHeadings.push('PaymentStages');
   }
@@ -130,10 +134,11 @@ const PaymentStagesAndSummary = (props) => {
     return heading;
   };
   const selecedTabIndex = getSelectedTabIndex(history, path);
+  const {images} = order;
   return [<Tabs key="1" initialPage={selecedTabIndex} page={selecedTabIndex}  {...shotgun.tabsStyle}>
     {TabHeadings.map(th =>  <Tab heading={getHeading(th)} onPress={() => goToTabNamed(th)} />)}
   </Tabs>,
-  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
+  <ReduxRouter key="2" name="CustomerOrdersRouter" {...props} images={images} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />
     <Route path={'PaymentStages'} component={PartnerStagedPaymentPanel} />
     <Route path={'Photos'} component={OrderProgressPictures} />
@@ -158,10 +163,10 @@ resourceDictionary.
     rubbish((order) => `${order.orderProduct.name} Rubbish Collection`).
   property('PlacedControls', [PartnerNegotiationPanel, OrderSummary]).
   property('InProgressControlsFactory').
-  personell(getControlsFromOrder).
-  hire(() => [PartnerPriceSummary, HireOrderInProgress]).
-  delivery(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]).
-  rubbish(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]);
+    personell(getControlsFromOrder).
+    hire(() => [PartnerPriceSummary, HireOrderInProgress]).
+    delivery(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]).
+    rubbish(() => [PartnerPriceSummary, PartnerJourneyOrderInProgress]);
 /*eslint-enable */
 
 

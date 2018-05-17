@@ -52,7 +52,7 @@ public class IsOrderVisible implements IUserDefinedFunction, IExpressionBool {
             if(relationshipStatus.equals(UserRelationshipStatus.BLOCKED) || relationshipStatus.equals(UserRelationshipStatus.BLOCKEDBYME)){
                 return false;
             }
-            if(order.isJustForFriends()){
+            if(order.isJustForFriends() != null && order.isJustForFriends()){
                 return relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.ACCEPTED);
             }
         }

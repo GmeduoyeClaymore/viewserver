@@ -43,7 +43,7 @@ export default class PartnerOrderResponseDao{
     }
 
     if (isCompleted !== undefined && !orderId) {
-      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP];
+      reportContext.dimensions.dimension_status = isCompleted == true ? [OrderStatuses.COMPLETED] : [OrderStatuses.ACCEPTED, OrderStatuses.PLACED, OrderStatuses.PICKEDUP, OrderStatuses.INPROGRESS];
     }
 
 

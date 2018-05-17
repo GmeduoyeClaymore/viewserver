@@ -13,13 +13,16 @@ import static com.shotgun.viewserver.ControllerUtils.getUserId;
 public interface RatedOrderController extends UserTransformationController, OrderUpdateController,RatingNotifications {
 
     @ControllerAction(path = "addOrUpdateRating", isSynchronous = true)
-    default void addOrUpdateRating(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "rating") int rating, @ActionParam(name = "comments") String comments, @ActionParam(name = "ratingType") UserRating.RatingType ratingType) {
+    default void addOrUpdateRating(UserRating rating) {
+        String orderId = rating.getOrderId();
+        UserRating.RatingType ratingType = rating.getRatingType();
         BasicOrder order = getOrderForId(orderId, BasicOrder.class);
         String userId = ratingType.equals(UserRating.RatingType.Customer) ? order.getCustomerUserId() : order.getPartnerUserId();
-
+        rating.set("userId", getUserId());
+        rating.set("title", order.getTitle());
         this.transform(userId,
                 user -> {
-                    UserRating userRating = user.addRating(getUserId(),order.getTitle(),orderId, rating, comments, ratingType);
+                    UserRating userRating = user.addRating(rating);
                     order.set("rating" + ratingType.name(), userRating);
                     updateOrderRecord(order);
                     return true;

@@ -10,7 +10,6 @@ const DefaultNavigationStack = [{
 
 const MaxStackLength = 2;
 
-
 export default class NavigationContainerTranslator{
   constructor(navContainer, routerPath, defaultRoute, routesInScope){
     invariant(navContainer, 'Nav container is required');
@@ -48,7 +47,7 @@ export default class NavigationContainerTranslator{
     const match = matchPath(this.location.pathname, this.routerPath);
     if (match && match.isExact){
       const newStack = [...this.navigationStack];
-      const newHead = {...this.location, ...this.defaultRoute};
+      const newHead = {...this.location, ...clean(this.defaultRoute)};
       newStack[this.navContainer.navPointer] = newHead;
       return {...newHead, navContainerOverride: this.navContainer.setIn(['navigationStack'], newStack)};
     }
@@ -60,8 +59,8 @@ export default class NavigationContainerTranslator{
     const index = this.routesInScope.findIndex(c=> matchPath(result.pathname, c.path));
     if (!!~index){
       const route = this.routesInScope[index];
-      const {isReverse, transition = route.transition} = result;
-      return {...route, pathname: route.path, transition, isReverse};
+      const {isReverse, transition = route.transition, state  = route.state } = result;
+      return {...route, pathname: route.path, transition, isReverse, state};
     }
   }
   
@@ -136,3 +135,15 @@ export default class NavigationContainerTranslator{
     });
   }
 }
+
+const  clean = (obj) =>  {
+  if (!obj){
+    return obj;
+  }
+  for (const propName in obj) {
+    if (obj[propName] === null || obj[propName] === undefined) {
+      delete obj[propName];
+    }
+  }
+  return obj;
+};

@@ -10,6 +10,7 @@ import {updateRelationship} from 'common/actions/CommonActions';
 import {withExternalState, ReduxRouter, Route} from 'custom-redux';
 import {resetSubscriptionAction, getDaoState, isAnyOperationPending, getNavigationProps, getDao} from 'common/dao';
 
+
 class UserDetail extends Component{
   handleCancel = () => {
     const {history} = this.props;

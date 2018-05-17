@@ -92,6 +92,22 @@ public interface User extends DynamicJsonBackedObject{
         return userRating;
     }
 
+    default UserRating addRating(UserRating rating){
+        if(rating.getOrderId() == null){
+            throw new RuntimeException("Rating cannot be null");
+        }
+        List<UserRating> ratings = fromArray(getRatings()).filter(c->!c.getOrderId().equals(rating.getOrderId())).collect(Collectors.toList());
+        ratings.add(rating);
+        this.set("ratings",toArray(ratings, UserRating[]::new));
+
+        int length = getRatings().length;
+        if(getRatings() != null && length > 0){
+            int sum = fromArray(getRatings()).map(UserRating::getRating).mapToInt(Integer::intValue).sum();
+            this.set("ratingAvg", (double)sum/(double)length);
+        }
+        return rating;
+    }
+
     default void clearPendingMessages(){
         this.set("pendingMessages", null);
     }
