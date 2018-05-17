@@ -52,7 +52,8 @@ public abstract class ConfigurableOperatorBase<TConfig> extends OperatorBase imp
     }
 
     protected TConfig mergePendingConfig(TConfig pendingConfig, TConfig config) {
-        throw new UnsupportedOperationException("Operators of type " + this.getClass().getName() + " do not support merging of configs");
+        log.warn("Operators of type " + this.getClass().getName() + " do not support merging of configs");
+        return pendingConfig;
     }
 
     @Override

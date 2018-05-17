@@ -23,8 +23,20 @@ public interface PersonellOrder extends BasicOrder, VariablePeopleOrder, Negotia
         Date date = new Date();
         this.set("dayStarted", true);
         this.setOrderStatus(OrderStatus.INPROGRESS);
-        return addPaymentStage(getAmount(), "Day Rate Work " + formatDate(date), String.format("Day rate work started at " + formatTime(date)), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
+        String name = "Day Rate Work " + formatDate(date);
+        if(this.getPaymentStage(name) != null ){
+            name = getAvailableName(name,1);
+        }
+        return addPaymentStage(getAmount(), name, String.format("Day rate work started at " + formatTime(date)), OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started, false);
 
+    }
+
+    default String getAvailableName(String name, int counter){
+        String newName = name + "_" + counter;
+        if(this.getPaymentStage(newName) != null ){
+            newName = getAvailableName(name,counter+1);
+        }
+        return newName;
     }
 
     default String formatDate(Date date) {

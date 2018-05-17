@@ -151,7 +151,7 @@ public class UtilsTests {
                 }
         );
         StagedPaymentOrder object = JSONBackedObjectFactory.create(StagedPaymentOrder.class);
-        object.addPaymentStage(1,"Foo","Foo", OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started);
+        object.addPaymentStage(1,"Foo","Foo", OrderPaymentStage.PaymentStageType.Fixed, OrderPaymentStage.PaymentStageStatus.Started, true);
         Assert.assertNotNull(object.serialize());
     }
 

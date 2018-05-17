@@ -69,11 +69,6 @@ public class MessagingController implements IMessagingController, UserPersistenc
                 return;
             }
         }
-        if(tk.getEventType().equals(EventType.ROW_REMOVE)){
-            if(eventData.get("fcmToken") != null) {
-                tokenToUserMap.put((String) eventData.get("fcmToken"), null);
-            }
-        }
     }
 
     @Override
