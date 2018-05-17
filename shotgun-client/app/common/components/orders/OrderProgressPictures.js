@@ -69,8 +69,9 @@ export default class OrderProgressPictures extends Component{
     const {images: urls = []} = this.props;
     return (
       <Image
+        cache='force-cache'
         style={StyleSheet.absoluteFill}
-        source={{ uri: urls[idx] }}
+        source={{ uri: urls[idx], cache: 'force-cache' }}
         resizeMode={'contain'}
       />
     );
@@ -94,8 +95,9 @@ export default class OrderProgressPictures extends Component{
             style={styles.imageContainer}>
             <Image
               key={url}
+              
               style={styles.image}
-              source={{ uri: url, width: 300 }}
+              source={{ uri: url, width: 300, cache: 'force-cache' }}
               resizeMode={'contain'}
             />
             <Button fullWidth danger busy={busy} style={{marginLeft: 35, marginRight: 35}} onPress={() => deleteImage(url)}>

@@ -39,9 +39,8 @@ export default class RatingsImages extends Component{
       const {images: urls = []} = this.props;
       return (
         <Image
-          cache='force-cache'
           style={StyleSheet.absoluteFill}
-          source={{ uri: urls[idx] }}
+          source={{ uri: urls[idx], cache: 'force-cache'}}
           resizeMode={'contain'}
         />
       );
@@ -57,9 +56,8 @@ export default class RatingsImages extends Component{
         renderFooter={this._renderFooter}>
         {[...urls].map(url => (
           <Image
-            cache='force-cache'
             key={url}
-            source={{ uri: url}}
+            source={{ uri: url, cache: 'force-cache'}}
             resizeMode={'contain'}
           />
         ))}

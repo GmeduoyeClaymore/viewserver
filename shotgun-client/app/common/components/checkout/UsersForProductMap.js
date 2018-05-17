@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import {withExternalState} from 'custom-redux';
+import {withExternalState, Redirect} from 'custom-redux';
 import { Container, Button, Text, Grid, Col, Row, Item, Input} from 'native-base';
 import {ErrorRegion, Icon} from 'common/components';
 import { getDaoState } from 'common/dao';
@@ -40,7 +40,10 @@ class UsersForProductMap extends Component{
   }
 
   render(){
-    const {order, errors, next, client, history, stateKey} = this.props;
+    const {order, errors, next, client, history, stateKey, parentPath} = this.props;
+    if (!order){
+      return <Redirect just to={`${parentPath}`} history={history}/>;
+    }
     const {origin} = order;
     const disableDoneButton = !origin || !origin.line1;
     const geoLocation = !origin || !origin.line1 ? undefined : {latitude: origin.latitude, longitude: origin.longitude};

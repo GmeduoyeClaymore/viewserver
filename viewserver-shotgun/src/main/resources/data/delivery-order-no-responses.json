@@ -34,7 +34,7 @@
   "requiredDate": "{requiredDate}",
   "description": "this is a small van order",
   "orderStatus": "PLACED",
-  "title": "Large Van",
+  "title": "Luton to London Rebar Delivery",
   "orderProduct": {
     "dimension_productId": 3,
     "productId": "LargeVan",
