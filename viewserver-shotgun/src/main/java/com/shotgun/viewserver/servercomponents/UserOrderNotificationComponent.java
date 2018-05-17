@@ -65,7 +65,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private IMessagingController messagingController;
     private SystemReportExecutor systemReportExecutor;
     private HashMap<String,List<String>> notifiedOrdersByUser;
-    Executor notificationsExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("notifications"));
+    Executor notificationsExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("notifications"));
     private ReportContextRegistry reportContextRegistry;
     private ReportRegistry reportRegistry;
 

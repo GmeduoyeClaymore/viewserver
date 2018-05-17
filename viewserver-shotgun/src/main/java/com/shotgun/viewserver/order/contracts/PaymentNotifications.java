@@ -26,6 +26,12 @@ public interface PaymentNotifications extends OrderNotificationContract {
     }
 
 
+    default void notifyPaymentStageAdded(String orderId, String partnerId, String description) {
+        User user = (User) ControllerContext.get("user");
+        sendMessage(orderId, partnerId, String.format("Shotgun Payment stage added"), String.format("%s has  just added a payment  stage \"%s\".", user.getFirstName() + " " + user.getLastName(), description),"PartnerOrderDetail~PaymentStages");
+    }
+
+
 
 
 }
