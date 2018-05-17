@@ -1,11 +1,1 @@
 orderId,created,lastModified,userId,status,paymentId,totalPrice,productId,assignedPartnerUserId,orderContentTypeId,orderDetails,requiredDate
-2c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,PLACED,card_1BZjOtJf2h7PvwlulrG7Lrbx,1200,BrickLayer,,5,ref://data/brick-layer-order-no-responses.json,01/06/2017 08:30
-3c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,PLACED,card_1BZjOtJf2h7PvwlulrG7Lrbx,6350,SmallVan,,1,ref://data/delivery-order-no-responses.json,01/06/2017 08:30
-4c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,1250,DrillCordless,3ABCD,3,ref://data/delivery-order-accepted.json,01/06/2017 08:30
-5c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,1299,SmallVan,3ABCD,1,ref://data/delivery-order-accepted.json,01/06/2017 08:30
-6c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,2356,MediumVan,,1,ref://data/delivery-order-negotiating.json,01/06/2017 08:30
-7c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,PLACED,card_1BZjOtJf2h7PvwlulrG7Lrbx,5000,CommercialHoldMin,,2,ref://data/rubbish-order-no-responses.json,01/06/2017 08:30
-8c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,2000,SafetyHarness,3ABCD,3,ref://data/delivery-order-accepted.json,01/06/2017 08:30
-9c2f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,2375,CommercialThreeQuarterVan,3ABCD,2,ref://data/delivery-order-accepted.json,01/06/2017 08:30
-102f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,2BBui,ACCEPTED,card_1BZjOtJf2h7PvwlulrG7Lrbx,2354,Carpenter,3ABCD,5,ref://data/delivery-order-accepted.json,01/06/2017 08:30
-112f5e22-54f2-4464-8d25-5b0a0dcc2ec9,01/01/2017 08:30,01/01/2017 08:30,3ABCD,PLACED,card_1BZjOtJf2h7PvwlulrG7Lrbx,1200,BrickLayer,,5,ref://data/brick-layer-order-no-responses.json,01/06/2017 08:30
