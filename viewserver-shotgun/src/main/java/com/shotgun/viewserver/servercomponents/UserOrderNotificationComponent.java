@@ -152,14 +152,9 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
                                     log.info("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
-                                    if(hasNotificationForUser(orderId, user.getUserId())){//TODO fix this hack why does the index operator repeatedly fire row add events for the same order id
-                                        log.info("Already notified of " + orderId + " not doing it again");
-                                        return;
-                                    }
                                     if(setNotificationForUser(orderId, user.getUserId())){
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
-                                    ;
                                 }
 
                             }, err -> log.error("Issue subscribing to orders {}", err)));

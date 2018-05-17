@@ -103,7 +103,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
                 return result;
             }
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
-            logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
+            logger.info(format);
             if(sendRemotely){
                 sendPayload(message.toSimpleMessage());
             }
