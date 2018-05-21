@@ -1909,7 +1909,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "3ba159c6-26a3-481c-8419-f7bbb6f090ae";
+				PROVISIONING_PROFILE = "4e445a91-6b8d-4073-8d62-74226b713fe1";
 				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

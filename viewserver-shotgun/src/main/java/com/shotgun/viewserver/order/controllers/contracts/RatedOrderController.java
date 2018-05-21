@@ -18,7 +18,7 @@ public interface RatedOrderController extends UserTransformationController, Orde
         UserRating.RatingType ratingType = rating.getRatingType();
         BasicOrder order = getOrderForId(orderId, BasicOrder.class);
         String userId = ratingType.equals(UserRating.RatingType.Customer) ? order.getCustomerUserId() : order.getPartnerUserId();
-        rating.set("userId", getUserId());
+        rating.set("fromUserId", getUserId());
         rating.set("title", order.getTitle());
         this.transform(userId,
                 user -> {
