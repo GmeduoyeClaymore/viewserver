@@ -57,6 +57,7 @@
 		6D540B5C202B779900D406DB /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6D540B5A202B779900D406DB /* HockeySDKResources.bundle */; };
 		6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540B5B202B779900D406DB /* HockeySDK.framework */; };
 		6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BCD20B43FA60064626C /* Images.xcassets */; };
+		6DB03BD220B458290064626C /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BD120B458290064626C /* SplashScreen.png */; };
 		6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
@@ -467,6 +468,7 @@
 		6D540B5A202B779900D406DB /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		6D540B5B202B779900D406DB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		6DB03BCD20B43FA60064626C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ShotgunClient/Images.xcassets; sourceTree = "<group>"; };
+		6DB03BD120B458290064626C /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen.png; sourceTree = "<group>"; };
 		6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = PPP_001.mobileprovision; path = ../../../../Downloads/PPP_001.mobileprovision; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -658,6 +660,7 @@
 		13B07FAE1A68108700A75B9A /* ShotgunClient */ = {
 			isa = PBXGroup;
 			children = (
+				6DB03BD120B458290064626C /* SplashScreen.png */,
 				6D428928204EC9D100290784 /* ShotgunClient.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -1491,6 +1494,7 @@
 				5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */,
 				6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */,
 				6D540B5C202B779900D406DB /* HockeySDKResources.bundle in Resources */,
+				6DB03BD220B458290064626C /* SplashScreen.png in Resources */,
 				8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */,
 				755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */,
 			);
