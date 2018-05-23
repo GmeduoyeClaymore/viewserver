@@ -51,7 +51,7 @@ export default class NotificationsDaoContext{
       const {row} = ev;
       const {message, sentRemotely} = row;
       if (!sentRemotely){
-        FCM.presentLocalNotification({...message, show_in_foreground: true});
+        FCM.presentLocalNotification(message);
       }
     }
     return dataSink.rows;

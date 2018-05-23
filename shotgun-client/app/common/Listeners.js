@@ -65,15 +65,18 @@ export const getActionFromNotification = notif => {
     }
     return notif.action;
   }
+
   if (notif.opened_from_tray) {
-    return notif.click_action;
+    return notif.action || notif.click_action;
   }
 };
 
 
 const handleInitialNotification = async(handler) => {
   const notif = await FCM.getInitialNotification();
-  if (notif.click_action) {
-    handler(notif.click_action);
+  const action = notif.action || notif.click_action;
+
+  if (action) {
+    handler(action);
   }
 };

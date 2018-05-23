@@ -57,7 +57,7 @@ class PartnerNegotiationPanel extends Component {
         <Row>
           <Item stackedLabel style={styles.responseItem} >
             <Label>Your Price</Label>
-            <CurrencyInput disabled={awaitingCustomerResponse} initialPrice={negotiationAmount} style={styles.currencyInput} ref={ip => {this.amountInput = ip;}} onValueChanged={this.setNegotiationAmount} placeholder="Enter your price"/>
+            <CurrencyInput editable={!awaitingCustomerResponse} initialPrice={negotiationAmount} style={styles.currencyInput} ref={ip => {this.amountInput = ip;}} onValueChanged={this.setNegotiationAmount} placeholder="Enter your price"/>
           </Item>
           <Item stackedLabel style={styles.responseItem} >
             <Label>Availability Date</Label>

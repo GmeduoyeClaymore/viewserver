@@ -76,10 +76,11 @@ export class CurrencyInput extends Component{
 
   render(){
     const {formattedPrice} = this.state;
-    const {style = {}, placeholder} = this.props;
+    const {style = {}, placeholder, editable = true} = this.props;
     return <Input
       keyboardType='phone-pad'
       placeholder={placeholder}
+      editable={editable}
       placeholderTextColor={shotgun.silver}
       value={formattedPrice}
       style={[styles.amountInput, style]}
