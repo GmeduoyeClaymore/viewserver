@@ -113,7 +113,7 @@ export default class OrderRequestDao{
   }
 
   doesSubscriptionNeedToBeRecreated(previousOptions, newOptions){
-    return hasAnyOptionChanged(previousOptions, newOptions, ['contentType', 'location', 'maxDistance', 'showUnrelated', 'showOutOfRange']);
+    return hasAnyOptionChanged(previousOptions, newOptions, ['contentType', 'location', 'maxDistance', 'showUnrelated', 'showOutOfRange', 'contentTypeOptions']);
   }
 
   transformOptions(options){

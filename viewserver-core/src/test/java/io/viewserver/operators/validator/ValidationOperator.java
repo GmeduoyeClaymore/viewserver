@@ -81,7 +81,7 @@ public class ValidationOperator extends OperatorBase{
 
             throw throwable;
         }finally {
-            System.out.println("Actual actions are \n" + dataTable);
+            System.out.println("Expected actions are \n" + dataTable);
         }
     }
 
@@ -95,7 +95,7 @@ public class ValidationOperator extends OperatorBase{
 
             throw throwable;
         }finally {
-            System.out.println("Actual actions are \n" + expectedTable);
+            System.out.println("Expected actions are \n" + expectedTable);
         }
     }
 

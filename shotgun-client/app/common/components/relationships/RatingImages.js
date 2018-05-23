@@ -49,7 +49,7 @@ export default class RatingsImages extends Component{
     render(){
       const {images: urls = []} = this.props;
       return <ImageCarousel
-        style={{marginTop: 10, marginBottom: 10}}
+        style={styles.image}
         ref={car => {this._imageCarousel = car;}}
         renderContent={this._renderContent}
         renderHeader={this._renderHeader}
@@ -57,7 +57,7 @@ export default class RatingsImages extends Component{
         {[...urls].map(url => (
           <Image
             key={url}
-            source={{ uri: url, cache: 'force-cache'}}
+            source={{ uri: url, cache: 'force-cache', width: 300}}
             resizeMode={'contain'}
           />
         ))}
@@ -77,7 +77,9 @@ const styles = {
     textAlign: 'center',
   },
   image: {
+    position: 'absolute',
     marginRight: 2,
+    height: 300,
     marginBottom: 10,
   },
   noJobs: {
