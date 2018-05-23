@@ -45,7 +45,7 @@ public class VehicleDetailsController implements IVehicleDetailsController {
             Map<String, Object> res = (Map<String, Object>) get(reqres, "Response");
             if (!get(res, "StatusCode").equals("Success")) {
                 log.error(String.format("Response status code was \"%s\" reason is \"%s\"", res.get("StatusCode"), res.get("StatusMessage")));
-                throw new RuntimeException("Unable to find a vehicle with that registration number");
+                throw new RuntimeException(String.format("Unable to find a vehicle with that registration number - %s", res.get("StatusMessage")));
             }
             Map<String, Object> dataItems = (Map<String, Object>) get(res, "DataItems");
             Map<String, Object> vehicleRegistration = (Map<String, Object>) get(dataItems, "VehicleRegistration");

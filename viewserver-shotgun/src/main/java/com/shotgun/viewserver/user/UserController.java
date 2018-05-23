@@ -101,19 +101,6 @@ public class UserController implements UserTransformationController, RatedOrderC
         return cardId.get();
     }
 
-    @ControllerAction(path = "addOrUpdateVehicle", isSynchronous = true)
-    public void addOrUpdateVehicle(Vehicle vehicle) {
-        String userId = getUserId();
-        this.transform(
-                userId,
-                user -> {
-                    user.set("vehicle",vehicle);
-                    return true;
-                },
-                User.class
-        );
-    }
-
     public static List<String> getValidProductsVehicle(Dimensions dimensions) {
         log.debug(String.format("Getting valid products for vehicle with volume %s m cubed", dimensions.getVolume()));
 

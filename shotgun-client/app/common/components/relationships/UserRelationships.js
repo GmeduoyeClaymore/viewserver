@@ -1,12 +1,10 @@
 import React, {Component}  from 'react';
 import { withExternalState, ReduxRouter, Route } from 'custom-redux';
-import {Content, Button, Tab, View, Text, Row, Col, Grid, Switch, Header, Body, Title} from 'native-base';
-import {Tabs, ErrorRegion, LoadingScreen} from 'common/components';
-import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getDaoSize, getAnyOperationError, getDaoOptions } from 'common/dao';
-import shotgun from 'native-base-theme/variables/shotgun';
+import {Content, Button, View, Text, Row, Grid, Title} from 'native-base';
+import {LoadingScreen} from 'common/components';
+import { getDaoState, isAnyOperationPending, updateSubscriptionAction, getAnyOperationError, getDaoOptions } from 'common/dao';
 import {isEqual} from 'lodash';
 import UserRelationshipMap from './UserRelationshipMap';
-import {updateRange, updateStatus} from 'common/actions/CommonActions';
 import UserDetail from './UserDetail';
 import {Platform} from 'react-native';
 const IS_ANDROID = Platform.OS === 'android';

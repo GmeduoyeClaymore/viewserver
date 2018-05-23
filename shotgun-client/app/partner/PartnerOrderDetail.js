@@ -95,16 +95,6 @@ class PartnerOrderDetail extends Component {
   }
 }
 
-const styles = {
-  starDeclined: {
-    paddingTop: 10,
-    alignSelf: 'center',
-    fontSize: 30,
-    padding: 2,
-    color: shotgun.brandDanger,
-  }
-};
-
 const PaymentStagesAndSummary = (props) => {
   const { history, path, orderId, width, height, order } = props;
   const goToTabNamed = (name) => {

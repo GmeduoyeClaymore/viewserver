@@ -1,83 +1,42 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import {Text, Spinner, Row} from 'native-base';
-import {LoadingScreen, PagingListView, CheckBox} from 'common/components';
-import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
+import {Text, Spinner, Row, Button} from 'native-base';
+import {LoadingScreen, PagingListView, Icon} from 'common/components';
+import {isAnyLoading, getLoadingErrors, getDaoOptions, getDaoState} from 'common/dao';
 import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-class ProductCategoryList extends Component {
-  static validationSchema = {
-    selectedProductCategories: yup.array().required()
-  };
-  
-
-  constructor(props) {
-    super(props);
-    this.rowView = this.rowView.bind(this);
-    this.renderSelectionControl = this.renderSelectionControl.bind(this);
-  }
-
-  isImplicitlyChecked(categoryObj, selectedProductCategories) {
-    return !!selectedProductCategories.find(c => this.isDescendendantOf(categoryObj, c));
-  }
-
-  isDescendendantOf(parent, child) {
-    return child.path.includes(parent.path + '>') && child.path.length > parent.path.length;
-  }
-
-  renderSelectionControl = ({categoryObj, selectedProductCategories = [], context}) => {
-    const checked = context.isChecked(categoryObj);
-    const implicitlyChecked = context.isImplicitlyChecked(categoryObj, selectedProductCategories);
-    return <CheckBox style={{left: 10}} key={categoryObj.categoryId} onPress={() => context.toggleCategory(categoryObj)} categorySelectionCheckbox checked={checked} implicitylChecked={implicitlyChecked}/>;
-  }
-
-  isChecked(categoryObj) {
-    const {selectedProductCategories = []} = this.props;
-    const isExplicitlyChecked = !!selectedProductCategories.find(c => c.categoryId === categoryObj.categoryId);
-    return isExplicitlyChecked && !this.isImplicitlyChecked(categoryObj, selectedProductCategories);
-  }
-
-  rowView({item: row, selectedProductCategories}) {
+class ProductCategorySelector extends Component {
+  rowView = ({item: row, selectedProductCategories}) => {
     const {categoryId, category} = row;
-    const {renderSelectionControl: SelectionControl} = this;
+    const isSelected = !!selectedProductCategories.find(c => c.categoryId === categoryId);
 
-    return <Row key={categoryId} style={styles.categoryRow}>
-      <View style={styles.categoryView}>
-        <SelectionControl categoryObj={row} selectedProductCategories={selectedProductCategories} context={this}/>
-      </View>
+    return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
+      <Button style={{height: 'auto'}} large active={isSelected}  onPress={() => this.toggleCategory(row)}>
+        <Icon name={categoryId}/>
+      </Button>
       <Text style={styles.categoryText}>{category}</Text>
-    </Row>;
+    </View>;
   }
 
-  toggleCategory(categoryObjAll) {
-    const {path, categoryId} = categoryObjAll;
+  toggleCategory = (row) => {
+    const {path, categoryId} = row;
     const categoryObj = {path, categoryId};
     let {selectedProductCategories = []} = this.props;
+
     const index = selectedProductCategories.findIndex(c => c.categoryId === categoryObj.categoryId);
-    if (!!~index || this.isImplicitlyChecked(categoryObj, selectedProductCategories)) {
+    if (!!~index) {
       selectedProductCategories = selectedProductCategories.filter((category, idx) => idx !== index);
-      selectedProductCategories = selectedProductCategories.filter((category) => !this.isDescendendantOf(categoryObj, category));
     } else {
       selectedProductCategories = [...selectedProductCategories, categoryObj];
     }
+
     this.setState({selectedProductCategories});
   }
 
-  expandCategory(categoryId) {
-    let {expandedCategoryIds = []} = this.props;
-    const index = expandedCategoryIds.indexOf(categoryId);
-    if (!!~index) {
-      expandedCategoryIds = expandedCategoryIds.filter((_, idx) => idx !== index);
-    } else {
-      expandedCategoryIds = [...expandedCategoryIds, categoryId];
-    }
-    this.setState({expandedCategoryIds});
-  }
-
-  getOptions() {
+  getOptions = () => {
     const {options, expandedCategoryIds, contentType} = this.props;
     return {...options, parentCategoryId: contentType.rootProductCategory, expandedCategoryIds};
   }
@@ -93,6 +52,8 @@ class ProductCategoryList extends Component {
         {...{selectedProductCategories, expandedCategoryIds}}
         daoName='productCategoryDao'
         dataPath={['product', 'categories']}
+        elementContainer={Row}
+        elementContainerStyle={{flexWrap: 'wrap'}}
         pageSize={10}
         options={this.getOptions()}
         rowView={this.rowView}
@@ -102,6 +63,11 @@ class ProductCategoryList extends Component {
       />;
   }
 }
+
+const validationSchema = {
+  selectedProductCategories: yup.array().required()
+};
+
 
 const styles = {
   pagingListView: {
@@ -129,11 +95,12 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-const  canSubmit = async (state) => {
+const canSubmit = async (state, user) => {
   const {selectedProductCategories} = state;
-  return await ValidationService.validate({selectedProductCategories}, yup.object(ProductCategoryList.validationSchema));
+
+  return user !== undefined ? undefined : await ValidationService.validate({selectedProductCategories}, yup.object(validationSchema));
 };
 
-const ConnectedProductCategoryList = withExternalState(mapStateToProps)(ProductCategoryList);
+const ConnectedProductCategoryList = withExternalState(mapStateToProps)(ProductCategorySelector);
 export default {control: ConnectedProductCategoryList, validator: canSubmit};
 

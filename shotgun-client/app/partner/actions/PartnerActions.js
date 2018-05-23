@@ -3,7 +3,6 @@ import {register, registerNakedDao} from 'common/actions/CommonActions';
 import UserDao from 'common/dao/UserDao';
 import PartnerDao from 'partner/dao/PartnerDao';
 import PartnerOrderResponseDao from 'partner/dao/PartnerOrderResponseDao';
-import VehicleDao from 'partner/dao/VehicleDao';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
 import OrderRequestDao from 'partner/dao/OrderRequestDao';
 import UserRelationshipDao from 'common/dao/UserRelationshipDao';
@@ -13,7 +12,6 @@ import moment from 'moment';
 export const partnerServicesRegistrationAction = (client, continueWith) => {
   return async (dispatch) => {
     register(dispatch, new UserDao(client));
-    register(dispatch, new VehicleDao(client));
     register(dispatch, new OrderRequestDao(client));
     register(dispatch, new OrderSummaryDao(client));
     register(dispatch, new PartnerOrderResponseDao(client));
@@ -42,10 +40,6 @@ export const updatePartner = (partner, continueWith) => {
 
 export const getVehicleDetails = (registrationNumber, continueWith) => {
   return invokeDaoCommand('partnerDao', 'getVehicleDetails', {registrationNumber}, continueWith);
-};
-
-export const updateVehicle = (vehicle, continueWith) => {
-  return invokeDaoCommand('vehicleDao', 'addOrUpdateVehicle', {vehicle}, continueWith);
 };
 
 export const respondToOrder = (orderId, orderContentTypeId, requiredDate, amount, continueWith) => {

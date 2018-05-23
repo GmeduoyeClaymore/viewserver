@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withExternalState} from 'custom-redux';
-import {Container, Content, Header, Text, Title, Body, Left, Button, Row} from 'native-base';
+import {Container, Content, Header, Text, Title, Body, Left, Button} from 'native-base';
 import {checkout} from 'customer/actions/CustomerActions';
 import {isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';

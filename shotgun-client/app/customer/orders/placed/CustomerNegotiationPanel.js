@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {TouchableOpacity, Image} from 'react-native';
+import {Image} from 'react-native';
 import {ListItem, View, Text, Grid, Row, Spinner, Col, Button, Item, Label} from 'native-base';
-import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, UserInfo, AverageRating, Icon} from 'common/components';
+import {SpinnerButton, CurrencyInput, Currency, ValidatingButton, AverageRating} from 'common/components';
 import moment from 'moment';
 import {rejectResponse, acceptResponse, updateOrderAmount, cancelResponseCustomer, updateOrderVisibility} from 'customer/actions/CustomerActions';
 import yup from 'yup';

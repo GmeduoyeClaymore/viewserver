@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text,  Item, Label, Input} from 'native-base';
+import {View, Text,  Item, Label} from 'native-base';
 import {ValidatingInput, ValidatingButton, CurrencyInput} from 'common/components';
 import {addPaymentStage} from 'customer/actions/CustomerActions';
 import yup from 'yup';

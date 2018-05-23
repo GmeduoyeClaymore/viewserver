@@ -1,7 +1,6 @@
 import React, {Component}  from 'react';
 import MapView from 'react-native-maps';
 import UserMarker from 'common/components/maps/UserMarker';
-import MapViewDirections from 'common/components/maps/MapViewDirections';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {isEqual, debounce} from 'lodash';
 import Logger from 'common/Logger';

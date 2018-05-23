@@ -71,7 +71,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentTypeIndex,
     contentTypeId,
     selectedContentType,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !selectedContentType,
+    busy: !selectedContentType,
     user
   };
 };

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, Image} from 'react-native';
+import {View} from 'react-native';
 import {Text, Spinner, Button, Container, Header, Title, Body, Left, Content, Row} from 'native-base';
 import {LoadingScreen, PagingListView, ValidatingButton, Icon} from 'common/components';
 import {withExternalState} from 'custom-redux';
@@ -15,7 +15,7 @@ class FlatProductCategoryList extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  rowView = ({item: row, index: i, highlightedCategory}) => {
+  rowView = ({item: row, highlightedCategory}) => {
     const {categoryId, category} = row;
  
     return <View key={categoryId} style={{width: '50%', paddingRight: 5, paddingLeft: 5, maxWidth: 250, maxHeight: 250}}>
@@ -125,7 +125,8 @@ resourceDictionary.
 /*eslint-enable */
 
 const mapStateToProps = (state, initialProps) => {
-  let {selectedContentType, selectedCategory, productCategory} = initialProps;
+  let {selectedCategory} = initialProps;
+  const {selectedContentType, productCategory} = initialProps;
   const { rootProductCategory} = selectedContentType;
   selectedCategory = selectedCategory || productCategory;
   const defaultOptions = {

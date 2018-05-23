@@ -28,7 +28,6 @@ class UpdatePaymentCardDetails extends Component {
 
     dispatch(addPaymentCard(newPaymentCard, () => {
       if (next){
-        //history.goBack();/ /Why would you do this ? This obviously doesn't do the same thing 
         history.push(next);
       }
       this.ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined});
