@@ -13,6 +13,7 @@ import io.viewserver.operators.table.TableKey;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -28,11 +29,15 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 public class ControllerUtils{
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerUtils.class);
+
+    public static Executor BackgroundExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("background"));
 
     public static HashMap<String,Object> mapDefault(String json){
         return (HashMap<String, Object>) io.viewserver.controller.ControllerUtils.mapDefault(json);

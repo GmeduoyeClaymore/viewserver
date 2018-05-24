@@ -18,6 +18,7 @@ package io.viewserver.adapters.common;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.IRecord;
+import org.apache.commons.beanutils.ConvertUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -77,7 +78,8 @@ public class Record implements IRecord {
 
     @Override
     public String getString(String columnName) {
-        return (String)values.get(columnName);
+        Object o = values.get(columnName);
+        return o == null || o instanceof String ? (String)o : (String)ConvertUtils.convert(o,String.class);
     }
 
     @Override
@@ -85,6 +87,9 @@ public class Record implements IRecord {
         Object value = values.get(columnName);
         if (value instanceof NullableBool) {
             return ((NullableBool) value).getBooleanValue();
+        }
+        if(value == null){
+            return false;
         }
         return (boolean) value;
     }

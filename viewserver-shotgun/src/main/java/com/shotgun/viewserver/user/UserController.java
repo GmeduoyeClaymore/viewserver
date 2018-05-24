@@ -43,6 +43,7 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -295,13 +296,13 @@ public class UserController implements UserTransformationController, RatedOrderC
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
             log.info("Waiting for user {}", userId);
-            return output.observable().filter(ev -> hasUserId(ev, userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
+            return output.observable().subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).filter(ev -> hasUserId(ev, userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output, userRowId, null));
     }
 
     private static boolean hasUserId(OperatorEvent ev, String userId) {
-        if (!ev.getEventType().equals(EventType.ROW_ADD)) {
+        if (!ev.getEventType().equals(EventType.ROW_ADD) && !ev.getEventType().equals(EventType.ROW_UPDATE)) {
             return false;
         }
         if (ev.getEventData() == null) {

@@ -34,7 +34,7 @@ public class FirebaseUpdaterTest {
         Observable<IRecord> recordObservable = loader.getRecords(null);
 
         CountDownLatch latch = new CountDownLatch(1);
-        recordObservable.take(1).subscribe(
+        recordObservable.subscribe(
                 rec -> {
                     System.out.println(rec);
                     latch.countDown();

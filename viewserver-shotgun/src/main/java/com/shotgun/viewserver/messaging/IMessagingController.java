@@ -3,6 +3,7 @@ package com.shotgun.viewserver.messaging;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
+import com.shotgun.viewserver.setup.datasource.MessagesDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
@@ -28,7 +29,7 @@ public interface IMessagingController {
         messageRec.addValue("sentRemotely",sentRemotely);
         messageRec.addValue("message", message);
 
-        getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, UserDataSource.getDataSource().getSchema(), messageRec);
+        getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, MessagesDataSource.getDataSource().getSchema(), messageRec);
     }
 
     IDatabaseUpdater getDatabaseUpdater();

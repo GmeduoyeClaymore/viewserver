@@ -1,23 +1,21 @@
 package com.shotgun.viewserver;
 
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.mongodb.MongoClientURI;
 import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.servercomponents.*;
-import com.shotgun.viewserver.setup.FirebaseApplicationSetup;
-import com.shotgun.viewserver.setup.FirebaseTestApplicationSetup;
-import com.shotgun.viewserver.setup.ShotgunApplicationGraph;
-import com.shotgun.viewserver.setup.loaders.CompositeRecordLoaderCollection;
-import com.shotgun.viewserver.setup.loaders.CsvRecordLoaderCollection;
-import com.shotgun.viewserver.setup.loaders.FireBaseRecordLoaderCollection;
-import com.shotgun.viewserver.setup.loaders.H2RecordLoaderCollection;
+import com.shotgun.viewserver.setup.*;
+import com.shotgun.viewserver.setup.loaders.*;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.DirectTableUpdater;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
+import io.viewserver.adapters.mongo.MongoConnectionFactory;
+import io.viewserver.adapters.mongo.MongoTableUpdater;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Utils;
 import io.viewserver.network.EndpointFactoryRegistry;
@@ -104,14 +102,14 @@ public class ShotgunServerLauncher{
         container.addComponent(new MessagingApiKey(get("messaging.api.key")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
-        container.addComponent(new FirebaseConnectionFactory(get("firebase.keyfilePath")));
-        container.addComponent(new FirebaseApplicationSetup(
-                container.getComponent(FirebaseConnectionFactory.class),
+        container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
+        container.addComponent(new MongoApplicationSetup(
+                container.getComponent(MongoConnectionFactory.class),
                 container.getComponent(IApplicationGraphDefinitions.class),
                 get("csv.data.path")
         ));
-        container.addComponent(DatasourceFirebaseTableUpdater.class);
-        container.addComponent(FireBaseRecordLoaderCollection.class);
+        container.addComponent(DatasourceMongoTableUpdater.class);
+        container.addComponent(MongoRecordLoaderCollection.class);
         container.addComponent(RealShotgunControllersComponents.class);
         return true;
     }
@@ -123,14 +121,14 @@ public class ShotgunServerLauncher{
         container.addComponent(new MessagingApiKey(get("messaging.api.key")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
-        container.addComponent(new FirebaseConnectionFactory(get("firebase.keyfilePath")));
-        container.addComponent(new FirebaseTestApplicationSetup(
-                container.getComponent(FirebaseConnectionFactory.class),
+        container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
+        container.addComponent(new MongoTestApplicationSetup(
+                container.getComponent(MongoConnectionFactory.class),
                 container.getComponent(IApplicationGraphDefinitions.class),
                 get("csv.data.path")
         ));
-        container.addComponent(DatasourceFirebaseTableUpdater.class);
-        container.addComponent(FireBaseRecordLoaderCollection.class);
+        container.addComponent(DatasourceMongoTableUpdater.class);
+        container.addComponent(MongoRecordLoaderCollection.class);
         container.addComponent(MockShotgunControllersComponents.class);
         return true;
     }
