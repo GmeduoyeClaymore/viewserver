@@ -70,7 +70,7 @@ class OrderSummary extends Component{
 
       {this.renderMap()}
 
-      <ListItem padded last>
+      <ListItem paddedLeftRight last>
         {order.imageUrl !== undefined && order.imageUrl !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: order.imageUrl}} resizeMode='contain' style={styles.image}/></Row> : null}
         {order.imageData !== undefined && order.imageData !== '' ?  <Row style={{justifyContent: 'center'}}><Image source={{uri: `data:image/jpeg;base64,${order.imageData}`}} resizeMode='contain' style={styles.image}/></Row> : null}
       </ListItem>
@@ -85,10 +85,9 @@ const styles = {
     paddingBottom: shotgun.contentPadding
   },
   image: {
-    aspectRatio: 1.2,
+    aspectRatio: 1,
     borderRadius: 4,
-    height: 180,
-    marginTop: 25
+    width: '100%',
   },
   itemDetailsTitle: {
     color: shotgun.brandLight,

@@ -23,7 +23,7 @@ export default class PartnerDao{
 
   updatePartner = async({partner}) => {
     Logger.info(`Updating partner ${partner.email}`);
-    const partnerId = await this.client.invokeJSONCommand('userController', 'addOrUpdateUser', {user: partner});
+    const partnerId = await this.client.invokeJSONCommand('userController', 'updateUser', {user: partner});
     Logger.info(`Partner ${partnerId} updated`);
     return partnerId;
   }
