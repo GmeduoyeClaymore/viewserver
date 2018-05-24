@@ -6,6 +6,7 @@ import {isAnyOperationPending, getOperationError} from 'common/dao';
 import {OrderSummary, SpinnerButton, Icon, ErrorRegion} from 'common/components';
 import CustomerPriceSummary from 'customer/orders/CustomerPriceSummary';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {OrderStatuses} from 'common/constants/OrderStatuses';
 
 class OrderConfirmation extends Component{
   constructor(props){
@@ -31,7 +32,7 @@ class OrderConfirmation extends Component{
         <Body><Title>{order.title}</Title></Body>
       </Header>
       <Content>
-        <CustomerPriceSummary order={order}/>
+        <CustomerPriceSummary order={{...order, orderStatus: OrderStatuses.PLACED}}/>
         <OrderSummary userCreatedThisOrder={true} order={order} client={client}/>
       </Content>
       <ErrorRegion errors={errors}/>

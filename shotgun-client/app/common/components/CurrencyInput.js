@@ -14,6 +14,8 @@ export const formatPrice = (price) => {
   }
   return `£${(priceAsFloat).toFixed(2)}`;
 };
+
+
 export class CurrencyInput extends Component{
   constructor(props){
     super(props);

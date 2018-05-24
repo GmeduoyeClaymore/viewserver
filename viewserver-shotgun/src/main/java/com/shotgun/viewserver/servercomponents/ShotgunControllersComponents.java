@@ -44,7 +44,7 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         this.registerController(loginController);
         this.registerController(userController);
         this.registerController(new PartnerController( paymentController, userController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));
-        this.registerController(new CustomerController(deliveryAddressController,userController, nexmoController));
+        this.registerController(new CustomerController(deliveryAddressController,userController, loginController, nexmoController));
         this.registerController(deliveryOrderController);
         this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
         this.registerController(new PersonellOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, iImageController));

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import {Alert} from 'react-native';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {customerCompleteAndPay} from 'customer/actions/CustomerActions';
 import {Text} from 'native-base';
 import {SpinnerButton} from 'common/components';
+import {formatPrice} from 'common/components/Currency';
 
 class CustomerCompleteControl extends Component {
   constructor(props) {
@@ -12,7 +14,17 @@ class CustomerCompleteControl extends Component {
 
   onCompletePress = async() => {
     const {order, dispatch} = this.props;
-    dispatch(customerCompleteAndPay(order.orderId, order.orderContentTypeId));
+    const {amount, assignedPartner} = order;
+
+    Alert.alert(
+      'Complete and pay for job?',
+      `You are about to complete this job and pay ${formatPrice(amount)} to ${assignedPartner.firstName} ${assignedPartner.lastName}`,
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {text: 'OK', onPress: () => dispatch(customerCompleteAndPay(order.orderId, order.orderContentTypeId))},
+      ],
+      { cancelable: false }
+    );
   };
 
   render() {
