@@ -61,7 +61,7 @@ class CustomerOrderDetail extends Component{
       <Content>
         <ErrorRegion errors={errors}/>
         <OrderLifecycleView  orderStatus={order.orderStatus} price={order.amount} dispatch={dispatch} isRatingCustomer={false} userCreatedThisOrder={true} {...this.props}
-          PlacedControls={[CustomerNegotiationPanel, OrderSummary]}
+          PlacedControls={[CustomerNegotiationPanel, CancelControl, OrderSummary]}
           InProgressControls={InProgressControls}
           AcceptedControls={AcceptedControls}
           CompletedControls={[CustomerPriceSummary, RatingSummary, OrderSummary]}

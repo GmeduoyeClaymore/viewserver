@@ -1,43 +1,26 @@
 import React, {Component} from 'react';
-import {Text, Spinner, Row, Col} from 'native-base';
-import {LoadingScreen, PagingListView, CheckBox, MaskedInput} from 'common/components';
+import {View, Text, Spinner, Row, Button} from 'native-base';
+import {LoadingScreen, PagingListView, Icon} from 'common/components';
 import {isAnyLoading, getLoadingErrors, getDaoOptions} from 'common/dao';
 import {withExternalState} from 'custom-redux';
 import yup from 'yup';
 import ValidationService from 'common/services/ValidationService';
 import shotgun from 'native-base-theme/variables/shotgun';
 
-class ProductList extends Component{
-  static validationSchema = {
-    selectedProductIds: yup.array().required()
-  };
+class ProductSelector extends Component{
+  rowView = ({item, index: i, selectedProductIds}) => {
+    const {productId, name} = item;
+    const isSelected = !!~selectedProductIds.indexOf(productId);
 
-  constructor(props){
-    super(props);
-    this.rowView = this.rowView.bind(this);
-    this.renderSelectionControl = this.renderSelectionControl.bind(this);
+    return <View key={i} style={{width: '50%', paddingRight: i % 2 == 0 ? 10 : 0, paddingLeft: i % 2 == 0 ? 0 : 10}}>
+      <Button style={{height: 'auto'}} large active={isSelected} onPress={() => this.toggleProduct(productId)}>
+        <Icon name={productId}/>
+      </Button>
+      <Text style={styles.productSelectText}>{name}</Text>
+    </View>;
   }
 
-  renderSelectionControl = ({productId, selectedProductIds}) => {
-    const checked = !!~selectedProductIds.indexOf(productId);
-    return <CheckBox style={{left: 10}}  key={productId} onPress={() => this.toggleProduct(productId)} categorySelectionCheckbox checked={checked}/>;
-  }
-
-  rowView({item: row, selectedProductIds}){
-    const {productId, name, description} = row;
-    const {renderSelectionControl: SelectionControl} = this;
-    return <Row key={productId} style={styles.productRow}>
-      <Col style={styles.selectionControlColumn}>
-        <SelectionControl productId={productId} selectedProductIds={selectedProductIds}/>
-      </Col>
-      <Col style={{paddingTop: 15}}>
-        <Text>{name}</Text>
-        <Text style={styles.productDescription}>{description}</Text>
-      </Col>
-    </Row>;
-  }
-
-  toggleProduct(productId){
+  toggleProduct = (productId) => {
     let {selectedProductIds = []} = this.props;
     const index = selectedProductIds.indexOf(productId);
     if (!!~index){
@@ -59,7 +42,9 @@ class ProductList extends Component{
       {...{selectedProductIds}}
       daoName='productDao'
       dataPath={['product', 'products']}
-      pageSize={10}
+      pageSize={20}
+      elementContainer={Row}
+      elementContainerStyle={{flexWrap: 'wrap'}}
       options={{...options, categoryId: contentType.rootProductCategory}}
       rowView={this.rowView}
       paginationWaitingView={Paging}
@@ -69,22 +54,21 @@ class ProductList extends Component{
   }
 }
 
+const validationSchema = {
+  selectedProductIds: yup.array().required()
+};
+
 const styles = {
   pagingListView: {
     backgroundColor: shotgun.brandPrimary,
-    paddingTop: 10
+    marginTop: 20
   },
-  productRow: {
-    paddingTop: 20,
-    backgroundColor: shotgun.brandPrimary
-  },
-  selectionControlColumn: {
-    width: 50,
-    paddingTop: 5,
-    marginRight: 10
-  },
-  productDescription: {
-    color: shotgun.brandLight
+  productSelectText: {
+    width: '100%',
+    marginTop: 5,
+    marginBottom: 25,
+    fontSize: 16,
+    textAlign: 'center'
   }
 };
 
@@ -96,11 +80,11 @@ const mapStateToProps = (state, nextOwnProps) => {
   };
 };
 
-
-const  canSubmit = async (state) => {
+const canSubmit = async (state, user) => {
   const {selectedProductIds} = state;
-  return await ValidationService.validate({selectedProductIds}, yup.object(ProductList.validationSchema));
+
+  return  user !== undefined ? undefined : await ValidationService.validate({selectedProductIds}, yup.object(validationSchema));
 };
 
-const ConnectedProductList =  withExternalState(mapStateToProps)(ProductList);
+const ConnectedProductList =  withExternalState(mapStateToProps)(ProductSelector);
 export default {control: ConnectedProductList, validator: canSubmit};

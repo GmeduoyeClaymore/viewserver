@@ -5,8 +5,9 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import {connect, ReduxRouter, Route} from 'custom-redux';
 import PartnerMyOrdersListView from './PartnerMyOrdersListView';
 import OrderSummaryDao from 'common/dao/OrderSummaryDao';
-import {getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
+import {getPartnerFriendlyOrderStatusName, getPartnerOrderColor, getCustomerOrderColor, getDeliveryFriendlyOrderStatusName, getRubbishFriendlyOrderStatusName, getProductBasedFriendlyOrderStatusName} from 'common/constants/OrderStatuses';
 import * as ContentTypes from 'common/constants/ContentTypes';
+import {NegotiationStatuses, getPartnerFriendlyNegotiationStatusName, getPartnerNegotiationColor} from 'common/constants/NegotiationStatuses';
 
 class PartnerMyOrders extends Component{
   goToTabNamed = (name) => {
@@ -17,7 +18,7 @@ class PartnerMyOrders extends Component{
   getRespondedAndDeclinedOptions = () => {
     const {isCompleted} = this.props;
     return {
-      responseStatuses: isCompleted ? ['REJECTED'] : ['DECLINED', 'RESPONDED']
+      responseStatuses: isCompleted ? [NegotiationStatuses.REJECTED] : [NegotiationStatuses.DECLINED, NegotiationStatuses.RESPONDED]
     };
   }
 
@@ -25,7 +26,7 @@ class PartnerMyOrders extends Component{
     const {isCompleted} = this.props;
     return {
       isCompleted,
-      responseStatuses: ['ACCEPTED']
+      responseStatuses: [NegotiationStatuses.ACCEPTED]
     };
   }
 
@@ -67,9 +68,9 @@ class PartnerMyOrders extends Component{
         )}
       </Tabs>
       <ReduxRouter  name="PartnerOrdersRouter" height={routerHeight} defaultRoute='Responded' {...rest} >
-        <Route path={'Responded'} orderStatusResolver={getResponseStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} responded jobs`}  daoName='partnerOrderResponseDao' options={getRespondedAndDeclinedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
-        <Route path={'Accepted'} orderStatusResolver={getOrderStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} accepted jobs`} daoName='partnerOrderResponseDao' options={getAcceptedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
-        <Route path={'Posted'} orderStatusResolver={getCustomerBasedOrderStatus} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} posted jobs`} daoName='orderSummaryDao' options={getOrdersWhereIAmTheCustomerOptions()} isCustomer={true} component={PartnerMyOrdersListView}/>
+        <Route path={'Responded'} orderStatusResolver={getPartnerFriendlyNegotiationStatusName} orderColorResolver={getPartnerNegotiationColor} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} responded jobs`}  daoName='partnerOrderResponseDao' options={getRespondedAndDeclinedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
+        <Route path={'Accepted'} orderStatusResolver={getPartnerFriendlyOrderStatusName} orderColorResolver={getPartnerOrderColor} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} accepted jobs`} daoName='partnerOrderResponseDao' options={getAcceptedOptions()} isCustomer={false} component={PartnerMyOrdersListView}/>
+        <Route path={'Posted'} orderStatusResolver={getCustomerBasedOrderStatus} orderColorResolver={getCustomerOrderColor} emptyCaption={`You have no ${isCompleted ? 'completed' : ''} posted jobs`} daoName='orderSummaryDao' options={getOrdersWhereIAmTheCustomerOptions()} isCustomer={true} component={PartnerMyOrdersListView}/>
       </ReduxRouter>
     </Container>;
   }
@@ -84,14 +85,6 @@ const TabHeadings = [
 const getSelectedTabIndex = (currentLocation, path) => {
   const result = TabHeadings.findIndex(th => currentLocation.includes(`${path}/${th}`));
   return !!~result ? result : 0;
-};
-
-const getResponseStatus = order => {
-  return order.responseStatus;
-};
-
-const getOrderStatus = order => {
-  return order.orderStatus;
 };
 
 const getCustomerBasedOrderStatus = order => {

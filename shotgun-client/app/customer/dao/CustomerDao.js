@@ -1,6 +1,5 @@
 import Logger from 'common/Logger';
 import Rx from 'rxjs/Rx';
-import PhoneCallService from 'common/services/PhoneCallService';
 
 export default class CustomerDao{
   constructor(client) {

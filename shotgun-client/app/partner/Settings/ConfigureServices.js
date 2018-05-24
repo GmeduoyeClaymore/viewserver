@@ -8,14 +8,13 @@ import { getDaoState, isAnyLoading, getLoadingErrors, isAnyOperationPending, get
 import ReactNativeModal from 'react-native-modal';
 import ContentTypeSelector from 'partner/registration/ContentTypeSelector';
 import { updatePartner, updateVehicle } from 'partner/actions/PartnerActions';
-import Immutable from 'seamless-immutable';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
 class ConfigureServices extends Component {
   updateServices = async () => {
     //TODO - this selectedcontenttypes thing is a horrible mess, a big ball of json urg, why is it an object and not array as well?
     const { user, selectedContentTypes, dispatch, history, parentPath } = this.props;
-    const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : undefined;
+    const vehicle = selectedContentTypes[ContentTypes.DELIVERY] ? selectedContentTypes[ContentTypes.DELIVERY].vehicle : user.vehicle;
     const filteredContentTypes = {};
 
     for (const [key, value] of Object.entries(selectedContentTypes)) {
@@ -23,11 +22,7 @@ class ConfigureServices extends Component {
       filteredContentTypes[key] = { selectedProductCategories, selectedProductIds };
     }
 
-    const persistedUser = { ...user, selectedContentTypes: filteredContentTypes };
-
-    if (vehicle) {
-      dispatch(updateVehicle(vehicle));
-    }
+    const persistedUser = { ...user, selectedContentTypes: filteredContentTypes, vehicle};
 
     dispatch(updatePartner(persistedUser, () => history.push(`${parentPath}/PartnerSettingsLanding`)));
   }

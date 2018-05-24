@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Input, Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
+import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
 import yup from 'yup';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -129,7 +129,7 @@ class UserDetails extends Component{
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
-  
+
     </Container>;
   }
 }

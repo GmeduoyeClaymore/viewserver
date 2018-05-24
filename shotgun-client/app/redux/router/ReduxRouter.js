@@ -13,7 +13,6 @@ import matchPath from './utils/matchPath';
 import * as RouteUtils from './utils/routeUtils';
 import invariant from 'invariant';
 import shotgun from 'native-base-theme/variables/shotgun';
-import { Container } from 'native-base';
 import { setStateIfIsMounted } from 'custom-redux';
 
 class ReduxRouterClass extends Component {

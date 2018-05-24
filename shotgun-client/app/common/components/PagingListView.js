@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {updateSubscriptionAction, resetDataAction, clearCommandStatus} from 'common/dao/DaoActions';
 import {isEqual, connectAdvanced} from 'custom-redux';
@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {ErrorRegion} from 'common/components';
 import {getOperationErrors, getDaoCommandStatus, getDaoCommandResult, getDaoState, getDaoSize, getDaoOptions, isAnyOperationPending, getSnapshotComplete} from 'common/dao';
 import Logger from 'common/Logger';
-import {List, Row} from 'native-base';
+import {List} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 class PagingListView extends Component {
@@ -59,16 +59,16 @@ class PagingListView extends Component {
   renderItem = ({item, isLast, isFirst, ...rest}) => this.props.rowView({item, isLast, isFirst, ...rest});
 
   render() {
-    const {data = [], errors, busy, emptyView: EmptyView, paginationWaitingView, elementContainerStyle = styles.list, elementContainer: ElementContainer = List, headerView: HeaderView = () => null, ...rest} = this.props;
+    const {data = [], errors, busy, emptyView: EmptyView, paginationWaitingView, scrollContainer: ScrollContainer = ScrollView, scrollContainerStyle={}, elementContainerStyle = styles.list, elementContainer: ElementContainer = List, headerView: HeaderView = () => null, ...rest} = this.props;
 
     return [<ErrorRegion errors={errors} key='errors'/>,
-      <ScrollView key='scrollView' onScroll={this.onScroll}>
+      <ScrollContainer key='scrollView' onScroll={this.onScroll} style={scrollContainerStyle}>
         {!busy ? <HeaderView {...this.props}/> : null}
         {(data.length === 0 && !busy) ? <EmptyView {...this.props}/> : <ElementContainer style={elementContainerStyle}>
           {data.map((c, i) => this.renderItem({item: c, index: i, isLast: i == data.length - 1, isFirst: i == 0, ...rest}))}
         </ElementContainer>}
         {busy ? paginationWaitingView() : null}
-      </ScrollView>];
+      </ScrollContainer>];
   }
 }
 

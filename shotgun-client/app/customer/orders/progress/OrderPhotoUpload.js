@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withExternalState} from 'custom-redux';
 import {Image, Dimensions} from 'react-native';
-import {Button, Container, Content, Header, Text, Title, Body, Left, Grid, Row} from 'native-base';
+import {Button, Text, Grid, Row} from 'native-base';
 import {Icon, ImageSelector} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 const { width } = Dimensions.get('window');

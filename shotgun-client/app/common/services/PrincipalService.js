@@ -6,32 +6,39 @@ import invariant from 'invariant';
 const AsyncStorage = Platform.OS === 'android' ? NativeModules.RNAsyncStorage : DefaultAsyncStorage;
 
 export default class PrincipalService {
-  static userIdKey = '@shotgun:userId';
+  static userEmailKey = '@shotgun:email';
+  static userPasswordKey = '@shotgun:password';
 
-  static async getUserIdFromDevice(){
+  static async getLoginDetailsFromDevice(){
     try {
-      return await AsyncStorage.getItem(PrincipalService.userIdKey).timeoutWithError(5000, 'Unable to find get userid within 5 second timespan');
+      const email = await AsyncStorage.getItem(PrincipalService.userEmailKey).timeoutWithError(5000, 'Unable to get user email within 5 second timespan');
+      const password = await AsyncStorage.getItem(PrincipalService.userPasswordKey).timeoutWithError(5000, 'Unable to get user password within 5 second timespan');
+
+      return {email, password};
     } catch (error) {
-      throw new Error('Error getting user id from device ' + error);
+      throw new Error('Error getting user login details from device ' + error);
     }
   }
 
-  static async setUserIdOnDevice(userId){
+  static async setLoginDetailsOnDevice(email, password){
     try {
-      invariant(userId, 'User cannot be null');
-      await AsyncStorage.setItem(PrincipalService.userIdKey, userId).timeoutWithError(5000, 'Unable to find set userid within 5 second timespan');
+      invariant(email, 'Email cannot be null');
+      invariant(password, 'Password cannot be null');
+
+      AsyncStorage.setItem(PrincipalService.userEmailKey, email).timeoutWithError(5000, 'Unable to set user email on device within 5 second timespan');
+      AsyncStorage.setItem(PrincipalService.userPasswordKey, password).timeoutWithError(5000, 'Unable to set user password on device within 5 second timespan');
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error saving user id on device ' + error);
+      Logger.error('Error saving user login details on device ' + error);
     }
   }
 
-  static async removeUserIdFromDevice(){
+  static async removeLoginDetailsFromDevice(){
     try {
       await AsyncStorage.clear();
     } catch (error) {
       //TODO - error handling here
-      Logger.error('Error removing user id from device' + error);
+      Logger.error('Error removing user login details from device' + error);
     }
   }
 }

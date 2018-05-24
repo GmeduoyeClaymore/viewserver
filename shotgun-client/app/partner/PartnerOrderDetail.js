@@ -95,16 +95,7 @@ class PartnerOrderDetail extends Component {
   }
 }
 
-const styles = {
-  starDeclined: {
-    paddingTop: 10,
-    alignSelf: 'center',
-    fontSize: 30,
-    padding: 2,
-    color: shotgun.brandDanger,
-  }
-};
-
+//TODO - tidy up this mess
 const PaymentStagesAndSummary = (props) => {
   const { history, path, orderId, width, height, order } = props;
   const goToTabNamed = (name) => {
@@ -135,7 +126,7 @@ const PaymentStagesAndSummary = (props) => {
   const selecedTabIndex = getSelectedTabIndex(history, path);
   const {images} = order;
   return [<Tabs key="1" initialPage={selecedTabIndex} page={selecedTabIndex}  {...shotgun.tabsStyle}>
-    {TabHeadings.map(th =>  <Tab heading={getHeading(th)} onPress={() => goToTabNamed(th)} />)}
+    {TabHeadings.map(th =>  <Tab heading={getHeading(th)} key={th} onPress={() => goToTabNamed(th)} />)}
   </Tabs>,
   <ReduxRouter key="2" name="CustomerOrdersRouter" hideActionButtons={order.paymentType === 'DAYRATE'} {...props} images={images} height={height - shotgun.tabHeight} width={width} path={path} defaultRoute='Summary'>
     <Route path={'Summary'} component={OrderSummary} />

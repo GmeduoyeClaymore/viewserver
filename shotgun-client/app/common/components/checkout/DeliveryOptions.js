@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Picker} from 'react-native';
 import {Button, Container, ListItem, Header, Text, Title, Body, Left, Grid, Row, Col, Content} from 'native-base';
-import {getDaoState, getOperationError, getDaoCommandResult} from 'common/dao';
+import {getDaoState, getDaoCommandResult} from 'common/dao';
 import {ValidatingButton, CardIcon, ErrorRegion, Icon, OriginDestinationSummary, CurrencyInput} from 'common/components';
 import DatePicker from 'common/components/datePicker/DatePicker';
 import moment from 'moment';

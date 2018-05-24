@@ -5,7 +5,7 @@ import {withExternalState} from 'custom-redux';
 import {Icon} from 'common/components';
 
 const onChangeProduct = ({order, product, setState}) => {
-  const {productId, name} = product;
+  const {productId} = product;
   setState({ selectedProduct: product, order: {...order, orderProduct: product, productId}});
 };
 

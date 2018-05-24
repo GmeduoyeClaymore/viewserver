@@ -19,47 +19,40 @@ export default class LoginDao{
     this.crx = crx;// force rx extensions to load
   }
 
-   onRegister = async() => {
-     await this.connectClientIfNotConnected();
-     const userid = await PrincipalService.getUserIdFromDevice();
-     if (userid){
-       await this.loginByUserId(userid);
-     } else {
-       this.updateState({isLoggedIn: false});
-     }
-   }
-
-   get observable(){
-     return this.subject;
-   }
-
-   get optionsObservable(){
-     return this.optionsSubject;
-   }
-
-  loginByUserId = async(userId) => {
-    this.assertNotLoggedIn();
-    await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
-    await this.doLoginStuff(userId);
-    this.updateState({isLoggedIn: true});
-    this.optionsSubject.next({userId});
+  get observable(){
+    return this.subject;
   }
 
-  loginUserByUsernameAndPassword = async({email, password}) => {
+  get optionsObservable(){
+    return this.optionsSubject;
+  }
+
+  loginUserByUsernameAndPassword = async({email, password, fromSavedDetails = false}) => {
     this.assertNotLoggedIn();
     const userId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});
     Logger.info(`User ${userId} logged in`);
-    await this.doLoginStuff(userId);
+    await this.initMessaging();
     this.updateState({isLoggedIn: true});
     this.optionsSubject.next({email, password, userId});
+
+    if (!(fromSavedDetails)){
+      await PrincipalService.setLoginDetailsOnDevice(email, password);
+    }
+
     return userId;
   }
 
-  registerAndLoginPartner = async({partner, vehicle, address, bankAccount}) => {
+  logOut = async() => {
+    await PrincipalService.removeLoginDetailsFromDevice();
+    await this.client.invokeJSONCommand('loginController', 'logOut', {});
+    this.updateState({isLoggedIn: false});
+  }
+
+  registerAndLoginPartner = async({partner, vehicle, address}) => {
     Logger.info(`Registering partner ${partner.email}`);
-    const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: {...partner, bankAccount, deliveryAddress: address}, vehicle});
+    const partnerId = await this.client.invokeJSONCommand('partnerController', 'registerPartner', {user: {...partner, deliveryAddress: address}, vehicle});
     Logger.info(`Partner ${partnerId} registered`);
-    await this.loginByUserId(partnerId);
+    await this.loginUserByUsernameAndPassword({...partner});
     return partnerId;
   }
 
@@ -67,7 +60,7 @@ export default class LoginDao{
     Logger.info(`Registering customer ${customer.email}`);
     const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
     Logger.info(`Customer ${customerId} registered`);
-    await this.loginByUserId(customerId);
+    await this.loginUserByUsernameAndPassword({...partner});
     return customerId;
   }
 
@@ -80,10 +73,11 @@ export default class LoginDao{
 
   handleConnectionStatusChanged = async(isConnected) => {
     if (isConnected){
-      const userId = await PrincipalService.getUserIdFromDevice();
-      if (userId){
+      const loginDetails = await PrincipalService.getLoginDetailsFromDevice();
+
+      if (loginDetails && loginDetails.email && loginDetails.password){
         try {
-          await this.client.invokeJSONCommand('loginController', 'setUserId', userId);
+          await this.loginUserByUsernameAndPassword({...loginDetails, fromSavedDetails: true});
           await this.initMessaging();
           this.updateState({isConnected: true, isLoggedIn: true});
         } catch (error){
@@ -96,17 +90,6 @@ export default class LoginDao{
     } else {
       this.updateState({isConnected: false, isLoggedIn: false});
     }
-  }
-
-  doLoginStuff = async(userId) => {
-    await PrincipalService.setUserIdOnDevice(userId);
-    await this.initMessaging();
-  }
-
-  logOut = async() => {
-    await PrincipalService.removeUserIdFromDevice();
-    await this.client.invokeJSONCommand('loginController', 'logOut', {});
-    this.updateState({isLoggedIn: false});
   }
 
   initMessaging = async() => {

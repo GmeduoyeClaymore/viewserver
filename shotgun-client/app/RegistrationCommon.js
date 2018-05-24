@@ -1,7 +1,6 @@
 import React from 'react';
-import {Text, Button, Content, Grid, Col, Row, View, H1} from 'native-base';
+import {Text, Button, Content, View, H1} from 'native-base';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {Icon} from 'common/components';
 
 export default RegistrationCommon = ({history}) => {
   return <Content padded contentContainerStyle={styles.container}>

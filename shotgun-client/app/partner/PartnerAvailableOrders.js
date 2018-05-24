@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect, ReduxRouter, Route, memoize} from 'custom-redux';
 import {LoadingScreen, Tabs} from 'common/components';
 import {Container, Header, Body, Title, Tab } from 'native-base';
-import {getDaoState, isAnyLoading} from 'common/dao';
+import {getDaoState} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import PartnerAvailableOrdersListView from './PartnerAvailableOrdersListView';
 
@@ -71,7 +71,7 @@ const mapStateToProps = (state, initialProps) => {
     selectedContentTypeIndex,
     contentTypeId,
     selectedContentType,
-    busy: isAnyLoading(state, ['vehicleDao', 'userDao']) || !selectedContentType,
+    busy: !selectedContentType,
     user
   };
 };

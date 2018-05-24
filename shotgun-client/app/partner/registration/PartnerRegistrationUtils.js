@@ -2,7 +2,7 @@ import {registerAndLoginPartner} from 'partner/actions/PartnerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 /*eslint-disable */
 export  async function nextAction(){
-  const {user, bankAccount, address, dispatch, history, next} = this.props;
+  const {user, address, dispatch, history, next} = this.props;
   let {selectedContentTypes} = this.props;
   if (next){
     history.push(next);
@@ -13,7 +13,7 @@ export  async function nextAction(){
       selectedContentTypes = selectedContentTypes.setIn([ContentTypes.DELIVERY], selectedContentTypes[ContentTypes.DELIVERY].without(['vehicle']));
     }
     const persistedUser = user.setIn(['selectedContentTypes'], selectedContentTypes);
-    dispatch(registerAndLoginPartner(persistedUser, vehicle, address, bankAccount, () => history.push('/Root')));
+    dispatch(registerAndLoginPartner(persistedUser, vehicle, address, () => history.push('/Root')));
   }
 }
 /*eslint-enable */

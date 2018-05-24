@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'custom-redux';
-import {Button, Text, View} from 'native-base';
+import {Text, View} from 'native-base';
 import {SpinnerButton} from 'common/components';
 import {getDaoState, isAnyOperationPending} from 'common/dao';
 import {partnerStartJob, partnerCompleteJob} from 'partner/actions/PartnerActions';

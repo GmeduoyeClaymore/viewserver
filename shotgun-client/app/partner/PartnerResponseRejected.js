@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import {View, Spinner, Text} from 'native-base';
-import { OrderSummary, LoadingScreen, Icon, ErrorRegion, RatingSummary, Tabs } from 'common/components';
+import React from 'react';
+import {View, Text} from 'native-base';
+import {Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 export default PartnerResponseRejected = ({order}) => {
@@ -22,4 +22,4 @@ const styles = {
     padding: 2,
     color: shotgun.brandDanger,
   }
-}
+};

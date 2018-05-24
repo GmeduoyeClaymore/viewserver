@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Text, Grid, Col, Row} from 'native-base';
 import {Icon, AverageRating} from 'common/components';
-import {Image, TouchableOpacity} from 'react-native';
+import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {callUser} from 'common/actions/CommonActions';
 

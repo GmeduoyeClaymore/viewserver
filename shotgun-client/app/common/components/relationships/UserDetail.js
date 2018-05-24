@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import {UserInfo, Tabs} from 'common/components';
 import UserContentTypeDetail from './UserContentTypeDetail';
@@ -67,8 +67,7 @@ class UserDetail extends Component{
       buttonsToRender.push(this.getActionButton('REQUESTED', 'Add as friend'));
     } else if (selectedUser.relationshipStatus === 'BLOCKED'){
       buttonsToRender.push(this.getActionButton('BLOCKED', 'Block User', {danger: true}));
-    }
-    else {
+    } else {
       return <Text>{'Unknown ' + selectedUser.relationshipStatus}</Text>;
     }
     return buttonsToRender;

@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import {Text, Content, Header, Left, Body, Container, Button, Title} from 'native-base';
 import {LiteCreditCardInput} from 'react-native-credit-card-input';
-import {registerCustomer} from 'customer/actions/CustomerActions';
 import {ErrorRegion, TermsAgreement, Icon, SpinnerButton} from 'common/components';
-import {withExternalState} from 'custom-redux';
-
 
 export default class PaymentCardDetails extends Component {
   constructor(props) {

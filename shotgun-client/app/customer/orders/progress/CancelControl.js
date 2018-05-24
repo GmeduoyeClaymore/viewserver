@@ -3,6 +3,7 @@ import {cancelOrder} from 'customer/actions/CustomerActions';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {SpinnerButton} from 'common/components';
 import {Text} from 'native-base';
+import {Alert} from 'react-native';
 
 export default class CancelControl extends Component {
   constructor(props) {
@@ -13,7 +14,16 @@ export default class CancelControl extends Component {
   onCancelOrder = () => {
     const {order, dispatch} = this.props;
     const {orderId, orderContentTypeId} = order;
-    dispatch(cancelOrder({orderId, orderContentTypeId}));
+
+    Alert.alert(
+      'Cancel this job?',
+      'Are you sure you want to cancel this job? This action cannot be undone.',
+      [
+        {text: 'No', style: 'cancel'},
+        {text: 'Yes', onPress: () =>  dispatch(cancelOrder({orderId, orderContentTypeId}))},
+      ],
+      { cancelable: false }
+    );
   };
 
   render() {

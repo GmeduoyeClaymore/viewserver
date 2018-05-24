@@ -8,6 +8,8 @@ import yup from 'yup';
 import moment from 'moment';
 import { cancelResponsePartner } from 'partner/actions/PartnerActions';
 import { Platform } from 'react-native';
+import {NegotiationStatuses} from 'common/constants/NegotiationStatuses';
+
 const IS_ANDROID = Platform.OS === 'android';
 
 class PartnerNegotiationPanel extends Component {
@@ -48,16 +50,16 @@ class PartnerNegotiationPanel extends Component {
 
     negotiationAmount = negotiationAmount || responsePrice || (order.amount);
     negotiationDate = negotiationDate || responseDate || order.requiredDate;
-    const awaitingCustomerResponse = responseStatus === 'RESPONDED';
-    const hasCustomerResponded = !!~['DECLINED', 'ACCEPTED'].indexOf(responseStatus);
-    const hasAccepted = responseStatus === 'ACCEPTED';
+    const awaitingCustomerResponse = responseStatus === NegotiationStatuses.RESPONDED;
+    const hasCustomerResponded = !!~[NegotiationStatuses.DECLINED, NegotiationStatuses.ACCEPTED].indexOf(responseStatus);
+    const hasAccepted = responseStatus === NegotiationStatuses.ACCEPTED;
 
     return (
       <View padded>
         <Row>
           <Item stackedLabel style={styles.responseItem} >
             <Label>Your Price</Label>
-            <CurrencyInput disabled={awaitingCustomerResponse} initialPrice={negotiationAmount} style={styles.currencyInput} ref={ip => {this.amountInput = ip;}} onValueChanged={this.setNegotiationAmount} placeholder="Enter your price"/>
+            <CurrencyInput editable={!awaitingCustomerResponse} initialPrice={negotiationAmount} style={styles.currencyInput} ref={ip => {this.amountInput = ip;}} onValueChanged={this.setNegotiationAmount} placeholder="Enter your price"/>
           </Item>
           <Item stackedLabel style={styles.responseItem} >
             <Label>Availability Date</Label>

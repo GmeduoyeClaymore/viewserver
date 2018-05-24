@@ -9,7 +9,7 @@ import MapViewDirections from 'common/components/maps/MapViewDirections';
 import {getDaoState, updateSubscriptionAction} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import yup from 'yup';
-import {isEqual, debounce} from 'lodash';
+import {debounce} from 'lodash';
 import {addressToText} from 'common/components/maps/MapUtils';
 
 class DeliveryMap extends Component{

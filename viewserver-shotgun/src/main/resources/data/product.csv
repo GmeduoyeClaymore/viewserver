@@ -15,8 +15,8 @@ HouseHoldQuarterVan,Household  Quarter van,250 kg,2HouseHoldWaste,8000
 HouseHoldHalfVan,Household Half van,500 kg,2HouseHoldWaste,14000
 HouseHoldThreeQuarterVan,Household  Three Quarter van,750 kg,2HouseHoldWaste,18000
 HouseHoldFullVan,Household Full van,1000 kg,2HouseHoldWaste,22000
-CommercialHoldQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,9000
-CommercialHoldHalfVan,Commercial Half van,500 kg,2CommercialWaste,15000
+CommercialQuarterVan,Commercial Quarter van,250 kg,2CommercialWaste,9000
+CommercialHalfVan,Commercial Half van,500 kg,2CommercialWaste,15000
 CommercialThreeQuarterVan,Commercial Three Quarter van,750 kg,2CommercialWaste,19000
 CommercialFullVan,Commercial  Full van,1000 kg,2CommercialWaste,23000
 6YDSkip,6 Yard Skip,4.6 m3,2Skips,21000

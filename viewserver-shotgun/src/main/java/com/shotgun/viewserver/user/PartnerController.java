@@ -57,7 +57,7 @@ public class PartnerController {
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
-            throw new RuntimeException("Already  user registered for email " + user.getEmail());
+            throw new RuntimeException("A user is already registered with the email " + user.getEmail());
         }
 
         log.debug("Registering driver: " + user.getEmail());

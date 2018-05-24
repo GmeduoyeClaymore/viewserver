@@ -29,7 +29,6 @@ export const RUBBISH_ORDER_INITIAL_STATE =  {
 export const PERSONELL_ORDER_INITIAL_STATE =  {
   selectedContentType: undefined,
   order: {
-    paymentType: 'Fixed',
     orderProduct: undefined,
     orderContentTypeId: 5,
     origin: undefined,

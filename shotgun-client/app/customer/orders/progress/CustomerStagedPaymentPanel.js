@@ -4,7 +4,9 @@ import {SpinnerButton, Currency, Icon} from 'common/components';
 import {removePaymentStage, payForPaymentStage} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
 import AddPaymentStageControl from './AddPaymentStageControl';
-import {Platform} from 'react-native';
+import {Platform, Alert} from 'react-native';
+import {formatPrice} from 'common/components/Currency';
+
 const IS_ANDROID = Platform.OS === 'android';
 const CAN_ADD_PAYMENT_STAGE__ORDER_STATUSES = ['PLACED', 'ACCEPTED', 'INPROGRESS'];
 const CAN_MODIFY_PAYMENT_STAGE_STATUS = ['None'];
@@ -22,11 +24,19 @@ export default class CustomerStagedPaymentPanel extends Component{
     this.setState({paymentStageType});
   }
 
-  onPayForPaymentStage = (paymentStageId) => {
+  onPayForPaymentStage = (paymentStageId, amount) => {
     const {dispatch, order} = this.props;
-    const {orderId, orderContentTypeId} = order;
+    const {orderId, orderContentTypeId, assignedPartner} = order;
 
-    dispatch(payForPaymentStage({orderId, paymentStageId, orderContentTypeId}));
+    Alert.alert(
+      'Pay for payment stage?',
+      `You are about to complete this payment stage and pay ${formatPrice(amount)} to ${assignedPartner.firstName} ${assignedPartner.lastName}`,
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {text: 'OK', onPress: () => dispatch(payForPaymentStage({orderId, paymentStageId, orderContentTypeId}))},
+      ],
+      { cancelable: false }
+    );
   };
 
   onRemovePaymentStage = (paymentStageId) => {
@@ -63,13 +73,13 @@ export default class CustomerStagedPaymentPanel extends Component{
                 null}
 
               {!!~CAN_PAY_PAYMENT_STAGE_STATUS.indexOf(paymentStageStatus) ?
-                <SpinnerButton busy={busyUpdating} style={styles.stageButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id)}>
+                <SpinnerButton busy={busyUpdating} style={styles.stageButton} padded fullWidth success onPress={() => this.onPayForPaymentStage(id, currencyTotal)}>
                   <Text uppercase={false}>Pay</Text>
                 </SpinnerButton> :
                 null}
 
               {paymentStageStatus === 'Started' ?  [<Spinner  size={ IS_ANDROID ? 25 : 1} key='spinner' color={shotgun.brandSuccess} style={styles.waitingSpinner}/>, <Text key='text' style={styles.successText}>In Progress</Text>] : null}
-              {paymentStageStatus === 'Paid' ? [<Icon  name='checkmark' style={styles.checkmark}/>, <Text key='text2' style={styles.successText}>Paid</Text>] : null}
+              {paymentStageStatus === 'Paid' ? [<Icon  name='checkmark' key='icon' style={styles.checkmark}/>, <Text key='text2' style={styles.successText}>Paid</Text>] : null}
             </Col>
           </Row>
         </ListItem>;

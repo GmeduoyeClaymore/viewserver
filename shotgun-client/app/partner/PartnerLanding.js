@@ -53,11 +53,13 @@ class PartnerLanding extends Component {
   }
 
   render() {
-    const {busy, path, isLoggedIn, isConnected, history, user, daosHaveBeenRegistered} = this.props;
+    const {busy, path, isLoggedIn, isConnected, history, daosHaveBeenRegistered} = this.props;
     const completeProps = {...this.props, height: shotgun.contentHeight, width: shotgun.deviceWidth, ordersPath: `${path}/PartnerMyOrders/Posted`, ordersRoot: `${path}`};
+
     if (!isLoggedIn && isConnected){
       return <Redirect just to="/" history={history}/>;
     }
+
     return !daosHaveBeenRegistered ? <LoadingScreen text="Loading Partner Landing Screen ..."/> :
       [<ReactNativeModal key='connectingModal'
         isVisible={busy}
@@ -93,7 +95,7 @@ const mapStateToProps = (state, nextOwnProps) => {
     daosHaveBeenRegistered,
     parentMatch,
     contentTypes: getDaoState(state, ['contentTypes'], 'contentTypeDao'),
-    busy: isLoggedIn && isAnyLoading(state, ['userDao', 'partnerDao', 'vehicleDao', 'paymentDao', 'contentTypeDao']) || !user,
+    busy: isLoggedIn && isAnyLoading(state, ['userDao', 'partnerDao', 'paymentDao', 'contentTypeDao']) || !user,
     user
   };
 };

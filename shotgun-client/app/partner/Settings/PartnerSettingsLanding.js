@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, Content, List, ListItem, Header, Container, Body, Title, Col, Row, View} from 'native-base';
+import {Button, Text, Content, List, ListItem, Header, Container, Body, Title, Col, Row} from 'native-base';
 import {connect} from 'custom-redux';
 import {getDaoState} from 'common/dao';
 import {Image, Linking} from 'react-native';

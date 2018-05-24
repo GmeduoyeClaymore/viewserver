@@ -31,7 +31,7 @@
     "longitude": -0.1382081
   },
   "customerUserId": "{userId}",
-  "requiredDate": "{requiredDate}",
+  "requiredDate": "2018-05-04T07:00:00.000Z",
   "description": "this is a small van order",
   "orderStatus": "PLACED",
   "title": "Luton to London Rebar Delivery",

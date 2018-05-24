@@ -1,7 +1,7 @@
 import Logger from 'common/Logger';
-import { isEqual } from '../../is-equal';
 import invariant from 'invariant';
 const MaxStackLength = 2;
+
 export default class NavigationTransformation{
   constructor(navContainer){
     invariant(navContainer, 'navContainer must be defined');

@@ -516,7 +516,7 @@
       "properties": {
         "order": 209,
         "id": 58,
-        "name": "CommercialHoldHalfVan",
+        "name": "CommercialHalfVan",
         "prevSize": 32,
         "code": 59704
       },
@@ -551,7 +551,7 @@
       "properties": {
         "order": 210,
         "id": 57,
-        "name": "CommercialHoldQuarterVan",
+        "name": "CommercialQuarterVan",
         "prevSize": 32,
         "code": 59705
       },
@@ -621,7 +621,7 @@
       "properties": {
         "order": 202,
         "id": 55,
-        "name": "HouseHoldQuarterVan",
+        "name": "HouseHoldThreeQuarterVan",
         "prevSize": 32,
         "code": 59690
       },
@@ -656,7 +656,7 @@
       "properties": {
         "order": 203,
         "id": 54,
-        "name": "HouseHoldHalfVan",
+        "name": "HouseHoldQuarterVan",
         "prevSize": 32,
         "code": 59691
       },
@@ -691,7 +691,7 @@
       "properties": {
         "order": 204,
         "id": 53,
-        "name": "HouseHoldThreeQuarterVan",
+        "name": "HouseHoldHalfVan",
         "prevSize": 32,
         "code": 59692
       },

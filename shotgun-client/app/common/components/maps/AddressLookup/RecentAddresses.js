@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
 import {Text, Row, List, View, Col} from 'native-base';
-import {Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 
 const MAX_RECENT_ADDRESSES = 10;

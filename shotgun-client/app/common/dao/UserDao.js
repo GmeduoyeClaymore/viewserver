@@ -52,7 +52,8 @@ export default class UserDaoContext{
       return user;
     }
     //TODO - for some reason the Viewserver sends through null dates as zeros...
-    return {...user, status: user.userStatus};
+    //TODO - hack to deal with weird VS issue with null json coming through as a 1
+    return {...user, status: user.userStatus, vehicle: user.vehicle == 1 ? undefined : user.vehicle};
   }
 
   createSubscriptionStrategy(options, dataSink){

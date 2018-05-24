@@ -4,31 +4,25 @@ import moment from 'moment';
 import {getDaoState} from 'common/dao';
 import shotgun from 'native-base-theme/variables/shotgun';
 import {Icon, OriginDestinationSummary, Currency} from 'common/components';
-import {OrderStatuses} from 'common/constants/OrderStatuses';
 import {PaymentTypes} from 'common/constants/PaymentTypes';
-
-/*eslint-enable */
 import {connect} from 'custom-redux';
 
 class OrderListItem extends Component {
-  constructor(props) {
-    super(props);
+  getArmbandStyle = () => {
+    const {orderColorResolver, order} = this.props;
+    let armBandColor;
+
+    if (orderColorResolver) {
+      armBandColor = orderColorResolver(order);
+    }
+
+    return armBandColor != undefined ? {...styles.armBands, borderColor: armBandColor}  : {};
   }
 
   render() {
     const {order, history, next, isLast, isFirst, orderStatusResolver} = this.props;
-    const isInProgress = order.orderStatus == OrderStatuses.INPROGRESS;
-    const isAccepted = order.orderStatus == OrderStatuses.ACCEPTED;
-    const responded = order.negotiatedOrderStatus == OrderStatuses.RESPONDED;
-    let armbandStyle;
 
-    if (isInProgress || isAccepted){
-      armbandStyle = styles.statusGreen;
-    } else if (responded && order.userCreatedThisOrder){
-      armbandStyle = styles.statusAmber;
-    }
-
-    return <ListItem style={[styles.order, armbandStyle, isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
+    return <ListItem style={[styles.order, this.getArmbandStyle(), isLast ? styles.last : undefined, isFirst ?  styles.first : undefined ]}
       onPress={() => history.push({pathname: next, transition: 'left'}, {orderId: order.orderId})}>
       <Grid>
         <Row size={75} style={styles.locationRow}>
@@ -66,14 +60,7 @@ const styles = {
     borderBottomWidth: 0.5,
     borderColor: shotgun.silver
   },
-  statusGreen: {
-    borderColor: shotgun.brandSuccess,
-    borderWidth: 10,
-    paddingRight: 5,
-    paddingLeft: 15
-  },
-  statusAmber: {
-    borderColor: shotgun.brandWarning,
+  armBands: {
     borderWidth: 10,
     paddingRight: 5,
     paddingLeft: 15

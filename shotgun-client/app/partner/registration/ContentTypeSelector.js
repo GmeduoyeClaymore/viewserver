@@ -7,17 +7,9 @@ import shotgun from 'native-base-theme/variables/shotgun';
 import ReactNativeModal from 'react-native-modal';
 import * as ContentTypes from 'common/constants/ContentTypes';
 import {withExternalState} from 'custom-redux';
+import {getDaoState} from 'common/dao';
 import {isEqual} from 'lodash';
 import Immutable from 'seamless-immutable';
-
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-/*eslint-disable */
-resourceDictionary.
-  property('PageTitle', ({contentType}) => contentType.name).
-    delivery(() => 'What vehicle have you got?').
-    personell(() => 'What can you do?').
-    rubbish(() => 'Can you do commercial and household waste?');
-/*eslint-enable */
 
 class ContentTypeSelector extends Component{
   constructor(props){
@@ -34,13 +26,14 @@ class ContentTypeSelector extends Component{
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  handleSelectContentType(){
-    const {selected} = this.props;
-    if (!selected){
-      this.handleToggleDetailVisibility(true);
-    } else {
-      this.deselectContentType();
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(this.props.unsavedSelectedContentTypes, nextProps.unsavedSelectedContentTypes)){
+      this.doValidate(nextProps);
     }
+  }
+
+  handleSelectContentType(){
+    this.handleToggleDetailVisibility(true);
   }
 
   deselectContentType(blockPersist){
@@ -53,39 +46,40 @@ class ContentTypeSelector extends Component{
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!isEqual(this.props.unsavedSelectedContentTypes, nextProps.unsavedSelectedContentTypes)){
-      this.doValidate(nextProps);
-    }
-  }
-
-  handleToggleDetailVisibility(detailVisible){
-    this.doValidate(this.props);
+  async handleToggleDetailVisibility(detailVisible){
     const {selectedContentTypes} = this.props;
     if (detailVisible){
+      await this.doValidate(this.props);
       this.setState({unsavedSelectedContentTypes: selectedContentTypes});
     }
     super.setState({detailVisible});
   }
 
   handleCancel(){
-    this.deselectContentType(true);
     this.handleToggleDetailVisibility(false);
   }
 
   async handleConfirm(){
-    const {unsavedSelectedContentTypes = {}} = this.props;
-    const result = await this.getValidationResult(this.props);
-    if (!result || result.error == ''){
-      this.setState({selectedContentTypes: unsavedSelectedContentTypes, unsavedSelectedContentTypes: undefined});
-      this.handleToggleDetailVisibility(false);
+    const {unsavedSelectedContentTypes = {}, contentType} = this.props;
+    const {canSubmit} = this.state;
+    const unsavedProductIds = unsavedSelectedContentTypes[contentType.contentTypeId].selectedProductIds;
+    const unsavedCategoryIds = unsavedSelectedContentTypes[contentType.contentTypeId].selectedProductCategories;
+
+    if (canSubmit){
+      if ((unsavedProductIds && unsavedProductIds.length > 0) || (unsavedCategoryIds && unsavedCategoryIds.length > 0)) {
+        this.setState({selectedContentTypes: unsavedSelectedContentTypes});
+      } else {
+        this.deselectContentType(false);
+      }
+
+      await this.handleToggleDetailVisibility(false);
     } else {
       super.setState({showErrors: true});
     }
   }
 
   async getValidationResult(props){
-    const {contentType, unsavedSelectedContentTypes = {}} = props;
+    const {contentType, unsavedSelectedContentTypes = {}, user} = props;
     if (!contentType){
       return undefined;
     }
@@ -94,6 +88,7 @@ class ContentTypeSelector extends Component{
     if (!contentForContentType){
       return {error: 'must specify some content for content type'};
     }
+
     const ContentTypeDetailControl = resolveDetailsControl(contentType);
     if (!ContentTypeDetailControl){
       return {error: 'no control found for content type'};
@@ -102,14 +97,12 @@ class ContentTypeSelector extends Component{
     if (!canSubmitFunc){
       throw new Error('Unable to find canSubmit validation func for component type ' + ContentTypeDetailControl.control.name);
     }
-    return await canSubmitFunc(contentForContentType);
+    return await canSubmitFunc(contentForContentType, user);
   }
 
   async doValidate(props){
     const result = await this.getValidationResult(props);
-    if (result){
-      super.setState({canSubmit: !result || result.error == ''});
-    }
+    super.setState({canSubmit: !result || result.error == ''});
   }
 
   render(){
@@ -142,25 +135,9 @@ class ContentTypeSelector extends Component{
   }
 }
 
-const mapStateToProps = (state, nextOwnProps) => {
-  const {match: parentMatch} = nextOwnProps;
-  return {
-    parentMatch,
-    ...nextOwnProps
-  };
-};
-
-export default withExternalState(mapStateToProps)(ContentTypeSelector);
-
 const styles = {
   contentTypeButton: {
     height: 'auto'
-  },
-  contentTypeIcon: {
-    resizeMode: 'contain',
-    height: '70%',
-    width: '100%',
-    alignSelf: 'center'
   },
   contentTypeButtonText: {
     fontSize: shotgun.noteFontSize,
@@ -178,11 +155,29 @@ const styles = {
   },
   title: {
     textAlign: 'center',
-    color: shotgun.brandLight
+    marginBottom: shotgun.contentPadding
   },
   confirmButton: {
     marginBottom: 5
   }
 };
 
+const mapStateToProps = (state, nextOwnProps) => {
+  const {match: parentMatch} = nextOwnProps;
+  return {
+    parentMatch,
+    ...nextOwnProps,
+    user: getDaoState(state, ['user'], 'userDao')
+  };
+};
 
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+/*eslint-disable */
+resourceDictionary.
+property('PageTitle', ({contentType}) => contentType.name).
+delivery(() => 'What vehicle have you got?').
+personell(() => 'What can you do?').
+rubbish(() => 'Can you do commercial and household waste?');
+/*eslint-enable */
+
+export default withExternalState(mapStateToProps)(ContentTypeSelector);

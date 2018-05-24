@@ -58,7 +58,10 @@ class OrderSummary extends Component{
           <Icon paddedIcon name={orderProduct.productId}/>
           <Text>{`${orderProduct.name}`}</Text>
         </Row>
-        {order.description ? <View><Text style={styles.description}>{order.description}</Text></View> : null}
+        <View>
+          <Text style={styles.title}>{order.title}</Text>
+          {order.description ? <Text style={styles.description}>{order.description}</Text> : null}
+        </View>
       </ListItem> : null}
 
       <ListItem padded last>
@@ -96,10 +99,13 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'flex-start'
   },
+  title: {
+    paddingTop: 10
+  },
   description: {
     fontStyle: 'italic',
     color: shotgun.brandLight,
-    paddingTop: 10
+    paddingTop: 5
   }
 };
 
