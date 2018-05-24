@@ -22,6 +22,7 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import java.util.Date;
 
@@ -86,7 +87,7 @@ public class PartnerController {
                         deliveryAddressController.addOrUpdateDeliveryAddress(user.getDeliveryAddress());
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
-                    Observable.from(loginController.setUserId(userId)).subscribe(
+                    Observable.from(loginController.setUserId(userId)).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).subscribe(
                             res -> {
                                 log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
                                 future.set(userId);

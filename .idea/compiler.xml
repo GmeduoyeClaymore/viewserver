@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
     <excludeFromCompile>
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/operators/group/summary/Sum_KeyName_.java" />
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/sort/Comparer_KeyName_.java" />
@@ -40,7 +39,6 @@
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/offheap/OffHeapColumn_KeyName_.java" />
       <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnMetadata_KeyName_.java" />
     </excludeFromCompile>
-    <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
       <entry name="!?*.form" />
@@ -53,21 +51,16 @@
       <entry name="*.txt" />
     </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Annotation profile for viewserver-adapters-oracle" enabled="true">
+      <profile name="Annotation profile for viewserver-adapters-oracle" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="viewserver-adapters-oracle" />
       </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="msx-server-demo" />
         <module name="shotgun-viewsserver" />
         <module name="viewserver-adapters-common" />
@@ -75,6 +68,7 @@
         <module name="viewserver-adapters-firebase" />
         <module name="viewserver-adapters-h2" />
         <module name="viewserver-adapters-jdbc" />
+        <module name="viewserver-adapters-mongo" />
         <module name="viewserver-adapters-sqlserver" />
         <module name="viewserver-client" />
         <module name="viewserver-core" />
@@ -94,8 +88,10 @@
       <module name="viewserver-adapters-common" target="1.8" />
       <module name="viewserver-adapters-csv" target="1.8" />
       <module name="viewserver-adapters-firebase" target="1.8" />
+      <module name="viewserver-adapters-firebase (1)" target="1.5" />
       <module name="viewserver-adapters-h2" target="1.8" />
       <module name="viewserver-adapters-jdbc" target="1.8" />
+      <module name="viewserver-adapters-mongo" target="1.8" />
       <module name="viewserver-adapters-sqlserver" target="1.8" />
       <module name="viewserver-client" target="1.8" />
       <module name="viewserver-core" target="1.8" />

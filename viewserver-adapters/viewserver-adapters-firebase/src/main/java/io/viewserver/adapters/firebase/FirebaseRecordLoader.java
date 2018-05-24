@@ -103,8 +103,8 @@ public class FirebaseRecordLoader implements IRecordLoader{
             });
             return ss.get();
         }catch(Exception ex){
-            logger.error(String.format("Error adding snapshot listener for Firebase table %s", tableName));
-            throw new RuntimeException("Error getting records");
+            logger.error(String.format("Error adding snapshot listener for Firebase table %s \n{}", tableName), ex);
+            throw new RuntimeException("Error getting records",ex);
         }
     }
 

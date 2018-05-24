@@ -1,27 +1,24 @@
 package com.shotgun.viewserver.setup;
 
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.shotgun.viewserver.setup.datasource.*;
-import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
-import io.viewserver.adapters.firebase.FirebaseUtils;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FirebaseTestApplicationSetup  extends FirebaseApplicationSetup {
+public class MongoTestApplicationSetup  extends MongoApplicationSetup {
     private static final Logger log = LoggerFactory.getLogger(FirebaseTestApplicationSetup.class);
-    public FirebaseTestApplicationSetup(FirebaseConnectionFactory connectionFactory, IApplicationGraphDefinitions graphDefinitions, String csvDataPath) {
+    public MongoTestApplicationSetup(MongoConnectionFactory connectionFactory, IApplicationGraphDefinitions graphDefinitions, String csvDataPath) {
         super(connectionFactory, graphDefinitions, csvDataPath);
     }
 
     @Override
-    protected void setup(Firestore db) {
+    protected void setup(MongoDatabase db) {
         delete(db, UserDataSource.NAME);
+        delete(db, MessagesDataSource.NAME);
         delete(db, ContentTypeDataSource.NAME);
         delete(db, DeliveryAddressDataSource.NAME);
         delete(db, OrderDataSource.NAME);
@@ -29,15 +26,12 @@ public class FirebaseTestApplicationSetup  extends FirebaseApplicationSetup {
         delete(db, ProductDataSource.NAME);
         delete(db, ProductCategoryDataSource.NAME);
         delete(db, VehicleDataSource.NAME);
-        delete(db, "reports");
         super.setup(db);
     }
 
-    private void delete(Firestore db, String name) {
+    private void delete(MongoDatabase db, String name) {
         log.info("Deleting collection " + name);
-        CollectionReference collection = db.collection(name);
-        FirebaseUtils.deleteCollection(collection);
+        MongoCollection<Document> collection = db.getCollection(name);
+        collection.drop();
     }
 }
-
-

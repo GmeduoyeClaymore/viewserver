@@ -1,20 +1,22 @@
 package com.shotgun.viewserver.setup.loaders;
 
-import io.viewserver.datasource.*;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseRecordLoader;
+import io.viewserver.adapters.mongo.MongoConnectionFactory;
+import io.viewserver.adapters.mongo.MongoRecordLoader;
+import io.viewserver.datasource.*;
 import io.viewserver.report.ReportRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
+public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
-    private FirebaseConnectionFactory connectionFactory;
+    private MongoConnectionFactory connectionFactory;
 
-    public FireBaseRecordLoaderCollection(FirebaseConnectionFactory connectionFactory){
+    public MongoRecordLoaderCollection(MongoConnectionFactory connectionFactory){
         this.connectionFactory = connectionFactory;
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
@@ -23,9 +25,9 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
         register(PhoneNumberDataSource.getDataSource().getSchema(), PhoneNumberDataSource.NAME);
         register(ProductCategoryDataSource.getDataSource().getSchema(), ProductCategoryDataSource.NAME);
         register(ProductDataSource.getDataSource().getSchema(), ProductDataSource.NAME);
-        register(MessagesDataSource.getDataSource().getSchema(), MessagesDataSource.NAME);
         register(UserRelationshipDataSource.getDataSource().getSchema(), UserRelationshipDataSource.NAME);
         register(UserDataSource.getDataSource().getSchema(), UserDataSource.NAME);
+        register(MessagesDataSource.getDataSource().getSchema(), MessagesDataSource.NAME);
         register(VehicleDataSource.getDataSource().getSchema(), VehicleDataSource.NAME);
         registerAtRoot(DataSourceRegistry.getSchemaConfig(), IDataSourceRegistry.TABLE_NAME);
         registerAtRoot(ReportRegistry.getSchemaConfig(), ReportRegistry.TABLE_NAME);
@@ -39,8 +41,8 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
         loaders.put(getOperatorPath(operatorName), getLoader(schema, operatorName));
     }
 
-    private FirebaseRecordLoader getLoader(SchemaConfig schema, String operatorName) {
-        return new FirebaseRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT));
+    private MongoRecordLoader getLoader(SchemaConfig schema, String operatorName) {
+        return new MongoRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT));
     }
 
     static String getOperatorPath(String operatorName) {

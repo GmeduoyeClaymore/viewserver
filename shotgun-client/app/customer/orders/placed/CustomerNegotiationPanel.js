@@ -87,7 +87,7 @@ export default class OrderNegotiationPanel extends Component{
     const {partnerResponses, busyUpdating, order} = this.props;
     const {showAll} = this.state;
 
-    if (!partnerResponses){
+    if (!partnerResponses  || !partnerResponses.filter){
       return null;
     }
 
