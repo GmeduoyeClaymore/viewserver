@@ -129,7 +129,7 @@ class UserDetails extends Component{
           <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
-  
+
     </Container>;
   }
 }

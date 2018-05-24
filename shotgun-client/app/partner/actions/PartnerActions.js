@@ -30,8 +30,8 @@ export const completePaymentStage = ({orderId, paymentStageId, orderContentTypeI
   return invokeDaoCommand('orderDao', 'completePaymentStage', {orderId, paymentStageId, orderContentTypeId}, continueWith);
 };
 
-export const registerAndLoginPartner = (partner, vehicle, address, bankAccount, continueWith) => {
-  return invokeDaoCommand('loginDao', 'registerAndLoginPartner', {partner, vehicle, address, bankAccount}, continueWith);
+export const registerAndLoginPartner = (partner, vehicle, address, continueWith) => {
+  return invokeDaoCommand('loginDao', 'registerAndLoginPartner', {partner, vehicle, address}, continueWith);
 };
 
 export const updatePartner = (partner, continueWith) => {

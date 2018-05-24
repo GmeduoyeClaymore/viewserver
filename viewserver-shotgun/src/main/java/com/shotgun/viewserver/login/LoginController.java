@@ -66,7 +66,6 @@ public class LoginController {
         }
     }
 
-    @ControllerAction(path = "setUserId", isSynchronous = true)
     public ListenableFuture<Object> setUserId(String userId) {
         rx.Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME);
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();

@@ -28,7 +28,7 @@ export const registerActionListener = (handler) => {
   }
 
   FCM.on(FCMEvent.Notification, notif => {
-    console.log('Notification', notif);
+    // console.log('Notification', notif);
 
     if (Platform.OS === 'ios') {
       //optional
