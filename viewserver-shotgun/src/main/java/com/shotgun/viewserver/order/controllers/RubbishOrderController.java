@@ -47,10 +47,9 @@ public class RubbishOrderController implements NegotiationNotifications, OrderCr
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")RubbishOrder order){
+    public String createOrder(@ActionParam(name = "order")RubbishOrder order){
         return this.create(
             order,
-            paymentMethodId,
             (rec,ord) -> {
                 deliveryAddressController.addOrUpdateDeliveryAddress(order.getOrigin());
                 order.transitionTo(JourneyOrder.JourneyOrderStatus.PENDINGSTART);

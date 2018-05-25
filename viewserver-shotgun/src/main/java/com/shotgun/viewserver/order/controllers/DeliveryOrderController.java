@@ -58,10 +58,9 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
 
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){
+    public String createOrder(@ActionParam(name = "order")DeliveryOrder order){
         return this.create(
             order,
-            paymentMethodId,
             (rec,ord) -> {
                 if(order.getDestination() == null){
                     throw new RuntimeException("Delivery order should have destination");

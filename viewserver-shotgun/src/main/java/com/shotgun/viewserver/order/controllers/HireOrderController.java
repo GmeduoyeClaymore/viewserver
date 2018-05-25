@@ -76,10 +76,9 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")HireOrder order){
+    public String createOrder(@ActionParam(name = "order")HireOrder order){
         return this.create(
                 order,
-                paymentMethodId,
                 (rec,ord) -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
                     rec.addValue("orderLocation", order.getOrigin());

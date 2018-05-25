@@ -246,7 +246,7 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     if(amount == null){
                         throw new RuntimeException("Cannot complete order as unable to get the amount " + orderId);
                     }
-                    paymentId.set(getPaymentController().createCharge(amount,order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()));
+                    paymentId.set(getPaymentController().createCharge(amount,order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getTitle()));
                     updateOrderRecord(order);
                     return true;
                 },

@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 public interface OrderCreationController {
 
-    default <T extends BasicOrder> String create(T order, String paymentMethodId,Predicate2<Record, T> beforCreate, Consumer<T> afterTransform) {
+    default <T extends BasicOrder> String create(T order,Predicate2<Record, T> beforCreate, Consumer<T> afterTransform) {
 
         if(order == null){
             throw new RuntimeException("Order cannot be null");
@@ -48,7 +48,7 @@ public interface OrderCreationController {
 
         orderRecord
                 .addValue("orderId", orderId)
-                .addValue("paymentMethodId", paymentMethodId)
+                .addValue("paymentMethodId", order.getPaymentMethodId())
                 .addValue("requiredDate", order.getRequiredDate())
                 .addValue("created", now)
                 .addValue("productId", order.getOrderProduct() == null ? null : order.getOrderProduct().getProductId())

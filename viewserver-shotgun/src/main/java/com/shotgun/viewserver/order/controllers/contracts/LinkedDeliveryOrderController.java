@@ -42,10 +42,9 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
     }
 
     @ControllerAction(path = "createDeliveryOrder", isSynchronous = true)
-    default String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")LinkedDeliveryOrder order){
+    default String createOrder(@ActionParam(name = "order")LinkedDeliveryOrder order){
         return this.create(
                 order,
-                paymentMethodId,
                 (rec,ord) -> {
 
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
@@ -108,7 +107,9 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                     DeliveryOrder deliveryOrder = order.createOutboundDelivery(user.getUserId());
                     deliveryOrder.set("requiredDate", requiredDate);
                     deliveryOrder.set("partnerId", partnerId);
-                    deliveryHireId.set(getDeliveryOrderController().createOrder(paymentMethodId, deliveryOrder));
+                    deliveryOrder.set("paymentMethodId", paymentMethodId);
+
+                    deliveryHireId.set(getDeliveryOrderController().createOrder(deliveryOrder));
                     return true;
                 },
                 ord -> {
@@ -136,7 +137,9 @@ public interface LinkedDeliveryOrderController extends HireNotifications, OrderC
                     DeliveryOrder deliveryOrder = order.createInboundDelivery(user.getUserId());
                     deliveryOrder.set("requiredDate", requiredDate);
                     deliveryOrder.set("partnerId", partnerId);
-                    deliveryHireId.set(getDeliveryOrderController().createOrder(paymentMethodId, deliveryOrder));
+                    deliveryOrder.set("paymentMethodId", paymentMethodId);
+
+                    deliveryHireId.set(getDeliveryOrderController().createOrder(deliveryOrder));
                     return true;
                 },
                 ord -> {

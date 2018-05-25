@@ -53,17 +53,19 @@ export default class OrdersDao{
     await this.client.invokeJSONCommand('userController', 'addOrUpdateRating', {orderId,  rating, comments, ratingType, images});
   };
 
-  createOrder = async ({order, paymentId}) => {
+  createOrder = async ({order}) => {
     const controller = this.getControllerForOrder(order.orderContentTypeId);
     const {imageData, ...rest} = order;
     let newOrder;
+
     if (order.imageData){
+      //TODO - this should be done within createOrder on the server side
       const imageUrl = await this.client.invokeJSONCommand('imageController', 'saveOrderImage', {bucketName: order.orderContentTypeId, imageData});
       newOrder = {...rest, imageUrl};
     } else {
       newOrder = order;
     }
-    const orderId = await this.client.invokeJSONCommand(controller, 'createOrder', {paymentId, order: newOrder});
+    const orderId = await this.client.invokeJSONCommand(controller, 'createOrder', {order: newOrder});
     Logger.info(`Order ${orderId} created`);
     return orderId;
   }

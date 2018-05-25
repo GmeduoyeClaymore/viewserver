@@ -75,10 +75,9 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId") String paymentMethodId, @ActionParam(name = "order") PersonellOrder order) {
+    public String createOrder(@ActionParam(name = "order") PersonellOrder order) {
         return this.create(
                 order,
-                paymentMethodId,
                 (rec, ord) -> {
                     DeliveryAddress origin = order.getOrigin();
                     if (origin == null) {

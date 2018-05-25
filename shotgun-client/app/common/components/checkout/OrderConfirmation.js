@@ -15,8 +15,8 @@ class OrderConfirmation extends Component{
   }
 
   createJob = () => {
-    const {dispatch, history, order, payment, ordersPath} = this.props;
-    dispatch(checkout(order, payment, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
+    const {dispatch, history, order, ordersPath} = this.props;
+    dispatch(checkout(order, () => history.replace({pathname: `${ordersPath}`, transition: 'left'}, {isCustomer: true})));
   }
 
   render(){

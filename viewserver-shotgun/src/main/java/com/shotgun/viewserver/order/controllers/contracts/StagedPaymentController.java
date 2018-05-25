@@ -95,7 +95,8 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
         this.transform(
                 orderId,
                 order -> {
-                    String charge = getPaymentController().createCharge(order.getAmountForStage(paymentStageId),order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription());
+                    String description = order.getOrderPaymentStage(paymentStageId).getName();
+                    String charge = getPaymentController().createCharge(order.getAmountForStage(paymentStageId),order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), description);
                     order.payForPaymentStage(paymentStageId, charge);
                     paymentId.set(charge);
                     return true;

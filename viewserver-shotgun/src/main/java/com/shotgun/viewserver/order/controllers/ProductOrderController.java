@@ -36,10 +36,9 @@ public class ProductOrderController implements NegotiationNotifications, OrderCr
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")ProductOrder order){
+    String createOrder(@ActionParam(name = "order")ProductOrder order){
         return this.create(
                 order,
-                paymentMethodId,
                 (rec,ord) -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.REQUESTED);
                     rec.addValue("orderLocation", order.getProductAddress());
