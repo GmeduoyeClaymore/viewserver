@@ -44,9 +44,9 @@ class DeliveryOptions extends Component {
     this.setState({ order: {...order, paymentType}});
   }
 
-  setPaymentMethodId = (paymentCard) => {
+  setPaymentMethodId = (payment) => {
     const {order} = this.props;
-    this.setState({ order: {...order, paymentMethodId: paymentCard.cardId}});
+    this.setState({ order: {...order, payment, paymentMethodId: payment.cardId}});
   }
 
   toggleDatePicker = (isDatePickerVisible) => {
@@ -66,7 +66,8 @@ class DeliveryOptions extends Component {
 
   render() {
     const {resources} = this;
-    const {paymentCards, errors, order, payment = {}, history} = this.props;
+    const {paymentCards, errors, order, history} = this.props;
+    const {payment = {}} = order;
     const {isDatePickerVisible} = this.state;
 
     return <Container>
@@ -112,8 +113,8 @@ class DeliveryOptions extends Component {
 
         <ListItem padded style={{borderBottomWidth: 0}}>
           <CardIcon brand={payment.brand} /><Text>Use card</Text>
-          <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.paymentId} onValueChange={(c, i) => this.setPaymentMethodId(paymentCards[i])}>
-            {paymentCards.map((c, idx) => <Picker.Item key={idx} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.id} />)}
+          <Picker style={styles.cardPicker} itemStyle={{height: 38}} selectedValue={payment.cardId} onValueChange={(c, i) => this.setPaymentMethodId(paymentCards[i])}>
+            {paymentCards.map((c, idx) => <Picker.Item key={idx} label={`****${c.last4}  ${c.expMonth}/${c.expYear}`} value={c.cardId} />)}
           </Picker>
         </ListItem>
         <Text note style={styles.noteText}>You will not be charged until the job has been completed</Text>
