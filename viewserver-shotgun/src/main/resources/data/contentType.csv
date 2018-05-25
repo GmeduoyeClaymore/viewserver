@@ -1,4 +1,4 @@
 contentTypeId,name,rootProductCategory,pricingStrategy,description
 1,Delivery,1Vans,JOURNEY_DISTANCE,Schedule deliveries in an instant
-2,Rubbish Collection,1Rubbish,FIXED,Get rid of site rubbish now. Track that driver !!
-5,Trades People,1Workers,DURATION,Need a plumber? Ground worker? Labourer? Electrician? Get one now ... and yes track his progress !!
+2,Rubbish Collection,1Rubbish,FIXED,Get rid of site rubbish now and track the driver
+5,Trades People,1Workers,DURATION,Need a plumber? Ground worker? Labourer? Get one now.
