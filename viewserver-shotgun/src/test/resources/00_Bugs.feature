@@ -18,7 +18,6 @@ Feature: Delivery order scenarios
 	Given "client1" controller "deliveryOrderController" action "createOrder" invoked with data file "json/orders/createDeliveryOrder.json" with parameters
 	  | Name              | Value                                              |
 	  | param_paymentCard | {client1_partnerController_registerPartner_result} |
-
 	Given "client3" controller "deliveryOrderController" action "respondToOrder" invoked with parameters
 	  | Name         | Value                                                |
 	  | orderId      | {client1_deliveryOrderController_createOrder_result} |

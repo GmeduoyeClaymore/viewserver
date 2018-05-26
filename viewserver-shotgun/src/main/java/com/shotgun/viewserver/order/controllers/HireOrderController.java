@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.HireNotifications;
@@ -8,11 +9,16 @@ import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.domain.*;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+
+
 @Controller(name = "hireOrderController")
 public class HireOrderController implements HireNotifications, NegotiationNotifications, OrderCreationController, NegotiatedOrderController, SinglePaymentOrderController, LinkedDeliveryOrderController, JourneyBasedOrderController{
 
@@ -22,13 +28,15 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     private IMapsController iMapsController;
     private IPaymentController paymentController;
     private IMessagingController iMessagingController;
+    private ICatalog systemCatalog;
 
-    public HireOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController) {
+    public HireOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController, ICatalog systemCatalog) {
         this.deliveryOrderController = deliveryOrderController;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.iMapsController = iMapsController;
         this.paymentController = paymentController;
         this.iMessagingController = iMessagingController;
+        this.systemCatalog = systemCatalog;
     }
 
 
@@ -57,26 +65,48 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     }
 
     @ControllerAction(path = "startJourney", isSynchronous = true)
-    public void startJourney(@ActionParam(name = "orderId")String orderId) {
-        LinkedDeliveryOrderController.super.startJourney(orderId);
-        LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
-        HireOrder parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class);
-        parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.OFFHIRE : HireOrder.HireOrderStatus.OUTFORDELIVERY);
-        notifyHireItemOutForDelivery(parentOrder);
+    public ListenableFuture startJourney(@ActionParam(name = "orderId")String orderId) {
+        ListenableFuture result = LinkedDeliveryOrderController.super.startJourney(orderId);
+        ControllerContext context = ControllerContext.Current();
+        getOrderForId(orderId, LinkedDeliveryOrder.class).flatMap(
+                deliveryOrder -> {
+                    try {
+                        ControllerContext.create(context);
+                        return getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class).map(
+                                parentOrder -> {
+                                    parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.OFFHIRE : HireOrder.HireOrderStatus.OUTFORDELIVERY);
+                                    notifyHireItemOutForDelivery(parentOrder);
+                                    return parentOrder;
+                                }
+                        );
+                    }finally {
+                        ControllerContext.closeStatic();
+                    }
+                }
+        );
+        return result;
     }
 
     @Override
     @ControllerAction(path = "completeJourney", isSynchronous = true)
-    public void completeJourney(@ActionParam(name = "orderId")String orderId) {
-        LinkedDeliveryOrderController.super.startJourney(orderId);
-        LinkedDeliveryOrder deliveryOrder = getOrderForId(orderId, LinkedDeliveryOrder.class);
-        HireOrder parentOrder = getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class);
-        parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.RETURNED : HireOrder.HireOrderStatus.ONHIRE);
-        notifyItemOnHire(parentOrder);
+    public ListenableFuture completeJourney(@ActionParam(name = "orderId")String orderId) {
+        ListenableFuture result = LinkedDeliveryOrderController.super.startJourney(orderId);
+        getOrderForId(orderId, LinkedDeliveryOrder.class).flatMap(
+                deliveryOrder -> {
+                    return getOrderForId(deliveryOrder.getSourceOrderId(), HireOrder.class).map(
+                            parentOrder -> {
+                                parentOrder.transitionTo(deliveryOrder.getOrderLeg().equals(LinkedDeliveryOrder.OrderLeg.Inbound) ? HireOrder.HireOrderStatus.RETURNED : HireOrder.HireOrderStatus.ONHIRE);
+                                notifyItemOnHire(parentOrder);
+                                return parentOrder;
+                            }
+                    );
+                }
+        );
+        return result;
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")HireOrder order){
+    public ListenableFuture<String> createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")HireOrder order){
         return this.create(
                 order,
                 paymentMethodId,
@@ -96,6 +126,11 @@ public class HireOrderController implements HireNotifications, NegotiationNotifi
     @Override
     public DeliveryOrderController getDeliveryOrderController() {
         return deliveryOrderController;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override

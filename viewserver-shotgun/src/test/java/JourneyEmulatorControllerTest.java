@@ -12,7 +12,7 @@ public class JourneyEmulatorControllerTest {
 
     @Before
     public void createSut(){
-        sut = new JourneyEmulatorController(new MapsController(new MapsControllerKey("AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M")), null);
+        sut = new JourneyEmulatorController(new MapsController(new MapsControllerKey("AIzaSyBAW_qDo2aiu-AGQ_Ka0ZQXsDvF7lr9p3M")), null, null);
     }
 
     @Test

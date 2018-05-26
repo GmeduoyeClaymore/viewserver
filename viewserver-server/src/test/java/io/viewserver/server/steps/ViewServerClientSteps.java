@@ -130,6 +130,7 @@ public class ViewServerClientSteps {
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
     public void I_subscribe_to_report(String clientName, String reportId){
+        clientContext.waitForPersistenceRoundTrip();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
@@ -259,7 +260,6 @@ public class ViewServerClientSteps {
         for(Map<String,String> record : records){
             String paramName = record.get("Name");
             String paramValue = record.get("Value");
-
             paramValue = TestUtils.replaceReference(paramValue) + "";
             result.put(paramName,  clientContext.replaceParams(paramValue));
         }
@@ -312,6 +312,7 @@ public class ViewServerClientSteps {
 
     @When("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
     public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result, String resultNameSuffix) throws InterruptedException, ExecutionException, TimeoutException {
+        clientContext.waitForPersistenceRoundTrip();
         ClientConnectionContext connectionContext = clientContext.get(clientName);
 
         ListenableFuture<CommandResult> future = connectionContext.invokeJSONCommand(controllerName, action, data);
@@ -418,11 +419,14 @@ public class ViewServerClientSteps {
 
     @Then("^\"([^\"]*)\" the following notifications are received with key column \"([^\"]*)\"$")
     public void the_following_data_notifications_are_received_with_key_column(String clientName,String keyColumn, DataTable records) {
+        ClientConnectionContext connectionContext = clientContext.get(clientName);
+        connectionContext.getOptions().addSortColumn("sentTime", false);
         subscribedToReportWithParameters(clientName,"notificationsReport", null);
         String originalKeyCol = this.keyColumn;
         keycolumnIs(keyColumn);
         the_following_data_is_received_eventually(clientName, "notificationsReport", records);
         this.keyColumn = originalKeyCol;
+        connectionContext.getOptions().getColumnsToSort().clear();
     }
 
 

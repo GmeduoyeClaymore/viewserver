@@ -39,4 +39,9 @@ public class MongoConnectionFactory {
         }
         return database;
     }
+
+    public void close(){
+
+        mongoClient.close();
+    }
 }

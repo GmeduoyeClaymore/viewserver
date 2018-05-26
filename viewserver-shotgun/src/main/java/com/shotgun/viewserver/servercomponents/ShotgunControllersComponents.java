@@ -34,7 +34,7 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
 
 
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
-        DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater);
+        DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater, basicServerComponents.getServerCatalog());
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
         UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor(), basicServerComponents.getServerCatalog());
         DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController, basicServerComponents.getServerCatalog());
@@ -46,14 +46,14 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         this.registerController(new PartnerController( paymentController, userController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));
         this.registerController(new CustomerController(deliveryAddressController,userController, loginController, nexmoController));
         this.registerController(deliveryOrderController);
-        this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
-        this.registerController(new PersonellOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, iImageController));
-        this.registerController(new ProductOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController));
-        this.registerController(new RubbishOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController));
+        this.registerController(new HireOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController, basicServerComponents.getServerCatalog()));
+        this.registerController(new PersonellOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, iImageController, basicServerComponents.getServerCatalog()));
+        this.registerController(new ProductOrderController(deliveryOrderController, databaseUpdater,mapsController,paymentController, messagingController, basicServerComponents.getServerCatalog()));
+        this.registerController(new RubbishOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController, basicServerComponents.getServerCatalog()));
         this.registerController(messagingController);
         this.registerController(deliveryAddressController);
         this.registerController(iImageController);
-        this.registerController(new PhoneCallController(databaseUpdater));
+        this.registerController(new PhoneCallController(databaseUpdater, basicServerComponents.getServerCatalog()));
         this.registerController(nexmoController);
         this.registerController(getVehicleDetailsController());
     }

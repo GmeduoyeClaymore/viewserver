@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 import static com.shotgun.viewserver.PropertyUtils.loadProperties;
 
 
-public class ShotgunServerLauncher{
+public class  ShotgunServerLauncher{
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
     private BasicServer server;
 
@@ -76,7 +76,7 @@ public class ShotgunServerLauncher{
         container.addComponent(RealShotgunControllersComponents.class);
         container.addComponent(DirectTableUpdater.class);
         container.addComponent(new CompositeRecordLoaderCollection(
-                () -> new H2RecordLoaderCollection(container.getComponent(JdbcConnectionFactory.class)),
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new CsvRecordLoaderCollection(get("csv.data.path"))
         ));
         return true;
@@ -89,7 +89,7 @@ public class ShotgunServerLauncher{
         container.addComponent(MockShotgunControllersComponents.class);
         container.addComponent(DirectTableUpdater.class);
         container.addComponent(new CompositeRecordLoaderCollection(
-                () -> new H2RecordLoaderCollection(container.getComponent(JdbcConnectionFactory.class)),
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new CsvRecordLoaderCollection(get("csv.data.path"))
         ));
         return true;
@@ -105,11 +105,13 @@ public class ShotgunServerLauncher{
         container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
         container.addComponent(new MongoApplicationSetup(
                 container.getComponent(MongoConnectionFactory.class),
-                container.getComponent(IApplicationGraphDefinitions.class),
                 get("csv.data.path")
         ));
         container.addComponent(DatasourceMongoTableUpdater.class);
-        container.addComponent(MongoRecordLoaderCollection.class);
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
+                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class))
+        ));
         container.addComponent(RealShotgunControllersComponents.class);
         return true;
     }
@@ -124,11 +126,13 @@ public class ShotgunServerLauncher{
         container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
         container.addComponent(new MongoTestApplicationSetup(
                 container.getComponent(MongoConnectionFactory.class),
-                container.getComponent(IApplicationGraphDefinitions.class),
                 get("csv.data.path")
         ));
         container.addComponent(DatasourceMongoTableUpdater.class);
-        container.addComponent(MongoRecordLoaderCollection.class);
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
+                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class))
+        ));
         container.addComponent(MockShotgunControllersComponents.class);
         return true;
     }
@@ -143,7 +147,7 @@ public class ShotgunServerLauncher{
     }
 
 
-    public void run(String environment, boolean bootstrap) {
+    public void run(String environment, boolean bootstrap, boolean complete) {
 
         ExecutionContext.blockThreadAssertion  = true;
 
@@ -160,7 +164,7 @@ public class ShotgunServerLauncher{
         mutablePicoContainerPredicate.test(container);
 
         if(bootstrap){
-            container.getComponent(IApplicationSetup.class).run();
+            container.getComponent(IApplicationSetup.class).run(complete);
             //return;
         }
 

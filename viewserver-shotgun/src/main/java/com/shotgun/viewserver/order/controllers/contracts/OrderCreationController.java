@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.constants.TableNames;
@@ -17,7 +19,7 @@ import java.util.function.Consumer;
 
 public interface OrderCreationController {
 
-    default <T extends BasicOrder> String create(T order, String paymentMethodId,Predicate2<Record, T> beforCreate, Consumer<T> afterTransform) {
+    default <T extends BasicOrder> ListenableFuture<String> create(T order, String paymentMethodId, Predicate2<Record, T> beforCreate, Consumer<T> afterTransform) {
 
         if(order == null){
             throw new RuntimeException("Order cannot be null");
@@ -59,12 +61,14 @@ public interface OrderCreationController {
                 .addValue("orderDetails", order);
 
 
+        SettableFuture<String> result = SettableFuture.create();
 
-        getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
+        getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord).subscribe(res -> {
+            result.set(orderId);
+            afterTransform.accept(order);
+        }, err -> result.setException(err));
 
-        afterTransform.accept(order);
-
-        return orderId;
+        return result;
     }
 
 

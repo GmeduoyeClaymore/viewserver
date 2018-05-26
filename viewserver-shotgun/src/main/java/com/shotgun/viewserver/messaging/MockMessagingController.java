@@ -57,7 +57,7 @@ public class MockMessagingController implements IMessagingController {
         return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
             message.set("to",currentToken);
-            persistMessage(message, false);
+            persistMessage(message, false).subscribe();
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken));
 
@@ -81,7 +81,7 @@ public class MockMessagingController implements IMessagingController {
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
-            databaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+            databaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
             return userRecord;
         }));
     }

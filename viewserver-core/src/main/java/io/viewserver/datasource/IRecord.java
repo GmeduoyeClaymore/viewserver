@@ -51,6 +51,7 @@ public interface IRecord {
     Object getValue(String columnName);
 
     boolean hasValue(String columnName);
+
 }
 
 

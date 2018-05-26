@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class H2RecordLoaderCollection implements IRecordLoaderCollection {
+public class H2ReportsAndDataSourceRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
     private JdbcConnectionFactory connectionFactory;
 
-    public H2RecordLoaderCollection(JdbcConnectionFactory connectionFactory) {
+    public H2ReportsAndDataSourceRecordLoaderCollection(JdbcConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
         loaders = new HashMap<>();
         register(ReportRegistry.getSchemaConfig(),ReportRegistry.TABLE_NAME, "Reports");

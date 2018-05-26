@@ -13,5 +13,6 @@
         <Logger name="io.netty" level="info"/>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
         <Logger name="io.viewserver.operators.sort.SortOperator" level="info"/>
+        <Logger name="io.viewserver.operators.serialiser.SerialiserOperator" level="debug"/>
     </Loggers>
 </configuration>

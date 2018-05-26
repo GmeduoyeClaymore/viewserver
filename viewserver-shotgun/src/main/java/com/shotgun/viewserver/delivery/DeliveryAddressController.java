@@ -1,11 +1,14 @@
 package com.shotgun.viewserver.delivery;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.DeliveryAddressDataSource;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -24,13 +27,15 @@ import java.util.Date;
 public class DeliveryAddressController {
     private static final Logger log = LoggerFactory.getLogger(DeliveryAddressController.class);
     private IDatabaseUpdater iDatabaseUpdater;
+    private ICatalog catalog;
 
-    public DeliveryAddressController(IDatabaseUpdater iDatabaseUpdater) {
+    public DeliveryAddressController(IDatabaseUpdater iDatabaseUpdater, ICatalog catalog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.catalog = catalog;
     }
 
     @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
-    public String addOrUpdateDeliveryAddress(@ActionParam(name = "deliveryAddress") DeliveryAddress deliveryAddress) {
+    public ListenableFuture<String> addOrUpdateDeliveryAddress(@ActionParam(name = "deliveryAddress") DeliveryAddress deliveryAddress) {
         Date now = new Date();
         log.debug("Adding or updating delivery address");
         String userId = (String) ControllerContext.get("userId");
@@ -64,9 +69,11 @@ public class DeliveryAddressController {
                 .addValue("latitude", deliveryAddress.getLatitude())
                 .addValue("longitude", deliveryAddress.getLongitude());
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, DeliveryAddressDataSource.getDataSource().getSchema(), deliveryAddressRecord);
+        SettableFuture<String> result = SettableFuture.create();
 
-        return deliveryAddress.getDeliveryAddressId();
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, DeliveryAddressDataSource.getDataSource().getSchema(), deliveryAddressRecord).subscribe(c-> result.set(deliveryAddress.getDeliveryAddressId()), err -> result.setException(err));
+
+        return result;
     }
 
     public String getDeliveryAddressIdFromGooglePlaceId(String userId, String googlePlaceId){
@@ -74,7 +81,7 @@ public class DeliveryAddressController {
             return null;
         }
 
-        KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
+        KeyedTable deliveryAddressTable = (KeyedTable) catalog.getOperatorByPath(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
         int rowId = deliveryAddressTable.getRow(new TableKey(userId, googlePlaceId));
         return rowId != -1 ? ((String) ControllerUtils.getColumnValue(deliveryAddressTable, "deliveryAddressId", rowId)).toLowerCase() : null;
     }

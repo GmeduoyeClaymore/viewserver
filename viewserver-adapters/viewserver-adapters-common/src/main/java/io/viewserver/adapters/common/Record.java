@@ -23,12 +23,14 @@ import org.apache.commons.beanutils.ConvertUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by nick on 17/09/15.
  */
 public class Record implements IRecord {
     protected final Map<String, Object> values = new HashMap<>();
+    private int version = 0;
 
     public static Record from(IRecord source) {
         Record record = new Record();
@@ -48,9 +50,19 @@ public class Record implements IRecord {
         }
     }
 
+    public Record initialiseFromRecord(Map<String, Object> source) {
+        values.clear();
+        Set<String> columnNames = source.keySet();
+        for(String col : columnNames){
+            values.put(col, source.get(col));
+        }
+        return this;
+    }
+
     public boolean hasValue(String columnName){
         return values.containsKey(columnName);
     }
+
 
     public Record addValue(String columnName, Object value){
         values.put(columnName, value);
@@ -141,5 +153,9 @@ public class Record implements IRecord {
     @Override
     public Object getValue(String columnName) {
         return values.get(columnName);
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

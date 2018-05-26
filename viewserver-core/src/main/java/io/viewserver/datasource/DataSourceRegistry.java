@@ -163,8 +163,9 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     @Override
     public void setStatus(String name, DataSourceStatus status) {
         int rowId = getRow(new TableKey(name));
-        log.debug("Updating data source {} with row {}",name,rowId);
+        log.info(String.format("Updating data source %s with row %s to status %s",name,rowId,status.toString()));
         updateRow(rowId, row -> row.setString(STATUS_COL, status.toString()));
+        log.info(String.format("Updated data source %s with row %s to status %s",name,rowId,status.toString()));
         this.statusChanged.onNext(get(name));
     }
 

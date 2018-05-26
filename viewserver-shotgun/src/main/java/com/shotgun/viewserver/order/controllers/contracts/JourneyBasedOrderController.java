@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.maps.*;
 import com.shotgun.viewserver.order.contracts.JourneyNotifications;
 import com.shotgun.viewserver.order.domain.BasicOrder;
@@ -14,8 +15,8 @@ import java.util.Date;
 public interface JourneyBasedOrderController extends JourneyNotifications, OrderUpdateController, OrderTransformationController {
 
     @ControllerAction(path = "startJourney", isSynchronous = true)
-    public default void startJourney(@ActionParam(name = "orderId")String orderId){
-        this.transform(
+    default ListenableFuture startJourney(@ActionParam(name = "orderId")String orderId){
+        return this.transform(
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
@@ -31,7 +32,7 @@ public interface JourneyBasedOrderController extends JourneyNotifications, Order
     }
 
     @ControllerAction(path = "calculatePriceEstimate", isSynchronous = true)
-    public default Integer calculatePriceEstimate(@ActionParam(name = "order") JourneyOrder order) {
+    default Integer calculatePriceEstimate(@ActionParam(name = "order") JourneyOrder order) {
         if(order.getOrderProduct() == null){
             throw new RuntimeException("Unable to calculate amount estimate as no product specified on order");
         }
@@ -40,8 +41,8 @@ public interface JourneyBasedOrderController extends JourneyNotifications, Order
     }
 
     @ControllerAction(path = "completeJourney", isSynchronous = true)
-    default void completeJourney(@ActionParam(name = "orderId")String orderId){
-        this.transform(
+    default ListenableFuture completeJourney(@ActionParam(name = "orderId")String orderId){
+        return this.transform(
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");

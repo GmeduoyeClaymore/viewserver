@@ -9,6 +9,7 @@ import com.shotgun.viewserver.order.controllers.contracts.OrderCreationControlle
 import com.shotgun.viewserver.order.controllers.contracts.OrderTransformationController;
 import com.shotgun.viewserver.order.domain.JourneyOrder;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
@@ -24,43 +25,15 @@ public class JourneyEmulatorController implements OrderTransformationController{
     private static final Logger log = LoggerFactory.getLogger(PartnerController.class);
     private IMapsController IMapsController;
     private IDatabaseUpdater databaseUpdater;
+    private ICatalog systemCatalog;
 
-    public JourneyEmulatorController(IMapsController IMapsController, IDatabaseUpdater databaseUpdater) {
+    public JourneyEmulatorController(IMapsController IMapsController, IDatabaseUpdater databaseUpdater, ICatalog systemCatalog) {
         this.IMapsController = IMapsController;
         this.databaseUpdater = databaseUpdater;
+        this.systemCatalog = systemCatalog;
     }
 
-    public void emulateJourneyForOrder(String orderId, String emulator, String userId) {
-        log.debug("Emulator journey for order: " + orderId);
 
-        KeyedTable orderTable = ControllerUtils.getKeyedTable(TableNames.ORDER_TABLE_NAME);
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
-        KeyedTable deliveryAddressTable = ControllerUtils.getKeyedTable(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                    JourneyOrder order = getOrderForId(orderId, JourneyOrder.class);
-                    ArrayList<LatLng> locations = new ArrayList<>();
-                    locations.add(order.getOrigin().getLatLong());
-                    if(order.getOrigin() == null){
-                        throw new RuntimeException("Cannot simulate journey as no origin found");
-                    }
-                    if(order.getDestination() != null){
-                        locations.add(order.getDestination().getLatLong());
-                    }
-                    emulateJourney(emulator, new DirectionRequest((LatLng[]) locations.toArray(new LatLng[0]), "driving"));
-                } catch (Exception ex) {
-                    log.error("There was a problem emulating this journey", ex);
-                }
-            }
-        });
-
-        thread.start();
-    }
 
     public void emulateJourney(String emulator, DirectionRequest directionsRequest) {
         HashMap<String, Object> directions = IMapsController.mapDirectionRequest(directionsRequest);
@@ -80,6 +53,11 @@ public class JourneyEmulatorController implements OrderTransformationController{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override

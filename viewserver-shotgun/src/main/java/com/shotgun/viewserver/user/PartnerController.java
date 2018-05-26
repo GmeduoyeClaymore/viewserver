@@ -22,6 +22,7 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
 import java.util.Date;
@@ -74,34 +75,28 @@ public class PartnerController {
         SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
         user.set("created",new Date());
-        reactor.scheduleTask(new ITask() {
-            @Override
-            public void execute() {
-                try{
-                    ControllerContext.create(context);
-                    user.set("vehicle",vehicle);
-                    String userId = userController.addOrUpdateUser(user, user.getPassword());
-                    ControllerContext.set("userId",userId);
+        user.set("vehicle",vehicle);
+        return ListenableFutureObservable.to(userController.addOrUpdateUserObservable(user, user.getPassword()).observeOn(ControllerContext.Scheduler(context)).map(
+                userId -> {
+                    context.set("userId",userId, context.getPeerSession());
                     if(user.getDeliveryAddress() != null) {
                         user.getDeliveryAddress().set("isDefault", true);
                         deliveryAddressController.addOrUpdateDeliveryAddress(user.getDeliveryAddress());
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
-                    Observable.from(loginController.setUserId(userId)).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).subscribe(
+                    loginController.setUserIdObservable(userId, context.getPeerSession()).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).subscribe(
                             res -> {
                                 log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
                                 future.set(userId);
                             },
-                            err -> log.error("Problem logging in user",err)
+                            err -> {
+                                log.error("Problem logging in user",err);
+                                future.setException(err);
+                            }
                     );
-                    //future.set(userId);
-                }catch (Exception ex){
-                    log.error("There was a problem registering the driver", ex);
-                    future.setException(ex);
+                    return userId;
                 }
-            }
-        },0,0);
-        return future;
+        ));
     }
 
 

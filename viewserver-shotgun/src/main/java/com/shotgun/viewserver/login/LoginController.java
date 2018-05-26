@@ -67,11 +67,14 @@ public class LoginController {
     }
 
     @ControllerAction(path = "setUserId", isSynchronous = false)
-    public ListenableFuture<Object> setUserId(String userId) {
-        rx.Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME);
+    public ListenableFuture<String> setUserId(String userId) {
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
-        return ListenableFutureObservable.to(
-                datasources.flatMap(obj -> systemcatalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
+        return ListenableFutureObservable.to(setUserIdObservable(userId, peerSession));
+    }
+
+    public Observable<String> setUserIdObservable(String userId, IPeerSession peerSession) {
+        Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME);
+        return datasources.flatMap(obj -> systemcatalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
                                 rec -> {
@@ -79,7 +82,7 @@ public class LoginController {
                                     setUserOnline(userId).subscribe();
                                     return userId;
                                 })
-                )));
+                ));
     }
 
     @ControllerAction(path = "background", isSynchronous = true)
@@ -93,12 +96,12 @@ public class LoginController {
     }
 
     @ControllerAction(path = "logOut", isSynchronous = true)
-    public void logOut() {
+    public ListenableFuture logOut() {
         String userId = getUserId();
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("fcmToken", null);
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
     }
 
     private Observable<Boolean> setUserOnline(String userId) {
@@ -108,25 +111,25 @@ public class LoginController {
                 .addValue("userStatus", UserStatus.ONLINE.name())
                 .addValue("userAppStatus", UserAppStatus.FOREGROUND);
 
-        return iDatabaseUpdater.scheduleAddOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        return iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
     }
 
-    private void setUserOffLine(String userId) {
+    private ListenableFuture setUserOffLine(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("online", false)
                 .addValue("userStatus", UserStatus.OFFLINE.name())
                 .addValue("userAppStatus", UserAppStatus.BACKGROUND);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
     }
 
-    private void setUserAppStatus(String userId, UserAppStatus appStatus) {
+    private ListenableFuture setUserAppStatus(String userId, UserAppStatus appStatus) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("userAppStatus", appStatus);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
     }
 
     private String setupContext(String userId,IPeerSession session) {

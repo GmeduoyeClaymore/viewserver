@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.constants.OrderStatus;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.contracts.PaymentNotifications;
@@ -10,6 +12,7 @@ import com.shotgun.viewserver.order.types.NegotiationResponse;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.controller.ControllerContext;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,9 +49,9 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
 
 
     @ControllerAction(path = "respondToOrder", isSynchronous = true)
-    default void respondToOrder(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "requiredDate") Date requiredDate, @ActionParam(name = "amount") Integer amount) {
+    default ListenableFuture respondToOrder(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "requiredDate") Date requiredDate, @ActionParam(name = "amount") Integer amount) {
         String partnerId = getUserId();
-        this.transform(
+        return this.transform(
                 orderId,
                 order -> {
 
@@ -63,10 +66,10 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "cancelResponsePartner", isSynchronous = true)
-    default void cancelResponsePartner(@ActionParam(name = "orderId") String orderId) {
+    default ListenableFuture cancelResponsePartner(@ActionParam(name = "orderId") String orderId) {
         String partnerId = getUserId();
         final OrderStatus[] originalState = new OrderStatus[1];
-        this.transform(
+        return this.transform(
                 orderId,
                 order -> {
                     originalState[0] = order.getOrderStatus();
@@ -91,9 +94,9 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "cancelResponseCustomer", isSynchronous = true)
-    default void cancelResponseCustomer(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
+    default ListenableFuture cancelResponseCustomer(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
         final OrderStatus[] originalState = new OrderStatus[1];
-        this.transform(
+        return this.transform(
                 orderId,
                 order -> {
                     originalState[0] = order.getOrderStatus();
@@ -122,8 +125,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "rejectResponse", isSynchronous = true)
-    default void rejectResponse(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
-        this.transform(
+    default ListenableFuture rejectResponse(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
+        return this.transform(
                 orderId,
                 order -> {
                     if (!fromArray(order.getResponses()).anyMatch(c -> c.getPartnerId().equals(partnerId))) {
@@ -141,8 +144,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "acceptResponse", isSynchronous = true)
-    default void acceptResponseToOrder(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
-        this.transform(
+    default ListenableFuture acceptResponseToOrder(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "partnerId") String partnerId) {
+        return this.transform(
                 orderId,
                 order -> {
                     if (!fromArray(order.getResponses()).anyMatch(c -> c.getPartnerId().equals(partnerId))) {
@@ -171,8 +174,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "partnerStartJob", isSynchronous = true)
-    public default void partnerStartJob(@ActionParam(name = "orderId")String orderId){
-        this.transform(
+    public default ListenableFuture partnerStartJob(@ActionParam(name = "orderId")String orderId){
+        return this.transform(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.STARTED);
@@ -187,8 +190,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
 
 
     @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)
-    public default void partnerCompleteJob(@ActionParam(name = "orderId")String orderId){
-        this.transform(
+    public default ListenableFuture partnerCompleteJob(@ActionParam(name = "orderId")String orderId){
+        return this.transform(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.PARTNERCOMPLETE);
@@ -202,8 +205,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
     @ControllerAction(path = "cancelOrder", isSynchronous = true)
-    default void cancelOrder(@ActionParam(name = "orderId") String orderId) {
-        this.transform(
+    default ListenableFuture cancelOrder(@ActionParam(name = "orderId") String orderId) {
+        return this.transform(
                 orderId,
                 order -> {
                     order.cancel();
@@ -236,9 +239,10 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
 
 
     @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
-    public default String customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
-        AtomicReference<String> paymentId = new AtomicReference<>();
-        this.transform(
+    public default ListenableFuture<String> customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
+        SettableFuture<String> paymentId = SettableFuture.create();
+        ControllerContext context = ControllerContext.Current();
+        this.transformAsync(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.CUSTOMERCOMPLETE);
@@ -246,16 +250,25 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     if(amount == null){
                         throw new RuntimeException("Cannot complete order as unable to get the amount " + orderId);
                     }
-                    paymentId.set(getPaymentController().createCharge(amount,order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()));
-                    updateOrderRecord(order);
-                    return true;
+                    return getPaymentController().createCharge(amount, order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()).observeOn(ControllerContext.Scheduler(context)).map(
+                            charge -> {
+                                try {
+                                    paymentId.set(charge);
+                                    updateOrderRecord(order);
+                                    return true;
+                                }catch (Exception ex){
+                                    paymentId.setException(ex);
+                                    return false;
+                                }
+                            }
+                    );
                 },
                 order -> {
                     notifyJobCompleted(order.getOrderId(), order.getPartnerUserId());
                 },
                 NegotiatedOrder.class
         );
-        return paymentId.get();
+        return paymentId;
     }
 
     IPaymentController getPaymentController();

@@ -206,7 +206,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                     }
                 }
 
-                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
             }
         }
 
@@ -252,7 +252,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 phoneNumberRecord.addValue("toUserId", "");
                 phoneNumberRecord.addValue("userPhoneNumber", "");
 
-                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord);
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
             }
         }
     }

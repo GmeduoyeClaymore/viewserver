@@ -244,4 +244,5 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
     public boolean hasValue(String columnName) {
         return true;
     }
+
 }

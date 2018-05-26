@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.order.controllers.contracts;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.order.contracts.PaymentNotifications;
 import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
@@ -15,8 +17,8 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
 
     @Override
     @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
-    default String customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
-        String paymentId = NegotiatedOrderController.super.customerCompleteAndPay(orderId);
+    default ListenableFuture customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
+        ListenableFuture listenableFuture = NegotiatedOrderController.super.customerCompleteAndPay(orderId);
         this.transform(
                 orderId,
                 order -> {
@@ -24,7 +26,7 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
                     return true; },
                 StagedPaymentOrder.class
         );
-        return paymentId;
+        return listenableFuture;
     }
 
     @ControllerAction(path = "addPaymentStage", isSynchronous = true)
@@ -90,22 +92,30 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
     }
 
     @ControllerAction(path = "payForPaymentStage", isSynchronous = true)
-    default String payForPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
-        AtomicReference<String> paymentId = new AtomicReference<>();
-        this.transform(
+    default ListenableFuture<String> payForPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        SettableFuture<String> paymentId = SettableFuture.create();
+        this.transformAsync(
                 orderId,
                 order -> {
-                    String charge = getPaymentController().createCharge(order.getAmountForStage(paymentStageId),order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription());
-                    order.payForPaymentStage(paymentStageId, charge);
-                    paymentId.set(charge);
-                    return true;
+                    return getPaymentController().createCharge(order.getAmountForStage(paymentStageId),order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()).map(
+                            chargeId -> {
+                                try {
+                                    order.payForPaymentStage(paymentStageId, chargeId);
+                                    paymentId.set(chargeId);
+                                    return true;
+                                }catch (Exception ex){
+                                    paymentId.setException(ex);
+                                    return false;
+                                }
+                            }
+                    );
                 },
                 order -> {
                     notifyPaymentStagePaid(order.getOrderId(), order.getPartnerUserId(), order.getOrderPaymentStage(paymentStageId).getName());
                 },
                 StagedPaymentOrder.class
         );
-        return paymentId.get();
+        return paymentId;
     }
 
 

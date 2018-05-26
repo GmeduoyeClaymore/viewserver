@@ -26,10 +26,14 @@ import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.util.ViewServerException;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import rx.Observable;
+import rx.Scheduler;
+import rx.subjects.PublishSubject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 
@@ -41,6 +45,7 @@ public class KeyedTable extends Table {
 
     protected TableKeyDefinition tableKeyDefinition;
     private TObjectIntHashMap<Object> keys = new TObjectIntHashMap<>(8, 0.75f, -1);
+    private PublishSubject<Object> keysAdded;
 
     public KeyedTable(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, TableKeyDefinition tableKeyDefinition) {
         super(name, executionContext, catalog, schema, storage);
@@ -50,6 +55,7 @@ public class KeyedTable extends Table {
         }
         this.isDataResetRequested = false;
         this.tableKeyDefinition = tableKeyDefinition;
+        this.keysAdded = PublishSubject.create();
     }
 
     @Override
@@ -177,6 +183,15 @@ public class KeyedTable extends Table {
         return keys.get(keyValue);
     }
 
+    public Observable<Integer> waitForRow(TableKey tableKey, Scheduler scheduler){
+        Object keyValue = tableKeyDefinition.getValue(tableKey);
+        int i = keys.get(keyValue);
+        if(i>=0){
+            return Observable.just(i);
+        }
+        return keysAdded.filter(key -> key.equals(keyValue)).observeOn(scheduler).take(1).timeout(10, TimeUnit.SECONDS).map(kv -> keys.get(kv));
+    }
+
     protected TableKey getTableKey(ITableRow row) {
         List<Object> keyValues = new ArrayList<>();
         List<String> keys = tableKeyDefinition.getKeys();
@@ -205,6 +220,7 @@ public class KeyedTable extends Table {
             throw new RuntimeException(String.format("There must be exactly %d values in the table key \"%s\"", tableKeyDefinition.size(),tableKey));
         }
         keys.put(keyValue, rowId);
+        this.keysAdded.onNext(keyValue);
     }
 
     private int removeKey(TableKey tableKey) {

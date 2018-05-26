@@ -45,7 +45,7 @@ public class FirebaseApplicationSetup implements IApplicationSetup {
     }
 
     @Override
-    public void run() {
+    public void run(boolean complete) {
         log.info("Bootstrapping firebase database");
         setup(connectionFactory.getConnection());
     }

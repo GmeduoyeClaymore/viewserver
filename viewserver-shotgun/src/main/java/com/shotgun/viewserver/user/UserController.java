@@ -161,7 +161,7 @@ public class UserController implements UserTransformationController, RatedOrderC
 
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
-    public String updateUser(@ActionParam(name = "user") User user) {
+    public ListenableFuture updateUser(@ActionParam(name = "user") User user) {
         log.debug("updateUser user: " + user.getEmail());
         String userId = getUserId();
         user.set("userId", userId);
@@ -195,12 +195,11 @@ public class UserController implements UserTransformationController, RatedOrderC
                 .addValue("longitude", result.getLongitude());
 
         SettableFuture<LatLng> future = SettableFuture.create();
-        KeyedTable table = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
         reactor.scheduleTask(new ITask() {
             @Override
             public void execute() {
                 try {
-                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe(res -> future.set(result), err -> future.setException(err));
                     future.set(result);
                 } catch (Exception ex) {
                     log.error("There was a problem setting user location from postcode", ex);
@@ -226,20 +225,23 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "updateRelationship", isSynchronous = true)
-    public void updateRelationship(@ActionParam(name = "targetUserId") String targetUserId, @ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus, @ActionParam(name = "relationshipType") UserRelationshipType relationshipType) {
+    public ListenableFuture updateRelationship(@ActionParam(name = "targetUserId") String targetUserId, @ActionParam(name = "relationshipStatus") UserRelationshipStatus userRelationshipStatus, @ActionParam(name = "relationshipType") UserRelationshipType relationshipType) {
         String userId = getUserId();
-        this.transform(
+        return this.transformAsync(
                 targetUserId,
                 targetUser -> {
                     targetUser.addOrUpdateRelationship(userId, getRelationshipStatus(userRelationshipStatus),relationshipType);
-                    User meUser = getUserForId(userId,User.class);
-                    Optional<UserRelationship> relationship = meUser.findUserRelationship(targetUserId);
-                    if(relationship.isPresent() && relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)){
-                    }else{
-                        meUser.addOrUpdateRelationship(targetUserId,userRelationshipStatus,relationshipType);
-                    }
-                    updateUser(meUser);
-                    return true;
+                    return getUserForId(userId,User.class).map(
+                            meUser -> {
+                                Optional<UserRelationship> relationship = meUser.findUserRelationship(targetUserId);
+                                if (relationship.isPresent() && relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)) {
+                                } else {
+                                    meUser.addOrUpdateRelationship(targetUserId, userRelationshipStatus, relationshipType);
+                                }
+                                updateUser(meUser);
+                                return true;
+                            }
+                    );
                 },
                 user -> {
                     notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name());
@@ -296,7 +298,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
             log.info("Waiting for user {}", userId);
-            return output.observable().subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).filter(ev -> hasUserId(ev, userId)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
+            return output.observable().subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).filter(ev -> hasUserId(ev, userId)).take(1).timeout(10, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output, userRowId, null));
     }
@@ -310,6 +312,11 @@ public class UserController implements UserTransformationController, RatedOrderC
         }
         HashMap<String, Object> result = (HashMap<String, Object>) ev.getEventData();
         return userId.equals(result.get("userId"));
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return catalog;
     }
 
     @Override

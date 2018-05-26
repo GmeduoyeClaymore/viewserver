@@ -16,6 +16,7 @@ import com.shotgun.viewserver.delivery.ProductKey;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.DistanceAndDuration;
+import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.order.domain.LinkedDeliveryOrder;
 import com.shotgun.viewserver.order.domain.OrderPaymentStage;
@@ -27,6 +28,7 @@ import com.shotgun.viewserver.user.SavedPaymentCard;
 import com.shotgun.viewserver.user.UserRating;
 import com.shotgun.viewserver.user.UserRelationship;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import io.viewserver.util.dynamic.DynamicSerializationModule;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -34,15 +36,17 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.util.Date;
 
-public class OrderSerializationModule extends SimpleModule {
+public class OrderSerializationModule extends DynamicSerializationModule {
     public OrderSerializationModule() {
         addSerializer(new ProductKeySerialiser());
         addSerializer(new OrderContentTypeSerializer());
         addSerializer(new DateSerialiser());
+        registerDynamicClass(DynamicJsonBackedObject.class);
         registerDynamicClass(NegotiationResponse.class);
         registerDynamicClass(OrderPaymentStage.class);
         registerDynamicClass(LinkedDeliveryOrder.class);
         registerDynamicClass(OrderProduct.class);
+        registerDynamicClass(AppMessage.class);
         registerDynamicClass(UserRelationship.class);
         registerDynamicClass(UserRating.class);
         registerDynamicClass(SavedPaymentCard.class);

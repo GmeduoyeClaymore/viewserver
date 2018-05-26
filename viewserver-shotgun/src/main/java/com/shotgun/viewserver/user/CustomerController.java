@@ -57,21 +57,30 @@ public class CustomerController {
         }
         user.set("contactNo",international_format_number);
 
-        String userId = userController.addOrUpdateUser(user, user.getPassword());
-        ControllerContext.set("userId", userId);
+        ControllerContext context = ControllerContext.Current();
 
-        if(deliveryAddress != null && deliveryAddress.getLine1() != null) {
-            deliveryAddress.set("isDefault", true);
-            deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
-        }
+        userController.addOrUpdateUserObservable(user, user.getPassword()).subscribe(
+                userId -> {
+                    context.set("userId", userId);
 
-        log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
-        Observable.from(loginController.setUserId(userId)).subscribe(
-                res -> {
-                    log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
-                    future.set(userId);
+                    if(deliveryAddress != null && deliveryAddress.getLine1() != null) {
+                        deliveryAddress.set("isDefault", true);
+                        deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
+                    }
+
+                    log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
+                    Observable.from(loginController.setUserId(userId)).subscribe(
+                            res -> {
+                                log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
+                                future.set(userId);
+                            },
+                            err -> log.error("Problem logging in user",err)
+                    );
+
                 },
-                err -> log.error("Problem logging in user",err)
+                err -> {
+                    future.setException(err);
+                }
         );
 
         return future;

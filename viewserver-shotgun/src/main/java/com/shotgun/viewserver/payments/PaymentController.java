@@ -5,6 +5,7 @@ import com.stripe.Stripe;
 import com.stripe.model.*;
 import com.stripe.net.RequestOptions;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
@@ -18,8 +19,8 @@ public class PaymentController extends BasePaymentController implements IPayment
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
     private StripeApiKey apiKey;
 
-    public PaymentController(StripeApiKey apiKey, IDatabaseUpdater iDatabaseUpdater) {
-        super(iDatabaseUpdater);
+    public PaymentController(StripeApiKey apiKey, IDatabaseUpdater iDatabaseUpdater, ICatalog catalog) {
+        super(iDatabaseUpdater, catalog);
         this.apiKey = apiKey;
         Stripe.apiKey = apiKey.getPrivateKey();
     }

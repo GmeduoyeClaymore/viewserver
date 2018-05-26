@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.controllers.contracts.OrderCreationController;
@@ -11,6 +12,7 @@ import com.shotgun.viewserver.order.domain.NegotiatedOrder;
 import com.shotgun.viewserver.order.domain.ProductOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -26,17 +28,19 @@ public class ProductOrderController implements NegotiationNotifications, OrderCr
     private IMapsController iMapsController;
     private IPaymentController paymentController;
     private IMessagingController iMessagingController;
+    private ICatalog systemCatalog;
 
-    public ProductOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController) {
+    public ProductOrderController(DeliveryOrderController deliveryOrderController, IDatabaseUpdater iDatabaseUpdater, IMapsController iMapsController, IPaymentController paymentController, IMessagingController iMessagingController, ICatalog systemCatalog) {
         this.deliveryOrderController = deliveryOrderController;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.iMapsController = iMapsController;
         this.paymentController = paymentController;
         this.iMessagingController = iMessagingController;
+        this.systemCatalog = systemCatalog;
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")ProductOrder order){
+    ListenableFuture<String> createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")ProductOrder order){
         return this.create(
                 order,
                 paymentMethodId,
@@ -56,6 +60,11 @@ public class ProductOrderController implements NegotiationNotifications, OrderCr
     @Override
     public DeliveryOrderController getDeliveryOrderController() {
         return deliveryOrderController;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override

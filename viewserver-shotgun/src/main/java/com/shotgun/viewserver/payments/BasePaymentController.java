@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.payments;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
@@ -11,6 +13,7 @@ import com.stripe.model.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.network.IChannel;
@@ -20,6 +23,7 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,9 +34,11 @@ import java.util.Map;
 public abstract class BasePaymentController implements IPaymentController{
     private static final Logger logger = LoggerFactory.getLogger(BasePaymentController.class);
     private final IDatabaseUpdater iDatabaseUpdater;
+    private ICatalog systemCatalog;
 
-    public BasePaymentController(IDatabaseUpdater iDatabaseUpdater) {
+    public BasePaymentController(IDatabaseUpdater iDatabaseUpdater, ICatalog systemCatalog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.systemCatalog = systemCatalog;
     }
 
     public HashMap<String, Object> createPaymentCustomer(String emailAddress, PaymentCard paymentCard) {
@@ -184,14 +190,14 @@ public abstract class BasePaymentController implements IPaymentController{
         }
     }
 
-    public String createCharge(int totalPrice,
-                               String paymentMethodId,
-                               String fromCustomerUserId,
-                               String toPartnerUserId,
-                               String description) {
+    public Observable<String> createCharge(int totalPrice,
+                                           String paymentMethodId,
+                                           String fromCustomerUserId,
+                                           String toPartnerUserId,
+                                           String description) {
 
 
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
         String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId", fromCustomerUserId);
         String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId", toPartnerUserId);
@@ -227,11 +233,8 @@ public abstract class BasePaymentController implements IPaymentController{
                     addValue("accountId", toAccountId).
                     addValue("description", description);
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord);
 
-            logger.debug("Created stripe charge {} with amount {} with {} sent to driver", charge.getId(), totalPrice, destinationAmount);
-
-            return paymentid;
+            return iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord).map(res -> paymentid);
         } catch (Exception e) {
             logger.error("There was a problem creating the charge", e);
             throw new RuntimeException(e);

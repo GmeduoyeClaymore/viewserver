@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.table.TableKey;
@@ -12,7 +13,9 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Emitter;
 import rx.Observable;
+import rx.functions.Action1;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,28 +31,32 @@ public class MongoTableUpdater implements IDatabaseUpdater {
     }
 
     @Override
-    public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
-        try {
-            log.info("Writing to table \"" + tableName + "\"");
-            TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
-            TableKey tableKey = RecordUtils.getTableKey(record,definition);
-            String documentId = tableKey.toString("_");
-            Map<String, Object> docData = getDocumentData(record, schemaConfig);
-            BasicDBObject query = new BasicDBObject("_id",documentId);
-            getCollection(tableName).replaceOne(query, new Document(docData),new UpdateOptions().upsert(true));
-            log.info("Finished Writing to table \"" + tableName + "\"");
-        }catch (Exception ex){
-            log.error("Writing to \"" + tableName + "\" failed exception is",ex);
-            throw new RuntimeException(ex);
-        }
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+        return Observable.create(
+                booleanEmitter -> {
+                    try {
+                        TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
+                        TableKey tableKey = RecordUtils.getTableKey(record, definition);
+                        String documentId = tableKey.toString("_");
+                        log.info("Writing to table \"" + tableName + "\" record id " + documentId);
+                        Map<String, Object> docData = getDocumentData(record, schemaConfig);
+                        BasicDBObject query = new BasicDBObject("_id", documentId);
+                        Document tDocument = new Document(docData);
+                        UpdateResult result = getUpdateResult(tableName, query, tDocument);
+                        log.info("Finished Writing to table \"" + tableName + "\"");
+                        booleanEmitter.onNext(result.wasAcknowledged());
+                        booleanEmitter.onCompleted();
+                    }catch (Exception ex){
+                        log.error("Writing to \"" + tableName + "\" failed exception is",ex);
+                        booleanEmitter.onError(ex);
+                    }
+                }, Emitter.BackpressureMode.BUFFER
+        );
     }
 
-    @Override
-    public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
-        addOrUpdateRow(tableName,schemaConfig,record);
-        return Observable.just(true);
+    public UpdateResult getUpdateResult(String tableName, BasicDBObject query, Document tDocument) {
+        return getCollection(tableName).replaceOne(query, tDocument,new UpdateOptions().upsert(true));
     }
-
 
     private Map<String, Object> getDocumentData(IRecord record, SchemaConfig config){
         Map<String, Object> docData = new HashMap<>();

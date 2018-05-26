@@ -22,6 +22,7 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
         //register(DeliveryAddressDataSource.getDataSource().getSchema(), DeliveryAddressDataSource.NAME);
+        register(PaymentDataSource.getDataSource().getSchema(), PaymentDataSource.NAME);
         register(PhoneNumberDataSource.getDataSource().getSchema(), PhoneNumberDataSource.NAME);
         register(ProductCategoryDataSource.getDataSource().getSchema(), ProductCategoryDataSource.NAME);
         register(ProductDataSource.getDataSource().getSchema(), ProductDataSource.NAME);
@@ -57,6 +58,7 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
 
     @Override
     public void close(){
+        connectionFactory.close();
         loaders.values().forEach(c-> c.close());
     }
 }

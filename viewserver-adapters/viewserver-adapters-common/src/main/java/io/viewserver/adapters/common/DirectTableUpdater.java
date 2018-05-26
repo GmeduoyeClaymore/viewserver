@@ -20,19 +20,21 @@ public class DirectTableUpdater implements IDatabaseUpdater{
     }
 
     @Override
-    public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
-            scheduleAddOrUpdateRow(tableName,schemaConfig,record).subscribe();
-            return;
+            Observable<Boolean> booleanObservable = scheduleAddOrUpdateRow(tableName, schemaConfig, record);
+            booleanObservable.subscribe();//TODO work out propper way of making this a hot observable
+            return booleanObservable;
+
         }
         IOperator operator = serverCatalog.getOperatorByPath(tableName);
         if(operator == null){
             throw new RuntimeException("Unable to find operator named " + tableName);
         }
         RecordUtils.addRecordToTableOperator((KeyedTable) operator,record);
+        return Observable.just(true);
     }
 
-    @Override
     public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         return Observable.create(subscriber -> this.executionContext.getReactor().scheduleTask(() -> {
             try{

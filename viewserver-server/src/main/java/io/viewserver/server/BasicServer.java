@@ -15,7 +15,8 @@ public class BasicServer {
     private IDataSourceServerComponents dataSourceServerComponents;
     private IReportServerComponents reportServerComponents;
     private IInitialDataLoaderComponent initialDataLoaderComponent;
-    private List<Callable<IServerComponent>> components = new ArrayList<>();
+    private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
+    private List<IServerComponent> components = new ArrayList<>();
 
     public interface Callable<V> {
         V call() ;
@@ -53,15 +54,19 @@ public class BasicServer {
         registerComponent(() -> component);
     }
     public void registerComponent(Callable<IServerComponent> component) {
-        this.components.add(component);
+        this.componentFactories.add(component);
     }
 
     public void start(){
-        this.components.forEach(c-> c.call().start());
+        this.componentFactories.forEach(c-> {
+            IServerComponent component = c.call();
+            components.add(component);
+            component.start();
+        });
         basicServerComponents.listen();
     }
 
     public void stop(){
-        this.components.forEach(c-> c.call().stop());
+        this.components.forEach(c-> c.stop());
     }
 }

@@ -54,8 +54,6 @@ public class SerialiserOperator extends OperatorBase {
     private int commandId;
     private boolean snapshotComplete;
     private IMessage pendingMessage;
-    private HashMap<Status,Status> statusWorkFlow = new HashMap<>();
-    private List<Status> alreadySentStatus = new ArrayList<>();
 
     public SerialiserOperator(String name, IExecutionContext executionContext, ICatalog catalog,
                               IMessageManager messageManager, SubscriptionManager subscriptionManager, int connectionId,

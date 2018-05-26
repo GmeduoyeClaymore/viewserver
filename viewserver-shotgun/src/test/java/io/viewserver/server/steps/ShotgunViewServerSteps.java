@@ -17,6 +17,7 @@ public class ShotgunViewServerSteps {
 
     private ViewServerClientContext clientContext;
     private ShotgunServerLauncher launcher;
+    private static int runCount = 0;
 
     public ShotgunViewServerSteps(ViewServerClientContext clientContext, ShotgunServerLauncher launcher) {
         this.clientContext = clientContext;
@@ -31,7 +32,7 @@ public class ShotgunViewServerSteps {
         PropertyUtils.loadProperties(env);
         launcher.stop();
         if(Boolean.parseBoolean(System.getProperty("serverShouldBeStarted", "true"))) {
-            launcher.run(env, true);
+            launcher.run(env, true, 0==runCount++);
         }
     }
 

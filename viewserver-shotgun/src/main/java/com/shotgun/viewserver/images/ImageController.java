@@ -12,6 +12,7 @@ import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.order.controllers.contracts.OrderUpdateController;
 import com.shotgun.viewserver.order.domain.PersonellOrder;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -29,10 +30,12 @@ public class ImageController implements IImageController, OrderUpdateController 
     private BasicAWSCredentials awsCredentials;
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
     private IDatabaseUpdater databaseUpdater;
+    private ICatalog systemCatalog;
 
-    public ImageController(BasicAWSCredentials awsCredentials, IDatabaseUpdater databaseUpdater) {
+    public ImageController(BasicAWSCredentials awsCredentials, IDatabaseUpdater databaseUpdater, ICatalog systemCatalog) {
         this.awsCredentials = awsCredentials;
         this.databaseUpdater = databaseUpdater;
+        this.systemCatalog = systemCatalog;
     }
 
     @ControllerAction(path = "saveOrderImage", isSynchronous = false)
@@ -72,6 +75,11 @@ public class ImageController implements IImageController, OrderUpdateController 
             logger.error(String.format("Unable to upload image %s to s3", fileName),ex);
             throw new RuntimeException("Unable to upload image to s3");
         }
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override

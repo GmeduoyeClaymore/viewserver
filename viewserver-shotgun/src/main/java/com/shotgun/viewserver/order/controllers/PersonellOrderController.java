@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
@@ -19,6 +20,7 @@ import com.shotgun.viewserver.order.domain.PersonellOrder;
 import com.shotgun.viewserver.order.domain.SupportsImageOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -37,17 +39,19 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     private DeliveryAddressController deliveryAddressController;
     private IPaymentController paymentController;
     private IImageController imageController;
+    private ICatalog systemCatalog;
 
     public PersonellOrderController(IDatabaseUpdater iDatabaseUpdater,
                                     IMessagingController messagingController,
                                     DeliveryAddressController deliveryAddressController,
                                     IPaymentController paymentController,
-                                    IImageController imageController) {
+                                    IImageController imageController, ICatalog systemCatalog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
         this.deliveryAddressController = deliveryAddressController;
         this.paymentController = paymentController;
         this.imageController = imageController;
+        this.systemCatalog = systemCatalog;
     }
 
     @ControllerAction(path = "addOrderImage", isSynchronous = false)
@@ -75,7 +79,7 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId") String paymentMethodId, @ActionParam(name = "order") PersonellOrder order) {
+    public ListenableFuture<String> createOrder(@ActionParam(name = "paymentMethodId") String paymentMethodId, @ActionParam(name = "order") PersonellOrder order) {
         return this.create(
                 order,
                 paymentMethodId,
@@ -154,8 +158,8 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)
-    public void partnerCompleteJob(@ActionParam(name = "orderId") String orderId) {
-        this.transform(
+    public ListenableFuture partnerCompleteJob(@ActionParam(name = "orderId") String orderId) {
+        return this.transform(
                 orderId,
                 order -> {
                     order.partnerCompleteJob();
@@ -176,6 +180,11 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     @Override
     public IMessagingController getMessagingController() {
         return messagingController;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override

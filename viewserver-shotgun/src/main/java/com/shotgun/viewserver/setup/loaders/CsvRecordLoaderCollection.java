@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.setup.loaders;
 
+import com.shotgun.viewserver.setup.DataSourceRecordLoader;
+import com.shotgun.viewserver.setup.ReportRecordLoader;
 import io.viewserver.adapters.common.sql.SimpleSqlDataQueryProvider;
 import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
 import io.viewserver.adapters.jdbc.JdbcRecordLoader;
@@ -7,6 +9,7 @@ import io.viewserver.datasource.*;
 import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.csv.CsvRecordLoader;
 import io.viewserver.report.ReportRegistry;
+import io.viewserver.server.setup.IApplicationGraphDefinitions;
 
 import java.util.HashMap;
 import java.util.Map;

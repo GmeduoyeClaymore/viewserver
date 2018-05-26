@@ -16,6 +16,7 @@
 
 package io.viewserver.server.steps;
 
+import gherkin.lexer.Ru;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.execution.Options;
@@ -109,6 +110,14 @@ public class ViewServerClientContext {
 
     public void addAllParams(Map<String, String> params) {
         contextParams.putAll(params);
+    }
+
+    public void waitForPersistenceRoundTrip() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

@@ -26,7 +26,7 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
     }
 
     @Override
-    public void addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
         try {
             log.info("Writing to table \"" + tableName + "\"");
             TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
@@ -36,16 +36,11 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
             DocumentReference document = getCollection(tableName).document(documentId);
             document.set(docData, SetOptions.merge());
             log.info("Finished Writing to table \"" + tableName + "\"");
+            return Observable.just(true);
         }catch (Exception ex){
             log.error("Writing to \"" + tableName + "\" failed exception is",ex);
             throw new RuntimeException(ex);
         }
-    }
-
-    @Override
-    public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
-        addOrUpdateRow(tableName,schemaConfig,record);
-        return Observable.just(true);
     }
 
 

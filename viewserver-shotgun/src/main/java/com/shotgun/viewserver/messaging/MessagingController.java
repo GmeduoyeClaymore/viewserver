@@ -78,7 +78,6 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
     @Override
     public ListenableFuture sendMessageToUser(AppMessage message){
-        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
         if(message.getFromUserId() == null){
             throw new RuntimeException("From user id must be specified");
@@ -87,15 +86,11 @@ public class MessagingController implements IMessagingController, UserPersistenc
             throw new RuntimeException("To user id must be specified");
         }
 
-
-        return ListenableFutureObservable.to(waitForUser(message.getToUserId(), userTable).observeOn(Schedulers.from(service)).map(rec -> {
-            String currentToken = (String) rec.get("fcmToken");
+        return ListenableFutureObservable.to(getUserForId(message.getToUserId(),User.class).observeOn(Schedulers.from(service)).map(user -> {
+            String currentToken = user.getFcmToken();
             message.set("to",currentToken);
-
-            User user = getUserForId(message.getToUserId(),User.class);
-
             boolean sendRemotely = isSendRemotely(user);
-            persistMessage(message, sendRemotely);
+            persistMessage(message, sendRemotely).subscribe();
             if(currentToken == null && isSendRemotely(user)){
                 String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
                 logger.info(result);
@@ -135,7 +130,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             Record userRecord = new Record()
                     .addValue("userId", existingUserForToken)
                     .addValue("fcmToken", null);
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
         }
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
@@ -144,7 +139,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
 
             User user = (User) ControllerContext.get("user");
             if(user.getPendingMessages() != null){

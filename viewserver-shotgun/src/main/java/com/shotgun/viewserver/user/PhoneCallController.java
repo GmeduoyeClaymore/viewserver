@@ -7,6 +7,7 @@ import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.setup.datasource.PhoneNumberDataSource;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -27,9 +28,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class PhoneCallController implements OrderTransformationController{
     private static final Logger log = LoggerFactory.getLogger(PhoneCallController.class);
     private IDatabaseUpdater iDatabaseUpdater;
+    private ICatalog systemCatlog;
 
-    public PhoneCallController(IDatabaseUpdater iDatabaseUpdater) {
+    public PhoneCallController(IDatabaseUpdater iDatabaseUpdater, ICatalog systemCatlog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.systemCatlog = systemCatlog;
     }
 
     @ControllerAction(path = "getVirtualNumber", isSynchronous = true)
@@ -40,8 +43,8 @@ public class PhoneCallController implements OrderTransformationController{
     }
 
     private ArrayList<String> assignPhoneNumbers(String fromUserId, String toUserId) {
-        KeyedTable phoneNumberTable = ControllerUtils.getKeyedTable(TableNames.PHONE_NUMBER_TABLE_NAME);
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable phoneNumberTable = (KeyedTable) systemCatlog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) systemCatlog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
         String customerNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", fromUserId);
         String driverNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", toUserId);
@@ -58,7 +61,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), customerVirtualNumber);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), customerVirtualNumber).subscribe();
 
         Record driverVirtualNumber = new Record()
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
@@ -68,7 +71,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), driverVirtualNumber);
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), driverVirtualNumber).subscribe();
 
         return availablePhoneNumbers;
     }
@@ -99,6 +102,11 @@ public class PhoneCallController implements OrderTransformationController{
         }
 
         return availableNumbers;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatlog;
     }
 
     @Override

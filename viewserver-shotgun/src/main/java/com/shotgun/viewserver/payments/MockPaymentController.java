@@ -10,12 +10,14 @@ import com.shotgun.viewserver.user.User;
 import com.stripe.model.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,9 +31,11 @@ import static com.shotgun.viewserver.ControllerUtils.getUser;
 public class MockPaymentController implements IPaymentController {
 
     private IDatabaseUpdater iDatabaseUpdater;
+    private ICatalog catalog;
 
-    public MockPaymentController(IDatabaseUpdater iDatabaseUpdater){
+    public MockPaymentController(IDatabaseUpdater iDatabaseUpdater, ICatalog catalog){
         this.iDatabaseUpdater = iDatabaseUpdater;
+        this.catalog = catalog;
     }
     private static final Logger logger = LoggerFactory.getLogger(MockPaymentController.class);
 
@@ -105,14 +109,14 @@ public class MockPaymentController implements IPaymentController {
         return result;
     }
 
-    public String createCharge(int totalPrice,
-                               String paymentMethodId,
-                               String fromCustomerUserId,
-                               String toPartnerUserId,
-                               String description) {
+    public Observable<String> createCharge(int totalPrice,
+                                           String paymentMethodId,
+                                           String fromCustomerUserId,
+                                           String toPartnerUserId,
+                                           String description) {
 
 
-        KeyedTable userTable = ControllerUtils.getKeyedTable(TableNames.USER_TABLE_NAME);
+        KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
 
         String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId",fromCustomerUserId);
@@ -149,11 +153,9 @@ public class MockPaymentController implements IPaymentController {
                     addValue("accountId", toAccountId).
                     addValue("description", description);
 
-            iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord);
-
             logger.debug("Created stripe charge {} with amount {} with {} sent to driver", chargeId, totalPrice, destinationAmount);
 
-            return paymentid;
+            return iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord).map(res -> paymentid);
         } catch (Exception e) {
             logger.error("There was a problem creating the charge", e);
             throw new RuntimeException(e);

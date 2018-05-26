@@ -205,20 +205,6 @@ public class ControllerUtils{
         return (ITable)table;
     }
 
-    public static IOperator getOperator(String tableName){
-        IOperator operator = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperatorByPath(tableName);
-        return operator;
-    }
-
-    public static KeyedTable getKeyedTable(String tableName){
-        IOperator table = ControllerContext.Current().getPeerSession().getSystemCatalog().getOperatorByPath(tableName);
-        if (!(table instanceof KeyedTable)) {
-            throw new RuntimeException("Operator '" + tableName + "' is not a keyed table");
-        }
-
-        return (KeyedTable)table;
-    }
-
     public static Throwable Unwrap(Exception e){
         if(e instanceof InvocationTargetException){
             return ((InvocationTargetException)e).getTargetException();

@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.Vehicle;
@@ -22,6 +23,7 @@ import io.viewserver.controller.ControllerAction;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +60,7 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
 
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){
+    public ListenableFuture<String> createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")DeliveryOrder order){
         return this.create(
             order,
             paymentMethodId,
@@ -92,27 +94,30 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
     }
 
     @ControllerAction(path = "acceptResponse", isSynchronous = true)
-    public void acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
+    public ListenableFuture acceptResponseToOrder(@ActionParam(name = "orderId")String orderId, @ActionParam(name = "partnerId")String partnerId){
         AtomicReference<List<NegotiationResponse>> respondedResponses = new AtomicReference<>();
-        this.transform(
+        return this.transformAsync(
                 orderId,
                 order -> {
                     if(!fromArray(order.getResponses()).anyMatch(c->c.getPartnerId().equals(partnerId))){
                         getLogger().warn(partnerId + " has not responded to this order aborting");
-                        return false;
+                        return Observable.just(false);
                     }
                     respondedResponses.set(Arrays.stream(order.getResponses()).filter(c -> c.getResponseStatus().equals(NegotiationResponse.NegotiationResponseStatus.RESPONDED)).collect(Collectors.toList()));
-                    User partner = getUserForId(partnerId,User.class);
-                    if(partner == null){
-                        throw new RuntimeException("Unable to find user for id " + partnerId);
-                    }
-                    Vehicle vehicle = partner.getVehicle();
-                    if(vehicle == null){
-                        throw new RuntimeException("In order to accept this order the partner must have a vehicle registered");
-                    }
-                    order.set("vehicle", vehicle);
-                    order.acceptResponse(partnerId);
-                    return  true;
+                    return getUserForId(partnerId,User.class).map(
+                        partner -> {
+                            if(partner == null){
+                                throw new RuntimeException("Unable to find user for id " + partnerId);
+                            }
+                            Vehicle vehicle = partner.getVehicle();
+                            if(vehicle == null){
+                                throw new RuntimeException("In order to accept this order the partner must have a vehicle registered");
+                            }
+                            order.set("vehicle", vehicle);
+                            order.acceptResponse(partnerId);
+                            return  true;
+                        }
+                    );
                 },
                 order -> {
                     respondedResponses.get().forEach(
@@ -138,6 +143,11 @@ public class DeliveryOrderController implements NegotiationNotifications, OrderC
     @Override
     public IMessagingController getMessagingController() {
         return messagingController;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalogue;
     }
 
     @Override

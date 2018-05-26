@@ -23,6 +23,10 @@ public class MongoDocumentChangeRecord extends Record {
     private void initialise(Document doc) {
         values.clear();
 
+        setValuesFrom(doc);
+    }
+
+    public void setValuesFrom(Document doc) {
         for (Column column : schema.getColumns()) {
             String columnName = column.getName();
             if (!doc.containsKey(columnName)) {

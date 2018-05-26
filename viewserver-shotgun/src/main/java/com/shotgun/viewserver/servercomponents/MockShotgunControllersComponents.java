@@ -30,7 +30,7 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IPaymentController getPaymentController() {
-        return new MockPaymentController(databaseUpdater);
+        return new MockPaymentController(databaseUpdater, basicServerComponents.getServerCatalog());
     }
 
     @Override

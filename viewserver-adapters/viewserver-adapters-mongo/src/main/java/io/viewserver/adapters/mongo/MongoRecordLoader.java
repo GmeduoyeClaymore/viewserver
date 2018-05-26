@@ -7,6 +7,7 @@ import com.mongodb.Block;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import com.mongodb.client.model.changestream.OperationType;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.IRecordLoader;
 import io.viewserver.datasource.OperatorCreationConfig;
@@ -16,9 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
+import rx.subjects.PublishSubject;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class MongoRecordLoader implements IRecordLoader{
@@ -29,13 +33,20 @@ public class MongoRecordLoader implements IRecordLoader{
     private OperatorCreationConfig creationConfig;
     private MongoCollection<Document> collection;
     private ListeningExecutorService service;
+    private HashMap<String,MongoDocumentChangeRecord> recordsById;
+    private PublishSubject updateObservable = PublishSubject.create();
+    private PublishSubject recordStream = PublishSubject.create();
+    private boolean mongoListenerAdded;
+
 
     public MongoRecordLoader(MongoConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.connectionFactory = connectionFactory;
+        this.recordsById = new HashMap<>();
         this.tableName = tableName;
         this.service =  MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1,new ThreadFactoryBuilder().setNameFormat(this.tableName+"-%d").build()));
         this.config = config;
         this.creationConfig = creationConfig;
+        updateObservable.debounce(5, TimeUnit.MILLISECONDS).subscribe(res -> this.sendRecords());
     }
 
     @Override
@@ -49,46 +60,60 @@ public class MongoRecordLoader implements IRecordLoader{
     }
 
     public Observable<IRecord> getRecords(String query) {
-        return  rx.Observable.create(subscriber -> {
-            try{
-                this.service.submit(() -> addMongoListener(rec -> subscriber.onNext(rec)));
-            }catch (Exception ex){
-                subscriber.onError(ex);
-            }}, Emitter.BackpressureMode.BUFFER);
-
+        if(!mongoListenerAdded){
+            addMongoListener();
+            mongoListenerAdded = true;
+        }
+        return recordStream;
     }
 
 
-    private int addMongoListener(Consumer<IRecord> consumer){
+    private void addMongoListener(){
         CompletableFuture<Integer> ss = new CompletableFuture<>();
+        this.service.submit(() -> {
+            try {
+                logger.info(String.format("Adding snapshot listener for Mongo table %s", tableName));
+                Block<ChangeStreamDocument<Document>> block = t -> {
+                    Document fullDocument = t.getFullDocument();
+                    System.out.println("received document update: " + fullDocument.getString("_id"));
+                    if (t.getOperationType().equals(OperationType.INVALIDATE)) {
+                        return;
+                    }
+                    receiveDocument(fullDocument);
+                };
+                getCollection().find().forEach((Block<Document>) document -> {
+                    System.out.println("received doucment in snapshot: " + document.getString("_id"));
+                    receiveDocument(document);
+                });
+                getCollection().watch().forEach(block);
+                return ss.get();
+            } catch (Exception ex) {
+                logger.error(String.format("Error adding snapshot listener for Mongo table %s {}", tableName), ex);
+                throw new RuntimeException("Error getting records", ex);
+            }
+        });
+    }
 
-        try {
-            logger.info(String.format("Adding snapshot listener for Mongo table %s", tableName));
-            Block<ChangeStreamDocument<Document>> block = new Block<ChangeStreamDocument<Document>>() {
-                @Override
-                public void apply(ChangeStreamDocument<Document> t) {
-                    System.out.println("received update: " + t.getFullDocument());
-                    MongoDocumentChangeRecord changeRecord = new MongoDocumentChangeRecord(config, t.getFullDocument());
-                    consumer.accept(changeRecord);
-                }
-            };
-            getCollection().find().forEach(new Block<Document>() {
-                @Override
-                public void apply(Document document) {
-                    System.out.println("received snapshot: " + document);
-                    MongoDocumentChangeRecord changeRecord = new MongoDocumentChangeRecord(config, document);
-                    consumer.accept(changeRecord);
-                }
-            });
-            getCollection().watch().forEach(block);
-            /*getCollection().watch().forEach((Consumer<ChangeStreamDocument<Document>>) documentChangeStreamDocument -> {
-                MongoDocumentChangeRecord changeRecord = new MongoDocumentChangeRecord(config, documentChangeStreamDocument);
-                consumer.accept(changeRecord);
-            });*/
-            return ss.get();
-        }catch(Exception ex){
-            logger.error(String.format("Error adding snapshot listener for Mongo table %s {}", tableName),ex);
-            throw new RuntimeException("Error getting records", ex);
+    private void receiveDocument(Document document) {
+        String id = document.getString("_id");
+        synchronized (recordsById) {
+            MongoDocumentChangeRecord changeRecord = recordsById.get(id);
+            if (changeRecord == null) {
+                changeRecord = new MongoDocumentChangeRecord(config, document);
+                recordsById.put(id, changeRecord);
+            } else {
+                changeRecord.setValuesFrom(document);
+            }
+        }
+        updateObservable.onNext(null);
+    }
+
+    private void sendRecords() {
+        synchronized (recordsById){
+            for(IRecord rec : recordsById.values()){
+                recordStream.onNext(rec);
+            }
+            recordsById.clear();
         }
     }
 
@@ -106,6 +131,7 @@ public class MongoRecordLoader implements IRecordLoader{
 
     @Override
     public void close(){
+        connectionFactory.close();
     }
 }
 

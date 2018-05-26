@@ -12,6 +12,7 @@
         <Logger name="io.grpc.netty" level="info"/>
         <Logger name="io.netty" level="info"/>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
+        <Logger name="io.viewserver.operators.serialiser.SerialiserOperator" level="debug"/>
         <!--<Logger name="com.cmm.viewserver.command.MultiCommandResult" level="trace"/>-->
     </Loggers>
 </configuration>

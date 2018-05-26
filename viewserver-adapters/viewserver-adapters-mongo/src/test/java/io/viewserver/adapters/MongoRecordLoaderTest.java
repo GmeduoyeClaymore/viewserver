@@ -1,5 +1,6 @@
 package io.viewserver.adapters;
 
+import com.fasterxml.jackson.databind.Module;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
@@ -13,8 +14,10 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.adapters.mongo.MongoRecordLoader;
 import io.viewserver.adapters.mongo.MongoTableUpdater;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.*;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import io.viewserver.util.dynamic.DynamicSerializationModule;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.bson.Document;
 import org.junit.Assert;
@@ -30,6 +33,16 @@ import static java.util.Arrays.asList;
 
 public class MongoRecordLoaderTest {
 
+    static DynamicSerializationModule orderSerializationModule = new DynamicSerializationModule();
+
+    static{
+        JacksonSerialiser.getInstance().registerModules(
+                new Module[]{
+                        orderSerializationModule
+                });
+    }
+
+
     private String   clientURI = "mongodb+srv://development_user:Welcome123XXX@cluster0-62kku.mongodb.net";
     private MongoConnectionFactory connectionFactory;
     private String tableName;
@@ -40,10 +53,10 @@ public class MongoRecordLoaderTest {
     public void setup() {
         connectionFactory = new MongoConnectionFactory(clientURI, "test");
 
-        tableName = "test_table";
+        tableName = "test_table_2";
         config = new SchemaConfig().withColumns(asList(
                 new Column("id", ContentType.String),
-                new Column("name", ContentType.String)
+                new Column("name", ContentType.Json)
 
         )).withKeyColumns("id");
 
@@ -76,7 +89,7 @@ public class MongoRecordLoaderTest {
                 }
         );
         int counter = 0;
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", "report_name"));
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", "report_name")).subscribe();
         Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
     }
 
@@ -97,8 +110,8 @@ public class MongoRecordLoaderTest {
                     System.err.println(err);
                 }
         );
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name"));
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name2"));
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name")).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name2")).subscribe();
         Assert.assertTrue(latch.await(2,TimeUnit.SECONDS));
         Assert.assertEquals("report_name2", name.get());
     }
@@ -121,10 +134,35 @@ public class MongoRecordLoaderTest {
         int counter = 0;
         DynamicJsonBackedObject obj = JSONBackedObjectFactory.create(DynamicJsonBackedObject.class);
         obj.set("foo","bar");
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj));
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj)).subscribe();
         Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
     }
 
+
+
+    @Test
+    public void Can_add_dynamic_json_backed_object_array() throws InterruptedException {
+
+        setup();
+        CountDownLatch latch = new CountDownLatch(1);
+        recordObservable.timeout(10, TimeUnit.SECONDS).subscribe(
+                rec -> {
+                    System.out.println(rec);
+                    latch.countDown();
+                },
+                err -> {
+                    System.out.println(err);
+                }
+        );
+        int counter = 0;
+        DynamicJsonBackedObject[] ratings = new DynamicJsonBackedObject[2];
+        DynamicJsonBackedObject obj = JSONBackedObjectFactory.create(DynamicJsonBackedObject.class);
+        obj.set("foo","bar");
+        ratings[0] = obj;
+        ratings[1] = obj;
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", ratings)).subscribe();
+        Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
+    }
 
 
 

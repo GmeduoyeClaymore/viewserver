@@ -2,12 +2,15 @@ package io.viewserver.controller;
 
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 
 /**
  * Created by Gbemiga on 13/12/17.
@@ -18,6 +21,7 @@ public class ControllerContext implements AutoCloseable{
     private IPeerSession peerSession;
     private static ThreadLocal<ControllerContext> current = new ThreadLocal<>();
     private static ConcurrentHashMap<IPeerSession,ConcurrentHashMap<String,Object>> contextParams = new ConcurrentHashMap<>();
+
 
     private ControllerContext(IPeerSession peerSession) {
         this.peerSession = peerSession;
@@ -36,14 +40,32 @@ public class ControllerContext implements AutoCloseable{
         return context;
     }
 
+    public static Scheduler Scheduler(ControllerContext context){
+        return Schedulers.from(
+                command -> {
+                    try{
+                        ControllerContext.create(context);
+                        command.run();
+                    }finally {
+                        ControllerContext.closeStatic();
+                    }
+                }
+        );
+    }
+
     public static ControllerContext Current(){
         return current.get();
     }
 
     @Override
-    public void close() throws Exception {
+    public void close(){
         current.set(null);
     }
+
+    public static void closeStatic(){
+        current.set(null);
+    }
+
 
     private static Set<String> getParamNames(){
         IPeerSession peerSession = current.get().getPeerSession();

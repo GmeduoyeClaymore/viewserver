@@ -1,5 +1,6 @@
 package com.shotgun.viewserver.order.controllers;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.maps.DistanceAndDuration;
 import com.shotgun.viewserver.maps.IMapsController;
@@ -15,6 +16,7 @@ import com.shotgun.viewserver.order.domain.RubbishOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.user.User;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
@@ -34,20 +36,24 @@ public class RubbishOrderController implements NegotiationNotifications, OrderCr
     private DeliveryAddressController deliveryAddressController;
     private IPaymentController paymentController;
     private IMapsController mapsController;
+    private ICatalog systemCatalog;
 
     public RubbishOrderController(IDatabaseUpdater iDatabaseUpdater,
                                   IMessagingController messagingController,
                                   DeliveryAddressController deliveryAddressController,
-                                  IPaymentController paymentController, IMapsController mapsController) {
+                                  IPaymentController paymentController,
+                                  IMapsController mapsController,
+                                  ICatalog systemCatalog) {
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
         this.deliveryAddressController = deliveryAddressController;
         this.paymentController = paymentController;
         this.mapsController = mapsController;
+        this.systemCatalog = systemCatalog;
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
-    public String createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")RubbishOrder order){
+    public ListenableFuture<String> createOrder(@ActionParam(name = "paymentMethodId")String paymentMethodId, @ActionParam(name = "order")RubbishOrder order){
         return this.create(
             order,
             paymentMethodId,
@@ -73,8 +79,8 @@ public class RubbishOrderController implements NegotiationNotifications, OrderCr
     }
 
     @ControllerAction(path = "completeJourney", isSynchronous = true)
-    public void completeJourney(@ActionParam(name = "orderId")String orderId){
-        this.transform(
+    public ListenableFuture completeJourney(@ActionParam(name = "orderId")String orderId){
+        return this.transform(
                 orderId,
                 order -> {
                     User user = (User) ControllerContext.get("user");
@@ -104,6 +110,11 @@ public class RubbishOrderController implements NegotiationNotifications, OrderCr
     @Override
     public IMessagingController getMessagingController() {
         return messagingController;
+    }
+
+    @Override
+    public ICatalog getSystemCatalog() {
+        return systemCatalog;
     }
 
     @Override
