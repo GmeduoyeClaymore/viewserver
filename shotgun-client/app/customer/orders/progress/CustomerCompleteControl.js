@@ -14,11 +14,11 @@ class CustomerCompleteControl extends Component {
 
   onCompletePress = async() => {
     const {order, dispatch} = this.props;
-    const {amount, assignedPartner} = order;
+    const {amountToPay, assignedPartner} = order;
 
     Alert.alert(
       'Complete and pay for job?',
-      `You are about to complete this job and pay ${formatPrice(amount)} to ${assignedPartner.firstName} ${assignedPartner.lastName}`,
+      `You are about to complete this job and pay ${formatPrice(amountToPay)} to ${assignedPartner.firstName} ${assignedPartner.lastName}`,
       [
         {text: 'Cancel', style: 'cancel'},
         {text: 'OK', onPress: () => dispatch(customerCompleteAndPay(order.orderId, order.orderContentTypeId))},

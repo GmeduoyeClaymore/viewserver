@@ -104,6 +104,7 @@ const mapStateToProps = (state, initialProps) => {
   };
 };
 
+//TODO - bring this out into its own file
 const PaymentStagesAndSummary = (props) => {
   const {history, path, orderId, width, order} = props;
 

@@ -69,19 +69,16 @@ class UserDetails extends Component{
             </Col>
             {isPartner ? <Col width={60}><Row >
               <Col >
-                {user.imageData != undefined ? <Row style={{justifyContent: 'center'}} onPress={this.showPicker}>
-                  <Image source={{uri: `data:image/jpeg;base64,${user.imageData}`}} resizeMode='contain' style={styles.image}/>
-                </Row> : null}
-                {user.imageData == undefined ? <Button photoButton style={styles.imageButton} onPress={this.showPicker}>
-                  <Grid>
-                    <Row style={styles.imageButtonIconRow}>
-                      <Icon name='camera' style={{marginBottom: 15}}/>
-                    </Row>
-                    <Row style={{justifyContent: 'center'}}>
-                      <Text uppercase={false} style={styles.imageButtonText}>Add profile picture</Text>
-                    </Row>
-                  </Grid>
-                </Button> : null}
+                {user.imageData != undefined ?
+                  <Row style={styles.imageRow} onPress={this.showPicker}>
+                    <Image source={{uri: `data:image/jpeg;base64,${user.imageData}`}} resizeMode='contain' style={styles.image}/>
+                    <Icon style={styles.editPhotoIcon} name='cog'/>
+                  </Row> :
+                  <Row style={styles.imageRow}>
+                    <Button photoButton style={styles.imageButton} onPress={this.showPicker}>
+                      <Icon name='camera' style={styles.cameraIcon}/>
+                    </Button>
+                  </Row>}
               </Col>
             </Row></Col> : null }
           </Row>
@@ -143,28 +140,33 @@ const datePickerOptions = {
 };
 
 const styles = {
+  imageRow: {
+    justifyContent: 'flex-end',
+    marginRight: shotgun.contentPadding
+  },
   image: {
-    aspectRatio: 1.2,
-    borderRadius: shotgun.imageBorderRadius,
+    aspectRatio: 1,
     width: 100
   },
   imageButton: {
-    height: 80,
-    marginTop: shotgun.contentPadding,
-    marginLeft: shotgun.contentPadding,
-    marginRight: shotgun.contentPadding,
-    width: 'auto',
-    borderBottomWidth: 1,
-    borderRadius: 2,
-    alignItems: 'center'
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    flexDirection: 'column',
+    borderRadius: 80
   },
-  imageButtonText: {
-    fontSize: 14,
-    fontWeight: 'normal'
+  cameraIcon: {
+    fontSize: 38
   },
-  imageButtonIconRow: {
-    justifyContent: 'center',
-    alignItems: 'flex-start'
+  editPhotoIcon: {
+    position: 'absolute',
+    top: 70,
+    right: 10,
+    color: shotgun.brandDark,
+    fontSize: 20,
+    backgroundColor: shotgun.brandSecondary,
+    borderRadius: 25,
+    padding: 3
   }
 };
 

@@ -7,41 +7,23 @@ import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ImageSelector} from 'common/components';
 import * as ContentTypes from 'common/constants/ContentTypes';
 
-/*eslint-disable */
-const resourceDictionary = new ContentTypes.ResourceDictionary();
-resourceDictionary.
-  property('PageTitle', 'Photo of Your Item').
-    personell('Photo of Job').
-    rubbish('Photo of Rubbish').
-  property('PageCaption', 'Add a photo of your item').
-    personell('Add a photo of Job').
-    rubbish('Add a photo of your rubbish').
-  property('InputPlaceholder', 'Add a description of the item').
-    personell('Add a description of your job').
-    rubbish('Add a description of your rubbish')
-    /*eslint-disable */
-
-
 class ItemDetails extends Component{
   constructor(props){
     super(props);
-    this.onChangeValue = this.onChangeValue.bind(this);
-    this.onSelectImage = this.onSelectImage.bind(this);
-    this.showPicker = this.showPicker.bind(this);
     ContentTypes.bindToContentTypeResourceDictionary(this, resourceDictionary);
   }
 
-  onChangeValue(field, value){
-    const {order={}} = this.props;
+  onChangeValue = (field, value) => {
+    const {order = {}} = this.props;
     this.setState({order: {...order, [field]: value}});
   }
 
-  onSelectImage(response){
+  onSelectImage = (response) => {
     this.onChangeValue('imageData', response.data);
     imageIsVertical = response.height > response.width;
   }
 
-  showPicker(){
+  showPicker = () => {
     const {onSelectImage} = this;
     ImageSelector.show({title: 'Select Image', onSelect: onSelectImage, options: {}});
   }
@@ -49,8 +31,8 @@ class ItemDetails extends Component{
   render(){
     const {next, order, history} = this.props;
     const {imageData} = order;
-    let imageIsVertical = false;
-    const {onSelectImage, showPicker, onChangeValue, resources} = this;
+    const imageIsVertical = false;
+
     return (
       <Container>
         <Header withButton>
@@ -59,26 +41,26 @@ class ItemDetails extends Component{
               <Icon name='back-arrow'/>
             </Button>
           </Left>
-          <Body><Title>{resources.PageTitle}</Title></Body>
+          <Body><Title>{this.resources.PageTitle}</Title></Body>
         </Header>
         <Content padded>
-        <ValidatingInput style={styles.titleInput}  bold placeholder="Enter job title" value={order.title} validateOnMount={order.title !== undefined} onChangeText={(value) => onChangeValue('title', value)} validationSchema={validationSchema.title} maxLength={30}/>
-          {imageData != undefined ? <Grid onPress={showPicker}>
+          <ValidatingInput style={styles.titleInput}  bold placeholder="Enter job title" value={order.title} validateOnMount={order.title !== undefined} onChangeText={(value) => this.onChangeValue('title', value)} validationSchema={validationSchema.title} maxLength={30}/>
+          {imageData != undefined ? <Grid onPress={this.showPicker}>
             <Row style={{justifyContent: 'center'}}>
               <Image source={{uri: `data:image/jpeg;base64,${imageData}`}} resizeMode='contain' style={[styles.image, {width: imageIsVertical ? shotgun.deviceWidth / 2 : shotgun.deviceWidth - 50 }]}/>
             </Row>
           </Grid> : null}
-          {imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={showPicker}>
+          {imageData == undefined ? <Button style={styles.imageButton} photoButton onPress={this.showPicker}>
             <Grid>
               <Row style={styles.imageButtonIconRow}>
                 <Icon name='camera' style={{marginBottom: 15}}/>
               </Row>
               <Row style={{justifyContent: 'center'}}>
-                <Text uppercase={false}>{resources.PageCaption}</Text>
+                <Text uppercase={false}>{this.resources.PageCaption}</Text>
               </Row>
             </Grid>
           </Button> : null}
-          <ValidatingInput style={styles.detailsInput} value={order.description} multiline={true} placeholder={resources.InputPlaceholder} showIcons={false} onChangeText={(value) => onChangeValue('description', value)} validateOnMount={true} validationSchema={validationSchema.description} maxLength={200}/>
+          <ValidatingInput style={styles.detailsInput} value={order.description} multiline={true} placeholder={this.resources.InputPlaceholder} showIcons={false} onChangeText={(value) => this.onChangeValue('description', value)} validateOnMount={true} validationSchema={validationSchema.description} maxLength={200}/>
         </Content>
         <ValidatingButton fullWidth iconRight paddedBottomLeftRight onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
           <Text uppercase={false}>Continue</Text>
@@ -86,9 +68,24 @@ class ItemDetails extends Component{
         </ValidatingButton>
       </Container>
     );
-  
   }
 }
+
+/*eslint-disable */
+const resourceDictionary = new ContentTypes.ResourceDictionary();
+resourceDictionary.
+property('PageTitle', 'Description of Your Item').
+personell('Description of the job').
+rubbish('Description of the rubbish').
+property('PageCaption', 'Add a photo of your item').
+personell('Add a photo of the job').
+rubbish('Add a photo of your rubbish').
+property('InputPlaceholder', 'Add a description of the item').
+personell('Add a description of your job').
+rubbish('Add a description of your rubbish')
+/*eslint-disable */
+
+
 
 const validationSchema = {
   title: yup.string().required().max(30),

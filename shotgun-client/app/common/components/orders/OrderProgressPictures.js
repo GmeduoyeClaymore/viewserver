@@ -1,15 +1,8 @@
 import React, {Component} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {Col, Button} from 'native-base';
 import {SpinnerButton, Icon, ImageSelector, ErrorRegion} from 'common/components';
 import ImageCarousel from 'react-native-image-carousel';
-
 
 export default class OrderProgressPictures extends Component{
   constructor(props){
@@ -51,7 +44,7 @@ export default class OrderProgressPictures extends Component{
     this._imageCarousel.open();
   }
 
-  _renderHeader = () =>{
+  renderHeader = () =>{
     return  <TouchableWithoutFeedback onPress={this._imageCarousel.close} style={{padding: 0}}>
       <View>
         <Text style={styles.closeText}>Exit</Text>
@@ -59,13 +52,13 @@ export default class OrderProgressPictures extends Component{
     </TouchableWithoutFeedback>;
   }
  
-  _renderFooter = () =>  {
+  renderFooter = () =>  {
     return (
       <Text style={styles.footerText}></Text>
     );
   }
  
-  _renderContent = (idx) =>{
+  renderContent = (idx) =>{
     const {images: urls = []} = this.props;
     return (
       <Image
@@ -84,28 +77,18 @@ export default class OrderProgressPictures extends Component{
     
     return <Col style={{height: 150}}>
       <ErrorRegion errors={errors}/>
-      {urls.length ? <ImageCarousel
-        style={{marginTop: 10, marginBottom: 10, height: 360}}
-        ref={car => {this._imageCarousel = car;}}
-        renderContent={this._renderContent}
-        renderHeader={this._renderHeader}
-        renderFooter={this._renderFooter}>
-        {[...urls].map(url => (
-          <Col
-            style={styles.imageContainer}>
-            <Image
-              key={url}
-              
-              style={styles.image}
-              source={{ uri: url, width: 300, cache: 'force-cache' }}
-              resizeMode={'contain'}
-            />
-            <Button fullWidth danger busy={busy} style={{marginLeft: 35, marginRight: 35}} onPress={() => deleteImage(url)}>
-              <Text>Delete Image</Text>
-            </Button>
-          </Col>
-        ))}
-      </ImageCarousel> : null}
+      {urls.length ?
+        <ImageCarousel style={styles.carousel} ref={car => {this._imageCarousel = car;}} renderContent={this.renderContent} renderHeader={this.renderHeader} renderFooter={this.renderFooter}>
+          {[...urls].map(url => (
+            <Col
+              style={styles.imageContainer}>
+              <Image key={url} style={styles.image} source={{ uri: url, width: 300, cache: 'force-cache' }} resizeMode={'contain'}/>
+              <Button fullWidth danger busy={busy} style={{marginLeft: 35, marginRight: 35}} onPress={() => deleteImage(url)}>
+                <Text>Delete Image</Text>
+              </Button>
+            </Col>
+          ))}
+        </ImageCarousel> : null}
       <SpinnerButton busy={busy} style={!urls.length ? styles.imageButtonLarge : styles.imageButtonSml } photoButton onPress={showPicker}>
         <Icon name='camera' style={{marginBottom: 15}}/>
       </SpinnerButton>
@@ -114,6 +97,11 @@ export default class OrderProgressPictures extends Component{
 }
 
 const styles = {
+  carousel: {
+    marginTop: 10,
+    marginBottom: 10,
+    height: 360
+  },
   imageButtonSml: {
     height: 80
   },

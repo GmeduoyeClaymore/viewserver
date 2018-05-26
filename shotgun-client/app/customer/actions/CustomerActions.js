@@ -58,8 +58,8 @@ export const ratePartner = (orderId, rating, continueWith) => {
   return invokeDaoCommand('customerDao', 'ratePartner', {orderId, rating}, continueWith);
 };
 
-export const checkout = (order, payment, continueWith) => {
-  return invokeDaoCommand('orderDao', 'createOrder', {order, payment}, continueWith);
+export const checkout = (order, continueWith) => {
+  return invokeDaoCommand('orderDao', 'createOrder', {order}, continueWith);
 };
 
 export const addPaymentStage = ({orderId, orderContentTypeId, amount, name, description, paymentStageType}, continueWith) => {

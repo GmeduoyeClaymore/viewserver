@@ -4,6 +4,7 @@ import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion, ImageSelector} from 'common/components';
 import {withExternalState} from 'custom-redux';
 import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
+import shotgun from 'native-base-theme/variables/shotgun';
 import {Image} from 'react-native';
 
 class UpdateUserDetails extends Component{
@@ -27,7 +28,7 @@ class UpdateUserDetails extends Component{
 
   render() {
     const {unsavedUser, busy, errors, history} = this.props;
-    unsavedUser.imageUrl = unsavedUser.imageData !== undefined ? `data:image/jpeg;base64,${unsavedUser.imageData}` : unsavedUser.imageUrl;
+    const partnerImage = unsavedUser.imageData !== undefined ? `data:image/jpeg;base64,${unsavedUser.imageData}` : unsavedUser.imageUrl;
     const isPartner = unsavedUser.type == 'partner';
 
     return <Container>
@@ -68,9 +69,16 @@ class UpdateUserDetails extends Component{
             </Col>
             {isPartner ? <Col width={60}><Row>
               <Col >
-                {unsavedUser.imageUrl != undefined ? <Row style={{justifyContent: 'center'}} onPress={this.showPicker}>
-                  <Image source={{uri: unsavedUser.imageUrl}} resizeMode='contain' style={styles.image}/>
-                </Row> : null}
+                {partnerImage != undefined ?
+                  <Row style={styles.imageRow} onPress={this.showPicker}>
+                    <Image source={{uri: partnerImage}} resizeMode='contain' style={styles.image}/>
+                    <Icon style={styles.editPhotoIcon} name='cog'/>
+                  </Row> :
+                  <Row style={styles.imageRow}>
+                    <Button photoButton style={styles.imageButton} onPress={this.showPicker}>
+                      <Icon name='camera' style={styles.cameraIcon}/>
+                    </Button>
+                  </Row>}
               </Col>
             </Row></Col> : null }
           </Row>
@@ -97,7 +105,7 @@ class UpdateUserDetails extends Component{
             </Col>
           </Row>
         </Grid>
-        <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy}
+        <ValidatingButton padded fullWidth iconRight validateOnMount={true} busy={busy}
           onPress={this.onUpdateDetails} validationSchema={yup.object(validationSchema)} model={unsavedUser}>
           <Text uppercase={false}>Update details</Text>
         </ValidatingButton>
@@ -109,9 +117,33 @@ class UpdateUserDetails extends Component{
 }
 
 const styles = {
+  imageRow: {
+    justifyContent: 'flex-end',
+    marginRight: shotgun.contentPadding
+  },
   image: {
     aspectRatio: 1,
     width: 100
+  },
+  imageButton: {
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    flexDirection: 'column',
+    borderRadius: 80
+  },
+  cameraIcon: {
+    fontSize: 38
+  },
+  editPhotoIcon: {
+    position: 'absolute',
+    top: 70,
+    right: 10,
+    color: shotgun.brandDark,
+    fontSize: 20,
+    backgroundColor: shotgun.brandSecondary,
+    borderRadius: 25,
+    padding: 3
   }
 };
 

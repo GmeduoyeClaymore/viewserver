@@ -1,4 +1,4 @@
 [
-  {"brand": "Visa", "last4": "4242", "expMonth": 11, "expYear": 2025, "isDefault": true},
-  {"brand": "MasterCard", "last4": "4141", "expMonth": 11, "expYear": 2025, "isDefault": false}
+  {"cardId": "card_1BZjOtJf2h7PvwlulrG7Lrbx", "brand": "Visa", "last4": "4242", "expMonth": 12, "expYear": 2022, "isDefault": true},
+  {"cardId": "card_1CIFlgJf2h7PvwluK2KHun6D", "brand": "MasterCard", "last4": "4444", "expMonth": 11, "expYear": 2018, "isDefault": false}
 ]

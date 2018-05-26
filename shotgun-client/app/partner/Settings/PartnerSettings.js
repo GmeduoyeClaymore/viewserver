@@ -11,9 +11,11 @@ import PartnerMyOrders from 'partner/PartnerMyOrders';
 class  PartnerSettings extends Component{
   constructor(props){
     super(props);
-    const {path} = props;
-    this.onUpdate = (user) => updatePartner(user, () => props.history.push(`${path}/PartnerSettingsLanding`));
+    const {path, history} = props;
+    //if we move this function out of the constructor stuff breaks for some reason
+    this.onUpdate = (user) => updatePartner(user, () => history.push(`${path}/PartnerSettingsLanding`));
   }
+
   render(){
     const {path, height, width} = this.props;
     const partnerSettingsProps = {...this.props, stateKey: 'partnerSettings'};

@@ -116,11 +116,11 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
             return 0;
         }
         if(PaymentType.DAYRATE.equals(this.getPaymentType())){
-            Optional<OrderPaymentStage> paymentStage = fromArray(getPaymentStages()).filter(c -> (OrderPaymentStage.PaymentStageStatus.Started).equals(c.getPaymentStageStatus())).findAny();
-            if(paymentStage.isPresent()){
-                return getAmountForStage(paymentStage.get().getId());
-            }
-            return 0;
+            int totalUnpaidDays = fromArray(getPaymentStages())
+                    .filter(c -> (OrderPaymentStage.PaymentStageStatus.Complete).equals(c.getPaymentStageStatus()))
+                    .mapToInt(s -> getAmountForStage(s.getId())).sum();
+
+            return totalUnpaidDays;
         }else{
             int totalPaidForStages = fromArray(getPaymentStages()).filter(c-> c.getPaymentStageStatus().equals(OrderPaymentStage.PaymentStageStatus.Paid)).mapToInt(stage -> getAmountForStage(stage.getId())).sum();
             if(getAmount() == null){
