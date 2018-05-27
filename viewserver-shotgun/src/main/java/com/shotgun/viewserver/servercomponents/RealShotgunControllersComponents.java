@@ -57,7 +57,8 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IPaymentController getPaymentController() {
-        return new PaymentController(stripeApiKey, databaseUpdater, this.basicServerComponents.getServerCatalog());
+        return new MockPaymentController(databaseUpdater,this.basicServerComponents.getServerCatalog());
+        //return new PaymentController(stripeApiKey, databaseUpdater, this.basicServerComponents.getServerCatalog());
     }
 
     @Override
