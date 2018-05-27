@@ -48,7 +48,7 @@ public interface User extends DynamicJsonBackedObject{
     String getPassword();
     String getContactNo();
     String getType();
-    int getRange();
+    Integer getRange();
     String getStripeCustomerId();
     String getStripeAccountId();
     String getImageUrl();

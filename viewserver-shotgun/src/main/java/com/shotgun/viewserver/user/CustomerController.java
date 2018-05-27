@@ -61,9 +61,9 @@ public class CustomerController {
 
         ControllerContext context = ControllerContext.Current();
 
-        userController.addOrUpdateUserObservable(user, user.getPassword()).subscribe(
+        userController.addOrUpdateUserObservable(user, user.getPassword()).observeOn(ControllerContext.Scheduler(context)).subscribe(
                 userId -> {
-                    context.set("userId", userId);
+                    ControllerContext.set("userId", userId);
 
                     if(deliveryAddress != null && deliveryAddress.getLine1() != null) {
                         deliveryAddress.set("isDefault", true);

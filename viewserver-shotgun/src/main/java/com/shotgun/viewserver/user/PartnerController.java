@@ -76,7 +76,7 @@ public class PartnerController {
         ControllerContext context = ControllerContext.Current();
         user.set("created",new Date());
         user.set("vehicle",vehicle);
-        return ListenableFutureObservable.to(userController.addOrUpdateUserObservable(user, user.getPassword()).observeOn(ControllerContext.Scheduler(context)).map(
+        return ListenableFutureObservable.to(userController.addOrUpdateUserObservable(user, user.getPassword()).observeOn(ControllerContext.Scheduler(context)).flatMap(
                 userId -> {
                     context.set("userId",userId, context.getPeerSession());
                     if(user.getDeliveryAddress() != null) {
@@ -84,17 +84,9 @@ public class PartnerController {
                         deliveryAddressController.addOrUpdateDeliveryAddress(user.getDeliveryAddress());
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
-                    loginController.setUserIdObservable(userId, context.getPeerSession()).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).subscribe(
-                            res -> {
-                                log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
-                                future.set(userId);
-                            },
-                            err -> {
-                                log.error("Problem logging in user",err);
-                                future.setException(err);
-                            }
+                    return loginController.setUserIdObservable(userId, context.getPeerSession()).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).map(
+                            res -> userId
                     );
-                    return userId;
                 }
         ));
     }

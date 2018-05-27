@@ -100,8 +100,14 @@ public class MongoDocumentChangeRecord extends Record {
                 return string.getValue();
             }
             case Json: {
-                BsonString bsonValue = doc.getString(colName);
-                return bsonValue.getValue();
+                BsonValue bsonValue = doc.get(colName);
+                if(bsonValue instanceof BsonString){
+                    return ((BsonString)bsonValue).getValue();
+                }
+                if(bsonValue instanceof BsonDocument){
+                    return ((BsonDocument)bsonValue).toJson();
+                }
+                throw new RuntimeException("Invalid value found " + bsonValue);
             }
             case DateTime: {
                 return doc.getDateTime(colName) != null ? new java.sql.Date(doc.getDateTime(colName).getValue()).getTime(): null;

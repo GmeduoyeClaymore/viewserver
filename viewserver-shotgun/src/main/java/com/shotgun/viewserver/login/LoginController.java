@@ -100,7 +100,7 @@ public class LoginController {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("fcmToken", null)
-                .addValue("versions", getUser(userId).getVersion());
+                .addValue("version", getUser(userId).getVersion());
         return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
     }
 
