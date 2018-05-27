@@ -75,22 +75,24 @@ public class MongoRecordLoader implements IRecordLoader{
 
     private void addMongoListener(){
         CompletableFuture<Integer> ss = new CompletableFuture<>();
+        logger.info(String.format("SCHEDULING - Addition of snapshot listener for Mongo table %s", tableName));
         this.service.submit(() -> {
             try {
-                logger.info(String.format("Adding snapshot listener for Mongo table %s", tableName));
+                logger.info(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
                 Block<ChangeStreamDocument<Document>> block = t -> {
                     Document fullDocument = t.getFullDocument();
                     if(fullDocument == null){
                         return;
                     }
-                    System.out.println("received document update: " + fullDocument.getString("_id"));
+                    logger.info(String.format("GOT DOCUMENT IN UPDATE - %s - Addition of snapshot listener for Mongo table %s",fullDocument.getString("_id"), tableName));
                     if (t.getOperationType().equals(OperationType.INVALIDATE)) {
                         return;
                     }
                     receiveDocument(fullDocument);
                 };
+                logger.info(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
-                    System.out.println("received doucment in snapshot: " + document.getString("_id"));
+                    logger.info(String.format("GOT DOCUMENT IN SNAPSHOT - %s - Addition of snapshot listener for Mongo table %s",document.getString("_id"), tableName));
                     receiveDocument(document);
                 });
                 ready.onNext(null);

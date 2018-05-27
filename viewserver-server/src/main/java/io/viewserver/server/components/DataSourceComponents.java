@@ -49,7 +49,7 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                         runDataSource(c);
                     }
         }, err -> log.error("Problem subscribing to registered data sources",err));
-        return Observable.just(true);
+        return dataSourceRegistry.getRegistered();
     }
 
     private Observable<Object> waitFor(String dataSourceName, List<String> dependeciesToWaitFor) {
