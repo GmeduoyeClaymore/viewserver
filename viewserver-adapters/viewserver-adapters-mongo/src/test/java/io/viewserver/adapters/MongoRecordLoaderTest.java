@@ -21,6 +21,7 @@ import io.viewserver.util.dynamic.DynamicSerializationModule;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.bson.Document;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import rx.Observable;
 
@@ -95,6 +96,7 @@ public class MongoRecordLoaderTest {
 
 
     @Test
+    @Ignore
     public void Can_update_record_and_listen_for_changes() throws InterruptedException {
 
         setup();
