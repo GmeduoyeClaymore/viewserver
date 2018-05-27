@@ -22,6 +22,7 @@ public class PaymentDataSource {
         SchemaConfig schema = new SchemaConfig()
                 .withColumns(Arrays.asList(
                         new Column("totalPrice", ContentType.Int),
+                        new Column("version", ContentType.Int),
                         new Column("chargePercentage", ContentType.Int),
                         new Column("chargeId", ContentType.String),
                         new Column("paymentId", ContentType.String),

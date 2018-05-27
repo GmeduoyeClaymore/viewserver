@@ -58,6 +58,7 @@ public interface OrderCreationController {
                 .addValue("orderContentTypeId", order.getOrderContentType().getContentTypeId())
                 .addValue("lastModified", now)
                 .addValue("userId", customerId)
+                .addValue("version", order.getVersion())
                 .addValue("orderDetails", order);
 
 

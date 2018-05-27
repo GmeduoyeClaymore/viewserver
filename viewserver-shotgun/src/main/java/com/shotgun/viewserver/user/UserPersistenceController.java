@@ -81,6 +81,7 @@ public interface UserPersistenceController{
                 .addValue("stripeCustomerId", user.getStripeCustomerId())
                 .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl())
+                .addValue("version", user.getVersion())
                 .addValue("chargePercentage", user.getChargePercentage());
 
         if(password != null){

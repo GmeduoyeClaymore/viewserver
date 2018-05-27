@@ -1,38 +1,30 @@
 package com.shotgun.viewserver.user;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.BucketNames;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.constants.VanProducts;
 import com.shotgun.viewserver.constants.VanVolumes;
 import com.shotgun.viewserver.delivery.Dimensions;
-import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
-import com.shotgun.viewserver.order.contracts.UserNotificationContract;
-import com.shotgun.viewserver.order.controllers.contracts.RatedOrderController;
-import com.shotgun.viewserver.payments.PaymentBankAccount;
-import com.shotgun.viewserver.payments.PaymentCard;
-import com.shotgun.viewserver.payments.IPaymentController;
-import com.shotgun.viewserver.setup.datasource.VehicleDataSource;
-import io.viewserver.adapters.common.IDatabaseUpdater;
-import com.shotgun.viewserver.constants.BucketNames;
-import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.maps.LatLng;
-import com.shotgun.viewserver.messaging.AppMessage;
-import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
+import com.shotgun.viewserver.order.contracts.UserNotificationContract;
+import com.shotgun.viewserver.order.controllers.contracts.RatedOrderController;
+import com.shotgun.viewserver.payments.IPaymentController;
+import com.shotgun.viewserver.payments.PaymentBankAccount;
+import com.shotgun.viewserver.payments.PaymentCard;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
-import com.shotgun.viewserver.setup.datasource.UserRelationshipDataSource;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
-import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -43,6 +35,7 @@ import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
 import java.util.*;
@@ -79,10 +72,9 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "addPaymentCard", isSynchronous = false)
-    public String addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
+    public ListenableFuture addPaymentCard(@ActionParam(name = "paymentCard") PaymentCard paymentCard) {
         AtomicReference<String> cardId = new AtomicReference<>();
-
-        this.transform(getUserId(),
+        return ListenableFutureObservable.to(this.transformObservable(getUserId(),
                 user -> {
                     String customerToken = user.getStripeCustomerId();
                     SavedPaymentCard savedPaymentCard;
@@ -97,9 +89,7 @@ public class UserController implements UserTransformationController, RatedOrderC
                     user.addPaymentCard(savedPaymentCard);
                     cardId.set(savedPaymentCard.getCardId());
                     return true;
-                }, User.class);
-
-        return cardId.get();
+                }, User.class).map( res -> cardId.get()));
     }
 
     public static List<String> getValidProductsVehicle(Dimensions dimensions) {
@@ -121,8 +111,8 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public void deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId) {
-        this.transform(getUserId(),
+    public ListenableFuture deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId) {
+        return this.transform(getUserId(),
                 user -> {
                     paymentController.deletePaymentCard(cardId);
                     user.deletePaymentCard(cardId);
@@ -131,8 +121,8 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "setDefaultPaymentCard", isSynchronous = true)
-    public void setDefaultPaymentCard(@ActionParam(name = "setDefaultPaymentCard") String cardId) {
-        this.transform(getUserId(),
+    public ListenableFuture setDefaultPaymentCard(@ActionParam(name = "setDefaultPaymentCard") String cardId) {
+        return this.transform(getUserId(),
                 user -> {
                     user.setDefaultPaymentCard(cardId);
                     return true;
@@ -140,8 +130,8 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "setBankAccount", isSynchronous = true)
-    public void setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount, @ActionParam(name = "address") DeliveryAddress address) {
-        this.transform(getUserId(),
+    public ListenableFuture setBankAccount(@ActionParam(name = "paymentBankAccount") PaymentBankAccount paymentBankAccount, @ActionParam(name = "address") DeliveryAddress address) {
+        return this.transform(getUserId(),
                 user -> {
                     SavedBankAccount savedBankAccount;
                     String stripeAccountId = user.getStripeAccountId();
@@ -175,8 +165,8 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "setLocation", isSynchronous = true)
-    public void setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
-        this.transform(getUserId(),
+    public ListenableFuture setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
+        return this.transform(getUserId(),
                 user -> {
                     user.set("latitude", latitude);
                     user.set("longitude", longitude);
@@ -212,11 +202,11 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "updateStatus", isSynchronous = true)
-    public void updateStatus(@ActionParam(name = "status") UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
+    public ListenableFuture updateStatus(@ActionParam(name = "status") UserStatus status, @ActionParam(name = "statusMessage") String statusMessage) {
         String userId = getUserId();
 
 
-        this.transform(getUserId(),
+        return this.transform(getUserId(),
                 user -> {
                     user.set("statusMessage", statusMessage);
                     user.set("userStatus", status.name());
@@ -231,15 +221,14 @@ public class UserController implements UserTransformationController, RatedOrderC
                 targetUserId,
                 targetUser -> {
                     targetUser.addOrUpdateRelationship(userId, getRelationshipStatus(userRelationshipStatus),relationshipType);
-                    return getUserForId(userId,User.class).map(
+                    return getUserForId(userId,User.class).flatMap(
                             meUser -> {
                                 Optional<UserRelationship> relationship = meUser.findUserRelationship(targetUserId);
                                 if (relationship.isPresent() && relationship.get().getRelationshipStatus().equals(UserRelationshipStatus.BLOCKEDBYME)) {
                                 } else {
                                     meUser.addOrUpdateRelationship(targetUserId, userRelationshipStatus, relationshipType);
                                 }
-                                updateUser(meUser);
-                                return true;
+                                return addOrUpdateUserObservable(meUser, null).map(res -> true);
                             }
                     );
                 },

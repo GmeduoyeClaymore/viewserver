@@ -13,6 +13,7 @@ import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import rx.observable.ListenableFutureObservable;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -238,11 +239,11 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
     }
 
 
-    @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
+    @ControllerAction(path = "customerCompleteAndPay", isSynchronous = false)
     public default ListenableFuture<String> customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
-        SettableFuture<String> paymentId = SettableFuture.create();
+        AtomicReference<String> paymentId = new AtomicReference();
         ControllerContext context = ControllerContext.Current();
-        this.transformAsync(
+        return ListenableFutureObservable.to(this.transformAsyncObservable(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.CUSTOMERCOMPLETE);
@@ -252,14 +253,8 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     }
                     return getPaymentController().createCharge(amount, order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()).observeOn(ControllerContext.Scheduler(context)).map(
                             charge -> {
-                                try {
-                                    paymentId.set(charge);
-                                    updateOrderRecord(order);
-                                    return true;
-                                }catch (Exception ex){
-                                    paymentId.setException(ex);
-                                    return false;
-                                }
+                                paymentId.set(charge);
+                                return true;
                             }
                     );
                 },
@@ -267,8 +262,7 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     notifyJobCompleted(order.getOrderId(), order.getPartnerUserId());
                 },
                 NegotiatedOrder.class
-        );
-        return paymentId;
+        ).map(res -> paymentId.get()));
     }
 
     IPaymentController getPaymentController();

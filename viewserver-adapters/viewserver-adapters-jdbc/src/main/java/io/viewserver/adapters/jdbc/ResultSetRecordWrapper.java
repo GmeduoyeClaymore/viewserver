@@ -72,7 +72,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
 
 
     @Override
-    public boolean getBool(String columnName) {
+    public Boolean getBool(String columnName) {
         try {
             return resultSet.getBoolean(columnName);
         } catch (SQLException e) {
@@ -116,7 +116,7 @@ public class ResultSetRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public int getInt(String columnName) {
+    public Integer getInt(String columnName) {
         try {
             return resultSet.getInt(getDataSourceColumnName(columnName));
         } catch (SQLException e) {

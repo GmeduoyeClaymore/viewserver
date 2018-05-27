@@ -31,7 +31,8 @@ public class OrderDataSource {
                         new Column("productId", ContentType.String),
                         new Column("orderContentTypeId", ContentType.Int),
                         new Column("orderDetails", ContentType.Json),
-                        new Column("totalPrice", ContentType.Int)
+                        new Column("totalPrice", ContentType.Int),
+                        new Column("version", ContentType.Int)
                 ))
                 .withKeyColumns("orderId");
 

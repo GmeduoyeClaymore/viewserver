@@ -252,7 +252,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public boolean getBool(String columnName) {
+    public Boolean getBool(String columnName) {
         String string = getString(columnName);
         return string != null && TypeFormat.parseBoolean(string); //Boolean.parseBoolean(getString(columnName));
     }
@@ -273,7 +273,7 @@ public class CsvRecordWrapper extends BaseRecordWrapper {
     }
 
     @Override
-    public int getInt(String columnName) {
+    public Integer getInt(String columnName) {
         Double dbl = getDouble(columnName);
         return dbl == null ? -1 : (int) Math.round(dbl);
     }

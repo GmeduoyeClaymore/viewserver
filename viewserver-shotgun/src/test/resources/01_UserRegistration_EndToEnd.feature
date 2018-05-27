@@ -37,6 +37,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | Double      | latitude             |
 	  | ColumnAdd | Double      | longitude            |
 	  | ColumnAdd | Int         | range                |
+	  | ColumnAdd | Int         | version                |
 	  | ColumnAdd | String      | imageUrl             |
 	  | ColumnAdd | Bool        | online               |
 	  | ColumnAdd | String      | userStatus           |

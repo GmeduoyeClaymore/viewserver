@@ -26,6 +26,7 @@ import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.observable.ListenableFutureObservable;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -55,27 +56,25 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "addOrderImage", isSynchronous = false)
-    public String addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageData") String imageData) {
+    public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageData") String imageData) {
         String fileName = orderId + "/" + ControllerUtils.generateGuid() + ".jpg";
         String completeFileName = imageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData);
-        this.transform(orderId, order -> {
+        return ListenableFutureObservable.to(this.transformObservable(orderId, order -> {
             order.addImage(completeFileName);
             return true;
         },
         SupportsImageOrder.class
-        );
-        return completeFileName;
+        ).map(res -> completeFileName));
     }
 
     @ControllerAction(path = "deleteImage", isSynchronous = false)
-    public String deleteImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageUrl") String imageUrl) {
-        this.transform(orderId, order -> {
+    public ListenableFuture deleteImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageUrl") String imageUrl) {
+        return this.transform(orderId, order -> {
                     order.removeImage(imageUrl);
                     return true;
                 },
                 SupportsImageOrder.class
         );
-        return imageUrl;
     }
 
     @ControllerAction(path = "createOrder", isSynchronous = true)
@@ -108,8 +107,8 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "startPaymentStage", isSynchronous = true)
-    public void startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
-        this.transform(
+    public ListenableFuture startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        return this.transform(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.STARTED);
@@ -124,9 +123,9 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "logDayStarted", isSynchronous = true)
-    public String logDayStarted(@ActionParam(name = "orderId") String orderId) {
+    public ListenableFuture logDayStarted(@ActionParam(name = "orderId") String orderId) {
         AtomicReference<String> paymentStageId = new AtomicReference<>();
-        this.transform(
+        return ListenableFutureObservable.to(this.transformObservable(
                 orderId,
                 order -> {
                     paymentStageId.set(order.logDayStarted());
@@ -136,14 +135,13 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
                     notifyPaymentStageStarted(orderId, order.getCustomerUserId(), order.getOrderPaymentStage(paymentStageId.get()).getDescription());
                 },
                 PersonellOrder.class
-        );
-        return paymentStageId.get();
+        ).map(res -> paymentStageId.get()));
     }
 
     @ControllerAction(path = "logDayComplete", isSynchronous = true)
-    public String logDayComplete(@ActionParam(name = "orderId") String orderId) {
+    public ListenableFuture logDayComplete(@ActionParam(name = "orderId") String orderId) {
         AtomicReference<OrderPaymentStage> paymentStage = new AtomicReference<>();
-        this.transform(
+        return ListenableFutureObservable.to(this.transformObservable(
                 orderId,
                 order -> {
                     paymentStage.set(order.logDayComplete());
@@ -153,8 +151,7 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
                     notifyPaymentStageComplete(orderId, order.getCustomerUserId(), paymentStage.get().getDescription());
                 },
                 PersonellOrder.class
-        );
-        return paymentStage.get().getId();
+        ).map(res -> paymentStage.get()));
     }
 
     @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)

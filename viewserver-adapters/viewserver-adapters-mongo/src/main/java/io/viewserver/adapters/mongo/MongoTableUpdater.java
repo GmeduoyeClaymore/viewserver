@@ -10,12 +10,10 @@ import io.viewserver.datasource.*;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
-import rx.functions.Action1;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,12 +36,13 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
                         TableKey tableKey = RecordUtils.getTableKey(record, definition);
                         String documentId = tableKey.toString("_");
-                        log.info("Writing to table \"" + tableName + "\" record id " + documentId);
+                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " version " + record.getValue("version"));
                         Map<String, Object> docData = getDocumentData(record, schemaConfig);
+                        docData.put("version", incrementVersion(record));
                         BasicDBObject query = new BasicDBObject("_id", documentId);
                         Document tDocument = new Document(docData);
                         UpdateResult result = getUpdateResult(tableName, query, tDocument);
-                        log.info("Finished Writing to table \"" + tableName + "\"");
+                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " version " + record.getValue("version"));
                         booleanEmitter.onNext(result.wasAcknowledged());
                         booleanEmitter.onCompleted();
                     }catch (Exception ex){
@@ -52,6 +51,14 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                     }
                 }, Emitter.BackpressureMode.BUFFER
         );
+    }
+
+    public Integer incrementVersion(IRecord record) {
+        Integer version = (Integer) record.getValue("version");
+        if(version == null){
+            return 0;
+        }
+        return version + 1;
     }
 
     public UpdateResult getUpdateResult(String tableName, BasicDBObject query, Document tDocument) {

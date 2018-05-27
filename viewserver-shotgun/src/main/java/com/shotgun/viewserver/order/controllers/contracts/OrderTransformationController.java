@@ -31,9 +31,19 @@ public interface OrderTransformationController extends OrderUpdateController{
         return transform(orderId,tranformation,c->{}, orderClass);
     }
 
+
+    default <T extends BasicOrder> Observable<Object> transformObservable(String orderId, Predicate<T> tranformation, Class<T> orderClass){
+        return transformObservable(orderId,tranformation,c->{}, orderClass);
+    }
+
+
     default <T extends BasicOrder> ListenableFuture transform(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
+        return ListenableFutureObservable.to(transformObservable(orderId, tranformation, afterTransform, orderClass));
+    }
+
+    default <T extends BasicOrder> Observable<Object> transformObservable(String orderId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass) {
         ControllerContext context = ControllerContext.Current();
-        return ListenableFutureObservable.to(getOrderForId(orderId, orderClass).subscribeOn(ControllerContext.Scheduler(context)).flatMap(
+        return getOrderForId(orderId, orderClass).subscribeOn(ControllerContext.Scheduler(context)).flatMap(
                 order -> {
                     try {
                         ControllerContext.create(context);
@@ -50,29 +60,31 @@ public interface OrderTransformationController extends OrderUpdateController{
                     return Observable.just(order);
 
                 }
-        ));
+        );
     }
 
     default <T extends BasicOrder> ListenableFuture transformAsync(String orderId,IAsyncPredicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass){
+        return ListenableFutureObservable.to(transformAsyncObservable(orderId, tranformation, afterTransform, orderClass));
+    }
+
+    default <T extends BasicOrder> Observable<Object> transformAsyncObservable(String orderId, IAsyncPredicate<T> tranformation, Consumer<T> afterTransform, Class<T> orderClass) {
         ControllerContext context = ControllerContext.Current();
-        return ListenableFutureObservable.to(getOrderForId(orderId, orderClass).flatMap(
-                order -> {
-                        return tranformation.call(order).observeOn(ControllerContext.Scheduler(context)).flatMap(
-                                res -> {
-                                    if (res) {
-                                        Observable<Boolean> observable = updateOrderRecordObservable(order);
-                                        return observable.observeOn(ControllerContext.Scheduler(context)).map(res2 -> {
-                                            afterTransform.accept(order);
-                                            return res2;
-                                        });
-                                    }
-                                    return Observable.just(order).observeOn(ControllerContext.Scheduler(context));
-                                }
-                        );
-
-
-                }
-        ));
+        return getOrderForId(orderId, orderClass).flatMap(
+            order -> {
+                return tranformation.call(order).observeOn(ControllerContext.Scheduler(context)).flatMap(
+                        res -> {
+                            if (res) {
+                                Observable<Boolean> observable = updateOrderRecordObservable(order);
+                                return observable.observeOn(ControllerContext.Scheduler(context)).map(res2 -> {
+                                    afterTransform.accept(order);
+                                    return res2;
+                                });
+                            }
+                            return Observable.just(order).observeOn(ControllerContext.Scheduler(context));
+                        }
+                );
+            }
+        );
     }
 
 

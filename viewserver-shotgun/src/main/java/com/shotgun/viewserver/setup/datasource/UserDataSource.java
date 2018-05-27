@@ -45,6 +45,7 @@ public class UserDataSource {
                                         new Column("latitude", ContentType.Double),
                                         new Column("longitude", ContentType.Double),
                                         new Column("range",  ContentType.Int),
+                                        new Column("version",  ContentType.Int),
                                         new Column("imageUrl",  ContentType.String),
                                         new Column("online", ContentType.Bool),
                                         new Column("userStatus",  ContentType.String),

@@ -42,6 +42,7 @@ public interface OrderUpdateController {
                 addValue("status", order.getOrderStatus().name()).
                 addValue("assignedPartnerUserId", order.getPartnerUserId()).
                 addValue("lastModified", now).
+                addValue("version", order.getVersion()).
                 addValue("orderDetails", order.serialize());
 
 
@@ -70,6 +71,11 @@ public interface OrderUpdateController {
                     if(order == null){
                         throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
                     }
+
+                    Integer version = (Integer) ControllerUtils.getColumnValue(orderTable, "version", currentRow);
+
+                    order.set("version", version);
+
                     return order;
                 }
         );

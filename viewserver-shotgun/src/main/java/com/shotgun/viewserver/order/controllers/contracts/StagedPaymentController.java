@@ -9,6 +9,7 @@ import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
+import rx.observable.ListenableFutureObservable;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,14 +31,14 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
     }
 
     @ControllerAction(path = "addPaymentStage", isSynchronous = true)
-    default String addPaymentStage(
+    default ListenableFuture addPaymentStage(
             @ActionParam(name = "orderId")String orderId,
             @ActionParam(name = "amount")int amount,
             @ActionParam(name = "name")String name,
             @ActionParam(name = "description")String description,
             @ActionParam(name = "paymentStageType")OrderPaymentStage.PaymentStageType paymentStageType) {
         AtomicReference<String> stagedPaymentId = new AtomicReference<>();
-        this.transform(
+        return ListenableFutureObservable.to(this.transformObservable(
                 orderId,
                 order -> {
                     stagedPaymentId.set(order.addPaymentStage(amount, name,description, paymentStageType, OrderPaymentStage.PaymentStageStatus.None, true));
@@ -46,8 +47,7 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
                     notifyPaymentStageAdded(order.getOrderId(), order.getPartnerUserId(), name,order.getTitle());
                 },
                 StagedPaymentOrder.class
-        );
-        return stagedPaymentId.get();
+        ).map(res -> stagedPaymentId.get()));
     }
 
     @ControllerAction(path = "removePaymentStage", isSynchronous = true)
@@ -63,8 +63,8 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
     }
 
     @ControllerAction(path = "startPaymentStage", isSynchronous = true)
-    default void startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
-        this.transform(
+    default ListenableFuture startPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        return this.transform(
                 orderId,
                 order -> {
                     order.startPaymentStage(paymentStageId);
@@ -77,8 +77,8 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
         );
     }
     @ControllerAction(path = "completePaymentStage", isSynchronous = true)
-    default void completePaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
-        this.transform(
+    default ListenableFuture completePaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        return this.transform(
                 orderId,
                 order -> {
                     order.completePaymentStage(paymentStageId);
@@ -91,22 +91,18 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
         );
     }
 
-    @ControllerAction(path = "payForPaymentStage", isSynchronous = true)
-    default ListenableFuture<String> payForPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
-        SettableFuture<String> paymentId = SettableFuture.create();
-        this.transformAsync(
+    @ControllerAction(path = "payForPaymentStage", isSynchronous = false)
+    default ListenableFuture payForPaymentStage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "paymentStageId") String paymentStageId) {
+        AtomicReference<String> paymentId = new AtomicReference();
+        return ListenableFutureObservable.to(this.transformAsyncObservable(
                 orderId,
                 order -> {
                     return getPaymentController().createCharge(order.getAmountForStage(paymentStageId),order.getPaymentMethodId(), order.getCustomerUserId(), order.getPartnerUserId(), order.getDescription()).map(
                             chargeId -> {
-                                try {
-                                    order.payForPaymentStage(paymentStageId, chargeId);
-                                    paymentId.set(chargeId);
-                                    return true;
-                                }catch (Exception ex){
-                                    paymentId.setException(ex);
-                                    return false;
-                                }
+                                order.payForPaymentStage(paymentStageId, chargeId);
+                                paymentId.set(chargeId);
+                                return true;
+
                             }
                     );
                 },
@@ -114,8 +110,7 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
                     notifyPaymentStagePaid(order.getOrderId(), order.getPartnerUserId(), order.getOrderPaymentStage(paymentStageId).getName());
                 },
                 StagedPaymentOrder.class
-        );
-        return paymentId;
+        ).map( res -> paymentId.get()));
     }
 
 

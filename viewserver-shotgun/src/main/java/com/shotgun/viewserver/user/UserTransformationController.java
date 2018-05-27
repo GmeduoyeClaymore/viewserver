@@ -41,9 +41,20 @@ public interface UserTransformationController extends UserPersistenceController{
         return transform(userId,tranformation,c->{}, userClass);
     }
 
+    default <T extends User> Observable<Object> transformObservable(String userId, Predicate<T> tranformation, Class<T> userClass){
+        if(userId == null){
+            throw new RuntimeException("User id is required");
+        }
+        return transformObservable(userId,tranformation,c->{}, userClass);
+    }
+
     default <T extends User> ListenableFuture transformAsync(String userId, UserTransformationController.IAsyncPredicate<T> tranformation, Consumer<T> afterTransform, Class<T> userClass){
+        return ListenableFutureObservable.to(transforAsyncObservable(userId, tranformation, afterTransform, userClass));
+    }
+
+    default <T extends User> Observable<Object> transforAsyncObservable(String userId, IAsyncPredicate<T> tranformation, Consumer<T> afterTransform, Class<T> userClass) {
         ControllerContext context = ControllerContext.Current();
-        return ListenableFutureObservable.to(getUserForId(userId, userClass).flatMap(
+        return getUserForId(userId, userClass).flatMap(
                 order -> {
                     return tranformation.call(order).observeOn(ControllerContext.Scheduler(context)).flatMap(
                             res -> {
@@ -62,13 +73,17 @@ public interface UserTransformationController extends UserPersistenceController{
 
 
                 }
-        ));
+        );
     }
 
 
     default <T extends User> ListenableFuture transform(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> userClass){
+        return ListenableFutureObservable.to(transformObservable(userId, tranformation, afterTransform, userClass));
+    }
+
+    default <T extends User> Observable<Object> transformObservable(String userId, Predicate<T> tranformation, Consumer<T> afterTransform, Class<T> userClass) {
         ControllerContext context = ControllerContext.Current();
-        return ListenableFutureObservable.to(getUserForId(userId, userClass).observeOn(ControllerContext.Scheduler(context)).flatMap(
+        return getUserForId(userId, userClass).observeOn(ControllerContext.Scheduler(context)).flatMap(
                 user -> {
                     try {
                         ControllerContext.create(context);
@@ -85,10 +100,8 @@ public interface UserTransformationController extends UserPersistenceController{
                     return Observable.just(user);
 
                 }
-        ));
+        );
     }
-
-
 
 
 }

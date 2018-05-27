@@ -21,6 +21,7 @@ public class MessagesDataSource {
                                         new Column("fromUserId",  ContentType.String),
                                         new Column("toUserId", ContentType.String),
                                         new Column("title", ContentType.String),
+                                        new Column("version", ContentType.Int),
                                         new Column("sentRemotely", ContentType.Bool),
                                         new Column("message", ContentType.Json)
                                 ))

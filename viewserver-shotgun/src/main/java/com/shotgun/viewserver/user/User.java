@@ -58,6 +58,8 @@ public interface User extends DynamicJsonBackedObject{
     Vehicle getVehicle();
     UserStatus getUserStatus();
     UserAppStatus getUserAppStatus();
+    Integer getVersion();
+
 
 
     default UserRating addRating(String fromUserId,String title,String orderId, int rating, String comments, UserRating.RatingType type){
@@ -203,7 +205,6 @@ public interface User extends DynamicJsonBackedObject{
     default void setBankAccount(SavedBankAccount savedBankAccount){
         this.set("bankAccount", savedBankAccount);
     }
-
 
 
 }

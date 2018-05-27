@@ -17,6 +17,7 @@ public class PhoneNumberDataSource {
                                         new Column("phoneNumber", ContentType.String),
                                         new Column("fromUserId",  ContentType.String),
                                         new Column("toUserId",  ContentType.String),
+                                        new Column("version",  ContentType.Int),
                                         new Column("userPhoneNumber", ContentType.String),
                                         new Column("phoneNumberStatus", ContentType.String),
                                         new Column("assignedTime",  ContentType.DateTime)

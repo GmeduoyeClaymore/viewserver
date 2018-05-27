@@ -24,7 +24,6 @@ public class FireBaseRecordLoaderCollection implements IRecordLoaderCollection {
         register(ProductCategoryDataSource.getDataSource().getSchema(), ProductCategoryDataSource.NAME);
         register(ProductDataSource.getDataSource().getSchema(), ProductDataSource.NAME);
         register(MessagesDataSource.getDataSource().getSchema(), MessagesDataSource.NAME);
-        register(UserRelationshipDataSource.getDataSource().getSchema(), UserRelationshipDataSource.NAME);
         register(UserDataSource.getDataSource().getSchema(), UserDataSource.NAME);
         register(VehicleDataSource.getDataSource().getSchema(), VehicleDataSource.NAME);
         registerAtRoot(DataSourceRegistry.getSchemaConfig(), IDataSourceRegistry.TABLE_NAME);

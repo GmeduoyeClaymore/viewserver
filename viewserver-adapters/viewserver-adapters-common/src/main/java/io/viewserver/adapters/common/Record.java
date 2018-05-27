@@ -95,7 +95,7 @@ public class Record implements IRecord {
     }
 
     @Override
-    public boolean getBool(String columnName) {
+    public Boolean getBool(String columnName) {
         Object value = values.get(columnName);
         if (value instanceof NullableBool) {
             return ((NullableBool) value).getBooleanValue();
@@ -117,9 +117,9 @@ public class Record implements IRecord {
     }
 
     @Override
-    public int getInt(String columnName) {
+    public Integer getInt(String columnName) {
         try {
-            return (int) values.get(columnName);
+            return (Integer) values.get(columnName);
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }

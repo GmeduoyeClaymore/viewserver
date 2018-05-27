@@ -27,6 +27,7 @@ public class DeliveryAddressDataSource {
                                         new Column("postCode",  ContentType.String),
                                         new Column("latitude",  ContentType.Double),
                                         new Column("longitude", ContentType.Double),
+                                        new Column("version", ContentType.Int),
                                         new Column("googlePlaceId",  ContentType.String)
                                         ))
                                 .withKeyColumns("deliveryAddressId")

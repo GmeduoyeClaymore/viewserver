@@ -30,13 +30,13 @@ public interface IRecord {
 
     String getString(String columnName);
 
-    boolean getBool(String columnName);
+    Boolean getBool(String columnName);
 
     NullableBool getNullableBool(String columnName);
 
     Short getShort(String columnName);
 
-    int getInt(String columnName);
+    Integer getInt(String columnName);
 
     Long getLong(String columnName);
 

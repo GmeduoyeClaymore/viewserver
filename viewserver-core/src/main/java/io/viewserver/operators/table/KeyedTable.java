@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static io.viewserver.core.Utils.toArray;
 import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 
 /**
@@ -182,6 +183,8 @@ public class KeyedTable extends Table {
         Object keyValue = tableKeyDefinition.getValue(tableKey);
         return keys.get(keyValue);
     }
+
+
 
     public Observable<Integer> waitForRow(TableKey tableKey, Scheduler scheduler){
         Object keyValue = tableKeyDefinition.getValue(tableKey);

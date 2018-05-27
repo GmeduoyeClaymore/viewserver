@@ -22,17 +22,16 @@ public interface RatedOrderController extends UserTransformationController, Orde
         UserRating.RatingType ratingType = rating.getRatingType();
         Observable<BasicOrder> orderObservable = getOrderForId(orderId, BasicOrder.class);
         return ListenableFutureObservable.to(
-                orderObservable.map(
+                orderObservable.flatMap(
                         order -> {
                             String userId = ratingType.equals(UserRating.RatingType.Customer) ? order.getCustomerUserId() : order.getPartnerUserId();
                             rating.set("fromUserId", getUserId());
                             rating.set("title", order.getTitle());
-                            return this.transform(userId,
+                            return this.transforAsyncObservable(userId,
                                     user -> {
                                         UserRating userRating = user.addRating(rating);
                                         order.set("rating" + ratingType.name(), userRating);
-                                        updateOrderRecord(order);
-                                        return true;
+                                        return updateOrderRecordObservable(order);
                                     },
                                     user -> {
                                         if(ratingType.equals(UserRating.RatingType.Customer)){

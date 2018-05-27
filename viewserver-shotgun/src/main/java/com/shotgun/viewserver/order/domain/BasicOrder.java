@@ -45,6 +45,8 @@ public interface BasicOrder  extends DynamicJsonBackedObject {
 
     DeliveryAddress getOrigin();
 
+    Integer getVersion();
+
 
     default Integer calculateRemainder(){
         if(getOrderStatus().equals(OrderStatus.COMPLETED)){

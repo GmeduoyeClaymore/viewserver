@@ -73,7 +73,7 @@ public class LoginController {
     }
 
     public Observable<String> setUserIdObservable(String userId, IPeerSession peerSession) {
-        Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME, UserRelationshipDataSource.NAME);
+        Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME);
         return datasources.flatMap(obj -> systemcatalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
                 flatMap(ut ->
                         waitForUser(userId, ut).map(
