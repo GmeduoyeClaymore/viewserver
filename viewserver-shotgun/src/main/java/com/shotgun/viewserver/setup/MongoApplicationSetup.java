@@ -7,9 +7,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
-import com.shotgun.viewserver.setup.datasource.ContentTypeDataSource;
-import com.shotgun.viewserver.setup.datasource.ProductCategoryDataSource;
-import com.shotgun.viewserver.setup.datasource.ProductDataSource;
+import com.shotgun.viewserver.setup.datasource.*;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.firebase.FirebaseCsvDataLoader;
@@ -46,7 +44,7 @@ public class MongoApplicationSetup implements IApplicationSetup {
 
     @Override
     public void run(boolean complete) {
-        log.info("Bootstrapping firebase database");
+        log.info("Bootstrapping mongo database");
         setup(connectionFactory.getConnection(), complete);
     }
 
@@ -57,6 +55,21 @@ public class MongoApplicationSetup implements IApplicationSetup {
             recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
         }
+        delete(db, UserDataSource.NAME);
+        delete(db, PaymentDataSource.NAME);
+        delete(db, MessagesDataSource.NAME);
+
+        delete(db, DeliveryAddressDataSource.NAME);
+        delete(db, OrderDataSource.NAME);
+        delete(db, PhoneNumberDataSource.NAME);
+
+        delete(db, VehicleDataSource.NAME);
+    }
+
+    private void delete(MongoDatabase db, String name) {
+        log.info("Deleting collection " + name);
+        MongoCollection<Document> collection = db.getCollection(name);
+        collection.drop();
     }
 
     protected void recreate(MongoDatabase db, String operatorName, SchemaConfig schema) {

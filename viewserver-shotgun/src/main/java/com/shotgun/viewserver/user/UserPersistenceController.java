@@ -73,6 +73,7 @@ public interface UserPersistenceController{
                 .addValue("longitude", user.getLongitude())
                 .addValue("online", user.getOnline())
                 .addValue("userStatus", user.getUserStatus())
+                .addValue("password", user.getPassword())
                 .addValue("userAppStatus", user.getUserAppStatus())
                 .addValue("pendingMessages", user.getPendingMessages())
                 .addValue("blockedByUsers", user.getBlockedByUsers())

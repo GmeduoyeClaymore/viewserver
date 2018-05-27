@@ -27,7 +27,7 @@ public interface AppMessage extends DynamicJsonBackedObject {
         customNotificationBody.put("icon", "ic_notif");
         customNotificationBody.put("priority", getPriority());
         customNotificationBody.put("show_in_foreground", true);
-       // body.put("notification", customNotificationBody); //this breaks Android messages
+        body.put("notification", customNotificationBody); //this breaks Android messages //this is needed for IOS messages can you explain how it breaks android messages
         HashMap<String, Object> customNotification = new HashMap<>();
         customNotification.put("custom_notification", customNotificationBody);
         body.put("data", customNotification);

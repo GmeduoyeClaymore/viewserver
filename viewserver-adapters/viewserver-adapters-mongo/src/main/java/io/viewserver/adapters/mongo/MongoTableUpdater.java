@@ -10,6 +10,7 @@ import io.viewserver.datasource.*;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
@@ -36,14 +37,14 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
                         TableKey tableKey = RecordUtils.getTableKey(record, definition);
                         String documentId = tableKey.toString("_");
-                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " version " + record.getValue("version"));
                         Map<String, Object> docData = getDocumentData(record, schemaConfig);
+                        Integer versionBeforeUpdate = record.getInt("version");
                         docData.put("version", incrementVersion(record));
-                        BasicDBObject query = new BasicDBObject("_id", documentId);
+                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + record.getValue("version") + " new version is " + docData.get("version"));
                         Document tDocument = new Document(docData);
-                        UpdateResult result = getUpdateResult(tableName, query, tDocument);
-                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " version " + record.getValue("version"));
-                        booleanEmitter.onNext(result.wasAcknowledged());
+                        boolean result = getUpdateResult(versionBeforeUpdate, tableName, documentId, tDocument);
+                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + record.getValue("version") + " new version is " + docData.get("version"));
+                        booleanEmitter.onNext(result);
                         booleanEmitter.onCompleted();
                     }catch (Exception ex){
                         log.error("Writing to \"" + tableName + "\" failed exception is",ex);
@@ -61,8 +62,20 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         return version + 1;
     }
 
-    public UpdateResult getUpdateResult(String tableName, BasicDBObject query, Document tDocument) {
-        return getCollection(tableName).replaceOne(query, tDocument,new UpdateOptions().upsert(true));
+    public boolean getUpdateResult(Integer initialVersion, String tableName, String  documentId, Document tDocument) {
+        Bson updateQuery = new Document("$set", tDocument);
+        Integer version = tDocument.getInteger("version");
+        if(version == 0){
+            tDocument.put("_id",documentId);
+            getCollection(tableName).insertOne(tDocument);
+            return true;
+        }else{
+            BasicDBObject query = new BasicDBObject("_id", documentId);
+            query.put("version", new BasicDBObject("$eq", initialVersion));
+            return getCollection(tableName).updateOne(query, updateQuery,new UpdateOptions()).wasAcknowledged();
+
+
+        }
     }
 
     private Map<String, Object> getDocumentData(IRecord record, SchemaConfig config){

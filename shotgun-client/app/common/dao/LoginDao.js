@@ -27,6 +27,10 @@ export default class LoginDao{
     return this.optionsSubject;
   }
 
+  onRegister = async() => {
+    await this.connectClientIfNotConnected();
+  }
+
   loginUserByUsernameAndPassword = async({email, password, fromSavedDetails = false}) => {
     this.assertNotLoggedIn();
     const userId = await this.client.invokeJSONCommand('loginController', 'login', {email, password});

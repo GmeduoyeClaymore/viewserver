@@ -76,11 +76,10 @@ public class LoginController {
         Observable datasources = waitForDataSources(UserDataSource.NAME, OrderDataSource.NAME, ContentTypeDataSource.NAME);
         return datasources.flatMap(obj -> systemcatalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).cast(KeyedTable.class).
                 flatMap(ut ->
-                        waitForUser(userId, ut).map(
+                        waitForUser(userId, ut).flatMap(
                                 rec -> {
-                                    setupContext(userId, peerSession);
-                                    setUserOnline(userId).subscribe();
-                                    return userId;
+                                    setupContext(userId,peerSession);
+                                    return setUserOnline(userId).map(c -> userId );
                                 })
                 ));
     }
@@ -108,6 +107,7 @@ public class LoginController {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("online", true)
+                .addValue("version", getUser(userId).getVersion())
                 .addValue("userStatus", UserStatus.ONLINE.name())
                 .addValue("userAppStatus", UserAppStatus.FOREGROUND);
 
@@ -117,6 +117,7 @@ public class LoginController {
     private ListenableFuture setUserOffLine(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
+                .addValue("version", getUser(userId).getVersion())
                 .addValue("online", false)
                 .addValue("userStatus", UserStatus.OFFLINE.name())
                 .addValue("userAppStatus", UserAppStatus.BACKGROUND);

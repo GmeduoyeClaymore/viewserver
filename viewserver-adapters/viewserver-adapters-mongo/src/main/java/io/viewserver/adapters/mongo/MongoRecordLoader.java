@@ -8,10 +8,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
+import com.mongodb.client.model.changestream.UpdateDescription;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.datasource.IRecordLoader;
 import io.viewserver.datasource.OperatorCreationConfig;
 import io.viewserver.datasource.SchemaConfig;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +51,8 @@ public class MongoRecordLoader implements IRecordLoader{
         this.service =  MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1,new ThreadFactoryBuilder().setNameFormat(this.tableName+"-%d").build()));
         this.config = config;
         this.creationConfig = creationConfig;
-        updateObservable.debounce(5, TimeUnit.MILLISECONDS).subscribe(res -> this.sendRecords());
+        //updateObservable.debounce(5, TimeUnit.MILLISECONDS).subscribe(res -> this.sendRecords());
+        updateObservable.subscribe(res -> this.sendRecords());
     }
 
     @Override
@@ -82,17 +86,20 @@ public class MongoRecordLoader implements IRecordLoader{
                 Block<ChangeStreamDocument<Document>> block = t -> {
                     Document fullDocument = t.getFullDocument();
                     if(fullDocument == null){
-                        return;
+                        UpdateDescription description = t.getUpdateDescription();
+                        receiveBsonDocument(t.getDocumentKey().getString("_id").getValue(),description.getUpdatedFields());
+                    }else{
+                        logger.info(String.format("GOT DOCUMENT IN UPDATE - %s -version %s - Addition of snapshot listener for Mongo table %s",fullDocument.getString("_id"),fullDocument.getInteger("version"), tableName));
+                        if (t.getOperationType().equals(OperationType.INVALIDATE)) {
+                            return;
+                        }
+                        receiveDocument(fullDocument);
                     }
-                    logger.info(String.format("GOT DOCUMENT IN UPDATE - %s - Addition of snapshot listener for Mongo table %s",fullDocument.getString("_id"), tableName));
-                    if (t.getOperationType().equals(OperationType.INVALIDATE)) {
-                        return;
-                    }
-                    receiveDocument(fullDocument);
+
                 };
                 logger.info(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
-                    logger.info(String.format("GOT DOCUMENT IN SNAPSHOT - %s - Addition of snapshot listener for Mongo table %s",document.getString("_id"), tableName));
+                    logger.info(String.format("GOT DOCUMENT IN SNAPSHOT - %s - Addition of snapshot listener for Mongo table %s",document.getString("_id"),document.getInteger("version"), tableName));
                     receiveDocument(document);
                 });
                 ready.onNext(null);
@@ -102,6 +109,20 @@ public class MongoRecordLoader implements IRecordLoader{
                 throw new RuntimeException("Error getting records", ex);
             }
         });
+    }
+
+    private void receiveBsonDocument(String documentId,BsonDocument document) {
+        synchronized (recordsById) {
+            MongoDocumentChangeRecord changeRecord = recordsById.get(documentId);
+            if (changeRecord == null) {
+                changeRecord = new MongoDocumentChangeRecord(config, document);
+                changeRecord.setId(documentId);
+                recordsById.put(documentId, changeRecord);
+            } else {
+                changeRecord.setValuesFrom(document);
+            }
+        }
+        updateObservable.onNext(null);
     }
 
     private void receiveDocument(Document document) {

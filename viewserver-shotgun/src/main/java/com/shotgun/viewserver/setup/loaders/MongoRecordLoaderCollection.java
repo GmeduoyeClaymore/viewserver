@@ -21,7 +21,7 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
-        //register(DeliveryAddressDataSource.getDataSource().getSchema(), DeliveryAddressDataSource.NAME);
+        register(DeliveryAddressDataSource.getDataSource().getSchema(), DeliveryAddressDataSource.NAME);
         register(PaymentDataSource.getDataSource().getSchema(), PaymentDataSource.NAME);
         register(PhoneNumberDataSource.getDataSource().getSchema(), PhoneNumberDataSource.NAME);
         register(ProductCategoryDataSource.getDataSource().getSchema(), ProductCategoryDataSource.NAME);
