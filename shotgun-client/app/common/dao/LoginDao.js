@@ -64,7 +64,7 @@ export default class LoginDao{
     Logger.info(`Registering customer ${customer.email}`);
     const customerId = await this.client.invokeJSONCommand('customerController', 'registerCustomer', {user: customer,  deliveryAddress, paymentCard});
     Logger.info(`Customer ${customerId} registered`);
-    await this.loginUserByUsernameAndPassword({...partner});
+    await this.loginUserByUsernameAndPassword({...customer});
     return customerId;
   }
 

@@ -173,7 +173,7 @@ const mapStateToProps = (state, initialProps) => {
     ...initialProps,
     errors: getOperationErrors(state, [{ partnerDao: 'acceptOrderRequest' }]) + '\n' + getAnyOperationError(state, 'orderDao') + '\n' + getAnyOperationError(state, 'singleOrderSummaryDao'),
     user,
-    busyUpdating: isAnyOperationPending(state, [{ partnerDao: 'acceptOrderRequest' }, { partnerDao: 'updateOrderPrice' }]),
+    busyUpdating: isAnyOperationPending(state, [{ partnerDao: 'acceptOrderRequest' }, { partnerDao: 'updateOrderPrice' }, { orderDao: 'partnerCompleteJob' }]),
     busy: isPendingOrderSummarySubscription,
     order,
     orderId,

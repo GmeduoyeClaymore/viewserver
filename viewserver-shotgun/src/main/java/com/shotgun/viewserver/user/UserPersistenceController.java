@@ -42,6 +42,17 @@ public interface UserPersistenceController{
 
     }
 
+    default <T extends User> T getUserForIdSync(String userId, Class<T> userClass) {
+
+        KeyedTable userTable = getUserTable();
+
+        HashMap<String, Object> userRow = userTable.getRowObject(new TableKey(userId));
+        if(userRow == null){
+            throw new RuntimeException(String.format("Unable to find user for id %s",userId));
+        }
+        return JSONBackedObjectFactory.create(userRow, userClass);
+    }
+
 
     @ControllerAction(path = "addOrUpdateUser", isSynchronous = true)
     default ListenableFuture addOrUpdateUser(@ActionParam(name = "user") User user, @ActionParam(name = "password") String password) {

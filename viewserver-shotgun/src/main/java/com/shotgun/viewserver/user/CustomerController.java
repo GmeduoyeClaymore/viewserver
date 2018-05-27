@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.login.LoginController;
@@ -19,6 +20,7 @@ import io.viewserver.controller.ControllerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import java.util.HashMap;
 
@@ -69,7 +71,7 @@ public class CustomerController {
                     }
 
                     log.debug("Registered customer: " + user.getEmail() + " with id " + userId);
-                    Observable.from(loginController.setUserId(userId)).subscribe(
+                    Observable.from(loginController.setUserId(userId)).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).subscribe(
                             res -> {
                                 log.debug("Logged in driver: " + user.getEmail() + " with id " + userId);
                                 future.set(userId);

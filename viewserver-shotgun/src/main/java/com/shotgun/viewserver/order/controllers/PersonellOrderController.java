@@ -154,7 +154,7 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
         ).map(res -> paymentStage.get()));
     }
 
-    @ControllerAction(path = "partnerCompleteJob", isSynchronous = true)
+    @ControllerAction(path = "partnerCompleteJob", isSynchronous = false)
     public ListenableFuture partnerCompleteJob(@ActionParam(name = "orderId") String orderId) {
         return this.transform(
                 orderId,

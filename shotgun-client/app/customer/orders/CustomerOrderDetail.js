@@ -99,7 +99,7 @@ const mapStateToProps = (state, initialProps) => {
     isPendingOrderSummarySubscription,
     me: getDaoState(state, ['user'], 'userDao'),
     errors,
-    busyUpdating: isAnyOperationPending(state, [{orderDao: 'cancelOrder'}, {orderDao: 'rejectResponse'}, {orderDao: 'updateOrderAmount'}, {orderDao: 'updateOrderVisibility'}]),
+    busyUpdating: isAnyOperationPending(state, [{orderDao: 'cancelOrder'}, {orderDao: 'rejectResponse'}, {orderDao: 'updateOrderAmount'}, {orderDao: 'updateOrderVisibility'}, {orderDao: 'customerCompleteAndPay'}]),
     busy: isPendingOrderSummarySubscription,
   };
 };

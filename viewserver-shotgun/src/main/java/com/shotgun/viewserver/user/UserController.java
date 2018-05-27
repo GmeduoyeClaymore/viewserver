@@ -164,7 +164,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         return this.addOrUpdateUser(user, null);
     }
 
-    @ControllerAction(path = "setLocation", isSynchronous = true)
+    @ControllerAction(path = "setLocation", isSynchronous = false)
     public ListenableFuture setLocation(@ActionParam(name = "latitude") double latitude, @ActionParam(name = "longitude") double longitude) {
         return this.transform(getUserId(),
                 user -> {

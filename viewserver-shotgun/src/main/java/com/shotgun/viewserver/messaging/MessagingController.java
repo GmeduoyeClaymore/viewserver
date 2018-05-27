@@ -129,6 +129,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
         if(existingUserForToken != null){
             Record userRecord = new Record()
                     .addValue("userId", existingUserForToken)
+                    .addValue("version", getUserForIdSync(userId,User.class).getVersion())
                     .addValue("fcmToken", null);
             iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
         }
@@ -138,6 +139,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);
             Record userRecord = new Record()
                     .addValue("userId", userId)
+                    .addValue("version", getUserForIdSync(userId,User.class).getVersion())
                     .addValue("fcmToken", token);
             iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
 

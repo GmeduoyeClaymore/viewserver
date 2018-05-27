@@ -99,7 +99,8 @@ public class LoginController {
         String userId = getUserId();
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("fcmToken", null);
+                .addValue("fcmToken", null)
+                .addValue("versions", getUser(userId).getVersion());
         return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
     }
 
@@ -128,6 +129,7 @@ public class LoginController {
     private ListenableFuture setUserAppStatus(String userId, UserAppStatus appStatus) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
+                .addValue("version", getUser(userId).getVersion())
                 .addValue("userAppStatus", appStatus);
 
         return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
