@@ -75,6 +75,9 @@ public class MongoRecordLoader implements IRecordLoader{
                 logger.info(String.format("Adding snapshot listener for Mongo table %s", tableName));
                 Block<ChangeStreamDocument<Document>> block = t -> {
                     Document fullDocument = t.getFullDocument();
+                    if(fullDocument == null){
+                        return;
+                    }
                     System.out.println("received document update: " + fullDocument.getString("_id"));
                     if (t.getOperationType().equals(OperationType.INVALIDATE)) {
                         return;
