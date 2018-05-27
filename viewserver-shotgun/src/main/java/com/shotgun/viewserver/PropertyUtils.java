@@ -12,7 +12,9 @@ public class PropertyUtils{
             try (InputStream resourceStream = loader.getResourceAsStream(String.format("%s.properties", environment))) {
                 props.load(resourceStream);
                 for (String propName : props.stringPropertyNames()) {
-                    System.setProperty(propName, (String) props.get(propName));
+                    if(System.getProperty(propName) == null) {
+                        System.setProperty(propName, (String) props.get(propName));
+                    }
                 }
             }
         }catch (Exception ex){
