@@ -130,7 +130,6 @@ public class ViewServerClientSteps {
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
     public void I_subscribe_to_report(String clientName, String reportId){
-        clientContext.waitForPersistenceRoundTrip();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
@@ -312,7 +311,6 @@ public class ViewServerClientSteps {
 
     @When("^\"([^\"]*)\" controller \"([^\"]*)\" action \"([^\"]*)\" invoked with data \"([^\"]*)\" and result \"([^\"]*)\"$")
     public void I_Invoke_Action_On_Controller_With_Data_With_Result(String clientName, String controllerName, String action, String data, String result, String resultNameSuffix) throws InterruptedException, ExecutionException, TimeoutException {
-        clientContext.waitForPersistenceRoundTrip();
         ClientConnectionContext connectionContext = clientContext.get(clientName);
 
         ListenableFuture<CommandResult> future = connectionContext.invokeJSONCommand(controllerName, action, data);

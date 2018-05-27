@@ -13,6 +13,7 @@ import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 
 import java.util.Date;
@@ -241,9 +242,12 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
 
     @ControllerAction(path = "customerCompleteAndPay", isSynchronous = false)
     public default ListenableFuture<String> customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
+        return ListenableFutureObservable.to(customerCompleteAndPayObservable(orderId));
+    }
+    public default Observable<String> customerCompleteAndPayObservable(@ActionParam(name = "orderId") String orderId) {
         AtomicReference<String> paymentId = new AtomicReference();
         ControllerContext context = ControllerContext.Current();
-        return ListenableFutureObservable.to(this.transformAsyncObservable(
+        return this.transformAsyncObservable(
                 orderId,
                 order -> {
                     order.transitionTo(NegotiatedOrder.NegotiationOrderStatus.CUSTOMERCOMPLETE);
@@ -262,7 +266,7 @@ public interface NegotiatedOrderController extends OrderUpdateController, Negoti
                     notifyJobCompleted(order.getOrderId(), order.getPartnerUserId());
                 },
                 NegotiatedOrder.class
-        ).map(res -> paymentId.get()));
+        ).map(res -> paymentId.get());
     }
 
     IPaymentController getPaymentController();

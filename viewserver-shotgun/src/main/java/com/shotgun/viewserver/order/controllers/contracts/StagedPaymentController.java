@@ -9,6 +9,7 @@ import com.shotgun.viewserver.order.domain.StagedPaymentOrder;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
+import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,15 +20,16 @@ public interface StagedPaymentController extends NegotiatedOrderController, Orde
     @Override
     @ControllerAction(path = "customerCompleteAndPay", isSynchronous = true)
     default ListenableFuture customerCompleteAndPay(@ActionParam(name = "orderId") String orderId) {
-        ListenableFuture listenableFuture = NegotiatedOrderController.super.customerCompleteAndPay(orderId);
-        this.transform(
-                orderId,
-                order -> {
-                    order.completeAllPaymentStages();
-                    return true; },
-                StagedPaymentOrder.class
-        );
-        return listenableFuture;
+        Observable<String> observable = NegotiatedOrderController.super.customerCompleteAndPayObservable(orderId);
+        return ListenableFutureObservable.to(observable.flatMap(res-> {
+            return this.transformObservable(
+                    orderId,
+                    order -> {
+                        order.completeAllPaymentStages();
+                        return true; },
+                    StagedPaymentOrder.class
+            ).map(res2 -> res);
+        }));
     }
 
     @ControllerAction(path = "addPaymentStage", isSynchronous = true)
