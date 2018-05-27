@@ -41,6 +41,7 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("integration_teamcity",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("integration_running",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it_running",ShotgunServerLauncher::ConfigureForMockEnvironment);

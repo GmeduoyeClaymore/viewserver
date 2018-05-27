@@ -27,8 +27,9 @@ public class ShotgunViewServerSteps {
     @Given("^a running shotgun viewserver$")
     public void a_running_shotgun_viewserver() throws InterruptedException {
         clientContext.closeClients();
-        PropertyUtils.loadProperties("cucumber");
         String env = System.getProperty("env");
+        PropertyUtils.loadProperties("cucumber");
+        env = System.getProperty("env");
         PropertyUtils.loadProperties(env);
         launcher.stop();
         if(Boolean.parseBoolean(System.getProperty("serverShouldBeStarted", "true"))) {
