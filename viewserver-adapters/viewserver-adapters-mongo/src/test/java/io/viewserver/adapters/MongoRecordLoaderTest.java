@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.mongodb.client.model.Filters.eq;
 import static java.util.Arrays.asList;
 
+@Ignore
 public class MongoRecordLoaderTest {
 
     static DynamicSerializationModule orderSerializationModule = new DynamicSerializationModule();
