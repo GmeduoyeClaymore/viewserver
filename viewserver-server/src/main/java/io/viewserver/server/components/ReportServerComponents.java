@@ -8,6 +8,7 @@ import io.viewserver.execution.SystemReportExecutor;
 import io.viewserver.report.ReportContextRegistry;
 import io.viewserver.report.ReportRegistry;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import rx.Observable;
 
 public class ReportServerComponents implements IReportServerComponents {
     private final IBasicServerComponents basicServerComponents;
@@ -22,7 +23,7 @@ public class ReportServerComponents implements IReportServerComponents {
     }
 
     @Override
-    public void start() {
+    public Observable start() {
 
         reportRegistry = new ReportRegistry(basicServerComponents.getServerCatalog(), basicServerComponents.getExecutionContext());
         reportContextRegistry = new ReportContextRegistry(basicServerComponents.getExecutionContext(),basicServerComponents.getServerCatalog(), new ChunkedColumnStorage(1024));
@@ -30,6 +31,7 @@ public class ReportServerComponents implements IReportServerComponents {
 
         register("subscribeReport", new SubscribeReportHandler(basicServerComponents.getExecutionContext().getDimensionMapper(), getDataSourceRegistry(), reportRegistry, basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), reportContextRegistry, systemReportExecutor));
         register("subscribeDimension", new SubscribeDimensionHandler(basicServerComponents.getExecutionContext().getDimensionMapper(), getDataSourceRegistry(), reportRegistry, basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner()));
+        return Observable.just(true);
     }
 
     private IDataSourceRegistry getDataSourceRegistry(){

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +37,7 @@ public class MongoRecordLoader implements IRecordLoader{
     private HashMap<String,MongoDocumentChangeRecord> recordsById;
     private PublishSubject updateObservable = PublishSubject.create();
     private PublishSubject recordStream = PublishSubject.create();
+    private ReplaySubject ready = ReplaySubject.create(1);
     private boolean mongoListenerAdded;
 
 
@@ -67,6 +69,9 @@ public class MongoRecordLoader implements IRecordLoader{
         return recordStream;
     }
 
+    public Observable readyObservable(){
+        return ready.take(1);
+    }
 
     private void addMongoListener(){
         CompletableFuture<Integer> ss = new CompletableFuture<>();
@@ -88,8 +93,8 @@ public class MongoRecordLoader implements IRecordLoader{
                     System.out.println("received doucment in snapshot: " + document.getString("_id"));
                     receiveDocument(document);
                 });
+                ready.onNext(null);
                 getCollection().watch().forEach(block);
-                return ss.get();
             } catch (Exception ex) {
                 logger.error(String.format("Error adding snapshot listener for Mongo table %s {}", tableName), ex);
                 throw new RuntimeException("Error getting records", ex);

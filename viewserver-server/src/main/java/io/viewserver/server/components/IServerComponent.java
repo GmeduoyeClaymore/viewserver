@@ -1,7 +1,9 @@
 package io.viewserver.server.components;
 
+import rx.Observable;
+
 public interface IServerComponent{
-    void start();
+    Observable start();
     default void stop() {
     }
 }

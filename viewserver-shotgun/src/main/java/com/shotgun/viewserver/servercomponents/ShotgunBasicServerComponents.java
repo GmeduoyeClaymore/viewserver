@@ -7,6 +7,7 @@ import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.network.IEndpoint;
 import io.viewserver.operators.spread.SpreadFunctionRegistry;
 import io.viewserver.server.components.NettyBasicServerComponent;
+import rx.Observable;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     }
 
     @Override
-    public void start() {
+    public Observable start() {
         super.start();
         this.serverNetwork.setDisconnectOnTimeout(disconnectOnTimeout);
         this.serverNetwork.setTimeoutInterval(timeoutInterval);
@@ -43,6 +44,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         spreadColumnRegistry.register("getCategoryIdsFromContentTypeJSON", CategorySpreadFunction.class);
         spreadColumnRegistry.register("getPartnerResponseIdsFromOrderDetail", DateNegotiatedOrderResponseSpreadFunction.class);
         spreadColumnRegistry.register(UserRelationshipsSpreadFunction.NAME, UserRelationshipsSpreadFunction.class);
+        return null;
     }
 }
 

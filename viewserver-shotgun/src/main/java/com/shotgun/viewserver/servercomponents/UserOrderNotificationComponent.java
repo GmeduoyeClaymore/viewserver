@@ -1,20 +1,14 @@
 package com.shotgun.viewserver.servercomponents;
 
-import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
-import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.OrderNotificationContract;
-import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.setup.datasource.OrderDataSource;
 import com.shotgun.viewserver.setup.datasource.OrderWithResponseDataSource;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import com.shotgun.viewserver.user.ProductSpreadFunction;
 import com.shotgun.viewserver.user.User;
-import com.shotgun.viewserver.user.UserRelationship;
-import com.shotgun.viewserver.user.UserRelationshipStatus;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
-import io.viewserver.command.CommandResult;
 import io.viewserver.command.ObservableCommandResult;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.datasource.IDataSourceRegistry;
@@ -22,7 +16,6 @@ import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.SystemReportExecutor;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
-import io.viewserver.expression.function.Distance;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
@@ -36,14 +29,11 @@ import io.viewserver.server.components.IServerComponent;
 import io.viewserver.server.components.ReportServerComponents;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import io.viewserver.util.dynamic.NamedThreadFactory;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import java.text.DecimalFormat;
@@ -82,7 +72,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
 
     @Override
-    public void start() {
+    public Observable start() {
         String operatorPath = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, DataSource.TABLE_NAME);
         rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(operatorPath);
         log.info("Waiting for user operator " + operatorPath);
@@ -90,6 +80,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             log.info("Found for user operator "  + operatorPath);
             listenForUsers(operator);
         }));
+        return null;
     }
 
     private void listenForUsers(IOperator operator) {

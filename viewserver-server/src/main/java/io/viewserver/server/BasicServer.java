@@ -2,10 +2,14 @@ package io.viewserver.server;
 
 import io.viewserver.network.IEndpoint;
 import io.viewserver.server.components.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.functions.FuncN;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class BasicServer {
@@ -17,6 +21,7 @@ public class BasicServer {
     private IInitialDataLoaderComponent initialDataLoaderComponent;
     private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
     private List<IServerComponent> components = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(BasicServer.class);
 
     public interface Callable<V> {
         V call() ;
@@ -58,12 +63,24 @@ public class BasicServer {
     }
 
     public void start(){
+        List<Observable<Object>> observables = new ArrayList<>();
         this.componentFactories.forEach(c-> {
             IServerComponent component = c.call();
             components.add(component);
-            component.start();
+            Observable start = component.start();
+            if(start != null) {
+                observables.add(start);
+            }
         });
-        basicServerComponents.listen();
+        FuncN<?> onCompletedAll = (FuncN<Object>) objects -> {
+            logger.info(String.format("COMPLETED FINISHED WAITING for server components"));
+            return true;
+        };
+        Observable.zip(observables, onCompletedAll).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds"))).subscribe(
+                res -> {
+                    basicServerComponents.listen();
+                }
+        );
     }
 
     public void stop(){

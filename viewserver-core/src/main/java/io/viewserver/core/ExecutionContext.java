@@ -16,6 +16,8 @@
 
 package io.viewserver.core;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import io.viewserver.catalog.MetadataRegistry;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.datasource.DimensionMapper;
@@ -188,13 +190,16 @@ public class ExecutionContext implements IExecutionContext{
 
 
     @Override
-    public void submit(Runnable work, int delay) {
+    public ListenableFuture submit(Runnable work, int delay) {
+        SettableFuture future = SettableFuture.create();
         this.reactor.scheduleTask(new ITask() {
             @Override
             public void execute() {
                 work.run();
+                future.set(null);
             }
         },delay,0);
+        return future;
     }
 
     public void register(IOperator operator) {

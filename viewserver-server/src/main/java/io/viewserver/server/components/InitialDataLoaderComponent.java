@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.FuncN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +34,24 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
     }
 
     @Override
-    public void start() {
+    public Observable start() {
+        List<Observable<Object>> readyObservables = new ArrayList<>();
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
             IRecordLoader recordLoader = loaderEntry.getValue();
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             Observable<KeyedTable> operator = getKeyedTable(loaderEntry.getKey(), schemaConfig, creationConfig);
             this.subscriptions.add(operator.subscribe(kt -> onKeyedTable(kt,loaderEntry.getValue())));
+            readyObservables.add(loaderEntry.getValue().readyObservable());
         }
+        FuncN<?> onCompletedAll = new FuncN<Object>() {
+            @Override
+            public Object call(Object... objects) {
+                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders"));
+                return true;
+            }
+        };
+        return Observable.zip(readyObservables, onCompletedAll).take(1);
     }
 
     private void onKeyedTable(KeyedTable table, IRecordLoader recordLoader){

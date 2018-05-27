@@ -13,6 +13,7 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.server.components.ControllerComponents;
 import io.viewserver.server.components.IBasicServerComponents;
+import rx.Observable;
 
 
 public abstract class ShotgunControllersComponents extends ControllerComponents{
@@ -24,7 +25,7 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
     }
 
     @Override
-    public void start() {
+    public Observable start() {
         super.start();
         IImageController iImageController = getImageController();
         IMessagingController messagingController = getMessagingController();
@@ -56,6 +57,7 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         this.registerController(new PhoneCallController(databaseUpdater, basicServerComponents.getServerCatalog()));
         this.registerController(nexmoController);
         this.registerController(getVehicleDetailsController());
+        return null;
     }
 
     private IReactor getServerReactor() {

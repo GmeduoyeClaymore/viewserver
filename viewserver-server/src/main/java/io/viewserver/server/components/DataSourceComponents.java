@@ -37,7 +37,7 @@ public class DataSourceComponents implements IDataSourceServerComponents{
     }
 
     @Override
-    public void start() {
+    public Observable start() {
         dataSourceRegistry = new DataSourceRegistry(basicServerComponents.getServerCatalog(), basicServerComponents.getExecutionContext());
         dataSourceRegistry.getRegistered().subscribe(c-> {
                     Set<String> dependencies = this.getDependencies(c);
@@ -49,6 +49,7 @@ public class DataSourceComponents implements IDataSourceServerComponents{
                         runDataSource(c);
                     }
         }, err -> log.error("Problem subscribing to registered data sources",err));
+        return Observable.just(true);
     }
 
     private Observable<Object> waitFor(String dataSourceName, List<String> dependeciesToWaitFor) {

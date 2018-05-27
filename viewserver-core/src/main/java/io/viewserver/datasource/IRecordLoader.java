@@ -23,7 +23,9 @@ public interface IRecordLoader {
     SchemaConfig getSchemaConfig();
     Observable<IRecord> getRecords(String query);
     OperatorCreationConfig getCreationConfig();
-
+    default Observable readyObservable(){
+        return Observable.just(true);
+    }
     void close();
 }
 

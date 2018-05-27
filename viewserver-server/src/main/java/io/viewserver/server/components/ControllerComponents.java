@@ -3,6 +3,7 @@ package io.viewserver.server.components;
 import io.viewserver.controller.ControllerCatalog;
 import io.viewserver.controller.ControllerJSONCommandHandler;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import rx.Observable;
 
 public class ControllerComponents implements IControllerComponents {
 
@@ -28,7 +29,8 @@ public class ControllerComponents implements IControllerComponents {
     }
 
     @Override
-    public void start() {
+    public Observable start() {
         basicServerComponents.getCommandHandlerRegistry().register("genericJSON", this.controllerHandler);
+        return Observable.just(true);
     }
 }

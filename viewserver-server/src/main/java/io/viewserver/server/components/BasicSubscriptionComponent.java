@@ -2,12 +2,8 @@ package io.viewserver.server.components;
 
 import io.viewserver.authentication.*;
 import io.viewserver.command.*;
-import io.viewserver.controller.ControllerCatalog;
-import io.viewserver.controller.ControllerJSONCommandHandler;
-import io.viewserver.datasource.IDataSourceRegistry;
-import io.viewserver.report.ReportRegistry;
-import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.sql.ExecuteSqlCommandHandler;
+import rx.Observable;
 
 public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
 
@@ -21,7 +17,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
 
     }
 
-    public void start() {
+    public Observable start() {
 
         // commands we can receive
         register("authenticate", new AuthenticateCommandHandler(authenticationHandlerRegistry));
@@ -32,6 +28,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
         register("tableEdit", new TableEditCommandHandler(basicServerComponents.getTableFactoryRegistry()));
         register("executeSql", new ExecuteSqlCommandHandler(basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), basicServerComponents.getExecutionContext().getSummaryRegistry()));
         this.registerAuthenticationHandlers();
+        return Observable.just(true);
     }
 
     void register(String name, ICommandHandler commandHandler){

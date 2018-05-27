@@ -16,6 +16,7 @@ import io.viewserver.messages.protobuf.Message;
 import io.viewserver.operators.OperatorFactoryRegistry;
 import io.viewserver.operators.table.TableFactoryRegistry;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import rx.Observable;
 
 /**
  * Created by bemm on 25/11/2014.
@@ -102,8 +103,9 @@ public class BasicServerComponents implements IBasicServerComponents {
     }
 
     @Override
-    public void start() {
+    public Observable<Object> start() {
         new Catalog("graphNodes", getServerCatalog());
+        return Observable.just(true);
     }
 
     @Override

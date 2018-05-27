@@ -26,9 +26,12 @@ import io.viewserver.reactor.EventLoopReactor;
 import io.viewserver.reactor.IReactor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.observable.ListenableFutureObservable;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 
@@ -45,7 +48,7 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
     }
 
     @Override
-    public void start() {
+    public Observable<Object> start() {
         try {
             CountDownLatch latch = new CountDownLatch(1);
             final NettyNetworkAdapter networkAdapter = new NettyNetworkAdapter();
@@ -59,10 +62,10 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
                 log.info("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
                         runtime.freeMemory(), runtime.maxMemory());
             }, 1, 3 * 60 * 1000);
-            this.getExecutionContext().submit(() -> latch.countDown(),5);
-            latch.await(10, TimeUnit.SECONDS);
+            return ListenableFutureObservable.from(this.getExecutionContext().submit(() -> latch.countDown(), 5), Runnable::run) ;
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
+            throw new RuntimeException(e);
         }
     }
 
