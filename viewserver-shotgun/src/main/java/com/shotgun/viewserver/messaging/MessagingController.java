@@ -13,6 +13,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.KeyedTable;
@@ -21,6 +22,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
@@ -54,11 +56,18 @@ public class MessagingController implements IMessagingController, UserPersistenc
         this.messagingApiKey = messagingApiKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.catalog = catalog;
-        catalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME).subscribe(
-                c-> c.getOutput("out").observable("userId","fcmToken").subscribe(
-                        tk -> recordUserToken(tk)
-                )
-        );
+        if( this.catalog  == null){
+            throw new RuntimeException("Catalog must be set");
+        }
+
+        Observable<IOperator> iOperatorObservable = catalog.waitForOperatorAtThisPath(TableNames.USER_TABLE_NAME);
+        if(iOperatorObservable != null) {
+            iOperatorObservable.subscribe(
+                    c -> c.getOutput("out").observable("userId", "fcmToken").subscribe(
+                            tk -> recordUserToken(tk)
+                    )
+            );
+        }
     }
 
     private void recordUserToken(OperatorEvent tk) {

@@ -10,7 +10,16 @@
     "range": 50,
     "latitude": 51.4857236,
     "longitude": -0.2123406,
-    "selectedContentTypes": "objref://json/users/groundWorker_selectedContentTypes.json"
+    "selectedContentTypes": "objref://json/users/groundWorker_selectedContentTypes.json",
+    "deliveryAddress": {
+      "line1": "12 Kinnoul Rd",
+      "city": "London",
+      "postCode": "W6",
+      "country": "United Kingdom",
+      "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
+      "latitude": 51.4857236,
+      "longitude": -0.2123406
+    }
   },
   "bankAccount": {
     "accountNumber": "00012345",
@@ -31,14 +40,5 @@
       "SmallVan",
       "MediumVan"
     ]
-  },
-  "address": {
-    "line1": "12 Kinnoul Rd",
-    "city": "London",
-    "postCode": "W6",
-    "country": "United Kingdom",
-    "googlePlaceId": "EikxMiBLaW5ub3VsIFJkLCBIYW1tZXJzbWl0aCwgTG9uZG9uIFc2LCBVSw",
-    "latitude": 51.4857236,
-    "longitude": -0.2123406
   }
 }

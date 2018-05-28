@@ -10,7 +10,6 @@ import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
-import com.shotgun.viewserver.payments.PaymentBankAccount;
 import com.shotgun.viewserver.payments.IPaymentController;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
@@ -18,10 +17,8 @@ import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.reactor.IReactor;
-import io.viewserver.reactor.ITask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
 import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
@@ -76,12 +73,17 @@ public class PartnerController {
         ControllerContext context = ControllerContext.Current();
         user.set("created",new Date());
         user.set("vehicle",vehicle);
+        DeliveryAddress deliveryAddress = user.getDeliveryAddress();
+        if(deliveryAddress != null){
+            user.set("latitude", deliveryAddress.getLatitude());
+            user.set("longitude", deliveryAddress.getLongitude());
+        }
         return ListenableFutureObservable.to(userController.addOrUpdateUserObservable(user, user.getPassword()).observeOn(ControllerContext.Scheduler(context)).flatMap(
                 userId -> {
                     context.set("userId",userId, context.getPeerSession());
-                    if(user.getDeliveryAddress() != null) {
-                        user.getDeliveryAddress().set("isDefault", true);
-                        deliveryAddressController.addOrUpdateDeliveryAddress(user.getDeliveryAddress());
+                    if(deliveryAddress != null) {
+                        deliveryAddress.set("isDefault", true);
+                        deliveryAddressController.addOrUpdateDeliveryAddress(deliveryAddress);
                     }
                     log.debug("Registered driver: " + user.getEmail() + " with id " + userId);
                     return loginController.setUserIdObservable(userId, context.getPeerSession()).subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).map(

@@ -30,6 +30,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | String      | lastName             |
 	  | ColumnAdd | String      | contactNo            |
 	  | ColumnAdd | Json        | selectedContentTypes |
+	  | ColumnAdd | Json        | primaryAddress       |
 	  | ColumnAdd | String      | email                |
 	  | ColumnAdd | String      | type                 |
 	  | ColumnAdd | String      | fcmToken             |
@@ -37,7 +38,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | Double      | latitude             |
 	  | ColumnAdd | Double      | longitude            |
 	  | ColumnAdd | Int         | range                |
-	  | ColumnAdd | Int         | version                |
+	  | ColumnAdd | Int         | version              |
 	  | ColumnAdd | String      | imageUrl             |
 	  | ColumnAdd | Bool        | online               |
 	  | ColumnAdd | String      | userStatus           |
@@ -52,30 +53,56 @@ Feature: User registration scenarios
 	  | ColumnAdd | Json        | vehicle              |
 	  | ColumnAdd | Json        | relationships        |
 	  | ColumnAdd | String      | relationshipStatus   |
-	  | ColumnAdd | String      | userAppStatus   |
+	  | ColumnAdd | String      | userAppStatus        |
 
 	Then "client2" the following data is received eventually on report "userReport"
 	  | ~Action | contactNo   | distance | email                        | firstName | imageUrl | initiatedByMe | lastName   | online | range | rank | ratingAvg | relationshipStatus | selectedContentTypes                        | statusMessage | type    | userId                                             |
 	  | RowAdd  | 07966265016 |          | modestasbricklayer@gmail.com | Modestas  |          |               | BrickLayer | True   | 50    | 0    | -1.0      | UNKNOWN            | {"5":{"selectedProductIds":["BrickLayer"]}} |               | partner | {client2_partnerController_registerPartner_result} |
 
-  Scenario: Newly registered users can be seen by each other
+  Scenario: Location is initially set to primary address location
+	When "client2" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client2" the following data is received eventually on report "userReport"
+	  | ~Action | latitude  | longitude | userId                                             |
+	  | RowAdd  | 51.4857236 | -0.2123406 | {client2_partnerController_registerPartner_result} |
+	Then "client2" controller "userController" action "setLocation" invoked with parameters
+	  | Name      | Value |
+	  | latitude  | 100   |
+	  | longitude | 100   |
+	When "client2" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client2" the following data is received eventually on report "userReport"
+	  | ~Action | latitude   | longitude  | userId                                             |
+	  | RowAdd  | 100.0 | 100.0 | {client2_partnerController_registerPartner_result} |
+	Then "client2" controller "userController" action "setLocation" invoked with parameters
+	  | Name      | Value |
+	  | latitude  | 0     |
+	  | longitude | 0     |
+	When "client2" subscribed to report "userReport" with parameters
+	  | Name             | Type   | Value   |
+	  | dimension_userId | String | @userId |
+	Then "client2" the following data is received eventually on report "userReport"
+	  | ~Action | latitude  | longitude | userId                                             |
+	  | RowAdd  | 51.4857236 | -0.2123406 | {client2_partnerController_registerPartner_result} |
 
   Scenario: Can see partner for product in userProduct report
 	Given "client1" report parameters
-	  | Name           | Type    | Value |
-	  | showOutOfRange | String  | true |
-	  | showUnrelated  | String  | true  |
-	  | latitude       | Integer | 0     |
-	  | longitude      | Integer | 0     |
-	  | userId         | Integer | 0     |
-	  | maxDistance    | Integer | 0     |
-	  |productId | String | BrickLayer |
+	  | Name           | Type    | Value      |
+	  | showOutOfRange | String  | true       |
+	  | showUnrelated  | String  | true       |
+	  | latitude       | Integer | 0          |
+	  | longitude      | Integer | 0          |
+	  | userId         | Integer | 0          |
+	  | maxDistance    | Integer | 0          |
+	  | productId      | String  | BrickLayer |
 	And "client1" paging from 0 to 100 by "userId" descending
 	When "client1" subscribed to report "usersForProduct"
 	Then "client1" the following schema is received eventually on report "usersForProduct"
 	  | ~Action   | ~ColumnType | ~Name                |
 	  | ColumnAdd | String      | relationshipStatus   |
-	  | ColumnAdd | String      | relationshipType   |
+	  | ColumnAdd | String      | relationshipType     |
 	  | ColumnAdd | String      | userId               |
 	  | ColumnAdd | String      | firstName            |
 	  | ColumnAdd | String      | lastName             |

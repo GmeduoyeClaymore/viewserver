@@ -3,11 +3,9 @@ package com.shotgun.viewserver.user;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.TableNames;
-import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
-import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
@@ -79,6 +77,7 @@ public interface UserPersistenceController{
                 .addValue("contactNo", user.getContactNo())
                 .addValue("email", user.getEmail().toLowerCase())
                 .addValue("type", user.getType())
+                .addValue("deliveryAddress", user.getDeliveryAddress())
                 .addValue("vehicle", user.getVehicle())
                 .addValue("latitude", user.getLatitude())
                 .addValue("longitude", user.getLongitude())

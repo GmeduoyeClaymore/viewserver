@@ -3,8 +3,9 @@ package com.shotgun.viewserver.setup.datasource;
 
 import io.viewserver.Constants;
 import io.viewserver.datasource.*;
-import io.viewserver.execution.nodes.GroupByNode;
-import io.viewserver.execution.nodes.JoinNode;
+import io.viewserver.execution.nodes.*;
+import io.viewserver.operators.calccol.CalcColOperator;
+import io.viewserver.operators.projection.IProjectionConfig;
 
 import java.util.Arrays;
 
@@ -36,6 +37,7 @@ public class UserDataSource {
                                         new Column("relationships",  ContentType.Json),
                                         new Column("pendingMessages",  ContentType.Json),
                                         new Column("ratings",  ContentType.Json),
+                                        new Column("deliveryAddress",  ContentType.Json),
                                         new Column("ratingAvg",  ContentType.Double),
                                         new Column("type",  ContentType.String),
                                         new Column("stripeCustomerId",  ContentType.String),
@@ -54,9 +56,32 @@ public class UserDataSource {
                                 ))
                                 .withKeyColumns("userId")
                 )
+                .withNodes(
+                        new ProjectionNode("latLongProjection")
+                                .withMode(IProjectionConfig.ProjectionMode.Projection)
+                                .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("latitude", "sourceLatitude"),
+                                        new IProjectionConfig.ProjectionColumn("longitude", "sourceLongitude")
+                                )
+                                .withConnection(DataSource.TABLE_NAME),
+                        new CalcColNode("latLongCalc")
+                                .withCalculations(
+                                        new CalcColOperator.CalculatedColumn("latitude", "getLatLongFromAddress(\"latitude\",deliveryAddress,sourceLatitude)"),
+                                        new CalcColOperator.CalculatedColumn("longitude", "getLatLongFromAddress(\"longitude\",deliveryAddress,sourceLongitude)")
+                                )
+                                .withConnection("latLongProjection"),
+                        new ProjectionNode("removeSourceCols")
+                                .withMode(IProjectionConfig.ProjectionMode.Exclusionary)
+                                .withProjectionColumns(
+                                        new IProjectionConfig.ProjectionColumn("sourceLatitude"),
+                                        new IProjectionConfig.ProjectionColumn( "sourceLongitude")
+                                )
+                                .withConnection("latLongCalc")
+
+                )
                 .withDimensions(Arrays.asList(dimension_userId,
                         new Dimension("dimension_online","online", Cardinality.Byte, ContentType.Bool)))
-                .withOutput(DataSource.TABLE_NAME)
+                .withOutput("removeSourceCols")
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }
