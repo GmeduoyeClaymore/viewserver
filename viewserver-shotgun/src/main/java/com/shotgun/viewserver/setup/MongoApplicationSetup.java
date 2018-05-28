@@ -54,6 +54,7 @@ public class MongoApplicationSetup implements IApplicationSetup {
             recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
             recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
+            recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
         }
         delete(db, UserDataSource.NAME);
         delete(db, PaymentDataSource.NAME);
@@ -61,7 +62,6 @@ public class MongoApplicationSetup implements IApplicationSetup {
 
         delete(db, DeliveryAddressDataSource.NAME);
         delete(db, OrderDataSource.NAME);
-        delete(db, PhoneNumberDataSource.NAME);
 
         delete(db, VehicleDataSource.NAME);
     }

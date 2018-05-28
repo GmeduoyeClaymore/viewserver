@@ -306,7 +306,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     }
 
     @Override
-    public ICatalog getChild(String name) {
+    public synchronized ICatalog getChild(String name) {
         return catalogHolder.getChild(name);
     }
 

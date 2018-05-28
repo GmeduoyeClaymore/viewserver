@@ -30,7 +30,6 @@ Feature: User registration scenarios
 	  | ColumnAdd | String      | lastName             |
 	  | ColumnAdd | String      | contactNo            |
 	  | ColumnAdd | Json        | selectedContentTypes |
-	  | ColumnAdd | Json        | primaryAddress       |
 	  | ColumnAdd | String      | email                |
 	  | ColumnAdd | String      | type                 |
 	  | ColumnAdd | String      | fcmToken             |
@@ -52,6 +51,7 @@ Feature: User registration scenarios
 	  | ColumnAdd | Json        | pendingMessages      |
 	  | ColumnAdd | Json        | vehicle              |
 	  | ColumnAdd | Json        | relationships        |
+	  | ColumnAdd | Json        | deliveryAddress        |
 	  | ColumnAdd | String      | relationshipStatus   |
 	  | ColumnAdd | String      | userAppStatus        |
 
