@@ -117,7 +117,7 @@ public class Record implements IRecord {
     }
 
     @Override
-    public Integer getInt(String columnName) {
+    public Integer  getInt(String columnName) {
         try {
             return (Integer) values.get(columnName);
         }catch (Exception ex){
