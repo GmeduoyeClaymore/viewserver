@@ -188,10 +188,12 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
                 Integer version = (Integer) ControllerUtils.getColumnValue(phoneNumberTable, "version", rows.getRowId());
 
-                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
                 Record phoneNumberRecord = new Record();
                 phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
                 phoneNumberRecord.addValue("phoneNumberStatus", status);
+                phoneNumberRecord.addValue("version", version);
+
                 if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
                     status.equals(PhoneNumberStatuses.REJECTED.name()) ||
                     status.equals(PhoneNumberStatuses.FAILED.name()) ||
@@ -201,7 +203,6 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                     phoneNumberRecord.addValue("fromUserId", "");
                     phoneNumberRecord.addValue("toUserId", "");
-                    phoneNumberRecord.addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber));
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                     if(fromUserId != null && toUserId != null) {
                         releaseOtherNumbersFromCallSession(fromUserId, toUserId, status);
@@ -245,14 +246,14 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                 fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
                 toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-
-                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
+                Object version = ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber);
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
                 Record phoneNumberRecord = new Record();
                 phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
                 phoneNumberRecord.addValue("phoneNumberStatus", status);
                 phoneNumberRecord.addValue("fromUserId", "");
                 phoneNumberRecord.addValue("toUserId", "");
-                phoneNumberRecord.addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber));
+                phoneNumberRecord.addValue("version", version);
                 phoneNumberRecord.addValue("userPhoneNumber", "");
 
                 iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
