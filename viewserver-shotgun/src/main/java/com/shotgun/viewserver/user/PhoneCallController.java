@@ -58,7 +58,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", customerNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", ControllerUtils.getColumnValue(userTable, "version", availablePhoneNumbers.get(0)))
+                .addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(0)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
@@ -69,7 +69,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", driverNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", ControllerUtils.getColumnValue(userTable, "version", availablePhoneNumbers.get(1)))
+                .addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(1)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
