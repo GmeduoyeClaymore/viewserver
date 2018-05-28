@@ -5,12 +5,18 @@ package com.shotgun.viewserver.messaging;
  */
 public class MessagingApiKey {
     private String apiKey;
-
-    public MessagingApiKey(String apiKey) {
+    private boolean blockRemoteSending;
+    public MessagingApiKey(String apiKey, boolean blockRemoteSending) {
         this.apiKey = apiKey;
+        this.blockRemoteSending = blockRemoteSending;
     }
 
     public String getApiKey() {
         return apiKey;
+    }
+
+
+    public boolean isBlockRemoteSending() {
+        return blockRemoteSending;
     }
 }

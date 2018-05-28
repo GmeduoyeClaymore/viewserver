@@ -48,7 +48,6 @@ public class PhoneCallController implements OrderTransformationController{
 
         String customerNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", fromUserId);
         String driverNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", toUserId);
-        Integer version = (Integer) ControllerUtils.getColumnValue(userTable, "version", toUserId);
 
         ArrayList<String> availablePhoneNumbers = getAvailablePhoneNumbers(phoneNumberTable, 2);
 
@@ -59,7 +58,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", customerNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", version)
+                .addValue("version", ControllerUtils.getColumnValue(userTable, "version", availablePhoneNumbers.get(0)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
@@ -70,7 +69,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", driverNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", version)
+                .addValue("version", ControllerUtils.getColumnValue(userTable, "version", availablePhoneNumbers.get(1)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 

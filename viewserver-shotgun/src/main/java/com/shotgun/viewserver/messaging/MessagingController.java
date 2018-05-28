@@ -50,8 +50,10 @@ public class MessagingController implements IMessagingController, UserPersistenc
     private IDatabaseUpdater iDatabaseUpdater;
     private ICatalog catalog;
     private ConcurrentHashMap<String,String> tokenToUserMap;
+    private boolean blockRemoteSending;
 
-    public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater, ICatalog catalog) {
+    public MessagingController(MessagingApiKey messagingApiKey, IDatabaseUpdater iDatabaseUpdater, ICatalog catalog, boolean blockRemoteSending) {
+        this.blockRemoteSending = blockRemoteSending;
         tokenToUserMap = new ConcurrentHashMap<>();
         this.messagingApiKey = messagingApiKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
@@ -168,6 +170,9 @@ public class MessagingController implements IMessagingController, UserPersistenc
 
 
     public void sendPayload(String payload) {
+        if(blockRemoteSending){
+            return;
+        }
         Map<String,String> headers = new HashMap<>();
         logger.info("Sending message remotely {}", payload);
         headers.put("Authorization", "key=" + this.messagingApiKey.getApiKey());

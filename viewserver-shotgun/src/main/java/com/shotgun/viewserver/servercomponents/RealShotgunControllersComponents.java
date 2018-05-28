@@ -13,7 +13,6 @@ import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
 import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.payments.MockPaymentController;
-import com.shotgun.viewserver.payments.PaymentController;
 import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.NexmoController;
@@ -47,7 +46,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
         this.messagingApiKey = messagingApiKey;
         this.mapsControllerKey = mapsControllerKey;
         this.vehicleDetailsApiKey = vehicleDetailsApiKey;
-        this.messagingController = new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog());
+        this.messagingController = new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog(), messagingApiKey.isBlockRemoteSending());
     }
 
     @Override

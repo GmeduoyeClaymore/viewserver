@@ -1,5 +1,4 @@
 import com.shotgun.viewserver.ControllerUtils;
-import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.messaging.MessagingController;
@@ -13,7 +12,6 @@ import rx.Observable;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
  * Created by Gbemiga on 18/01/18.
@@ -23,7 +21,7 @@ public class MessagingControllerTest {
 
     @Before
     public void createSut(){
-        sut = new MessagingController(new MessagingApiKey("AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA"), null, new ICatalog() {
+        sut = new MessagingController(new MessagingApiKey("AAAA43sqrgA:APA91bH1hL-tEDjcfzUNxkiyQyvMOToWaTzH7N1g4r6W9TkMSLsPX7TQV_JoIkXkWpWvthr7C57AS5nHXTLKH0Xbz9pZCQgvDM5LpWmJXGVj-3sa_mmoD407IS3NZJv8iTSxNtHQyxZA", false), null, new ICatalog() {
             @Override
             public String getName() {
                 return null;
@@ -113,7 +111,7 @@ public class MessagingControllerTest {
             public void tearDown() {
 
             }
-        });
+        }, true);
     }
 
     @Test

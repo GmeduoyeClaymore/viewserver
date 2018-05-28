@@ -1,7 +1,6 @@
 package com.shotgun.viewserver;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.mongodb.MongoClientURI;
 import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
@@ -11,11 +10,8 @@ import com.shotgun.viewserver.setup.*;
 import com.shotgun.viewserver.setup.loaders.*;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.DirectTableUpdater;
-import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
-import io.viewserver.adapters.jdbc.JdbcConnectionFactory;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
-import io.viewserver.adapters.mongo.MongoTableUpdater;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Utils;
 import io.viewserver.network.EndpointFactoryRegistry;
@@ -45,10 +41,10 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("integration_running",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("it_running",ShotgunServerLauncher::ConfigureForMockEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForRealEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForRealEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
     }
 
     private static void SharedConfig(MutablePicoContainer container){
@@ -66,12 +62,12 @@ public class  ShotgunServerLauncher{
         container.addComponent(BasicServer.class);
     }
 
-    private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
+    /*private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
-        container.addComponent(new MessagingApiKey(get("messaging.api.key")));
+        container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
@@ -83,7 +79,7 @@ public class  ShotgunServerLauncher{
                 () -> new CsvRecordLoaderCollection(get("csv.data.path"))
         ));
         return true;
-    }
+    }*/
 
     private static boolean ConfigureForMockEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
@@ -97,12 +93,21 @@ public class  ShotgunServerLauncher{
         ));
         return true;
     }
-    private static boolean ConfigureForRealEnvironment(MutablePicoContainer container) {
+    private static boolean ConfigureForProdEnvironment(MutablePicoContainer container) {
+        return ConfigureForRealEnvironment(container,false);
+    }
+    private static boolean ConfigureForStagingEnvironment(MutablePicoContainer container) {
+        return ConfigureForRealEnvironment(container,true);
+    }
+    private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
+        return ConfigureForRealEnvironment(container,true);
+    }
+    private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
-        container.addComponent(new MessagingApiKey(get("messaging.api.key")));
+        container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
@@ -123,7 +128,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
-        container.addComponent(new MessagingApiKey(get("messaging.api.key")));
+        container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));

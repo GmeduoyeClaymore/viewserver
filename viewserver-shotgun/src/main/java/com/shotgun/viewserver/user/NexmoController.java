@@ -170,7 +170,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         String toNumberTrim = toNumber.trim();
         String fromNumberTrim = fromNumber.trim();
-        log.info(String.format("Attempting to find a user record with userPhoneNumber %s and virtual numnber %s", toNumberTrim, fromNumberTrim));
+        log.info(String.format("Attempting to find a phone number record with userPhoneNumber %s and virtual numnber %s", toNumberTrim, fromNumberTrim));
 
 
         String fromUserId = null;
