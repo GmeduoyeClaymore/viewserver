@@ -48,7 +48,7 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForRealEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForRealEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("pre-`prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForRealEnvironment);
     }
 
     private static void SharedConfig(MutablePicoContainer container){
