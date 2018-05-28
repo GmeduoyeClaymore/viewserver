@@ -266,7 +266,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
         HashMap proxyRoute = new HashMap();
 
-        log.info(String.format("Examining contents of table to create proxy call from {} to {}", fromNumber, toNumber));
+        log.info(String.format("Examining contents of table to create proxy call from %s to %s", fromNumber, toNumber));
 
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
