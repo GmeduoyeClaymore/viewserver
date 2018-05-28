@@ -201,7 +201,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                     phoneNumberRecord.addValue("fromUserId", "");
                     phoneNumberRecord.addValue("toUserId", "");
-                    phoneNumberRecord.addValue("version", version);
+                    phoneNumberRecord.addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber));
                     phoneNumberRecord.addValue("userPhoneNumber", "");
                     if(fromUserId != null && toUserId != null) {
                         releaseOtherNumbersFromCallSession(fromUserId, toUserId, status);
@@ -245,7 +245,6 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                 fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
                 toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-                Integer version = (Integer) ControllerUtils.getColumnValue(phoneNumberTable, "version", rows.getRowId());
 
                 log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
                 Record phoneNumberRecord = new Record();
@@ -253,7 +252,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                 phoneNumberRecord.addValue("phoneNumberStatus", status);
                 phoneNumberRecord.addValue("fromUserId", "");
                 phoneNumberRecord.addValue("toUserId", "");
-                phoneNumberRecord.addValue("version", version);
+                phoneNumberRecord.addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber));
                 phoneNumberRecord.addValue("userPhoneNumber", "");
 
                 iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
