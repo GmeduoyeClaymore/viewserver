@@ -45,7 +45,7 @@ public class MongoRecordLoaderTest {
     }
 
 
-    private String   clientURI = "mongodb+srv://prod_user:Awe4Lo55@cluster0-2czwh.mongodb.net";
+    private String   clientURI = "mongodb+srv://development_user:Welcome123XXX@cluster0-62kku.mongodb.net";
     private MongoConnectionFactory connectionFactory;
     private String tableName;
     private SchemaConfig config;
