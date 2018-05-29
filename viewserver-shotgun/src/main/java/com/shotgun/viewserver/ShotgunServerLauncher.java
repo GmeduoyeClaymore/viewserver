@@ -44,7 +44,7 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForPreProdEnvironment);
     }
 
     private static void SharedConfig(MutablePicoContainer container){
@@ -93,19 +93,24 @@ public class  ShotgunServerLauncher{
         ));
         return true;
     }
+
+    private static boolean ConfigureForPreProdEnvironment(MutablePicoContainer container) {
+        return ConfigureForRealEnvironment(container,false, true);
+    }
+
     private static boolean ConfigureForProdEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,false);
+        return ConfigureForRealEnvironment(container,false, false);
     }
     private static boolean ConfigureForStagingEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,true);
+        return ConfigureForRealEnvironment(container,true, true);
     }
     private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,true);
+        return ConfigureForRealEnvironment(container,true, true);
     }
-    private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending) {
+    private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending, boolean doMockPaymentController) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
-        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
+        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
@@ -126,7 +131,7 @@ public class  ShotgunServerLauncher{
     private static boolean ConfigureForEndToEndTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
-        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
+        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
