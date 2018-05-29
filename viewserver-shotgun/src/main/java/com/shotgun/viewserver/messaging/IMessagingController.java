@@ -26,6 +26,7 @@ public interface IMessagingController {
         messageRec.addValue("fromUserId", message.getFromUserId());
         messageRec.addValue("toUserId", message.getToUserId());
         messageRec.addValue("title", message.getTitle());
+        messageRec.addValue("picture", message.getPicture());
         messageRec.addValue("sentTime", new Date());
         messageRec.addValue("sentRemotely",sentRemotely);
         messageRec.addValue("message", message);

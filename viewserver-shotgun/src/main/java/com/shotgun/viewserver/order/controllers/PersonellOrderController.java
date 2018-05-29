@@ -10,6 +10,7 @@ import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.contracts.PaymentNotifications;
+import com.shotgun.viewserver.order.contracts.PersonellOrderNotifications;
 import com.shotgun.viewserver.order.controllers.contracts.NegotiatedOrderController;
 import com.shotgun.viewserver.order.controllers.contracts.OrderCreationController;
 import com.shotgun.viewserver.order.controllers.contracts.OrderTransformationController;
@@ -30,8 +31,10 @@ import rx.observable.ListenableFutureObservable;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.shotgun.viewserver.ControllerUtils.getUserId;
+
 @Controller(name = "personellOrderController")
-public class PersonellOrderController implements NegotiationNotifications, PaymentNotifications, OrderTransformationController, OrderCreationController, NegotiatedOrderController, StagedPaymentController {
+public class PersonellOrderController implements NegotiationNotifications, PaymentNotifications, OrderTransformationController, OrderCreationController, NegotiatedOrderController, StagedPaymentController, PersonellOrderNotifications {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonellOrderController.class);
 
@@ -59,9 +62,20 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageData") String imageData) {
         String fileName = orderId + "/" + ControllerUtils.generateGuid() + ".jpg";
         String completeFileName = imageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData);
+        String userId = getUserId();
         return ListenableFutureObservable.to(this.transformObservable(orderId, order -> {
             order.addImage(completeFileName);
             return true;
+        },
+        order -> {
+            if(order.getPartnerUserId() == null || order.getCustomerUserId() == null){
+                return;
+            }
+            if(userId == order.getPartnerUserId()){
+                notifyPartnerAddedImage(orderId,order.getCustomerUserId(),order.getTitle(),completeFileName);
+            }else{
+                notifyCustomerAddedImage(orderId,order.getPartnerUserId(),order.getTitle(),completeFileName);
+            }
         },
         SupportsImageOrder.class
         ).map(res -> completeFileName));

@@ -48,4 +48,9 @@ public class AppMessageBuilder {
     public AppMessage build(){
         return message;
     }
+
+    public AppMessageBuilder withPicture(String picture) {
+        message.set("picture",picture);
+        return this;
+    }
 }
