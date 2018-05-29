@@ -36,6 +36,11 @@ class UpdatePaymentCardDetails extends Component {
 
   render(){
     const {history, busy, errors, user, valid} = this.props;
+
+    if (!user){
+      return null;
+    }
+
     const {paymentCards = []} = user;
 
     return <Container>
