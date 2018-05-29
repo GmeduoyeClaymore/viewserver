@@ -61,6 +61,7 @@ public class PartnerController {
         log.debug("Registering driver: " + user.getEmail());
         //We can change this later on or on a per user basis
         user.set("chargePercentage", 10);
+        user.set("type","partner");
 
         //save image if required
         if(user.getImageData() != null){
