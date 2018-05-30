@@ -29,6 +29,7 @@
     </Root>
     <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
     <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
+    <Logger name="org.mongodb.driver.protocol.command" level="info"/>
     <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
     <Logger name="io.viewserver.operators.sortxx" level="trace"/>
 </Loggers>
