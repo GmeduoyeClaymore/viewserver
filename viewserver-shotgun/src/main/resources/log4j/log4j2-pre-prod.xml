@@ -20,11 +20,11 @@
             <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
         </Policies>
     </RollingFile>
-</appenders>
+</appenders>s
 <Loggers>
     <Root level="debug">
-        <AppenderRef ref="Console" level="debug"/>
-        <AppenderRef ref="DailyDebugLog" level="debug"/>
+        <AppenderRef ref="Console" level="info"/>
+        <AppenderRef ref="DailyDebugLog" level="info"/>
         <AppenderRef ref="DailyErrorLog" level="error"/>
     </Root>
     <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>

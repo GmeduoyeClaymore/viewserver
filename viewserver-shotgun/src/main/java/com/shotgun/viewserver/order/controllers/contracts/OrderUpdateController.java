@@ -43,7 +43,7 @@ public interface OrderUpdateController {
                 addValue("assignedPartnerUserId", order.getPartnerUserId()).
                 addValue("lastModified", now).
                 addValue("version", order.getVersion()).
-                addValue("orderDetails", order.serialize());
+                addValue("orderDetails", order);
 
 
         return getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
