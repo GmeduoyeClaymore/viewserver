@@ -101,13 +101,7 @@ public class MongoDocumentChangeRecord extends Record {
             }
             case Json: {
                 BsonValue bsonValue = doc.get(colName);
-                if(bsonValue instanceof BsonString){
-                    return ((BsonString)bsonValue).getValue();
-                }
-                if(bsonValue instanceof BsonDocument){
-                    return ((BsonDocument)bsonValue).toJson();
-                }
-                throw new RuntimeException("Invalid value found " + bsonValue);
+                return getStringFromVal(bsonValue);
             }
             case DateTime: {
                 return doc.getDateTime(colName) != null ? new java.sql.Date(doc.getDateTime(colName).getValue()).getTime(): null;
@@ -118,6 +112,33 @@ public class MongoDocumentChangeRecord extends Record {
             default:
                 throw new RuntimeException(String.format("Could not process column of type %s", dataType));
         }
+    }
+
+    private String getStringFromVal(BsonValue bsonValue) {
+        if(bsonValue instanceof BsonString){
+            return ((BsonString)bsonValue).getValue();
+        }
+        if(bsonValue instanceof BsonDocument){
+            return ((BsonDocument)bsonValue).toJson();
+        }
+        if(bsonValue instanceof BsonArray){
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            for(BsonValue val : ((BsonArray)bsonValue).getValues()){
+                String result = getStringFromVal(val);
+                if(result ==null){
+                    continue;
+                }
+                if(sb.length()>1) {
+                    sb.append(",");
+                }
+                sb.append(result);
+
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+        throw new RuntimeException("Unrecognised bson value" + bsonValue);
     }
 
     public Object getMongoDocumentValue(ContentType dataType, String colName, Document doc) {

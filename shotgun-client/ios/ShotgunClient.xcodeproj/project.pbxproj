@@ -58,7 +58,6 @@
 		6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540B5B202B779900D406DB /* HockeySDK.framework */; };
 		6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BCD20B43FA60064626C /* Images.xcassets */; };
 		6DB03BD220B458290064626C /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BD120B458290064626C /* SplashScreen.png */; };
-		6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
@@ -469,7 +468,6 @@
 		6D540B5B202B779900D406DB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		6DB03BCD20B43FA60064626C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ShotgunClient/Images.xcassets; sourceTree = "<group>"; };
 		6DB03BD120B458290064626C /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen.png; sourceTree = "<group>"; };
-		6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = PPP_001.mobileprovision; path = ../../../../Downloads/PPP_001.mobileprovision; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -855,7 +853,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */,
 				6D428922204EC49A00290784 /* RCTRestart.xcodeproj */,
 				6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */,
 				6D540ACD202A1E6600D406DB /* QBImagePicker.framework */,
@@ -1474,7 +1471,6 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */,
 				20FF5D7290284F0A80CFBDD6 /* Entypo.ttf in Resources */,
-				6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */,
 				D05E1F04D2A44C2891E45C54 /* EvilIcons.ttf in Resources */,
 				EAFF47D6560C4393ACD02E64 /* FontAwesome.ttf in Resources */,
 				55813A86D6C34186BDE2BE83 /* Foundation.ttf in Resources */,
@@ -1821,7 +1817,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1843,8 +1839,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "3ba159c6-26a3-481c-8419-f7bbb6f090ae";
-				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
+				PROVISIONING_PROFILE = "bacdb178-7ea3-4427-a7a0-9f0bcf0122eb";
+				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Construction";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -8,12 +8,32 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bson.codecs.MapCodec;
+import org.bson.codecs.configuration.CodecRegistry;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Map;
+
 public class DynamicJsonBackedObjectArrayCodec implements Codec<DynamicJsonBackedObject[]> {
+
+    private final Codec codec;
+
+    public DynamicJsonBackedObjectArrayCodec(CodecRegistry codecRegistry) {
+        codec = codecRegistry.get(DynamicJsonBackedObject.class);
+    }
+
+
     @Override
     public void encode(final BsonWriter writer, final DynamicJsonBackedObject[] value, final EncoderContext encoderContext) {
-        writer.writeString(JacksonSerialiser.getInstance().serialise(value));
+
+        writer.writeStartArray();
+
+        for (DynamicJsonBackedObject obj:value) {
+            encoderContext.encodeWithChildContext(codec, writer, obj);
+        }
+
+        writer.writeEndArray();
+
     }
 
     @Override
