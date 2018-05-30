@@ -58,6 +58,7 @@ public class CustomerController {
             throw new RuntimeException("Unable to format user contact number " + user.getContactNo() + " is it valid?");
         }
         user.set("contactNo",international_format_number);
+        user.set("type","customer");
 
         ControllerContext context = ControllerContext.Current();
 

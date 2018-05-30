@@ -7,10 +7,16 @@ public class StripeApiKey {
 
     private String publicKey;
     private String privateKey;
+    private boolean mockPaymentController;
 
-    public StripeApiKey(String publicKey, String privateKey) {
+    public StripeApiKey(String publicKey, String privateKey, boolean mockPaymentController) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
+        this.mockPaymentController = mockPaymentController;
+    }
+
+    public boolean isMockPaymentController() {
+        return mockPaymentController;
     }
 
     public String getPublicKey() {

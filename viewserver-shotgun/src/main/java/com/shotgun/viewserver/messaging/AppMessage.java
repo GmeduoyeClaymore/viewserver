@@ -16,6 +16,7 @@ public interface AppMessage extends DynamicJsonBackedObject {
     public String getTo();
     public String getPriority();
     public String getAction();
+    public String getPicture();
 
     default String toSimpleMessage() {
         HashMap<String, Object> body = new HashMap<String, Object>();
@@ -23,6 +24,9 @@ public interface AppMessage extends DynamicJsonBackedObject {
         customNotificationBody.put("title", getTitle());
         customNotificationBody.put("body", getBody());
         customNotificationBody.put("sound", getSound());
+        customNotificationBody.put("picture", getPicture());
+        customNotificationBody.put("image", getPicture());
+        customNotificationBody.put("big_picture", getPicture());
         customNotificationBody.put("click_action", getAction());
         customNotificationBody.put("icon", "ic_notif");
         customNotificationBody.put("priority", getPriority());
@@ -34,4 +38,5 @@ public interface AppMessage extends DynamicJsonBackedObject {
         body.put("to", getTo());
         return ControllerUtils.toString(body);
     }
+
 }

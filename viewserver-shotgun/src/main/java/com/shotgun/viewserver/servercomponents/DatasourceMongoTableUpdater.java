@@ -42,6 +42,9 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
         TableKey tableKey = RecordUtils.getTableKey(record, definition);
         DataSourceTableName dsTableName = new DataSourceTableName(tableName);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Updatating {} with record {}", table, record.asString());
+        }
         return super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record).observeOn(Schedulers.from(MongoPersistenceExecutor)).flatMap(res -> {
             if(!res){
                 throw new RuntimeException("Update to record " + tableKey + " has not been acknowleged");

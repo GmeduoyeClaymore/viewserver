@@ -27,7 +27,6 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
     private NexmoControllerKey controllerKey;
     private StripeApiKey stripeApiKey;
     private BasicAWSCredentials basicAWSCredentials;
-    private MessagingApiKey messagingApiKey;
     private MapsControllerKey mapsControllerKey;
     private VehicleDetailsApiKey vehicleDetailsApiKey;
 
@@ -44,7 +43,6 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
         this.controllerKey = controllerKey;
         this.stripeApiKey = stripeApiKey;
         this.basicAWSCredentials = basicAWSCredentials;
-        this.messagingApiKey = messagingApiKey;
         this.mapsControllerKey = mapsControllerKey;
         this.vehicleDetailsApiKey = vehicleDetailsApiKey;
         this.messagingController = new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog(), messagingApiKey.isBlockRemoteSending());
@@ -57,6 +55,9 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IPaymentController getPaymentController() {
+        if(stripeApiKey.isMockPaymentController()){
+            return new MockPaymentController(databaseUpdater,this.basicServerComponents.getServerCatalog());
+        }
         return new PaymentController(stripeApiKey, databaseUpdater, this.basicServerComponents.getServerCatalog());
     }
 
