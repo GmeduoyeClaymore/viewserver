@@ -27,7 +27,7 @@ public interface User extends DynamicJsonBackedObject{
     default LatLng getLocation(){
         Double latitude = this.getLatitude();
         Double longitude = this.getLongitude();
-        return new LatLng(latitude == null ? 0 : latitude, longitude == null ? 0 : longitude);
+        return LatLng.from(latitude == null ? 0 : latitude, longitude == null ? 0 : longitude);
     }
 
     UserRating[] getRatings();

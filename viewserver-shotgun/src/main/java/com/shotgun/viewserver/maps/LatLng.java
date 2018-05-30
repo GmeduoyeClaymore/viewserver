@@ -1,42 +1,22 @@
 package com.shotgun.viewserver.maps;
 
-public class LatLng{
-    private double latitude;
-    private double longitude;
+import io.viewserver.util.dynamic.DynamicJsonBackedObject;
+import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 
-    public LatLng(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+public interface LatLng  extends DynamicJsonBackedObject {
+
+    static LatLng from(double latitude, double longitude) {
+        LatLng result = JSONBackedObjectFactory.create(LatLng.class);
+        result.set("latitude",latitude);
+        result.set("longitude", longitude);
+        return result;
     }
 
-    public LatLng() {
-    }
+    double getLatitude();
+    double getLongitude();
 
-    public double getLatitude() {
-        return latitude;
-    }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public String toQueryString(String key){
-        return String.format("result_type=street_address&latlng=%s,%s&key=%s",latitude,longitude,key);
-    }
-
-    @Override
-    public String toString() {
-        return "LatLng{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
+    default String toQueryString(String key){
+        return String.format("result_type=street_address&latlng=%s,%s&key=%s",getLatitude(),getLongitude(),key);
     }
 }

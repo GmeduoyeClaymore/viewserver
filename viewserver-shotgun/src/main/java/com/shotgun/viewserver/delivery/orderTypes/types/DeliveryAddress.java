@@ -25,7 +25,7 @@ public interface DeliveryAddress extends DynamicJsonBackedObject{
         if(getLatitude() == null || getLongitude() == null){
             throw new RuntimeException("Cannot get lat lng as latitude or/and longitude are null");
         }
-        return new LatLng(getLatitude(), getLongitude());
+        return LatLng.from(getLatitude(), getLongitude());
     }
 
 }

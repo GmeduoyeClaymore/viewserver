@@ -57,7 +57,7 @@ public class MapsControllerTest {
     @Test
     public void canGetAddressFromLocation(){
         String postcode = "E59QR";
-        List<DeliveryAddress> address = sut.getAddressesFromLatLong(new LatLng(51.485334,-0.212109));
+        List<DeliveryAddress> address = sut.getAddressesFromLatLong(LatLng.from(51.485334,-0.212109));
         System.out.println(address);
     }
 
@@ -69,8 +69,8 @@ public class MapsControllerTest {
     @Test
     public void canRequestDirections(){
         ArrayList<LatLng> locations = new ArrayList<>();
-        locations.add(new LatLng(51.5526951, -0.1412256));
-        locations.add(new LatLng(51.4857236, -0.2123406));
+        locations.add(LatLng.from(51.5526951, -0.1412256));
+        locations.add(LatLng.from(51.4857236, -0.2123406));
 
         System.out.println(sut.mapDirectionRequest(new DirectionRequest((LatLng[]) locations.toArray(new LatLng[0]), "driving")));
     }
