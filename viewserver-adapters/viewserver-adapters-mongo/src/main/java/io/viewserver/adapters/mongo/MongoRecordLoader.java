@@ -142,6 +142,9 @@ public class MongoRecordLoader implements IRecordLoader{
     private void sendRecords() {
         synchronized (recordsById){
             for(IRecord rec : recordsById.values()){
+                if(logger.isDebugEnabled()){
+                    logger.debug("{} received record {}", tableName, rec.asString());
+                }
                 recordStream.onNext(rec);
             }
             recordsById.clear();

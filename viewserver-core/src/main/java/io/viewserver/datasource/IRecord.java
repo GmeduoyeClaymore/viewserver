@@ -16,14 +16,21 @@
 
 package io.viewserver.datasource;
 
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.core.NullableBool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by bemm on 25/11/2014.
  */
 public interface IRecord {
+
+    static final Logger logger = LoggerFactory.getLogger(IRecord.class);
+
     String[] getColumnNames();
 
     byte getByte(String columnName);
@@ -51,6 +58,19 @@ public interface IRecord {
     Object getValue(String columnName);
 
     boolean hasValue(String columnName);
+
+    default String asString(){
+        HashMap<String,Object> record = new HashMap<>();
+        for(String col : getColumnNames()){
+            try{
+                record.put(col,this.getValue(col));
+            }
+            catch (Exception ex){
+                logger.error("Issue getting value for column " + col,ex);
+            }
+        }
+        return JacksonSerialiser.getInstance().serialise(record);
+    }
 
 }
 
