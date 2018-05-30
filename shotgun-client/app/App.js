@@ -33,9 +33,9 @@ class App extends React.Component {
     super();
     registerTokenListener();
     //this.client = new Client('ws://shotgun.ltd:6060/');
-    //this.client = new Client('ws://192.168.0.46:6060/');
+    this.client = new Client('ws://192.168.0.45:6060/');
     //this.client = new Client('ws://localhost:6060/');
-    this.client = new Client('ws://192.168.0.20:6060/');
+    //this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
     this.dispatch = store.dispatch;
     this.state = {
