@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Shotgun Server - Paul - Bootstrap" type="Application" factoryName="Application" singleton="true">
+    <option name="MAIN_CLASS_NAME" value="com.shotgun.viewserver.Main" />
+    <module name="viewserver-shotgun" />
+    <option name="PROGRAM_PARAMETERS" value="bootstrap" />
+    <option name="VM_PARAMETERS" value="-Xmx3G -Xms3G -XX:StringTableSize=1000003 -Dshotgun.environment=paul -Dlog4j.configurationFile=log4j2.xml" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/viewserver-shotgun" />
+    <method />
+  </configuration>
+</component>
