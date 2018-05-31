@@ -34,8 +34,7 @@ public class DeliveryAddressController {
         this.catalog = catalog;
     }
 
-    @ControllerAction(path = "addOrUpdateDeliveryAddress", isSynchronous = true)
-    public ListenableFuture<String> addOrUpdateDeliveryAddress(@ActionParam(name = "deliveryAddress") DeliveryAddress deliveryAddress) {
+    public ListenableFuture<String> addOrUpdateDeliveryAddress(DeliveryAddress deliveryAddress) {
         Date now = new Date();
         log.debug("Adding or updating delivery address");
         String userId = (String) ControllerContext.get("userId");

@@ -43,6 +43,10 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
           <Text style={styles.text}>Personal details</Text>
           <Icon style={styles.icon} name='one-person'/>
         </ListItem>
+        <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/UpdateAddressDetails`)}>
+          <Text style={styles.text}>Home address</Text>
+          <Icon style={styles.icon} name='address'/>
+        </ListItem>
         <ListItem paddedTopBottom iconRight onPress={() => history.push(`${parentPath}/PartnerMyOrders`)}>
           <Text style={styles.text}>Completed and Rejected Jobs</Text>
           <Icon style={{paddingRight: 10, fontSize: 24}} name='available-jobs'/>
@@ -59,7 +63,7 @@ const PartnerSettings = ({history, dispatch, user, parentPath}) => {
           <Text style={styles.text}>Configure Services</Text>
           <Icon style={styles.icon} name='cog'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
+        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL('mailto:support@shotgun.ltd')}>
           <Text style={styles.text}>Give us feedback</Text>
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>

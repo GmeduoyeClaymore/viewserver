@@ -111,7 +111,7 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "deletePaymentCard", isSynchronous = false)
-    public ListenableFuture deletePaymentCard(@ActionParam(name = "deletePaymentCard") String cardId) {
+    public ListenableFuture deletePaymentCard(@ActionParam(name = "cardId") String cardId) {
         return this.transform(getUserId(),
                 user -> {
                     paymentController.deletePaymentCard(cardId);
@@ -121,7 +121,7 @@ public class UserController implements UserTransformationController, RatedOrderC
     }
 
     @ControllerAction(path = "setDefaultPaymentCard", isSynchronous = true)
-    public ListenableFuture setDefaultPaymentCard(@ActionParam(name = "setDefaultPaymentCard") String cardId) {
+    public ListenableFuture setDefaultPaymentCard(@ActionParam(name = "cardId") String cardId) {
         return this.transform(getUserId(),
                 user -> {
                     user.setDefaultPaymentCard(cardId);

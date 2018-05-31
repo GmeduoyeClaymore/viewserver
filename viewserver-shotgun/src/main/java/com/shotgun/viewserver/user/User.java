@@ -197,7 +197,7 @@ public interface User extends DynamicJsonBackedObject{
 
         if(paymentCard.isPresent()){
             List<SavedPaymentCard> paymentCards = toList(this.getPaymentCards());
-            paymentCards.remove(paymentCard);
+            paymentCards.remove(paymentCard.get());
             this.set("paymentCards",toArray(paymentCards, SavedPaymentCard[]::new));
         }
     }

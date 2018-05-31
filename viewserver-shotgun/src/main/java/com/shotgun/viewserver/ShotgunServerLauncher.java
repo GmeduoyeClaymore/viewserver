@@ -96,14 +96,14 @@ public class  ShotgunServerLauncher{
     }
 
     private static boolean ConfigureForPreProdEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,false, true);
+        return ConfigureForRealEnvironment(container,false, false);
     }
 
     private static boolean ConfigureForProdEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,false, false);
     }
     private static boolean ConfigureForStagingEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,true, true);
+        return ConfigureForRealEnvironment(container,true, false);
     }
     private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,true, true);

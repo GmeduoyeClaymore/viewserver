@@ -6,13 +6,14 @@ import {withExternalState} from 'custom-redux';
 import {isAnyOperationPending, getOperationErrors, getDaoState, getNavigationProps} from 'common/dao';
 import {deletePaymentCard, addPaymentCard} from 'customer/actions/CustomerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
+import PaymentInfo from 'common/settings/PaymentInfo';
 
 class UpdatePaymentCardDetails extends Component {
   onCardDetailsChange = (details) => {
     if (details.valid == true){
-      const {number, expiry, cvc} = details.values;
+      const {number, expiry, cvc, type} = details.values;
       const expiryTokens = expiry.split('/');
-      this.setState({valid: details.valid, newPaymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc}});
+      this.setState({valid: details.valid, newPaymentCard: {number, expMonth: expiryTokens[0], expYear: expiryTokens[1], cvc, brand: type}});
     } else {
       this.setState({valid: details.valid});
     }
@@ -41,7 +42,7 @@ class UpdatePaymentCardDetails extends Component {
       return null;
     }
 
-    const {paymentCards = []} = user;
+    const {paymentCards = [], chargePercentage} = user;
 
     return <Container>
       <Header withButton>
@@ -55,13 +56,13 @@ class UpdatePaymentCardDetails extends Component {
       <Content padded keyboardShouldPersistTaps="always">
         <List>
           {paymentCards.length > 0 && paymentCards.map(c => {
-            return <ListItem paddedTopBottom key={c.id}>
+            return <ListItem paddedTopBottom key={c.cardId}>
               <CardIcon style={styles.cardIcon} brand={c.brand} />
               <View>
                 <Text>{c.brand} ending {c.last4}</Text>
                 <Text note>expiry {c.expMonth}/{c.expYear}</Text>
               </View>
-              {!c.isDefault && !busy ? <Icon name="trash" right style={styles.trashIcon} onPress={() => this.deleteCard(c.id)}/> : null}
+              {!c.isDefault && !busy ? <Icon name="bin" right style={styles.trashIcon} onPress={() => this.deleteCard(c.cardId)}/> : null}
             </ListItem>;
           })}
           <ListItem paddedTopBottom>
@@ -70,6 +71,10 @@ class UpdatePaymentCardDetails extends Component {
               {!paymentCards || !paymentCards.length || paymentCards.length < 3 ? <LiteCreditCardInput ref={c => {this.ccInput = c;}} onChange={(details) => this.onCardDetailsChange(details)}/> : <Text note>You can only add up to 3 payment cards please delete one before adding another</Text> }
             </View>
           </ListItem>
+          {paymentCards.length == 0 ?  <ListItem>
+            <PaymentInfo chargePercentage={chargePercentage}></PaymentInfo>
+          </ListItem> :
+            null}
         </List>
       </Content>
       <ErrorRegion errors={errors}/>

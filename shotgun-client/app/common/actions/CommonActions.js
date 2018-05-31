@@ -41,10 +41,6 @@ export const unregisterAllDaosAndResetComponentState = () => {
   };
 };
 
-export const updateDeliveryAddress = (deliveryAddress, continueWith) => {
-  return invokeDaoCommand('deliveryAddressDao', 'addOrUpdateDeliveryAddress', {deliveryAddress}, continueWith);
-};
-
 export const updateRange = (range) => {
   return invokeDaoCommand('userDao', 'updateRange', {range});
 };

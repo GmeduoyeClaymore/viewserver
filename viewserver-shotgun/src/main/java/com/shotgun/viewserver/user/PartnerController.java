@@ -27,6 +27,8 @@ import java.util.Date;
 
 @Controller(name = "partnerController")
 public class PartnerController {
+    //We can change this later on or on a per user basis
+    private final int CHARGE_PERCENTAGE = 5;
     private static final Logger log = LoggerFactory.getLogger(PartnerController.class);
     private IPaymentController paymentController;
     private UserController userController;
@@ -59,8 +61,7 @@ public class PartnerController {
         }
 
         log.debug("Registering driver: " + user.getEmail());
-        //We can change this later on or on a per user basis
-        user.set("chargePercentage", 10);
+        user.set("chargePercentage", CHARGE_PERCENTAGE);
         user.set("type","partner");
 
         //save image if required

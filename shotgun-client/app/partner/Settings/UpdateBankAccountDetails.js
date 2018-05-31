@@ -6,6 +6,7 @@ import {withExternalState} from 'custom-redux';
 import {isAnyOperationPending, getDaoState, getOperationErrors, getNavigationProps} from 'common/dao';
 import {setBankAccount} from 'partner/actions/PartnerActions';
 import shotgun from 'native-base-theme/variables/shotgun';
+import PaymentInfo from 'common/settings/PaymentInfo';
 
 class UpdateBankAccountDetails extends Component {
   onChangeText = async (field, value) => {
@@ -22,7 +23,8 @@ class UpdateBankAccountDetails extends Component {
   }
   
   render(){
-    const {bankAccount, history, busy, errors, unsavedBankAccount = {}} = this.props;
+    const {user, history, busy, errors, unsavedBankAccount = {}} = this.props;
+    const {bankAccount} = user;
 
     return <Container>
       <Header withButton>
@@ -43,7 +45,7 @@ class UpdateBankAccountDetails extends Component {
               <View>
                 <Text bold>{bankAccount.bankName}</Text>
                 <Text>Account ending {bankAccount.last4}</Text>
-                <Text note>Sort Code {bankAccount.routingNumber}</Text>
+                <Text note>Sort Code {bankAccount.sortCode}</Text>
               </View>
             </Col>
           </Row> :
@@ -77,6 +79,10 @@ class UpdateBankAccountDetails extends Component {
               </Item>
             </Col>
           </Row>
+          {!bankAccount ?  <Row>
+            <PaymentInfo chargePercentage={user.chargePercentage}></PaymentInfo>
+          </Row> :
+            null}
         </Grid>
       </Content>
       <ErrorRegion errors={errors}/>
@@ -110,10 +116,9 @@ const mapStateToProps = (state, initialProps) => {
   return {
     ...initialProps,
     next,
-    busy: isAnyOperationPending(state, [{ paymentDao: 'getBankAccount'}, { paymentDao: 'setBankAccount'}]),
-    errors: getOperationErrors(state, [{paymentDao: 'getBankAccount'}, {paymentDao: 'setBankAccount'}]),
+    busy: isAnyOperationPending(state, [{ paymentDao: 'setBankAccount'}]),
+    errors: getOperationErrors(state, [{paymentDao: 'setBankAccount'}]),
     user: getDaoState(state, ['user'], 'userDao'),
-    bankAccount: getDaoState(state, ['bankAccount'], 'paymentDao'),
     address: getDaoState(state, ['customer', 'homeAddress'], 'deliveryAddressDao')
   };
 };
