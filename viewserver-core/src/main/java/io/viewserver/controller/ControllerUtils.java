@@ -25,8 +25,8 @@ public class ControllerUtils {
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static Object mapDefault(String json) {
-        if(json == null){
-            return null;
+        if(json == null || "".equals(json) || "\"\"".equals(json)){
+            return json;
         }
         if(json.startsWith("[")){
             try {

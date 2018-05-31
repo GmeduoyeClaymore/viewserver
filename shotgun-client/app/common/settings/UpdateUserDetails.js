@@ -22,8 +22,14 @@ class UpdateUserDetails extends Component{
   };
 
   onUpdateDetails = () => {
-    const {dispatch, unsavedUser, onUpdate} = this.props;
-    dispatch(onUpdate(unsavedUser));
+    const {history, dispatch, onUpdate, next, unsavedUser} = this.props;
+
+    dispatch(onUpdate(unsavedUser,
+      () =>  {
+        history.push(next);
+        this.setState({unsavedUser: undefined});
+      }
+    ));
   };
 
   render() {

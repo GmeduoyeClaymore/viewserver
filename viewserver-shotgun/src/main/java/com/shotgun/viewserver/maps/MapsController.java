@@ -96,7 +96,7 @@ public class MapsController implements IMapsController {
         }
         HashMap<String, Object> geometry = (HashMap<String, Object>) x.get("geometry");
         HashMap<String, Object> location = (HashMap<String, Object>) geometry.get("location");
-        return new LatLng((Double)location.get("lat"),(Double)location.get("lng"));
+        return LatLng.from((Double)location.get("lat"),(Double)location.get("lng"));
     }
 
     @Override

@@ -88,11 +88,17 @@ public interface UserPersistenceController{
                 .addValue("blockedByUsers", user.getBlockedByUsers())
                 .addValue("range", user.getRange())
                 .addValue("ratingAvg", user.getRatingAvg())
-                .addValue("stripeCustomerId", user.getStripeCustomerId())
-                .addValue("stripeAccountId", user.getStripeAccountId())
                 .addValue("imageUrl", user.getImageUrl())
                 .addValue("version", user.getVersion())
                 .addValue("chargePercentage", user.getChargePercentage());
+
+        if(user.getStripeCustomerId() != null){
+            userRecord.addValue("stripeCustomerId", user.getStripeCustomerId());
+        }
+
+        if(user.getStripeAccountId() != null){
+            userRecord.addValue("stripeAccountId", user.getStripeAccountId());
+        }
 
         if(password != null){
             userRecord.addValue("password", ControllerUtils.encryptPassword(password));

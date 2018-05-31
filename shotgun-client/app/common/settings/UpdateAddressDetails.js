@@ -3,14 +3,14 @@ import {Text, Header, Left, Body, Container, Button, Title, Content, Grid, Row, 
 import yup from 'yup';
 import {ValidatingInput, ValidatingButton, Icon, ErrorRegion} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
-import {getDaoState, isAnyOperationPending, getOperationError} from 'common/dao';
+import {getDaoState, isAnyOperationPending, getOperationErrors} from 'common/dao';
 import {updateDeliveryAddress} from 'common/actions/CommonActions';
 import { withExternalState } from 'custom-redux';
 
 class HomeAddressDetails  extends Component{
   onChangeText = async (field, value) => {
     const {unSavedDeliveryAddress} = this.props;
-    this.setState({unSavedDeliveryAddress: {...unSavedDeliveryAddress, [field]: value}});
+    this.setState({unsavedUser: {...unSavedDeliveryAddress, [field]: value}});
   }
 
   doAddressLookup = (addressLabel) => {
@@ -19,9 +19,9 @@ class HomeAddressDetails  extends Component{
   }
 
   onUpdateAddress = () => {
-    const {history, dispatch, next, unSavedDeliveryAddress} = this.props;
+    const {history, dispatch, onUpdate, next, user, unSavedDeliveryAddress} = this.props;
 
-    dispatch(updateDeliveryAddress({...unSavedDeliveryAddress, isDefault: true},
+    dispatch(onUpdate({...user, deliveryAddress: unSavedDeliveryAddress},
       () =>  {
         history.push(next);
         this.setState({unSavedDeliveryAddress: undefined});
@@ -103,6 +103,7 @@ class HomeAddressDetails  extends Component{
 }
 
 const validationSchema = {
+  flatNumber: yup.string().max(30),
   line1: yup.string().required().max(30),
   city: yup.string().required().max(30),
   postCode: yup.string()
@@ -123,15 +124,16 @@ const styles = {
 };
 
 const mapStateToProps = (state, initialProps) => {
-  const deliveryAddresses = getDaoState(state, ['customer', 'deliveryAddresses'], 'deliveryAddressDao');
+  const user = getDaoState(state, ['user'], 'userDao');
   let {unSavedDeliveryAddress} = initialProps;
-  unSavedDeliveryAddress = unSavedDeliveryAddress !== undefined ? unSavedDeliveryAddress : (deliveryAddresses !== undefined ? deliveryAddresses.find(ad => ad.isDefault) : {});
+  unSavedDeliveryAddress = unSavedDeliveryAddress !== undefined ? unSavedDeliveryAddress : (user !== undefined ? user.deliveryAddress : {});
 
   return {
     ...initialProps,
+    user,
     unSavedDeliveryAddress,
-    errors: getOperationError(state, 'deliveryAddressDao', 'addOrUpdateDeliveryAddress'),
-    busy: isAnyOperationPending(state, [{deliveryAddressDao: 'addOrUpdateDeliveryAddress'}])
+    errors: getOperationErrors(state, [{customerDao: 'updateCustomer'}, {partnerDao: 'updatePartner'}]),
+    busy: isAnyOperationPending(state, [{customerDao: 'updateCustomer'}, {partnerDao: 'updatePartner'}])
   };
 };
 

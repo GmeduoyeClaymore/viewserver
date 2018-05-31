@@ -9,11 +9,15 @@ public class MongoCodecProvider implements CodecProvider {
         @Override
         public <T> Codec<T> get(final Class<T> clazz, final CodecRegistry registry) {
             if (clazz.getName().startsWith("com.sun.proxy.$") || DynamicJsonBackedObject.class.isAssignableFrom(clazz)) {
-                return (Codec<T>) new DynamicJsonBackedObjectCodec();
+                return (Codec<T>) new DynamicJsonBackedObjectCodec(registry);
             }
             if(clazz.isArray() && DynamicJsonBackedObject.class.isAssignableFrom(clazz.getComponentType())){
-                return (Codec<T>) new DynamicJsonBackedObjectArrayCodec();
+                return (Codec<T>) new DynamicJsonBackedObjectArrayCodec(registry);
             }
+            if(clazz.isEnum() ){
+                return (Codec<T>) new EnumCodec();
+            }
+
 
             return null;
         }

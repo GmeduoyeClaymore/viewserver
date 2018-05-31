@@ -54,7 +54,7 @@ public abstract class BasePaymentController implements IPaymentController{
             Card stripeSavedCard = (Card) customer.getSources().retrieve(customer.getDefaultSource());
             HashMap<String, Object> result = new HashMap<>();
             result.put("stripeCustomerId", customer.getId());
-            result.put("savedPaymentCard", mapStripeCardToSavedPaymentCard(stripeSavedCard));
+            result.put("savedPaymentCard", mapStripeCardToSavedPaymentCard(stripeSavedCard, true));
             return result;
         } catch (Exception e) {
             logger.error("There was a problem adding the payment customer", e);
@@ -89,7 +89,7 @@ public abstract class BasePaymentController implements IPaymentController{
             }
             c.setTime(user.getDob());
             dob.put("day", c.get(Calendar.DAY_OF_MONTH));
-            dob.put("month", c.get(Calendar.MONTH));
+            dob.put("month", c.get(Calendar.MONTH) + 1); //add one as months are zero indexed
             dob.put("year", c.get(Calendar.YEAR));
 
             Map<String, Object> entityAddress = new HashMap<>();
@@ -172,7 +172,7 @@ public abstract class BasePaymentController implements IPaymentController{
             params.put("source", cardToken);
             Card stripeCard = (Card)customer.getSources().create(params);
             logger.debug("Added stripe payment card with token {}", cardToken);
-            return mapStripeCardToSavedPaymentCard(stripeCard);
+            return mapStripeCardToSavedPaymentCard(stripeCard, false);
         } catch (Exception e) {
             logger.error("There was a problem adding the payment card", e);
             throw new RuntimeException(e);
@@ -245,14 +245,14 @@ public abstract class BasePaymentController implements IPaymentController{
         return (BankAccount)account.getExternalAccounts().getData().get(0);
     }
 
-    protected SavedPaymentCard mapStripeCardToSavedPaymentCard(Card stripeCard) {
+    protected SavedPaymentCard mapStripeCardToSavedPaymentCard(Card stripeCard, boolean isDefault) {
         SavedPaymentCard savedPaymentCard = JSONBackedObjectFactory.create(SavedPaymentCard.class);
         savedPaymentCard.set("cardId", stripeCard.getId());
         savedPaymentCard.set("last4", stripeCard.getLast4());
         savedPaymentCard.set("brand", stripeCard.getBrand());
         savedPaymentCard.set("expMonth", stripeCard.getExpMonth());
         savedPaymentCard.set("expYear", stripeCard.getExpYear());
-        savedPaymentCard.set("isDefault", true);
+        savedPaymentCard.set("isDefault", isDefault);
 
         return savedPaymentCard;
     }

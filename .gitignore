@@ -33,3 +33,5 @@ threadDumps
 logs
 /shotgun-client/haste-map-react-native-packager-*
 
+#ios
+Pods

@@ -58,7 +58,6 @@
 		6D540B5D202B779900D406DB /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540B5B202B779900D406DB /* HockeySDK.framework */; };
 		6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BCD20B43FA60064626C /* Images.xcassets */; };
 		6DB03BD220B458290064626C /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BD120B458290064626C /* SplashScreen.png */; };
-		6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
@@ -469,7 +468,6 @@
 		6D540B5B202B779900D406DB /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		6DB03BCD20B43FA60064626C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ShotgunClient/Images.xcassets; sourceTree = "<group>"; };
 		6DB03BD120B458290064626C /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen.png; sourceTree = "<group>"; };
-		6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = PPP_001.mobileprovision; path = ../../../../Downloads/PPP_001.mobileprovision; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -855,7 +853,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				6DD7F163206B691200EF4AC1 /* PPP_001.mobileprovision */,
 				6D428922204EC49A00290784 /* RCTRestart.xcodeproj */,
 				6D428917204EC3DC00290784 /* ReactNativeExceptionHandler.xcodeproj */,
 				6D540ACD202A1E6600D406DB /* QBImagePicker.framework */,
@@ -926,8 +923,6 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				1425D3A76E0D24EAD6747021 /* [CP] Embed Pods Frameworks */,
-				CF0E569D3C2C31F0D587F9B3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -948,7 +943,6 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				42B4F9D6E31D3B609EF01268 /* [CP] Embed Pods Frameworks */,
 				387A6A8784BDBE2A638370BE /* [CP] Copy Pods Resources */,
 				6D540ACC202A1E5F00D406DB /* Embed Frameworks */,
 				6D540AF4202B399400D406DB /* ShellScript */,
@@ -971,8 +965,6 @@
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
 				2D02E4791E0B4A5D006451C7 /* Resources */,
 				2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */,
-				7F7E79ADD5AF68AA4981779A /* [CP] Embed Pods Frameworks */,
-				644AC2A268115778FF8CAE1F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -991,8 +983,6 @@
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
-				7D46F7705917ED526B6BC595 /* [CP] Embed Pods Frameworks */,
-				1E151CB83A8C0EA3C75D0E04 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1481,7 +1471,6 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */,
 				20FF5D7290284F0A80CFBDD6 /* Entypo.ttf in Resources */,
-				6DD7F164206B691200EF4AC1 /* PPP_001.mobileprovision in Resources */,
 				D05E1F04D2A44C2891E45C54 /* EvilIcons.ttf in Resources */,
 				EAFF47D6560C4393ACD02E64 /* FontAwesome.ttf in Resources */,
 				55813A86D6C34186BDE2BE83 /* Foundation.ttf in Resources */,
@@ -1531,36 +1520,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		1425D3A76E0D24EAD6747021 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClientTests/Pods-ShotgunClientTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1E151CB83A8C0EA3C75D0E04 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient-tvOSTests/Pods-ShotgunClient-tvOSTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1616,36 +1575,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient/Pods-ShotgunClient-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		42B4F9D6E31D3B609EF01268 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient/Pods-ShotgunClient-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		644AC2A268115778FF8CAE1F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient-tvOS/Pods-ShotgunClient-tvOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6D540AF4202B399400D406DB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1677,36 +1606,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7D46F7705917ED526B6BC595 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient-tvOSTests/Pods-ShotgunClient-tvOSTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7F7E79ADD5AF68AA4981779A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClient-tvOS/Pods-ShotgunClient-tvOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C10DC7DD15A09770D0F3EF49 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1723,21 +1622,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CF0E569D3C2C31F0D587F9B3 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ShotgunClientTests/Pods-ShotgunClientTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FBDAA02FDC2C4217783D3A37 /* [CP] Check Pods Manifest.lock */ = {
@@ -1897,7 +1781,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -1919,8 +1803,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "4e445a91-6b8d-4073-8d62-74226b713fe1";
-				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
+				PROVISIONING_PROFILE = "bacdb178-7ea3-4427-a7a0-9f0bcf0122eb";
+				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Construction";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1933,7 +1817,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1955,8 +1839,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "3ba159c6-26a3-481c-8419-f7bbb6f090ae";
-				PROVISIONING_PROFILE_SPECIFIER = "First provisioning profile";
+				PROVISIONING_PROFILE = "bacdb178-7ea3-4427-a7a0-9f0bcf0122eb";
+				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Construction";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -27,7 +27,7 @@ public interface User extends DynamicJsonBackedObject{
     default LatLng getLocation(){
         Double latitude = this.getLatitude();
         Double longitude = this.getLongitude();
-        return new LatLng(latitude == null ? 0 : latitude, longitude == null ? 0 : longitude);
+        return LatLng.from(latitude == null ? 0 : latitude, longitude == null ? 0 : longitude);
     }
 
     UserRating[] getRatings();
@@ -197,7 +197,7 @@ public interface User extends DynamicJsonBackedObject{
 
         if(paymentCard.isPresent()){
             List<SavedPaymentCard> paymentCards = toList(this.getPaymentCards());
-            paymentCards.remove(paymentCard);
+            paymentCards.remove(paymentCard.get());
             this.set("paymentCards",toArray(paymentCards, SavedPaymentCard[]::new));
         }
     }

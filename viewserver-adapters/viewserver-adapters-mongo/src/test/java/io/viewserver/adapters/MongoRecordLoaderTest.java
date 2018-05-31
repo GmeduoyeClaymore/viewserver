@@ -138,7 +138,7 @@ public class MongoRecordLoaderTest {
         DynamicJsonBackedObject obj = JSONBackedObjectFactory.create(DynamicJsonBackedObject.class);
         obj.set("foo","bar");
         tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj)).subscribe();
-        Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
+        Assert.assertTrue(latch.await(20,TimeUnit.SECONDS));
     }
 
 
@@ -164,7 +164,7 @@ public class MongoRecordLoaderTest {
         ratings[0] = obj;
         ratings[1] = obj;
         tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", ratings)).subscribe();
-        Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
+        Assert.assertTrue(latch.await(20,TimeUnit.SECONDS));
     }
 
 

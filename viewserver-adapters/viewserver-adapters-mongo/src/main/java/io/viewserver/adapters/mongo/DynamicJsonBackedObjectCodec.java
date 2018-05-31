@@ -7,11 +7,23 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bson.codecs.MapCodec;
+import org.bson.codecs.configuration.CodecRegistry;
+
+import java.io.IOException;
 
 public class DynamicJsonBackedObjectCodec implements Codec<DynamicJsonBackedObject> {
+
+
+    private final  MapCodec mapCodec;
+
+    public DynamicJsonBackedObjectCodec(CodecRegistry codecRegistry) {
+        this.mapCodec = new MapCodec(codecRegistry);
+    }
+
     @Override
     public void encode(final BsonWriter writer, final DynamicJsonBackedObject value, final EncoderContext encoderContext) {
-        writer.writeString(value.serialize());
+        mapCodec.encode(writer, value.getFields(), encoderContext);
     }
 
     @Override

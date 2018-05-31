@@ -42,7 +42,7 @@ const CustomerSettings = ({history, user = {}, parentPath, dispatch}) => {
           <Text style={styles.text}>Payment cards</Text>
           <Icon style={{paddingRight: 10}} name='payment'/>
         </ListItem>
-        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL(`mailto:accounts@shotgun.ltd?subject=${feedbackSubject}`)}>
+        <ListItem paddedTopBottom iconRight onPress={() => Linking.openURL('mailto:support@shotgun.ltd')}>
           <Text style={styles.text}>Give us feedback</Text>
           <Icon style={styles.icon} name='feedback'/>
         </ListItem>

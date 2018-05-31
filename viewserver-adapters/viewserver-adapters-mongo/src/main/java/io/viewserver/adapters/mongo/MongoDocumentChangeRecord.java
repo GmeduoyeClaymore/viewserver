@@ -1,13 +1,23 @@
 package io.viewserver.adapters.mongo;
 
 import io.viewserver.adapters.common.Record;
+import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.SchemaConfig;
 import org.bson.*;
+import org.bson.json.Converter;
+import org.bson.json.JsonMode;
+import org.bson.json.JsonWriterSettings;
+import org.bson.json.StrictJsonWriter;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
+import static java.lang.String.format;
 
 /**
  * Created by Paul on 15/03/2018.
@@ -15,6 +25,8 @@ import java.util.List;
 
 public class MongoDocumentChangeRecord extends Record {
     private final SchemaConfig schema;
+    private JsonWriterSettings settings = JsonWriterSettings.builder().dateTimeConverter(new OurShellDateTimeConverter()).build();
+    ;
 
     public MongoDocumentChangeRecord(SchemaConfig schema, Document doc) {
         this.schema = schema;
@@ -101,23 +113,45 @@ public class MongoDocumentChangeRecord extends Record {
             }
             case Json: {
                 BsonValue bsonValue = doc.get(colName);
-                if(bsonValue instanceof BsonString){
-                    return ((BsonString)bsonValue).getValue();
-                }
-                if(bsonValue instanceof BsonDocument){
-                    return ((BsonDocument)bsonValue).toJson();
-                }
-                throw new RuntimeException("Invalid value found " + bsonValue);
+                return getStringFromVal(bsonValue);
             }
             case DateTime: {
-                return doc.getDateTime(colName) != null ? new java.sql.Date(doc.getDateTime(colName).getValue()).getTime(): null;
+                return doc.getDateTime(colName) != null ? doc.getDateTime(colName).getValue(): null;
             }
             case Date: {
-                return doc.getDateTime(colName) != null ? new Timestamp(doc.getDateTime(colName).getValue()) : null;
+                return doc.getDateTime(colName) != null ? doc.getDateTime(colName).getValue() : null;
             }
             default:
                 throw new RuntimeException(String.format("Could not process column of type %s", dataType));
         }
+    }
+
+    private String getStringFromVal(BsonValue bsonValue) {
+        if(bsonValue instanceof BsonString){
+            return ((BsonString)bsonValue).getValue();
+        }
+        if(bsonValue instanceof BsonDocument){
+            String s = ((BsonDocument) bsonValue).toJson(settings);
+            return s;
+        }
+        if(bsonValue instanceof BsonArray){
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            for(BsonValue val : ((BsonArray)bsonValue).getValues()){
+                String result = getStringFromVal(val);
+                if(result ==null){
+                    continue;
+                }
+                if(sb.length()>1) {
+                    sb.append(",");
+                }
+                sb.append(result);
+
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+        throw new RuntimeException("Unrecognised bson value" + bsonValue);
     }
 
     public Object getMongoDocumentValue(ContentType dataType, String colName, Document doc) {
@@ -147,13 +181,27 @@ public class MongoDocumentChangeRecord extends Record {
                 return doc.get(colName);
             }
             case DateTime: {
-                return doc.getDate(colName) != null ? new java.sql.Date(doc.getDate(colName).getTime()) : null;
+                return doc.getDate(colName) != null ? doc.getDate(colName).getTime() : null;
             }
             case Date: {
-                return doc.getDate(colName) != null ? new Timestamp(doc.getDate(colName).getTime()) : null;
+                return doc.getDate(colName) != null ? doc.getDate(colName).getTime() : null;
             }
             default:
                 throw new RuntimeException(String.format("Could not process column of type %s", dataType));
         }
     }
 }
+
+class OurShellDateTimeConverter implements Converter<Long> {
+    @Override
+    public void convert(final Long value, final StrictJsonWriter writer) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        if (value >= -59014396800000L && value <= 253399536000000L) {
+            writer.writeRaw(format("\"%s\"", dateFormat.format(new Date(value))));
+        } else {
+            writer.writeRaw(format("new Date(%d)", value));
+        }
+    }
+}
+
