@@ -109,7 +109,7 @@ public class JacksonSerialiser implements IJsonSerialiser {
     }
 
     private <T> T internalDeserialise(String json, JavaType type) {
-        if(json == null || "".equals(json.trim()) || json.trim().length() == 0 || "\"\"".equals(json)){
+        if(json == null || "".equals(json.trim()) || json.trim().length() == 0 || "\"\"".equals(json) || "\"\\\"\\\"\"".equals(json)){
             return null;
         }
         ObjectReader reader = readers.get(type);
