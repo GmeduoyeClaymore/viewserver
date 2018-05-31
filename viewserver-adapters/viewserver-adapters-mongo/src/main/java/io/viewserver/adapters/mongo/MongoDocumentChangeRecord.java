@@ -178,7 +178,7 @@ public class MongoDocumentChangeRecord extends Record {
                 return doc.getString(colName);
             }
             case Json: {
-                return JacksonSerialiser.getInstance().serialise(doc.get(colName));
+                return doc.get(colName);
             }
             case DateTime: {
                 return doc.getDate(colName) != null ? doc.getDate(colName).getTime() : null;
