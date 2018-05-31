@@ -20,7 +20,9 @@ class ContentTypeSelect extends Component{
 
   startOrder = () => {
     const {history, next, user, checkoutRoot} = this.props;
-    if (user.paymentCards.length > 0) {
+    const {paymentCards = []} = user;
+
+    if (paymentCards.length > 0) {
       history.push(next);
     } else {
       history.replace({pathname: `${checkoutRoot}/UpdatePaymentCardDetails`, transition: 'left'}, {next});

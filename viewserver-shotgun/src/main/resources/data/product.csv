@@ -1,8 +1,8 @@
 productId,name,description,categoryId,price
-SmallVan,Small Van,"Ford Transit Connect, Vauxhall Combo or similar. Ideal for 8-12 cardboard removal boxes or one kitchen appliance.",1Vans,2000
+SmallVan,Small Van,"Ford Transit Connect, Vauxhall Combo or similar. Ideal for 8-12 cardboard removal boxes or one kitchen appliance.",1Vans,3000
 MediumVan,Medium Van,"Ford Transit, Volkswagen Transporter or similar. Ideal for small moves and can generally take one or two people's personal belongings of up to 30 to 40 assorted moving boxes, or a single large item of furniture such as a sofa or bed.",1Vans,3000
-LargeVan,Large Van,"Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",1Vans,4000
-LutonLorry,Box/Luton Van,"A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimensions 3.9x2.2x2m",1Vans,5000
+LargeVan,Large Van,"Mercedes Sprinter XLWB or similar.  Ideal for moving one or two people from a flat with a small amount of furniture and white goods, or for several items of furniture alone such as a three seat sofa, double bed, armchair and chest of drawers. Avg loading dimensions 4.3x2.2x1.8m",1Vans,3000
+LutonLorry,Box/Luton Van,"A Luton or box van. Ideal for moving a two bedroom flat or small house with up top 40 boxes of personal belongings, dining table and chairs, two and three seat sofas, two double beds, wardrobes, chest of drawers and all kitchen white goods. Avg loading dimensions 3.9x2.2x2m",1Vans,4000
 Carpenter,Carpenter,,1Workers,15000
 GroundWorker,Ground Worker,,1Workers,15000
 Tiler,Tiler,,1Workers,15000

@@ -37,7 +37,7 @@ public interface JourneyBasedOrderController extends JourneyNotifications, Order
             throw new RuntimeException("Unable to calculate amount estimate as no product specified on order");
         }
         DistanceAndDuration distanceAndDuration = order.getDistanceAndDuration() == null ? getDistanceAndDuration(order) : order.getDistanceAndDuration();
-        return JourneyOrder.amountCalc(distanceAndDuration);
+        return JourneyOrder.amountCalc(distanceAndDuration, order.getOrderProduct().getPrice());
     }
 
     @ControllerAction(path = "completeJourney", isSynchronous = true)

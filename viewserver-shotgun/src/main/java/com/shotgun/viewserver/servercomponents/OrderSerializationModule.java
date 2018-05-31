@@ -16,6 +16,7 @@ import com.shotgun.viewserver.delivery.ProductKey;
 import com.shotgun.viewserver.delivery.Vehicle;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.maps.DistanceAndDuration;
+import com.shotgun.viewserver.maps.LatLng;
 import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.order.domain.BasicOrder;
 import com.shotgun.viewserver.order.domain.LinkedDeliveryOrder;
@@ -52,6 +53,7 @@ public class OrderSerializationModule extends DynamicSerializationModule {
         registerDynamicClass(SavedPaymentCard.class);
         registerDynamicClass(SavedBankAccount.class);
         registerDynamicClass(DeliveryAddress.class);
+        registerDynamicClass(LatLng.class);
         registerDynamicClass(Dimensions.class);
         registerDynamicClass(DistanceAndDuration.class);
         registerDynamicClass(BasicOrder.class);

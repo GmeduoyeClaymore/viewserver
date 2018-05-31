@@ -68,7 +68,7 @@ public class ControllerUtils{
 
     public static String postToURL(String url, String message, HttpClient httpClient,  Map<String,String> requestHeaders) throws IOException, RuntimeException {
         HttpPost postRequest = new HttpPost(url);
-        logger.info("Making request to: {} with parameters {}",url,message);
+        logger.debug("Making request to: {} with parameters {}",url,message);
         StringEntity input = new StringEntity(message);
         input.setContentType("application/json");
         postRequest.setEntity(input);
@@ -104,7 +104,7 @@ public class ControllerUtils{
 
             boolean isGet = method.equals("GET");
             url = new URL(targetURL + (isGet ? "?" + urlParameters : ""));
-            logger.info("Making request to: {}",url);
+            logger.debug("Making request to: {}",url);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(method);
 
@@ -139,7 +139,7 @@ public class ControllerUtils{
             }
             InputStream is = connection.getInputStream();
             String string = getString(is);
-            logger.info("Response to request \"{}\" is \"{}\"",url,string);
+            logger.debug("Response to request \"{}\" is \"{}\"",url,string);
             return string;
         } catch (Exception e) {
             logger.error(String.format("Problem making request to: %s",url),e);

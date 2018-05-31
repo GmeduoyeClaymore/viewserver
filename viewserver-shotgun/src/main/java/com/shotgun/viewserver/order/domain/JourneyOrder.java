@@ -28,16 +28,16 @@ public interface JourneyOrder extends BasicOrder, SinglePaymentOrder {
         return transitionTo(JourneyOrderStatus.ENROUTE);
     }
 
-
-
     default JourneyOrder transitionTo(JourneyOrderStatus status){
         this.set("journeyOrderStatus", TransitionUtils.transition(getJourneyOrderStatus(), status));
         this.setOrderStatus(status.getOrderStatus());
         return this;
     }
 
-    static int amountCalc(DistanceAndDuration duration) {
-        return duration.getDistance();
+    static int amountCalc(DistanceAndDuration duration, int price) {
+        //fixed price of van (product price) + (distance in km) * £0.70
+        int kmDistance = duration.getDistance() / 1000;
+        return price + (kmDistance * 70);
     }
 
     DistanceAndDuration getDistanceAndDuration();
