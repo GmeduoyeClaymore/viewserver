@@ -48,7 +48,6 @@
 		5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A86A459FCDF94F09A3E5821E /* rubicon-icon-font.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6D45BB5E204F04B300FEFA1E /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D45BB5D204F04B300FEFA1E /* CloudKit.framework */; };
-		6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D540A732029F0BE00D406DB /* GoogleService-Info.plist */; };
 		6D540ABE202A082A00D406DB /* shotgun-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D540AB1202A082A00D406DB /* shotgun-icons.ttf */; };
 		6D540ACA202A1E5F00D406DB /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */; };
 		6D540ACB202A1E5F00D406DB /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -60,6 +59,7 @@
 		6DB03BD220B458290064626C /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BD120B458290064626C /* SplashScreen.png */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
+		76753D5020C1997000AB8918 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76753D4F20C1997000AB8918 /* GoogleService-Info.plist */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		9DDBF28D9900CAB40C549988 /* libPods-ShotgunClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D9E8A0A104D8EFC132C7E6 /* libPods-ShotgunClient.a */; };
@@ -460,7 +460,6 @@
 		6D428922204EC49A00290784 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRestart.xcodeproj; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; };
 		6D428928204EC9D100290784 /* ShotgunClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ShotgunClient.entitlements; path = ShotgunClient/ShotgunClient.entitlements; sourceTree = "<group>"; };
 		6D45BB5D204F04B300FEFA1E /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		6D540A732029F0BE00D406DB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6D540AB1202A082A00D406DB /* shotgun-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "shotgun-icons.ttf"; sourceTree = "<group>"; };
 		6D540AC9202A1E5F00D406DB /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D540ACD202A1E6600D406DB /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -470,6 +469,7 @@
 		6DB03BD120B458290064626C /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen.png; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		76753D4F20C1997000AB8918 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7BC5629A708A4D4CBF774213 /* libRCTRestart.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTRestart.a; sourceTree = "<group>"; };
 		82B9C94F516A4207A85103F6 /* RNImmediatePhoneCall.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImmediatePhoneCall.xcodeproj; path = "../node_modules/react-native-immediate-phone-call/ios/RNImmediatePhoneCall.xcodeproj"; sourceTree = "<group>"; };
@@ -658,6 +658,7 @@
 		13B07FAE1A68108700A75B9A /* ShotgunClient */ = {
 			isa = PBXGroup;
 			children = (
+				76753D4F20C1997000AB8918 /* GoogleService-Info.plist */,
 				6DB03BD120B458290064626C /* SplashScreen.png */,
 				6D428928204EC9D100290784 /* ShotgunClient.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -667,7 +668,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				6D540A732029F0BE00D406DB /* GoogleService-Info.plist */,
 				6DB03BCD20B43FA60064626C /* Images.xcassets */,
 			);
 			name = ShotgunClient;
@@ -1469,7 +1469,6 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				6D540AAD2029F0BE00D406DB /* GoogleService-Info.plist in Resources */,
 				20FF5D7290284F0A80CFBDD6 /* Entypo.ttf in Resources */,
 				D05E1F04D2A44C2891E45C54 /* EvilIcons.ttf in Resources */,
 				EAFF47D6560C4393ACD02E64 /* FontAwesome.ttf in Resources */,
@@ -1479,6 +1478,7 @@
 				430E2B53B30A48F9A6872C6B /* Octicons.ttf in Resources */,
 				EB441CACF8DF450CBD77DC92 /* Roboto_medium.ttf in Resources */,
 				4F4E68DEE787429DA4B54DC5 /* Roboto.ttf in Resources */,
+				76753D5020C1997000AB8918 /* GoogleService-Info.plist in Resources */,
 				6D540ABE202A082A00D406DB /* shotgun-icons.ttf in Resources */,
 				5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */,
 				6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */,
