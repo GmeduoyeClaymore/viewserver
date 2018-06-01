@@ -1005,11 +1005,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 3DYD5U82S8;
+						DevelopmentTeam = M6YH55V9VT;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 3DYD5U82S8;
+						DevelopmentTeam = M6YH55V9VT;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1712,7 +1712,7 @@
 			baseConfigurationReference = 2C6A6D031E20B50ABEF5A62C /* Pods-ShotgunClientTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				DEVELOPMENT_TEAM = M6YH55V9VT;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1748,7 +1748,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				DEVELOPMENT_TEAM = M6YH55V9VT;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-mapslibios/**",
@@ -1781,11 +1781,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				DEVELOPMENT_TEAM = M6YH55V9VT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
@@ -1801,10 +1801,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shotgun.client;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "bacdb178-7ea3-4427-a7a0-9f0bcf0122eb";
-				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Construction";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Development Profile";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1817,11 +1817,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ShotgunClient/ShotgunClient.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3DYD5U82S8;
+				DEVELOPMENT_TEAM = M6YH55V9VT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
@@ -1837,10 +1837,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.shotgunclient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shotgun.client;
 				PRODUCT_NAME = ShotgunClient;
-				PROVISIONING_PROFILE = "bacdb178-7ea3-4427-a7a0-9f0bcf0122eb";
-				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Construction";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Shotgun Development Profile";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
