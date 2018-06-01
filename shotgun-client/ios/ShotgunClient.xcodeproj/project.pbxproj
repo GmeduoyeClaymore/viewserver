@@ -59,7 +59,7 @@
 		6DB03BD220B458290064626C /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6DB03BD120B458290064626C /* SplashScreen.png */; };
 		6EE0D0503D8341CBB6C3E1B0 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 446992BFD1344910997AAFC5 /* libAirMaps.a */; };
 		755C8B34FDAB442AA4D16B16 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED1D61758D241D2BD4C161A /* Zocial.ttf */; };
-		76753D5020C1997000AB8918 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76753D4F20C1997000AB8918 /* GoogleService-Info.plist */; };
+		76753DAB20C1A79D00AB8918 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76753DAA20C1A79D00AB8918 /* GoogleService-Info.plist */; };
 		8155B622108840E7AAFF730E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECD7C237C6C441C0B366FD3F /* SimpleLineIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		9DDBF28D9900CAB40C549988 /* libPods-ShotgunClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D9E8A0A104D8EFC132C7E6 /* libPods-ShotgunClient.a */; };
@@ -469,7 +469,7 @@
 		6DB03BD120B458290064626C /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SplashScreen.png; sourceTree = "<group>"; };
 		6ED1D61758D241D2BD4C161A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		732FDBF2C5B793E917CCE814 /* libPods-ShotgunClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ShotgunClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		76753D4F20C1997000AB8918 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		76753DAA20C1A79D00AB8918 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7BC5629A708A4D4CBF774213 /* libRCTRestart.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTRestart.a; sourceTree = "<group>"; };
 		82B9C94F516A4207A85103F6 /* RNImmediatePhoneCall.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImmediatePhoneCall.xcodeproj; path = "../node_modules/react-native-immediate-phone-call/ios/RNImmediatePhoneCall.xcodeproj"; sourceTree = "<group>"; };
@@ -658,7 +658,7 @@
 		13B07FAE1A68108700A75B9A /* ShotgunClient */ = {
 			isa = PBXGroup;
 			children = (
-				76753D4F20C1997000AB8918 /* GoogleService-Info.plist */,
+				76753DAA20C1A79D00AB8918 /* GoogleService-Info.plist */,
 				6DB03BD120B458290064626C /* SplashScreen.png */,
 				6D428928204EC9D100290784 /* ShotgunClient.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -1478,7 +1478,7 @@
 				430E2B53B30A48F9A6872C6B /* Octicons.ttf in Resources */,
 				EB441CACF8DF450CBD77DC92 /* Roboto_medium.ttf in Resources */,
 				4F4E68DEE787429DA4B54DC5 /* Roboto.ttf in Resources */,
-				76753D5020C1997000AB8918 /* GoogleService-Info.plist in Resources */,
+				76753DAB20C1A79D00AB8918 /* GoogleService-Info.plist in Resources */,
 				6D540ABE202A082A00D406DB /* shotgun-icons.ttf in Resources */,
 				5CBE0A65839548E2AC10AF0B /* rubicon-icon-font.ttf in Resources */,
 				6DB03BCE20B43FA60064626C /* Images.xcassets in Resources */,

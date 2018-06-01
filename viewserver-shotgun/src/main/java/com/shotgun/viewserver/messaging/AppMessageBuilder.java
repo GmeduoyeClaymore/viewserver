@@ -24,8 +24,8 @@ public class AppMessageBuilder {
     public AppMessageBuilder withDefaults(){
         message.set("sound","default");
         message.set("priority","high");
-        //message.set("icon", "ic_notif");
-        //message.set("show_in_foreground", true);
+        message.set("icon", "ic_notif");
+        message.set("show_in_foreground", true);
         return this;
     }
 
