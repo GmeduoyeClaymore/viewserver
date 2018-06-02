@@ -30,7 +30,6 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
         register(MessagesDataSource.getDataSource().getSchema(), MessagesDataSource.NAME);
         register(VehicleDataSource.getDataSource().getSchema(), VehicleDataSource.NAME);
         registerAtRoot(DataSourceRegistry.getSchemaConfig(), IDataSourceRegistry.TABLE_NAME);
-        registerAtRoot(ReportRegistry.getSchemaConfig(), ReportRegistry.TABLE_NAME);
     }
 
     private void registerAtRoot(SchemaConfig schema, String operatorName) {

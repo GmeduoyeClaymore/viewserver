@@ -317,7 +317,7 @@ public class ColumnHolderUtils {
                 break;
             }
             case Int: {
-                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row, (Integer) defaultVal(value,-1) );
+                ((IWritableColumnInt)columnHolder.getColumn()).setInt(row, (Integer) ConvertUtils.convert(defaultVal(value,-1),Integer.class) );
                 break;
             }
             case Long: {

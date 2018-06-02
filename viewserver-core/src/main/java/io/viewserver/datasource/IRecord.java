@@ -27,6 +27,7 @@ import java.util.HashMap;
 /**
  * Created by bemm on 25/11/2014.
  */
+
 public interface IRecord {
 
     static final Logger logger = LoggerFactory.getLogger(IRecord.class);

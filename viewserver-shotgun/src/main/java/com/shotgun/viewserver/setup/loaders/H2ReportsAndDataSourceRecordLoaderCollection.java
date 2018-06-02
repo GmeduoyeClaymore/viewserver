@@ -18,7 +18,6 @@ public class H2ReportsAndDataSourceRecordLoaderCollection implements IRecordLoad
     public H2ReportsAndDataSourceRecordLoaderCollection(JdbcConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
         loaders = new HashMap<>();
-        register(ReportRegistry.getSchemaConfig(),ReportRegistry.TABLE_NAME, "Reports");
         register(DataSourceRegistry.getSchemaConfig(),DataSourceRegistry.TABLE_NAME, "DataSources");
     }
 
