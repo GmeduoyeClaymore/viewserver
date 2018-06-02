@@ -18,13 +18,13 @@ public class OrderRequestReport {
                         .withRequiredParameter("partnerLongitude", "Partner Longitude Override", double[].class)
                         .withRequiredParameter("maxDistance", "Maximum Distance Override", String[].class)
                         .withRequiredParameter("@userId", "User Id", String[].class)
-                        .withRequiredParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
+                        //.withRequiredParameter("showOutOfRange", "Show Out Of Range", boolean[].class)
                         .withNodes(
                                 new CalcColNode("distanceCalcCol")
                                         .withCalculations(
                                                 new CalcColOperator.CalculatedColumn("userCreatedThisOrder", "userId == \"{@userId}\""),
                                                 new CalcColOperator.CalculatedColumn("currentDistance", "distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"),
-                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "if({showOutOfRange},0,distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\"))"))
+                                                new CalcColOperator.CalculatedColumn("currentDistanceFilter", "distanceJson(orderLocation, isNull({partnerLatitude},partner_latitude), isNull({partnerLongitude},partner_longitude), \"M\")"))
                                         .withConnection("#input"),
                                 new FilterNode("distanceFilter")
                                         .withExpression("currentDistanceFilter <= isNull({maxDistance}, partner_range)")
