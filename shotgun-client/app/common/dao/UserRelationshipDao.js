@@ -14,7 +14,7 @@ export default class UserRelationshipDaoContext{
     limit: 100,
     filterMode: 2,
     showUnrelated: true,
-    showOutOfRange: true,
+    showOutOfRange: false,
     position: UserRelationshipDaoContext.DEFAULT_POSITION,
     maxDistance: 50
   };

@@ -14,7 +14,7 @@ export default class PartnerAvailableOrdersListView extends Component {
       userId: undefined,
       contentType,
       contentTypeOptions,
-      showOutOfRange: true
+      showOutOfRange: false
     };
   };
 

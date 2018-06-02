@@ -13,7 +13,7 @@ export default class OrderRequestDao{
     limit: 10,
     filterMode: 2,
     maxDistance: 0,
-    showOutOfRange: true,
+    showOutOfRange: false,
     position: OrderRequestDao.DEFAULT_POSITION
   };
 
@@ -45,7 +45,7 @@ export default class OrderRequestDao{
     return childPath.includes(parentPath + '>') && childPath.length > parentPath.length;
   }
 
-  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDao.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = true}){
+  getReportContext({contentType, contentTypeOptions = {}, position = OrderRequestDao.DEFAULT_POSITION, maxDistance = 0, showUnrelated = true, showOutOfRange = false}){
     if (typeof contentType === 'undefined') {
       return {};
     }
