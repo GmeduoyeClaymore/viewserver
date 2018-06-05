@@ -162,7 +162,7 @@ public class LoginController {
 
         while(rows.moveNext()){
             String email = (String) ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
-            if(email != null && email.toLowerCase().equals(loginEmail)){
+            if(email != null && email.toLowerCase().equals(loginEmail.trim())){
                 return rows.getRowId();
             }
         }

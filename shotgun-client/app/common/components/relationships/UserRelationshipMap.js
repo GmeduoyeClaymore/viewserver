@@ -66,7 +66,7 @@ class UserRelationshipMap extends Component{
     } catch (error){
       Logger.info('Encountered error in fit map ' + error);
     }
-  }, 200);
+  }, 500);
 
   getLocations = (props) => {
     const {me, selectedUser} = props;

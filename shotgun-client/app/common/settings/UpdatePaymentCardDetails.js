@@ -29,12 +29,19 @@ class UpdatePaymentCardDetails extends Component {
     const _this = this;
     dispatch(addPaymentCard(newPaymentCard, () => {
       if (next){
-        history.replace(next, undefined, () => _this.ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined}));
+        history.replace(next, undefined, () => _this.clearInput());
       } else {
-        _this.ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined});
+        _this.clearInput();
       }
     }));
   };
+
+  clearInput(){
+    const {ccInput} = this;
+    if (ccInput){
+      ccInput.setValues({number: undefined, expiry: undefined, cvc: undefined});
+    }
+  }
 
   render(){
     const {history, busy, errors, user, valid} = this.props;
