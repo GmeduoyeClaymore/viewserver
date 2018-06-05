@@ -80,7 +80,7 @@ class PartnerLanding extends Component {
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
         <Route path={'UserDetail'} exact component={UserDetail}/>
         <Route path={'Settings'} component={PartnerSettings}/>
-        <Route path={'UserRelationships'} component={UserRelationships} justFriends={true}/>
+        <Route path={'UserRelationships'} component={UserRelationships} justFriends={false}/>
       </ReduxRouter>,
       <PartnerMenuBar key='menuBar' {...this.props}/>];
   }

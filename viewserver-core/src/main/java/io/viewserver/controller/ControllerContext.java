@@ -1,5 +1,6 @@
 package io.viewserver.controller;
 
+import com.sun.jmx.snmp.ThreadContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;
 import rx.Scheduler;
@@ -21,7 +22,11 @@ public class ControllerContext implements AutoCloseable{
     private IPeerSession peerSession;
     private static ThreadLocal<ControllerContext> current = new ThreadLocal<>();
     private static ConcurrentHashMap<IPeerSession,ConcurrentHashMap<String,Object>> contextParams = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String,ControllerContext> threadNameToContextMap = new ConcurrentHashMap<>();
 
+    public static ControllerContext getContextForThreadName(String name){
+        return threadNameToContextMap.get(name);
+    }
 
     private ControllerContext(IPeerSession peerSession) {
         this.peerSession = peerSession;
@@ -37,6 +42,7 @@ public class ControllerContext implements AutoCloseable{
 
     public static ControllerContext create(ControllerContext context){
         current.set(context);
+        threadNameToContextMap.put(Thread.currentThread().getName(),context);
         return context;
     }
 
@@ -59,10 +65,12 @@ public class ControllerContext implements AutoCloseable{
 
     @Override
     public void close(){
+        org.apache.logging.log4j.ThreadContext.clearMap();
         current.set(null);
     }
 
     public static void closeStatic(){
+        org.apache.logging.log4j.ThreadContext.clearMap();
         current.set(null);
     }
 
@@ -82,6 +90,7 @@ public class ControllerContext implements AutoCloseable{
 
     public static void set(String name, Object value) {
         IPeerSession peerSession1 = current.get().getPeerSession();
+
         set(name, value, peerSession1);
     }
 
@@ -106,8 +115,16 @@ public class ControllerContext implements AutoCloseable{
                 });
                 contextParams.put(peerSession1, params);
             }
+            if(value instanceof String) {
+                org.apache.logging.log4j.ThreadContext.put(name, (String) value);
+            }
             params.put(name,value);
         }
+    }
+
+    public Object getParam(String name) {
+        IPeerSession peerSession = this.getPeerSession();
+        return get(name, peerSession);
     }
 
     public static Object get(String name) {

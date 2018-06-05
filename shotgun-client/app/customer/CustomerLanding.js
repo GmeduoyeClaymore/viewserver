@@ -8,6 +8,7 @@ import CustomerOrderDetail from './orders/CustomerOrderDetail';
 import {customerServicesRegistrationAction} from 'customer/actions/CustomerActions';
 import {watchPosition} from 'partner/actions/PartnerActions';
 import CustomerSettings from './settings/CustomerSettings';
+import UserDetail from 'common/components/relationships/UserDetail';
 import {isAnyLoading, getDaoState, getDao} from 'common/dao';
 import {LoadingScreen} from 'common/components';
 import {registerActionListener, getActionFromNotification} from 'common/Listeners';
@@ -72,8 +73,9 @@ class CustomerLanding extends Component {
         <Route path={'CustomerMyOrders'} exact component={CustomerMyOrders}/>
         <Route path={'Orders'} exact component={CustomerMyOrders}/>
         <Route path={'CustomerOrderDetail'} exact component={CustomerOrderDetail}/>
+        <Route path={'UserDetail'} exact component={UserDetail}/>
         <Route path={'Settings'} parentPath={path} component={CustomerSettings}/>
-        <Route path={'UserRelationships'} component={UserRelationships} showAll={true}/>
+        <Route path={'UserRelationships'} component={UserRelationships} justFriends={false}/>
       </ReduxRouter>,
       <CustomerMenuBar key='menuBar' {...this.props}/>];
   }

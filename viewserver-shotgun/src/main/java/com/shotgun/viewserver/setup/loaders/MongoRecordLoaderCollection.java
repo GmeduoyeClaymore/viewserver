@@ -1,12 +1,9 @@
 package com.shotgun.viewserver.setup.loaders;
 
 import com.shotgun.viewserver.setup.datasource.*;
-import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
-import io.viewserver.adapters.firebase.FirebaseRecordLoader;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.adapters.mongo.MongoRecordLoader;
 import io.viewserver.datasource.*;
-import io.viewserver.report.ReportRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

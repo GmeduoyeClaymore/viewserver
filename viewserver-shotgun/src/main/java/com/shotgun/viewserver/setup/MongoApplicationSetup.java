@@ -1,35 +1,15 @@
 package com.shotgun.viewserver.setup;
 
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteBatch;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import com.shotgun.viewserver.setup.datasource.*;
-import io.viewserver.adapters.common.Record;
-import io.viewserver.adapters.firebase.FirebaseConnectionFactory;
-import io.viewserver.adapters.firebase.FirebaseCsvDataLoader;
-import io.viewserver.adapters.firebase.FirebaseUtils;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.adapters.mongo.MongoCsvDataLoader;
-import io.viewserver.core.JacksonSerialiser;
-import io.viewserver.datasource.*;
-import io.viewserver.report.ReportDefinition;
-import io.viewserver.report.ReportRegistry;
-import io.viewserver.server.setup.IApplicationGraphDefinitions;
+import io.viewserver.datasource.SchemaConfig;
 import io.viewserver.server.setup.IApplicationSetup;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-
-import java.util.*;
-
-/**
- * Created by nick on 10/09/15.
- */
 
 public class MongoApplicationSetup implements IApplicationSetup {
 

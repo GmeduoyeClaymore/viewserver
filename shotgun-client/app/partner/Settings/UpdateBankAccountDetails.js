@@ -17,7 +17,7 @@ class UpdateBankAccountDetails extends Component {
   onSetBankAccount = async () => {
     const {history, dispatch, unsavedBankAccount, address, next} = this.props;
     dispatch(setBankAccount(unsavedBankAccount, address, () => {
-      history.push(next);
+      history.replace(next);
       this.setState({unsavedBankAccount: undefined});
     }));
   }

@@ -138,6 +138,7 @@ public class LoginController {
     private String setupContext(String userId,IPeerSession session) {
         session.onDisconnect().take(1).subscribe(c-> setUserOffLine(userId));
         ControllerContext.set("userId", userId,session);
+        ControllerContext.set("userName", getUser(userId).getEmail(),session);
         ControllerContext.setFactory("user", () -> getUser(userId), session);
         ControllerContext.setFactory("now", () -> new Date().getTime(), session);
         return userId;

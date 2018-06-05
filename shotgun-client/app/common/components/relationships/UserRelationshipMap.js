@@ -46,11 +46,14 @@ class UserRelationshipMap extends Component{
       const {map} = this;
       let {me} = newProps;
 
-      const {location} = newProps;
+      const {location, geoLocation} = newProps;
       me = location || me;
       let {relatedUsers} = newProps;
       if (me){
         relatedUsers = [...relatedUsers, me];
+      }
+      if (geoLocation){
+        relatedUsers = [geoLocation, ...relatedUsers];
       }
       const filteredUsers = relatedUsers.filter(c=> c.latitude != undefined && c.longitude != undefined ).map(c => {return {latitude: c.latitude, longitude: c.longitude};});
       Logger.info(`Calling fit map for ${filteredUsers.length} users`);
