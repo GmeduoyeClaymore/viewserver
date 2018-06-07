@@ -146,6 +146,9 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                     if(setNotificationForUser(orderId, user.getUserId())){
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
+                                    else{
+                                         log.info("");
+                                    }
                                 }
 
                             }, err -> log.error("Issue subscribing to orders {}", err)));
