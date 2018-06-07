@@ -54,7 +54,8 @@ public class NexmoController implements INexmoController, UserNotificationContra
     @ControllerAction(path = "getInternationalFormatNumber", isSynchronous = false)
     public String getInternationalFormatNumber(String phoneNumber) {
         if (phoneNumber == null || "".equals(phoneNumber)) {
-            throw new RuntimeException("Phone number cannot be null");
+            log.error("Phone number cannot be null");
+            return null;
         }
         try {
             if(resolvedCache.containsKey(phoneNumber)){
