@@ -96,11 +96,12 @@ public class MessagingController implements IMessagingController, UserPersistenc
         if(message.getToUserId() == null){
             throw new RuntimeException("To user id must be specified");
         }
-
+        logger.info("Will send message once we have found user");
         return ListenableFutureObservable.to(getUserForId(message.getToUserId(),User.class).observeOn(Schedulers.from(service)).map(user -> {
             String currentToken = user.getFcmToken();
             message.set("to",currentToken);
             boolean sendRemotely = isSendRemotely(user);
+            logger.info("Found user persisting message");
             persistMessage(message, sendRemotely).subscribe();
             if(currentToken == null && isSendRemotely(user)){
                 String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
@@ -111,6 +112,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             String format = String.format("Sending message \"%s\" to \"%s\" token \"%s\"", message, message.getToUserId(), currentToken);
             logger.info(format);
             if(sendRemotely){
+                logger.info("Sending message remotely");
                 sendPayload(message.toSimpleMessage());
             }
 
