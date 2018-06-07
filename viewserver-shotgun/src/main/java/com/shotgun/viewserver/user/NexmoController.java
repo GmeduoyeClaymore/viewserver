@@ -272,7 +272,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-            if(userPhoneNumber == null || "".equals(phoneNumber)){
+            if(userPhoneNumber == null || "".equals(userPhoneNumber)){
                 continue;
             }
             String internationalFormatNumber = getInternationalFormatNumber(userPhoneNumber);
