@@ -144,10 +144,11 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                     log.info("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
                                     if(setNotificationForUser(orderId, user.getUserId())){
+                                        log.info("Sending notification to user {}",user.getUserId());
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
                                     else{
-                                         log.info("");
+                                         log.info("Not sending notification to user {} as already sent",user.getUserId());
                                     }
                                 }
 
