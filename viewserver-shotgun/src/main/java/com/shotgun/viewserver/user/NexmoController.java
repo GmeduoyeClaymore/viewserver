@@ -75,7 +75,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             return (String) map.get("international_format_number");
         } catch (Exception ex) {
             log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);
-            throw new RuntimeException(ex);
+            return null;
         }
     }
 
@@ -271,10 +271,13 @@ public class NexmoController implements INexmoController, UserNotificationContra
         while (rows.moveNext()) {
             String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
             String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-            if(userPhoneNumber == null){
+            if(userPhoneNumber == null || "".equals(phoneNumber)){
                 continue;
             }
             String internationalFormatNumber = getInternationalFormatNumber(userPhoneNumber);
+             if(internationalFormatNumber == null){
+                continue;
+            }
             log.info("from comparing {}=={}",internationalFormatNumber, fromNumber);
             if (internationalFormatNumber.equals(fromNumber)) {
                 log.info("found from comparing {}=={}",internationalFormatNumber, fromNumber);
