@@ -25,7 +25,7 @@ public interface UserPersistenceController{
     default <T extends User> Observable<T> getUserForId(String userId, Class<T> userClass) {
         KeyedTable userTable = getUserTable();
         ControllerContext context = ControllerContext.Current();
-        return userTable.waitForRow(new TableKey(userId), Schedulers.from(ControllerUtils.BackgroundExecutor)).observeOn(ControllerContext.Scheduler(context)).map(
+        return userTable.waitForRow(new TableKey(userId), Schedulers.from(ControllerUtils.BackgroundExecutor)).map(
                 currentRow -> {
                     if(currentRow == -1){
                         throw new RuntimeException("Unable to find user for key:" + userId);
