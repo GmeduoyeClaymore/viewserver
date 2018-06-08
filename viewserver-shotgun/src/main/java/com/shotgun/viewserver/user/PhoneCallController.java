@@ -15,6 +15,7 @@ import io.viewserver.controller.ControllerContext;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,8 @@ public class PhoneCallController implements OrderTransformationController{
         KeyedTable phoneNumberTable = (KeyedTable) systemCatlog.getOperatorByPath(TableNames.PHONE_NUMBER_TABLE_NAME);
         KeyedTable userTable = (KeyedTable) systemCatlog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
-        String customerNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", fromUserId);
-        String driverNumber = (String) ControllerUtils.getColumnValue(userTable, "contactNo", toUserId);
+        String customerNumber = (String) ColumnHolderUtils.getColumnValue(userTable, "contactNo", fromUserId);
+        String driverNumber = (String) ColumnHolderUtils.getColumnValue(userTable, "contactNo", toUserId);
 
         ArrayList<String> availablePhoneNumbers = getAvailablePhoneNumbers(phoneNumberTable, 2);
 
@@ -58,7 +59,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", customerNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(0)))
+                .addValue("version", ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(0)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
@@ -69,7 +70,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", driverNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", ControllerUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(1)))
+                .addValue("version", ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(1)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
@@ -83,16 +84,16 @@ public class PhoneCallController implements OrderTransformationController{
         ArrayList availableNumbers = new ArrayList();
 
         while (rows.moveNext()) {
-            String fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
-            String toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-            String status = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumberStatus", rows.getRowId());
-            long assignedTime = (long) ControllerUtils.getColumnValue(phoneNumberTable, "assignedTime", rows.getRowId());
+            String fromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+            String toUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+            String status = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "phoneNumberStatus", rows.getRowId());
+            long assignedTime = (long) ColumnHolderUtils.getColumnValue(phoneNumberTable, "assignedTime", rows.getRowId());
             long now = new Date().getTime();
             long assignedAgoMillis = now - assignedTime;
 
             //if the orderId is not set or the number is assigned but hasn't been updated in 300 seconds then we can use it.
             if ((isNullOrEmpty(fromUserId) &&  isNullOrEmpty(toUserId)) ||(status == PhoneNumberStatuses.ASSIGNED.name() && assignedAgoMillis > (1000 * 300))) {
-                String phoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+                String phoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
                 availableNumbers.add(phoneNumber);
             }
         }

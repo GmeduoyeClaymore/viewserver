@@ -18,7 +18,13 @@ package io.viewserver.reactor;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
+import io.viewserver.network.IPeerSession;
+import rx.Emitter;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 /**
@@ -49,4 +55,36 @@ public interface IReactor {
                          FutureCallback<? super V> callback);
 
     void start();
+
+    default <T> Observable<T> scheduleTaskObservable(Callable<T> o, long delay, long frequency){
+        return Observable.create(
+                tEmitter -> scheduleTask(() -> {
+                    try {
+                        tEmitter.onNext(o.call());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                },delay,frequency), Emitter.BackpressureMode.BUFFER
+        );
+    }
+
+    default <T> Observable<T> scheduleObservable(Callable<Observable<T>> of, long delay, long frequency){
+        return Observable.create(
+                tEmitter -> scheduleTask(() -> {
+                    try {
+                        Observable<T> o = of.call();
+                        o.subscribe(
+                                el -> tEmitter.onNext(el),
+                                ex -> tEmitter.onError(ex),
+                                () -> tEmitter.onCompleted()
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                },delay,frequency), Emitter.BackpressureMode.BUFFER
+        );
+    }
+
+
+
 }

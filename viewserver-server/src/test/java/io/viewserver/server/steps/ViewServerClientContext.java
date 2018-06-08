@@ -19,15 +19,21 @@ package io.viewserver.server.steps;
 import gherkin.lexer.Ru;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.ViewServerClient;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rx.Observable;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by nick on 10/02/2015.
@@ -36,6 +42,7 @@ public class ViewServerClientContext {
     private HashMap<String, ClientConnectionContext> clientConnectionsByName;
     private Map<String,String> contextParams = new HashMap<>();
     private static DateTime nowDate = new DateTime();
+    private static final Logger log = LoggerFactory.getLogger(ViewServerClientContext.class);
     public ViewServerClientContext() {
         clientConnectionsByName = new HashMap<>();
     }
@@ -72,16 +79,48 @@ public class ViewServerClientContext {
         return result;
     }
 
-    public ClientConnectionContext create(String name, String url){
+    public Observable<ClientConnectionContext> create(String name, String url, String authName, String token) throws AuthenticationException{
         try {
             TestViewServerClient client = new TestViewServerClient(name, replaceParams(url));
-            client.authenticate("open", "cucumber").get();
-            ClientConnectionContext result = new ClientConnectionContext(name,client, this);
-            this.clientConnectionsByName.put(name,result);
-            return result;
+            return client.withAuthentication(authName, token).flatMap(
+                    success -> {
+                        log.info("Client successfully authenticated");
+                        ClientConnectionContext result = new ClientConnectionContext(name,client, this);
+                        this.clientConnectionsByName.put(name,result);
+                        return Observable.just(result);
+                    },
+                    err -> {
+                        try {
+                            log.info("Authentication failed " + err);
+                            client.close();
+                            err = unwrap(err);
+                            HashMap<String, Object> result = (HashMap<String, Object>) ControllerUtils.mapDefault(err.getMessage());
+                            String alternativeUrl = (String) result.get("alternative");
+                            if (alternativeUrl != null){
+                                log.info("Client not authenticated but found alternative " + alternativeUrl);
+                                return create(name,alternativeUrl,authName,token);
+                            }else{
+                                log.info("Client not authenticated no alternative found aborting");
+                            }
+                        }catch (Exception ex2){
+                           log.error("Problem with authenttion",ex2);
+                        }
+                        return Observable.error(new AuthenticationException(err.getMessage()));
+                    },
+                    () -> {
+                        return Observable.empty();
+                    }
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Throwable unwrap(Throwable ex) {
+        if(ex instanceof ExecutionException){
+            return ex.getCause();
+        }
+        return ex;
     }
 
     public ClientConnectionContext get(String name){

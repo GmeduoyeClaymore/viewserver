@@ -34,7 +34,7 @@ public class SqlTests extends BenchmarkTestBase {
 
     @Test
     public void test() throws Throwable {
-        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoint("tcp://localhost:18000"));
+        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"));
         Options options = new Options();
         options.setLimit(10);
         CountDownLatch snapshotLatch = new CountDownLatch(1);
@@ -52,7 +52,7 @@ public class SqlTests extends BenchmarkTestBase {
 
     @Test
     public void test2() throws Throwable {
-        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoint("tcp://localhost:18000"));
+        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"));
         Options options = new Options();
         options.setLimit(10);
         CountDownLatch snapshotLatch = new CountDownLatch(1);

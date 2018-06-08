@@ -45,6 +45,7 @@ public class MongoRecordLoader implements IRecordLoader{
     private int MAX_CONNECTION_RETRY_LIMIT = 1000;
     private long lastConnectionRetryTime = 0;
     private long connectionLostTime = 0;
+    private boolean isClosed;
 
     public MongoRecordLoader(MongoConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
         this.connectionFactory = connectionFactory;
@@ -87,6 +88,9 @@ public class MongoRecordLoader implements IRecordLoader{
     }
 
     private void actuallyAddMongoListener() {
+        if(this.isClosed){
+            return;
+        }
         try {
             logger.info(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
             Block<ChangeStreamDocument<Document>> block = t -> {
@@ -135,12 +139,16 @@ public class MongoRecordLoader implements IRecordLoader{
             }
             changeStreamDocuments.forEach(block);
         } catch (Exception ex) {
+            if(isClosed){
+                logger.info("Expected exception as loader is closed" + ex.getMessage());
+                return;
+            }
             logger.error(String.format("Error adding snapshot listener for Mongo table %s {}", tableName), ex);
             if(connectionLostTime == 0) {
                 connectionLostTime = new Date().getTime();
             }
             if(connectionRetries < MAX_CONNECTION_RETRY_LIMIT){
-                while (true){ //binary exponential back off for connection retry
+                while (!isClosed){ //binary exponential back off for connection retry
                     long now = new Date().getTime();
                     long timeElapsedSinceLastRetry = now - lastConnectionRetryTime;
                     long millisShouldWait = connectionRetries * 1000;
@@ -229,6 +237,9 @@ public class MongoRecordLoader implements IRecordLoader{
 
     @Override
     public void close(){
+        logger.info("Shutting down record loader");
+        this.isClosed = true;
+        this.service.shutdown();
         connectionFactory.close();
     }
 }

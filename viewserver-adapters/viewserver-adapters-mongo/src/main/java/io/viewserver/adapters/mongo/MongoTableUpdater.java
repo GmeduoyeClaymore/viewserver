@@ -4,9 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
 import io.viewserver.adapters.common.IDatabaseUpdater;
-import io.viewserver.controller.ControllerUtils;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
@@ -30,8 +28,9 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         this.connectionFactory = connectionFactory;
     }
 
+
     @Override
-    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version){
         return Observable.create(
                 booleanEmitter -> {
                     try {
@@ -39,12 +38,13 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                         TableKey tableKey = RecordUtils.getTableKey(record, definition);
                         String documentId = tableKey.toString("_");
                         Map<String, Object> docData = getDocumentData(record, schemaConfig);
-                        Integer versionBeforeUpdate = record.getInt("version");
-                        docData.put("version", incrementVersion(record));
-                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + record.getValue("version") + " new version is " + docData.get("version"));
+                        docData.put("version", incrementVersion(version));
+                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + version + " new version is " + docData.get("version"));
+                        log.info("Writing record to table " + docData);
                         Document tDocument = new Document(docData);
-                        boolean result = getUpdateResult(versionBeforeUpdate, tableName, documentId, tDocument);
-                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + record.getValue("version") + " new version is " + docData.get("version"));
+                        boolean result = getUpdateResult(version, tableName, documentId, tDocument);
+                        log.info("Record result is " + result);
+                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + version + " new version is " + docData.get("version"));
                         booleanEmitter.onNext(result);
                         booleanEmitter.onCompleted();
                     }catch (Exception ex){
@@ -55,10 +55,16 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         );
     }
 
-    public Integer incrementVersion(IRecord record) {
-        Integer version = (Integer) record.getValue("version");
+    private Integer getVersionBeforeUpdate(IRecord record) {
+        return record.getInt("version");
+    }
+
+    public Integer incrementVersion(Integer version) {
         if(version == null){
-            return 0;
+            return 1;
+        }
+        if(version == Integer.MAX_VALUE){
+            return version;
         }
         return version + 1;
     }
@@ -66,16 +72,23 @@ public class MongoTableUpdater implements IDatabaseUpdater {
     public boolean getUpdateResult(Integer initialVersion, String tableName, String  documentId, Document tDocument) {
         Bson updateQuery = new Document("$set", tDocument);
         Integer version = tDocument.getInteger("version");
-        if(version == 0){
+        if(version == 1){
+            log.info(documentId + " Record version is 0 so treating as an insert");
             tDocument.put("_id",documentId);
             getCollection(tableName).insertOne(tDocument);
             return true;
-        }else{
+        }
+        else if(version == Integer.MAX_VALUE){
+            log.info(documentId + " Record version is int.MaxValue so treating as an unconditional upsert");
+            BasicDBObject query = new BasicDBObject("_id",documentId);
+            getCollection(tableName).replaceOne(query, tDocument,new UpdateOptions().upsert(true));
+            return true;
+        }
+        else{
+            log.info(documentId + " Record version is "+initialVersion+" so treating as an update to a specific version");
             BasicDBObject query = new BasicDBObject("_id", documentId);
             query.put("version", new BasicDBObject("$eq", initialVersion));
             return getCollection(tableName).updateOne(query, updateQuery,new UpdateOptions()).wasAcknowledged();
-
-
         }
     }
 

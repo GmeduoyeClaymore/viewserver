@@ -38,8 +38,10 @@ import java.net.URISyntaxException;
 public class NettyIpcEndpoint implements INettyEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NettyIpcEndpoint.class);
     private final String name;
+    private String url;
 
     public NettyIpcEndpoint(String url) throws URISyntaxException {
+        this.url = url;
         URI uri = new URI(url);
         this.name = uri.getHost();
     }
@@ -95,5 +97,10 @@ public class NettyIpcEndpoint implements INettyEndpoint {
         return "NettyIpcEndpoint{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getUrl() {
+        return this.url;
     }
 }

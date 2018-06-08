@@ -33,7 +33,7 @@ public class ValidationOperatorRow {
         return new ValidationOperatorRow(new HashMap<>(values),new HashMap<>(previousValue),newAction);
     }
 
-    public int getRowId(String rowKeyField) {
+    public int getRowId(String rowKeyField, boolean flatten) {
         StringBuilder sb = new StringBuilder();
         String[] parts = rowKeyField.split(",");
         for(String part : parts){
@@ -46,7 +46,7 @@ public class ValidationOperatorRow {
             }
             sb.append(idString);
         }
-        return ValidationUtils.rowKeyHash(sb + "_" + action.name());
+        return ValidationUtils.rowKeyHash(sb + (flatten || action == null ? "" : "_" + action.name()));
     }
 
     public HashMap<String, Object> getValues() {

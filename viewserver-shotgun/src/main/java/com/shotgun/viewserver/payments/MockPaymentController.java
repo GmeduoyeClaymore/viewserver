@@ -14,6 +14,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,9 +120,9 @@ public class MockPaymentController implements IPaymentController {
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
 
-        String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId",fromCustomerUserId);
-        String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId",toPartnerUserId);
-        int chargePercentage = (int) ControllerUtils.getColumnValue(userTable, "chargePercentage",toPartnerUserId);
+        String stripeCustomerId = (String) ColumnHolderUtils.getColumnValue(userTable, "stripeCustomerId",fromCustomerUserId);
+        String toAccountId = (String) ColumnHolderUtils.getColumnValue(userTable, "stripeAccountId",toPartnerUserId);
+        int chargePercentage = (int) ColumnHolderUtils.getColumnValue(userTable, "chargePercentage",toPartnerUserId);
 
 
         try {

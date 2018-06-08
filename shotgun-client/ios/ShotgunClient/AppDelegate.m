@@ -25,7 +25,7 @@
   [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
   
 
-  [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"6bcea6c227c244b69f3fd4b6bb3fc264"];
+  [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"902ae4ec241f44199d350b0c66030e9b"];
   [[BITHockeyManager sharedHockeyManager] startManager];
   [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
 

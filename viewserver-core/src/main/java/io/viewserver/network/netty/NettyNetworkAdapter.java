@@ -16,6 +16,7 @@
 
 package io.viewserver.network.netty;
 
+import io.viewserver.collections.BoundedFifoBuffer_KeyName_;
 import io.viewserver.messages.IMessage;
 import io.viewserver.network.*;
 import io.viewserver.reactor.INetworkMessageListener;
@@ -29,7 +30,9 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,10 +48,12 @@ public class NettyNetworkAdapter implements INetworkAdapter {
     private NioEventLoopGroup handlers;
     private CopyOnWriteArrayList<ServerBootstrap> servers;
     private IReactor reactor;
+    private List<NettyChannel> channels;
 
     public NettyNetworkAdapter() {
         listeners = new CopyOnWriteArrayList<>();
         servers = new CopyOnWriteArrayList<>();
+        channels = new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -83,6 +88,7 @@ public class NettyNetworkAdapter implements INetworkAdapter {
             @Override
             protected void initChannel(Channel ch) throws Exception {
                 ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+
                     @Override
                     public void channelActive(ChannelHandlerContext ctx) throws Exception {
                         log.debug("New connection on channel {}", ctx.channel());
@@ -90,7 +96,7 @@ public class NettyNetworkAdapter implements INetworkAdapter {
                         for (INetworkMessageListener listener : listeners) {
                             listener.onConnection(channel);
                         }
-
+                        NettyNetworkAdapter.this.channels.add(channel);
                         super.channelActive(ctx);
                     }
 
@@ -116,15 +122,12 @@ public class NettyNetworkAdapter implements INetworkAdapter {
         SettableFuture<IChannel> promise = SettableFuture.create();
         final INettyEndpoint.IClient client = ((INettyEndpoint) endpoint).getClient(getClientWorkerGroup(), new NettyPipelineInitialiser(networkMessageWheel));
         ChannelFuture channelFuture = client.connect();
-        channelFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (future.isSuccess()) {
-                    NettyChannel channel = new NettyChannel(future.channel());
-                    promise.set(channel);
-                } else {
-                    promise.setException(future.cause());
-                }
+        channelFuture.addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                NettyChannel channel = new NettyChannel(future.channel());
+                promise.set(channel);
+            } else {
+                promise.setException(future.cause());
             }
         });
         return promise;
@@ -156,27 +159,42 @@ public class NettyNetworkAdapter implements INetworkAdapter {
 //                e.printStackTrace();
 //            }
 //        }
-
+        /*NettyNetworkAdapter.this.channels.forEach(ch -> {
+            for (INetworkMessageListener listener : listeners) {
+                listener.onDisconnection(ch);
+            }
+            try {
+                ch.getChannel().closeFuture().get();
+                ch.getChannel().closeFuture().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });*/
         try {
             NioEventLoopGroup handlers = this.handlers;
             this.handlers = null;
             if (handlers != null) {
                 log.debug("Shutting down Netty handlers");
                 handlers.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
+                //handlers.shutdown();
             }
             NioEventLoopGroup parentGroup = this.parentGroup;
             this.parentGroup = null;
             if (parentGroup != null) {
                 log.debug("Shutting down Netty parent group");
+                //parentGroup.shutdown();
                 parentGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             }
             NioEventLoopGroup clientWorkerGroup = this.clientWorkerGroup;
             this.clientWorkerGroup = null;
             if (clientWorkerGroup != null) {
                 log.debug("Shutting down Netty client group");
+                //clientWorkerGroup.shutdown();
                 clientWorkerGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         log.debug("Shut down Netty");

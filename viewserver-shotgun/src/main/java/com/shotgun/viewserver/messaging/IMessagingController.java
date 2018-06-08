@@ -29,6 +29,7 @@ public interface IMessagingController {
         messageRec.addValue("picture", message.getPicture());
         messageRec.addValue("sentTime", new Date());
         messageRec.addValue("sentRemotely",sentRemotely);
+        messageRec.addValue("version",Integer.MAX_VALUE);
         messageRec.addValue("message", message);
 
         return getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, MessagesDataSource.getDataSource().getSchema(), messageRec);

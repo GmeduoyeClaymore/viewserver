@@ -41,7 +41,8 @@ public class MongoConnectionFactory {
     }
 
     public void close(){
-
-        mongoClient.close();
+        if(mongoClient != null) {
+            mongoClient.close();
+        }
     }
 }

@@ -33,8 +33,10 @@ import java.net.URISyntaxException;
  */
 public class NettyInProcEndpoint implements INettyEndpoint {
     private final String name;
+    private String url;
 
     public NettyInProcEndpoint(String url) throws URISyntaxException {
+        this.url = url;
         URI uri = new URI(url);
         this.name = uri.getHost();
     }
@@ -56,6 +58,12 @@ public class NettyInProcEndpoint implements INettyEndpoint {
                 .channel(LocalChannel.class)
                 .handler(handler);
         return () -> bootstrap.connect(new LocalAddress(name));
+    }
+
+
+    @Override
+    public String getUrl() {
+        return this.url;
     }
 
     @Override

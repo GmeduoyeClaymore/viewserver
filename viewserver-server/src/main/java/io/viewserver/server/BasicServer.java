@@ -42,8 +42,8 @@ public class BasicServer {
         registerComponent(this.initialDataLoaderComponent);
     }
 
-    BasicServer(List<IEndpoint> endpointList) {
-        basicServerComponents = new NettyBasicServerComponent(endpointList);
+    BasicServer(String serverName,List<IEndpoint> endpointList) {
+        basicServerComponents = new NettyBasicServerComponent(serverName,endpointList);
         dataSourceServerComponents = new DataSourceComponents(basicServerComponents);
         controllerComponents = new ControllerComponents(basicServerComponents);
         reportServerComponents = new ReportServerComponents(basicServerComponents,dataSourceServerComponents);
@@ -76,7 +76,7 @@ public class BasicServer {
             logger.info(String.format("COMPLETED FINISHED WAITING for server components"));
             return true;
         };
-        Observable.zip(observables, onCompletedAll).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds"))).subscribe(
+        Observable.zip(observables, onCompletedAll).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
                 res -> {
                     basicServerComponents.listen();
                 }

@@ -17,10 +17,15 @@
 package io.viewserver.authentication;
 
 import io.viewserver.messages.command.IAuthenticateCommand;
+import rx.Observable;
+
 
 /**
  * Created by nick on 13/02/2015.
  */
 public interface IAuthenticationHandler {
     AuthenticationToken authenticate(IAuthenticateCommand authenticateCommandDto);
+    default Observable<AuthenticationToken> authenticateObservable(IAuthenticateCommand authenticateCommandDto){
+        return Observable.just(authenticate(authenticateCommandDto));
+    }
 }

@@ -162,7 +162,11 @@ public abstract class PeerSession implements IPeerSession {
             disconnectionHandlersCopy.addAll(disconnectionHandlers);
             int count = disconnectionHandlersCopy.size();
             for (int i = 0; i < count; i++) {
-                disconnectionHandlersCopy.get(i).handleDisconnect(this);
+                try {
+                    disconnectionHandlersCopy.get(i).handleDisconnect(this);
+                }catch (Exception ex){
+                    log.error(String.format("Problem firing disconnection  - %s",ex.getMessage()));
+                }
             }
             disconnectionHandlersCopy.clear();
         }
@@ -259,5 +263,10 @@ public abstract class PeerSession implements IPeerSession {
 
     public interface IDisconnectionHandler {
         void handleDisconnect(IPeerSession peerSession);
+    }
+
+    @Override
+    public String toString() {
+        return channel.toString();
     }
 }

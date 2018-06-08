@@ -6,6 +6,7 @@ import com.shotgun.viewserver.messaging.AppMessage;
 import com.shotgun.viewserver.messaging.AppMessageBuilder;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 
 public interface UserNotificationContract{
@@ -31,8 +32,8 @@ public interface UserNotificationContract{
 
     default String getUsername(String userId) {
         KeyedTable userTable = getUserTable();
-        String firstName = (String) ControllerUtils.getColumnValue(userTable, "firstName", userId);
-        String lastName = (String) ControllerUtils.getColumnValue(userTable, "lastName", userId);
+        String firstName = (String) ColumnHolderUtils.getColumnValue(userTable, "firstName", userId);
+        String lastName = (String) ColumnHolderUtils.getColumnValue(userTable, "lastName", userId);
         return firstName + " " + lastName;
     }
 

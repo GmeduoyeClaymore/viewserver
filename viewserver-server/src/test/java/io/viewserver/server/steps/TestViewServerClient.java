@@ -24,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /**
@@ -32,8 +35,12 @@ import java.util.concurrent.Future;
 public class TestViewServerClient extends ViewServerClient {
     private static final Logger log = LoggerFactory.getLogger(TestViewServerClient.class);
 
-    public TestViewServerClient(String name, IEndpoint endpoint) {
+    public TestViewServerClient(String name, List<IEndpoint> endpoint) {
         super(name, endpoint);
+    }
+
+    public TestViewServerClient(String name, IEndpoint endpoint) {
+        super(name, Arrays.asList(endpoint));
     }
 
     public TestViewServerClient(String name, String url) throws URISyntaxException {

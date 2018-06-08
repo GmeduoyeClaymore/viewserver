@@ -68,6 +68,13 @@ public class ValidationUtils {
         return result;
     }
 
+
+    public static  ValidationOperatorRow toFlattenedRow(Map<String,String> row, String keyColumnName){
+        validateRowHasKey(row, keyColumnName);
+        HashMap<String,Object>  values = getValues(row,0);
+        return new ValidationOperatorRow(values,new HashMap<>(),ValidationAction.Add);
+    }
+
     public static  ValidationOperatorRow toRow(Map<String,String> row, String keyColumnName){
         String actionName = row.get(ACTION_NAME);
         if(actionName == null || !actionName.startsWith("Row")){
@@ -97,6 +104,9 @@ public class ValidationUtils {
     }
 
     public static void validateRowHasKey(Map<String, String> row, String keyColumnName) {
+        if(keyColumnName == null){
+            throw new RuntimeException("Key column name should be specified");
+        }
         String[] parts = keyColumnName.split(",");
         for(String part : parts){
             String idString = row.get(part);

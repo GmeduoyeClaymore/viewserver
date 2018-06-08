@@ -20,6 +20,7 @@ import io.viewserver.network.IChannel;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.netty.NettyChannel;
 import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -199,9 +200,9 @@ public abstract class BasePaymentController implements IPaymentController{
 
         KeyedTable userTable = (KeyedTable) systemCatalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
 
-        String stripeCustomerId = (String) ControllerUtils.getColumnValue(userTable, "stripeCustomerId", fromCustomerUserId);
-        String toAccountId = (String) ControllerUtils.getColumnValue(userTable, "stripeAccountId", toPartnerUserId);
-        int chargePercentage = (int) ControllerUtils.getColumnValue(userTable, "chargePercentage", toPartnerUserId);
+        String stripeCustomerId = (String) ColumnHolderUtils.getColumnValue(userTable, "stripeCustomerId", fromCustomerUserId);
+        String toAccountId = (String) ColumnHolderUtils.getColumnValue(userTable, "stripeAccountId", toPartnerUserId);
+        int chargePercentage = (int) ColumnHolderUtils.getColumnValue(userTable, "chargePercentage", toPartnerUserId);
 
 
         try {

@@ -27,6 +27,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
 
         //DataSources which require data from csv only in test mode
         dataSources.add(UserDataSource.getDataSource());
+        dataSources.add(ClusterDataSource.getDataSource());
         dataSources.add(DeliveryAddressDataSource.getDataSource());
         dataSources.add(OrderDataSource.getDataSource());
         dataSources.add(MessagesDataSource.getDataSource());
@@ -49,6 +50,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         reportDefinitions.put(UserReport.ID, UserReport.getReportDefinition());
         reportDefinitions.put(ProductReport.ID, ProductReport.getReportDefinition());
         reportDefinitions.put(PaymentsReport.ID, PaymentsReport.getReportDefinition());
+        reportDefinitions.put(ClusterReport.ID, ClusterReport.getReportDefinition());
         reportDefinitions.put(OrderResponseReport.ID, OrderResponseReport.getReportDefinition());
         /*reportDefinitions.put(LegacyUserRelationshipReport.USER_RELATIONSHIPS, LegacyUserRelationshipReport.getReportDefinition(false));
         reportDefinitions.put(LegacyUserRelationshipReport.USER_RELATIONSHIPS + "All", LegacyUserRelationshipReport.getReportDefinition(true));

@@ -16,12 +16,15 @@
 
 package io.viewserver.schema.column;
 
+import io.viewserver.Constants;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.Column;
 import io.viewserver.datasource.ContentType;
-import io.viewserver.operators.table.ISchemaConfig;
-import io.viewserver.operators.table.TableKeyDefinition;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.IOutput;
+import io.viewserver.operators.table.*;
+import io.viewserver.schema.Schema;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +116,37 @@ public class ColumnHolderUtils {
                 return null;
             }
         }
+    }
+
+
+
+    public static Object getOperatorColumnValue(IOperator table, String column, int row){
+        IOutput output = table.getOutput(Constants.OUT);
+        Schema schema = output.getSchema();
+        ColumnHolder col = schema.getColumnHolder(column);
+        if(col == null){
+            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
+        }
+        return ColumnHolderUtils.getValue(col, row);
+    }
+
+    public static Object getColumnValue(KeyedTable table, String column, String key){
+        return getColumnValue(table, column, new TableKey(key));
+    }
+
+    public static Object getColumnValue(KeyedTable table, String column, TableKey tableKey) {
+        return getColumnValue(table, column, table.getRow(tableKey));
+    }
+
+
+    public static Object getColumnValue(ITable table, String column, int row){
+        IOutput output = table.getOutput();
+        Schema schema = output.getSchema();
+        ColumnHolder col = schema.getColumnHolder(column);
+        if(col == null){
+            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
+        }
+        return ColumnHolderUtils.getValue(col, row);
     }
 
     public static Object getValue(ColumnHolder columnHolder, int row) {

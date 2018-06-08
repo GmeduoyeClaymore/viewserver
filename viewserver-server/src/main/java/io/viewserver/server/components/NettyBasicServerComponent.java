@@ -39,11 +39,13 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
 
     private static final Logger log = LoggerFactory.getLogger(NettyBasicServerComponent.class);
 
+    private String serverName;
     protected List<IEndpoint> endpointList;
     protected Network serverNetwork;
     protected IReactor serverReactor;
 
-    public NettyBasicServerComponent(List<IEndpoint> endpointList) {
+    public NettyBasicServerComponent(String serverName,List<IEndpoint> endpointList) {
+        this.serverName = serverName;
         this.endpointList = endpointList;
     }
 
@@ -84,7 +86,7 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
     }
 
     private IReactor initReactor(Network serverNetwork) {
-        IReactor serverReactor = new EventLoopReactor("main",serverNetwork);
+        IReactor serverReactor = new EventLoopReactor(serverName,serverNetwork);
         this.getExecutionContext().setReactor(serverReactor);
         return serverReactor;
     }

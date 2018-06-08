@@ -32,7 +32,6 @@ import io.viewserver.network.Network;
 import io.viewserver.network.netty.tcp.NettyTcpEndpoint;
 import io.viewserver.operators.filter.FilterOperator;
 import io.viewserver.reactor.EventLoopReactor;
-import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.server.steps.TestViewServerClient;
 import com.google.common.io.Resources;
 import org.junit.Before;
@@ -40,6 +39,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.observable.ListenableFutureObservable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -582,7 +582,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 //                new NettyWebSocketEndpoint("wss://localhost:8080/", true)
 //                new NettyIpcEndpoint("master.viewserver.ipc")
         );
-        client.getConnectFuture().get();
+        ListenableFutureObservable.to(client.getConnectObservable()).get();
         client.authenticate("open", "admin@viewserver.com");
 
         CountDownLatch snapshotLatch = new CountDownLatch(1);
