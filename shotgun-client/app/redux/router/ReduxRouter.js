@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native-animatable';
 import { BackHandler, Keyboard } from 'react-native';
 import { withExternalStateFactory } from '../withExternalState';
+import {Container} from 'native-base';
 import Logger from 'common/Logger';
 import { LoadingScreen } from 'common/components';
 import { memoize } from '../memoize';
@@ -14,6 +15,7 @@ import * as RouteUtils from './utils/routeUtils';
 import invariant from 'invariant';
 import shotgun from 'native-base-theme/variables/shotgun';
 import { setStateIfIsMounted } from 'custom-redux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 class ReduxRouterClass extends Component {
   constructor(props) {
@@ -116,7 +118,7 @@ class ReduxRouterClass extends Component {
 
     const reduxRouterPropertiesToPassToEachRoute = removeProperties(this.props, ['hasFooter', 'resizeForKeyboard', 'style', 'primaryNavigation', 'stateKey', 'history', 'historyOverrideFactory', 'children', 'defaultRoute', 'setStateWithPath', 'setState', 'clearState', 'clearStateAtPath', 'name', 'navigationContainerTranslator']);
     const routesToRender = navigationContainerTranslator.getRoutesToRender();
-    const result = <View style={{
+    const result = <KeyboardAwareScrollView><View style={{
       height, width,
       backgroundColor: shotgun.brandPrimary,
       minHeight: height, minWidth: width, maxHeight: height, maxWidth: width
@@ -148,7 +150,7 @@ class ReduxRouterClass extends Component {
           </View>;
         }
       ) : <LoadingScreen text="Navigating..." />}
-    </View>;
+    </View></KeyboardAwareScrollView>;
 
     if (!routesToRender.length) {
       Logger.info(`${isInBackground} - No routes found to match the path ${navigationContainerTranslator.location.pathname} routes are ${navigationContainerTranslator.printAllRoutes}`);

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withExternalState, ReduxRouter, Route} from 'custom-redux';
-import {Button, Header, Left, Body, Container, Title, Input, Tab, Row, Content} from 'native-base';
+import {Button, Header, Left, Body, Container, Title, Input, Tab, Row, Content, View} from 'native-base';
 import {getDaoState, getNavigationProps} from 'common/dao';
 import {ErrorRegion, Icon, Tabs} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -105,12 +105,12 @@ class AddressLookup extends Component {
           <Body><Title style={styles.title}>{addressLabel}</Title></Body>
         </Header>
         <Content keyboardShouldPersistTaps="always">
-          <Row size={10} style={styles.searchContainer}>
+          <View style={styles.searchContainer}>
             <ErrorRegion errors={errors}/>
             <Icon name="pin" paddedIcon originPin style={{alignSelf: 'center'}}/>
             <Input placeholder={`Enter ${addressLabel.toLowerCase()}`} autoCorrect={false} returnKeyType={'done'} style={styles.input}
               value={addressSearchText} autoFocus={true} onChangeText={this.onAddressChanged}/>
-          </Row>
+          </View>
           {tabs.length ? <Tabs initialPage={selectedTabIndex} page={selectedTabIndex} {...shotgun.tabsStyle} >
             {tabs.map(tab => <Tab key={tab} heading={tab} onPress={() => this.goToTabNamed(tab)}/>)}
           </Tabs> : null}
@@ -139,6 +139,7 @@ const styles = {
   searchContainer: {
     backgroundColor: shotgun.brandPrimary,
     paddingLeft: shotgun.contentPadding,
+    flexDirection: 'row'
   }
 };
 
