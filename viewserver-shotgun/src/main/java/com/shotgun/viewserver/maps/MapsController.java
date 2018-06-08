@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Controller(name = "mapsController")
@@ -102,7 +105,25 @@ public class MapsController implements IMapsController {
     @Override
     @ControllerAction(path = "makeAutoCompleteRequest", isSynchronous = false)
     public HashMap<String,Object> makeAutoCompleteRequest(MapRequest request){
-        return getResponse(request, ControllerUtils.execute("GET", AUTO_COMPLETE_URL, request.toQueryString(controllerKey.getKey())),true);
+        HashMap<String, Object> response = getResponse(request, ControllerUtils.execute("GET", AUTO_COMPLETE_URL, request.toQueryString(controllerKey.getKey())), true);
+
+        try {
+            List<LinkedHashMap> predictions = (List<LinkedHashMap>) response.get("predictions");
+
+            //filters out any results that do not have a place_id or which are neither a street_address or postal_code
+            List<LinkedHashMap> filteredPredictions = predictions.stream().filter(p -> {
+                ArrayList<String> types = (ArrayList<String>) p.get("types");
+                String placeId = p.containsKey("place_id") ? (String) p.get("place_id") : null;
+
+                return !placeId.isEmpty() && (types.contains("street_address") || types.contains("postal_code"));
+            }).collect(Collectors.toList());
+
+            response.put("predictions", filteredPredictions);
+        }catch(Exception ex){
+            logger.error("Unable to parse Google autocomplete results", ex);
+        }
+
+        return response;
     }
 
     private HashMap<String, Object> getResponse(Object request, String response, boolean allowZeroResults) {

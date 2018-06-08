@@ -187,9 +187,9 @@ const styles = {
     color: shotgun.silver
   },
   flatInput: {
+    lineHeight: shotgun.platform === 'ios' ? 25 : 18,
     padding: 0,
-    height: 12,
-    lineHeight: 18
+    height: shotgun.platform === 'ios' ? 35 : 20
   },
   inputPin: {
     paddingRight: 15
