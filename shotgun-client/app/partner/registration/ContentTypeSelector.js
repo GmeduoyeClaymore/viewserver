@@ -123,9 +123,8 @@ class ContentTypeSelector extends Component{
         <Text style={styles.title}>{this.resources.PageTitle(this.props)}</Text>
         <ContentTypeDetailControl stateKey={`${stateKey}.unsavedSelectedContentTypes.${contentType.contentTypeId}`} {...rest} stateForContentType={stateForContentType}/>
 
-        <Button fullWidth iconRight style={styles.confirmButton} onPress={this.handleConfirm} disabled={!canSubmit}>
+        <Button fullWidth iconRight style={styles.confirmButton} arrow={true} onPress={this.handleConfirm} disabled={!canSubmit}>
           <Text uppercase={false}>Confirm</Text>
-          <Icon next name='forward-arrow'/>
         </Button>
 
         <Button fullWidth cancelButton onPress={this.handleCancel}>

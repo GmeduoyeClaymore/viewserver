@@ -36,7 +36,9 @@ class OrderConfirmation extends Component{
         <OrderSummary userCreatedThisOrder={true} order={order} client={client}/>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton busy={busy} onPress={this.createJob} fullWidth iconRight paddedBottomLeftRight><Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text><Icon next name='forward-arrow'/></SpinnerButton>
+      <SpinnerButton busy={busy} arrow={true} onPress={this.createJob} fullWidth iconRight paddedBottomLeftRight>
+        <Text uppercase={false}>{this.resources.SubmitButtonCaption}</Text>
+      </SpinnerButton>
     </Container>;
   }
 }

@@ -66,9 +66,8 @@ class PartnerLogin extends Component {
       </Content>
       <ErrorRegion errors={errors}/>
       <ValidatingButton paddedBottomLeftRight fullWidth iconRight
-        onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} model={this.state}>
+        onPress={login} validationSchema={yup.object(validationSchema)} busy={busy} arrow={true} model={this.state}>
         <Text uppercase={false}>Sign In</Text>
-        <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </Container>;
   }

@@ -121,9 +121,8 @@ class UserDetails extends Component{
             </Col>
           </Row>
         </View>
-        <ValidatingButton paddedBottomLeftRight busy={busyUpdating} fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
+        <ValidatingButton paddedBottomLeftRight busy={busyUpdating} arrow={true} fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
           <Text uppercase={false}>{!next ? submitButtonCaption : 'Continue'}</Text>
-          <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
     </Container>;

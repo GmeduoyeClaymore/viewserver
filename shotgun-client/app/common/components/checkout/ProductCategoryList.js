@@ -69,9 +69,8 @@ class ProductCategoryList extends Component{
           headerView={() => null}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottomLeftRight iconRight onPress={() =>  history.push(next)} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
+      <ValidatingButton fullWidth paddedBottomLeftRight iconRight arrow={true} onPress={() =>  history.push(next)} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={selectedProduct}>
         <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </Container>;
   }

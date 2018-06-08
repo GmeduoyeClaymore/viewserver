@@ -83,9 +83,8 @@ class FlatProductCategoryList extends Component{
           headerView={this.headerView}
         />
       </Content>
-      <ValidatingButton fullWidth paddedBottomLeftRight iconRight onPress={() => this.navigateToCategory()} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={highlightedCategory}>
+      <ValidatingButton fullWidth paddedBottomLeftRight iconRight onPress={() => this.navigateToCategory()} arrow={true} validateOnMount={true} validationSchema={yup.object(validationSchema)} model={highlightedCategory}>
         <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
       </ValidatingButton>
     </Container>;
   }

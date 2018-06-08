@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Spinner} from 'native-base';
 import { Platform } from 'react-native';
+import {Icon} from 'common/components';
 import shotgun from 'native-base-theme/variables/shotgun';
 const IS_ANDROID = Platform.OS === 'android';
 
@@ -10,7 +11,7 @@ export class SpinnerButton extends Component {
   }
 
   render() {
-    const {busy = false} = this.props;
+    const {busy = false, arrow = false} = this.props;
     const disabled = this.props.disabled || busy;
     const {style = {}, disabledStyle = {}, ...rest} = this.props;
     const normalStyle = style;
@@ -18,6 +19,7 @@ export class SpinnerButton extends Component {
     return (
       <Button {...rest} disabled={disabled} style={disabled ? {...style, ...disabledStyle} : normalStyle}>
         {this.props.children}
+        {arrow && !busy ? <Icon next name='forward-arrow'/> : null}
         {busy ? <Spinner size={IS_ANDROID ? 24 : 1} color={shotgun.btnDisabledClr} style={styles.spinner}/> : null}
       </Button>
     );
@@ -27,7 +29,6 @@ export class SpinnerButton extends Component {
 const styles = {
   spinner: {
     position: 'absolute',
-    right: 12,
-    backgroundColor: '#D4D4D4'
+    right: IS_ANDROID ? 12 : 20
   }
 };
