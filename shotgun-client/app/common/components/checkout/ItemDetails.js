@@ -61,11 +61,10 @@ class ItemDetails extends Component{
             </Grid>
           </Button> : null}
           <ValidatingInput style={styles.detailsInput} value={order.description} multiline={true} placeholder={this.resources.InputPlaceholder} showIcons={false} onChangeText={(value) => this.onChangeValue('description', value)} validateOnMount={true} validationSchema={validationSchema.description} maxLength={200}/>
+          <ValidatingButton fullWidth iconRight arrow={true} onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
+            <Text uppercase={false}>Continue</Text>
+          </ValidatingButton>
         </Content>
-        <ValidatingButton fullWidth iconRight paddedBottomLeftRight onPress={() =>  history.push(next)} validationSchema={yup.object(validationSchema)} validateOnMount={true} model={order}>
-          <Text uppercase={false}>Continue</Text>
-          <Icon next name='forward-arrow'/>
-        </ValidatingButton>
       </Container>
     );
   }

@@ -39,9 +39,8 @@ export default class PaymentCardDetails extends Component {
         <LiteCreditCardInput autoFocus={true} onChange={(details) => onCardDetailsChange(details)}/>
       </Content>
       <ErrorRegion errors={errors}/>
-      <SpinnerButton paddedBottomLeftRight fullWidth iconRight busy={busy} onPress={nextAction.bind(this)} disabled={!valid}>
+      <SpinnerButton paddedBottomLeftRight fullWidth iconRight arrow={true} busy={busy} onPress={nextAction.bind(this)} disabled={!valid}>
         <Text uppercase={false}>Continue</Text>
-        <Icon next name='forward-arrow'/>
       </SpinnerButton>
       <TermsAgreement history={history}/>
     </Container>;

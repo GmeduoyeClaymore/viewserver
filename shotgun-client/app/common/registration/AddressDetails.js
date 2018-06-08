@@ -81,9 +81,7 @@ const validationSchema = {
   flatNumber: yup.string().max(30),
   line1: yup.string().required().max(30),
   city: yup.string().required().max(30),
-  postCode: yup.string()
-    //.matches(/^([A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2})$/i) REGEX VALIDATOR ISSUES IN IOS
-    .required()
+  postCode: yup.string().matches(/^([A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2})$/i).required()
 };
 
 const styles = {

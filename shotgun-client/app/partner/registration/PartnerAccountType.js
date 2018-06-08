@@ -43,9 +43,8 @@ class PartnerAccountType extends Component{
           </Row>
         </Grid>
       </Content>
-      <ValidatingButton paddedBottomLeftRight fullWidth iconRight validateOnMount={true} busy={busy} onPress={nextAction.bind(this)}  validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
+      <ValidatingButton paddedBottomLeftRight fullWidth iconRight arrow={true} validateOnMount={true} busy={busy} onPress={nextAction.bind(this)}  validationSchema={yup.object(validationSchema)} model={{selectedContentTypes: Object.keys(selectedContentTypes)}}>
         <Text uppercase={false}>Register</Text>
-        <Icon next name='forward-arrow'/>
       </ValidatingButton>
       <TermsAgreement history={history}/>
     </Container>;

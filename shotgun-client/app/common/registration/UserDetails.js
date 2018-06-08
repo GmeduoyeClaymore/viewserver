@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid, Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
+import {Row, Col, Text, Content, Header, Body, Container, Title, Item, Label, Left, Button, View} from 'native-base';
 import yup from 'yup';
 import {Image} from 'react-native';
 import shotgun from 'native-base-theme/variables/shotgun';
@@ -121,12 +121,10 @@ class UserDetails extends Component{
             </Col>
           </Row>
         </View>
-        <ValidatingButton paddedBottomLeftRight busy={busyUpdating} fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
+        <ValidatingButton paddedBottomLeftRight busy={busyUpdating} arrow={true} fullWidth iconRight validateOnMount={true} onPress={nextAction.bind(this)} validationSchema={yup.object(isPartner ? partnervalidationSchema : validationSchema)} model={user}>
           <Text uppercase={false}>{!next ? submitButtonCaption : 'Continue'}</Text>
-          <Icon next name='forward-arrow'/>
         </ValidatingButton>
       </Content>
-
     </Container>;
   }
 }
@@ -182,8 +180,8 @@ const validationSchema = {
   firstName: yup.string().required().max(30),
   lastName: yup.string().required().max(30),
   password: yup.string().required().max(30),
-  email: yup.string().required().email().max(100), //BREAKS in IOS .matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35),
-  contactNo: yup.string().required().max(35),
+  email: yup.string().required().email().max(100),
+  contactNo: yup.string().required().matches(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|0\d{3})\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|0\d{2})\s?\d{4}\s?\d{4}))?$/).max(35)
 };
 
 const partnervalidationSchema = {

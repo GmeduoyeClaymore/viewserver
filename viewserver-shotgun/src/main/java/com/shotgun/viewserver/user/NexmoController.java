@@ -20,7 +20,6 @@ import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
-import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,8 @@ public class NexmoController implements INexmoController, UserNotificationContra
     @ControllerAction(path = "getInternationalFormatNumber", isSynchronous = false)
     public String getInternationalFormatNumber(String phoneNumber) {
         if (phoneNumber == null || "".equals(phoneNumber)) {
-            throw new RuntimeException("Phone number cannot be null");
+            log.error("Phone number cannot be null");
+            return null;
         }
         try {
             if(resolvedCache.containsKey(phoneNumber)){
@@ -76,7 +76,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             return (String) map.get("international_format_number");
         } catch (Exception ex) {
             log.error(String.format("Problem getting number info from Nexmo for %s", phoneNumber), ex);
-            throw new RuntimeException(ex);
+            return null;
         }
     }
 
@@ -178,16 +178,16 @@ public class NexmoController implements INexmoController, UserNotificationContra
         String toUserId = null;
 
         while (rows.moveNext()) {
-            String userPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
-            String virtualPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+            String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
+            String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
 
             log.info(String.format("Comparing %s==%s || %s==%s",userPhoneNumber,toNumberTrim,virtualPhoneNumber,fromNumberTrim));
 
             if (virtualPhoneNumber.equals(fromNumberTrim)) {
 
-                fromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
-                toUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-                Integer version = (Integer) ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", rows.getRowId());
+                fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+                toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+                Integer version = (Integer) ControllerUtils.getColumnValue(phoneNumberTable, "version", rows.getRowId());
 
                 log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
                 Record phoneNumberRecord = new Record();
@@ -236,18 +236,18 @@ public class NexmoController implements INexmoController, UserNotificationContra
         IRowSequence rows = phoneNumberTable.getOutput().getAllRows();
 
         while (rows.moveNext()) {
-            String tableFromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
-            String tableToUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-            String virtualPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-            String userPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
+            String tableFromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+            String tableToUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+            String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+            String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
 
             log.info(String.format("Comparing %s==%s || %s==%s",fromUserId,tableFromUserId,toUserId,tableToUserId));
 
             if (fromUserId.equals(tableFromUserId) && toUserId.equals(tableToUserId)) {
 
-                fromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
-                toUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-                Object version = ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber);
+                fromUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
+                toUserId = (String) ControllerUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
+                Object version = ControllerUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber);
                 log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
                 Record phoneNumberRecord = new Record();
                 phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
@@ -270,12 +270,15 @@ public class NexmoController implements INexmoController, UserNotificationContra
         log.info(String.format("Examining contents of table to create proxy call from %s to %s", fromNumber, toNumber));
 
         while (rows.moveNext()) {
-            String userPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
-            String virtualPhoneNumber = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
-            if(userPhoneNumber == null){
+            String userPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "userPhoneNumber", rows.getRowId());
+            String virtualPhoneNumber = (String) ControllerUtils.getColumnValue(phoneNumberTable, "phoneNumber", rows.getRowId());
+            if(userPhoneNumber == null || "".equals(userPhoneNumber)){
                 continue;
             }
             String internationalFormatNumber = getInternationalFormatNumber(userPhoneNumber);
+             if(internationalFormatNumber == null){
+                continue;
+            }
             log.info("from comparing {}=={}",internationalFormatNumber, fromNumber);
             if (internationalFormatNumber.equals(fromNumber)) {
                 log.info("found from comparing {}=={}",internationalFormatNumber, fromNumber);
