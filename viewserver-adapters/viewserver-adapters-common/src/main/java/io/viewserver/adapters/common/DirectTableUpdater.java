@@ -20,7 +20,7 @@ public class DirectTableUpdater implements IDatabaseUpdater{
     }
 
     @Override
-    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
             Observable<Boolean> booleanObservable = scheduleAddOrUpdateRow(tableName, schemaConfig, record);
             booleanObservable.subscribe();//TODO work out propper way of making this a hot observable

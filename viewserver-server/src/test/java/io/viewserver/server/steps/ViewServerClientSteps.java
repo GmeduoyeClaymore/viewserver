@@ -16,6 +16,7 @@
 
 package io.viewserver.server.steps;
 
+import cucumber.api.java.Before;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
 import io.viewserver.controller.ControllerUtils;
@@ -42,6 +43,7 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -70,11 +72,24 @@ public class ViewServerClientSteps {
 
     }
 
-    @And("^a client named \"(.*)\" connected to \"(.*)\"$")
-    public void a_connected_client(String name, String url) {
-        clientContext.create(name, url);
+    @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\"$")
+    public void a_connected_client(String name, String url) throws AuthenticationException {
+        clientContext.create(name, url, "compatableVersion", "1").take(1).timeout(10,TimeUnit.MINUTES).toBlocking().first();
     }
 
+    @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and token \"([^\"]*)\"$")
+    public void a_connected_client_with_authentication(String name, String url, String authName, String token) {
+        try {
+            clientContext.create(name, url, authName, token).take(1).timeout(10,TimeUnit.SECONDS).toBlocking().first();
+        }catch (Exception ex){
+            logger.error("Problem with client authentication",ex);
+        }
+    }
+
+    @And("^wait for other servers in cluster to realise server is dead$")
+    public void wait_for_other_servers_in_cluster_to_realise_server_is_deaf() {
+        sleep_for_millis(10000);
+    }
     @And("^sleep for (\\d+) millis$")
     public void sleep_for_millis(int millis) {
         try {
@@ -130,6 +145,7 @@ public class ViewServerClientSteps {
 
     @When("^\"(.*)\" subscribed to report \"([^\"]*)\"$")
     public void I_subscribe_to_report(String clientName, String reportId){
+        logger.info("Client {} subscribing to report {}",clientName,reportId);
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
         clientConnectionContext.getReportContext().setReportName(reportId);
 
@@ -392,17 +408,17 @@ public class ViewServerClientSteps {
 
         }
         I_subscribe_to_report(clientName,reportName);
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportName,keyColumn,records), 5, 500, 0,false);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportName,keyColumn,records,true), 5, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\"$")
     public void the_following_data_is_received_eventually(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 500, 0,false);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,true), 5, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received terminally on report \"([^\"]*)\"$")
     public void the_following_data_is_received_terminally(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records), 5, 400, 0, true);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,true), 5, 400, 0, true);
     }
 
     @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\"$")
@@ -465,8 +481,9 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following data is received on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
-    public void the_following_data_is_received(String clientName,String reportId,String keyColumn, DataTable records) {
+    public void the_following_data_is_received(String clientName,String reportId,String keyColumn, DataTable records,boolean flatten) {
         try {
+            logger.info("Asserting data for \"{}\" subscribing to report {}",clientName,reportId);
             ClientConnectionContext connectionContext = clientContext.get(clientName);
             String name = "report" + reportId;
             TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
@@ -485,9 +502,9 @@ public class ViewServerClientSteps {
                 Map<String, String> row = clientContext.replaceParams(record);
                 TestUtils.replaceReferences((HashMap)row);
                 clientContext.replaceParams(row);
-                validationRows.add(ValidationUtils.toRow(row, keyColumn));
+                validationRows.add(flatten ?  ValidationUtils.toFlattenedRow(row, keyColumn) : ValidationUtils.toRow(row, keyColumn));
             }
-            operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, keyColumn);
+            operator.validateRows(c-> clientContext.replaceParams((String)c),validationRows, columns, keyColumn, flatten);
         } catch (Exception ex) {
             throw ex;
         }

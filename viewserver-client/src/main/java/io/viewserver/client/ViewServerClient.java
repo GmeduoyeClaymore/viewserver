@@ -19,6 +19,7 @@ package io.viewserver.client;
 import io.viewserver.Constants;
 import io.viewserver.authentication.AuthenticationHandlerRegistry;
 import io.viewserver.catalog.Catalog;
+import io.viewserver.collections.BoundedFifoBuffer_KeyName_;
 import io.viewserver.command.CommandHandlerRegistry;
 import io.viewserver.command.ICommandResultListener;
 import io.viewserver.core.ExecutionContext;
@@ -40,7 +41,6 @@ import io.viewserver.operators.deserialiser.DeserialiserOperator;
 import io.viewserver.operators.deserialiser.IDeserialiserEventHandler;
 import io.viewserver.reactor.EventLoopReactor;
 import io.viewserver.reactor.IReactor;
-import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -53,28 +53,45 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zeromq.ZMQ;
+import rx.Emitter;
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.observable.ListenableFutureObservable;
+import rx.subjects.ReplaySubject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 public class ViewServerClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(ViewServerClient.class);
     private static final ISubscriptionFactory<ClientSubscription> defaultSubscriptionFactory = ClientSubscription::new;
-    private final ExecutionContext executionContext = new ExecutionContext();
-    private final Catalog catalog = new Catalog(executionContext);
+    private ExecutionContext executionContext = new ExecutionContext();
+    private Catalog catalog;
     private final String name;
-    private IEndpoint endpoint;
+    private List<IEndpoint> endpoints;
     private Network network;
     private IReactor reactor;
-    private ListenableFuture<IPeerSession> connectFuture;
+    private ReplaySubject<IPeerSession> connectReplaySubject;
     private SettableFuture<IPeerSession> authenticateFuture = SettableFuture.create();
     private CommandHandlerRegistry commandHandlerRegistry;
+    private int endpointCounter = 0;
+    private Subscription authenticationSubscription;
+    private List<Subscription> subscriptons;
+    private String type;
+    private String[] tokens;
+    private boolean isClosed;
 
-    public ViewServerClient(String name, IEndpoint endpoint) {
+    public ViewServerClient(String name, List<IEndpoint> endpoints) {
         this.name = name;
-        this.endpoint = endpoint;
-
+        this.executionContext = new ExecutionContext();
+        this.catalog = new Catalog(executionContext);
+        this.endpoints = endpoints;
+        this.connectReplaySubject = ReplaySubject.create(1);
+        this.subscriptons = new ArrayList<>();
         run();
     }
 
@@ -82,16 +99,20 @@ public class ViewServerClient implements AutoCloseable {
         return executionContext;
     }
 
+    public Network getNetwork() {
+        return network;
+    }
+
     public Catalog getCatalog() {
         return catalog;
     }
 
     public ViewServerClient(String name, String url) throws URISyntaxException {
-        this(name, EndpointFactoryRegistry.createEndpoint(url));
+        this(name, EndpointFactoryRegistry.createEndpoints(url));
     }
 
-    public ListenableFuture<IPeerSession> getConnectFuture() {
-        return connectFuture;
+    public Observable<IPeerSession> getConnectObservable() {
+        return connectReplaySubject;
     }
 
 
@@ -108,6 +129,8 @@ public class ViewServerClient implements AutoCloseable {
             final SimpleNetworkMessageWheel networkMessageWheel = new SimpleNetworkMessageWheel(new Encoder(), new Decoder());
             networkAdapter.setNetworkMessageWheel(networkMessageWheel);
             network = new Network(commandHandlerRegistry, executionContext, catalog, networkAdapter);
+            network.setDisconnectOnTimeout(true);
+            network.setTimeoutInterval(4000);
             reactor = this.initReactor(network);
 
             reactor.start();
@@ -116,47 +139,92 @@ public class ViewServerClient implements AutoCloseable {
                 new Message();
             }, 0, -1);
 
-            connectFuture = network.connect(endpoint);
+            this.subscriptons.add(network.connectObservable(endpoints,true).subscribe(this::onConnectionEstablished, this::onConnectionError));
+            this.subscriptons.add(network.disconnectionObservable().subscribe(c-> onSessionDisconnect()));
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
         }
     }
 
+    private void onConnectionError(Throwable throwable) {
+        if(this.isClosed){
+            return;
+        }
+        log.info("Connection error {}");
+        this.connectReplaySubject.onError(throwable);
+    }
+
+    public Observable<CommandResult> withAuthentication(String type, String... tokens){
+        this.type = type;
+        this.tokens = tokens;
+
+        if(this.authenticationSubscription != null){
+            this.authenticationSubscription.unsubscribe();
+        }
+        return Observable.create(subscriber ->  {
+            ViewServerClient.this.authenticationSubscription = ViewServerClient.this.connectReplaySubject.subscribe(session -> {
+                ViewServerClient.this.authenticate(type,tokens).subscribe(
+                        res -> {
+                            log.info("Authetication succeeded - " + res);
+                            subscriber.onNext(res);
+                            subscriber.onCompleted();
+                        },
+                        err -> {
+                            log.info("Authetication failed - " + err);
+                            subscriber.onError(err);
+                        }
+                );
+            });
+        },Emitter.BackpressureMode.BUFFER);
+
+    }
+
+    private void onSessionDisconnect() {
+        this.connectReplaySubject = ReplaySubject.create(1);
+        if(this.tokens != null){
+            withAuthentication(this.type,this.tokens).subscribe();
+        }
+    }
+
+    private void onConnectionEstablished(IPeerSession iPeerSession) {
+        if(this.isClosed){
+            return;
+        }
+        log.info("Connection established {}",iPeerSession);
+        this.connectReplaySubject.onNext(iPeerSession);
+    }
+
+
     private void registerCommands() {
     }
 
-    public ListenableFuture<CommandResult> sendCommand(Command command) {
-        return sendCommand(command, true);
-    }
 
-    protected ListenableFuture<CommandResult> sendCommand(Command command, boolean requireAuthentication) {
+    public ListenableFuture<CommandResult> sendCommand(Command command) {
         SettableFuture<CommandResult> future = SettableFuture.create();
         if (command.getMessage() != null) {
             command.getMessage().retain();
         }
-        reactor.addCallback(requireAuthentication ? authenticateFuture : connectFuture, new FutureCallback<IPeerSession>() {
-            @Override
-            public void onSuccess(IPeerSession peerSession) {
-                ICommandResultListener originalListener = command.getCommandResultListener();
-                command.setCommandResultListener((result) -> {
-                    if (result.isSuccess()) {
-                        future.set(new CommandResult(true, result.getMessage()));
-                    } else {
-                        future.setException(new ViewServerClientException(result.getMessage()));
-                    }
-                    if (originalListener != null) {
-                        originalListener.onResult(result);
-                    }
-                });
-                peerSession.sendCommand(command);
-                command.getMessage().release();
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                future.setException(t);
-            }
-        });
+        getConnectObservable().take(1).subscribe(
+                iPeerSession -> {
+                    ICommandResultListener originalListener = command.getCommandResultListener();
+                    command.setCommandResultListener((result) -> {
+                        if (result.isSuccess()) {
+                            future.set(new CommandResult(true, result.getMessage()));
+                        } else {
+                            future.setException(new ViewServerClientException(result.getMessage()));
+                        }
+                        if (originalListener != null) {
+                            originalListener.onResult(result);
+                        }
+                    });
+                    iPeerSession.sendCommand(command);
+                    command.getMessage().release();
+                },
+                err -> {
+                    future.setException(err);
+                }
+        );
         return future;
     }
 
@@ -166,29 +234,14 @@ public class ViewServerClient implements AutoCloseable {
         return serverReactor;
     }
 
-    public ListenableFuture<CommandResult> authenticate(String type, String... tokens) {
-        IAuthenticateCommand authenticateCommandDto = MessagePool.getInstance().get(IAuthenticateCommand.class)
+    public Observable<CommandResult> authenticate(String type, String... tokens) {
+          IAuthenticateCommand authenticateCommandDto = MessagePool.getInstance().get(IAuthenticateCommand.class)
                 .setType(type);
+          log.info("Sending authentication command {} with tokens {}",type,String.join(",",tokens));
         authenticateCommandDto.getTokens().addAll(Arrays.asList(tokens));
 
-        ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto, false);
-        Futures.addCallback(authenticationFuture, new FutureCallback<CommandResult>() {
-            @Override
-            public void onSuccess(CommandResult result) {
-                try {
-                    authenticateFuture.set(connectFuture.get());
-                } catch (Exception e) {
-                    // should never happen, since we won't send the auth command before the connection is established
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                authenticateFuture.setException(t);
-            }
-        });
-        authenticateCommandDto.release();
-        return authenticationFuture;
+        ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto);
+        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor());
     }
 
     public ListenableFuture<ClientSubscription> subscribe(String operator, Options options, ISubscriptionEventHandler<ClientSubscription> eventHandler) {
@@ -258,10 +311,8 @@ public class ViewServerClient implements AutoCloseable {
                                                                 ISubscriptionFactory<TSubscription> subscriptionFactory) {
         SettableFuture<TSubscription> future = SettableFuture.<TSubscription>create();
         command.getMessage().retain();
-        reactor.addCallback(authenticateFuture, new FutureCallback<IPeerSession>() {
-            @Override
-            public void onSuccess(IPeerSession peerSession) {
-                reactor.scheduleTask(() -> {
+        this.getConnectObservable().subscribe(
+                peerSession -> {
                     final DeserialiserOperator deserialiserOperator = new DeserialiserOperator(
                             UUID.randomUUID().toString(),
                             executionContext,
@@ -318,14 +369,11 @@ public class ViewServerClient implements AutoCloseable {
                         });
                     }
                     deserialiserOperator.connect();
-                }, 0, -1);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                future.setException(t);
-            }
-        });
+                },
+                err->{
+                    future.setException(err);
+                }
+        );
         return future;
     }
 
@@ -490,20 +538,19 @@ public class ViewServerClient implements AutoCloseable {
         }
     }
 
-    public ListenableFuture<CommandResult> sendCommand(String commandName, IPoolableMessage commandDto) {
-        return sendCommand(commandName, commandDto, true);
-    }
 
-    private ListenableFuture<CommandResult> sendCommand(String commandName, IPoolableMessage commandDto, boolean requireAuthentication) {
+    private ListenableFuture<CommandResult> sendCommand(String commandName, IPoolableMessage commandDto) {
         Command command = new Command(commandName, commandDto);
-        return sendCommand(command, requireAuthentication);
+        return sendCommand(command);
     }
 
     @Override
     public void close() throws IOException {
+        log.info("Closing client - " + name);
+        this.subscriptons.forEach(c-> c.unsubscribe());
+        this.isClosed = true;
         reactor.shutDown();
         reactor.waitForShutdown();
-
-        network.reset();
+        network.shutdown();
     }
 }

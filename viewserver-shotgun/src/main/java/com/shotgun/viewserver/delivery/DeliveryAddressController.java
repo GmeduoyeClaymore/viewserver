@@ -18,6 +18,7 @@ import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ public class DeliveryAddressController {
                 .addValue("created", deliveryAddress.getCreated())
                 .addValue("userId", userId)
                 .addValue("lastUsed", now)
+                .addValue("version", -1)
                 .addValue("isDefault", deliveryAddress.getIsDefault())
                 .addValue("flatNumber", deliveryAddress.getFlatNumber())
                 .addValue("line1", deliveryAddress.getLine1())
@@ -82,7 +84,7 @@ public class DeliveryAddressController {
 
         KeyedTable deliveryAddressTable = (KeyedTable) catalog.getOperatorByPath(TableNames.DELIVERY_ADDRESS_TABLE_NAME);
         int rowId = deliveryAddressTable.getRow(new TableKey(userId, googlePlaceId));
-        return rowId != -1 ? ((String) ControllerUtils.getColumnValue(deliveryAddressTable, "deliveryAddressId", rowId)).toLowerCase() : null;
+        return rowId != -1 ? ((String) ColumnHolderUtils.getColumnValue(deliveryAddressTable, "deliveryAddressId", rowId)).toLowerCase() : null;
     }
 }
 

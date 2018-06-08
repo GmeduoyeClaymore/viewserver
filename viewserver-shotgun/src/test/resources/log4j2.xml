@@ -6,11 +6,12 @@
         </Console>
     </appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="Console" />
         </Root>
         <Logger name="io.grpc.netty" level="info"/>
         <Logger name="io.netty" level="info"/>
+        <Logger name="org.mongodb.driver.cluster" level="WARN"/>
         <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
         <Logger name="io.viewserver.operators.serialiser.SerialiserOperator" level="debug"/>
         <!--<Logger name="com.cmm.viewserver.command.MultiCommandResult" level="trace"/>-->

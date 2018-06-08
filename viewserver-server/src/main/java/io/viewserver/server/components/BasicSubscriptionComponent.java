@@ -8,7 +8,7 @@ import rx.Observable;
 public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
 
 
-    private final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
+    protected final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
     private IBasicServerComponents basicServerComponents;
 
 
@@ -35,7 +35,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
         basicServerComponents.getCommandHandlerRegistry().register(name,commandHandler);
     }
 
-    private void registerAuthenticationHandlers() {
+    protected void registerAuthenticationHandlers() {
         authenticationHandlerRegistry.register("open", new OpenAuthenticationHandler());
         authenticationHandlerRegistry.register(LoggerAuthenticationHandler.TYPE, new LoggerAuthenticationHandler());
         authenticationHandlerRegistry.register("slave", new SlaveAuthenticationHandler());

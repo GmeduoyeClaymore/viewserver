@@ -57,6 +57,6 @@ public class NettyChannel implements IChannel {
 
     @Override
     public String toString() {
-        return String.format("NettyChannel{channel=%s}",  channel);
+        return String.format("NettyChannel{from=%s,to=%s}",  channel.localAddress(),channel.remoteAddress());
     }
 }

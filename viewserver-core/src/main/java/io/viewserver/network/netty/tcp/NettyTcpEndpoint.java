@@ -41,6 +41,7 @@ import java.security.cert.CertificateException;
 public class NettyTcpEndpoint implements INettyEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NettyTcpEndpoint.class);
     private boolean usingSelfSignedCertificate;
+    private String url;
     private File keyCertChainFile;
     private File keyFile;
     private String keyPassword;
@@ -56,6 +57,7 @@ public class NettyTcpEndpoint implements INettyEndpoint {
     }
 
     public NettyTcpEndpoint(String url, File keyCertChainFile, File keyFile, String keyPassword) {
+        this.url = url;
         this.keyCertChainFile = keyCertChainFile;
         this.keyFile = keyFile;
         this.keyPassword = keyPassword;
@@ -124,6 +126,11 @@ public class NettyTcpEndpoint implements INettyEndpoint {
                 .option(ChannelOption.TCP_NODELAY, true);
         server.bind(uri.getHost(), uri.getPort());
         return server;
+    }
+
+    @Override
+    public String getUrl() {
+        return this.url;
     }
 
     @Override

@@ -45,6 +45,8 @@ public class OperatorEvent{
         int count = columnHolders.size();
         for (int i = 0; i < count; i++) {
             ColumnHolder columnHolder = columnHolders.get(i);
+
+
             if (columnHolder == null) {
                 continue;
             }

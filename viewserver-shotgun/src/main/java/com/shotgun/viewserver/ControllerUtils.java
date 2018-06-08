@@ -212,29 +212,6 @@ public class ControllerUtils{
         return e;
     }
 
-    public static Object getColumnValue(ITable table, String column, int row){
-        IOutput output = table.getOutput();
-        Schema schema = output.getSchema();
-        ColumnHolder col = schema.getColumnHolder(column);
-        if(col == null){
-            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
-        }
-        return ColumnHolderUtils.getValue(col, row);
-    }
-
-    public static Object getOperatorColumnValue(IOperator table, String column, int row){
-        IOutput output = table.getOutput(Constants.OUT);
-        Schema schema = output.getSchema();
-        ColumnHolder col = schema.getColumnHolder(column);
-        if(col == null){
-            throw new RuntimeException("Unable to find column named '" + column + "' in table " + table.getName());
-        }
-        return ColumnHolderUtils.getValue(col, row);
-    }
-
-    public static Object getColumnValue(KeyedTable table, String column, String key){
-       return getColumnValue(table, column, table.getRow(new TableKey(key)));
-    }
 
     public static String generateGuid(){
         UUID uuid = UUID.randomUUID();

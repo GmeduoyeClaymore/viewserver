@@ -21,6 +21,8 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
+import rx.Observable;
+
 
 /**
  * Created by nick on 27/10/15.
@@ -41,13 +43,19 @@ public class AuthenticateCommandHandler extends CommandHandlerBase<IAuthenticate
                 throw new Exception("Invalid authentication type '" + data.getType() + "'");
             }
 
-            AuthenticationToken authenticationToken = authenticationHandler.authenticate(data);
-            if (authenticationToken == null) {
-                throw new Exception("Unknown authentication error");
-            }
+           authenticationHandler.authenticateObservable(data).subscribe(
+                    authenticationToken -> {
+                        if (authenticationToken == null) {
+                            commandResult.setSuccess(false).setMessage("Unknown authentication error").setComplete(true);
+                        }else{
+                            peerSession.setAuthenticationToken(authenticationToken);
+                            commandResult.setSuccess(true).setComplete(true);
+                        }
+                    },
+                    err -> {
+                        commandResult.setSuccess(false).setMessage(err.getMessage()).setComplete(true);
+                    });
 
-            peerSession.setAuthenticationToken(authenticationToken);
-            commandResult.setSuccess(true).setComplete(true);
         } catch (Throwable e) {
             commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
         }

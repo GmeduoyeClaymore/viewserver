@@ -28,6 +28,7 @@ import org.rosuda.REngine.REXPLogical;
 import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -40,7 +41,7 @@ public class RClient extends ViewServerClient {
     private static final byte[] logicalValues = new byte[]{REXPLogical.NA, REXPLogical.FALSE, REXPLogical.TRUE};
 
     public RClient(String name, IEndpoint endpoint) {
-        super(name, endpoint);
+        super(name, Arrays.asList(endpoint));
     }
 
     public RClient(String name, String url) throws URISyntaxException {

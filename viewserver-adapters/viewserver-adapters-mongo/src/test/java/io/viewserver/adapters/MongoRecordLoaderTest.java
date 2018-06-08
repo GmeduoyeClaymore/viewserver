@@ -45,7 +45,7 @@ public class MongoRecordLoaderTest {
     }
 
 
-    private String   clientURI = "mongodb+srv://development_user:Welcome123XXX@cluster0-62kku.mongodb.net";
+    private String   clientURI = "mongodb+srv://development_user:Welcome123XXX@cluster0-a0kxh.mongodb.net";
     private MongoConnectionFactory connectionFactory;
     private String tableName;
     private SchemaConfig config;
@@ -140,8 +140,6 @@ public class MongoRecordLoaderTest {
         tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj)).subscribe();
         Assert.assertTrue(latch.await(20,TimeUnit.SECONDS));
     }
-
-
 
     @Test
     public void Can_add_dynamic_json_backed_object_array() throws InterruptedException {

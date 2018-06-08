@@ -32,6 +32,7 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.ITask;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -252,8 +253,8 @@ public class UserController implements UserTransformationController, RatedOrderC
 
 
     private String getUsername(String userId, KeyedTable userTable) {
-        String firstName = (String) ControllerUtils.getColumnValue(userTable, "firstName", userId);
-        String lastName = (String) ControllerUtils.getColumnValue(userTable, "lastName", userId);
+        String firstName = (String) ColumnHolderUtils.getColumnValue(userTable, "firstName", userId);
+        String lastName = (String) ColumnHolderUtils.getColumnValue(userTable, "lastName", userId);
         return firstName + " " + lastName;
     }
 

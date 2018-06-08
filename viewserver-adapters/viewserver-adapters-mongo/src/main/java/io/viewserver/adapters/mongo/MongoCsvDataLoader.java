@@ -41,7 +41,11 @@ public class MongoCsvDataLoader implements ILoader {
 
     public int load() {
         List<? extends Document> documentsFromCSV = getDocumentsFromCSV();
-        getCollection().insertMany(documentsFromCSV);
+        if(documentsFromCSV.size() > 0){
+            getCollection().insertMany(documentsFromCSV);
+        }else{
+            getDb().createCollection(tableName);
+        }
         log.info(String.format("Loaded %s rows from %s", documentsFromCSV.size(), this.fileName));
         return documentsFromCSV.size();
     }

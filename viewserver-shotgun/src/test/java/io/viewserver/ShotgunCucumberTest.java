@@ -38,7 +38,9 @@ import org.junit.runner.RunWith;
                 "junit:target/cucumber-report/junit.xml",
                 "html:target/cucumber-report"}
         ,
-        tags = {"~@ignore"}
+        tags = {
+                "~@ignore"
+        }
 )
 public class ShotgunCucumberTest {
 }

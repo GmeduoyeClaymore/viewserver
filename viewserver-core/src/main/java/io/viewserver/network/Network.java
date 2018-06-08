@@ -28,15 +28,15 @@ import io.viewserver.messages.command.ICommandResult;
 import io.viewserver.messages.heartbeat.IHeartbeat;
 import io.viewserver.messages.tableevent.ITableEvent;
 import io.viewserver.reactor.IReactor;
-import io.viewserver.reactor.ITask;
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Subscription;
+import rx.observable.ListenableFutureObservable;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 import java.util.ArrayList;
@@ -54,9 +54,18 @@ public class Network implements PeerSession.IDisconnectionHandler {
     private TObjectIntHashMap<IChannel> connectionIds = new TObjectIntHashMap<>(8, 0.75f, -1);
     private final SessionManager sessionManager;
     private final INetworkAdapter networkAdapter;
-    private boolean disconnectOnTimeout;
+    private boolean disconnectOnTimeout = true;
     private int timeoutInterval = 5000;
+    private int heartbeatInterval = 1000;
+
+    private int heartBeatInterval = timeoutInterval / 2;
     private PublishSubject<IChannel> channelsConnected;
+    private PublishSubject<IChannel> channelsDisconnected;
+    private int connectionFailureCount = 0;
+    private boolean isStopped;
+    private Subscription connectSubscription;
+    PublishSubject<IPeerSession> publishSubject = PublishSubject.create();
+
 
     public Network(CommandHandlerRegistry commandHandlerRegistry, IExecutionContext executionContext, ICatalog catalog,
                    INetworkAdapter networkAdapter) {
@@ -65,7 +74,13 @@ public class Network implements PeerSession.IDisconnectionHandler {
         this.catalog = catalog;
         this.networkAdapter = networkAdapter;
         this.channelsConnected = PublishSubject.create();
+        this.channelsDisconnected = PublishSubject.create();
         this.sessionManager = new SessionManager(executionContext, catalog);
+    }
+
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
     }
 
     public INetworkAdapter getNetworkAdapter() {
@@ -81,18 +96,30 @@ public class Network implements PeerSession.IDisconnectionHandler {
         reactor.scheduleTask(() -> networkAdapter.listen(endpoint), 0, -1);
     }
 
-    public ListenableFuture<IPeerSession> connect(final IEndpoint endpoint) {
-        SettableFuture<IPeerSession> future = SettableFuture.create();
-        log.debug("Connecting to {}", endpoint);
+    public ListenableFuture<IPeerSession> connect(final List<IEndpoint> endpoints, boolean shouldReconnect) {
+        return ListenableFutureObservable.to(connectObservable(endpoints, shouldReconnect, 0));
+    }
+
+    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, boolean shouldReconnect) {
+        return connectObservable(endpoints, shouldReconnect, 0);
+    }
+
+    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, boolean shouldReconnect, int endPointIndex) {
+        if(connectSubscription != null){
+            connectSubscription.unsubscribe();
+        }
+        if (isStopped) {
+            return Observable.empty();
+        }
         final int connectionId = getNextConnectionId();
-        ITask connectTask = new ITask() {
-            @Override
-            public void execute() {
-                ITask thisTask = this;
-                ListenableFuture<IChannel> channelFuture = networkAdapter.connect(endpoint);
-                reactor.addCallback(channelFuture, new FutureCallback<IChannel>() {
-                    @Override
-                    public void onSuccess(IChannel channel) {
+        IEndpoint endpoint = endpoints.get(endPointIndex);
+        log.info("EXECUTING - Connecting to {} - Failure Count is {}", endpoint, connectionFailureCount);
+        ListenableFuture<IChannel> channelFuture = networkAdapter.connect(endpoint);
+        Observable<IChannel> channelObservable = ListenableFutureObservable.from(channelFuture, Schedulers.from(executionContext.getReactor().getExecutor()));
+        int nextEndPointIndex = getNextEndPointIndex(endpoints, endPointIndex);
+        this.connectSubscription = channelObservable.take(1).subscribe(
+                channel -> {
+                    try {
                         ClientToServerSession peerSession = new ClientToServerSession(channel, executionContext, catalog,
                                 Network.this, connectionId, networkAdapter.createMessageManager(channel));
                         peerSession.addDisconnectionHandler(Network.this);
@@ -100,21 +127,55 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         sessionManager.addSession(peerSession);
                         heartbeatTask.sessions.add(peerSession);
                         heartbeatTask.lastResponses.put(peerSession, System.currentTimeMillis());
+                        log.info("Successfully Connected to {} - {}", endpoint,peerSession);
+                        if (shouldReconnect) {
+                            Network.this.disconnectionObservable().take(1).subscribe(c -> {
+                                log.info("Reconnecting because of network disconnection");
+                                connectionFailureCount++;
+                                logReconnection(endpoints, nextEndPointIndex, "Connection lost", null);
+                                reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
+                            });
+                        }
                         log.debug("Connection {} initialised on channel {}", connectionId, channel);
-                        future.set(peerSession);
+                        publishSubject.onNext(peerSession);
+                    } catch (Exception t) {
+                        if (log.isDebugEnabled()) {
+                            log.error(String.format("Failed to connect to %s failure count is %s", endpoint, connectionFailureCount), t);
+                        } else {
+                            log.error(String.format("Failed to connect to %s  failure count is %s", endpoint, connectionFailureCount) + " - " + t.getMessage());
+                        }
+                        connectionFailureCount++;
+                        logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", t);
+                        reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
                     }
+                },
+                err -> {
+                    connectionFailureCount++;
+                    logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", err);
+                    reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
+                },
+                () -> {
+                }
+        );
+        return publishSubject;
+    }
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        log.error(String.format("Failed to connect to %s", endpoint), t);
-                        reactor.scheduleTask(thisTask, 1000, -1);
-                    }
-                });
-            }
-        };
-        reactor.scheduleTask(connectTask, 0, -1);
-        log.debug("Scheduled task to connect to server");
-        return future;
+    private void logReconnection(List<IEndpoint> endpoints, int nextEndPointIndex, String reason, Throwable ex) {
+        if(log.isDebugEnabled()){
+            log.error(String.format(reason + "Scheduling connection to next end point in a second %s - %s/%s", endpoints.get(nextEndPointIndex), nextEndPointIndex + 1, endpoints.size()), ex);
+        }
+        else{
+            log.error(String.format(reason + "Scheduling connection to next end point in a second %s - %s/%s - %s", endpoints.get(nextEndPointIndex), nextEndPointIndex + 1, endpoints.size(),ex == null ? null : ex.getMessage()));
+        }
+    }
+
+    private int getNextEndPointIndex(List<IEndpoint> endpoints, int currentEndPointIndex) {
+        if (currentEndPointIndex < endpoints.size() - 1) {
+            currentEndPointIndex++;
+        } else {
+            currentEndPointIndex = 0;
+        }
+        return currentEndPointIndex;
     }
 
     public void sendCommand(Command command, int connectionId) {
@@ -203,6 +264,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         if (log.isTraceEnabled()) {
             log.trace("Received heartbeat from connection id {}", peerSession.getConnectionId());
         }
+        log.debug("Received heartbeat - " + heartbeat.getType() + " - session - " + peerSession);
         if (heartbeat.getType().equals(IHeartbeat.Type.Ping)) {
             sendHeartbeat(peerSession, IHeartbeat.Type.Pong);
         } else {
@@ -215,6 +277,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
             log.error("PeerSession does not exist, cannot send heartbeat");
             return;
         }
+        log.debug("Sending heartbeat - " + type + " - session - " + peerSession);
         final IMessage message = MessagePool.getInstance().get(IMessage.class);
         message.getHeartbeat().setType(type);
         peerSession.sendMessage(message);
@@ -287,7 +350,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
 
     public boolean receiveMessage(IChannel channel, IMessage message) {
         IPeerSession peerSession = getiPeerSession(channel);
-        log.trace("Received message - {}",message);
+        log.trace("Received message - {}", message);
         boolean needCommit = false;
         switch (message.getType()) {
             case Heartbeat: {
@@ -337,18 +400,23 @@ public class Network implements PeerSession.IDisconnectionHandler {
         return sessionManager.getSessionById(connectionId);
     }
 
-    public rx.Observable<IPeerSession> waitForSession(IChannel channel){
+    public rx.Observable<IChannel> disconnectionObservable() {
+        return channelsDisconnected;
+    }
+
+    public rx.Observable<IPeerSession> waitForSession(IChannel channel) {
         int connectionId = connectionIds.get(channel);
         if (connectionId != connectionIds.getNoEntryValue()) {
             return Observable.just(getiPeerSession(channel));
         }
-        return this.channelsConnected.filter(ch-> matches(ch,channel)).map(ch -> getiPeerSession(channel)).take(1);
+        return this.channelsConnected.filter(ch -> matches(ch, channel)).map(ch -> getiPeerSession(channel)).take(1);
     }
+
 
     private boolean matches(IChannel ch, IChannel channel) {
         int connectionId = connectionIds.get(ch);
         if (connectionId == connectionIds.getNoEntryValue()) {
-          return false;
+            return false;
         }
         int connectionId2 = connectionIds.get(channel);
         if (connectionId2 == connectionIds.getNoEntryValue()) {
@@ -367,6 +435,8 @@ public class Network implements PeerSession.IDisconnectionHandler {
             log.warn("Handling disconnect for non-existent channel");
             return;
         }
+        log.info("Channel disconnect fired - " + channel);
+        this.channelsDisconnected.onNext(channel);
         IPeerSession peerSession = sessionManager.getSessionById(connectionId);
         peerSession.fireDisconnection();
     }
@@ -376,19 +446,27 @@ public class Network implements PeerSession.IDisconnectionHandler {
         sessionManager.removeSession(peerSession);
         connectionIds.remove(peerSession.getChannel());
         heartbeatTask.removeSession(peerSession);
-
+        log.info("Session disconnect fired - " + peerSession);
+        Network.this.channelsDisconnected.onNext(peerSession.getChannel());
         peerSession.tearDown();
     }
 
     public void shutdown() {
+        publishSubject.onCompleted();
+        isStopped = true;
         networkAdapter.shutdown();
     }
 
     public void setDisconnectOnTimeout(boolean disconnectOnTimeout) {
         this.disconnectOnTimeout = disconnectOnTimeout;
     }
+
     public void setTimeoutInterval(int timeoutInterval) {
         this.timeoutInterval = timeoutInterval;
+    }
+
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
     }
 
     private class HeartbeatTask implements Runnable {
@@ -410,27 +488,36 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long now = System.currentTimeMillis();
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
-                if (lastPing > -1) {
-                    if (now - lastPing > (timeoutInterval) ) {
-                        // timeout!
-                        log.debug("Session {} timed out!", peerSession.getConnectionId());
-                        // TODO: correctly handle client-to-server sessions
-                        if (peerSession instanceof ServerToClientSession) {
-                            if(disconnectOnTimeout){
-                                peerSession.fireDisconnection();
-                            }
-                            else{
-                                log.debug("DISCONNECT DISABLED FOR DEV!! Session {} timed out!", peerSession.getConnectionId());
-                            }
+                log.debug("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
+                if (peerSession instanceof ServerToClientSession) {
+                    if (lastPing > -1 && now - lastPing > (timeoutInterval)) {
+                        if (disconnectOnTimeout) {
+                            log.info("ServerToClientSession {} timed out!", peerSession);
+                            peerSession.fireDisconnection();
+                            Network.this.channelsDisconnected.onNext(peerSession.getChannel());
                         }
+                        continue;
                     }
-                    continue;
+                }
+
+                if (peerSession instanceof ClientToServerSession) {
+                    if (lastResponse > -1 && now - lastResponse > (timeoutInterval)) {
+                        if (disconnectOnTimeout) {
+                            log.info("ClientToServerSession {} timed out!", peerSession);
+                            peerSession.fireDisconnection();
+                            Network.this.channelsDisconnected.onNext(peerSession.getChannel());
+                        }
+                        continue;
+                    }
                 }
 
                 long elapsed = now - lastResponse;
-                if (elapsed >= timeoutInterval) {
+                if (elapsed >= heartbeatInterval) {
+                    log.debug("Sending heartbeat {}", peerSession);
                     lastPings.put(peerSession, now);
                     sendHeartbeat(peerSession, IHeartbeat.Type.Ping);
+                }else{
+                    log.debug("Heartbeat task finished nothing to do on {} - {}", peerSession, String.format("elapsed:%s < heartBeatInterval:%s",elapsed,heartBeatInterval));
                 }
             }
         }

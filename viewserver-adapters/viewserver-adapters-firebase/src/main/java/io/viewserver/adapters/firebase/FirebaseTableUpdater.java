@@ -26,7 +26,7 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
     }
 
     @Override
-    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record,Integer version){
         try {
             log.info("Writing to table \"" + tableName + "\"");
             TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();

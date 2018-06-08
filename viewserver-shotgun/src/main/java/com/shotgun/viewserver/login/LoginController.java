@@ -21,6 +21,7 @@ import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +56,10 @@ public class LoginController {
         if(userRowId == -1){
             throw new RuntimeException("Unable to find user for email " + email);
         }
-        String encryptedPassWord = (String)ControllerUtils.getColumnValue(userTable, "password", userRowId);
+        String encryptedPassWord = (String)ColumnHolderUtils.getColumnValue(userTable, "password", userRowId);
 
         if(ControllerUtils.validatePassword(password, encryptedPassWord)){
-            String userId = (String)ControllerUtils.getColumnValue(userTable, "userId", userRowId);
+            String userId = (String)ColumnHolderUtils.getColumnValue(userTable, "userId", userRowId);
             setUserId(userId);
             return userId;
         }else{
@@ -141,7 +142,7 @@ public class LoginController {
         ControllerContext.set("userName", getUser(userId).getEmail(),session);
         ControllerContext.setFactory("user", () -> getUser(userId), session);
         ControllerContext.setFactory("now", () -> new Date().getTime(), session);
-        return userId;
+         return userId;
     }
 
 
@@ -161,7 +162,7 @@ public class LoginController {
         IRowSequence rows = (output.getAllRows());
 
         while(rows.moveNext()){
-            String email = (String) ControllerUtils.getColumnValue(userTable, "email", rows.getRowId());
+            String email = (String) ColumnHolderUtils.getColumnValue(userTable, "email", rows.getRowId());
             if(email != null && email.toLowerCase().equals(loginEmail.trim())){
                 return rows.getRowId();
             }

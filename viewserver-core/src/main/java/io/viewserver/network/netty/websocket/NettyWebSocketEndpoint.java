@@ -49,6 +49,7 @@ import java.util.List;
  */
 public class NettyWebSocketEndpoint implements INettyEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NettyWebSocketEndpoint.class);
+    private final String url;
     private URI uri;
     private SslContext serverSslContext;
     private boolean usingSelfSignedCertificate;
@@ -67,6 +68,7 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
     }
 
     public NettyWebSocketEndpoint(String url, File keyCertChainFile, File keyFile, String keyPassword) {
+        this.url = url;
         this.keyCertChainFile = keyCertChainFile;
         this.keyFile = keyFile;
         this.keyPassword = keyPassword;
@@ -74,6 +76,7 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
     }
 
     public NettyWebSocketEndpoint(String url, boolean bypassCertificateChecks) {
+        this.url = url;
         this.bypassCertificateChecks = bypassCertificateChecks;
         initialise(url);
     }
@@ -84,6 +87,10 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(url, e);
         }
+    }
+
+    public URI getUri() {
+        return uri;
     }
 
     @Override
@@ -225,5 +232,10 @@ public class NettyWebSocketEndpoint implements INettyEndpoint {
                     }
                 });
         return () -> bootstrap.connect(uri.getHost(), uri.getPort());
+    }
+
+    @Override
+    public String getUrl() {
+        return this.url;
     }
 }

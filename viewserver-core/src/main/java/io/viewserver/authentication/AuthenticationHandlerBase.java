@@ -17,6 +17,7 @@
 package io.viewserver.authentication;
 
 import io.viewserver.messages.command.IAuthenticateCommand;
+import rx.Observable;
 
 import java.util.List;
 

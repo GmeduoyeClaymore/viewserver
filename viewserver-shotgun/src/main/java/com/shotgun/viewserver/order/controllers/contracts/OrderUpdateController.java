@@ -12,6 +12,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -58,7 +59,7 @@ public interface OrderUpdateController {
                         throw new RuntimeException("Unable to find order for key:" + orderId);
                     }
 
-                    Object orderDetails = ControllerUtils.getColumnValue(orderTable, "orderDetails", currentRow);
+                    Object orderDetails = ColumnHolderUtils.getColumnValue(orderTable, "orderDetails", currentRow);
 
                     if(orderDetails == null){
                         throw new RuntimeException("no orderDetails field found in order row - " + orderId);
@@ -72,7 +73,7 @@ public interface OrderUpdateController {
                         throw new RuntimeException("Unable to deserialize order from " + orderDetailsString);
                     }
 
-                    Integer version = (Integer) ControllerUtils.getColumnValue(orderTable, "version", currentRow);
+                    Integer version = (Integer) ColumnHolderUtils.getColumnValue(orderTable, "version", currentRow);
 
                     order.set("version", version);
 

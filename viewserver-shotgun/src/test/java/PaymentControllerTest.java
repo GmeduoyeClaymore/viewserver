@@ -32,7 +32,7 @@ public class PaymentControllerTest {
     public void createSut(){
         sut = new PaymentController(new StripeApiKey("pk_test_BUWd5f8iUuxmbTT5MqsdOlmk", "sk_test_a36Vq8WXGWEf0Jb55tUUdXD4", false), new IDatabaseUpdater() {
             @Override
-            public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
+            public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version) {
                 return null;
             }
         }, null);

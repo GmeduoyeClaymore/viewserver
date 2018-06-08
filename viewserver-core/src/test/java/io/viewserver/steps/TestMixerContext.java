@@ -229,7 +229,7 @@ public class TestMixerContext {
         List<ValidationOperatorRow> rows = records.stream().map(c -> ValidationUtils.toRow(c, keyColumnName)).collect(Collectors.toList());
         List<String> columns = records.size() > 0 ? new ArrayList<>(records.get(0).keySet()) : null;
 
-        operator.validateRows(c-> (String) c, rows, columns, keyColumnName);
+        operator.validateRows(c-> (String) c, rows, columns, keyColumnName, false);
     }
 
 }

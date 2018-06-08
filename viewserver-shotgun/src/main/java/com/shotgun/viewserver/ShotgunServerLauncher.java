@@ -10,6 +10,7 @@ import com.shotgun.viewserver.setup.*;
 import com.shotgun.viewserver.setup.loaders.*;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.DirectTableUpdater;
+import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.core.ExecutionContext;
@@ -23,7 +24,9 @@ import io.viewserver.server.setup.IApplicationSetup;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.shotgun.viewserver.PropertyUtils.loadProperties;
@@ -31,7 +34,8 @@ import static com.shotgun.viewserver.PropertyUtils.loadProperties;
 
 public class  ShotgunServerLauncher{
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
-    private BasicServer server;
+    //private BasicServer server;
+    private List<BasicServer> servers = new ArrayList<>();
 
     public ShotgunServerLauncher(){
 
@@ -49,14 +53,17 @@ public class  ShotgunServerLauncher{
     }
 
     private static void SharedConfig(MutablePicoContainer container){
-        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(EndpointFactoryRegistry.createEndpoints(get("server.endpoint")), Boolean.parseBoolean(get("server.disconnectOnTimeout")), Integer.parseInt(get("server.timeoutInterval")));
+        ClientVersionInfo cvi = new ClientVersionInfo(get("server.endpoint"), get("server.version"));
+        ShotgunBasicServerComponents basicServerComponent = new ShotgunBasicServerComponents(get("server.name"),EndpointFactoryRegistry.createEndpoints(get("server.endpoint")),cvi,Boolean.parseBoolean(get("server.disconnectOnTimeout")),
+                Integer.parseInt(get("server.timeoutInterval")),Integer.parseInt(get("server.heartBeatInterval")),() -> container.getComponent(IDatabaseUpdater.class), Boolean.parseBoolean(get("server.isMaster")));
+        container.addComponent(cvi);
         container.addComponent(basicServerComponent);
         container.addComponent(basicServerComponent.getServerCatalog());
         container.addComponent(basicServerComponent.getExecutionContext());
         container.addComponent(basicServerComponent.getConfigurator());
         container.addComponent(ReportServerComponents.class);
         container.addComponent(DataSourceComponents.class);
-        container.addComponent(BasicSubscriptionComponent.class);
+        container.addComponent(ShotgunSubscriptionComponent.class);
         container.addComponent(ShotgunApplicationGraph.class);
         container.addComponent(InitialDataLoaderComponent.class);
         container.addComponent(UserOrderNotificationComponent.class);
@@ -179,21 +186,18 @@ public class  ShotgunServerLauncher{
 
         if(bootstrap){
             container.getComponent(IApplicationSetup.class).run(complete);
-            //return;
         }
 
-        server = container.getComponent(BasicServer.class);
+        BasicServer server = container.getComponent(BasicServer.class);
         server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));
         server.start();
+        this.servers.add(server);
         ExecutionContext.blockThreadAssertion  = false;
     }
 
     public void stop(){
-        if(server != null){
-            server.stop();
-        }
+        servers.forEach(c-> c.stop());
     }
-
 
 }
 

@@ -117,7 +117,7 @@ const mapStateToProps = (state, initialProps) => {
   const navProps = getNavigationProps(initialProps);
 
   const defaultOptions = {
-    categoryId: navProps.parentSelectedCategory != undefined ? navProps.parentSelectedCategory.categoryId : selectedCategory.categoryId
+    categoryId: navProps.parentSelectedCategory != undefined ? navProps.parentSelectedCategory.categoryId : selectedCategory ? selectedCategory.categoryId : undefined
   };
 
   return {

@@ -1,5 +1,7 @@
 package com.shotgun.viewserver.servercomponents;
 
+import com.shotgun.viewserver.ControllerUtils;
+import com.shotgun.viewserver.constants.TableNames;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.OrderNotificationContract;
 import com.shotgun.viewserver.setup.datasource.OrderDataSource;
@@ -20,9 +22,11 @@ import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.report.ReportContextRegistry;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
+import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.server.components.IBasicServerComponents;
 import io.viewserver.server.components.IDataSourceServerComponents;
 import io.viewserver.server.components.IServerComponent;
@@ -53,16 +57,18 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     private List<Subscription> subscriptions = new ArrayList<>();
     private HashMap<String,Subscription> subscriptionsByUserId = new HashMap<>();
     private IMessagingController messagingController;
+    private ClientVersionInfo clientVersionInfo;
     private SystemReportExecutor systemReportExecutor;
     private HashMap<String,List<String>> notifiedOrdersByUser;
     Executor notificationsExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("notifications"));
     private ReportContextRegistry reportContextRegistry;
     private ReportRegistry reportRegistry;
 
-    public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents, ReportServerComponents reportServerComponents) {
+    public UserOrderNotificationComponent(IDataSourceServerComponents components, IBasicServerComponents basicServerComponents, ShotgunControllersComponents controllersComponents, ReportServerComponents reportServerComponents, ClientVersionInfo clientVersionInfo) {
         this.components = components;
         this.basicServerComponents = basicServerComponents;
         this.messagingController = controllersComponents.getMessagingController();
+        this.clientVersionInfo = clientVersionInfo;
 
         notifiedOrdersByUser = new HashMap<>();
         this.systemReportExecutor = reportServerComponents.getSystemReportExecutor();
@@ -143,6 +149,10 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
                                     log.info("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
+                                    if(!this.isMaster()){
+                                        log.info("Not sending notification as I am not the master");
+                                    }
+
                                     if(setNotificationForUser(orderId, user.getUserId())){
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
@@ -176,6 +186,18 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                     return false;
                 }
             });});
+    }
+
+    private boolean isMaster() {
+        KeyedTable table = (KeyedTable) basicServerComponents.getServerCatalog().getOperatorByPath(TableNames.CLUSTER_TABLE_NAME);
+        if(table == null){
+            log.info("Cannot determine if I am master as cannot find the load balancer table");
+        }
+        Boolean result = (Boolean) ColumnHolderUtils.getColumnValue(table,"isMaster",clientVersionInfo.getServerEndPoint());
+        if(result == null){
+            return false;
+        }
+        return true;
     }
 
     private rx.Observable<IOutput> getOrCreateOutput(User user) {

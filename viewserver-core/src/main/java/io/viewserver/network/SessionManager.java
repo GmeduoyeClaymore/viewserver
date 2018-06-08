@@ -53,6 +53,10 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         register();
     }
 
+    public Object[] getSessions(){
+        return sessionsById.values();
+    }
+
     public IPeerSession getSessionById(int id) {
         return sessionsById.get(id);
     }
@@ -65,6 +69,10 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         peerSession.addAuthenticationEventHandler(this);
 
         output.handleAdd(id);
+    }
+
+    public int getSessionCount(){
+        return this.sessionsById.size();
     }
 
     public void removeSession(IPeerSession peerSession) {
@@ -105,6 +113,9 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         @Override
         public String getString(int row) {
             IPeerSession peerSession = getSessionById(row);
+            if(peerSession == null){
+                return null;
+            }
             return peerSession.getSessionCatalog().getName();
         }
 
@@ -127,6 +138,9 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         @Override
         public String getString(int row) {
             IPeerSession peerSession = getSessionById(row);
+            if(peerSession == null){
+                return null;
+            }
             AuthenticationToken authenticationToken = peerSession.getAuthenticationToken();
             if (authenticationToken != null) {
                 return authenticationToken.getId();
@@ -153,6 +167,9 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         @Override
         public String getString(int row) {
             IPeerSession peerSession = getSessionById(row);
+            if(peerSession == null){
+                return null;
+            }
             AuthenticationToken authenticationToken = peerSession.getAuthenticationToken();
             if (authenticationToken != null) {
                 return authenticationToken.getType();
@@ -179,6 +196,9 @@ public class SessionManager extends InputOperatorBase implements IPeerSessionAut
         @Override
         public String getString(int row) {
             IPeerSession peerSession = getSessionById(row);
+            if(peerSession == null){
+                return null;
+            }
             IOperator sessionCatalog = (IOperator) peerSession.getSessionCatalog();
             return sessionCatalog.getPath();
         }

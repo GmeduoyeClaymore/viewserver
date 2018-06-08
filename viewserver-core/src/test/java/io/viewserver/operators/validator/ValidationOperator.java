@@ -85,10 +85,10 @@ public class ValidationOperator extends OperatorBase{
         }
     }
 
-    public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName) {
+    public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName, boolean flatten) {
         System.out.println(this.getName() + " validating rows");
-        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName, true);
-        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName, false);
+        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName, true, false);
+        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName, false,flatten);
         try {
             expectedTable.diff(actual);
         }catch (Throwable throwable){
@@ -132,7 +132,7 @@ public class ValidationOperator extends OperatorBase{
         return DataTable.create(columns);
     }
 
-    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn, boolean rowsAreFromCucumber) {
+    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn, boolean rowsAreFromCucumber, boolean flatten) {
 
         for(ValidationOperatorRow row : actionsToConvert){
             if(ValidationAction.Remove.equals(row.getValidationAction())){
@@ -151,12 +151,13 @@ public class ValidationOperator extends OperatorBase{
             }
         }
 
-        List<HashMap<String,Object>> rows = getRows(actionsToConvert, c-> ((ValidationOperatorRow)c).getRowId(keyColumn));
+        List<HashMap<String,Object>> rows = getRows(actionsToConvert, c-> ((ValidationOperatorRow)c).getRowId(keyColumn,flatten));
         if(columns == null){
             columns = rows.size() > 0 ? new ArrayList<>(rows.get(0).keySet()) : new ArrayList<>();
         }
-        List<HashMap<String,Object>> referenceActionsRows = referenceActions == null ? null : getRows(referenceActions, c-> ((ValidationOperatorRow)c).getRowId(keyColumn));
+        List<HashMap<String,Object>> referenceActionsRows = referenceActions == null ? null : getRows(referenceActions, c-> ((ValidationOperatorRow)c).getRowId(keyColumn, flatten));
         List<List<String>>tableData = new ArrayList<>();
+        HashMap<Integer,List<String>>rowToIdMap = new HashMap<>();
         tableData.add(columns);
         for(HashMap<String,Object> row : rows){
             List<String> result = new ArrayList<String>();
@@ -197,7 +198,22 @@ public class ValidationOperator extends OperatorBase{
                 }
 
             }
-            tableData.add(result);
+            if(flatten){
+                Integer id = (Integer) row.get(ValidationUtils.ID_NAME);
+                List<String> exitingRowForId = rowToIdMap.get(id);
+                if(exitingRowForId != null){
+                    int index = tableData.indexOf(exitingRowForId);
+                    tableData.remove(index);
+                    tableData.add(index,result);
+                }else{
+                    tableData.add(result);
+                }
+                rowToIdMap.put(id,result);
+            }else{
+                tableData.add(result);
+
+            }
+
         }
         return DataTable.create(tableData);
     }
