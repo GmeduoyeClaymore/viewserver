@@ -24,7 +24,7 @@ public interface StagedPaymentOrder extends BasicOrder, DynamicJsonBackedObject 
         OrderPaymentStage paymentStage = JSONBackedObjectFactory.create(OrderPaymentStage.class);
         if(doLimitCheck) {
             int totalForAllStages = fromArray(getPaymentStages()).mapToInt(stage -> stage.getQuantity()).sum();
-            int limit = stageType.equals(OrderPaymentStage.PaymentStageType.Percentage) ? 100 : getAmount();
+            int limit = OrderPaymentStage.PaymentStageType.Percentage.equals(stageType) ? 100 : getAmount();
             boolean blockPaymentStageAddition = false;
             if ((totalForAllStages + quantity) >= limit) {
                 quantity = limit - totalForAllStages;

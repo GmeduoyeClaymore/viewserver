@@ -53,15 +53,15 @@ Feature:Cluster scenarios
   @MongoTest
   Scenario: When connecting to compatable server with authentication compatableVersionEvenlyDistributed Successive connections should be equally distributed amongst compatable view servers
     Given a client named "client1" connected to "inproc://master1" with authentication "compatableVersionEvenlyDistributed" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client2" connected to "inproc://master1" with authentication "compatableVersionEvenlyDistributed" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client3" connected to "inproc://master1" with authentication "compatableVersionEvenlyDistributed" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client4" connected to "inproc://master1" with authentication "compatableVersionEvenlyDistributed" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client5" connected to "inproc://master1" with authentication "compatableVersionEvenlyDistributed" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client6" connected to "inproc://master3" with authentication "compatableVersionEvenlyDistributed" and token "1"
     Then sleep for 1000 millis
     When "client1" subscribed to report "cluster"

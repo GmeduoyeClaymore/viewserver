@@ -49,7 +49,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     private static final Logger log = LoggerFactory.getLogger(ShotgunBasicServerComponents.class);
     private List<Subscription> subscriptions;
     private List<ClusterServerConnectionWatcher> watchers;
-    Executor connectionCountExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("connectionCount"));
+    ScheduledExecutorService connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("connectionCount"));
     private boolean isStopped;
 
     public ShotgunBasicServerComponents(String serverName,List<IEndpoint> endpointList,ClientVersionInfo clientVersionInfo,boolean disconnectOnTimeout, int timeoutInterval,int heartbeatInterval,BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory, boolean isMaster) {
@@ -112,33 +112,30 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             return;
         }
         if(operatorEvent.getEventType().equals(EventType.ROW_ADD) || operatorEvent.getEventType().equals(EventType.ROW_REMOVE) || operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
+            int sessionCount = getNonClusterConnections();
             if(operatorEvent.getEventType().equals(EventType.ROW_ADD)){
-                log.info("Modifying connection count as session added");
+                log.info("Modifying connection count as session added - {}", sessionCount);
             }
             else if(operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
-                log.info("Modifying connection count as session updated");
+                log.info("Modifying connection count as session updated - {}", sessionCount);
             }
             else{
-                log.info("Modifying connection count as session " + operatorEvent.getEventType());
+                log.info("Modifying connection count as session removed - {}", sessionCount);
             }
-            this.debouncer.debounce("recalculateConnectionCount", this::recalculateConnectionCount,100,TimeUnit.MILLISECONDS);
+            this.debouncer.debounce("recalculateConnectionCount", () -> recalculateConnectionCount(sessionCount),100,TimeUnit.MILLISECONDS);
         }
     }
 
 
-    private void recalculateConnectionCount() {
-        int sessionCount = getNonClusterConnections();
+    private void recalculateConnectionCount(int sessionCount) {
         log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
                 .addValue("version", -1)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record).subscribe(
-                res -> {
-                    log.info("No connections modified to - {}",sessionCount);
-                }
-        );
+        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record).toBlocking().first();
+        log.info("No connections modified to - {}",sessionCount);
     }
 
     private int getNonClusterConnections() {
@@ -264,7 +261,6 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
 
     public class Debouncer {
-        private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         private final ConcurrentHashMap<Object, Future<?>> delayedMap = new ConcurrentHashMap<>();
 
         /**
@@ -272,10 +268,12 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
          * or cancels its execution if the method is called with the same key within the {@code delay} again.
          */
         public void debounce(final Object key, final Runnable runnable, long delay, TimeUnit unit) {
-            final Future<?> prev = delayedMap.put(key, scheduler.schedule(new Runnable() {
+            log.info("Scheduled - " + runnable);
+            final Future<?> prev = delayedMap.put(key, connectionCountExecutor.schedule(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        log.info("Running - " + runnable);
                         runnable.run();
                     } finally {
                         delayedMap.remove(key);
@@ -283,12 +281,12 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 }
             }, delay, unit));
             if (prev != null) {
-                prev.cancel(true);
+                prev.cancel(false);
             }
         }
 
         public void shutdown() {
-            scheduler.shutdownNow();
+            connectionCountExecutor.shutdownNow();
         }
     }
 

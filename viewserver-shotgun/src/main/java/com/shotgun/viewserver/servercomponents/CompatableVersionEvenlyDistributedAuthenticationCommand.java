@@ -9,6 +9,8 @@ import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +19,7 @@ public class CompatableVersionEvenlyDistributedAuthenticationCommand implements 
 
         ICatalog systemCatalog;
         private ClientVersionInfo versionInfo;
-
+        private static final Logger log = LoggerFactory.getLogger(CompatableVersionEvenlyDistributedAuthenticationCommand.class);
 
         public CompatableVersionEvenlyDistributedAuthenticationCommand(ICatalog systemCatalog, ClientVersionInfo versionInfo) {
             this.systemCatalog = systemCatalog;
@@ -31,6 +33,7 @@ public class CompatableVersionEvenlyDistributedAuthenticationCommand implements 
                 throw new RuntimeException("Cannot authenticate as no load balancer table");
             }
             List<String> compatableVersions = authenticateCommandDto.getTokens();
+            log.info("Attempting to authenticate against client version - {}",String.join(",",compatableVersions));
             IRowSequence rows = (table.getOutput().getAllRows());
             Integer myNoConnections = compatableVersions.contains(versionInfo.getCompatableClientVersion()) ? (Integer)ColumnHolderUtils.getColumnValue(table, "noConnections",versionInfo.getServerEndPoint()) : Integer.MAX_VALUE;
 
@@ -46,13 +49,18 @@ public class CompatableVersionEvenlyDistributedAuthenticationCommand implements 
                 }
             }
             if(alternativeUrl == null && myNoConnections != Integer.MAX_VALUE) {
+                log.info("Successfully authenticated - {}",String.join(",",compatableVersions));
                 return new AuthenticationToken(authenticateCommandDto.getType(), versionInfo.getCompatableClientVersion());
             }
 
             HashMap result = new HashMap();
             if(alternativeUrl == null){
-                result.put("message",String.format("Client version %s is not compatable with server verison %s and could not find alternative",String.join(",",compatableVersions),versionInfo.getCompatableClientVersion()));
+                String format = String.format("Client version %s is not compatable with server verison %s and could not find alternative", String.join(",", compatableVersions), versionInfo.getCompatableClientVersion());
+                log.info(format);
+                result.put("message", format);
             }else{
+                String format = String.format("Client version %s is not compatable with server verison %s and found alternative %s", String.join(",", compatableVersions), versionInfo.getCompatableClientVersion(),alternativeUrl);
+                log.info(format);
                 result.put("alternative",alternativeUrl);
             }
             throw new RuntimeException(ControllerUtils.toString(result));

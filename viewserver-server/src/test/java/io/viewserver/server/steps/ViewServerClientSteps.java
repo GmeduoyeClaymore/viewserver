@@ -413,7 +413,7 @@ public class ViewServerClientSteps {
 
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\"$")
     public void the_following_data_is_received_eventually(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,true), 5, 500, 0,false);
+        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,true), 10, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received terminally on report \"([^\"]*)\"$")
