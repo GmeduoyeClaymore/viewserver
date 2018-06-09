@@ -137,7 +137,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                                 log.info("Reconnecting because of network disconnection");
                                 connectionFailureCount++;
                                 logReconnection(endpoints, nextEndPointIndex, "Connection lost", null);
-                                reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
+                                reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000 * connectionFailureCount, -1).subscribe();
                             });
                         }
                         log.debug("Connection {} initialised on channel {}", connectionId, channel);
@@ -151,13 +151,13 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         }
                         connectionFailureCount++;
                         logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", t);
-                        reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
+                        reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000 * connectionFailureCount, -1).subscribe();
                     }
                 },
                 err -> {
                     connectionFailureCount++;
                     logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", err);
-                    reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
+                    reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000 * connectionFailureCount, -1).subscribe();
                 },
                 () -> {
                 }
