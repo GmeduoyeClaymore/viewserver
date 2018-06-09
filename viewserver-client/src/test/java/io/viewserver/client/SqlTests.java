@@ -19,6 +19,7 @@ package io.viewserver.client;
 import io.viewserver.BenchmarkTestBase;
 import io.viewserver.execution.Options;
 import io.viewserver.network.EndpointFactoryRegistry;
+import io.viewserver.network.ReconnectionSettings;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class SqlTests extends BenchmarkTestBase {
 
     @Test
     public void test() throws Throwable {
-        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"));
+        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"), ReconnectionSettings.Dont);
         Options options = new Options();
         options.setLimit(10);
         CountDownLatch snapshotLatch = new CountDownLatch(1);
@@ -52,7 +53,7 @@ public class SqlTests extends BenchmarkTestBase {
 
     @Test
     public void test2() throws Throwable {
-        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"));
+        ViewServerClient client = new ViewServerClient("client", EndpointFactoryRegistry.createEndpoints("tcp://localhost:18000"), ReconnectionSettings.Dont);
         Options options = new Options();
         options.setLimit(10);
         CountDownLatch snapshotLatch = new CountDownLatch(1);

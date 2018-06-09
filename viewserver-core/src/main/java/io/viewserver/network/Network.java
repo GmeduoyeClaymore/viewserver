@@ -96,20 +96,24 @@ public class Network implements PeerSession.IDisconnectionHandler {
         reactor.scheduleTask(() -> networkAdapter.listen(endpoint), 0, -1);
     }
 
-    public ListenableFuture<IPeerSession> connect(final List<IEndpoint> endpoints, boolean shouldReconnect) {
-        return ListenableFutureObservable.to(connectObservable(endpoints, shouldReconnect, 0));
+    public ListenableFuture<IPeerSession> connect(final List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
+        return ListenableFutureObservable.to(connectObservable(endpoints, reconnectionSettings, 0));
     }
 
-    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, boolean shouldReconnect) {
-        return connectObservable(endpoints, shouldReconnect, 0);
+    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
+        return connectObservable(endpoints, reconnectionSettings, 0);
     }
 
-    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, boolean shouldReconnect, int endPointIndex) {
+    public Observable<IPeerSession> connectObservable(final List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings, int endPointIndex) {
         if(connectSubscription != null){
             connectSubscription.unsubscribe();
         }
         if (isStopped) {
             return Observable.empty();
+        }
+
+        if(reconnectionSettings.isShouldReconnect() && connectionFailureCount >= reconnectionSettings.getNoFailures()){
+            return Observable.error(new RuntimeException(String.format("Connection failure count %s exceeds threshold set %s for number of reconnections",connectionFailureCount,reconnectionSettings.getNoFailures())));
         }
         final int connectionId = getNextConnectionId();
         IEndpoint endpoint = endpoints.get(endPointIndex);
@@ -128,15 +132,16 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         heartbeatTask.sessions.add(peerSession);
                         heartbeatTask.lastResponses.put(peerSession, System.currentTimeMillis());
                         log.info("Successfully Connected to {} - {}", endpoint,peerSession);
-                        if (shouldReconnect) {
+                        if (reconnectionSettings.isShouldReconnect()) {
                             Network.this.disconnectionObservable().take(1).subscribe(c -> {
                                 log.info("Reconnecting because of network disconnection");
                                 connectionFailureCount++;
                                 logReconnection(endpoints, nextEndPointIndex, "Connection lost", null);
-                                reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
+                                reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
                             });
                         }
                         log.debug("Connection {} initialised on channel {}", connectionId, channel);
+                        connectionFailureCount = 0;
                         publishSubject.onNext(peerSession);
                     } catch (Exception t) {
                         if (log.isDebugEnabled()) {
@@ -146,13 +151,13 @@ public class Network implements PeerSession.IDisconnectionHandler {
                         }
                         connectionFailureCount++;
                         logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", t);
-                        reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
+                        reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
                     }
                 },
                 err -> {
                     connectionFailureCount++;
                     logReconnection(endpoints, nextEndPointIndex, "Issue connecting. ", err);
-                    reactor.scheduleObservable(() -> connectObservable(endpoints, shouldReconnect, nextEndPointIndex), 1000, -1).subscribe();
+                    reactor.scheduleObservable(() -> connectObservable(endpoints, reconnectionSettings, nextEndPointIndex), 1000, -1).subscribe();
                 },
                 () -> {
                 }

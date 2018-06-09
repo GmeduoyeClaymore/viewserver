@@ -22,6 +22,7 @@ import io.viewserver.client.SubscriptionEventHandlerBase;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.execution.Options;
 import io.viewserver.network.IEndpoint;
+import io.viewserver.network.ReconnectionSettings;
 import io.viewserver.subscription.SubscriptionFlags;
 import org.rosuda.REngine.REXPLogical;
 
@@ -40,12 +41,12 @@ import java.util.concurrent.Future;
 public class RClient extends ViewServerClient {
     private static final byte[] logicalValues = new byte[]{REXPLogical.NA, REXPLogical.FALSE, REXPLogical.TRUE};
 
-    public RClient(String name, IEndpoint endpoint) {
-        super(name, Arrays.asList(endpoint));
+    public RClient(String name, IEndpoint endpoint, ReconnectionSettings reconnectionSettings) {
+        super(name, Arrays.asList(endpoint),reconnectionSettings);
     }
 
-    public RClient(String name, String url) throws URISyntaxException {
-        super(name, url);
+    public RClient(String name, String url, ReconnectionSettings reconnectionSettings) throws URISyntaxException {
+        super(name, url, reconnectionSettings);
     }
 
     public RClientSubscription subscribe(String operator, String output) {

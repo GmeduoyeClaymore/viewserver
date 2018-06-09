@@ -21,6 +21,7 @@ import io.viewserver.client.CommandResult;
 import io.viewserver.client.ITableCreationConfig;
 import io.viewserver.client.RollingTableCreationConfig;
 import io.viewserver.client.RowEvent;
+import io.viewserver.network.ReconnectionSettings;
 import io.viewserver.operators.table.RollingTable;
 import io.viewserver.schema.column.ColumnType;
 import com.google.common.util.concurrent.FutureCallback;
@@ -75,7 +76,7 @@ public class ViewServerManager extends AbstractManager {
         public ViewServerManager createManager(String name, ViewServerManagerFactoryData data) {
             LoggerClient client;
             try {
-                client = new LoggerClient(name, data.url);
+                client = new LoggerClient(name, data.url, ReconnectionSettings.Forever);
             } catch (URISyntaxException e) {
                 LOGGER.error("Unable to parse URL " + data.url, e);
                 return null;

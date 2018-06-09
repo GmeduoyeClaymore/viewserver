@@ -20,6 +20,7 @@ import io.viewserver.client.ViewServerClient;
 import io.viewserver.network.Command;
 import io.viewserver.network.IEndpoint;
 import com.google.common.util.concurrent.SettableFuture;
+import io.viewserver.network.ReconnectionSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,15 +37,15 @@ public class TestViewServerClient extends ViewServerClient {
     private static final Logger log = LoggerFactory.getLogger(TestViewServerClient.class);
 
     public TestViewServerClient(String name, List<IEndpoint> endpoint) {
-        super(name, endpoint);
+        super(name, endpoint, ReconnectionSettings.Times(20));
     }
 
     public TestViewServerClient(String name, IEndpoint endpoint) {
-        super(name, Arrays.asList(endpoint));
+        super(name, Arrays.asList(endpoint), ReconnectionSettings.Times(20));
     }
 
     public TestViewServerClient(String name, String url) throws URISyntaxException {
-        super(name, url);
+        super(name, url, ReconnectionSettings.Times(20));
     }
 
     public Future<Boolean> resetServer() {

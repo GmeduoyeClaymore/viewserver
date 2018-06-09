@@ -20,6 +20,7 @@ import io.viewserver.client.CommandResult;
 import io.viewserver.client.ViewServerClient;
 import io.viewserver.network.Command;
 import io.viewserver.network.Network;
+import io.viewserver.network.ReconnectionSettings;
 import io.viewserver.reactor.IReactor;
 import io.viewserver.reactor.MultiThreadedEventLoopReactor;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -31,8 +32,8 @@ import java.net.URISyntaxException;
  * Created by nick on 30/09/15.
  */
 public class LoggerClient extends ViewServerClient {
-    public LoggerClient(String name, String url) throws URISyntaxException {
-        super(name, url);
+    public LoggerClient(String name, String url, ReconnectionSettings settings) throws URISyntaxException {
+        super(name, url, settings);
     }
 
     @Override

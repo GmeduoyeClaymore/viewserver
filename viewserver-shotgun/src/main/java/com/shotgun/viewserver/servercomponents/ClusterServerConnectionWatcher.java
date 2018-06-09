@@ -1,6 +1,7 @@
 package com.shotgun.viewserver.servercomponents;
 
 import io.viewserver.client.ViewServerClient;
+import io.viewserver.network.ReconnectionSettings;
 import rx.Observable;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class ClusterServerConnectionWatcher {
     private ViewServerClient getOrCreateClient() {
         try {
         if(client == null) {
-            client = new ViewServerClient("serverConnectionWatcher_" + versionInfo.getServerEndPoint(), peerUrl);
+            client = new ViewServerClient("serverConnectionWatcher_" + versionInfo.getServerEndPoint(), peerUrl, ReconnectionSettings.Times(100));
         }
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);

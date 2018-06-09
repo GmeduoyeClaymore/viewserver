@@ -72,6 +72,7 @@ public class ViewServerClient implements AutoCloseable {
     private ExecutionContext executionContext = new ExecutionContext();
     private Catalog catalog;
     private final String name;
+    private ReconnectionSettings reconnectionSettings;
     private List<IEndpoint> endpoints;
     private Network network;
     private IReactor reactor;
@@ -85,8 +86,9 @@ public class ViewServerClient implements AutoCloseable {
     private String[] tokens;
     private boolean isClosed;
 
-    public ViewServerClient(String name, List<IEndpoint> endpoints) {
+    public ViewServerClient(String name, List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
         this.name = name;
+        this.reconnectionSettings = reconnectionSettings;
         this.executionContext = new ExecutionContext();
         this.catalog = new Catalog(executionContext);
         this.endpoints = endpoints;
@@ -107,8 +109,8 @@ public class ViewServerClient implements AutoCloseable {
         return catalog;
     }
 
-    public ViewServerClient(String name, String url) throws URISyntaxException {
-        this(name, EndpointFactoryRegistry.createEndpoints(url));
+    public ViewServerClient(String name, String url,ReconnectionSettings reconnectionSettings) throws URISyntaxException {
+        this(name, EndpointFactoryRegistry.createEndpoints(url),reconnectionSettings);
     }
 
     public Observable<IPeerSession> getConnectObservable() {
@@ -139,7 +141,7 @@ public class ViewServerClient implements AutoCloseable {
                 new Message();
             }, 0, -1);
 
-            this.subscriptons.add(network.connectObservable(endpoints,true).subscribe(this::onConnectionEstablished, this::onConnectionError));
+            this.subscriptons.add(network.connectObservable(endpoints,reconnectionSettings).subscribe(this::onConnectionEstablished, this::onConnectionError));
             this.subscriptons.add(network.disconnectionObservable().subscribe(c-> onSessionDisconnect()));
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);

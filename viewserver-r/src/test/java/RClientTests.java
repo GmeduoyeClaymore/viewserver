@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import io.viewserver.network.ReconnectionSettings;
 import io.viewserver.r.client.RClient;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class RClientTests {
     // why the fark won't it pick up the junit dependency???????
     @Test
     public void test() throws Exception {
-        RClient client = new RClient("client", "tcp://localhost:18000");
+        RClient client = new RClient("client", "tcp://localhost:18000", ReconnectionSettings.Dont);
 //        RClientSubscription subscription = client.subscribe("fxrates", Constants.OUT);
 //        Iterable<RClientSubscription.ColumnValues> rows = subscription.getRows(-1);
     }
