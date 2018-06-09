@@ -113,9 +113,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         }
 
         if(reconnectionSettings.isShouldReconnect() && connectionFailureCount >= reconnectionSettings.getNoFailures()){
-            publishSubject.onError(new RuntimeException(String.format("Connection failure count %s exceeds threshold set %s for number of reconnections",connectionFailureCount,reconnectionSettings.getNoFailures())));
-            publishSubject.onCompleted();
-            return Observable.empty();
+            throw new RuntimeException(String.format("Connection failure count %s exceeds threshold set %s for number of reconnections",connectionFailureCount,reconnectionSettings.getNoFailures()));
         }
         final int connectionId = getNextConnectionId();
         IEndpoint endpoint = endpoints.get(endPointIndex);
