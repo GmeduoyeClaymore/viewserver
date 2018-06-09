@@ -29,7 +29,13 @@ public class ShotgunViewServerSteps {
 
     @After
     public void afterScenario() {
-        launcherHashMap.values().stream().forEach(lau -> lau.stop());
+        launcherHashMap.values().stream().forEach(lau ->
+                {
+                    if(lau !=null){
+                        lau.stop();
+                    }
+                }
+        );
     }
 
     @Given("^a running shotgun viewserver$")

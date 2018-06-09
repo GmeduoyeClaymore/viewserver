@@ -49,23 +49,30 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
         TableKey tableKey = RecordUtils.getTableKey(record, definition);
         TableUpdateKey key = new TableUpdateKey(tableName, tableKey);
+        DataSourceTableName dsTableName = new DataSourceTableName(tableName);
 
         Observable<Boolean> inFlightUpdate = this.inFlightUpdates.get(key);
         if(inFlightUpdate != null){
             logger.info(String.format("Found in flight update for table %s record %s",table,tableKey));
-            return inFlightUpdate.flatMap(res -> {
-                if(res){
-                    logger.info(String.format("In flight update for table %s record %s completed successfully",table,tableKey));
-                    return addOrUpdateRow(tableName,schemaConfig,record);
-                }else{
+            Observable<Boolean> booleanObservable = inFlightUpdate.flatMap(res -> {
+                if (res) {
+                    logger.info(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
+                    return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName);
+                } else {
                     String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
                     logger.info(format);
                     throw new RuntimeException(format);
                 }
             });
+            this.inFlightUpdates.put(key,booleanObservable);
+            return booleanObservable;
         }
 
-        DataSourceTableName dsTableName = new DataSourceTableName(tableName);
+
+        return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName);
+    }
+
+    private Observable<Boolean> getBooleanObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName) {
         Integer versionBeforeUpdate = getVersionBeforeUpdate(table, record, tableKey);
 
         if(logger.isDebugEnabled()) {
