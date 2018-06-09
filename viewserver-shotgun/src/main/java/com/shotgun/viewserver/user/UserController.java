@@ -25,6 +25,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -190,7 +191,7 @@ public class UserController implements UserTransformationController, RatedOrderC
             @Override
             public void execute() {
                 try {
-                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe(res -> future.set(result), err -> future.setException(err));
+                    iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION).subscribe(res -> future.set(result), err -> future.setException(err));
                     future.set(result);
                 } catch (Exception ex) {
                     log.error("There was a problem setting user location from postcode", ex);

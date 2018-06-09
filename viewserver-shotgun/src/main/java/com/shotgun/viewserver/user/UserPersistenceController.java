@@ -89,7 +89,6 @@ public interface UserPersistenceController{
                 .addValue("range", user.getRange())
                 .addValue("ratingAvg", user.getRatingAvg())
                 .addValue("imageUrl", user.getImageUrl())
-                .addValue("version", user.getVersion())
                 .addValue("chargePercentage", user.getChargePercentage());
 
         if(user.getStripeCustomerId() != null){
@@ -104,7 +103,7 @@ public interface UserPersistenceController{
             userRecord.addValue("password", ControllerUtils.encryptPassword(password));
         }
 
-        return getDatabaseUpdater().addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).map(res -> user.getUserId());
+        return getDatabaseUpdater().addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, user.getVersion()).map(res -> user.getUserId());
     }
 
     IDatabaseUpdater getDatabaseUpdater();

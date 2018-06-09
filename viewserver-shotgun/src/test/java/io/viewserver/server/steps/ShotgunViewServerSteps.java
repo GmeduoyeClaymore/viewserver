@@ -10,6 +10,7 @@ import cucumber.api.java.en.When;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
 import io.viewserver.server.setup.IApplicationSetup;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class ShotgunViewServerSteps {
 
     @After
     public void afterScenario() {
-        launcherHashMap.values().stream().forEach(lau ->
+        launcherHashMap.values().stream().parallel().forEach(lau ->
                 {
                     if(lau !=null){
                         lau.stop();
@@ -45,9 +46,10 @@ public class ShotgunViewServerSteps {
 
     @Given("^a running shotgun viewserver with url \"([^\"]*)\" and version \"([^\"]*)\" and bootstrap \"([^\"]*)\"$")
     public void a_running_shotgun_viewserver_with_url(String url,String version,String bootstrap) throws InterruptedException {
+        DateTime now = DateTime.now();
         System.setProperty("server.isMaster",bootstrap);
         System.setProperty("server.endpoint",url);
-        System.setProperty("server.name",url);
+        System.setProperty("server.name",url + "_" + now);
         System.setProperty("server.version",version);
         runViewServer(Boolean.parseBoolean(bootstrap));
     }

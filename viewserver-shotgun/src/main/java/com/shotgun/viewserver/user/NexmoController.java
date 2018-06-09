@@ -18,6 +18,7 @@ import io.viewserver.adapters.common.Record;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -188,13 +189,11 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                 fromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
                 toUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-                Integer version = (Integer) ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", rows.getRowId());
 
-                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s", userPhoneNumber, virtualPhoneNumber));
                 Record phoneNumberRecord = new Record();
                 phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
                 phoneNumberRecord.addValue("phoneNumberStatus", status);
-                phoneNumberRecord.addValue("version", version);
 
                 if (status.equals(PhoneNumberStatuses.COMPLETED.name()) ||
                     status.equals(PhoneNumberStatuses.REJECTED.name()) ||
@@ -211,7 +210,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                     }
                 }
 
-                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord,IRecord.UPDATE_LATEST_VERSION).subscribe();
             }
         }
 
@@ -248,17 +247,15 @@ public class NexmoController implements INexmoController, UserNotificationContra
 
                 fromUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "fromUserId", rows.getRowId());
                 toUserId = (String) ColumnHolderUtils.getColumnValue(phoneNumberTable, "toUserId", rows.getRowId());
-                Object version = ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", virtualPhoneNumber);
-                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and version is %s", userPhoneNumber, virtualPhoneNumber, version));
+                log.debug(String.format("found record with userPhoneNumber %s and virtual number %s and", userPhoneNumber, virtualPhoneNumber));
                 Record phoneNumberRecord = new Record();
                 phoneNumberRecord.addValue("phoneNumber", virtualPhoneNumber);
                 phoneNumberRecord.addValue("phoneNumberStatus", status);
                 phoneNumberRecord.addValue("fromUserId", "");
                 phoneNumberRecord.addValue("toUserId", "");
-                phoneNumberRecord.addValue("version", version);
                 phoneNumberRecord.addValue("userPhoneNumber", "");
 
-                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord).subscribe();
+                iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), phoneNumberRecord,IRecord.UPDATE_LATEST_VERSION).subscribe();
             }
         }
     }

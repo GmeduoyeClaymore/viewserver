@@ -30,7 +30,7 @@ public class MongoTableUpdater implements IDatabaseUpdater {
 
 
     @Override
-    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version){
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer versionToBeUpdated){
         return Observable.create(
                 booleanEmitter -> {
                     try {
@@ -38,13 +38,13 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                         TableKey tableKey = RecordUtils.getTableKey(record, definition);
                         String documentId = tableKey.toString("_");
                         Map<String, Object> docData = getDocumentData(record, schemaConfig);
-                        docData.put("version", incrementVersion(version));
-                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + version + " new version is " + docData.get("version"));
+                        docData.put("version", incrementVersion(versionToBeUpdated));
+                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
                         log.info("Writing record to table " + docData);
                         Document tDocument = new Document(docData);
-                        boolean result = getUpdateResult(version, tableName, documentId, tDocument);
+                        boolean result = getUpdateResult(versionToBeUpdated, tableName, documentId, tDocument);
                         log.info("Record result is " + result);
-                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + version + " new version is " + docData.get("version"));
+                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
                         booleanEmitter.onNext(result);
                         booleanEmitter.onCompleted();
                     }catch (Exception ex){
@@ -69,10 +69,10 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         return version + 1;
     }
 
-    public boolean getUpdateResult(Integer initialVersion, String tableName, String  documentId, Document tDocument) {
+    public boolean getUpdateResult(Integer versionToBeUpdated, String tableName, String  documentId, Document tDocument) {
         Bson updateQuery = new Document("$set", tDocument);
         Integer version = tDocument.getInteger("version");
-        if(version == 1){
+        if(versionToBeUpdated == null){
             log.info(documentId + " Record version is 0 so treating as an insert");
             tDocument.put("_id",documentId);
             getCollection(tableName).insertOne(tDocument);
@@ -85,9 +85,9 @@ public class MongoTableUpdater implements IDatabaseUpdater {
             return true;
         }
         else{
-            log.info(documentId + " Record version is "+initialVersion+" so treating as an update to a specific version");
+            log.info(documentId + " Record version is "+version+" so treating as an update to a specific version");
             BasicDBObject query = new BasicDBObject("_id", documentId);
-            query.put("version", new BasicDBObject("$eq", initialVersion));
+            query.put("version", new BasicDBObject("$eq", versionToBeUpdated));
             return getCollection(tableName).updateOne(query, updateQuery,new UpdateOptions()).wasAcknowledged();
         }
     }

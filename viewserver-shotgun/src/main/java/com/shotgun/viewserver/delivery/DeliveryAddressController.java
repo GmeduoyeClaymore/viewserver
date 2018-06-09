@@ -13,6 +13,7 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
@@ -60,7 +61,6 @@ public class DeliveryAddressController {
                 .addValue("created", deliveryAddress.getCreated())
                 .addValue("userId", userId)
                 .addValue("lastUsed", now)
-                .addValue("version", -1)
                 .addValue("isDefault", deliveryAddress.getIsDefault())
                 .addValue("flatNumber", deliveryAddress.getFlatNumber())
                 .addValue("line1", deliveryAddress.getLine1())
@@ -72,7 +72,7 @@ public class DeliveryAddressController {
 
         SettableFuture<String> result = SettableFuture.create();
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, DeliveryAddressDataSource.getDataSource().getSchema(), deliveryAddressRecord).subscribe(c-> result.set(deliveryAddress.getDeliveryAddressId()), err -> result.setException(err));
+        iDatabaseUpdater.addOrUpdateRow(TableNames.DELIVERY_ADDRESS_TABLE_NAME, DeliveryAddressDataSource.getDataSource().getSchema(), deliveryAddressRecord, IRecord.REPLACE_VERSION).subscribe(c-> result.set(deliveryAddress.getDeliveryAddressId()), err -> result.setException(err));
 
         return result;
     }

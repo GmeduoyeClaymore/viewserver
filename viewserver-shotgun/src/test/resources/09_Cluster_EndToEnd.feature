@@ -12,7 +12,7 @@ Feature:Cluster scenarios
     Given a client named "client2" connected to "inproc://master2" with authentication "compatableVersion" and token "2"
     Given a client named "client3" connected to "inproc://master3" with authentication "compatableVersion" and token "1"
     When "client1" subscribed to report "cluster"
-    Then "client1" the following data is received eventually on report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster |
       | inproc://master1 | 1             | 1             | true     |
       | inproc://master2 | 2             | 1             | false    |
@@ -24,7 +24,7 @@ Feature:Cluster scenarios
     Given a client named "client2" connected to "inproc://master2" with authentication "compatableVersion" and token "2"
     Given a client named "client3" connected to "inproc://master3" with authentication "compatableVersion" and token "2"
     When "client1" subscribed to report "cluster"
-    Then "client1" the following data is received eventually on report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster |
       | inproc://master1 | 1             | 1             | true     |
       | inproc://master2 | 2             | 2             | false    |
@@ -44,7 +44,7 @@ Feature:Cluster scenarios
     Then sleep for 1000 millis
     Given a client named "client6" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
     When "client1" subscribed to report "cluster"
-    Then "client1" the following data is received eventually on report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
      | url              | clientVersion | noConnections | isMaster |
      | inproc://master1 | 1             | 3             | true     |
      | inproc://master2 | 2             | 0             | false    |
@@ -65,7 +65,7 @@ Feature:Cluster scenarios
     Given a client named "client6" connected to "inproc://master3" with authentication "compatableVersionEvenlyDistributed" and token "1"
     Then sleep for 1000 millis
     When "client1" subscribed to report "cluster"
-    Then "client1" the following data is received eventually on report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster |
       | inproc://master1 | 1             | 3             | true     |
       | inproc://master2 | 2             | 0             | false    |
@@ -82,7 +82,7 @@ Feature:Cluster scenarios
     And Shotgun viewserver with url "inproc://master1" is killed
     And sleep for 10000 millis
     When "client6" subscribed to report "cluster"
-    Then "client6" the following data is received eventually on report "cluster"
+    Then "client6" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster | isOffline |
       | inproc://master1 | 1             | 0             | false    | true      |
       | inproc://master2 | 2             | 0             | true     | false     |

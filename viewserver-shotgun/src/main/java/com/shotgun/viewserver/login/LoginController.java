@@ -14,6 +14,7 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.operators.*;
 import io.viewserver.operators.rx.EventType;
@@ -100,40 +101,36 @@ public class LoginController {
         String userId = getUserId();
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("fcmToken", null)
-                .addValue("version", getUser(userId).getVersion());
-        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
+                .addValue("fcmToken", null);
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION));
     }
 
     private Observable<Boolean> setUserOnline(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
                 .addValue("online", true)
-                .addValue("version", getUser(userId).getVersion())
                 .addValue("userStatus", UserStatus.ONLINE.name())
                 .addValue("userAppStatus", UserAppStatus.FOREGROUND);
 
-        return iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord);
+        return iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION);
     }
 
     private ListenableFuture setUserOffLine(String userId) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("version", getUser(userId).getVersion())
                 .addValue("online", false)
                 .addValue("userStatus", UserStatus.OFFLINE.name())
                 .addValue("userAppStatus", UserAppStatus.BACKGROUND);
 
-        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION));
     }
 
     private ListenableFuture setUserAppStatus(String userId, UserAppStatus appStatus) {
         Record userRecord = new Record()
                 .addValue("userId", userId)
-                .addValue("version", getUser(userId).getVersion())
                 .addValue("userAppStatus", appStatus);
 
-        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord));
+        return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION));
     }
 
     private String setupContext(String userId,IPeerSession session) {

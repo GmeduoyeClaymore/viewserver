@@ -131,11 +131,10 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
-                .addValue("version", -1)
                 .addValue("isMaster", isMaster)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record).toBlocking().first();
+        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).toBlocking().first();
         log.info("No connections modified to - {}",sessionCount);
     }
 
@@ -176,7 +175,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 .addValue("isOffline", false)
                 .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record)
+        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
         .subscribe(c-> super.listen());
 
     }
@@ -222,16 +221,14 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
-                        .addValue("version", -1)
                         .addValue("isMaster", isMaster);
-                updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record).subscribe();
+                updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()
                         .addValue("url", url)
-                        .addValue("version", -1)
                         .addValue("isOffline", true)
                         .addValue("noConnections", 0)
                         .addValue("isMaster", false);
-                updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record).subscribe();
+                updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION ).subscribe();
             }else{
                 log.info("{} has detetcted that MASTER {} has died in cluster. I am not next in line for the throne",this.clientVersionInfo.getServerEndPoint(), url);
             }

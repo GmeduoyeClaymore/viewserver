@@ -156,7 +156,7 @@ public class MockPaymentController implements IPaymentController {
 
             logger.debug("Created stripe charge {} with amount {} with {} sent to driver", chargeId, totalPrice, destinationAmount);
 
-            return iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord).map(res -> paymentid);
+            return iDatabaseUpdater.addOrUpdateRow(TableNames.PAYMENT_TABLE_NAME, PaymentDataSource.getDataSource().getSchema(), paymentRecord, IRecord.UPDATE_LATEST_VERSION).map(res -> paymentid);
         } catch (Exception e) {
             logger.error("There was a problem creating the charge", e);
             throw new RuntimeException(e);

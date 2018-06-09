@@ -27,5 +27,12 @@ public interface IRecordLoader {
         return Observable.just(true);
     }
     void close();
+    default void safeClose(){
+        try{
+            close();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
 }
 

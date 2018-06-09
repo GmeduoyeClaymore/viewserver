@@ -47,7 +47,7 @@ public interface OrderUpdateController {
                 addValue("orderDetails", order);
 
 
-        return getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord);
+        return getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord,order.getVersion());
     }
 
 

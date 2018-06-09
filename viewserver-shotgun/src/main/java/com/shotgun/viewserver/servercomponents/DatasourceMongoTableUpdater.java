@@ -43,7 +43,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     }
 
     @Override
-    public synchronized Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+    public synchronized Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version){
 
         KeyedTable table = (KeyedTable) catalog.getOperatorByPath(tableName);
         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
@@ -57,7 +57,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
             Observable<Boolean> booleanObservable = inFlightUpdate.flatMap(res -> {
                 if (res) {
                     logger.info(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
-                    return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName);
+                    return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
                 } else {
                     String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
                     logger.info(format);
@@ -69,11 +69,11 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         }
 
 
-        return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName);
+        return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
     }
 
-    private Observable<Boolean> getBooleanObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName) {
-        Integer versionBeforeUpdate = getVersionBeforeUpdate(table, record, tableKey);
+    private Observable<Boolean> getBooleanObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName, Integer version) {
+        Integer versionBeforeUpdate = getVersionBeforeUpdate(table, version, tableKey);
 
         if(logger.isDebugEnabled()) {
             logger.debug("Updatating {} with record {}", table, record.asString());
@@ -88,8 +88,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         return booleanObservable;
     }
 
-    private Integer getVersionBeforeUpdate(KeyedTable table, IRecord record, TableKey tableKey) {
-        Integer version = record.getInt("version");
+    private Integer getVersionBeforeUpdate(KeyedTable table, Integer version, TableKey tableKey) {
         if(version != null && version == -1){
             version = (Integer) ColumnHolderUtils.getColumnValue(table,"version", tableKey);
             if(version == 0){

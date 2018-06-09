@@ -48,7 +48,7 @@ public class CsvRecordLoaderCollection implements IRecordLoaderCollection {
     @Override
     public void close() {
         if(loaders != null){
-            loaders.values().forEach(c->c.close());
+            loaders.values().forEach(c->c.safeClose());
         }
     }
 }

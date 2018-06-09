@@ -38,7 +38,7 @@ public class DirectTableUpdater implements IDatabaseUpdater{
     public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         return Observable.create(subscriber -> this.executionContext.getReactor().scheduleTask(() -> {
             try{
-                addOrUpdateRow(tableName,schemaConfig,record);
+                addOrUpdateRow(tableName,schemaConfig,record,null);
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }catch (Exception ex){

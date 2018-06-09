@@ -131,7 +131,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(DatasourceMongoTableUpdater.class);
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
-                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class))
+                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
         container.addComponent(RealShotgunControllersComponents.class);
         return true;
@@ -152,7 +152,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(DatasourceMongoTableUpdater.class);
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
-                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class))
+                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
         container.addComponent(MockShotgunControllersComponents.class);
         return true;

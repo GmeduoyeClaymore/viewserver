@@ -47,11 +47,11 @@ public class MongoRecordLoader implements IRecordLoader{
     private long connectionLostTime = 0;
     private boolean isClosed;
 
-    public MongoRecordLoader(MongoConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig) {
+    public MongoRecordLoader(MongoConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig, String serverName) {
         this.connectionFactory = connectionFactory;
         this.recordsById = new HashMap<>();
         this.tableName = tableName;
-        this.service =  MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1,new ThreadFactoryBuilder().setNameFormat(this.tableName+"-%d").build()));
+        this.service =  MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(1,new ThreadFactoryBuilder().setNameFormat(this.tableName+"-" + serverName+ "-%d").build()));
         this.config = config;
         this.creationConfig = creationConfig;
         //updateObservable.debounce(5, TimeUnit.MILLISECONDS).subscribe(res -> this.sendRecords());
@@ -237,10 +237,14 @@ public class MongoRecordLoader implements IRecordLoader{
 
     @Override
     public void close(){
-        logger.info("Shutting down record loader");
-        this.isClosed = true;
-        this.service.shutdown();
-        connectionFactory.close();
+        try {
+            logger.info("Shutting down record loader");
+            this.isClosed = true;
+            this.service.shutdown();
+            connectionFactory.close();
+        }catch (Exception ex){
+            logger.info("Problem closing record loader " + ex.getMessage());
+        }
     }
 }
 

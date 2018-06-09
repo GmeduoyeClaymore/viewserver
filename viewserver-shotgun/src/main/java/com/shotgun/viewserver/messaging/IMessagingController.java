@@ -8,6 +8,7 @@ import com.shotgun.viewserver.setup.datasource.UserDataSource;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.controller.ControllerAction;
+import io.viewserver.datasource.IRecord;
 import rx.Observable;
 
 import java.util.Date;
@@ -29,10 +30,9 @@ public interface IMessagingController {
         messageRec.addValue("picture", message.getPicture());
         messageRec.addValue("sentTime", new Date());
         messageRec.addValue("sentRemotely",sentRemotely);
-        messageRec.addValue("version",Integer.MAX_VALUE);
         messageRec.addValue("message", message);
 
-        return getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, MessagesDataSource.getDataSource().getSchema(), messageRec);
+        return getDatabaseUpdater().addOrUpdateRow(TableNames.MESSAGES_TABLE_NAME, MessagesDataSource.getDataSource().getSchema(), messageRec,IRecord.UPDATE_LATEST_VERSION);
     }
 
     IDatabaseUpdater getDatabaseUpdater();

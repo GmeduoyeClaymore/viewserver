@@ -58,13 +58,12 @@ public interface OrderCreationController {
                 .addValue("orderContentTypeId", order.getOrderContentType().getContentTypeId())
                 .addValue("lastModified", now)
                 .addValue("userId", customerId)
-                .addValue("version", order.getVersion())
                 .addValue("orderDetails", order);
 
 
         SettableFuture<String> result = SettableFuture.create();
 
-        getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord).subscribe(res -> {
+        getDatabaseUpdater().addOrUpdateRow(TableNames.ORDER_TABLE_NAME, OrderDataSource.getDataSource().getSchema(), orderRecord, IRecord.UPDATE_LATEST_VERSION).subscribe(res -> {
             result.set(orderId);
             afterTransform.accept(order);
         }, err -> result.setException(err));

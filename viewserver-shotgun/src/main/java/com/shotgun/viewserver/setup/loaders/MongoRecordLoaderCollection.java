@@ -12,9 +12,11 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
 
     private HashMap<String,IRecordLoader> loaders;
     private MongoConnectionFactory connectionFactory;
+    private String serverName;
 
-    public MongoRecordLoaderCollection(MongoConnectionFactory connectionFactory){
+    public MongoRecordLoaderCollection(MongoConnectionFactory connectionFactory, String serverName){
         this.connectionFactory = connectionFactory;
+        this.serverName = serverName;
         loaders = new HashMap<>();
         register(OrderDataSource.getDataSource().getSchema(), OrderDataSource.NAME);
         register(ContentTypeDataSource.getDataSource().getSchema(), ContentTypeDataSource.NAME);
@@ -39,7 +41,7 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
     }
 
     private MongoRecordLoader getLoader(SchemaConfig schema, String operatorName) {
-        return new MongoRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT));
+        return new MongoRecordLoader(connectionFactory, operatorName, schema, new OperatorCreationConfig(CreationStrategy.WAIT,CreationStrategy.WAIT), serverName);
     }
 
     static String getOperatorPath(String operatorName) {
@@ -55,6 +57,6 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
     @Override
     public void close(){
         connectionFactory.close();
-        loaders.values().forEach(c-> c.close());
+        loaders.values().forEach(c-> c.safeClose());
     }
 }

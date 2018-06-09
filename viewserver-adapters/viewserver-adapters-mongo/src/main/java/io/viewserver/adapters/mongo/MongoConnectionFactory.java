@@ -7,8 +7,12 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MongoConnectionFactory {
+    private static final Logger logger = LoggerFactory.getLogger(MongoConnectionFactory.class);
+
     private String clientURI;
     private String databaseName;
     private MongoClient mongoClient;
@@ -21,6 +25,7 @@ public class MongoConnectionFactory {
 
     private void createConnection() {
         try {
+            logger.info("Creating connection");
             CodecRegistry defaultCodecRegistry = MongoClient.getDefaultCodecRegistry();
             MongoCodecProvider myCodecProvider = new MongoCodecProvider();
             CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(myCodecProvider), defaultCodecRegistry);;
@@ -41,8 +46,14 @@ public class MongoConnectionFactory {
     }
 
     public void close(){
-        if(mongoClient != null) {
-            mongoClient.close();
+        try{
+            logger.info("Closing connection factory");
+            if(mongoClient != null) {
+                mongoClient.close();
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
+
     }
 }

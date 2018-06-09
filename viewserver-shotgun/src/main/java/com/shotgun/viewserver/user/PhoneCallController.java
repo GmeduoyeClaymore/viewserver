@@ -12,6 +12,7 @@ import io.viewserver.command.ActionParam;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.ITable;
 import io.viewserver.operators.table.KeyedTable;
@@ -59,11 +60,10 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("userPhoneNumber", customerNumber)
                 .addValue("fromUserId", fromUserId)
                 .addValue("toUserId", toUserId)
-                .addValue("version", ColumnHolderUtils.getColumnValue(phoneNumberTable, "version", availablePhoneNumbers.get(0)))
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), customerVirtualNumber).subscribe();
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), customerVirtualNumber,IRecord.UPDATE_LATEST_VERSION).subscribe();
 
         Record driverVirtualNumber = new Record()
                 .addValue("phoneNumber", availablePhoneNumbers.get(1))
@@ -74,7 +74,7 @@ public class PhoneCallController implements OrderTransformationController{
                 .addValue("phoneNumberStatus", PhoneNumberStatuses.ASSIGNED.name())
                 .addValue("assignedTime", now);
 
-        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), driverVirtualNumber).subscribe();
+        iDatabaseUpdater.addOrUpdateRow(TableNames.PHONE_NUMBER_TABLE_NAME, PhoneNumberDataSource.getDataSource().getSchema(), driverVirtualNumber,IRecord.UPDATE_LATEST_VERSION).subscribe();
 
         return availablePhoneNumbers;
     }

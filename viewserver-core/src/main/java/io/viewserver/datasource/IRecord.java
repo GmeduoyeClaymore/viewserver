@@ -30,6 +30,9 @@ import java.util.HashMap;
 
 public interface IRecord {
 
+    public static int UPDATE_LATEST_VERSION = -1;
+    public static int REPLACE_VERSION = -1;
+
     static final Logger logger = LoggerFactory.getLogger(IRecord.class);
 
     String[] getColumnNames();

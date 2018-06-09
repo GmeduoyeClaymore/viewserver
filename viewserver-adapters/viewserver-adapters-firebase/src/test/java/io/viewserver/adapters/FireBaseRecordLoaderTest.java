@@ -52,7 +52,7 @@ public class FireBaseRecordLoaderTest {
                 }
         );
         String report_id = "report_id";
-        tableUpdater.addOrUpdateRow(tableName,config, new Record().addValue("id", report_id).addValue("name","report_name"));
+        tableUpdater.addOrUpdateRow(tableName,config, new Record().addValue("id", report_id).addValue("name","report_name"),null);
         latch.await(10,TimeUnit.SECONDS);
     }
 

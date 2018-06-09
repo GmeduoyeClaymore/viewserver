@@ -33,7 +33,15 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
     @Override
     public void close() {
         if(loaderMap != null){
-            loaderMap.values().forEach(c->c.close());
+            loaderMap.values().forEach(c-> close(c));
+        }
+    }
+
+    private void close(IRecordLoader c) {
+        try {
+            c.close();
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 }

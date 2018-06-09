@@ -34,7 +34,7 @@ public class H2ReportsAndDataSourceRecordLoaderCollection implements IRecordLoad
     @Override
     public void close() {
         if(loaders != null){
-            loaders.values().forEach(c->c.close());
+            loaders.values().forEach(c->c.safeClose());
         }
     }
 }

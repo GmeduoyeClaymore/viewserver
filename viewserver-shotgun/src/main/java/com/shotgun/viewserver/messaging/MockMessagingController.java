@@ -13,6 +13,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.table.KeyedTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public class MockMessagingController implements IMessagingController {
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("fcmToken", token);
-            databaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
+            databaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION).subscribe();
             return userRecord;
         }));
     }

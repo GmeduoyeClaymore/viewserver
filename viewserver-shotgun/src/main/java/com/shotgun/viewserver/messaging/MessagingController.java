@@ -13,6 +13,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -142,9 +143,8 @@ public class MessagingController implements IMessagingController, UserPersistenc
         if(existingUserForToken != null){
             Record userRecord = new Record()
                     .addValue("userId", existingUserForToken)
-                    .addValue("version", getUserForIdSync(userId,User.class).getVersion())
                     .addValue("fcmToken", null);
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION).subscribe();
         }
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
@@ -154,7 +154,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
                     .addValue("userId", userId)
                     .addValue("version", getUserForIdSync(userId,User.class).getVersion())
                     .addValue("fcmToken", token);
-            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord).subscribe();
+            iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION).subscribe();
 
             User user = (User) ControllerContext.get("user");
             if(user.getPendingMessages() != null){
