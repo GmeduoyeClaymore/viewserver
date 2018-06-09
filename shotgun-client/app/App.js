@@ -32,8 +32,8 @@ class App extends React.Component {
   constructor() {
     super();
     registerTokenListener();
-    //this.client = new Client('ws://shotgun.ltd:6060/');
-    this.client = new Client('ws://192.168.0.67:6060/');
+   // this.client = new Client('ws://shotgun.ltd:6060/');
+    this.client = new Client('ws://192.168.0.45:6060/');
     //this.client = new Client('ws://localhost:6060/');
     //this.client = new Client('ws://192.168.0.20:6060/');
     //this.client = new Client('ws://10.5.200.151:6060/');
@@ -92,7 +92,7 @@ class App extends React.Component {
     </ReactNativeModal>,
     <TouchableWithoutFeedback key='root' onPress={() => Keyboard.dismiss()}><Root>
       <StyleProvider style={{...getTheme(shotgun)}}>
-        <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'RegistrationCommon' } {...completeProps}>
+        <ReduxRouter path="/" name="AppRouter" defaultRoute={isLoggedIn ? 'LandingCommon' : 'Partner/Registration' } {...completeProps}>
           <Route path="RegistrationCommon" exact component={RegistrationCommon}/>
           <Route path="Root" exact component={LandingCommon}/>
           <Route path="LandingCommon" exact component={LandingCommon}/>
