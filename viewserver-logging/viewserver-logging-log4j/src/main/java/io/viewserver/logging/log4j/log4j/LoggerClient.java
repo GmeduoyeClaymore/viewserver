@@ -44,9 +44,4 @@ public class LoggerClient extends ViewServerClient {
         return reactor;
     }
 
-    @Override
-    protected ListenableFuture<CommandResult> sendCommand(Command command, boolean requireAuthentication) {
-        command.setSilent(true);
-        return super.sendCommand(command, requireAuthentication);
-    }
 }
