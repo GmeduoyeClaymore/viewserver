@@ -33,15 +33,15 @@ Feature:Cluster scenarios
   @MongoTest
   Scenario: When connecting to incompatable server Successive connections should be equally distributed amongst compatable view servers
     Given a client named "client1" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client2" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client3" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client4" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client5" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
-    Then sleep for 500 millis
+    Then sleep for 1000 millis
     Given a client named "client6" connected to "inproc://master2" with authentication "compatableVersion" and token "1"
     When "client1" subscribed to report "cluster"
     Then "client1" the following data is received eventually on report "cluster"

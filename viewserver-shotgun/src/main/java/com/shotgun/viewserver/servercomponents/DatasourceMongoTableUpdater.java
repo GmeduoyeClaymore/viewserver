@@ -21,15 +21,20 @@ import rx.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.viewserver.core.Utils.toArray;
 
+
+
 public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     public static Executor MongoPersistenceExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("mongo-persistence"));
     private static final Logger logger = LoggerFactory.getLogger(DatasourceMongoTableUpdater.class);
+    private ConcurrentHashMap<TableUpdateKey,Observable<Boolean>> inFlightUpdates = new ConcurrentHashMap<>();
     private ICatalog catalog;
 
     public DatasourceMongoTableUpdater(MongoConnectionFactory connectionFactory, ICatalog catalog) {
@@ -38,22 +43,42 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     }
 
     @Override
-    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+    public synchronized Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record){
+
         KeyedTable table = (KeyedTable) catalog.getOperatorByPath(tableName);
         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
         TableKey tableKey = RecordUtils.getTableKey(record, definition);
+        TableUpdateKey key = new TableUpdateKey(tableName, tableKey);
+
+        Observable<Boolean> inFlightUpdate = this.inFlightUpdates.get(key);
+        if(inFlightUpdate != null){
+            logger.info(String.format("Found in flight update for table %s record %s",table,tableKey));
+            return inFlightUpdate.flatMap(res -> {
+                if(res){
+                    logger.info(String.format("In flight update for table %s record %s completed successfully",table,tableKey));
+                    return addOrUpdateRow(tableName,schemaConfig,record);
+                }else{
+                    String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
+                    logger.info(format);
+                    throw new RuntimeException(format);
+                }
+            });
+        }
+
         DataSourceTableName dsTableName = new DataSourceTableName(tableName);
         Integer versionBeforeUpdate = getVersionBeforeUpdate(table, record, tableKey);
 
         if(logger.isDebugEnabled()) {
             logger.debug("Updatating {} with record {}", table, record.asString());
         }
-        return super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).observeOn(Schedulers.from(MongoPersistenceExecutor)).flatMap(res -> {
-            if(!res){
+        Observable<Boolean> booleanObservable = super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).observeOn(Schedulers.from(MongoPersistenceExecutor)).flatMap(res -> {
+            if (!res) {
                 throw new RuntimeException("Update to record " + tableKey + " has not been acknowleged");
             }
-            return waitForRecordUpdate(tableKey,table, versionBeforeUpdate);
+            return waitForRecordUpdate(tableName,tableKey, table, versionBeforeUpdate);
         });
+        inFlightUpdates.put(key,booleanObservable);
+        return booleanObservable;
     }
 
     private Integer getVersionBeforeUpdate(KeyedTable table, IRecord record, TableKey tableKey) {
@@ -69,12 +94,16 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     }
 
 
-    private Observable<Boolean> waitForRecordUpdate(TableKey tableKey, KeyedTable table, Integer version) {
+    private Observable<Boolean> waitForRecordUpdate(String tableName,TableKey tableKey, KeyedTable table, Integer version) {
         TableKeyDefinition tableKeyDefinition = table.getTableKeyDefinition();
         List<String> fields = new ArrayList<>(tableKeyDefinition.getKeys());
         fields.add("version");
         Observable<OperatorEvent> observable = table.getOutput().observable(toArray(fields, String[]::new));
-        return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(res -> true);
+        return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(
+                res -> {
+                    inFlightUpdates.remove(new TableUpdateKey(tableName,tableKey));
+                    return true;
+                });
     }
 
     private String getMessage(TableKey tableKey, Integer version) {
@@ -107,5 +136,39 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
             }
         }
         return false;
+    }
+
+
+    class TableUpdateKey{
+        private String tableName;
+        private TableKey tableKey;
+
+        public TableUpdateKey(String tableName, TableKey tableKey) {
+            this.tableName = tableName;
+            this.tableKey = tableKey;
+        }
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        public TableKey getTableKey() {
+            return tableKey;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TableUpdateKey that = (TableUpdateKey) o;
+            return Objects.equals(tableName, that.tableName) &&
+                    Objects.equals(tableKey, that.tableKey);
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(tableName, tableKey);
+        }
     }
 }

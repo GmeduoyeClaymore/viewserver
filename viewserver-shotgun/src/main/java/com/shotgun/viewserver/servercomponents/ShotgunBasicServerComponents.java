@@ -132,6 +132,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
                 .addValue("version", -1)
+                .addValue("isMaster", isMaster)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
         updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record).toBlocking().first();
@@ -216,12 +217,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         }
         if(otherServerMaster){
             if(iAmTheServerWithTheLeastConnectionsInTheCluster(url)) {
+                isMaster = true;
                 log.info("{} has detetcted that MASTER {} has died in cluster. I'm becoming the new master",this.clientVersionInfo.getServerEndPoint(), url);
                 IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
                         .addValue("version", -1)
-                        .addValue("isMaster", true);
+                        .addValue("isMaster", isMaster);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record).subscribe();
                 record = new Record()
                         .addValue("url", url)
@@ -274,7 +276,11 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 public void run() {
                     try {
                         log.info("Running - " + runnable);
-                        runnable.run();
+                        if(ShotgunBasicServerComponents.this.isStopped){
+                            log.info("Not running as connection stopped");
+                        }else{
+                            runnable.run();
+                        }
                     } finally {
                         delayedMap.remove(key);
                     }
@@ -283,10 +289,6 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             if (prev != null) {
                 prev.cancel(false);
             }
-        }
-
-        public void shutdown() {
-            connectionCountExecutor.shutdownNow();
         }
     }
 

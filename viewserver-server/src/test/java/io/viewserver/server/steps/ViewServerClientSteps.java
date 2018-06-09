@@ -79,10 +79,12 @@ public class ViewServerClientSteps {
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and token \"([^\"]*)\"$")
     public void a_connected_client_with_authentication(String name, String url, String authName, String token) {
+        int timeout = 30;
         try {
-            clientContext.create(name, url, authName, token).take(1).timeout(10,TimeUnit.SECONDS).toBlocking().first();
+            clientContext.create(name, url, authName, token).take(1).timeout(timeout,TimeUnit.SECONDS).toBlocking().first();
         }catch (Exception ex){
             logger.error("Problem with client authentication",ex);
+            throw new RuntimeException(String.format("Could not get conneted client in %s seconds", timeout));
         }
     }
 

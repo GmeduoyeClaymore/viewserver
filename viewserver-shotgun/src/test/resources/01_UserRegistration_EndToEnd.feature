@@ -122,7 +122,8 @@ Feature: User registration scenarios
 	  | ColumnAdd | Int         | rank                 |
 	Then "client1" the following data is received eventually on report "usersForProduct"
 	  | ~Action | type    | userId                                             |
-	  | RowAdd  | partner | {client2_partnerController_registerPartner_result} |
+	  | RowAdd  | partner | 3ABCD24                                            |
 	  | RowAdd  | partner | 3ABCD23                                            |
 	  | RowAdd  | partner | 3ABCD22                                            |
-	  | RowAdd  | partner | 3ABCD24                                            |
+	  | RowAdd  | partner | {client2_partnerController_registerPartner_result} |
+
