@@ -87,7 +87,7 @@
                         <featureBranchPrefix>feature-</featureBranchPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                        <versionTagPrefix>version-</versionTagPrefix>
+                        <versionTagPrefix></versionTagPrefix>
                     </flowInitContext>
                     <username>paulgraves</username>
                     <password>Awe4Lo55</password>
