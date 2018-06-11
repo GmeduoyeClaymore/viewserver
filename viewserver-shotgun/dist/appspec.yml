@@ -12,9 +12,9 @@ hooks:
   BeforeInstall: ~
   ApplicationStop:
     - location: ./stop_viewserver.sh
-      timeout: 300
+      timeout: 60
       runas: root
   ApplicationStart:
     - location: ./start_viewserver.sh
-      timeout: 300
+      timeout: 60
       runas: root
