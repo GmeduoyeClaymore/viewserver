@@ -1,2 +1,2 @@
 #/bin/bash
-pkill -f *viewserver-shotgun*
+#pkill -f *viewserver-shotgun*
