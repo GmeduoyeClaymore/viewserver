@@ -9,9 +9,9 @@ permissions:
     mode: 555
 hooks:
   BeforeInstall: ~
-  ApplicationStop:
-    - location: stop_viewserver.sh
-      timeout: 3600
+  ApplicationStop: ~
+  #  - location: stop_viewserver.sh
+  #    timeout: 3600
   ApplicationStart:
     - location: start_viewserver.sh
       timeout: 3600
