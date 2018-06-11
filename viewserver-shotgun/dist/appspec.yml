@@ -4,17 +4,20 @@ files:
   - source: /
     destination: /usr/bin/shotgun-viewserver
 permissions:
-  - object: /usr/bin/shotgun-viewserver
-    pattern: *.sh
-    mode: 555
+  - object: /usr/bin/shotgun-viewserver/stop_viewserver.sh
+    mode: 777
+  - object: /usr/bin/shotgun-viewserver/start_viewserver.sh
+    mode: 777
 hooks:
   BeforeInstall: ~
-  ApplicationStop: ~
-  #  - location: stop_viewserver.sh
-  #    timeout: 3600
+  ApplicationStop:
+    - location: stop_viewserver.sh
+      timeout: 3600
+      runas: root
   ApplicationStart:
     - location: start_viewserver.sh
       timeout: 3600
+      runas: root
   #ValidateService:
   #  - location: Scripts/MonitorService.sh
   #    timeout: 3600
