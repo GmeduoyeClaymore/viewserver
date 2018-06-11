@@ -19,12 +19,12 @@
     <parent>
         <artifactId>viewserver-logging</artifactId>
         <groupId>io.viewserver</groupId>
-     <version>1.0.7-SNAPSHOT</version>
+     <version>1.0.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-logging-log4j</artifactId>
- <version>1.0.7-SNAPSHOT</version>
+ <version>1.0.8-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
