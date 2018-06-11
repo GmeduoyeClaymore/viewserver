@@ -92,7 +92,7 @@
                     <username>paulgraves</username>
                     <password>Awe4Lo55</password>
                     <noDeploy>true</noDeploy>
-                    <squash>true</squash>
+                    <!--<squash>true</squash>-->
                     <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
                 </configuration>
             </plugin>
