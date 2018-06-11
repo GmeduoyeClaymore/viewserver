@@ -20,7 +20,7 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
- <version>1.0.0</version>
+ <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/shotgunsolutions/shotgun-viewserver.git</connection>
@@ -87,12 +87,12 @@
                         <featureBranchPrefix>feature-</featureBranchPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                        <versionTagPrefix>version-</versionTagPrefix>
+                        <versionTagPrefix />
                     </flowInitContext>
                     <username>paulgraves</username>
                     <password>Awe4Lo55</password>
                     <noDeploy>true</noDeploy>
-                    <squash>true</squash>
+                    <!--<squash>true</squash>-->
                     <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
                 </configuration>
             </plugin>
