@@ -4,7 +4,8 @@ files:
   - source: /
     destination: /usr/bin/shotgun-viewserver
 hooks:
- ApplicationStop:
+  BeforeInstall: ~
+  ApplicationStop:
     - location: stop_viewserver.sh
       timeout: 3600
   ApplicationStart:
