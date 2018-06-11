@@ -96,6 +96,8 @@
                     <tagMessage>${version}</tagMessage>
                     <!--<squash>true</squash>-->
                     <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <noDeploy>true</noDeploy>
                 </configuration>
             </plugin>
             <plugin>
