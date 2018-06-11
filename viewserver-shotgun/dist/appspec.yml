@@ -4,9 +4,8 @@ files:
   - source: /
     destination: /usr/bin/shotgun-viewserver
 permissions:
-  - object: /usr/bin/shotgun-viewserver/stop_viewserver.sh
-    mode: 555
-  - object: /usr/bin/shotgun-viewserver/start_viewserver.sh
+  - object: /usr/bin/shotgun-viewserver
+    pattern: *.sh
     mode: 555
 hooks:
   BeforeInstall: ~
