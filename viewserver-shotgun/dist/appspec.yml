@@ -1,0 +1,16 @@
+version: 1.0
+os: linux
+files:
+  - source: /
+    destination: /usr/bin/shotgun-viewserver
+hooks:
+ ApplicationStop:
+    - location: stop_viewserver.sh
+      timeout: 3600
+  ApplicationStart:
+    - location: start_viewserver.sh
+      timeout: 3600
+  #ValidateService:
+  #  - location: Scripts/MonitorService.sh
+  #    timeout: 3600
+  #    runas: codedeployuser
