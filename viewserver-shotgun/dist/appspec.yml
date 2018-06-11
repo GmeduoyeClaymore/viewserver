@@ -11,11 +11,11 @@ permissions:
 hooks:
   BeforeInstall: ~
   ApplicationStop:
-    - location: stop_viewserver.sh
+    - location: ./stop_viewserver.sh
       timeout: 3600
       runas: root
   ApplicationStart:
-    - location: start_viewserver.sh
+    - location: ./start_viewserver.sh
       timeout: 3600
       runas: root
   #ValidateService:
