@@ -8,9 +8,11 @@ hooks:
   ApplicationStop:
     - location: stop_viewserver.sh
       timeout: 3600
+      runas: root
   ApplicationStart:
     - location: start_viewserver.sh
       timeout: 3600
+      runas: root
   #ValidateService:
   #  - location: Scripts/MonitorService.sh
   #    timeout: 3600
