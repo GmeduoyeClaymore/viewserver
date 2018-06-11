@@ -92,6 +92,8 @@
                     <username>paulgraves</username>
                     <password>Awe4Lo55</password>
                     <noDeploy>true</noDeploy>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <tagMessage>${version}</tagMessage>
                     <!--<squash>true</squash>-->
                     <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
                 </configuration>
