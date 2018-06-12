@@ -1,4 +1,7 @@
 #! /bin/bash
-cd /usr/bin/shotgun-viewserver
-pkill -f *viewserver-shotgun*
+if cd /usr/bin/shotgun-viewserver &> /dev/null;
+then
+    pkill -f *viewserver-shotgun*
+    echo "killed process"
+fi
 
