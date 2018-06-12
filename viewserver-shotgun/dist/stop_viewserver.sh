@@ -1,4 +1,4 @@
 #! /bin/bash
-cd /usr/bin/shotgun-viewserver
+cd /usr/bin
 pkill -f *viewserver-shotgun*
 

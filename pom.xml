@@ -89,11 +89,7 @@
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
                         <versionTagPrefix />
                     </flowInitContext>
-                    <username>paulgraves</username>
-                    <password>Awe4Lo55</password>
-                    <noDeploy>true</noDeploy>
                     <useReleaseProfile>false</useReleaseProfile>
-                    <!--<squash>true</squash>-->
                     <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <noDeploy>true</noDeploy>
