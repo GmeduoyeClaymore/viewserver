@@ -5,7 +5,7 @@
         <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
     </Console>
     <RollingFile name="DailyInfoLog" fileName="logs/shotgun-info.log" filePattern="logs/shotgun-info-%d{yyyy-MM-dd}_%i.log">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
+        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
         <Policies>
             <OnStartupTriggeringPolicy />
             <SizeBasedTriggeringPolicy size="100 MB" />
@@ -13,7 +13,7 @@
         </Policies>
     </RollingFile>
     <RollingFile name="DailyErrorLog" fileName="logs/shotgun-error.log" filePattern="logs/shotgun-error-%d{yyyy-MM-dd}_%i.log">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
+        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
         <Policies>
             <OnStartupTriggeringPolicy />
             <SizeBasedTriggeringPolicy size="100 MB" />
