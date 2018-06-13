@@ -3,12 +3,12 @@
     <parent>
         <groupId>io.viewserver</groupId>
         <artifactId>viewserver-engine</artifactId>
-     <version>1.0.22-SNAPSHOT</version>
+     <version>1.0.21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-shotgun</artifactId>
- <version>1.0.22-SNAPSHOT</version>
+ <version>1.0.21</version>
 
     <repositories>
     </repositories>
@@ -82,62 +82,62 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-server</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-core</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-csv</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-h2</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-firebase</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-mongo</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-common</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-client</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-messages-protobuf</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-sql</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-messages-common</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
         </dependency>
 
         <dependency>
@@ -185,7 +185,7 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-server</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-core</artifactId>
-         <version>1.0.22-SNAPSHOT</version>
+         <version>1.0.21</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
