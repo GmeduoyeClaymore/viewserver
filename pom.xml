@@ -20,16 +20,17 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+ <version>1.0.0</version>
     <packaging>pom</packaging>
     <scm>
-        <connection>scm:git:https://claymoreminds/viewserver.git</connection>
+        <connection>scm:git:https://github.com/shotgunsolutions/shotgun-viewserver.git</connection>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
         <slf4j.version>1.7.7</slf4j.version>
         <log4j.version>2.0.2</log4j.version>
-        <cukes.version>LATEST</cukes.version>
+        <cukes.version>1.2.5</cukes.version>
     </properties>
 
     <modules>
@@ -75,6 +76,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>development</developBranchName>
+                        <featureBranchPrefix>feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                        <versionTagPrefix>version-</versionTagPrefix>
+                    </flowInitContext>
+                    <username>paulgraves</username>
+                    <password>Awe4Lo55</password>
+                    <noDeploy>true</noDeploy>
+                    <squash>true</squash>
+                    <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

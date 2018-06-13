@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>io.viewserver</groupId>
         <artifactId>viewserver-engine</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+     <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-shotgun</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+ <version>1.0.0</version>
 
     <repositories>
     </repositories>
@@ -84,62 +82,62 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-server</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-core</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-csv</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-h2</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-firebase</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-mongo</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-client</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-messages-protobuf</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-sql</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-messages-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -187,7 +185,7 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-server</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -202,7 +200,7 @@
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-core</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+         <version>1.0.0</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
