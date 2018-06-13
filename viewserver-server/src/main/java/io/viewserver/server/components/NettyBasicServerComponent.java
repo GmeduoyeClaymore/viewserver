@@ -72,6 +72,7 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
     }
 
     public void listen() {
+        log.info("MILESTONE: Calling server listen");
         endpointList.forEach(serverNetwork::listen);
     }
 

@@ -102,8 +102,8 @@ public class ViewServerClientContext {
                             }else{
                                 log.info("Client not authenticated no alternative found aborting");
                             }
-                        }catch (Exception ex2){
-                           log.error("Problem with authenttion",ex2);
+                        }catch (Throwable ex2){
+                           log.error("Problem with authention",err);
                         }
                         return Observable.error(new AuthenticationException(err.getMessage()));
                     },

@@ -23,13 +23,16 @@ public class MongoConnectionFactory {
         this.databaseName = databaseName;
     }
 
-    private void createConnection() {
+    private synchronized void createConnection() {
         try {
+            if(database != null){
+                return;
+            }
             logger.info("Creating connection");
             CodecRegistry defaultCodecRegistry = MongoClient.getDefaultCodecRegistry();
             MongoCodecProvider myCodecProvider = new MongoCodecProvider();
             CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(myCodecProvider), defaultCodecRegistry);;
-            mongoClient = new MongoClient( new MongoClientURI(clientURI, new MongoClientOptions.Builder().codecRegistry(codecRegistry)));
+            mongoClient = new MongoClient( new MongoClientURI(clientURI, new MongoClientOptions.Builder().socketTimeout(Integer.MAX_VALUE).codecRegistry(codecRegistry)));
             database = mongoClient.getDatabase(databaseName);
 
         }catch(Exception ex){

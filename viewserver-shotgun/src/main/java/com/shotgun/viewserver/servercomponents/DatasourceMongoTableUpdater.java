@@ -13,9 +13,11 @@ import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.util.dynamic.NamedThreadFactory;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.functions.FuncN;
 import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         TableUpdateKey key = new TableUpdateKey(tableName, tableKey);
         DataSourceTableName dsTableName = new DataSourceTableName(tableName);
 
+        if(!anyFieldsHaveChanged(record,tableKey,table)){
+            return Observable.just(true);
+        }
+
         Observable<Boolean> inFlightUpdate = this.inFlightUpdates.get(key);
         if(inFlightUpdate != null){
             logger.info(String.format("Found in flight update for table %s record %s",table,tableKey));
@@ -70,6 +76,23 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
 
 
         return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
+    }
+
+    private boolean anyFieldsHaveChanged(IRecord record, TableKey key, KeyedTable table) {
+        for(String field : record.getColumnNames()){
+            Object recordValue = record.getValue(field);
+            Object columnValue = ColumnHolderUtils.getColumnValue(table, field,key);
+            if(recordValue == null && columnValue == null){
+                continue;
+            }
+            if(recordValue == null || columnValue == null){
+                return true;
+            }
+            if(!recordValue.equals(ConvertUtils.convert(columnValue,recordValue.getClass()))){
+                return true;
+            }
+        }
+        return false;
     }
 
     private Observable<Boolean> getBooleanObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName, Integer version) {
@@ -105,7 +128,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         List<String> fields = new ArrayList<>(tableKeyDefinition.getKeys());
         fields.add("version");
         Observable<OperatorEvent> observable = table.getOutput().observable(toArray(fields, String[]::new));
-        return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(
+         return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, isStopped ? Observable.empty() : Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(
                 res -> {
                     inFlightUpdates.remove(new TableUpdateKey(tableName,tableKey));
                     return true;
@@ -144,6 +167,18 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         return false;
     }
 
+
+    @Override
+    public void stop() {
+        try {
+            if (inFlightUpdates.size() > 0) {
+                Observable.zip(inFlightUpdates.values(), objects -> null).take(1).timeout(10, TimeUnit.SECONDS).toBlocking().first();
+            }
+        }catch (Exception ex){
+            logger.error(ex.getMessage());
+        }
+        super.stop();
+    }
 
     class TableUpdateKey{
         private String tableName;

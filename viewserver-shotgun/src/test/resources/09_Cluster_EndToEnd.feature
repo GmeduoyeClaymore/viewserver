@@ -80,7 +80,7 @@ Feature:Cluster scenarios
     Given a client named "client5" connected to "inproc://master3,inproc://master1" with authentication "compatableVersion" and token "1"
     Given a client named "client6" connected to "inproc://master3,inproc://master1" with authentication "compatableVersion" and token "1"
     And Shotgun viewserver with url "inproc://master1" is killed
-    And sleep for 10000 millis
+    And sleep for 15000 millis
     When "client6" subscribed to report "cluster"
     Then "client6" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster | isOffline |

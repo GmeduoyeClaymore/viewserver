@@ -164,7 +164,7 @@ public abstract class PeerSession implements IPeerSession {
             for (int i = 0; i < count; i++) {
                 try {
                     disconnectionHandlersCopy.get(i).handleDisconnect(this);
-                }catch (Exception ex){
+                }catch (Throwable ex){
                     log.error(String.format("Problem firing disconnection  - %s",ex.getMessage()));
                 }
             }
@@ -258,7 +258,11 @@ public abstract class PeerSession implements IPeerSession {
         authenticationHandlers.clear();
         disconnectionHandlers.clear();
 
-        channel.close();
+        try {
+            channel.close();
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+        }
     }
 
     public interface IDisconnectionHandler {

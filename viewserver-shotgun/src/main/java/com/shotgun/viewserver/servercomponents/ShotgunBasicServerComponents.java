@@ -99,6 +99,8 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     @Override
     public void stop() {
         this.isStopped = true;
+        IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+        updater.stop();
         super.stop();
         if(connectionCountSubscription != null){
             connectionCountSubscription.unsubscribe();
@@ -122,7 +124,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             else{
                 log.info("Modifying connection count as session removed - {}", sessionCount);
             }
-            this.debouncer.debounce("recalculateConnectionCount", () -> recalculateConnectionCount(sessionCount),100,TimeUnit.MILLISECONDS);
+            debouncer.debounce("connectionCount",() -> this.recalculateConnectionCount(sessionCount), 50, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -131,11 +133,11 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
+                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
                 .addValue("isMaster", isMaster)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).toBlocking().first();
-        log.info("No connections modified to - {}",sessionCount);
+        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).subscribeOn(Schedulers.from(connectionCountExecutor)).subscribe((res) -> log.info("No connections modified to - {}",sessionCount));
     }
 
     private int getNonClusterConnections() {
@@ -175,6 +177,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 .addValue("isOffline", false)
                 .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+        log.info("MILESTONE: Attempting to update cluster before calling server listen");
         updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
         .subscribe(c-> super.listen());
 
@@ -221,6 +224,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
+                        .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
                         .addValue("isMaster", isMaster);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()

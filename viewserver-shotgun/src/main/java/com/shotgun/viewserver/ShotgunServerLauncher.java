@@ -23,6 +23,8 @@ import io.viewserver.server.setup.IApplicationGraphDefinitions;
 import io.viewserver.server.setup.IApplicationSetup;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +36,8 @@ import static com.shotgun.viewserver.PropertyUtils.loadProperties;
 
 public class  ShotgunServerLauncher{
     HashMap<String,Predicate<MutablePicoContainer>> ENVIRONMENT_CONFIGURATIONS = new HashMap<>();
+
+    private static final Logger log = LoggerFactory.getLogger(ShotgunServerLauncher.class);
     //private BasicServer server;
     private List<BasicServer> servers = new ArrayList<>();
 
@@ -189,8 +193,13 @@ public class  ShotgunServerLauncher{
         }
 
         BasicServer server = container.getComponent(BasicServer.class);
+
+        log.info("MILESTONE: Kicking off basic server {}",System.getProperty("server.endpoint"));
+
         server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));
         server.start();
+
+        log.info("MILESTONE: Kicked off basic server {}",System.getProperty("server.endpoint"));
         this.servers.add(server);
         ExecutionContext.blockThreadAssertion  = false;
     }
