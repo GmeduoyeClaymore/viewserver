@@ -14,6 +14,7 @@ import io.viewserver.datasource.IRecord;
 import io.viewserver.network.IEndpoint;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.SessionManager;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.rx.EventType;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -162,21 +164,28 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
     @Override
     public void listen() {
-        KeyedTable clusterTable = (KeyedTable) this.getCatalog().getOperatorByPath(TableNames.CLUSTER_TABLE_NAME);
-        if(clusterTable == null){
-            throw new RuntimeException("Cannot listen as cannot find load balancer table");
-        }
-        clusterTable.getOutput().observable().subscribe( ev -> trackOtherServerInCluster(ev));
-        IRecord record = new Record()
-                .addValue("url",clientVersionInfo.getServerEndPoint())
-                .addValue("version", -1)
-                .addValue("isMaster", isMaster)
-                .addValue("isOffline", false)
-                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
-        IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        log.info("MILESTONE: Attempting to update cluster before calling server listen");
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
-        .subscribe(c-> super.listen());
+        Observable<IOperator> clusterTableObservable = this.getCatalog().waitForOperatorAtThisPath(TableNames.CLUSTER_TABLE_NAME);
+        log.info("MILESTONE: Waiting for cluster table");
+        clusterTableObservable.subscribe(
+                iOperator -> {
+                    log.info("MILESTONE: Got cluster table");
+                    KeyedTable clusterTable = (KeyedTable)iOperator;
+                    if(clusterTable == null){
+                        throw new RuntimeException("Cannot listen as cannot find load balancer table");
+                    }
+                    clusterTable.getOutput().observable().subscribe( ev -> trackOtherServerInCluster(ev));
+                    IRecord record = new Record()
+                            .addValue("url",clientVersionInfo.getServerEndPoint())
+                            .addValue("version", -1)
+                            .addValue("isMaster", isMaster)
+                            .addValue("isOffline", false)
+                            .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
+                    IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+                    log.info("MILESTONE: Attempting to update cluster before calling server listen");
+                    updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
+                            .subscribe(c-> ShotgunBasicServerComponents.super.listen());
+                }
+        );
 
     }
 
