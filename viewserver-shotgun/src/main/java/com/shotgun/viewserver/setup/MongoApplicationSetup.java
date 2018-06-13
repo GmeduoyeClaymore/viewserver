@@ -35,10 +35,8 @@ public class MongoApplicationSetup implements IApplicationSetup {
             recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
             recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
-            recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
-        }else{
-            delete(db, ClusterDataSource.NAME);
         }
+
         delete(db, UserDataSource.NAME);
         delete(db, PaymentDataSource.NAME);
         delete(db, MessagesDataSource.NAME);
