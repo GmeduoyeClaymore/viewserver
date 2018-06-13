@@ -154,9 +154,6 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         return noConnections;
     }
 
-    private boolean isAnotherServerInCluster(IPeerSession c) {
-        return c.getCatalogName().startsWith("serverConnectionWatcher_");
-    }
 
     private ICatalog getCatalog() {
         return this.serverNetwork.getSessionManager().getCatalog();
