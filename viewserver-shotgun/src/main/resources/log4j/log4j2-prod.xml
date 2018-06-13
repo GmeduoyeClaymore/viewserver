@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="OFF">
 <appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
-    </Console>
-    <RollingFile name="DailyInfoLog" fileName="logs/shotgun-info.log" filePattern="logs/shotgun-info-%d{yyyy-MM-dd}_%i.log">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
+    <RollingFile name="DailyLog" fileName="logs/shotgun.log" filePattern="logs/shotgun-%d{yyyy-MM-dd}_%i.log">
+        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
         <Policies>
-            <OnStartupTriggeringPolicy />
             <SizeBasedTriggeringPolicy size="100 MB" />
             <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
         </Policies>
     </RollingFile>
     <RollingFile name="DailyErrorLog" fileName="logs/shotgun-error.log" filePattern="logs/shotgun-error-%d{yyyy-MM-dd}_%i.log">
-        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
+        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] [%X{userName}] %-5level %logger{36} - %msg%n" />
         <Policies>
-            <OnStartupTriggeringPolicy />
             <SizeBasedTriggeringPolicy size="100 MB" />
             <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
         </Policies>
@@ -23,8 +18,7 @@
 </appenders>
 <Loggers>
     <Root level="info">
-        <AppenderRef ref="Console" level="info"/>
-        <AppenderRef ref="DailyInfoLog" level="info"/>
+        <AppenderRef ref="DailyLog" level="info"/>
         <AppenderRef ref="DailyErrorLog" level="error"/>
     </Root>
     <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>

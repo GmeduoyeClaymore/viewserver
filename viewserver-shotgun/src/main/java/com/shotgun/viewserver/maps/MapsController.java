@@ -115,7 +115,8 @@ public class MapsController implements IMapsController {
                 ArrayList<String> types = (ArrayList<String>) p.get("types");
                 String placeId = p.containsKey("place_id") ? (String) p.get("place_id") : null;
 
-                return !placeId.isEmpty() && (types.contains("street_address") || types.contains("postal_code"));
+                return !placeId.isEmpty() &&
+                (types.contains("street_address") || types.contains("postal_code") || types.contains("route") || types.contains("establishment"));
             }).collect(Collectors.toList());
 
             response.put("predictions", filteredPredictions);
