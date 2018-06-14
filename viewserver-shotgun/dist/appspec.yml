@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /usr/bin/shotgun-viewserver
+permissions:
+  - object: /usr/bin/shotgun-viewserver/stop_viewserver.sh
+    mode: 777
+  - object: /usr/bin/shotgun-viewserver/start_viewserver.sh
+    mode: 777
+hooks:
+  BeforeInstall: ~
+  ApplicationStop:
+    - location: ./stop_viewserver.sh
+      timeout: 60
+      runas: root
+  ApplicationStart:
+    - location: ./start_viewserver.sh
+      timeout: 60
+      runas: root
