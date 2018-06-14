@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
@@ -86,19 +88,28 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     @Override
     //be careful when using this it will start spamming alot of objects if you subscribe
     public Observable<OperatorEvent>  observable(IRowFlags flags){
-        Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
-            try{
-                IRowSequence rows = (this.getAllRows());
-                while(rows.moveNext()){
-                    HashMap<String, Object> rowDetails = getRowDetails(getProducer(), rows.getRowId(), flags);
-                    subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
+        Observable<OperatorEvent> snapshot =  Observable.create(new Action1<Emitter<OperatorEvent>>() {
+            Subscription subscription = null;
+            @Override
+            public void call(Emitter<OperatorEvent> subscriber) {
+                try {
+                    IRowSequence rows = (OutputBase.this.getAllRows());
+                    this.subscription = subject.subscribe(el -> subscriber.onNext(el), err -> subscriber.onError(err), () ->{
+                        subscriber.onCompleted();
+                        subscription.unsubscribe();
+                    });
+                    while (rows.moveNext()) {
+                        HashMap<String, Object> rowDetails = getRowDetails(OutputBase.this.getProducer(), rows.getRowId(), flags);
+                        subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
+                    }
+                } catch (Exception ex) {
+                    subscriber.onError(ex);
                 }
-                subscriber.onCompleted();
-            }catch (Exception ex){
-                subscriber.onError(ex);
-            }}, Emitter.BackpressureMode.BUFFER);
+            }
 
-        return Observable.concat(snapshot,subject.onBackpressureBuffer(100));
+        }, Emitter.BackpressureMode.BUFFER);
+
+        return snapshot;
     }
 
 
