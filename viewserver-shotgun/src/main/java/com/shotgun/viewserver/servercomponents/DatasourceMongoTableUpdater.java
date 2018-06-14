@@ -135,9 +135,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     }
 
     private String getMessage(TableKey tableKey, Integer version) {
-        String s = "Unable to detect update to record " + tableKey + " version " + version + " after 5 seconds";
-        logger.error(s);
-        return s;
+        return "Unable to detect update to record " + tableKey + " version " + version + " after 5 seconds";
     }
 
     private Boolean filterForVersionUpdate(OperatorEvent ev,String path, TableKey tableKey, Integer version, TableKeyDefinition tableKeyDefinition) {
