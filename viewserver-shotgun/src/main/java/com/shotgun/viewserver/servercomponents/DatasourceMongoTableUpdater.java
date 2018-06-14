@@ -34,7 +34,6 @@ import static io.viewserver.core.Utils.toArray;
 
 
 public class DatasourceMongoTableUpdater extends MongoTableUpdater {
-    public static Executor MongoPersistenceExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("mongo-persistence"));
     private static final Logger logger = LoggerFactory.getLogger(DatasourceMongoTableUpdater.class);
     private ConcurrentHashMap<TableUpdateKey,Observable<Boolean>> inFlightUpdates = new ConcurrentHashMap<>();
     private ICatalog catalog;
@@ -101,7 +100,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         if(logger.isDebugEnabled()) {
             logger.debug("Updatating {} with record {}", table, record.asString());
         }
-        Observable<Boolean> booleanObservable = super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).observeOn(Schedulers.from(MongoPersistenceExecutor)).flatMap(res -> {
+        Observable<Boolean> booleanObservable = super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).flatMap(res -> {
             if (!res) {
                 throw new RuntimeException("Update to record " + tableKey + " has not been acknowleged");
             }

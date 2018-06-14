@@ -86,8 +86,6 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     @Override
     //be careful when using this it will start spamming alot of objects if you subscribe
     public Observable<OperatorEvent>  observable(IRowFlags flags){
-
-
         Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
             try{
                 IRowSequence rows = (this.getAllRows());
