@@ -33,6 +33,7 @@ public interface AppMessage extends DynamicJsonBackedObject {
         customNotificationBody.put("big_picture", getPicture());
         customNotificationBody.put("click_action", getAction());
         customNotificationBody.put("icon", "ic_notif");
+        customNotificationBody.put("color", "#00aeb4");
         customNotificationBody.put("priority", getPriority());
         customNotificationBody.put("show_in_foreground", true);
 
