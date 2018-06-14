@@ -541,7 +541,7 @@ public class ViewServerClientSteps {
                 throw ex;
             }
             try {
-                Thread.sleep(delay);
+                Thread.sleep(delay );
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

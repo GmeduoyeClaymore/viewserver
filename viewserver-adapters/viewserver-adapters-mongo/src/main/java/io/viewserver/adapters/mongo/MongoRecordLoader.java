@@ -129,7 +129,7 @@ public class MongoRecordLoader implements IRecordLoader{
                     receiveDocument(document);
                 });
             }
-            ready.onNext(null);
+            ready.onNext(new Object());
             ChangeStreamIterable<Document> changeStreamDocuments;
             if(resumeToken !=null){
                 changeStreamDocuments = getCollection().watch().resumeAfter(resumeToken);

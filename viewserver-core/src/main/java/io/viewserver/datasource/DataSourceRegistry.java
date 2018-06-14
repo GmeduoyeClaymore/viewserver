@@ -58,6 +58,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     private final CatalogHolder catalogHolder;
     private ReplaySubject<IDataSource> registered = ReplaySubject.create();
     private ReplaySubject<IDataSource> statusChanged = ReplaySubject.create();
+    private ReplaySubject<Boolean> allBuilt = ReplaySubject.create(1);
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceRegistry.class);
 
@@ -82,6 +83,24 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         setAllowDataReset(true);
         initialise(8);
         register();
+
+        this.registered.subscribe(reg -> recalutateAllBuilt());
+        this.statusChanged.subscribe(reg -> recalutateAllBuilt());
+    }
+
+    private void recalutateAllBuilt() {
+        Collection<IDataSource> all = getAll();
+        if(all.isEmpty()){
+            this.allBuilt.onNext(false);
+            return;
+        }
+
+        for(IDataSource dataSource : all){
+            if(!getStatus(dataSource.getName()).equals(DataSourceStatus.INITIALIZED)){
+                this.allBuilt.onNext(false);
+            }
+        }
+        this.allBuilt.onNext(true);
     }
 
     public static SchemaConfig getConfig() {
@@ -105,6 +124,10 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
     @Override
     public Observable<IDataSource> getStatusChanged() {
         return statusChanged.observeOn(RxUtils.executionContextScheduler(this.executionContext,0));
+    }
+    @Override
+    public Observable<Boolean> getAllBuilt() {
+        return allBuilt.observeOn(RxUtils.executionContextScheduler(this.executionContext,0));
     }
 
     protected static TableKeyDefinition getTableKeyDefinitions() {
@@ -168,7 +191,6 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
         log.info(String.format("Updated data source %s with row %s to status %s",name,rowId,status.toString()));
         this.statusChanged.onNext(get(name));
     }
-
 
     @Override
     public DataSourceStatus getStatus(String name) {
