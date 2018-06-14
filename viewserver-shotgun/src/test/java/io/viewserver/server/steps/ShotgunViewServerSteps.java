@@ -25,14 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ShotgunViewServerSteps {
 
-    private ViewServerClientContext clientContext;
     private static int runCount = 0;
     private HashMap<String,TestServer> launcherHashMap = new HashMap<>();
 
-    private List<Thread> threads = new ArrayList<>();
-
-    public ShotgunViewServerSteps(ViewServerClientContext clientContext) {
-        this.clientContext = clientContext;
+    public ShotgunViewServerSteps() {
     }
 
 
