@@ -127,7 +127,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         List<String> fields = new ArrayList<>(tableKeyDefinition.getKeys());
         fields.add("version");
         Observable<OperatorEvent> observable = table.getOutput().observable(toArray(fields, String[]::new));
-         return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, isStopped ? Observable.empty() : Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(
+         return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).timeout(5, TimeUnit.SECONDS, isStopped ? Observable.empty() : Observable.error(new RuntimeException(getMessage(tableKey, version)))).take(1).map(
                 res -> {
                     inFlightUpdates.remove(new TableUpdateKey(tableName,tableKey));
                     return true;
