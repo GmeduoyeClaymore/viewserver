@@ -135,7 +135,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleAdd(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling Add - " +row);
+            log.debug("RX Subject Handling Add - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),row,null)));
         }
     }
@@ -153,7 +153,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling UPDATE - " +row);
+            log.debug("RX Subject Handling UPDATE - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(), row, new IRowFlags() {
                 @Override
                 public boolean isDirty(int columnId) {
@@ -171,7 +171,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleRemove(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling REMOVE - " +row);
+            log.debug("RX Subject Handling REMOVE - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_REMOVE,getRowDetails(getProducer(),row,null)));
         }
     }
@@ -295,7 +295,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
         getCurrentChanges().handleStatus(Status.SchemaReset);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling reset schema");
+            log.debug("RX Subject Handling reset schema");
             subject.onNext(new OperatorEvent(EventType.SCHEMA_RESET,null));
         }
     }
@@ -310,8 +310,9 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     public void resetData() {
 
         getCurrentChanges().handleStatus(Status.DataReset);
+        getCurrentChanges().handleStatus(Status.DataReset);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling reset DATA");
+            log.debug("RX Subject Handling reset DATA");
             subject.onNext(new OperatorEvent(EventType.DATA_RESET,null));
         }
     }

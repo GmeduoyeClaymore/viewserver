@@ -25,7 +25,7 @@ public class MongoConnectionFactory {
 
     private void createConnection() {
         try {
-            logger.info("Creating connection");
+            logger.debug("Creating connection");
             CodecRegistry defaultCodecRegistry = MongoClient.getDefaultCodecRegistry();
             MongoCodecProvider myCodecProvider = new MongoCodecProvider();
             CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(myCodecProvider), defaultCodecRegistry);;
@@ -47,7 +47,7 @@ public class MongoConnectionFactory {
 
     public void close(){
         try{
-            logger.info("Closing connection factory");
+            logger.debug("Closing connection factory");
             if(mongoClient != null) {
                 mongoClient.close();
             }

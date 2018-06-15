@@ -114,13 +114,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         if(operatorEvent.getEventType().equals(EventType.ROW_ADD) || operatorEvent.getEventType().equals(EventType.ROW_REMOVE) || operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
             int sessionCount = getNonClusterConnections();
             if(operatorEvent.getEventType().equals(EventType.ROW_ADD)){
-                log.info("Modifying connection count as session added - {}", sessionCount);
+                log.debug("Modifying connection count as session added - {}", sessionCount);
             }
             else if(operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
-                log.info("Modifying connection count as session updated - {}", sessionCount);
+                log.debug("Modifying connection count as session updated - {}", sessionCount);
             }
             else{
-                log.info("Modifying connection count as session removed - {}", sessionCount);
+                log.debug("Modifying connection count as session removed - {}", sessionCount);
             }
             this.debouncer.debounce("recalculateConnectionCount", () -> recalculateConnectionCount(sessionCount),100,TimeUnit.MILLISECONDS);
         }
@@ -128,14 +128,14 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
 
     private void recalculateConnectionCount(int sessionCount) {
-        log.info("No connections is - {}",sessionCount);
+        log.debug("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
                 .addValue("isMaster", isMaster)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
         updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).toBlocking().first();
-        log.info("No connections modified to - {}",sessionCount);
+        log.debug("No connections modified to - {}",sessionCount);
     }
 
     private int getNonClusterConnections() {
@@ -145,7 +145,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         while(rows.moveNext()){
             String authenticationToken = (String) ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.USERTYPE_COLUMN),rows.getRowId());
             if(authenticationToken != null){
-                log.info("Detected connection - {}", ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.SESSIONID_COLUMN),rows.getRowId()));
+                log.debug("Detected connection - {}", ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.SESSIONID_COLUMN),rows.getRowId()));
                 noConnections++;
             }
         }
@@ -188,7 +188,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 //this is me
                 return;
             }
-            log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), url);
+            log.debug("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), url);
             ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(url,this.clientVersionInfo);
             this.watchers.add(watcher);
             this.subscriptions.add(watcher.waitForDeath().subscribe(c-> onOtherServerDies(watcher,c,url)));
@@ -267,14 +267,14 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
          * or cancels its execution if the method is called with the same key within the {@code delay} again.
          */
         public void debounce(final Object key, final Runnable runnable, long delay, TimeUnit unit) {
-            log.info("Scheduled - " + runnable);
+            log.debug("Scheduled - " + runnable);
             final Future<?> prev = delayedMap.put(key, connectionCountExecutor.schedule(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        log.info("Running - " + runnable);
+                        log.debug("Running - " + runnable);
                         if(ShotgunBasicServerComponents.this.isStopped){
-                            log.info("Not running as connection stopped");
+                            log.debug("Not running as connection stopped");
                         }else{
                             runnable.run();
                         }

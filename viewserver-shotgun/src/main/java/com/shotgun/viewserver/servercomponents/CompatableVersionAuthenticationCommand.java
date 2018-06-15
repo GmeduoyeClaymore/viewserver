@@ -54,11 +54,11 @@ public class CompatableVersionAuthenticationCommand implements IAuthenticationHa
             HashMap result = new HashMap();
             if(alternativeUrl == null){
                 String format = String.format("Client version %s is not compatable with server verison %s and could not find alternative", String.join(",", compatableVersions), versionInfo.getCompatableClientVersion());
-                log.info(format);
+                log.debug(format);
                 result.put("message", format);
             }else{
                 String format = String.format("Client version %s is not compatable with server verison %s and found alternative %s", String.join(",", compatableVersions), versionInfo.getCompatableClientVersion(),alternativeUrl);
-                log.info(format);
+                log.debug(format);
                 result.put("alternative",alternativeUrl);
             }
             throw new RuntimeException(ControllerUtils.toString(result));
