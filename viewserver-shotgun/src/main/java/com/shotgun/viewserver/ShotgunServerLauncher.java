@@ -114,12 +114,15 @@ public class  ShotgunServerLauncher{
     private static boolean ConfigureForProdEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,false, false);
     }
+
     private static boolean ConfigureForStagingEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,true, false);
+        return ConfigureForRealEnvironment(container,false, false);
     }
+
     private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,true, true);
     }
+
     private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending, boolean doMockPaymentController) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
