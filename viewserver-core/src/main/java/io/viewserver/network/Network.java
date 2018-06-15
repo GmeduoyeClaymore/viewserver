@@ -56,8 +56,6 @@ public class Network implements PeerSession.IDisconnectionHandler {
     private final INetworkAdapter networkAdapter;
     private boolean disconnectOnTimeout = true;
     private int timeoutInterval = 5000;
-    private int heartbeatInterval = 1000;
-
     private int heartBeatInterval = timeoutInterval / 2;
     private PublishSubject<IChannel> channelsConnected;
     private PublishSubject<IChannel> channelsDisconnected;
@@ -471,7 +469,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
     }
 
     public void setHeartbeatInterval(int heartbeatInterval) {
-        this.heartbeatInterval = heartbeatInterval;
+        this.heartBeatInterval = heartbeatInterval;
     }
 
     private class HeartbeatTask implements Runnable {
@@ -493,7 +491,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long now = System.currentTimeMillis();
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
-                log.debug("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
+                log.info("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
                 if (peerSession instanceof ServerToClientSession) {
                     if (lastPing > -1 && now - lastPing > (timeoutInterval)) {
                         if (disconnectOnTimeout) {
@@ -509,15 +507,17 @@ public class Network implements PeerSession.IDisconnectionHandler {
                     if (lastResponse > -1 && now - lastResponse > (timeoutInterval)) {
                         if (disconnectOnTimeout) {
                             log.info("ClientToServerSession {} timed out!", peerSession);
-                            peerSession.fireDisconnection();
-                            Network.this.channelsDisconnected.onNext(peerSession.getChannel());
+                            if(!Network.this.isStopped) {
+                                peerSession.fireDisconnection();
+                                Network.this.channelsDisconnected.onNext(peerSession.getChannel());
+                            }
                         }
                         continue;
                     }
                 }
 
                 long elapsed = now - lastResponse;
-                if (elapsed >= heartbeatInterval) {
+                if (elapsed >= heartBeatInterval) {
                     log.debug("Sending heartbeat {}", peerSession);
                     lastPings.put(peerSession, now);
                     sendHeartbeat(peerSession, IHeartbeat.Type.Ping);

@@ -14,6 +14,7 @@ import io.viewserver.datasource.IRecord;
 import io.viewserver.network.IEndpoint;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.SessionManager;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.rx.EventType;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -99,6 +101,8 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     @Override
     public void stop() {
         this.isStopped = true;
+        IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+        updater.stop();
         super.stop();
         if(connectionCountSubscription != null){
             connectionCountSubscription.unsubscribe();
@@ -114,28 +118,28 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         if(operatorEvent.getEventType().equals(EventType.ROW_ADD) || operatorEvent.getEventType().equals(EventType.ROW_REMOVE) || operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
             int sessionCount = getNonClusterConnections();
             if(operatorEvent.getEventType().equals(EventType.ROW_ADD)){
-                log.debug("Modifying connection count as session added - {}", sessionCount);
+                log.info("Modifying connection count as session added - {}", sessionCount);
             }
             else if(operatorEvent.getEventType().equals(EventType.ROW_UPDATE)){
-                log.debug("Modifying connection count as session updated - {}", sessionCount);
+                log.info("Modifying connection count as session updated - {}", sessionCount);
             }
             else{
-                log.debug("Modifying connection count as session removed - {}", sessionCount);
+                log.info("Modifying connection count as session removed - {}", sessionCount);
             }
-            this.debouncer.debounce("recalculateConnectionCount", () -> recalculateConnectionCount(sessionCount),100,TimeUnit.MILLISECONDS);
+            debouncer.debounce("connectionCount",() -> this.recalculateConnectionCount(sessionCount), 50, TimeUnit.MILLISECONDS);
         }
     }
 
 
     private void recalculateConnectionCount(int sessionCount) {
-        log.debug("No connections is - {}",sessionCount);
+        log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
+                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
                 .addValue("isMaster", isMaster)
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).toBlocking().first();
-        log.debug("No connections modified to - {}",sessionCount);
+        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).subscribeOn(Schedulers.from(connectionCountExecutor)).subscribe((res) -> log.info("No connections modified to - {}",sessionCount));
     }
 
     private int getNonClusterConnections() {
@@ -145,16 +149,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         while(rows.moveNext()){
             String authenticationToken = (String) ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.USERTYPE_COLUMN),rows.getRowId());
             if(authenticationToken != null){
-                log.debug("Detected connection - {}", ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.SESSIONID_COLUMN),rows.getRowId()));
+                log.info("Detected connection - {}", ColumnHolderUtils.getValue(output.getSchema().getColumnHolder(SessionManager.SESSIONID_COLUMN),rows.getRowId()));
                 noConnections++;
             }
         }
         return noConnections;
     }
 
-    private boolean isAnotherServerInCluster(IPeerSession c) {
-        return c.getCatalogName().startsWith("serverConnectionWatcher_");
-    }
 
     private ICatalog getCatalog() {
         return this.serverNetwork.getSessionManager().getCatalog();
@@ -163,20 +164,28 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
     @Override
     public void listen() {
-        KeyedTable clusterTable = (KeyedTable) this.getCatalog().getOperatorByPath(TableNames.CLUSTER_TABLE_NAME);
-        if(clusterTable == null){
-            throw new RuntimeException("Cannot listen as cannot find load balancer table");
-        }
-        clusterTable.getOutput().observable().subscribe( ev -> trackOtherServerInCluster(ev));
-        IRecord record = new Record()
-                .addValue("url",clientVersionInfo.getServerEndPoint())
-                .addValue("version", -1)
-                .addValue("isMaster", isMaster)
-                .addValue("isOffline", false)
-                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
-        IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
-        updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
-        .subscribe(c-> super.listen());
+        Observable<IOperator> clusterTableObservable = this.getCatalog().waitForOperatorAtThisPath(TableNames.CLUSTER_TABLE_NAME);
+        log.info("MILESTONE: Waiting for cluster table");
+        clusterTableObservable.subscribe(
+                iOperator -> {
+                    log.info("MILESTONE: Got cluster table");
+                    KeyedTable clusterTable = (KeyedTable)iOperator;
+                    if(clusterTable == null){
+                        throw new RuntimeException("Cannot listen as cannot find load balancer table");
+                    }
+                    clusterTable.getOutput().observable().subscribe( ev -> trackOtherServerInCluster(ev));
+                    IRecord record = new Record()
+                            .addValue("url",clientVersionInfo.getServerEndPoint())
+                            .addValue("version", -1)
+                            .addValue("isMaster", isMaster)
+                            .addValue("isOffline", false)
+                            .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
+                    IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+                    log.info("MILESTONE: Attempting to update cluster before calling server listen");
+                    updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
+                            .subscribe(c-> ShotgunBasicServerComponents.super.listen());
+                }
+        );
 
     }
 
@@ -188,7 +197,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 //this is me
                 return;
             }
-            log.debug("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), url);
+            log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), url);
             ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(url,this.clientVersionInfo);
             this.watchers.add(watcher);
             this.subscriptions.add(watcher.waitForDeath().subscribe(c-> onOtherServerDies(watcher,c,url)));
@@ -221,6 +230,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
+                        .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
                         .addValue("isMaster", isMaster);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()
@@ -267,14 +277,14 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
          * or cancels its execution if the method is called with the same key within the {@code delay} again.
          */
         public void debounce(final Object key, final Runnable runnable, long delay, TimeUnit unit) {
-            log.debug("Scheduled - " + runnable);
+            log.info("Scheduled - " + runnable);
             final Future<?> prev = delayedMap.put(key, connectionCountExecutor.schedule(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        log.debug("Running - " + runnable);
+                        log.info("Running - " + runnable);
                         if(ShotgunBasicServerComponents.this.isStopped){
-                            log.debug("Not running as connection stopped");
+                            log.info("Not running as connection stopped");
                         }else{
                             runnable.run();
                         }

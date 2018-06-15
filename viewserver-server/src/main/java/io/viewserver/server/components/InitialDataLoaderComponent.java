@@ -47,7 +47,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         FuncN<?> onCompletedAll = new FuncN<Object>() {
             @Override
             public Object call(Object... objects) {
-                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders"));
+                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders - %s",readyObservables.size()));
                 return true;
             }
         };

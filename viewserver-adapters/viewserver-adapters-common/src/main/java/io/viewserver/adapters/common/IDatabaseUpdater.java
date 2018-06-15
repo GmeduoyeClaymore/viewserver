@@ -7,6 +7,8 @@ import rx.Observable;
 
 public interface IDatabaseUpdater {
 
-
     Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer version);
+
+    default void stop(){
+    }
 }

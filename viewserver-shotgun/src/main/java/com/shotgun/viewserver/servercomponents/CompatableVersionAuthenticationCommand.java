@@ -34,6 +34,8 @@ public class CompatableVersionAuthenticationCommand implements IAuthenticationHa
             throw new RuntimeException("Cannot authenticate as no load balancer table");
         }
 
+        log.info("MILESTONE Attempting to authenticate - {}",authenticateCommandDto);
+
         List<String> compatableVersions = authenticateCommandDto.getTokens();
         log.info("Attempting to authenticate against client version - {}",String.join(",",compatableVersions));
         if(!compatableVersions.contains(versionInfo.getCompatableClientVersion())){
@@ -63,7 +65,7 @@ public class CompatableVersionAuthenticationCommand implements IAuthenticationHa
             }
             throw new RuntimeException(ControllerUtils.toString(result));
         }
-        log.info("Successfully authenticated - {}",String.join(",",compatableVersions));
+        log.info("MILESTONE Successfully authenticated - {}",String.join(",",compatableVersions));
         return new AuthenticationToken(authenticateCommandDto.getType(),versionInfo.getCompatableClientVersion());
     }
 }

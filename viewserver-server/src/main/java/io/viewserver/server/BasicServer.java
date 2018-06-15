@@ -1,14 +1,20 @@
 package io.viewserver.server;
 
+import com.google.common.util.concurrent.MoreExecutors;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.network.IEndpoint;
 import io.viewserver.server.components.*;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.functions.FuncN;
+import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
@@ -22,6 +28,7 @@ public class BasicServer {
     private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
     private List<IServerComponent> components = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(BasicServer.class);
+    public static Executor BackgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
 
     public interface Callable<V> {
         V call() ;
@@ -76,7 +83,7 @@ public class BasicServer {
             logger.info(String.format("COMPLETED FINISHED WAITING for server components"));
             return true;
         };
-        Observable.zip(observables, onCompletedAll).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
+        Observable.zip(observables, onCompletedAll).observeOn(Schedulers.from(BackgroundExecutor)).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
                 res -> {
                     basicServerComponents.listen();
                 }

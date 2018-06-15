@@ -56,6 +56,8 @@ public interface IDataSourceRegistry{
 
     Observable<IDataSource> getStatusChanged();
 
+    Observable<Boolean> getAllBuilt();
+
     void register(IDataSource dataSource);
 
     void setStatus(String name, DataSourceStatus status);

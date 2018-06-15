@@ -167,6 +167,7 @@ Feature: Delivery order scenarios
       | ~Action | fromUserId                                         | message.title          |
       | RowAdd  | {client2_partnerController_registerPartner_result} | "Shotgun job response" |
       | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
+      | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
     Given "client3" subscribed to report "orderResponses" with parameters
       | Name                | Type   | Value   |
       | dimension_partnerId | String | @userId |

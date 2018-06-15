@@ -18,7 +18,7 @@ public class RecordUtils{
 
     public static void addRecordToTableOperator(KeyedTable operator, IRecord rec) {
         if(!Thread.currentThread().getName().startsWith("reactor-")){
-            logger.debug("Scheduling addition to operator " + operator.getPath());
+            logger.debug("Scheduling addition to operator {}", operator.getPath());
             operator.getExecutionContext().submit(() -> actualyAddRecord(operator,rec,true), 0);
             return;
         }
@@ -27,7 +27,7 @@ public class RecordUtils{
 
     public static void actualyAddRecord(KeyedTable operator, IRecord rec, boolean scheduled) {
         ExecutionContext.AssertUpdateThread();
-        logger.debug((scheduled ? "SCHEDULED - " : "") +  "Acually adding record rec to operator " + operator.getPath());
+        logger.debug("{} Actually adding record rec to operator {}",(scheduled ? "SCHEDULED - " : "") ,operator.getPath());
         TableKeyDefinition tableKeyDefinition = operator.getTableKeyDefinition();
         if(tableKeyDefinition == null ){
             throw new RuntimeException(String.format("Cannot map record as no key columns are defined on schema - %s", rec));

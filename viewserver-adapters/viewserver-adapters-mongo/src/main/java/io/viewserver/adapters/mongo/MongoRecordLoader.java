@@ -125,11 +125,11 @@ public class MongoRecordLoader implements IRecordLoader{
                 logger.debug(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
                     resetConnectionRetryCounter();
-                    logger.debug(String.format("GOT DOCUMENT IN SNAPSHOT - %s - Addition of snapshot listener for Mongo table %s", document.getString("_id"), document.getInteger("version"), tableName));
+                    logger.debug("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
                     receiveDocument(document);
                 });
             }
-            ready.onNext(null);
+            ready.onNext(new Object());
             ChangeStreamIterable<Document> changeStreamDocuments;
             if(resumeToken !=null){
                 changeStreamDocuments = getCollection().watch().resumeAfter(resumeToken);
@@ -143,7 +143,7 @@ public class MongoRecordLoader implements IRecordLoader{
                 logger.info("Expected exception as loader is closed" + ex.getMessage());
                 return;
             }
-            logger.error(String.format("Error adding snapshot listener for Mongo table %s {}", tableName), ex);
+            logger.error("Error adding snapshot listener for Mongo table %s {}", tableName, ex);
             if(connectionLostTime == 0) {
                 connectionLostTime = new Date().getTime();
             }

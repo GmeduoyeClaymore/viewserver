@@ -5,6 +5,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.event.ServerClosedEvent;
+import com.mongodb.event.ServerDescriptionChangedEvent;
+import com.mongodb.event.ServerListener;
+import com.mongodb.event.ServerOpeningEvent;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
@@ -23,13 +27,31 @@ public class MongoConnectionFactory {
         this.databaseName = databaseName;
     }
 
-    private void createConnection() {
+    private synchronized void createConnection() {
         try {
-            logger.debug("Creating connection");
+            if(database != null){
+                return;
+            }
+            logger.info("Creating connection");
             CodecRegistry defaultCodecRegistry = MongoClient.getDefaultCodecRegistry();
             MongoCodecProvider myCodecProvider = new MongoCodecProvider();
             CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(myCodecProvider), defaultCodecRegistry);;
-            mongoClient = new MongoClient( new MongoClientURI(clientURI, new MongoClientOptions.Builder().codecRegistry(codecRegistry)));
+            mongoClient = new MongoClient( new MongoClientURI(clientURI, new MongoClientOptions.Builder().addServerListener(new ServerListener() {
+                @Override
+                public void serverOpening(ServerOpeningEvent event) {
+                    logger.info("Server opening");
+                }
+
+                @Override
+                public void serverClosed(ServerClosedEvent event) {
+                    logger.info("Server closed");
+                }
+
+                @Override
+                public void serverDescriptionChanged(ServerDescriptionChangedEvent event) {
+
+                }
+            }).socketTimeout(Integer.MAX_VALUE).codecRegistry(codecRegistry)));
             database = mongoClient.getDatabase(databaseName);
 
         }catch(Exception ex){
@@ -47,7 +69,7 @@ public class MongoConnectionFactory {
 
     public void close(){
         try{
-            logger.debug("Closing connection factory");
+            logger.info("Closing connection factory");
             if(mongoClient != null) {
                 mongoClient.close();
             }

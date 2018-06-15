@@ -23,6 +23,7 @@ import java.util.Map;
 public class MongoTableUpdater implements IDatabaseUpdater {
     private MongoConnectionFactory connectionFactory;
     private static final Logger log = LoggerFactory.getLogger(MongoTableUpdater.class);
+    protected boolean isStopped;
 
     public MongoTableUpdater(MongoConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
@@ -34,6 +35,9 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         return Observable.create(
                 booleanEmitter -> {
                     try {
+                        if(isStopped){
+                            return;
+                        }
                         TableKeyDefinition definition = schemaConfig.getTableKeyDefinition();
                         TableKey tableKey = RecordUtils.getTableKey(record, definition);
                         String documentId = tableKey.toString("_");
@@ -53,6 +57,11 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                     }
                 }, Emitter.BackpressureMode.BUFFER
         );
+    }
+
+    @Override
+    public void stop() {
+        this.isStopped = true;
     }
 
     private Integer getVersionBeforeUpdate(IRecord record) {

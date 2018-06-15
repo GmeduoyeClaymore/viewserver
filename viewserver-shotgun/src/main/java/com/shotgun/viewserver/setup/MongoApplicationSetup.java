@@ -36,6 +36,7 @@ public class MongoApplicationSetup implements IApplicationSetup {
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
             recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
         }
+
         delete(db, ClusterDataSource.NAME);
         delete(db, UserDataSource.NAME);
         delete(db, PaymentDataSource.NAME);
@@ -48,14 +49,17 @@ public class MongoApplicationSetup implements IApplicationSetup {
     }
 
     private void delete(MongoDatabase db, String name) {
-        log.info("Deleting collection " + name);
-        MongoCollection<Document> collection = db.getCollection(name);
-        collection.drop();
+        try {
+            log.info("Deleting collection " + name);
+            MongoCollection<Document> collection = db.getCollection(name);
+            collection.drop();
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+        }
     }
 
     protected void recreate(MongoDatabase db, String operatorName, SchemaConfig schema) {
-        MongoCollection<Document> collection = db.getCollection(operatorName);
-        collection.drop();
+        delete(db,operatorName);
         MongoCsvDataLoader loader = new MongoCsvDataLoader(String.format("%s/%s.csv", csvDataPath,operatorName), operatorName, schema,connectionFactory);
         int noRecords = loader.load();
         log.info("{} records loading into mongo table {}",noRecords,operatorName);
