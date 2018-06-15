@@ -125,7 +125,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
                     String fromNumber = parameters.get("from");
                     String toNumber = parameters.get("to");
 
-                    log.info("Call handler params - " + parameters.toString());
+                    log.debug("Call handler params - " + parameters.toString());
                     String ncco = getConnectNcco(fromNumber, toNumber, systemCatalog).toString();
 
                     he.sendResponseHeaders(200, ncco.length());
@@ -146,7 +146,7 @@ public class NexmoController implements INexmoController, UserNotificationContra
             systemCatalog.getExecutionContext().getReactor().scheduleTask(() -> {
                 try {
                     HashMap<String, String> parameters = getParameters(he.getRequestBody());
-                    log.info("Event handler params - " + parameters.toString());
+                    log.debug("Event handler params - " + parameters.toString());
                     setPhoneNumberStatus(parameters.get("status").toUpperCase(), parameters.get("to"), parameters.get("from"), parameters.get("duration"));
                 } catch (Exception ex) {
                     log.error("Could not handle Nexmo event", ex);
@@ -277,14 +277,14 @@ public class NexmoController implements INexmoController, UserNotificationContra
              if(internationalFormatNumber == null){
                 continue;
             }
-            log.info("from comparing {}=={}",internationalFormatNumber, fromNumber);
+            log.debug("from comparing {}=={}",internationalFormatNumber, fromNumber);
             if (internationalFormatNumber.equals(fromNumber)) {
-                log.info("found from comparing {}=={}",internationalFormatNumber, fromNumber);
+                log.debug("found from comparing {}=={}",internationalFormatNumber, fromNumber);
                 proxyRoute.put("from", virtualPhoneNumber);
             }
-            log.info("to comparing {}=={}",virtualPhoneNumber, toNumber);
+            log.debug("to comparing {}=={}",virtualPhoneNumber, toNumber);
             if (virtualPhoneNumber.equals(toNumber)) {
-                log.info("found to comparing {}=={}",virtualPhoneNumber, toNumber);
+                log.debug("found to comparing {}=={}",virtualPhoneNumber, toNumber);
                 proxyRoute.put("to", internationalFormatNumber);
             }
 

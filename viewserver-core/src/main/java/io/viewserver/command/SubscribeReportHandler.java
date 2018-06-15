@@ -69,7 +69,7 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             enhance(definition,reportContext);
             substituteParamValues(peerSession, reportContext, options, definition);
 
-            log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+            log.debug("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
             ICatalog catalog = reportContextRegistry.getOrCreateCatalogForContext(reportContext);
 
@@ -131,14 +131,14 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
                 int index = 0;
                 for(Object val : str.getValues().toArray()){
                     if(val instanceof String && val.toString().startsWith("@")){
-                        log.info(String.format("Found controller context param %s in report context for dimension %s. Looking for value in controller context to replace it",val,str.getName()));
+                        log.debug(String.format("Found controller context param %s in report context for dimension %s. Looking for value in controller context to replace it",val,str.getName()));
                         String parameterName = val.toString().substring(1);
                         Object contextValue = ControllerContext.get(parameterName, peerSession);
                         if(contextValue != null){
-                            log.info(String.format("Found controller context value %s for %s in controller context",contextValue,val));
+                            log.debug(String.format("Found controller context value %s for %s in controller context",contextValue,val));
                             setValueAtIndex(contextValue, index, str.getValues());
                         }else{
-                            log.info(String.format("Unable to find controller context value for %s in controller context",val));
+                            log.debug(String.format("Unable to find controller context value for %s in controller context",val));
                         }
                     }
                     index++;

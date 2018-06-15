@@ -43,12 +43,12 @@ public class MongoTableUpdater implements IDatabaseUpdater {
                         String documentId = tableKey.toString("_");
                         Map<String, Object> docData = getDocumentData(record, schemaConfig);
                         docData.put("version", incrementVersion(versionToBeUpdated));
-                        log.info("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
-                        log.info("Writing record to table " + docData);
+                        log.debug("Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
+                        log.debug("Writing record to table " + docData);
                         Document tDocument = new Document(docData);
                         boolean result = getUpdateResult(versionToBeUpdated, tableName, documentId, tDocument);
-                        log.info("Record result is " + result);
-                        log.info("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
+                        log.debug("Record result is " + result);
+                        log.debug("Finished Writing to table \"" + tableName + "\" record id " + documentId + " initial version is " + versionToBeUpdated + " new version is " + docData.get("version"));
                         booleanEmitter.onNext(result);
                         booleanEmitter.onCompleted();
                     }catch (Exception ex){
@@ -82,19 +82,19 @@ public class MongoTableUpdater implements IDatabaseUpdater {
         Bson updateQuery = new Document("$set", tDocument);
         Integer version = tDocument.getInteger("version");
         if(versionToBeUpdated == null){
-            log.info(documentId + " Record version is 0 so treating as an insert");
+            log.debug(documentId + " Record version is 0 so treating as an insert");
             tDocument.put("_id",documentId);
             getCollection(tableName).insertOne(tDocument);
             return true;
         }
         else if(version == Integer.MAX_VALUE){
-            log.info(documentId + " Record version is int.MaxValue so treating as an unconditional upsert");
+            log.debug(documentId + " Record version is int.MaxValue so treating as an unconditional upsert");
             BasicDBObject query = new BasicDBObject("_id",documentId);
             getCollection(tableName).replaceOne(query, tDocument,new UpdateOptions().upsert(true));
             return true;
         }
         else{
-            log.info(documentId + " Record version is "+version+" so treating as an update to a specific version");
+            log.debug(documentId + " Record version is "+version+" so treating as an update to a specific version");
             BasicDBObject query = new BasicDBObject("_id", documentId);
             query.put("version", new BasicDBObject("$eq", versionToBeUpdated));
             return getCollection(tableName).updateOne(query, updateQuery,new UpdateOptions()).wasAcknowledged();

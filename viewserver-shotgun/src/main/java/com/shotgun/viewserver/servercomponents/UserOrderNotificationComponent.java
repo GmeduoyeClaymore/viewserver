@@ -81,9 +81,9 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     public Observable start() {
         String operatorPath = IDataSourceRegistry.getOperatorPath(UserDataSource.NAME, DataSource.TABLE_NAME);
         rx.Observable<IOperator> result = this.basicServerComponents.getServerCatalog().waitForOperatorAtThisPath(operatorPath);
-        log.info("Waiting for user operator " + operatorPath);
+        log.debug("Waiting for user operator " + operatorPath);
         this.subscriptions.add(result.subscribe(operator -> {
-            log.info("Found for user operator "  + operatorPath);
+            log.debug("Found for user operator "  + operatorPath);
             listenForUsers(operator);
         }));
         return null;
@@ -101,10 +101,10 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
             HashMap eventData = (HashMap) ev.getEventData();
             if(eventData.containsKey("selectedContentTypes")){
-                log.info("Resubscribing user as content types have changed");
+                log.debug("Resubscribing user as content types have changed");
                 onUserAdded(eventData);
             }else{
-                log.info("Not resubscribing user as content types have not changed");
+                log.debug("Not resubscribing user as content types have not changed");
             }
         }));
         this.subscriptions.add(out.observable("userId").
@@ -115,7 +115,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
     private void onUserAdded(HashMap userMap) {
         User user = JSONBackedObjectFactory.create(userMap, User.class);
-        log.info("Found for user - " + user.getUserId());
+        log.debug("Found for user - " + user.getUserId());
         listenForUserProducts(user);
     }
     private void onUserRemoved(HashMap userMap) {
@@ -140,14 +140,14 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             Subscription subscribe = result.subscribe(operator -> {
                 getOrCreateOutput(user).subscribe(
                         out -> {
-                            log.info(user.getUserId() + " is susbscribing to operator " + out.getOwner().getName() + " at path " + out.getOwner().getPath());
+                            log.debug(user.getUserId() + " is susbscribing to operator " + out.getOwner().getName() + " at path " + out.getOwner().getPath());
                             subscribe1.set(out.observable("orderId", "orderDetails").observeOn(Schedulers.from(notificationsExecutor)).subscribe(ev -> {
-                                log.info("Received data for - " + user.getUserId() + " event is " + ev.getEventType());
+                                log.debug("Received data for - " + user.getUserId() + " event is " + ev.getEventType());
                                 if(Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())){
                                     HashMap eventData = (HashMap) ev.getEventData();
                                     String  orderId = (String) eventData.get("orderId");
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
-                                    log.info("Received data for - " + user.getUserId() + " orderId  is " + orderId);
+                                    log.debug("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
                                     if(!this.isMaster()){
                                         log.info("Not sending notification as I am not the master");
@@ -164,7 +164,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
                             }, err -> log.error("Issue subscribing to orders {}", err)));
 
-                            log.info("Adding subscription for - " + user.getUserId());
+                            log.debug("Adding subscription for - " + user.getUserId());
                             this.subscriptions.add(subscribe1.get());
                         },
                         err -> log.error("Issue subscribing to report output",err)
@@ -176,7 +176,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
             subscriptionsByUserId.put(user.getUserId(), new Subscription() {
                 @Override
                 public void unsubscribe() {
-                    log.info("Unsubscribing " + user.getUserId());
+                    log.debug("Unsubscribing " + user.getUserId());
                     if(subscribe1.get() != null){
                         subscribe1.get().unsubscribe();
                     }
@@ -216,7 +216,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         enhance(definition,reportContext);
 
 
-        log.info("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+        log.debug("Subscribe command for context: {}\nOptions: {}", reportContext, options);
 
         ObservableCommandResult systemExecutionPlanResult = new ObservableCommandResult();
 

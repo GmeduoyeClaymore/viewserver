@@ -21,6 +21,7 @@
         <AppenderRef ref="DailyLog" level="info"/>
         <AppenderRef ref="DailyErrorLog" level="error"/>
     </Root>
+    <Logger name="org.mongodb.driver" level="error"/>
     <Logger name="io.netty.handler.codec.http.websocketx" level="info"/>
     <Logger name="io.viewserver.messages.PoolableMessage" level="info"/>
     <Logger name="org.mongodb.driver.protocol.command" level="info"/>
