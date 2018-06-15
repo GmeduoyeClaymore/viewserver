@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.UserNotificationContract;
+import com.shotgun.viewserver.servercomponents.ClientVersionInfo;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import com.shotgun.viewserver.constants.PhoneNumberStatuses;
 import com.shotgun.viewserver.constants.TableNames;
@@ -19,11 +20,14 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.controller.Controller;
 import io.viewserver.controller.ControllerAction;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.expression.function.Hash;
+import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -36,21 +40,42 @@ public class NexmoController implements INexmoController, UserNotificationContra
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
     private final int httpPort;
     private ICatalog systemCatalog;
+    private ClientVersionInfo clientVersionInfo;
     private NexmoControllerKey nexmoControllerKey;
     private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
     private IMessagingController messagingController;
     private ConcurrentHashMap<String,String> resolvedCache;
+    private Subscription subscription;
 
-    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController) {
+    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController,ClientVersionInfo clientVersionInfo) {
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
+        this.clientVersionInfo = clientVersionInfo;
         this.resolvedCache = new ConcurrentHashMap<>();
         this.nexmoControllerKey = nexmoControllerKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
-        this.createHttpServer(httpPort);
+        systemCatalog.waitForOperatorAtThisPath(TableNames.CLUSTER_TABLE_NAME).subscribe(tb -> listenForMaster(tb));
     }
+
+    private void listenForMaster(IOperator tb) {
+        KeyedTable clusterTable = (KeyedTable)tb;
+        this.subscription = clusterTable.getOutput().observable("isMaster").subscribe(
+                ev -> {
+                    if(ev.getEventData() != null){
+                        HashMap eventData = (HashMap) ev.getEventData();
+                        String url = (String) eventData.get("url");
+                        Boolean isMaster = (Boolean) eventData.get("isMaster");
+                        if(Boolean.TRUE.equals(isMaster) && url.equals(clientVersionInfo.getServerEndPoint())){
+                            this.createHttpServer(httpPort);
+                        }
+                    }
+
+                }
+        );
+    }
+
 
     @Override
     @ControllerAction(path = "getInternationalFormatNumber", isSynchronous = false)

@@ -53,6 +53,7 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("paul",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("gbemiga",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga2",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForPreProdEnvironment);
     }

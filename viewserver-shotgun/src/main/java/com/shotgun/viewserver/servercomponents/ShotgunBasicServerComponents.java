@@ -197,11 +197,17 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                 //this is me
                 return;
             }
-            log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), url);
-            ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(url,this.clientVersionInfo);
+            String preferedTransportUrl = getPreferedTransportUrl(url);
+            log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), preferedTransportUrl);
+            ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(preferedTransportUrl,this.clientVersionInfo);
             this.watchers.add(watcher);
-            this.subscriptions.add(watcher.waitForDeath().subscribe(c-> onOtherServerDies(watcher,c,url)));
+            this.subscriptions.add(watcher.waitForDeath().subscribe(c-> onOtherServerDies(watcher,c,preferedTransportUrl)));
         }
+    }
+
+    private String getPreferedTransportUrl(String url) {
+        String[] parts = url.split(",");
+        return parts[0];
     }
 
     private boolean hasComeOnlineAgain(OperatorEvent ev) {
