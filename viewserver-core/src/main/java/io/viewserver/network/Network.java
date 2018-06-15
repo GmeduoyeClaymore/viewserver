@@ -491,7 +491,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long now = System.currentTimeMillis();
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
-                log.info("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
+                log.debug("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
                 if (peerSession instanceof ServerToClientSession) {
                     if (lastPing > -1 && now - lastPing > (timeoutInterval)) {
                         if (disconnectOnTimeout) {

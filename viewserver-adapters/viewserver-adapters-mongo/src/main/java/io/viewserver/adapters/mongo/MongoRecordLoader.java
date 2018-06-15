@@ -125,7 +125,7 @@ public class MongoRecordLoader implements IRecordLoader{
                 logger.info(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
                     resetConnectionRetryCounter();
-                    logger.debug("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
+                    logger.info("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
                     receiveDocument(document);
                 });
             }

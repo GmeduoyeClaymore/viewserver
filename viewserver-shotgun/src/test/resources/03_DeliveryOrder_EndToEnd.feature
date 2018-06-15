@@ -139,7 +139,7 @@ Feature: Delivery order scenarios
     Then "client1" the following notifications are received
       | ~Action | fromUserId                                         | message.title          |
       | RowAdd  | {client2_partnerController_registerPartner_result} | "Shotgun job response" |
-      | RowAdd  | {client3_partnerController_registerPartner_result} | "Shotgun job response" |
+      | RowAdd  | {c¢lient3_partnerController_registerPartner_result} | "Shotgun job response" |
     Given "client1" controller "deliveryOrderController" action "rejectResponse" invoked with parameters
       | Name      | Value                                                |
       | orderId   | {client1_deliveryOrderController_createOrder_result} |
