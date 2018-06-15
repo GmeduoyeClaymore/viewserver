@@ -52,7 +52,8 @@ public class UserDataSource {
                                         new Column("online", ContentType.Bool),
                                         new Column("userStatus",  ContentType.String),
                                         new Column("userAppStatus",  ContentType.String),
-                                        new Column("statusMessage",  ContentType.String)
+                                        new Column("statusMessage",  ContentType.String),
+                                        new Column("operatingSystem",  ContentType.String)
                                 ))
                                 .withKeyColumns("userId")
                 )

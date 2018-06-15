@@ -41,6 +41,7 @@ public interface User extends DynamicJsonBackedObject{
     String getFirstName();
     String getLastName();
     String getFcmToken();
+    String getOperatingSystem();
     DeliveryAddress getDeliveryAddress();
     Date getCreated();
     Date getDob();

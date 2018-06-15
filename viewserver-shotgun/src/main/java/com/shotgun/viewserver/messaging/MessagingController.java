@@ -101,6 +101,8 @@ public class MessagingController implements IMessagingController, UserPersistenc
         return ListenableFutureObservable.to(getUserForId(message.getToUserId(),User.class).observeOn(Schedulers.from(service)).map(user -> {
             String currentToken = user.getFcmToken();
             message.set("to",currentToken);
+            message.set("operatingSystem", user.getOperatingSystem());
+
             boolean sendRemotely = isSendRemotely(user);
             logger.info("Found user persisting message");
             persistMessage(message, sendRemotely).subscribe();
@@ -186,6 +188,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
                 throw new RuntimeException("Failed to send notification response is \"" + json+ "\"");
             }
         } catch (IOException e) {
+            logger.error("There was a problem sending the notification. Error is", e);
             throw new RuntimeException(e);
         }
     }
