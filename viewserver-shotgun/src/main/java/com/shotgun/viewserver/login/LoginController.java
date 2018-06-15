@@ -50,7 +50,8 @@ public class LoginController {
     }
 
     @ControllerAction(path = "login", isSynchronous = true)
-    public String login(@ActionParam(name = "email", exampleValue = "Steven.Brown@email.com")String email, @ActionParam(name = "password", exampleValue = "driver")String password){
+    public String login(@ActionParam(name = "email", exampleValue = "Steven.Brown@email.com") String email,
+                        @ActionParam(name = "password", exampleValue = "driver") String password){
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         int userRowId = getUserRow(userTable, email.toLowerCase());
@@ -68,7 +69,6 @@ public class LoginController {
         }
     }
 
-    @ControllerAction(path = "setUserId", isSynchronous = false)
     public ListenableFuture<String> setUserId(String userId) {
         IPeerSession peerSession = ControllerContext.Current().getPeerSession();
         return ListenableFutureObservable.to(setUserIdObservable(userId, peerSession));
@@ -95,6 +95,15 @@ public class LoginController {
     public void foreground() {
         setUserAppStatus(getUserId(), UserAppStatus.FOREGROUND);
     }
+
+  @ControllerAction(path = "setOperatingSystem", isSynchronous = true)
+  public ListenableFuture setOperatingSystem(@ActionParam(name = "operatingSystem", exampleValue = "ios") String operatingSystem) {
+    String userId = getUserId();
+    Record userRecord = new Record()
+    .addValue("userId", userId)
+    .addValue("operatingSystem", operatingSystem);
+    return ListenableFutureObservable.to(iDatabaseUpdater.addOrUpdateRow(TableNames.USER_TABLE_NAME, UserDataSource.getDataSource().getSchema(), userRecord, IRecord.UPDATE_LATEST_VERSION));
+  }
 
     @ControllerAction(path = "logOut", isSynchronous = true)
     public ListenableFuture logOut() {
@@ -141,8 +150,6 @@ public class LoginController {
         ControllerContext.setFactory("now", () -> new Date().getTime(), session);
          return userId;
     }
-
-
 
     private User getUser(String userId) {
         KeyedTable keyedTable = (KeyedTable) systemcatalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
