@@ -178,6 +178,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                             .addValue("url",clientVersionInfo.getServerEndPoint())
                             .addValue("version", -1)
                             .addValue("isMaster", isMaster)
+                            .addValue("noConnections", 0)
                             .addValue("isOffline", false)
                             .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
                     IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
@@ -201,7 +202,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), preferedTransportUrl);
             ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(preferedTransportUrl,this.clientVersionInfo);
             this.watchers.add(watcher);
-            this.subscriptions.add(watcher.waitForDeath().subscribe(c-> onOtherServerDies(watcher,c,preferedTransportUrl)));
+            this.subscriptions.add(watcher.waitForDeath().take(1).subscribe(c-> onOtherServerDies(watcher,c,preferedTransportUrl)));
         }
     }
 
