@@ -1,4 +1,5 @@
 #! /bin/bash
+source  ~/.shotgun_env
 cd /usr/bin/shotgun-viewserver
 SHOTGUN_ENVIRONMENT_NAME=${SHOTGUN_ENVIRONMENT_NAME}
 SHOTGUN_ENDPOINT=${SHOTGUN_ENDPOINT}
