@@ -77,6 +77,10 @@ public class Network implements PeerSession.IDisconnectionHandler {
     }
 
 
+    public Observable<IPeerSession> connectionEstablishedObservable() {
+        return publishSubject;
+    }
+
     public SessionManager getSessionManager() {
         return sessionManager;
     }

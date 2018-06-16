@@ -22,11 +22,14 @@ public class ClusterServerConnectionWatcher {
     public Observable waitForDeath(){
         return getOrCreateClient().getNetwork().disconnectionObservable();
     }
+    public Observable waitForConnection(){
+        return getOrCreateClient().getNetwork().connectionEstablishedObservable();
+    }
 
     private ViewServerClient getOrCreateClient() {
         try {
         if(client == null) {
-            client = new ViewServerClient("serverConnectionWatcher_" + versionInfo.getServerEndPoint(), peerUrl, ReconnectionSettings.Times(100));
+            client = new ViewServerClient("serverConnectionWatcher_" + versionInfo.getServerEndPoint(), peerUrl, ReconnectionSettings.Times(Integer.MAX_VALUE));
         }
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);

@@ -45,7 +45,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     private int timeoutInterval;
     private int heartbeatInterval;
     private BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory;
-    private boolean isMaster;
+    private boolean isInitiallyMaster;
     private Subscription connectionCountSubscription;
     private ClientVersionInfo clientVersionInfo;
     private static final Logger log = LoggerFactory.getLogger(ShotgunBasicServerComponents.class);
@@ -54,14 +54,14 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     ScheduledExecutorService connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("connectionCount"));
     private boolean isStopped;
 
-    public ShotgunBasicServerComponents(String serverName,List<IEndpoint> endpointList,ClientVersionInfo clientVersionInfo,boolean disconnectOnTimeout, int timeoutInterval,int heartbeatInterval,BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory, boolean isMaster) {
+    public ShotgunBasicServerComponents(String serverName,List<IEndpoint> endpointList,ClientVersionInfo clientVersionInfo,boolean disconnectOnTimeout, int timeoutInterval,int heartbeatInterval,BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory, boolean isInitiallyMaster) {
         super(serverName,endpointList);
         this.clientVersionInfo = clientVersionInfo;
         this.disconnectOnTimeout = disconnectOnTimeout;
         this.timeoutInterval = timeoutInterval;
         this.heartbeatInterval = heartbeatInterval;
         this.iDatabaseUpdaterFactory = iDatabaseUpdaterFactory;
-        this.isMaster = isMaster;
+        this.isInitiallyMaster = isInitiallyMaster;
         this.subscriptions = new ArrayList<>();
         this.watchers = new ArrayList<>();
         this.debouncer = new Debouncer();
@@ -136,10 +136,25 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
                 .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
-                .addValue("isMaster", isMaster)
+                .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
         updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION).subscribeOn(Schedulers.from(connectionCountExecutor)).subscribe((res) -> log.info("No connections modified to - {}",sessionCount));
+    }
+
+    private boolean anotherServerIsNotMaster(boolean isMaster) {
+        if(!isMaster){
+            return isMaster;
+        }
+        KeyedTable table = (KeyedTable) this.getCatalog().getOperatorByPath(TableNames.CLUSTER_TABLE_NAME);
+        IRowSequence rows = (table.getOutput().getAllRows());
+        while(rows.moveNext()){
+            String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
+            if(!url.equals(this.clientVersionInfo.getServerEndPoint()) && (Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isMaster", rows.getRowId())))){
+                return false;
+            }
+        }
+        return isMaster;
     }
 
     private int getNonClusterConnections() {
@@ -177,7 +192,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                     IRecord record = new Record()
                             .addValue("url",clientVersionInfo.getServerEndPoint())
                             .addValue("version", -1)
-                            .addValue("isMaster", isMaster)
+                            .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                             .addValue("noConnections", 0)
                             .addValue("isOffline", false)
                             .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
@@ -191,7 +206,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     }
 
     private void trackOtherServerInCluster(OperatorEvent ev) {
-        if(ev.getEventType().equals(EventType.ROW_ADD) || hasComeOnlineAgain(ev)){
+        if(ev.getEventType().equals(EventType.ROW_ADD)){
             HashMap<String,Object> rowValues = (HashMap<String, Object>) ev.getEventData();
             String url = (String) rowValues.get("url");
             if(url.equals(this.clientVersionInfo.getServerEndPoint())){
@@ -202,8 +217,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             log.info("{} is tracking {} in cluster",this.clientVersionInfo.getServerEndPoint(), preferedTransportUrl);
             ClusterServerConnectionWatcher watcher = new ClusterServerConnectionWatcher(preferedTransportUrl,this.clientVersionInfo);
             this.watchers.add(watcher);
-            this.subscriptions.add(watcher.waitForDeath().take(1).subscribe(c-> onOtherServerDies(watcher,c,preferedTransportUrl)));
+            this.subscriptions.add(watcher.waitForDeath().take(1).subscribe(c -> onOtherServerDies(watcher, url)));
         }
+    }
+
+    private void onOtherServerComesBackToLife(IPeerSession session, ClusterServerConnectionWatcher watcher, String  url) {
+        log.info("Server {} has come back to life",session);
+        this.subscriptions.add(watcher.waitForDeath().take(1).subscribe(c -> onOtherServerDies(watcher,url)));
     }
 
     private String getPreferedTransportUrl(String url) {
@@ -211,34 +231,24 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         return parts[0];
     }
 
-    private boolean hasComeOnlineAgain(OperatorEvent ev) {
-        boolean isUpdate = ev.getEventType().equals(EventType.ROW_UPDATE);
-        HashMap<String,Object> result = (HashMap<String, Object>) ev.getEventData();
-        if(isUpdate){
-            if(Boolean.FALSE.equals(result.get("isOffline"))){
-                return true;
-            }
-        }
-        return false;
-    }
 
-    private void onOtherServerDies(ClusterServerConnectionWatcher watcher, Object c, String url) {
-        watcher.close();
+    private void onOtherServerDies(ClusterServerConnectionWatcher watcher, String  url) {
         boolean otherServerMaster = isOtherServerMaster(url);
+        IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+        this.subscriptions.add(watcher.waitForConnection().take(1).subscribe(c -> onOtherServerComesBackToLife((IPeerSession) c,watcher,url)));
         if(otherServerMaster){
-            log.info("{} has detetcted that MASTER {} has died in cluster",this.clientVersionInfo.getServerEndPoint(), url);
+            log.error("{} has detetcted that MASTER {} has died in cluster",this.clientVersionInfo.getServerEndPoint(), url);
         }else{
-            log.info("{} has detetcted that SLAVE {} has died in cluster",this.clientVersionInfo.getServerEndPoint(), url);
+            log.error("{} has detetcted that SLAVE {} has died in cluster",this.clientVersionInfo.getServerEndPoint(), url);
         }
         if(otherServerMaster){
             if(iAmTheServerWithTheLeastConnectionsInTheCluster(url)) {
-                isMaster = true;
                 log.info("{} has detetcted that MASTER {} has died in cluster. I'm becoming the new master",this.clientVersionInfo.getServerEndPoint(), url);
-                IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
+
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
                         .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
-                        .addValue("isMaster", isMaster);
+                        .addValue("isMaster", true);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()
                         .addValue("url", url)
@@ -249,6 +259,13 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
             }else{
                 log.info("{} has detetcted that MASTER {} has died in cluster. I am not next in line for the throne",this.clientVersionInfo.getServerEndPoint(), url);
             }
+        }else{
+            IRecord record = new Record()
+                    .addValue("url", url)
+                    .addValue("isOffline", true)
+                    .addValue("noConnections", 0)
+                    .addValue("isMaster", false);
+            updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION ).subscribe();
         }
     }
 
