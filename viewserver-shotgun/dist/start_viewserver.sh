@@ -1,6 +1,9 @@
 #! /bin/bash
-source /usr/bin/shotgun-viewserver/shotgun_env.sh
+
 cd /usr/bin/shotgun-viewserver
+source ./shotgun_env.sh
+
+echo $SHOTGUN_ENVIRONMENT_NAME
 
 if [[ -z "$SHOTGUN_ENVIRONMENT_NAME" ]]; then
     echo "Environment variable SHOTGUN_ENVIRONMENT_NAME is required and has not been set on this host"
