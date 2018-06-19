@@ -101,6 +101,8 @@ public class MessagingController implements IMessagingController, UserPersistenc
         return ListenableFutureObservable.to(getUserForId(message.getToUserId(),User.class).observeOn(Schedulers.from(service)).map(user -> {
             String currentToken = user.getFcmToken();
             message.set("to",currentToken);
+            message.set("operatingSystem", user.getOperatingSystem());
+
             boolean sendRemotely = isSendRemotely(user);
             logger.info("Found user persisting message");
             persistMessage(message, sendRemotely).subscribe();
@@ -137,7 +139,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
         String existingUserForToken = tokenToUserMap.get(token);
 
         if(userId.equals(existingUserForToken)){
-            logger.info("User is already assigned this token aborting");
+            logger.debug("User is already assigned this token aborting");
             return Futures.immediateFuture(null);
         }
         if(existingUserForToken != null){
@@ -149,7 +151,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
-            logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);
+            logger.debug("Updating token \"{}\" to \"{}\"",currentToken, token);
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("version", getUserForIdSync(userId,User.class).getVersion())
@@ -186,6 +188,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
                 throw new RuntimeException("Failed to send notification response is \"" + json+ "\"");
             }
         } catch (IOException e) {
+            logger.error("There was a problem sending the notification. Error is", e);
             throw new RuntimeException(e);
         }
     }

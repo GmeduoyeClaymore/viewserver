@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 
@@ -86,21 +88,28 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     @Override
     //be careful when using this it will start spamming alot of objects if you subscribe
     public Observable<OperatorEvent>  observable(IRowFlags flags){
-
-
-        Observable<OperatorEvent> snapshot =  Observable.create(subscriber -> {
-            try{
-                IRowSequence rows = (this.getAllRows());
-                while(rows.moveNext()){
-                    HashMap<String, Object> rowDetails = getRowDetails(getProducer(), rows.getRowId(), flags);
-                    subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
+        Observable<OperatorEvent> snapshot =  Observable.create(new Action1<Emitter<OperatorEvent>>() {
+            Subscription subscription = null;
+            @Override
+            public void call(Emitter<OperatorEvent> subscriber) {
+                try {
+                    IRowSequence rows = (OutputBase.this.getAllRows());
+                    this.subscription = subject.subscribe(el -> subscriber.onNext(el), err -> subscriber.onError(err), () ->{
+                        subscriber.onCompleted();
+                        subscription.unsubscribe();
+                    });
+                    while (rows.moveNext()) {
+                        HashMap<String, Object> rowDetails = getRowDetails(OutputBase.this.getProducer(), rows.getRowId(), flags);
+                        subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
+                    }
+                } catch (Exception ex) {
+                    subscriber.onError(ex);
                 }
-                subscriber.onCompleted();
-            }catch (Exception ex){
-                subscriber.onError(ex);
-            }}, Emitter.BackpressureMode.BUFFER);
+            }
 
-        return Observable.concat(snapshot,subject.onBackpressureBuffer(100));
+        }, Emitter.BackpressureMode.BUFFER);
+
+        return snapshot;
     }
 
 
@@ -135,7 +144,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleAdd(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling Add - " +row);
+            log.debug("RX Subject Handling Add - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),row,null)));
         }
     }
@@ -153,7 +162,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling UPDATE - " +row);
+            log.debug("RX Subject Handling UPDATE - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(), row, new IRowFlags() {
                 @Override
                 public boolean isDirty(int columnId) {
@@ -171,7 +180,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         }
         getCurrentChanges().handleRemove(row);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling REMOVE - " +row);
+            log.debug("RX Subject Handling REMOVE - " +row);
             subject.onNext(new OperatorEvent(EventType.ROW_REMOVE,getRowDetails(getProducer(),row,null)));
         }
     }
@@ -295,7 +304,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
 
         getCurrentChanges().handleStatus(Status.SchemaReset);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling reset schema");
+            log.debug("RX Subject Handling reset schema");
             subject.onNext(new OperatorEvent(EventType.SCHEMA_RESET,null));
         }
     }
@@ -310,8 +319,9 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     public void resetData() {
 
         getCurrentChanges().handleStatus(Status.DataReset);
+        getCurrentChanges().handleStatus(Status.DataReset);
         if(subject.hasObservers()){
-            log.info("RX Subject Handling reset DATA");
+            log.debug("RX Subject Handling reset DATA");
             subject.onNext(new OperatorEvent(EventType.DATA_RESET,null));
         }
     }

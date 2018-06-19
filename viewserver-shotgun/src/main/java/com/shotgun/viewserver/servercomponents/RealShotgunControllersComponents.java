@@ -29,6 +29,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
     private BasicAWSCredentials basicAWSCredentials;
     private MapsControllerKey mapsControllerKey;
     private VehicleDetailsApiKey vehicleDetailsApiKey;
+    private ClientVersionInfo clientVersionInfo;
 
     public RealShotgunControllersComponents(
             IBasicServerComponents basicServerComponents,
@@ -38,19 +39,21 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
             BasicAWSCredentials basicAWSCredentials,
             MessagingApiKey messagingApiKey,
             MapsControllerKey mapsControllerKey,
-            VehicleDetailsApiKey vehicleDetailsApiKey) {
+            VehicleDetailsApiKey vehicleDetailsApiKey,
+            ClientVersionInfo clientVersionInfo) {
         super(basicServerComponents, databaseUpdater);
         this.controllerKey = controllerKey;
         this.stripeApiKey = stripeApiKey;
         this.basicAWSCredentials = basicAWSCredentials;
         this.mapsControllerKey = mapsControllerKey;
         this.vehicleDetailsApiKey = vehicleDetailsApiKey;
+        this.clientVersionInfo = clientVersionInfo;
         this.messagingController = new MessagingController(messagingApiKey, this.databaseUpdater, basicServerComponents.getServerCatalog(), messagingApiKey.isBlockRemoteSending());
     }
 
     @Override
     protected INexmoController getNexmoController() {
-        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  getDatabaseUpdater(), messagingController);
+        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  getDatabaseUpdater(), messagingController,clientVersionInfo);
     }
 
     @Override

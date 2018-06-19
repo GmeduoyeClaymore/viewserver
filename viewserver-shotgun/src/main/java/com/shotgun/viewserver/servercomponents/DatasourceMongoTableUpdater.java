@@ -34,7 +34,6 @@ import static io.viewserver.core.Utils.toArray;
 
 
 public class DatasourceMongoTableUpdater extends MongoTableUpdater {
-    public static Executor MongoPersistenceExecutor = Executors.newFixedThreadPool(5,new NamedThreadFactory("mongo-persistence"));
     private static final Logger logger = LoggerFactory.getLogger(DatasourceMongoTableUpdater.class);
     private ConcurrentHashMap<TableUpdateKey,Observable<Boolean>> inFlightUpdates = new ConcurrentHashMap<>();
     private ICatalog catalog;
@@ -59,14 +58,14 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
 
         Observable<Boolean> inFlightUpdate = this.inFlightUpdates.get(key);
         if(inFlightUpdate != null){
-            logger.info(String.format("Found in flight update for table %s record %s",table,tableKey));
+            logger.debug(String.format("Found in flight update for table %s record %s",table,tableKey));
             Observable<Boolean> booleanObservable = inFlightUpdate.flatMap(res -> {
                 if (res) {
-                    logger.info(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
+                    logger.debug(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
                     return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
                 } else {
                     String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
-                    logger.info(format);
+                    logger.debug(format);
                     throw new RuntimeException(format);
                 }
             });
@@ -101,7 +100,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         if(logger.isDebugEnabled()) {
             logger.debug("Updatating {} with record {}", table, record.asString());
         }
-        Observable<Boolean> booleanObservable = super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).observeOn(Schedulers.from(MongoPersistenceExecutor)).flatMap(res -> {
+        Observable<Boolean> booleanObservable = super.addOrUpdateRow(dsTableName.getDataSourceName(), schemaConfig, record, versionBeforeUpdate).flatMap(res -> {
             if (!res) {
                 throw new RuntimeException("Update to record " + tableKey + " has not been acknowleged");
             }
@@ -117,7 +116,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
             if(version == 0){
                 version = null;
             }
-            logger.info("Found record {} had the magic version number -1 so got the current verison from table which is \"{}\"",tableKey,version);
+            logger.debug("Found record {} had the magic version number -1 so got the current verison from table which is \"{}\"",tableKey,version);
         }
         return new Integer(-1).equals(version) ? null : version;
     }
@@ -128,7 +127,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         List<String> fields = new ArrayList<>(tableKeyDefinition.getKeys());
         fields.add("version");
         Observable<OperatorEvent> observable = table.getOutput().observable(toArray(fields, String[]::new));
-         return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).take(1).timeout(5, TimeUnit.SECONDS, isStopped ? Observable.empty() : Observable.error(new RuntimeException(getMessage(tableKey, version)))).map(
+         return observable.filter(ev -> filterForVersionUpdate(ev,table.getPath(), tableKey,version, tableKeyDefinition)).timeout(5, TimeUnit.SECONDS, isStopped ? Observable.empty() : Observable.error(new RuntimeException(getMessage(tableKey, version)))).take(1).map(
                 res -> {
                     inFlightUpdates.remove(new TableUpdateKey(tableName,tableKey));
                     return true;
@@ -136,9 +135,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
     }
 
     private String getMessage(TableKey tableKey, Integer version) {
-        String s = "Unable to detect update to record " + tableKey + " version " + version + " after 5 seconds";
-        logger.error(s);
-        return s;
+        return "Unable to detect update to record " + tableKey + " version " + version + " after 5 seconds";
     }
 
     private Boolean filterForVersionUpdate(OperatorEvent ev,String path, TableKey tableKey, Integer version, TableKeyDefinition tableKeyDefinition) {
@@ -156,10 +153,10 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
 
                 boolean result = new Integer(Integer.MAX_VALUE).equals(version)  || version == null ? versionFromUpdate != null : versionFromUpdate > version;
                 if(result){
-                    logger.info(String.format("SUCCESS - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
-                    logger.info("Record is :" + ev.getEventData());
+                    logger.debug(String.format("SUCCESS - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
+                    logger.debug("Record is :" + ev.getEventData());
                 }else{
-                    logger.info(String.format("INVALID - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
+                    logger.debug(String.format("INVALID - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
                 }
                 return result;
             }

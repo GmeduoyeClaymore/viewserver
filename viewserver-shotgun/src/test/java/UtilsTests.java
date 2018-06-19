@@ -16,10 +16,18 @@ import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import io.viewserver.util.dynamic.MethodInfo;
 import org.junit.Assert;
 import org.junit.Test;
+import rx.Emitter;
+import rx.Observable;
+import rx.Observer;
+import rx.observables.AsyncOnSubscribe;
+import rx.observables.SyncOnSubscribe;
+import rx.subjects.PublishSubject;
 
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class UtilsTests {
     @Test
@@ -33,6 +41,54 @@ public class UtilsTests {
         DeliveryAddress getDestination();
     }
 
+
+    @Test
+    public void Can_timeout_observable() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(10000);
+
+        PublishSubject subject = PublishSubject.create();
+
+        new Thread(){
+            @Override
+            public void run() {
+                while (true){
+                    System.out.println("Nexting");
+                    subject.onNext(null);
+                    try {
+                        System.out.println("Sleeping");
+                        Thread.sleep(8000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Nexting");
+                    subject.onNext(null);
+                }
+            }
+        }.start();
+
+
+        Observable result = Observable.concat(Observable.create(subscriber -> {
+            int i=0;
+            while(i++ < 10){
+                subscriber.onNext(i);
+            }
+            subscriber.onCompleted();
+        }),subject);
+
+        Thread.sleep(4000);
+
+        System.out.println("Now subscribing");
+        result.timeout(5,TimeUnit.SECONDS).subscribe(
+                ne -> {
+                    System.out.println("Now nexting");
+                    latch.countDown();
+                },
+                err -> System.err.println(err)
+        );
+
+        latch.await();
+
+    }
 
 
     @Test

@@ -2,6 +2,7 @@ package com.shotgun.viewserver.servercomponents;
 
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.IVehicleDetailsController;
+import com.shotgun.viewserver.error.ClientLoggerController;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.login.LoginController;
 import com.shotgun.viewserver.maps.IMapsController;
@@ -37,11 +38,13 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater, basicServerComponents.getServerCatalog());
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
+        ClientLoggerController clientLoggerController = new ClientLoggerController();
         UserController userController = new UserController(databaseUpdater,  iImageController,  messagingController, paymentController, mapsController, getServerReactor(), basicServerComponents.getServerCatalog());
         DeliveryOrderController deliveryOrderController = new DeliveryOrderController(databaseUpdater, messagingController, deliveryAddressController, paymentController, mapsController, basicServerComponents.getServerCatalog());
 
         this.registerController(paymentController);
         this.registerController(mapsController);
+        this.registerController(clientLoggerController);
         this.registerController(loginController);
         this.registerController(userController);
         this.registerController(new PartnerController( paymentController, userController, loginController, iImageController, deliveryAddressController, this.getServerReactor()));

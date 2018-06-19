@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.FuncN;
+import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
-        return Observable.zip(readyObservables, onCompletedAll).take(1);
+        return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 
     private void onKeyedTable(KeyedTable table, IRecordLoader recordLoader){

@@ -548,11 +548,11 @@ public class ViewServerClient implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        network.shutdown();
         log.info("Closing client - " + name);
         this.subscriptons.forEach(c-> c.unsubscribe());
         this.isClosed = true;
         reactor.shutDown();
         reactor.waitForShutdown();
-        network.shutdown();
     }
 }

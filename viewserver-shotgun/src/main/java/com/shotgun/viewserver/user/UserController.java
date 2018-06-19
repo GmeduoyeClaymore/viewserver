@@ -288,7 +288,7 @@ public class UserController implements UserTransformationController, RatedOrderC
         int userRowId = userTable.getRow(new TableKey(userId));
         IOutput output = userTable.getOutput();
         if (userRowId == -1) {
-            log.info("Waiting for user {}", userId);
+            log.debug("Waiting for user {}", userId);
             return output.observable().subscribeOn(Schedulers.from(ControllerUtils.BackgroundExecutor)).filter(ev -> hasUserId(ev, userId)).take(1).timeout(10, TimeUnit.SECONDS, Observable.error(UserNotFoundException.fromUserId(userId))).map(ev -> (Map<String, Object>) ev.getEventData());
         }
         return rx.Observable.just(OperatorEvent.getRowDetails(output, userRowId, null));

@@ -52,6 +52,9 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("paul",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga2",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga3",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForPreProdEnvironment);
     }
@@ -113,12 +116,15 @@ public class  ShotgunServerLauncher{
     private static boolean ConfigureForProdEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,false, false);
     }
+
     private static boolean ConfigureForStagingEnvironment(MutablePicoContainer container) {
-        return ConfigureForRealEnvironment(container,true, false);
+        return ConfigureForRealEnvironment(container,false, false);
     }
+
     private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
         return ConfigureForRealEnvironment(container,true, true);
     }
+
     private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending, boolean doMockPaymentController) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));

@@ -30,6 +30,9 @@ public class ClusterDataSource {
                                 .withKeyColumns("url")
                 )
                 .withOutput(DataSource.TABLE_NAME)
+                .withDimensions(Arrays.asList(
+                        new Dimension("dimension_clientVersion","clientVersion" ,Cardinality.Int, ContentType.String),
+                        new Dimension("dimension_isOffline","isOffline" ,Cardinality.Int, ContentType.Bool)))
                 .withOptions(DataSourceOption.IsReportSource, DataSourceOption.IsKeyed);
     }
 }
