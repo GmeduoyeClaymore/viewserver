@@ -20,7 +20,7 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
- <version>1.0.27-SNAPSHOT</version>
+ <version>1.0.26</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/shotgunsolutions/shotgun-viewserver.git</connection>
