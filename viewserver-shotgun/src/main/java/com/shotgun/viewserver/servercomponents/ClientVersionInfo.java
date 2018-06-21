@@ -2,18 +2,18 @@ package com.shotgun.viewserver.servercomponents;
 
 public class ClientVersionInfo {
     private String serverEndPoint;
-    private String compatableClientVersion;
+    private String compatibleClientVersion;
 
-    public ClientVersionInfo(String serverEndPoint, String compatableClientVersion) {
+    public ClientVersionInfo(String serverEndPoint, String compatibleClientVersion) {
         this.serverEndPoint = serverEndPoint;
-        this.compatableClientVersion = compatableClientVersion;
+        this.compatibleClientVersion = compatibleClientVersion;
     }
 
     public String getServerEndPoint() {
         return serverEndPoint;
     }
 
-    public String getCompatableClientVersion() {
-        return compatableClientVersion;
+    public String getCompatibleClientVersion() {
+        return compatibleClientVersion;
     }
 }

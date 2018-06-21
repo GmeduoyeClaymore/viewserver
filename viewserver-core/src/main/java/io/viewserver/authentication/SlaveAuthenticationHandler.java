@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class SlaveAuthenticationHandler extends AuthenticationHandlerBase {
     @Override
-    protected String authenticate(List<String> tokens) {
-        return tokens.get(0);
+    protected String authenticate(String clientVersion) {
+        return clientVersion;
     }
 
     @Override

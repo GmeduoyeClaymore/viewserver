@@ -16,8 +16,8 @@ public class ShotgunSubscriptionComponent extends BasicSubscriptionComponent {
     }
 
     protected void registerAuthenticationHandlers() {
-        authenticationHandlerRegistry.register("compatableVersion", new CompatableVersionAuthenticationCommand(basicServerComponents.getServerCatalog(),versionInfo));
-        authenticationHandlerRegistry.register("compatableVersionEvenlyDistributed", new CompatableVersionEvenlyDistributedAuthenticationCommand(basicServerComponents.getServerCatalog(),versionInfo));
+        authenticationHandlerRegistry.register("compatibleVersion", new CompatibleVersionAuthenticationCommand(basicServerComponents.getServerCatalog(),versionInfo));
+        authenticationHandlerRegistry.register("compatibleVersionEvenlyDistributed", new CompatibleVersionEvenlyDistributedAuthenticationCommand(basicServerComponents.getServerCatalog(),versionInfo));
     }
 
 }

@@ -16,14 +16,12 @@
 
 package io.viewserver.authentication;
 
-import java.util.List;
-
 /**
  * Created by nick on 13/02/2015.
  */
 public class OpenAuthenticationHandler extends AuthenticationHandlerBase {
     @Override
-    protected String authenticate(List<String> tokens) {
-        return tokens.get(0);
+    protected String authenticate(String clientVersion) {
+        return clientVersion;
     }
 }

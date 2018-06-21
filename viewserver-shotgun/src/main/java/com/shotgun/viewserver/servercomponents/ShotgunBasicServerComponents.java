@@ -135,7 +135,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
-                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
+                .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion())
                 .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
@@ -195,7 +195,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                             .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                             .addValue("noConnections", 0)
                             .addValue("isOffline", false)
-                            .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
+                            .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion());
                     IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                     log.info("MILESTONE: Attempting to update cluster before calling server listen");
                     updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
@@ -247,7 +247,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
-                        .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
+                        .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion())
                         .addValue("isMaster", true);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()

@@ -18,8 +18,6 @@ package io.viewserver.messages.command;
 
 import io.viewserver.messages.IPoolableMessage;
 
-import java.util.List;
-
 /**
  * Created by nick on 02/12/15.
  */
@@ -27,5 +25,6 @@ public interface IAuthenticateCommand<T> extends IPoolableMessage<T> {
     String getType();
     IAuthenticateCommand setType(String type);
 
-    List<String> getTokens();
+    IAuthenticateCommand setClientVersion(String clientVersion);
+    String getClientVersion();
 }
