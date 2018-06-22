@@ -33,15 +33,36 @@ Feature:Cluster scenarios
   @MongoTest
   Scenario: When connecting to incompatible server Successive connections should be equally distributed amongst compatible view servers
     Given a client named "client1" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
+    When "client1" subscribed to report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster |
+      | inproc://master1 | ^1.0.0        | 1             | true     |
+      | inproc://master2 | ^2.0.0        | 0             | false    |
+      | inproc://master3 | ^1.0.0        | 0             | false    |
     Given a client named "client2" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster |
+      | inproc://master1 | ^1.0.0        | 1             | true     |
+      | inproc://master2 | ^2.0.0        | 0             | false    |
+      | inproc://master3 | ^1.0.0        | 1             | false    |
     Given a client named "client3" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster |
+      | inproc://master1 | ^1.0.0        | 2             | true     |
+      | inproc://master2 | ^2.0.0        | 0             | false    |
+      | inproc://master3 | ^1.0.0        | 1             | false    |
     Given a client named "client4" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster |
+      | inproc://master1 | ^1.0.0        | 2             | true     |
+      | inproc://master2 | ^2.0.0        | 0             | false    |
+      | inproc://master3 | ^1.0.0        | 2             | false    |
     Given a client named "client5" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster |
+      | inproc://master1 | ^1.0.0        | 3             | true     |
+      | inproc://master2 | ^2.0.0        | 0             | false    |
+      | inproc://master3 | ^1.0.0        | 2             | false    |
     Given a client named "client6" connected to "inproc://master2" with authentication "compatibleVersion" and clientVersion "1.0.0"
     When "client1" subscribed to report "cluster"
     Then "client1" the following data is received eventually on report "cluster" snapshot
@@ -53,32 +74,59 @@ Feature:Cluster scenarios
   @MongoTest
   Scenario: When connecting to compatible server with authentication compatibleVersionEvenlyDistributed Successive connections should be equally distributed amongst compatible view servers
     Given a client named "client1" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
-    Given a client named "client2" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
-    Given a client named "client3" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
-    Given a client named "client4" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
-    Given a client named "client5" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
-    Given a client named "client6" connected to "inproc://master3" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
-    Then sleep for 1000 millis
     When "client1" subscribed to report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections |
+      | inproc://master1 | ^1.0.0        | 1             |
+      | inproc://master2 | ^2.0.0        | 0             |
+      | inproc://master3 | ^1.0.0        | 0             |
+    Given a client named "client2" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections |
+      | inproc://master1 | ^1.0.0        | 1             |
+      | inproc://master2 | ^2.0.0        | 0             |
+      | inproc://master3 | ^1.0.0        | 1             |
+    Given a client named "client3" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections |
+      | inproc://master1 | ^1.0.0        | 2             |
+      | inproc://master2 | ^2.0.0        | 0             |
+      | inproc://master3 | ^1.0.0        | 1             |
+    Given a client named "client4" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections |
+      | inproc://master1 | ^1.0.0        | 2             |
+      | inproc://master2 | ^2.0.0        | 0             |
+      | inproc://master3 | ^1.0.0        | 2             |
+    Given a client named "client5" connected to "inproc://master1" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections |
+      | inproc://master1 | ^1.0.0        | 3             |
+      | inproc://master2 | ^2.0.0        | 0             |
+      | inproc://master3 | ^1.0.0        | 2             |
+    Given a client named "client6" connected to "inproc://master3" with authentication "compatibleVersionEvenlyDistributed" and clientVersion "1.0.0"
     Then "client1" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster |
       | inproc://master1 | ^1.0.0        | 3             | true     |
       | inproc://master2 | ^2.0.0        | 0             | false    |
       | inproc://master3 | ^1.0.0        | 3             | false    |
 
+
   @MongoTest
   Scenario: Killing master should delegate master responsiblity to node in cluster with least connections
     Given a client named "client1" connected to "inproc://master1,inproc://master3" with authentication "compatibleVersion" and clientVersion "1.0.0"
+    Given "client1" subscribed to report "cluster"
+    Then "client1" the following data is received eventually on report "cluster" snapshot
+      | url              | clientVersion | noConnections | isMaster | isOffline |
+      | inproc://master1 | ^1.0.0        | 0             | true     | false     |
+      | inproc://master2 | ^2.0.0        | 0             | false    | false     |
+      | inproc://master3 | ^1.0.0        | 1             | false    | false     |
     Given a client named "client2" connected to "inproc://master1,inproc://master3" with authentication "compatibleVersion" and clientVersion "1.0.0"
     Given a client named "client3" connected to "inproc://master1,inproc://master3" with authentication "compatibleVersion" and clientVersion "1.0.0"
     Given a client named "client4" connected to "inproc://master3,inproc://master1" with authentication "compatibleVersion" and clientVersion "1.0.0"
     Given a client named "client5" connected to "inproc://master3,inproc://master1" with authentication "compatibleVersion" and clientVersion "1.0.0"
     Given a client named "client6" connected to "inproc://master3,inproc://master1" with authentication "compatibleVersion" and clientVersion "1.0.0"
+    And sleep for 3000 millis
     And Shotgun viewserver with url "inproc://master1" is killed
     And sleep for 15000 millis
     When "client6" subscribed to report "cluster"

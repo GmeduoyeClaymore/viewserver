@@ -36,20 +36,24 @@ public class CompatibleVersionEvenlyDistributedAuthenticationCommand implements 
             Version clientVersion = Version.valueOf(authenticateCommandDto.getClientVersion());
             log.info("Attempting to authenticate against client version - {}", clientVersion);
             IRowSequence rows = (table.getOutput().getAllRows());
-            Integer myNoConnections = clientVersion.satisfies(versionInfo.getCompatibleClientVersion()) ? (Integer)ColumnHolderUtils.getColumnValue(table, "noConnections",versionInfo.getServerEndPoint()) : Integer.MAX_VALUE;
+            Integer noConnectionsOnAlternative = clientVersion.satisfies(versionInfo.getCompatibleClientVersion()) ? (Integer)ColumnHolderUtils.getColumnValue(table, "noConnections",versionInfo.getServerEndPoint()) : Integer.MAX_VALUE;
 
             String alternativeUrl = null;
             while(rows.moveNext()){
                 String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
-                if(!url.equals(versionInfo.getServerEndPoint()) && !Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())) && clientVersion.satisfies((String)ColumnHolderUtils.getColumnValue(table, "clientVersion", rows.getRowId()))){
+                String clientVersion1 = (String) ColumnHolderUtils.getColumnValue(table, "clientVersion", rows.getRowId());
+                if(clientVersion1 == null || url == null){
+                    continue;
+                }
+                if(!url.equals(versionInfo.getServerEndPoint()) && !Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())) && clientVersion.satisfies(clientVersion1)){
                     Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
-                    if(noConnections < myNoConnections){
+                    if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections == noConnectionsOnAlternative && url.hashCode() < alternativeUrl.hashCode())){
                         alternativeUrl = url;
-                        myNoConnections = noConnections;
+                        noConnectionsOnAlternative = noConnections;
                     }
                 }
             }
-            if(alternativeUrl == null && myNoConnections != Integer.MAX_VALUE) {
+            if(alternativeUrl == null && noConnectionsOnAlternative != Integer.MAX_VALUE) {
                 log.info("Successfully authenticated - {}", clientVersion.toString());
                 return new AuthenticationToken(authenticateCommandDto.getType(), versionInfo.getCompatibleClientVersion());
             }

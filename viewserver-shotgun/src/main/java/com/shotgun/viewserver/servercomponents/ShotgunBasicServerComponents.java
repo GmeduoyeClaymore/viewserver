@@ -150,6 +150,9 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         IRowSequence rows = (table.getOutput().getAllRows());
         while(rows.moveNext()){
             String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
+            if(url == null){
+                continue;
+            }
             if(!url.equals(this.clientVersionInfo.getServerEndPoint()) && (Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isMaster", rows.getRowId())))){
                 return false;
             }
@@ -281,9 +284,12 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         String alternativeUrl = null;
         while(rows.moveNext()){
             String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
+            if(url == null){
+                continue;
+            }
             if(!url.equals(disconnectedUrl) && !(Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())))){
                 Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
-                if(noConnections < noConnectionsOnAlternative || (noConnections.equals(noConnectionsOnAlternative) && url.hashCode() < alternativeUrl.hashCode())){
+                if(noConnections == null || noConnections < noConnectionsOnAlternative || (noConnections.equals(noConnectionsOnAlternative) && url.hashCode() < alternativeUrl.hashCode())){
                     alternativeUrl = url;
                     noConnectionsOnAlternative = noConnections;
                 }

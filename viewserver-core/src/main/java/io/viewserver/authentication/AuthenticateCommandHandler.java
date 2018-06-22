@@ -21,6 +21,8 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 
@@ -29,6 +31,7 @@ import rx.Observable;
  */
 public class AuthenticateCommandHandler extends CommandHandlerBase<IAuthenticateCommand> {
     private final AuthenticationHandlerRegistry authenticationHandlerRegistry;
+    private static final Logger log = LoggerFactory.getLogger(AuthenticateCommandHandler.class);
 
     public AuthenticateCommandHandler(AuthenticationHandlerRegistry authenticationHandlerRegistry) {
         super(IAuthenticateCommand.class);
@@ -57,6 +60,7 @@ public class AuthenticateCommandHandler extends CommandHandlerBase<IAuthenticate
                     });
 
         } catch (Throwable e) {
+            log.error("Problem executing authenticate command",e);
             commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
         }
     }
