@@ -74,17 +74,27 @@ public class ViewServerClientSteps {
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\"$")
     public void a_connected_client(String name, String url) throws AuthenticationException {
-        clientContext.create(name, url, "compatableVersion", "1").timeout(10,TimeUnit.MINUTES).take(1).toBlocking().first();
+        clientContext.create(name, url, "compatibleVersion", "1").timeout(10,TimeUnit.MINUTES).take(1).toBlocking().first();
     }
 
-    @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and token \"([^\"]*)\"$")
-    public void a_connected_client_with_authentication(String name, String url, String authName, String token) {
+    @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
+    public void a_connected_client_with_authentication(String name, String url, String authName, String clientVersion) {
         int timeout = 30;
         try {
-            clientContext.create(name, url, authName, token).timeout(timeout,TimeUnit.SECONDS).take(1).toBlocking().first();
+            clientContext.create(name, url, authName, clientVersion).timeout(timeout,TimeUnit.SECONDS).take(1).toBlocking().first();
         }catch (Exception ex){
             logger.error("Problem with client authentication",ex);
-            throw new RuntimeException(String.format("Could not get conneted client in %s seconds", timeout));
+            throw new RuntimeException(String.format("Could not get connected client in %s seconds", timeout));
+        }
+    }
+
+    @And("^a client named \"([^\"]*)\" connect failed to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
+    public void a_connect_failed_client_with_authentication(String name, String url, String authName, String clientVersion) {
+        int timeout = 30;
+        try {
+            clientContext.create(name, url, authName, clientVersion).timeout(timeout,TimeUnit.SECONDS).take(1).toBlocking().first();
+        }catch (Exception ex){
+            logger.error("Client did not connect as expected",ex);
         }
     }
 

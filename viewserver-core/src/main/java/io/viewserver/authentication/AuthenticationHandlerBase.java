@@ -17,7 +17,6 @@
 package io.viewserver.authentication;
 
 import io.viewserver.messages.command.IAuthenticateCommand;
-import rx.Observable;
 
 import java.util.List;
 
@@ -27,12 +26,12 @@ import java.util.List;
 public abstract class AuthenticationHandlerBase implements IAuthenticationHandler {
     @Override
     public final AuthenticationToken authenticate(IAuthenticateCommand authenticateCommandDto) {
-        AuthenticationToken token = new AuthenticationToken(authenticateCommandDto.getType(), authenticate(authenticateCommandDto.getTokens()));
+        AuthenticationToken token = new AuthenticationToken(authenticateCommandDto.getType(), authenticate(authenticateCommandDto.getClientVersion()));
         authorise(token);
         return token;
     }
 
-    protected abstract String authenticate(List<String> tokens);
+    protected abstract String authenticate(String clientVersion);
 
     protected void authorise(AuthenticationToken token) {
     }

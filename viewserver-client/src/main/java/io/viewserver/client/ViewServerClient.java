@@ -19,7 +19,6 @@ package io.viewserver.client;
 import io.viewserver.Constants;
 import io.viewserver.authentication.AuthenticationHandlerRegistry;
 import io.viewserver.catalog.Catalog;
-import io.viewserver.collections.BoundedFifoBuffer_KeyName_;
 import io.viewserver.command.CommandHandlerRegistry;
 import io.viewserver.command.ICommandResultListener;
 import io.viewserver.core.ExecutionContext;
@@ -47,24 +46,19 @@ import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.IRowFlags;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.sql.IExecuteSqlCommand;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zeromq.ZMQ;
 import rx.Emitter;
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.observable.ListenableFutureObservable;
 import rx.subjects.ReplaySubject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.Executors;
 
 public class ViewServerClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(ViewServerClient.class);
@@ -83,7 +77,7 @@ public class ViewServerClient implements AutoCloseable {
     private Subscription authenticationSubscription;
     private List<Subscription> subscriptons;
     private String type;
-    private String[] tokens;
+    private String clientVersion;
     private boolean isClosed;
 
     public ViewServerClient(String name, List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
@@ -156,16 +150,16 @@ public class ViewServerClient implements AutoCloseable {
         this.connectReplaySubject.onError(throwable);
     }
 
-    public Observable<CommandResult> withAuthentication(String type, String... tokens){
+    public Observable<CommandResult> withAuthentication(String type, String clientVersion){
         this.type = type;
-        this.tokens = tokens;
+        this.clientVersion = clientVersion;
 
         if(this.authenticationSubscription != null){
             this.authenticationSubscription.unsubscribe();
         }
         return Observable.create(subscriber ->  {
             ViewServerClient.this.authenticationSubscription = ViewServerClient.this.connectReplaySubject.subscribe(session -> {
-                ViewServerClient.this.authenticate(type,tokens).subscribe(
+                ViewServerClient.this.authenticate(type, clientVersion).subscribe(
                         res -> {
                             log.info("Authetication succeeded - " + res);
                             subscriber.onNext(res);
@@ -183,8 +177,8 @@ public class ViewServerClient implements AutoCloseable {
 
     private void onSessionDisconnect() {
         this.connectReplaySubject = ReplaySubject.create(1);
-        if(this.tokens != null){
-            withAuthentication(this.type,this.tokens).subscribe();
+        if(this.clientVersion != null){
+            withAuthentication(this.type,this.clientVersion).subscribe();
         }
     }
 
@@ -236,11 +230,11 @@ public class ViewServerClient implements AutoCloseable {
         return serverReactor;
     }
 
-    public Observable<CommandResult> authenticate(String type, String... tokens) {
+    public Observable<CommandResult> authenticate(String type, String clientVersion) {
           IAuthenticateCommand authenticateCommandDto = MessagePool.getInstance().get(IAuthenticateCommand.class)
                 .setType(type);
-          log.info("Sending authentication command {} with tokens {}",type,String.join(",",tokens));
-        authenticateCommandDto.getTokens().addAll(Arrays.asList(tokens));
+          log.info("Sending authentication command {} with clientVersion {}",type, clientVersion);
+        authenticateCommandDto.setClientVersion(clientVersion);
 
         ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto);
         return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor());
