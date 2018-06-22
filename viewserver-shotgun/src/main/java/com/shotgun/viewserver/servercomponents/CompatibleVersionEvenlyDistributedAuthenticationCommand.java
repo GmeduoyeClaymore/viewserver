@@ -47,7 +47,7 @@ public class CompatibleVersionEvenlyDistributedAuthenticationCommand implements 
                 }
                 if(!url.equals(versionInfo.getServerEndPoint()) && !Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())) && clientVersion.satisfies(clientVersion1)){
                     Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
-                    if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections == noConnectionsOnAlternative && url.hashCode() < alternativeUrl.hashCode())){
+                    if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections == noConnectionsOnAlternative && url.compareTo(alternativeUrl) < 0)){
                         alternativeUrl = url;
                         noConnectionsOnAlternative = noConnections;
                     }

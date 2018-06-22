@@ -50,7 +50,7 @@ public class CompatibleVersionAuthenticationCommand implements IAuthenticationHa
                         clientVersion.satisfies((String)ColumnHolderUtils.getColumnValue(table, "clientVersion", rows.getRowId()))){
                     Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
                     noConnections = noConnections == null ? 0 : noConnections;
-                    if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections == noConnectionsOnAlternative && url.hashCode() < alternativeUrl.hashCode())){
+                    if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections.equals(noConnectionsOnAlternative) && url.compareTo(alternativeUrl) < 0)) {
                         alternativeUrl = url;
                         noConnectionsOnAlternative = noConnections;
                     }
