@@ -74,7 +74,7 @@ public class ViewServerClientSteps {
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\"$")
     public void a_connected_client(String name, String url) throws AuthenticationException {
-        clientContext.create(name, url, "compatibleVersion", "1").timeout(10,TimeUnit.MINUTES).take(1).toBlocking().first();
+        clientContext.create(name, url, "compatibleVersion", "1.0.0").timeout(10,TimeUnit.MINUTES).take(1).toBlocking().first();
     }
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
