@@ -82,32 +82,35 @@ public class ViewServerClientContext {
     }
 
     public Observable<ClientConnectionContext> create(String name, String url, String authName, String token) throws AuthenticationException{
+        TestViewServerClient client = null;
         try {
-            TestViewServerClient client = new TestViewServerClient(name, replaceParams(url));
-            client.onClientClose();
+            client = new TestViewServerClient(name, replaceParams(url));
             log.info("MILESTONE - Creating client {} connecting to URL {}",name, url);
             synchronized (this.clientReferences) {
                 this.clientReferences.add(client);
             }
+            TestViewServerClient finalClient = client;
             return client.withAuthentication(authName, token).flatMap(
                     success -> {
                         log.info("Client successfully authenticated");
-                        ClientConnectionContext result = new ClientConnectionContext(name,client, this);
+                        ClientConnectionContext result = new ClientConnectionContext(name,finalClient, this);
                         this.clientConnectionsByName.put(name,result);
                         return Observable.just(result);
                     },
                     err -> {
                         try {
                             log.info("Authentication failed " + err);
-                            client.close();
-                            err = unwrap(err);
-                            HashMap<String, Object> result = (HashMap<String, Object>) ControllerUtils.mapDefault(err.getMessage());
-                            String alternativeUrl = (String) result.get("alternative");
-                            if (alternativeUrl != null){
-                                log.info("Client not authenticated but found alternative " + alternativeUrl);
-                                return create(name,alternativeUrl,authName,token);
-                            }else{
-                                log.info("Client not authenticated no alternative found aborting");
+                            if(!finalClient.isClosed) {
+                                finalClient.close();
+                                err = unwrap(err);
+                                HashMap<String, Object> result = (HashMap<String, Object>) ControllerUtils.mapDefault(err.getMessage());
+                                String alternativeUrl = (String) result.get("alternative");
+                                if (alternativeUrl != null) {
+                                    log.info("Client not authenticated but found alternative " + alternativeUrl);
+                                    return create(name, alternativeUrl, authName, token);
+                                } else {
+                                    log.info("Client not authenticated no alternative found aborting");
+                                }
                             }
                         }catch (Throwable ex2){
                            log.error("Problem with authention",err);
@@ -115,10 +118,14 @@ public class ViewServerClientContext {
                         return Observable.error(new AuthenticationException(err.getMessage()));
                     },
                     () -> {
+                        finalClient.close();
                         return Observable.empty();
                     }
             );
         } catch (Exception e) {
+            if(client != null){
+                client.close();
+            }
             throw new RuntimeException(e);
         }
     }

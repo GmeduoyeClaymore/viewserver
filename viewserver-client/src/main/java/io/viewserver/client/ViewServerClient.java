@@ -80,7 +80,7 @@ public class ViewServerClient implements AutoCloseable {
     private List<Subscription> subscriptons;
     private String type;
     private String clientVersion;
-    private boolean isClosed;
+    public boolean isClosed;
 
     public ViewServerClient(String name, List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
         this.name = name;

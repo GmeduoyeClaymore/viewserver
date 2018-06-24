@@ -51,7 +51,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     private static final Logger log = LoggerFactory.getLogger(ShotgunBasicServerComponents.class);
     private List<Subscription> subscriptions;
     private List<ClusterServerConnectionWatcher> watchers;
-    ScheduledExecutorService connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("connectionCount"));
+    ScheduledExecutorService connectionCountExecutor;
     private boolean isStopped;
 
     public ShotgunBasicServerComponents(String serverName,List<IEndpoint> endpointList,ClientVersionInfo clientVersionInfo,boolean disconnectOnTimeout, int timeoutInterval,int heartbeatInterval,BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory, boolean isInitiallyMaster) {
@@ -65,7 +65,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         this.subscriptions = new ArrayList<>();
         this.watchers = new ArrayList<>();
         this.debouncer = new Debouncer();
-
+        this.connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(String.format("connectionCount-%s",serverName)));
         JacksonSerialiser.getInstance().registerModules(
                 new Module[]{
                         new OrderSerializationModule()

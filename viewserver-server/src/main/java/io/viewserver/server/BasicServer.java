@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
 import rx.Observable;
-import rx.functions.Action1;
 import rx.functions.FuncN;
 import rx.schedulers.Schedulers;
 
@@ -27,16 +26,19 @@ public class BasicServer {
     private IInitialDataLoaderComponent initialDataLoaderComponent;
     private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
     private List<IServerComponent> components = new ArrayList<>();
-    private final Logger logger;
-    public static Executor BackgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
-    private String serverName;
+    private Logger logger;
+    private String serverName = "basicServer";
+    Executor backgroundExecutor;
+
 
     public interface Callable<V> {
         V call() ;
     }
 
     public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent,IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IInitialDataLoaderComponent initialDataLoaderComponent) {
+        this.backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
         this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
+
         this.basicSubscriptionComponent = basicSubscriptionComponent;
         this.basicServerComponents = basicServerComponents;
         this.controllerComponents = controllerComponents;
@@ -52,6 +54,8 @@ public class BasicServer {
     }
 
     BasicServer(String serverName,List<IEndpoint> endpointList) {
+        this.serverName = serverName;
+        this.backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
         this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
         basicServerComponents = new NettyBasicServerComponent(serverName,endpointList);
         dataSourceServerComponents = new DataSourceComponents(basicServerComponents);
@@ -71,6 +75,8 @@ public class BasicServer {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
+        this.backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory(serverName +"basicServer"));
+        this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
     }
 
     public void registerComponent(IServerComponent component) {
@@ -96,7 +102,7 @@ public class BasicServer {
                         logger.info(String.format("COMPLETED FINISHED WAITING for server components"));
                         return true;
                     };
-                    Observable.zip(observables, onCompletedAll).observeOn(Schedulers.from(BackgroundExecutor)).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
+                    Observable.zip(observables, onCompletedAll).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
                             res -> {
                                 basicServerComponents.listen();
                                 emitter.onNext(true);
