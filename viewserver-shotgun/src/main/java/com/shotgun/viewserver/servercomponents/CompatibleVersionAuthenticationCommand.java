@@ -46,8 +46,12 @@ public class CompatibleVersionAuthenticationCommand implements IAuthenticationHa
                 if(url == null){
                     continue;
                 }
+                String clientVersion1 = (String) ColumnHolderUtils.getColumnValue(table, "clientVersion", rows.getRowId());
+                if(clientVersion1 == null){
+                    continue;
+                }
                 if(!url.equals(versionInfo.getServerEndPoint()) && !Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())) &&
-                        clientVersion.satisfies((String)ColumnHolderUtils.getColumnValue(table, "clientVersion", rows.getRowId()))){
+                        clientVersion.satisfies(clientVersion1)){
                     Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
                     noConnections = noConnections == null ? 0 : noConnections;
                     if(noConnections < noConnectionsOnAlternative || (alternativeUrl != null && noConnections.equals(noConnectionsOnAlternative) && url.compareTo(alternativeUrl) < 0)) {
