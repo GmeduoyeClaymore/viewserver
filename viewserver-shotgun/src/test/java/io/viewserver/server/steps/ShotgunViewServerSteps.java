@@ -161,7 +161,7 @@ public class ShotgunViewServerSteps {
             launcher.run(env, bootstrap, complete);
             this.started.countDown();
             while (!isStopped) {
-                log.debug("INFO: Serve still running against {}", endPoint);
+                log.debug("INFO: Server is running against {}", endPoint);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
