@@ -114,7 +114,7 @@ Feature:Cluster scenarios
 
   @MongoTest
   Scenario: Killing master should delegate master responsiblity to node in cluster with least connections
-    Given a client named "client1" connected to "inproc://master1,inproc://master3" with authentication "compatibleVersion" and clientVersion "1.0.0"
+    Given a client named "client1" connected to "inproc://master3" with authentication "compatibleVersion" and clientVersion "1.0.0"
     Given "client1" subscribed to report "cluster"
     Then "client1" the following data is received eventually on report "cluster" snapshot
       | url              | clientVersion | noConnections | isMaster | isOffline |
