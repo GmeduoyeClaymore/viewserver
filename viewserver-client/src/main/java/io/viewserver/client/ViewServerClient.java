@@ -59,6 +59,8 @@ import rx.subjects.ReplaySubject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ViewServerClient implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(ViewServerClient.class);
@@ -89,6 +91,10 @@ public class ViewServerClient implements AutoCloseable {
         this.connectReplaySubject = ReplaySubject.create(1);
         this.subscriptons = new ArrayList<>();
         run();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public ExecutionContext getExecutionContext() {
@@ -541,11 +547,14 @@ public class ViewServerClient implements AutoCloseable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
+        if(this.isClosed){
+            return;
+        }
+        this.isClosed = true;
         network.shutdown();
         log.info("Closing client - " + name);
         this.subscriptons.forEach(c-> c.unsubscribe());
-        this.isClosed = true;
         reactor.shutDown();
         reactor.waitForShutdown();
     }

@@ -39,11 +39,7 @@ public class ClusterServerConnectionWatcher {
 
     public void close(){
         if(client != null){
-            try {
-                client.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            client.close();
         }
     }
 }

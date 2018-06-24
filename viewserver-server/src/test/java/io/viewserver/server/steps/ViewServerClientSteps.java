@@ -66,10 +66,13 @@ public class ViewServerClientSteps {
         this.clientContext = clientContext;
     }
 
+    @Before
+    public void beforeScenario() {
+        clientContext.closeClients();
+    }
     @After
     public void afterScenario() {
         clientContext.closeClients();
-
     }
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\"$")

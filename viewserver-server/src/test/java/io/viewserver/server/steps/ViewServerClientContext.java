@@ -19,6 +19,7 @@ package io.viewserver.server.steps;
 import gherkin.lexer.Ru;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.ViewServerClient;
+import io.viewserver.collections.BoolHashSet;
 import io.viewserver.controller.ControllerUtils;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
@@ -30,9 +31,7 @@ import rx.Observable;
 import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -43,8 +42,11 @@ public class ViewServerClientContext {
     private Map<String,String> contextParams = new HashMap<>();
     private static DateTime nowDate = new DateTime();
     private static final Logger log = LoggerFactory.getLogger(ViewServerClientContext.class);
+    private List<TestViewServerClient> clientReferences;
+
     public ViewServerClientContext() {
         clientConnectionsByName = new HashMap<>();
+        clientReferences = new ArrayList<>();
     }
 
     public Map<String, String> replaceParams(Map<String, String> record) {
@@ -82,6 +84,11 @@ public class ViewServerClientContext {
     public Observable<ClientConnectionContext> create(String name, String url, String authName, String token) throws AuthenticationException{
         try {
             TestViewServerClient client = new TestViewServerClient(name, replaceParams(url));
+            client.onClientClose();
+            log.info("MILESTONE - Creating client {} connecting to URL {}",name, url);
+            synchronized (this.clientReferences) {
+                this.clientReferences.add(client);
+            }
             return client.withAuthentication(authName, token).flatMap(
                     success -> {
                         log.info("Client successfully authenticated");
@@ -116,6 +123,12 @@ public class ViewServerClientContext {
         }
     }
 
+    private void removeClientReference(TestViewServerClient client) {
+        synchronized (this.clientReferences) {
+            this.clientReferences.remove(client);
+        }
+    }
+
     private Throwable unwrap(Throwable ex) {
         if(ex instanceof ExecutionException){
             return ex.getCause();
@@ -132,15 +145,19 @@ public class ViewServerClientContext {
     }
 
     public void closeClients() {
-        for(Map.Entry<String,ClientConnectionContext> entry : clientConnectionsByName.entrySet()){
-            try {
-                entry.getValue().getClient().close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        synchronized (this.clientReferences) {
+            for (TestViewServerClient testViewServerClient : clientReferences) {
+                try {
+                    log.info("MILESTONE - Closing test client {}", testViewServerClient.getName());
+                    testViewServerClient.close();
+                } catch (Exception ex) {
+                    log.error("Problem closing client", ex);
+                }
             }
+            clientConnectionsByName.clear();
+            contextParams.clear();
+            clientReferences.clear();
         }
-        clientConnectionsByName.clear();
-        contextParams.clear();
     }
 
     public Map<String, String> getContextParams() {

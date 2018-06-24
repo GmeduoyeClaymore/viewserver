@@ -54,7 +54,7 @@ public class MongoApplicationSetup implements IApplicationSetup {
             MongoCollection<Document> collection = db.getCollection(name);
             collection.drop();
         }catch (Exception ex){
-            log.error(ex.getMessage());
+            log.error("Issue dropping collection {}",name);
         }
     }
 

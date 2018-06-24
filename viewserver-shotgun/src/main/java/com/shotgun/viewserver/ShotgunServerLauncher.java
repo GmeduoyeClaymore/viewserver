@@ -200,6 +200,8 @@ public class  ShotgunServerLauncher{
 
         BasicServer server = container.getComponent(BasicServer.class);
 
+        server.setServerName(get("server.name"));
+
         log.info("MILESTONE: Kicking off basic server {}",System.getProperty("server.endpoint"));
 
         server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));

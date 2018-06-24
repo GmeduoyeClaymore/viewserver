@@ -27,14 +27,16 @@ public class BasicServer {
     private IInitialDataLoaderComponent initialDataLoaderComponent;
     private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
     private List<IServerComponent> components = new ArrayList<>();
-    private static final Logger logger = LoggerFactory.getLogger(BasicServer.class);
+    private final Logger logger;
     public static Executor BackgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
+    private String serverName;
 
     public interface Callable<V> {
         V call() ;
     }
 
     public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent,IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IInitialDataLoaderComponent initialDataLoaderComponent) {
+        this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
         this.basicSubscriptionComponent = basicSubscriptionComponent;
         this.basicServerComponents = basicServerComponents;
         this.controllerComponents = controllerComponents;
@@ -50,6 +52,7 @@ public class BasicServer {
     }
 
     BasicServer(String serverName,List<IEndpoint> endpointList) {
+        this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
         basicServerComponents = new NettyBasicServerComponent(serverName,endpointList);
         dataSourceServerComponents = new DataSourceComponents(basicServerComponents);
         controllerComponents = new ControllerComponents(basicServerComponents);
@@ -60,6 +63,14 @@ public class BasicServer {
         registerComponent(dataSourceServerComponents);
         registerComponent(reportServerComponents);
         registerComponent(controllerComponents);
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     public void registerComponent(IServerComponent component) {
