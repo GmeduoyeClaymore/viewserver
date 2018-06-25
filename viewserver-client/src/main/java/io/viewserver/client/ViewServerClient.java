@@ -186,6 +186,9 @@ public class ViewServerClient implements AutoCloseable {
 
     private void onSessionDisconnect() {
         this.connectReplaySubject = ReplaySubject.create(1);
+        if(this.isClosed){
+            return;
+        }
         if(this.clientVersion != null){
             withAuthentication(this.type,this.clientVersion).subscribe();
         }
@@ -246,7 +249,7 @@ public class ViewServerClient implements AutoCloseable {
         authenticateCommandDto.setClientVersion(clientVersion);
 
         ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto);
-        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor());
+        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor()).timeout(5,TimeUnit.SECONDS, Observable.error(new RuntimeException("No response to authenticate command in 5 seconds")));
     }
 
     public ListenableFuture<ClientSubscription> subscribe(String operator, Options options, ISubscriptionEventHandler<ClientSubscription> eventHandler) {
@@ -554,6 +557,7 @@ public class ViewServerClient implements AutoCloseable {
         if(this.isClosed){
             return;
         }
+        this.connectReplaySubject.onCompleted();
         this.isClosed = true;
         network.shutdown();
         log.info("Closing client - " + name);
