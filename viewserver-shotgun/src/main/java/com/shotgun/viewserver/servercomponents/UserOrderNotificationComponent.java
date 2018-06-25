@@ -151,7 +151,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                 if(Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())){
                                     HashMap eventData = (HashMap) ev.getEventData();
                                     String  orderId = (String) eventData.get("orderId");
-                                    DateTime created = new DateTime(eventData.get("created"));
+                                    DateTime lastModified = new DateTime(eventData.get("lastModified"));
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
                                     log.debug("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
@@ -159,7 +159,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                         log.info("Not sending notification as I am not the master");
                                     }
 
-                                    if(setNotificationForUser(orderId, created, user.getUserId())){
+                                    if(setNotificationForUser(orderId, lastModified, user.getUserId())){
                                         log.info("Sending notification to user {}",user.getUserId());
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
@@ -264,13 +264,13 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     }
 
 
-    private synchronized boolean setNotificationForUser(String orderId, DateTime created, String userId) {
+    private synchronized boolean setNotificationForUser(String orderId, DateTime lastModified, String userId) {
         List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
         if(notificationsForUser == null){
             notificationsForUser = new ArrayList<>();
             this.notifiedOrdersByUser.put(userId,notificationsForUser);
         }
-        if(!notificationsForUser.contains(orderId) && created.isAfter(startTime)){
+        if(!notificationsForUser.contains(orderId) && lastModified.isAfter(startTime)){
             notificationsForUser.add(orderId);
             return true;
         }
