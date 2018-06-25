@@ -107,7 +107,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
             logger.info("Found user persisting message");
             persistMessage(message, sendRemotely).subscribe();
             if(currentToken == null && isSendRemotely(user)){
-                String result = "Not sending message to {} as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token";
+                String result = String.format("Not sending message to \"%s\" as cannot yet find an fcm token for that user. Message marked as pending and will be sent when user registers token", message.getToUserId());
                 logger.info(result);
                 user.addPendingMessage(message);
                 return result;

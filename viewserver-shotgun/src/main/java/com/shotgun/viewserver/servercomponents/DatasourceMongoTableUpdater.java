@@ -172,7 +172,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
                 Observable.zip(inFlightUpdates.values(), objects -> null).take(1).timeout(10, TimeUnit.SECONDS).toBlocking().first();
             }
         }catch (Exception ex){
-            logger.error(ex.getMessage());
+            logger.error("At least one issue stopping table updater",ex.getMessage());
         }
         super.stop();
     }

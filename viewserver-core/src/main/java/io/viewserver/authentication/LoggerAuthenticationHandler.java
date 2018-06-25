@@ -25,7 +25,7 @@ public class LoggerAuthenticationHandler extends AuthenticationHandlerBase {
     public static final String TYPE = "logger";
 
     @Override
-    protected String authenticate(List<String> tokens) {
-        return tokens.get(0);
+    protected String authenticate(String clientVersion) {
+        return clientVersion;
     }
 }

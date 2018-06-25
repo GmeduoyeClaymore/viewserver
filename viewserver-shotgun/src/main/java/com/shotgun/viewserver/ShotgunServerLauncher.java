@@ -178,7 +178,7 @@ public class  ShotgunServerLauncher{
     }
 
 
-    public void run(String environment, boolean bootstrap, boolean complete) {
+    public rx.Observable run(String environment, boolean bootstrap, boolean complete) {
 
         ExecutionContext.blockThreadAssertion  = true;
 
@@ -200,14 +200,18 @@ public class  ShotgunServerLauncher{
 
         BasicServer server = container.getComponent(BasicServer.class);
 
+        server.setServerName(get("server.name"));
+
         log.info("MILESTONE: Kicking off basic server {}",System.getProperty("server.endpoint"));
 
         server.registerComponent(() -> container.getComponent(UserOrderNotificationComponent.class));
-        server.start();
+        rx.Observable result = server.start();
 
         log.info("MILESTONE: Kicked off basic server {}",System.getProperty("server.endpoint"));
         this.servers.add(server);
         ExecutionContext.blockThreadAssertion  = false;
+
+        return result;
     }
 
     public void stop(){

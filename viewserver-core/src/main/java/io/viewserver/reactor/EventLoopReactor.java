@@ -33,7 +33,7 @@ import java.util.concurrent.*;
  * Created by bemm on 06/10/2014.
  */
 public class EventLoopReactor implements IReactor, IReactorCommandListener, INetworkMessageListener {
-    private static final Logger log = LoggerFactory.getLogger(EventLoopReactor.class);
+    private final Logger log;
     public static final byte CONTROL_REFRESH = 0;
     public static final byte CONTROL_WAKEUP = 1;
     public static final byte CONTROL_SHUTDOWN = 2;
@@ -56,6 +56,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     public EventLoopReactor(String name, Network network) {
         this.name = name;
         this.network = network;
+        this.log = LoggerFactory.getLogger(String.format("%s-%s",EventLoopReactor.class,name));
 
         ReactorMonitor.INSTANCE.addReactor(this);
 

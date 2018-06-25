@@ -23,7 +23,11 @@ import com.google.common.util.concurrent.SettableFuture;
 import io.viewserver.network.ReconnectionSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
+import javax.security.auth.Subject;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +39,7 @@ import java.util.concurrent.Future;
  */
 public class TestViewServerClient extends ViewServerClient {
     private static final Logger log = LoggerFactory.getLogger(TestViewServerClient.class);
+    private PublishSubject<Boolean> onClientClose = PublishSubject.create();
 
     public TestViewServerClient(String name, List<IEndpoint> endpoint) {
         super(name, endpoint, ReconnectionSettings.Times(20));
@@ -42,6 +47,11 @@ public class TestViewServerClient extends ViewServerClient {
 
     public TestViewServerClient(String name, IEndpoint endpoint) {
         super(name, Arrays.asList(endpoint), ReconnectionSettings.Times(20));
+    }
+
+
+    public Observable<Boolean> onClientClose() {
+        return onClientClose;
     }
 
     public TestViewServerClient(String name, String url) throws URISyntaxException {
@@ -64,5 +74,18 @@ public class TestViewServerClient extends ViewServerClient {
         sendCommand(reset);
 
         return future;
+    }
+
+    @Override
+    public void close() {
+        try{
+            log.info("MILESTONE: Client closed");
+            super.close();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        onClientClose.onNext(true);
+        onClientClose.onCompleted();
+        log.info("MILESTONE: Client closed fired");
     }
 }

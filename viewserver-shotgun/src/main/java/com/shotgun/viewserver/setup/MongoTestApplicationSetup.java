@@ -39,7 +39,11 @@ public class MongoTestApplicationSetup  extends MongoApplicationSetup {
 
     private void delete(MongoDatabase db, String name) {
         log.info("Deleting collection " + name);
-        MongoCollection<Document> collection = db.getCollection(name);
-        collection.drop();
+        try {
+            MongoCollection<Document> collection = db.getCollection(name);
+            collection.drop();
+        }catch (Exception ex){
+            log.error("Problem dropping collection - {}",name);
+        }
     }
 }

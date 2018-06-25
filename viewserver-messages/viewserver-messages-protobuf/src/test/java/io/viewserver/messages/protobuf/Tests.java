@@ -42,8 +42,7 @@ public class Tests {
         final AuthenticateCommandMessage.AuthenticateCommandDto.Builder authenticateCommandDtoBuilder =
                 AuthenticateCommandMessage.AuthenticateCommandDto.newBuilder()
                         .setType("blah")
-                        .addToken("one")
-                        .addToken("two");
+                        .setClientVersion("1.0.0");
         commandBuilder.setExtension(AuthenticateCommandMessage.authenticateCommand, authenticateCommandDtoBuilder.build());
 
         final MessageMessage.MessageDto messageDto = messageDtoBuilder.buildPartial();
@@ -55,8 +54,6 @@ public class Tests {
         Assert.assertEquals("authenticate", command.getCommand());
         final IAuthenticateCommand authenticateCommand = (IAuthenticateCommand) command.getExtension(IAuthenticateCommand.class);
         Assert.assertEquals("blah", authenticateCommand.getType());
-        final List<String> tokens = new ArrayList<>(authenticateCommand.getTokens());
-        Assert.assertEquals("one", tokens.get(0));
-        Assert.assertEquals("two", tokens.get(1));
+        Assert.assertEquals("1.0.0", authenticateCommand.getClientVersion());
     }
 }

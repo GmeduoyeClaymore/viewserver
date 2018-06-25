@@ -16,7 +16,7 @@ const initialState = {
   // get this from config file (second parameter is the default value if not found)
   username: config.get('username', 'bem'),
   password: config.get('password', 'foo'),
-  url: config.get('url', 'localhost:6060')
+  url: config.get('url', 'prod2.shotgun.ltd:6060')
 };
 
 // Make Actions

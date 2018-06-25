@@ -51,7 +51,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
     private static final Logger log = LoggerFactory.getLogger(ShotgunBasicServerComponents.class);
     private List<Subscription> subscriptions;
     private List<ClusterServerConnectionWatcher> watchers;
-    ScheduledExecutorService connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("connectionCount"));
+    ScheduledExecutorService connectionCountExecutor;
     private boolean isStopped;
 
     public ShotgunBasicServerComponents(String serverName,List<IEndpoint> endpointList,ClientVersionInfo clientVersionInfo,boolean disconnectOnTimeout, int timeoutInterval,int heartbeatInterval,BasicServer.Callable<IDatabaseUpdater> iDatabaseUpdaterFactory, boolean isInitiallyMaster) {
@@ -65,7 +65,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         this.subscriptions = new ArrayList<>();
         this.watchers = new ArrayList<>();
         this.debouncer = new Debouncer();
-
+        this.connectionCountExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(String.format("connectionCount-%s",serverName)));
         JacksonSerialiser.getInstance().registerModules(
                 new Module[]{
                         new OrderSerializationModule()
@@ -135,7 +135,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         log.info("No connections is - {}",sessionCount);
         IRecord record = new Record()
                 .addValue("url",clientVersionInfo.getServerEndPoint())
-                .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
+                .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion())
                 .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                 .addValue("noConnections", sessionCount);
         IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
@@ -150,6 +150,9 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         IRowSequence rows = (table.getOutput().getAllRows());
         while(rows.moveNext()){
             String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
+            if(url == null){
+                continue;
+            }
             if(!url.equals(this.clientVersionInfo.getServerEndPoint()) && (Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isMaster", rows.getRowId())))){
                 return false;
             }
@@ -195,7 +198,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
                             .addValue("isMaster", anotherServerIsNotMaster(isInitiallyMaster))
                             .addValue("noConnections", 0)
                             .addValue("isOffline", false)
-                            .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion());
+                            .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion());
                     IDatabaseUpdater updater = iDatabaseUpdaterFactory.call();
                     log.info("MILESTONE: Attempting to update cluster before calling server listen");
                     updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME,ClusterDataSource.getDataSource().getSchema(),record,IRecord.UPDATE_LATEST_VERSION)
@@ -247,7 +250,7 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
 
                 IRecord record = new Record()
                         .addValue("url", clientVersionInfo.getServerEndPoint())
-                        .addValue("clientVersion", clientVersionInfo.getCompatableClientVersion())
+                        .addValue("clientVersion", clientVersionInfo.getCompatibleClientVersion())
                         .addValue("isMaster", true);
                 updater.addOrUpdateRow(TableNames.CLUSTER_TABLE_NAME, ClusterDataSource.getDataSource().getSchema(), record,IRecord.UPDATE_LATEST_VERSION).subscribe();
                 record = new Record()
@@ -281,9 +284,12 @@ public class ShotgunBasicServerComponents extends NettyBasicServerComponent{
         String alternativeUrl = null;
         while(rows.moveNext()){
             String url = (String) ColumnHolderUtils.getColumnValue(table, "url", rows.getRowId());
+            if(url == null){
+                continue;
+            }
             if(!url.equals(disconnectedUrl) && !(Boolean.TRUE.equals(ColumnHolderUtils.getColumnValue(table, "isOffline", rows.getRowId())))){
                 Integer noConnections = (Integer) ColumnHolderUtils.getColumnValue(table, "noConnections", rows.getRowId());
-                if(noConnections < noConnectionsOnAlternative || (noConnections.equals(noConnectionsOnAlternative) && url.hashCode() < alternativeUrl.hashCode())){
+                if(noConnections == null || noConnections < noConnectionsOnAlternative || (noConnections.equals(noConnectionsOnAlternative) && url.hashCode() < alternativeUrl.hashCode())){
                     alternativeUrl = url;
                     noConnectionsOnAlternative = noConnections;
                 }

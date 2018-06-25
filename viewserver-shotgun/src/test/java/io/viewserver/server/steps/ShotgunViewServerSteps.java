@@ -142,10 +142,15 @@ public class ShotgunViewServerSteps {
             if (url != null) {
                 System.setProperty("server.endpoint", url);
                 System.setProperty("server.name", url + "_" + now);
+            }else{
+                System.clearProperty("server.endpoint");
+                System.clearProperty("server.name");
             }
 
             if(version != null) {
                 System.setProperty("server.version", version);
+            }else{
+                System.clearProperty("server.version");
             }
             PropertyUtils.loadProperties("cucumber");
             String env = System.getProperty("env");
@@ -153,10 +158,18 @@ public class ShotgunViewServerSteps {
             String endPoint = System.getProperty("server.endpoint");
             log.info("MILESTONE: Actually running view server against url {}", endPoint);
             ShotgunServerLauncher launcher = new ShotgunServerLauncher();
-            launcher.run(env, bootstrap, complete);
-            this.started.countDown();
+            launcher.run(env, bootstrap, complete).subscribe(
+                    success -> {
+                        this.started.countDown();
+                    },
+                    err -> {
+                        log.error("Problem starting server",err);
+                        isStopped = true;
+                    }
+            );
+
             while (!isStopped) {
-                log.debug("INFO: Serve still running against {}", endPoint);
+                log.debug("INFO: Server is running against {}", endPoint);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

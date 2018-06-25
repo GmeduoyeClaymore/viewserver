@@ -21,15 +21,12 @@ import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.messages.protobuf.dto.AuthenticateCommandMessage;
 import io.viewserver.messages.protobuf.dto.CommandMessage;
 
-import java.util.List;
-
 /**
  * Created by nick on 02/12/15.
  */
 public class AuthenticateCommand extends PoolableMessage<AuthenticateCommand> implements IAuthenticateCommand<AuthenticateCommand>,
         ICommandExtension<AuthenticateCommand> {
     private AuthenticateCommandMessage.AuthenticateCommandDtoOrBuilder authenticateCommandDto;
-    private ListWrapper<String> tokensList;
 
     AuthenticateCommand() {
         super(IAuthenticateCommand.class);
@@ -57,23 +54,18 @@ public class AuthenticateCommand extends PoolableMessage<AuthenticateCommand> im
     }
 
     @Override
-    public List<String> getTokens() {
-        if (tokensList == null) {
-            tokensList = new ListWrapper<>(x -> {
-                final AuthenticateCommandMessage.AuthenticateCommandDto.Builder builder = getAuthenticateCommandDtoBuilder();
-                tokensList.setInnerList(builder.getTokenList());
-                builder.addToken(x);
-            });
-        }
-        tokensList.setInnerList(authenticateCommandDto != null ? authenticateCommandDto.getTokenList() : null);
-        return tokensList;
+    public IAuthenticateCommand setClientVersion(String clientVersion) {
+        getAuthenticateCommandDtoBuilder().setClientVersion(clientVersion);
+        return this;
+    }
+
+    @Override
+    public String getClientVersion() {
+       return authenticateCommandDto != null ? authenticateCommandDto.getClientVersion() : null;
     }
 
     @Override
     protected void doRelease() {
-        if (tokensList != null) {
-            tokensList.setInnerList(null);
-        }
         authenticateCommandDto = null;
     }
 

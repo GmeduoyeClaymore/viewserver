@@ -21,6 +21,7 @@ import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IOutput;
+import io.viewserver.operators.filter.FilterOperator;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.report.ReportContextRegistry;
@@ -33,6 +34,7 @@ import io.viewserver.server.components.IServerComponent;
 import io.viewserver.server.components.ReportServerComponents;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
 import io.viewserver.util.dynamic.NamedThreadFactory;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Emitter;
@@ -51,6 +53,7 @@ import static io.viewserver.command.SubscribeReportHandler.enhance;
 import static io.viewserver.core.Utils.toArray;
 
 public class UserOrderNotificationComponent implements IServerComponent, OrderNotificationContract {
+    private final DateTime startTime;
     private IDataSourceServerComponents components;
     private IBasicServerComponents basicServerComponents;
     private static final Logger log = LoggerFactory.getLogger(UserOrderNotificationComponent.class);
@@ -69,6 +72,8 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         this.basicServerComponents = basicServerComponents;
         this.messagingController = controllersComponents.getMessagingController();
         this.clientVersionInfo = clientVersionInfo;
+
+        this.startTime = new DateTime();
 
         notifiedOrdersByUser = new HashMap<>();
         this.systemReportExecutor = reportServerComponents.getSystemReportExecutor();
@@ -146,6 +151,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                 if(Arrays.asList(EventType.ROW_ADD, EventType.ROW_UPDATE).contains(ev.getEventType())){
                                     HashMap eventData = (HashMap) ev.getEventData();
                                     String  orderId = (String) eventData.get("orderId");
+                                    DateTime lastModified = new DateTime(eventData.get("lastModified"));
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
                                     log.debug("Received data for - " + user.getUserId() + " orderId  is " + orderId);
 
@@ -153,7 +159,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                         log.info("Not sending notification as I am not the master");
                                     }
 
-                                    if(setNotificationForUser(orderId, user.getUserId())){
+                                    if(setNotificationForUser(orderId, lastModified, user.getUserId())){
                                         log.info("Sending notification to user {}",user.getUserId());
                                         notifyUserOfNewOrder(orderId,orderDetails, user);
                                     }
@@ -201,22 +207,16 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
         if(result == null){
             return false;
         }
-        return true;
+        return result;
     }
 
     private rx.Observable<IOutput> getOrCreateOutput(User user) {
-        Options options = new Options();
-        options.setLimit(100);
-        options.setOffset(0);
-        //    columnsToSort: [{ name: 'requiredDate', direction: 'desc' }, { name: 'lastModified', direction: 'desc' }]
-        options.addSortColumn("requiredDate",true);
-        options.addSortColumn("lastModified",true);
+
         ReportContext reportContext = createContext(user);
         ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
         enhance(definition,reportContext);
 
-
-        log.debug("Subscribe command for context: {}\nOptions: {}", reportContext, options);
+        log.debug("Subscribe command for context: {}", reportContext);
 
         ObservableCommandResult systemExecutionPlanResult = new ObservableCommandResult();
 
@@ -264,13 +264,13 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
     }
 
 
-    private synchronized boolean setNotificationForUser(String orderId, String userId) {
+    private synchronized boolean setNotificationForUser(String orderId, DateTime lastModified, String userId) {
         List<String> notificationsForUser = this.notifiedOrdersByUser.get(userId);
         if(notificationsForUser == null){
             notificationsForUser = new ArrayList<>();
             this.notifiedOrdersByUser.put(userId,notificationsForUser);
         }
-        if(!notificationsForUser.contains(orderId)){
+        if(!notificationsForUser.contains(orderId) && lastModified.isAfter(startTime)){
             notificationsForUser.add(orderId);
             return true;
         }
