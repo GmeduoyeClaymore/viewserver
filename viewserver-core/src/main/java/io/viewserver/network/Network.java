@@ -123,7 +123,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         ListenableFuture<IChannel> channelFuture = networkAdapter.connect(endpoint);
         Observable<IChannel> channelObservable = ListenableFutureObservable.from(channelFuture, Schedulers.from(executionContext.getReactor().getExecutor()));
         int nextEndPointIndex = getNextEndPointIndex(endpoints, endPointIndex);
-        this.connectSubscription = channelObservable.take(1).subscribe(
+        this.connectSubscription = reactor.scheduleObservable(() -> channelObservable.take(1),100, -1).subscribe(
                 channel -> {
                     try {
                         log.info("Got channel now creating session");
