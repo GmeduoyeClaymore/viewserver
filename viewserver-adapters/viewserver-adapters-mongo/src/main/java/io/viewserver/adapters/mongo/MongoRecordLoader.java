@@ -81,7 +81,7 @@ public class MongoRecordLoader implements IRecordLoader{
     }
 
     private void scheduleAddMongoListener(){
-        logger.info(String.format("SCHEDULING - Addition of snapshot listener for Mongo table %s", tableName));
+        logger.debug(String.format("SCHEDULING - Addition of snapshot listener for Mongo table %s", tableName));
         this.service.submit(() -> {
             actuallyAddMongoListener();
         });
@@ -92,7 +92,7 @@ public class MongoRecordLoader implements IRecordLoader{
             return;
         }
         try {
-            logger.info(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
+            logger.debug(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
             Block<ChangeStreamDocument<Document>> block = t -> {
                 resetConnectionRetryCounter();
                 Document fullDocument = t.getFullDocument();
@@ -125,7 +125,7 @@ public class MongoRecordLoader implements IRecordLoader{
                 logger.debug(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
                     resetConnectionRetryCounter();
-                    logger.info("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
+                    logger.debug("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
                     receiveDocument(document);
                 });
             }
@@ -140,7 +140,7 @@ public class MongoRecordLoader implements IRecordLoader{
             changeStreamDocuments.forEach(block);
         } catch (Exception ex) {
             if(isClosed){
-                logger.info("Expected exception as loader is closed" + ex.getMessage());
+                logger.debug("Expected exception as loader is closed" + ex.getMessage());
                 return;
             }
             logger.error("Error adding snapshot listener for Mongo table %s {}", tableName, ex);
