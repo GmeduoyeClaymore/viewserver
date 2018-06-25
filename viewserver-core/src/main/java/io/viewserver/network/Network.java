@@ -126,6 +126,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         this.connectSubscription = channelObservable.take(1).subscribe(
                 channel -> {
                     try {
+                        log.info("Got channel now creating session");
                         ClientToServerSession peerSession = new ClientToServerSession(channel, executionContext, catalog,
                                 Network.this, connectionId, networkAdapter.createMessageManager(channel));
                         peerSession.addDisconnectionHandler(Network.this);

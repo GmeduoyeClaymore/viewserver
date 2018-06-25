@@ -63,7 +63,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class ViewServerClient implements AutoCloseable {
-    private static final Logger log = LoggerFactory.getLogger(ViewServerClient.class);
+    private final Logger log;
     private static final ISubscriptionFactory<ClientSubscription> defaultSubscriptionFactory = ClientSubscription::new;
     private ExecutionContext executionContext = new ExecutionContext();
     private Catalog catalog;
@@ -84,6 +84,7 @@ public class ViewServerClient implements AutoCloseable {
 
     public ViewServerClient(String name, List<IEndpoint> endpoints, ReconnectionSettings reconnectionSettings) {
         this.name = name;
+        this.log = LoggerFactory.getLogger(String.format("%s-%s",ViewServerClient.class,name));
         this.reconnectionSettings = reconnectionSettings;
         this.executionContext = new ExecutionContext();
         this.catalog = new Catalog(executionContext);
@@ -163,16 +164,18 @@ public class ViewServerClient implements AutoCloseable {
         if(this.authenticationSubscription != null){
             this.authenticationSubscription.unsubscribe();
         }
+        log.info("MILESTONE - Attempting authentication");
         return Observable.create(subscriber ->  {
             ViewServerClient.this.authenticationSubscription = ViewServerClient.this.connectReplaySubject.subscribe(session -> {
+                log.info("MILESTONE - Detected connection now authenticating");
                 ViewServerClient.this.authenticate(type, clientVersion).subscribe(
                         res -> {
-                            log.info("Authetication succeeded - " + res);
+                            log.info("MILESTONE - Authetication succeeded - " + res);
                             subscriber.onNext(res);
                             subscriber.onCompleted();
                         },
                         err -> {
-                            log.info("Authetication failed - " + err);
+                            log.info("MILESTONE - Authetication failed - " + err);
                             subscriber.onError(err);
                         }
                 );
