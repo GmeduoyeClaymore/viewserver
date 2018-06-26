@@ -157,6 +157,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
                                     if(!this.isMaster()){
                                         log.info("Not sending notification as I am not the master");
+                                        return;
                                     }
 
                                     if(setNotificationForUser(orderId, lastModified, user.getUserId())){

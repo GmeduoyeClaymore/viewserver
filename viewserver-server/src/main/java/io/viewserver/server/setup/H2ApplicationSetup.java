@@ -20,10 +20,8 @@ import com.google.common.io.Resources;
 import io.viewserver.adapters.h2.H2ConnectionFactory;
 import io.viewserver.core.IJsonSerialiser;
 import io.viewserver.core.JacksonSerialiser;
-import io.viewserver.core.Utils;
 import io.viewserver.datasource.DataSource;
 import io.viewserver.report.ReportDefinition;
-import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +52,7 @@ public class H2ApplicationSetup implements IApplicationSetup {
     }
 
     @Override
-    public void run(boolean complete) {
+    public void run(boolean complete, boolean isTest) {
         javax.sql.DataSource dataSource = h2ConnectionFactory.getDataSource();
         try (Connection connection = dataSource.getConnection()) {
             setupDatabase(connection, graphDefinitions);

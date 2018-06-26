@@ -1,5 +1,5 @@
 package io.viewserver.server.setup;
 
 public interface IApplicationSetup {
-    void run(boolean complete);
+    void run(boolean complete, boolean isTest);
 }

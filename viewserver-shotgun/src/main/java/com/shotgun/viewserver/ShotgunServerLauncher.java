@@ -178,7 +178,7 @@ public class  ShotgunServerLauncher{
     }
 
 
-    public rx.Observable run(String environment, boolean bootstrap, boolean complete) {
+    public rx.Observable run(String environment, boolean bootstrap, boolean complete, boolean isTest) {
 
         ExecutionContext.blockThreadAssertion  = true;
 
@@ -195,7 +195,7 @@ public class  ShotgunServerLauncher{
         mutablePicoContainerPredicate.test(container);
 
         if(bootstrap){
-            container.getComponent(IApplicationSetup.class).run(complete);
+            container.getComponent(IApplicationSetup.class).run(complete, isTest);
         }
 
         BasicServer server = container.getComponent(BasicServer.class);
