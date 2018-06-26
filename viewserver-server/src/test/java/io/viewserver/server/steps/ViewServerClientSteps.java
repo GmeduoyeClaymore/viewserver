@@ -88,8 +88,8 @@ public class ViewServerClientSteps {
     }
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\"$")
-    public void a_connected_client(String name, String url) throws AuthenticationException {
-        clientContext.create(name, url, "compatibleVersion", "1.0.0").timeout(10,TimeUnit.MINUTES).take(1).toBlocking().first();
+    public void a_connected_client(String name, String url) {
+        a_connected_client_with_authentication(name, url, "compatibleVersion", "1.0.0");
     }
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
@@ -133,10 +133,6 @@ public class ViewServerClientSteps {
         }
     }
 
-    @And("^wait for other servers in cluster to realise server is dead$")
-    public void wait_for_other_servers_in_cluster_to_realise_server_is_deaf() {
-        sleep_for_millis(10000);
-    }
     @And("^sleep for (\\d+) millis$")
     public void sleep_for_millis(int millis) {
         try {
