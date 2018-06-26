@@ -16,10 +16,11 @@
 
 package io.viewserver.server.steps;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.Before;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
-import io.viewserver.controller.ControllerUtils;
+import io.viewserver.collections.BoolHashSet;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
@@ -52,6 +53,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -61,17 +63,27 @@ public class ViewServerClientSteps {
     private ViewServerClientContext clientContext;
     private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
     private String keyColumn;
+    private List<CountDownLatch> latches = new ArrayList<>();
 
     public ViewServerClientSteps(ViewServerClientContext clientContext) {
         this.clientContext = clientContext;
     }
 
     @Before
-    public void beforeScenario() {
+    public void beforeScenario(Scenario scenario) {
+        logger.info("MILESTONE: Running scenatio - {}",scenario.getName());
+        latches.forEach(
+                lat -> lat.countDown()
+        );
+        latches.clear();
         clientContext.closeClients();
     }
     @After
     public void afterScenario() {
+        latches.forEach(
+                lat -> lat.countDown()
+        );
+        latches.clear();
         clientContext.closeClients();
     }
 
@@ -83,11 +95,31 @@ public class ViewServerClientSteps {
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
     public void a_connected_client_with_authentication(String name, String url, String authName, String clientVersion) {
         int timeout = 30;
+        CountDownLatch latch = new CountDownLatch(1);
+        this.latches.add(latch);
+        AtomicReference<Throwable> errResult = new AtomicReference<>(null);
         try {
-            clientContext.create(name, url, authName, clientVersion).timeout(timeout,TimeUnit.SECONDS).take(1).toBlocking().first();
-        }catch (Exception ex){
-            logger.error("Problem with client authentication",ex);
-            throw new RuntimeException(String.format("Could not get connected client in %s seconds", timeout));
+            clientContext.create(name, url, authName, clientVersion).take(1).subscribe(
+                    res -> {
+                        logger.info("MILESTONE: Successfully created client - {} - {}",name,url);
+                        latch.countDown();
+                    },
+                    err -> {
+                        errResult.set(err);
+                        logger.error("MILESTONE: Client - {} - {} not successfully created.",name,url);
+                        latch.countDown();
+                    }
+            );
+            if(!latch.await(timeout,TimeUnit.SECONDS)){
+                throw new RuntimeException(String.format("Could not get connected client in %s seconds", timeout));
+            }
+            if(errResult.get() != null){
+                throw errResult.get();
+            }
+
+        }catch (Throwable ex){
+            logger.error("Problem getting connected client",ex);
+
         }
     }
 
