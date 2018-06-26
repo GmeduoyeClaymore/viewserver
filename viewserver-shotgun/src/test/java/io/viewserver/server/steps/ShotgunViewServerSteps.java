@@ -2,24 +2,14 @@ package io.viewserver.server.steps;
 
 import com.shotgun.viewserver.PropertyUtils;
 import com.shotgun.viewserver.ShotgunServerLauncher;
-import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
-import io.viewserver.collections.BoundedFifoBuffer_KeyName_;
-import io.viewserver.messages.common.ValueLists;
-import io.viewserver.network.Network;
-import io.viewserver.server.setup.IApplicationGraphDefinitions;
-import io.viewserver.server.setup.IApplicationSetup;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -158,7 +148,7 @@ public class ShotgunViewServerSteps {
             String endPoint = System.getProperty("server.endpoint");
             log.info("MILESTONE: Actually running view server against url {}", endPoint);
             ShotgunServerLauncher launcher = new ShotgunServerLauncher();
-            launcher.run(env, bootstrap, complete).subscribe(
+            launcher.run(env, bootstrap, complete, true).subscribe(
                     success -> {
                         this.started.countDown();
                     },

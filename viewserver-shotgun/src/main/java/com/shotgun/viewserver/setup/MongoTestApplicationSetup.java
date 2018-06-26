@@ -16,7 +16,7 @@ public class MongoTestApplicationSetup  extends MongoApplicationSetup {
     }
 
     @Override
-    protected void setup(MongoDatabase db, boolean complete) {
+    protected void setup(MongoDatabase db, boolean complete, boolean isTest) {
 
         if(complete){
             delete(db, ContentTypeDataSource.NAME);
@@ -33,7 +33,7 @@ public class MongoTestApplicationSetup  extends MongoApplicationSetup {
         delete(db, PhoneNumberDataSource.NAME);
 
         delete(db, VehicleDataSource.NAME);
-        super.setup(db, complete);
+        super.setup(db, complete, isTest);
         recreate(db, UserDataSource.NAME, UserDataSource.getDataSource().getSchema());
     }
 

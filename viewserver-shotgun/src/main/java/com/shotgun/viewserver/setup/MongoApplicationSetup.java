@@ -23,29 +23,32 @@ public class MongoApplicationSetup implements IApplicationSetup {
     }
 
     @Override
-    public void run(boolean complete) {
+    public void run(boolean complete, boolean isTest) {
         log.info("Bootstrapping mongo database");
-        setup(connectionFactory.getConnection(), complete);
+        setup(connectionFactory.getConnection(), complete, isTest);
     }
 
 
-    protected void setup(MongoDatabase db,boolean complete) {
+    protected void setup(MongoDatabase db, boolean complete, boolean isTest) {
         if(complete) {
             recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
             recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
             recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
-            recreate(db, UserDataSource.NAME, UserDataSource.getDataSource().getSchema());
+
         }
 
-        recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
-        delete(db, PaymentDataSource.NAME);
-        delete(db, MessagesDataSource.NAME);
-
-        delete(db, DeliveryAddressDataSource.NAME);
-        delete(db, OrderDataSource.NAME);
-
-        delete(db, VehicleDataSource.NAME);
+        if(isTest) {
+            if(complete){
+                recreate(db, UserDataSource.NAME, UserDataSource.getDataSource().getSchema());
+            }
+            recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
+            delete(db, PaymentDataSource.NAME);
+            delete(db, MessagesDataSource.NAME);
+            delete(db, DeliveryAddressDataSource.NAME);
+            delete(db, OrderDataSource.NAME);
+            delete(db, VehicleDataSource.NAME);
+        }
     }
 
     private void delete(MongoDatabase db, String name) {
