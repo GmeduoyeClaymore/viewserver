@@ -16,24 +16,21 @@ public class MongoTestApplicationSetup  extends MongoApplicationSetup {
     }
 
     @Override
-    protected void setup(MongoDatabase db, boolean complete, boolean isTest) {
-
-        if(complete){
-            delete(db, ContentTypeDataSource.NAME);
-            delete(db, ProductDataSource.NAME);
-            delete(db, ProductCategoryDataSource.NAME);
+    protected void setup(MongoDatabase db, boolean complete) {
+        if(complete) {
+            recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
+            recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
+            recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
+            recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
         }
 
-        delete(db, UserDataSource.NAME);
         delete(db, PaymentDataSource.NAME);
         delete(db, MessagesDataSource.NAME);
-
         delete(db, DeliveryAddressDataSource.NAME);
         delete(db, OrderDataSource.NAME);
-        delete(db, PhoneNumberDataSource.NAME);
-
         delete(db, VehicleDataSource.NAME);
-        super.setup(db, complete, isTest);
+
+        recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
         recreate(db, UserDataSource.NAME, UserDataSource.getDataSource().getSchema());
     }
 

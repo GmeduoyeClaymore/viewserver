@@ -195,7 +195,7 @@ public class  ShotgunServerLauncher{
         mutablePicoContainerPredicate.test(container);
 
         if(bootstrap){
-            container.getComponent(IApplicationSetup.class).run(complete, isTest);
+            container.getComponent(IApplicationSetup.class).run(complete);
         }
 
         BasicServer server = container.getComponent(BasicServer.class);
