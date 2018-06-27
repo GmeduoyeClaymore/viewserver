@@ -23,32 +23,21 @@ public class MongoApplicationSetup implements IApplicationSetup {
     }
 
     @Override
-    public void run(boolean complete, boolean isTest) {
+    public void run(boolean complete) {
         log.info("Bootstrapping mongo database");
-        setup(connectionFactory.getConnection(), complete, isTest);
+        setup(connectionFactory.getConnection(), complete);
     }
 
 
-    protected void setup(MongoDatabase db, boolean complete, boolean isTest) {
+    protected void setup(MongoDatabase db, boolean complete) {
         if(complete) {
             recreate(db, ProductDataSource.NAME, ProductDataSource.getDataSource().getSchema());
             recreate(db, ContentTypeDataSource.NAME, ContentTypeDataSource.getDataSource().getSchema());
             recreate(db, ProductCategoryDataSource.NAME, ProductCategoryDataSource.getDataSource().getSchema());
             recreate(db, PhoneNumberDataSource.NAME, PhoneNumberDataSource.getDataSource().getSchema());
-
         }
 
-        if(isTest) {
-            if(complete){
-                recreate(db, UserDataSource.NAME, UserDataSource.getDataSource().getSchema());
-            }
-            recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
-            delete(db, PaymentDataSource.NAME);
-            delete(db, MessagesDataSource.NAME);
-            delete(db, DeliveryAddressDataSource.NAME);
-            delete(db, OrderDataSource.NAME);
-            delete(db, VehicleDataSource.NAME);
-        }
+        recreate(db, ClusterDataSource.NAME, ClusterDataSource.getDataSource().getSchema());
     }
 
     private void delete(MongoDatabase db, String name) {
