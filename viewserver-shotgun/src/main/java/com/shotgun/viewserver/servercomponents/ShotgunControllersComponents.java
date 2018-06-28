@@ -12,12 +12,15 @@ import com.shotgun.viewserver.payments.IPaymentController;
 import com.shotgun.viewserver.user.*;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.reactor.IReactor;
+import io.viewserver.server.BasicServer;
 import io.viewserver.server.components.ControllerComponents;
 import io.viewserver.server.components.IBasicServerComponents;
 import rx.Observable;
 
 
 public abstract class ShotgunControllersComponents extends ControllerComponents{
+
+
     protected IDatabaseUpdater databaseUpdater;
 
     public ShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater databaseUpdater) {
@@ -35,7 +38,6 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
         IPaymentController paymentController = getPaymentController();
 
 
-        IDatabaseUpdater databaseUpdater = getDatabaseUpdater();
         DeliveryAddressController deliveryAddressController = new DeliveryAddressController(databaseUpdater, basicServerComponents.getServerCatalog());
         LoginController loginController = new LoginController(databaseUpdater, basicServerComponents.getServerCatalog());
         ClientLoggerController clientLoggerController = new ClientLoggerController();
@@ -75,8 +77,5 @@ public abstract class ShotgunControllersComponents extends ControllerComponents{
     protected abstract IMapsController getMapsController() ;
     protected abstract IVehicleDetailsController getVehicleDetailsController() ;
 
-    public IDatabaseUpdater getDatabaseUpdater() {
-        return databaseUpdater;
-    }
 
 }

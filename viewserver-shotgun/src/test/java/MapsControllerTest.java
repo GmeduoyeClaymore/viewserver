@@ -63,7 +63,7 @@ public class MapsControllerTest {
 
     @Test
     public void canRequestPlace(){
-        System.out.println(sut.mapPlaceRequest(new PlaceRequest("ChIJrTLr-GyuEmsRBfy61i59si0", "en")));
+        System.out.println(sut.mapPlaceRequest(new PlaceRequest("EhhLaW5ub3VsIFJvYWQsIExvbmRvbiwgVUs", "en")));
     }
 
     @Test

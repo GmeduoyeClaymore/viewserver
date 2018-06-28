@@ -24,6 +24,7 @@ import io.viewserver.server.components.IBasicServerComponents;
 public class RealShotgunControllersComponents extends ShotgunControllersComponents {
 
     private final MessagingController messagingController;
+    private IDatabaseUpdater databaseUpdater;
     private NexmoControllerKey controllerKey;
     private StripeApiKey stripeApiKey;
     private BasicAWSCredentials basicAWSCredentials;
@@ -41,7 +42,8 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
             MapsControllerKey mapsControllerKey,
             VehicleDetailsApiKey vehicleDetailsApiKey,
             ClientVersionInfo clientVersionInfo) {
-        super(basicServerComponents, databaseUpdater);
+        super(basicServerComponents,databaseUpdater);
+        this.databaseUpdater = databaseUpdater;
         this.controllerKey = controllerKey;
         this.stripeApiKey = stripeApiKey;
         this.basicAWSCredentials = basicAWSCredentials;
@@ -53,7 +55,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected INexmoController getNexmoController() {
-        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  getDatabaseUpdater(), messagingController,clientVersionInfo);
+        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  databaseUpdater, messagingController,clientVersionInfo);
     }
 
     @Override

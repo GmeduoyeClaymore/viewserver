@@ -106,7 +106,7 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
 
             HashMap eventData = (HashMap) ev.getEventData();
             if(eventData.containsKey("selectedContentTypes")){
-                log.debug("Resubscribing user as content types have changed");
+                log.info("Resubscribing user as content types have changed");
                 onUserAdded(eventData);
             }else{
                 log.debug("Not resubscribing user as content types have not changed");

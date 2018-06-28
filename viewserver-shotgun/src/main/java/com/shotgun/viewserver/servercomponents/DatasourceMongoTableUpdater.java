@@ -58,14 +58,14 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
 
         Observable<Boolean> inFlightUpdate = this.inFlightUpdates.get(key);
         if(inFlightUpdate != null){
-            logger.debug(String.format("Found in flight update for table %s record %s",table,tableKey));
+            logger.info(String.format("Found in flight update for table %s record %s",table,tableKey));
             Observable<Boolean> booleanObservable = inFlightUpdate.flatMap(res -> {
                 if (res) {
-                    logger.debug(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
+                    logger.info(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
                     return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
                 } else {
                     String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
-                    logger.debug(format);
+                    logger.info(format);
                     throw new RuntimeException(format);
                 }
             });
@@ -153,8 +153,10 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
 
                 boolean result = new Integer(Integer.MAX_VALUE).equals(version)  || version == null ? versionFromUpdate != null : versionFromUpdate > version;
                 if(result){
-                    logger.debug(String.format("SUCCESS - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
-                    logger.debug("Record is :" + ev.getEventData());
+                    logger.info(String.format("SUCCESS - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
+                    if(logger.isDebugEnabled()) {
+                        logger.debug("Record is :" + ev.getEventData());
+                    }
                 }else{
                     logger.debug(String.format("INVALID - Found update to table %s key %s waiting for update greater than version %s found %s",path,tableKey,version,versionFromUpdate));
                 }

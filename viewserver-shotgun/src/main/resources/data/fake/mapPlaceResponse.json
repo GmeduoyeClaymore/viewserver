@@ -1,0 +1,90 @@
+{
+  "html_attributions": [],
+  "result": {
+    "address_components": [
+      {
+        "long_name": "Kinnoul Road",
+        "short_name": "Kinnoul Rd",
+        "types": [
+          "route"
+        ]
+      },
+      {
+        "long_name": "Hammersmith",
+        "short_name": "Hammersmith",
+        "types": [
+          "neighborhood",
+          "political"
+        ]
+      },
+      {
+        "long_name": "London",
+        "short_name": "London",
+        "types": [
+          "postal_town"
+        ]
+      },
+      {
+        "long_name": "Greater London",
+        "short_name": "Greater London",
+        "types": [
+          "administrative_area_level_2",
+          "political"
+        ]
+      },
+      {
+        "long_name": "England",
+        "short_name": "England",
+        "types": [
+          "administrative_area_level_1",
+          "political"
+        ]
+      },
+      {
+        "long_name": "United Kingdom",
+        "short_name": "GB",
+        "types": [
+          "country",
+          "political"
+        ]
+      },
+      {
+        "long_name": "W6 8NQ",
+        "short_name": "W6 8NQ",
+        "types": [
+          "postal_code"
+        ]
+      }
+    ],
+    "adr_address": "\u003cspan class=\"street-address\"\u003eKinnoul Rd\u003c/span\u003e, \u003cspan class=\"locality\"\u003eLondon\u003c/span\u003e \u003cspan class=\"postal-code\"\u003eW6 8NQ\u003c/span\u003e, \u003cspan class=\"country-name\"\u003eUK\u003c/span\u003e",
+    "formatted_address": "Kinnoul Rd, Hammersmith, London W6 8NQ, UK",
+    "geometry": {
+      "location": {
+        "lat": 51.4853695,
+        "lng": -0.21191
+      },
+      "viewport": {
+        "northeast": {
+          "lat": 51.48671848029149,
+          "lng": -0.210561019708498
+        },
+        "southwest": {
+          "lat": 51.48402051970849,
+          "lng": -0.213258980291502
+        }
+      }
+    },
+    "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+    "id": "28351870c82815dffcd5a21ee7d69d3b43982542",
+    "name": "Kinnoul Road",
+    "place_id": "ChIJjRIce70PdkgRAo8yejpTqNc",
+    "reference": "CmRbAAAAAUZwVhwPwqKlYhySqIglDyMHyDZ20LOdLFizZHr-T28BgTNmOmly3zj-Jn0_PWHD6GEh6dhs_dtOxF6WVYjo7JY9hnK61n0juzOKdKoTKCWz2c4U1_OTUEpK0u95-ZwDEhAnALBkGBr9gh0nxW8uodhzGhRcl-T_KIDWKv1kp7iRzakof0b4ug",
+    "scope": "GOOGLE",
+    "types": [
+      "route"
+    ],
+    "url": "https://maps.google.com/?q=Kinnoul+Rd,+Hammersmith,+London+W6+8NQ,+UK&ftid=0x48760fbd7b1c128d:0xd7a8533a7a328f02",
+    "utc_offset": 60
+  },
+  "status": "OK"
+}

@@ -15,12 +15,16 @@ import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.user.INexmoController;
 import com.shotgun.viewserver.user.MockNexmoController;
 import io.viewserver.adapters.common.IDatabaseUpdater;
+import io.viewserver.server.BasicServer;
 import io.viewserver.server.components.IBasicServerComponents;
 
 public class MockShotgunControllersComponents extends ShotgunControllersComponents {
 
-    public MockShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater databaseUpdater) {
-        super(basicServerComponents, databaseUpdater);
+    private String mockDataPath;
+
+    public MockShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath) {
+        super(basicServerComponents,iDatabaseUpdater);
+        this.mockDataPath = mockDataPath;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IMapsController getMapsController() {
-        return new MockMapsController();
+        return new MockMapsController(mockDataPath);
     }
 
     @Override

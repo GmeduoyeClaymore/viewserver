@@ -101,8 +101,12 @@ public class  ShotgunServerLauncher{
         SharedConfig(container);
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
-        container.addComponent(MockShotgunControllersComponents.class);
         container.addComponent(DirectTableUpdater.class);
+        container.addComponent(new MockShotgunControllersComponents(
+                container.getComponent(IBasicServerComponents.class),
+                container.getComponent(IDatabaseUpdater.class),
+                get("csv.data.path")
+        ));
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new CsvRecordLoaderCollection(get("csv.data.path"))

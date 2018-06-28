@@ -139,7 +139,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
         String existingUserForToken = tokenToUserMap.get(token);
 
         if(userId.equals(existingUserForToken)){
-            logger.debug("User is already assigned this token aborting");
+            logger.info("User is already assigned this token aborting");
             return Futures.immediateFuture(null);
         }
         if(existingUserForToken != null){
@@ -151,7 +151,7 @@ public class MessagingController implements IMessagingController, UserPersistenc
         KeyedTable userTable = (KeyedTable) catalog.getOperatorByPath(TableNames.USER_TABLE_NAME);
         return ListenableFutureObservable.to(waitForUser(userId, userTable).map(rec -> {
             String currentToken = (String) rec.get("fcmToken");
-            logger.debug("Updating token \"{}\" to \"{}\"",currentToken, token);
+            logger.info("Updating token \"{}\" to \"{}\"",currentToken, token);
             Record userRecord = new Record()
                     .addValue("userId", userId)
                     .addValue("version", getUserForIdSync(userId,User.class).getVersion())
