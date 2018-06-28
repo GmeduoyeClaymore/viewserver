@@ -132,7 +132,7 @@ public class  ShotgunServerLauncher{
 
     private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending, boolean doMockPaymentController) {
         SharedConfig(container);
-        container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
+        container.addComponent(new NexmoControllerKey(get("nexmo.domain"), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
@@ -153,7 +153,7 @@ public class  ShotgunServerLauncher{
     }
     private static boolean ConfigureForEndToEndTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
-        container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
+        container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
@@ -174,10 +174,16 @@ public class  ShotgunServerLauncher{
     }
 
     private static String get(String property){
+        return get(property,false);
+    }
+    private static String get(String property, boolean optional){
 
         String property1 = System.getProperty(property);
         if(property1 == null || "".equals(property)){
-            throw new RuntimeException(String.format("\"%s\" is a required prop",property));
+            if(!optional)
+                throw new RuntimeException(String.format("\"%s\" is a required prop",property));
+            else
+                return null;
         }
         return Utils.replaceSystemTokens(property1);
     }

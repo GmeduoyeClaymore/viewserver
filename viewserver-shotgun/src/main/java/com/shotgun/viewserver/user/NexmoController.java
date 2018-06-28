@@ -25,6 +25,8 @@ import io.viewserver.operators.IOperator;
 import io.viewserver.operators.IRowSequence;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.column.ColumnHolderUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Subscription;
@@ -32,23 +34,29 @@ import rx.Subscription;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @Controller(name = "nexmoController")
 public class NexmoController implements INexmoController, UserNotificationContract {
     private static final Logger log = LoggerFactory.getLogger(NexmoController.class);
+    private String nexmoDomain;
     private final int httpPort;
     private ICatalog systemCatalog;
     private ClientVersionInfo clientVersionInfo;
     private NexmoControllerKey nexmoControllerKey;
     private final IDatabaseUpdater iDatabaseUpdater;
     private String NUMBER_INSIGHT_URI = "https://api.nexmo.com/ni/basic/json";
+    private String NEXMO_ADMIN_END_POINT = "https://rest.nexmo.com/account/settings";
+
     private IMessagingController messagingController;
     private ConcurrentHashMap<String,String> resolvedCache;
     private Subscription subscription;
 
-    public NexmoController(int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController,ClientVersionInfo clientVersionInfo) {
+
+    public NexmoController(String nexmoDomain,int httpPort, ICatalog systemCatalog, NexmoControllerKey nexmoControllerKey, IDatabaseUpdater iDatabaseUpdater, IMessagingController messagingController,ClientVersionInfo clientVersionInfo) {
+        this.nexmoDomain = nexmoDomain;
         this.httpPort = httpPort;
         this.systemCatalog = systemCatalog;
         this.clientVersionInfo = clientVersionInfo;
@@ -56,7 +64,9 @@ public class NexmoController implements INexmoController, UserNotificationContra
         this.nexmoControllerKey = nexmoControllerKey;
         this.iDatabaseUpdater = iDatabaseUpdater;
         this.messagingController = messagingController;
-        systemCatalog.waitForOperatorAtThisPath(TableNames.CLUSTER_TABLE_NAME).subscribe(tb -> listenForMaster(tb));
+        if(systemCatalog != null){
+            systemCatalog.waitForOperatorAtThisPath(TableNames.CLUSTER_TABLE_NAME).subscribe(tb -> listenForMaster(tb));
+        }
     }
 
     private void listenForMaster(IOperator tb) {
@@ -69,11 +79,27 @@ public class NexmoController implements INexmoController, UserNotificationContra
                         Boolean isMaster = (Boolean) eventData.get("isMaster");
                         if(Boolean.TRUE.equals(isMaster) && url.equals(clientVersionInfo.getServerEndPoint())){
                             this.createHttpServer(httpPort);
+                            //this.modifyNexmoEndpoints();
                         }
                     }
 
                 }
         );
+    }
+
+    public void modifyNexmoEndpoints() {
+        if(nexmoDomain == null){
+            log.info("Not modifying end points as nexmo domain is null");
+            return;
+        }
+        HashMap params = new HashMap();
+        params.put("api_key", nexmoControllerKey.getKey());
+        params.put("api_secret", nexmoControllerKey.getSecret());
+        params.put("moCallBackUrl",String.format("http://%s:%s/event",nexmoDomain,httpPort));
+        params.put("drCallBackUrl",String.format("http://%s:%s/answer",nexmoDomain,httpPort));
+        log.info("Modifying end points to {}", ControllerUtils.toString(params));
+        ControllerUtils.execute("POST",NEXMO_ADMIN_END_POINT,params);
+
     }
 
 

@@ -55,7 +55,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected INexmoController getNexmoController() {
-        return new NexmoController(9000, this.basicServerComponents.getServerCatalog(),controllerKey,  databaseUpdater, messagingController,clientVersionInfo);
+        return new NexmoController(this.controllerKey.getDomain(),9000, this.basicServerComponents.getServerCatalog(),controllerKey,  databaseUpdater, messagingController,clientVersionInfo);
     }
 
     @Override
