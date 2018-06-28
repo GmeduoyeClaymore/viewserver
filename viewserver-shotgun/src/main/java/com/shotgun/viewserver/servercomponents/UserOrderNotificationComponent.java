@@ -154,7 +154,10 @@ public class UserOrderNotificationComponent implements IServerComponent, OrderNo
                                     DateTime lastModified = new DateTime(eventData.get("lastModified"));
                                     HashMap orderDetails = (HashMap) eventData.get("orderDetails");
                                     log.debug("Received data for - " + user.getUserId() + " orderId  is " + orderId);
-
+                                    if(orderDetails == null){
+                                        log.error("Bailing as order details is null");
+                                        return;
+                                    }
                                     if(!this.isMaster()){
                                         log.info("Not sending notification as I am not the master");
                                         return;
