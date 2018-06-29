@@ -23,6 +23,7 @@ import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 
 @Controller(name = "partnerController")
@@ -53,7 +54,7 @@ public class PartnerController {
 
     @ControllerAction(path = "registerPartner", isSynchronous = false)
     public ListenableFuture<String> registerPartner(@ActionParam(name = "user")User user,
-                                                    @ActionParam(name = "vehicle")Vehicle vehicle){
+                                                    @ActionParam(name = "vehicle")Vehicle vehicle) throws ExecutionException, InterruptedException {
 
         ITable userTable = ControllerUtils.getTable(TableNames.USER_TABLE_NAME);
         if(this.loginController.getUserRow(userTable,user.getEmail()) != -1){
@@ -67,7 +68,7 @@ public class PartnerController {
         //save image if required
         if(user.getImageData() != null){
             String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
+            String imageUrl = (String) IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData()).get();
             user.set("imageUrl",imageUrl);
         }
 

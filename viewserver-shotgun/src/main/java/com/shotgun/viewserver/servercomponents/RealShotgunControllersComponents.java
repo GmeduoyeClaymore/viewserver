@@ -4,7 +4,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
 import com.shotgun.viewserver.images.IImageController;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.images.MongoImageController;
+import com.shotgun.viewserver.images.S3ImageController;
 import com.shotgun.viewserver.maps.IMapsController;
 import com.shotgun.viewserver.maps.MapsController;
 import com.shotgun.viewserver.maps.MapsControllerKey;
@@ -68,7 +69,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IImageController getImageController() {
-        return new ImageController(basicAWSCredentials, databaseUpdater,this.basicServerComponents.getServerCatalog());
+        return new MongoImageController(databaseUpdater,this.basicServerComponents.getServerCatalog(), 9010);
     }
 
     @Override

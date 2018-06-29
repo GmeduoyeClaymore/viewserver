@@ -7,10 +7,11 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.shotgun.viewserver.ControllerUtils;
 import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.order.controllers.contracts.OrderUpdateController;
-import com.shotgun.viewserver.order.domain.PersonellOrder;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.command.ActionParam;
@@ -25,32 +26,26 @@ import java.net.URL;
 
 
 @Controller(name = "imageController")
-public class ImageController implements IImageController, OrderUpdateController {
+public class S3ImageController implements IImageController, OrderUpdateController {
 
+    private final AmazonS3 s3Client;
     private BasicAWSCredentials awsCredentials;
-    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3ImageController.class);
     private IDatabaseUpdater databaseUpdater;
     private ICatalog systemCatalog;
 
-    public ImageController(BasicAWSCredentials awsCredentials, IDatabaseUpdater databaseUpdater, ICatalog systemCatalog) {
+    public S3ImageController(BasicAWSCredentials awsCredentials, IDatabaseUpdater databaseUpdater, ICatalog systemCatalog) {
         this.awsCredentials = awsCredentials;
         this.databaseUpdater = databaseUpdater;
         this.systemCatalog = systemCatalog;
+        s3Client = AmazonS3ClientBuilder.standard().withRegion("eu-west-2").withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
     }
 
-    @ControllerAction(path = "saveOrderImage", isSynchronous = false)
-    public String saveOrderImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "imageData") String imageData){
-        String fileName = bucketName + "/" + ControllerUtils.generateGuid() + ".jpg";
-        String s = saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData);
-
-        return s;
-
-    }
 
 
     @Override
     @ControllerAction(path = "saveImage", isSynchronous = false)
-    public String saveImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "fileName") String fileName, @ActionParam(name = "imageData") String imageData){
+    public ListenableFuture saveImage(@ActionParam(name = "bucketName") String bucketName, @ActionParam(name = "fileName") String fileName, @ActionParam(name = "imageData") String imageData){
 
         if(imageData == null){
             throw new RuntimeException("No image data sent");
@@ -64,12 +59,11 @@ public class ImageController implements IImageController, OrderUpdateController 
 
         try {
             logger.info(String.format("Uploading image %s to s3 bucket", fileName, bucketName));
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion("eu-west-2").withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).build();
             s3Client.putObject(new PutObjectRequest(bucketName, fileName, input, meta).withCannedAcl(CannedAccessControlList.PublicRead));
             URL url = s3Client.getUrl(bucketName, fileName);
             logger.info("Finish loading image - " + (imageData.getBytes().length/1024) + "kb");
             logger.info(String.format("Uploaded image to s3 with url %s", url.toString()));
-            return url.toString();
+            return Futures.immediateFuture(url.toString());
 
         }catch (Exception ex){
             logger.error(String.format("Unable to upload image %s to s3", fileName),ex);

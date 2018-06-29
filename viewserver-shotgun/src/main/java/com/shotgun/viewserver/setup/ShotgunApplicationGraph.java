@@ -23,6 +23,7 @@ public class ShotgunApplicationGraph implements IApplicationGraphDefinitions {
         dataSources.add(ProductDataSource.getDataSource());
         dataSources.add(ContentTypeDataSource.getDataSource());
         dataSources.add(PhoneNumberDataSource.getDataSource());
+        dataSources.add(ImageDataSource.getDataSource());
         dataSources.add(UserProductDataSource.getDataSource());
 
         //DataSources which require data from csv only in test mode

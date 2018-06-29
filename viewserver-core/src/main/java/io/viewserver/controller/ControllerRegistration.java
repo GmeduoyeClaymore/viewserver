@@ -21,7 +21,7 @@ public class ControllerRegistration{
         try{
             this.actions = getActions(controller);
         }catch (Exception ex){
-            throw new RuntimeException(String.format("Problem constructing controller \"%s\"",this.controller.name()));
+            throw new RuntimeException(String.format("Problem constructing controller \"%s\"",this.controller.name()), ex);
         }
     }
 

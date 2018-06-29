@@ -12,21 +12,16 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKey;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.functions.FuncN;
-import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.viewserver.core.Utils.toArray;
@@ -62,7 +57,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
             Observable<Boolean> booleanObservable = inFlightUpdate.flatMap(res -> {
                 if (res) {
                     logger.info(String.format("In flight update for table %s record %s completed successfully", table, tableKey));
-                    return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
+                    return performUpdateObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
                 } else {
                     String format = String.format("In flight update for table %s record %s failed barfing", table, tableKey);
                     logger.info(format);
@@ -74,7 +69,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         }
 
 
-        return getBooleanObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
+        return performUpdateObservable(tableName, schemaConfig, record, table, tableKey, key, dsTableName, version);
     }
 
     private boolean anyFieldsHaveChanged(IRecord record, TableKey key, KeyedTable table) {
@@ -94,7 +89,7 @@ public class DatasourceMongoTableUpdater extends MongoTableUpdater {
         return false;
     }
 
-    private Observable<Boolean> getBooleanObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName, Integer version) {
+    private Observable<Boolean> performUpdateObservable(String tableName, SchemaConfig schemaConfig, IRecord record, KeyedTable table, TableKey tableKey, TableUpdateKey key, DataSourceTableName dsTableName, Integer version) {
         Integer versionBeforeUpdate = getVersionBeforeUpdate(table, version, tableKey);
 
         if(logger.isDebugEnabled()) {
