@@ -132,7 +132,7 @@ public class  ShotgunServerLauncher{
 
     private static boolean ConfigureForRealEnvironment(MutablePicoContainer container, boolean blockRemoteSending, boolean doMockPaymentController) {
         SharedConfig(container);
-        container.addComponent(new NexmoControllerKey(get("nexmo.domain"), get("nexmo.key"),get("nexmo.secret")));
+        container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
         container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
@@ -169,7 +169,11 @@ public class  ShotgunServerLauncher{
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
-        container.addComponent(MockShotgunControllersComponents.class);
+        container.addComponent(new MockShotgunControllersComponents(
+                container.getComponent(IBasicServerComponents.class),
+                container.getComponent(IDatabaseUpdater.class),
+                get("csv.data.path")
+        ));
         return true;
     }
 
