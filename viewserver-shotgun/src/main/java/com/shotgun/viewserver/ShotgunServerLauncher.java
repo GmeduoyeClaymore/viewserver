@@ -42,7 +42,6 @@ public class  ShotgunServerLauncher{
     private List<BasicServer> servers = new ArrayList<>();
 
     public ShotgunServerLauncher(){
-
         ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("mock2",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
@@ -77,25 +76,6 @@ public class  ShotgunServerLauncher{
         container.addComponent(UserOrderNotificationComponent.class);
         container.addComponent(BasicServer.class);
     }
-
-    /*private static boolean ConfigureForTestEnvironment(MutablePicoContainer container) {
-        SharedConfig(container);
-        container.addComponent(new NexmoControllerKey(get("nexmo.key"),get("nexmo.secret")));
-        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret")));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
-        container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
-        container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
-        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
-        container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
-        container.addComponent(H2ApplicationSetup.class);
-        container.addComponent(RealShotgunControllersComponents.class);
-        container.addComponent(DirectTableUpdater.class);
-        container.addComponent(new CompositeRecordLoaderCollection(
-                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
-                () -> new CsvRecordLoaderCollection(get("csv.data.path"))
-        ));
-        return true;
-    }*/
 
     private static boolean ConfigureForMockEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
