@@ -49,6 +49,6 @@ public class SystemUri {
     }
 
     public String toString() {
-        return String.format("mongo://%s/%s",context,imageId);
+        return String.format("fs://%s/%s",context,imageId);
     }
 }

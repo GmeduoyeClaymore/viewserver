@@ -64,15 +64,6 @@ public class PartnerController {
         log.debug("Registering driver: " + user.getEmail());
         user.set("chargePercentage", CHARGE_PERCENTAGE);
         user.set("type","partner");
-
-        //save image if required
-        if(user.getImageData() != null){
-            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = (String) IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData()).get();
-            user.set("imageUrl",imageUrl);
-        }
-
-        SettableFuture<String> future = SettableFuture.create();
         ControllerContext context = ControllerContext.Current();
         user.set("created",new Date());
         user.set("vehicle",vehicle);

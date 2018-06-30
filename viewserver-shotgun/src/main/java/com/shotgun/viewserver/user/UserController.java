@@ -158,12 +158,6 @@ public class UserController implements UserTransformationController, RatedOrderC
         log.debug("updateUser user: " + user.getEmail());
         String userId = getUserId();
         user.set("userId", userId);
-
-        if (user.getImageData() != null) {
-            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = (String) IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData()).get();
-            user.set("imageUrl", imageUrl);
-        }
         return this.addOrUpdateUser(user, null);
     }
 
