@@ -2,11 +2,11 @@ package com.shotgun.viewserver.images;
 
 import java.net.URI;
 
-public class MongoUri {
+public class SystemUri {
     private String extension = null;
     private String context;
     private String imageId;
-    public MongoUri(URI requestURI) {
+    public SystemUri(URI requestURI) {
         String url = requestURI.toString();
         context = getContextFromUri(url);
         String imageIdWithExtension = getImageIdFromUri(url);
@@ -39,7 +39,7 @@ public class MongoUri {
         return parts[idx];
     }
 
-    public MongoUri(String context, String imageId) {
+    public SystemUri(String context, String imageId) {
         this.context = context;
         this.imageId = imageId;
     }

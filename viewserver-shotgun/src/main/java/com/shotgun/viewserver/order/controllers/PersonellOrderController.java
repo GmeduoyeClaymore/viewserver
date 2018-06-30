@@ -59,12 +59,10 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "addOrderImage", isSynchronous = false)
-    public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageData") String imageData) throws ExecutionException, InterruptedException {
-        String fileName = orderId + "/" + ControllerUtils.generateGuid() + ".jpg";
-        String completeFileName = (String) imageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData).get();
+    public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageUrl") String imageUrl) throws ExecutionException, InterruptedException {
         String userId = getUserId();
         return ListenableFutureObservable.to(this.transformObservable(orderId, order -> {
-            order.addImage(completeFileName);
+            order.addImage(imageUrl);
             return true;
         },
         order -> {
@@ -72,13 +70,13 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
                 return;
             }
             if(userId == order.getPartnerUserId()){
-                notifyPartnerAddedImage(orderId,order.getCustomerUserId(),order.getTitle(),completeFileName);
+                notifyPartnerAddedImage(orderId,order.getCustomerUserId(),order.getTitle(),imageUrl);
             }else{
-                notifyCustomerAddedImage(orderId,order.getPartnerUserId(),order.getTitle(),completeFileName);
+                notifyCustomerAddedImage(orderId,order.getPartnerUserId(),order.getTitle(),imageUrl);
             }
         },
         SupportsImageOrder.class
-        ).map(res -> completeFileName));
+        ).map(res -> imageUrl));
     }
 
     @ControllerAction(path = "deleteImage", isSynchronous = false)

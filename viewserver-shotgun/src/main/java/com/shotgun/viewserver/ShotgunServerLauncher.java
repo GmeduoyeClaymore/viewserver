@@ -114,7 +114,7 @@ public class  ShotgunServerLauncher{
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
@@ -137,7 +137,7 @@ public class  ShotgunServerLauncher{
         boolean blockRemoteSending = true;
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
@@ -158,7 +158,7 @@ public class  ShotgunServerLauncher{
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
