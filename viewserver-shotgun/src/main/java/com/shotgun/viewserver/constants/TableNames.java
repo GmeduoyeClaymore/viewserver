@@ -10,6 +10,7 @@ public final class TableNames {
     public static final String PAYMENT_TABLE_NAME = "/datasources/payments/table";
     public static final String ORDER_TABLE_NAME = "/datasources/order/table";
     public static final String USER_TABLE_NAME = "/datasources/user/table";
+    public static final String IMAGES_TABLE_NAME = "/datasources/images/table";
     public static final String MESSAGES_TABLE_NAME = "/datasources/messages/table";
     public static final String DELIVERY_ADDRESS_TABLE_NAME = "/datasources/deliveryAddress/table";
     public static final String PHONE_NUMBER_TABLE_NAME = "/datasources/phoneNumber/table";

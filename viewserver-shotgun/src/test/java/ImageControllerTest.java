@@ -1,6 +1,6 @@
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.images.IImageController;
-import com.shotgun.viewserver.images.ImageController;
+import com.shotgun.viewserver.images.S3ImageController;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class ImageControllerTest {
 
     @Before
     public void createSut(){
-        sut = new ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"), null, null);
+        sut = new S3ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"), null, null);
     }
 
     @Test

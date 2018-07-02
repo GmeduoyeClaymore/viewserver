@@ -23,7 +23,6 @@ import static io.viewserver.core.Utils.toList;
 public interface User extends DynamicJsonBackedObject{
     String getUserId();
     String getEmail();
-    String getImageData();
     default LatLng getLocation(){
         Double latitude = this.getLatitude();
         Double longitude = this.getLongitude();

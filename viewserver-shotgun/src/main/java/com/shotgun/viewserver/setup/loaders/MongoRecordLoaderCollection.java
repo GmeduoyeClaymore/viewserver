@@ -29,6 +29,7 @@ public class MongoRecordLoaderCollection implements IRecordLoaderCollection {
         register(MessagesDataSource.getDataSource().getSchema(), MessagesDataSource.NAME);
         register(VehicleDataSource.getDataSource().getSchema(), VehicleDataSource.NAME);
         register(ClusterDataSource.getDataSource().getSchema(), ClusterDataSource.NAME);
+        register(ImageDataSource.getDataSource().getSchema(), ImageDataSource.NAME);
         registerAtRoot(DataSourceRegistry.getSchemaConfig(), IDataSourceRegistry.TABLE_NAME);
     }
 

@@ -52,9 +52,9 @@ public class  ShotgunServerLauncher{
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("paul",ShotgunServerLauncher::ConfigureForStagingEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("gbemiga",ShotgunServerLauncher::ConfigureForStagingEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("gbemiga2",ShotgunServerLauncher::ConfigureForStagingEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("gbemiga3",ShotgunServerLauncher::ConfigureForStagingEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga",ShotgunServerLauncher::ConfigureForDevelopmentEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga2",ShotgunServerLauncher::ConfigureForDevelopmentEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("gbemiga3",ShotgunServerLauncher::ConfigureForDevelopmentEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("prod",ShotgunServerLauncher::ConfigureForProdEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("pre-prod",ShotgunServerLauncher::ConfigureForPreProdEnvironment);
     }
@@ -114,7 +114,7 @@ public class  ShotgunServerLauncher{
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
@@ -131,11 +131,34 @@ public class  ShotgunServerLauncher{
         container.addComponent(RealShotgunControllersComponents.class);
         return true;
     }
+    public static boolean ConfigureForDevelopmentEnvironment(MutablePicoContainer container) {
+        SharedConfig(container);
+        boolean doMockPaymentController = true;
+        boolean blockRemoteSending = true;
+        container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
+        container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
+        container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
+        container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
+        container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
+        container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
+        container.addComponent(new MongoTestApplicationSetup(
+                container.getComponent(MongoConnectionFactory.class),
+                get("csv.data.path")
+        ));
+        container.addComponent(DatasourceMongoTableUpdater.class);
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
+                () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
+        ));
+        container.addComponent(RealShotgunControllersComponents.class);
+        return true;
+    }
     private static boolean ConfigureForEndToEndTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
-        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));

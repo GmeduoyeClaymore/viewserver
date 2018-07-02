@@ -41,6 +41,7 @@ import rx.observable.ListenableFutureObservable;
 import rx.schedulers.Schedulers;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -153,16 +154,10 @@ public class UserController implements UserTransformationController, RatedOrderC
 
 
     @ControllerAction(path = "updateUser", isSynchronous = true)
-    public ListenableFuture updateUser(@ActionParam(name = "user") User user) {
+    public ListenableFuture updateUser(@ActionParam(name = "user") User user) throws ExecutionException, InterruptedException {
         log.debug("updateUser user: " + user.getEmail());
         String userId = getUserId();
         user.set("userId", userId);
-
-        if (user.getImageData() != null) {
-            String fileName = BucketNames.driverImages + "/" + ControllerUtils.generateGuid() + ".jpg";
-            String imageUrl = IImageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, user.getImageData());
-            user.set("imageUrl", imageUrl);
-        }
         return this.addOrUpdateUser(user, null);
     }
 

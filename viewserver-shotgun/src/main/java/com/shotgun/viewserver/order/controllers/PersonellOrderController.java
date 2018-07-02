@@ -6,7 +6,6 @@ import com.shotgun.viewserver.constants.BucketNames;
 import com.shotgun.viewserver.delivery.DeliveryAddressController;
 import com.shotgun.viewserver.delivery.orderTypes.types.DeliveryAddress;
 import com.shotgun.viewserver.images.IImageController;
-import com.shotgun.viewserver.images.ImageController;
 import com.shotgun.viewserver.messaging.IMessagingController;
 import com.shotgun.viewserver.order.contracts.NegotiationNotifications;
 import com.shotgun.viewserver.order.contracts.PaymentNotifications;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.observable.ListenableFutureObservable;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.shotgun.viewserver.ControllerUtils.getUserId;
@@ -59,12 +59,10 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
     }
 
     @ControllerAction(path = "addOrderImage", isSynchronous = false)
-    public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageData") String imageData) {
-        String fileName = orderId + "/" + ControllerUtils.generateGuid() + ".jpg";
-        String completeFileName = imageController.saveImage(BucketNames.shotgunclientimages.name(), fileName, imageData);
+    public ListenableFuture addOrderImage(@ActionParam(name = "orderId") String orderId, @ActionParam(name = "imageUrl") String imageUrl) throws ExecutionException, InterruptedException {
         String userId = getUserId();
         return ListenableFutureObservable.to(this.transformObservable(orderId, order -> {
-            order.addImage(completeFileName);
+            order.addImage(imageUrl);
             return true;
         },
         order -> {
@@ -72,13 +70,13 @@ public class PersonellOrderController implements NegotiationNotifications, Payme
                 return;
             }
             if(userId == order.getPartnerUserId()){
-                notifyPartnerAddedImage(orderId,order.getCustomerUserId(),order.getTitle(),completeFileName);
+                notifyPartnerAddedImage(orderId,order.getCustomerUserId(),order.getTitle(),imageUrl);
             }else{
-                notifyCustomerAddedImage(orderId,order.getPartnerUserId(),order.getTitle(),completeFileName);
+                notifyCustomerAddedImage(orderId,order.getPartnerUserId(),order.getTitle(),imageUrl);
             }
         },
         SupportsImageOrder.class
-        ).map(res -> completeFileName));
+        ).map(res -> imageUrl));
     }
 
     @ControllerAction(path = "deleteImage", isSynchronous = false)
