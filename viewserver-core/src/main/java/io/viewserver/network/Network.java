@@ -272,7 +272,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
         if (log.isTraceEnabled()) {
             log.trace("Received heartbeat from connection id {}", peerSession.getConnectionId());
         }
-        log.debug("Received heartbeat - " + heartbeat.getType() + " - session - " + peerSession);
+        log.trace("Received heartbeat - " + heartbeat.getType() + " - session - " + peerSession);
         if (heartbeat.getType().equals(IHeartbeat.Type.Ping)) {
             sendHeartbeat(peerSession, IHeartbeat.Type.Pong);
         } else {
@@ -285,7 +285,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
             log.error("PeerSession does not exist, cannot send heartbeat");
             return;
         }
-        log.debug("Sending heartbeat - " + type + " - session - " + peerSession);
+        log.trace("Sending heartbeat - " + type + " - session - " + peerSession);
         final IMessage message = MessagePool.getInstance().get(IMessage.class);
         message.getHeartbeat().setType(type);
         peerSession.sendMessage(message);
@@ -496,7 +496,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
                 long now = System.currentTimeMillis();
                 long lastPing = lastPings.get(peerSession);
                 long lastResponse = lastResponses.get(peerSession);
-                log.debug("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
+                log.trace("Heartbeat task running for {} - {}", peerSession, String.format("LastPing:%s,LastResponse:%s",lastPing,lastResponse));
                 if (peerSession instanceof ServerToClientSession) {
                     if (lastPing > -1 && now - lastPing > (timeoutInterval)) {
                         if (disconnectOnTimeout) {
@@ -523,7 +523,7 @@ public class Network implements PeerSession.IDisconnectionHandler {
 
                 long elapsed = now - lastResponse;
                 if (elapsed >= heartBeatInterval) {
-                    log.debug("Sending heartbeat {}", peerSession);
+                    log.trace("Sending heartbeat {}", peerSession);
                     lastPings.put(peerSession, now);
                     sendHeartbeat(peerSession, IHeartbeat.Type.Ping);
                 }else{

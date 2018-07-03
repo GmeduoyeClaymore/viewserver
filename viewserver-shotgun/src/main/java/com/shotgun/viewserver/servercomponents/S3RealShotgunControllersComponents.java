@@ -3,7 +3,6 @@ package com.shotgun.viewserver.servercomponents;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.shotgun.viewserver.delivery.VehicleDetailsApiKey;
 import com.shotgun.viewserver.delivery.VehicleDetailsController;
-import com.shotgun.viewserver.images.FileSystemImageController;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.images.S3ImageController;
 import com.shotgun.viewserver.maps.IMapsController;
@@ -22,24 +21,23 @@ import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.server.components.IBasicServerComponents;
 
-
-public class RealShotgunControllersComponents extends ShotgunControllersComponents {
+public class S3RealShotgunControllersComponents extends ShotgunControllersComponents {
 
     private final MessagingController messagingController;
     private IDatabaseUpdater databaseUpdater;
     private NexmoControllerKey controllerKey;
     private StripeApiKey stripeApiKey;
-    private ImageUploadLocation imageUploadLocation;
+    private BasicAWSCredentials basicAWSCredentials;
     private MapsControllerKey mapsControllerKey;
     private VehicleDetailsApiKey vehicleDetailsApiKey;
     private ClientVersionInfo clientVersionInfo;
 
-    public RealShotgunControllersComponents(
+    public S3RealShotgunControllersComponents(
             IBasicServerComponents basicServerComponents,
             IDatabaseUpdater databaseUpdater,
             NexmoControllerKey controllerKey,
             StripeApiKey stripeApiKey,
-            ImageUploadLocation imageUploadLocation,
+            BasicAWSCredentials basicAWSCredentials,
             MessagingApiKey messagingApiKey,
             MapsControllerKey mapsControllerKey,
             VehicleDetailsApiKey vehicleDetailsApiKey,
@@ -48,7 +46,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
         this.databaseUpdater = databaseUpdater;
         this.controllerKey = controllerKey;
         this.stripeApiKey = stripeApiKey;
-        this.imageUploadLocation = imageUploadLocation;
+        this.basicAWSCredentials = basicAWSCredentials;
         this.mapsControllerKey = mapsControllerKey;
         this.vehicleDetailsApiKey = vehicleDetailsApiKey;
         this.clientVersionInfo = clientVersionInfo;
@@ -70,7 +68,7 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IImageController getImageController() {
-        return new FileSystemImageController(databaseUpdater,this.basicServerComponents.getServerCatalog(), 9010, imageUploadLocation.getLocation());
+        return new S3ImageController(basicAWSCredentials, databaseUpdater,this.basicServerComponents.getServerCatalog(), 9010);
     }
 
     @Override
@@ -88,5 +86,3 @@ public class RealShotgunControllersComponents extends ShotgunControllersComponen
         return new VehicleDetailsController(vehicleDetailsApiKey);
     }
 }
-
-

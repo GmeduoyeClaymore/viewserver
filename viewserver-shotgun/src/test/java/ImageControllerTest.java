@@ -18,7 +18,7 @@ public class ImageControllerTest {
 
     @Before
     public void createSut(){
-        sut = new S3ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"), null, null);
+        sut = new S3ImageController(new BasicAWSCredentials("AKIAJ5IKVCUUR6JC7NCQ", "UYB3e20Jr5jmU7Yk57PzAMyezYyLEQZ5o3lOOrDu"), null, null, 9010);
     }
 
     @Test

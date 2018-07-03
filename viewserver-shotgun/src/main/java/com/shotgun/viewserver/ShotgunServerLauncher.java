@@ -6,8 +6,13 @@ import com.shotgun.viewserver.maps.MapsControllerKey;
 import com.shotgun.viewserver.messaging.MessagingApiKey;
 import com.shotgun.viewserver.payments.StripeApiKey;
 import com.shotgun.viewserver.servercomponents.*;
-import com.shotgun.viewserver.setup.*;
-import com.shotgun.viewserver.setup.loaders.*;
+import com.shotgun.viewserver.setup.MongoApplicationSetup;
+import com.shotgun.viewserver.setup.MongoTestApplicationSetup;
+import com.shotgun.viewserver.setup.ShotgunApplicationGraph;
+import com.shotgun.viewserver.setup.loaders.ApplicationGraphLoaderCollection;
+import com.shotgun.viewserver.setup.loaders.CompositeRecordLoaderCollection;
+import com.shotgun.viewserver.setup.loaders.CsvRecordLoaderCollection;
+import com.shotgun.viewserver.setup.loaders.MongoRecordLoaderCollection;
 import com.shotgun.viewserver.user.NexmoControllerKey;
 import io.viewserver.adapters.common.DirectTableUpdater;
 import io.viewserver.adapters.common.IDatabaseUpdater;
@@ -17,7 +22,10 @@ import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.Utils;
 import io.viewserver.network.EndpointFactoryRegistry;
 import io.viewserver.server.BasicServer;
-import io.viewserver.server.components.*;
+import io.viewserver.server.components.DataSourceComponents;
+import io.viewserver.server.components.IBasicServerComponents;
+import io.viewserver.server.components.InitialDataLoaderComponent;
+import io.viewserver.server.components.ReportServerComponents;
 import io.viewserver.server.setup.H2ApplicationSetup;
 import io.viewserver.server.setup.IApplicationGraphDefinitions;
 import io.viewserver.server.setup.IApplicationSetup;
@@ -82,10 +90,12 @@ public class  ShotgunServerLauncher{
         container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(DirectTableUpdater.class);
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MockShotgunControllersComponents(
                 container.getComponent(IBasicServerComponents.class),
                 container.getComponent(IDatabaseUpdater.class),
-                get("csv.data.path")
+                get("csv.data.path"),
+                container.getComponent(ImageUploadLocation.class)
         ));
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
@@ -115,6 +125,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
         container.addComponent(new ImageUploadLocation(get("upload.location")));
+        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
@@ -128,7 +139,7 @@ public class  ShotgunServerLauncher{
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
-        container.addComponent(RealShotgunControllersComponents.class);
+        container.addComponent(S3RealShotgunControllersComponents.class);
         return true;
     }
     public static boolean ConfigureForDevelopmentEnvironment(MutablePicoContainer container) {
@@ -139,6 +150,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), doMockPaymentController));
         container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), blockRemoteSending));
+        container.addComponent(new BasicAWSCredentials(get("awsCredentials.accessKey"),get("awsCredentials.secretKey")));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
         container.addComponent(new MongoConnectionFactory(get("mongo.connectionUri"), get("mongo.databaseName")));
@@ -151,7 +163,7 @@ public class  ShotgunServerLauncher{
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
-        container.addComponent(RealShotgunControllersComponents.class);
+        container.addComponent(S3RealShotgunControllersComponents.class);
         return true;
     }
     private static boolean ConfigureForEndToEndTestEnvironment(MutablePicoContainer container) {
@@ -172,11 +184,13 @@ public class  ShotgunServerLauncher{
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
+        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MockShotgunControllersComponents(
                 container.getComponent(IBasicServerComponents.class),
                 container.getComponent(IDatabaseUpdater.class),
-                get("csv.data.path")
-        ));
+                get("csv.data.path"),
+                container.getComponent(ImageUploadLocation.class)
+                ));
         return true;
     }
 

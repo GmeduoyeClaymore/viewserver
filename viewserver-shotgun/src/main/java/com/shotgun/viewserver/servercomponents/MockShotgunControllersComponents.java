@@ -2,6 +2,7 @@ package com.shotgun.viewserver.servercomponents;
 
 import com.shotgun.viewserver.delivery.IVehicleDetailsController;
 import com.shotgun.viewserver.delivery.MockVehicleDetailsController;
+import com.shotgun.viewserver.images.FileSystemImageController;
 import com.shotgun.viewserver.images.IImageController;
 import com.shotgun.viewserver.images.MockImageController;
 import com.shotgun.viewserver.maps.IMapsController;
@@ -21,10 +22,12 @@ import io.viewserver.server.components.IBasicServerComponents;
 public class MockShotgunControllersComponents extends ShotgunControllersComponents {
 
     private String mockDataPath;
+    private ImageUploadLocation imageUploadLocation;
 
-    public MockShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath) {
+    public MockShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath,   ImageUploadLocation imageUploadLocation) {
         super(basicServerComponents,iDatabaseUpdater);
         this.mockDataPath = mockDataPath;
+        this.imageUploadLocation = imageUploadLocation;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class MockShotgunControllersComponents extends ShotgunControllersComponen
 
     @Override
     protected IImageController getImageController() {
-        return new MockImageController();
+        return new FileSystemImageController(databaseUpdater,this.basicServerComponents.getServerCatalog(), 9010, imageUploadLocation.getLocation());
     }
 
     @Override
