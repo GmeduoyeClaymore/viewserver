@@ -52,11 +52,11 @@ public class  ShotgunServerLauncher{
     public ShotgunServerLauncher(){
         ENVIRONMENT_CONFIGURATIONS.put("mock",ShotgunServerLauncher::ConfigureForMockEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("mock2",ShotgunServerLauncher::ConfigureForMockEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("integration_teamcity",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("integration_running",ShotgunServerLauncher::ConfigureForEndToEndTestEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockEnvironment);
-        ENVIRONMENT_CONFIGURATIONS.put("it_running",ShotgunServerLauncher::ConfigureForMockEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("integration",ShotgunServerLauncher::ConfigureForMongoFeatureTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("integration_teamcity",ShotgunServerLauncher::ConfigureForMongoFeatureTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("integration_running",ShotgunServerLauncher::ConfigureForMongoFeatureTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("it",ShotgunServerLauncher::ConfigureForMockFeatureTestEnvironment);
+        ENVIRONMENT_CONFIGURATIONS.put("it_running",ShotgunServerLauncher::ConfigureForMockFeatureTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("test",ShotgunServerLauncher::ConfigureForTestEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("staging",ShotgunServerLauncher::ConfigureForStagingEnvironment);
         ENVIRONMENT_CONFIGURATIONS.put("paul",ShotgunServerLauncher::ConfigureForStagingEnvironment);
@@ -96,6 +96,23 @@ public class  ShotgunServerLauncher{
                 container.getComponent(IDatabaseUpdater.class),
                 get("csv.data.path"),
                 container.getComponent(ImageUploadLocation.class)
+        ));
+        container.addComponent(new CompositeRecordLoaderCollection(
+                () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
+                () -> new CsvRecordLoaderCollection(get("csv.data.path"))
+        ));
+        return true;
+    }
+
+    private static boolean ConfigureForMockFeatureTestEnvironment(MutablePicoContainer container) {
+        SharedConfig(container);
+        container.addComponent(new H2ConnectionFactory("","",get("h2.db.path")));
+        container.addComponent(H2ApplicationSetup.class);
+        container.addComponent(DirectTableUpdater.class);
+        container.addComponent(new MockTestShotgunControllersComponents(
+                container.getComponent(IBasicServerComponents.class),
+                container.getComponent(IDatabaseUpdater.class),
+                get("csv.data.path")
         ));
         container.addComponent(new CompositeRecordLoaderCollection(
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
@@ -166,7 +183,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(S3RealShotgunControllersComponents.class);
         return true;
     }
-    private static boolean ConfigureForEndToEndTestEnvironment(MutablePicoContainer container) {
+    private static boolean ConfigureForMongoFeatureTestEnvironment(MutablePicoContainer container) {
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
@@ -183,12 +200,10 @@ public class  ShotgunServerLauncher{
                 () -> new ApplicationGraphLoaderCollection(container.getComponent(IApplicationGraphDefinitions.class)),
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
-        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MockTestShotgunControllersComponents(
                 container.getComponent(IBasicServerComponents.class),
                 container.getComponent(IDatabaseUpdater.class),
-                get("csv.data.path"),
-                container.getComponent(ImageUploadLocation.class)
+                get("csv.data.path")
                 ));
         return true;
     }

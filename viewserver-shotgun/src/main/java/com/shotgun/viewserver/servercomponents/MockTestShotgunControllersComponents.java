@@ -18,12 +18,10 @@ import io.viewserver.server.components.IBasicServerComponents;
 public class MockTestShotgunControllersComponents extends ShotgunControllersComponents {
 
     private String mockDataPath;
-    private ImageUploadLocation imageUploadLocation;
 
-    public MockTestShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath, ImageUploadLocation imageUploadLocation) {
+    public MockTestShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath) {
         super(basicServerComponents,iDatabaseUpdater);
         this.mockDataPath = mockDataPath;
-        this.imageUploadLocation = imageUploadLocation;
     }
 
     @Override
