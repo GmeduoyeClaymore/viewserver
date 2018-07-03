@@ -230,7 +230,9 @@ public class UserController implements UserTransformationController, RatedOrderC
                     );
                 },
                 user -> {
-                    notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name());
+                    if(userRelationshipStatus != UserRelationshipStatus.UNKNOWN) {
+                      notifyRelationshipStatus(userId, targetUserId, userRelationshipStatus == null ? null : userRelationshipStatus.name());
+                    }
                 }, User.class
         );
     }
