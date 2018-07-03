@@ -19,12 +19,12 @@ import io.viewserver.adapters.common.IDatabaseUpdater;
 import io.viewserver.server.BasicServer;
 import io.viewserver.server.components.IBasicServerComponents;
 
-public class MockShotgunControllersComponents extends ShotgunControllersComponents {
+public class MockRunnableShotgunControllersComponents extends ShotgunControllersComponents {
 
     private String mockDataPath;
     private ImageUploadLocation imageUploadLocation;
 
-    public MockShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath,   ImageUploadLocation imageUploadLocation) {
+    public MockRunnableShotgunControllersComponents(IBasicServerComponents basicServerComponents, IDatabaseUpdater iDatabaseUpdater, String mockDataPath, ImageUploadLocation imageUploadLocation) {
         super(basicServerComponents,iDatabaseUpdater);
         this.mockDataPath = mockDataPath;
         this.imageUploadLocation = imageUploadLocation;

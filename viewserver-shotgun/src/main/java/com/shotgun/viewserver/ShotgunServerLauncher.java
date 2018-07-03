@@ -91,7 +91,7 @@ public class  ShotgunServerLauncher{
         container.addComponent(H2ApplicationSetup.class);
         container.addComponent(DirectTableUpdater.class);
         container.addComponent(new ImageUploadLocation(get("upload.location")));
-        container.addComponent(new MockShotgunControllersComponents(
+        container.addComponent(new MockRunnableShotgunControllersComponents(
                 container.getComponent(IBasicServerComponents.class),
                 container.getComponent(IDatabaseUpdater.class),
                 get("csv.data.path"),
@@ -170,7 +170,6 @@ public class  ShotgunServerLauncher{
         SharedConfig(container);
         container.addComponent(new NexmoControllerKey(get("nexmo.domain",true), get("nexmo.key"),get("nexmo.secret")));
         container.addComponent(new StripeApiKey(get("stripe.key"),get("stripe.secret"), true));
-        container.addComponent(new ImageUploadLocation(get("upload.location")));
         container.addComponent(new MessagingApiKey(get("messaging.api.key"), true));
         container.addComponent(new VehicleDetailsApiKey(get("vehicle.details.key")));
         container.addComponent(new MapsControllerKey(get("google.mapsControllerKey")));
@@ -185,7 +184,7 @@ public class  ShotgunServerLauncher{
                 () -> new MongoRecordLoaderCollection(container.getComponent(MongoConnectionFactory.class), get("server.name"))
         ));
         container.addComponent(new ImageUploadLocation(get("upload.location")));
-        container.addComponent(new MockShotgunControllersComponents(
+        container.addComponent(new MockTestShotgunControllersComponents(
                 container.getComponent(IBasicServerComponents.class),
                 container.getComponent(IDatabaseUpdater.class),
                 get("csv.data.path"),
