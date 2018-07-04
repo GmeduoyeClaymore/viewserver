@@ -19,13 +19,13 @@
     <parent>
         <artifactId>viewserver-engine</artifactId>
         <groupId>io.viewserver</groupId>
-     <version>1.0.42</version>
+     <version>1.0.43</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-logging</artifactId>
     <packaging>pom</packaging>
- <version>1.0.42</version>
+ <version>1.0.43</version>
     <modules>
         <module>viewserver-logging-log4j</module>
     </modules>

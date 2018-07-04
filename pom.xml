@@ -20,36 +20,22 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
- <version>1.0.42</version>
+ <version>1.0.43</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/GmeduoyeClaymore/viewserver.git</connection>
         <tag>HEAD</tag>
     </scm>
 
-
-    <repositories>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>claymoresnapshots</id>
+            <url>http://claymoreminds.com:8040/artifactory/libs-snapshots</url>
+        </snapshotRepository>
         <repository>
             <id>claymorereleases</id>
             <url>http://claymoreminds.com:8040/artifactory/libs-release</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
-        <repository>
-            <id>claymoresnapshots</id>
-            <url>http://claymoreminds.com:8040/artifactory/libs-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-            <repository>
-                <id>claymore</id>
-                <url>http://claymoreminds.com:8040/artifactory/libs-snapshot</url>
-            </repository>
     </distributionManagement>
 
     <properties>
