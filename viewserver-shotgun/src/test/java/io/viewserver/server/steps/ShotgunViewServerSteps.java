@@ -148,7 +148,7 @@ public class ShotgunViewServerSteps {
             String endPoint = System.getProperty("server.endpoint");
             log.info("MILESTONE: Actually running view server against url {}", endPoint);
             ShotgunServerLauncher launcher = new ShotgunServerLauncher();
-            launcher.run(env, bootstrap, complete, true).subscribe(
+            launcher.run(env, bootstrap, complete).subscribe(
                     success -> {
                         this.started.countDown();
                     },

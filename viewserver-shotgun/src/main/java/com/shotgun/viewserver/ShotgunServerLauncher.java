@@ -224,13 +224,13 @@ public class  ShotgunServerLauncher{
     }
 
 
-    public rx.Observable run(String environment, boolean bootstrap, boolean complete, boolean isTest) {
+    public rx.Observable run(String environment, boolean bootstrap, boolean complete) {
 
         ExecutionContext.blockThreadAssertion  = true;
 
         loadProperties(environment);
 
-        MutablePicoContainer container = (new PicoBuilder()).withCaching().withLifecycle().build();
+        MutablePicoContainer container = new PicoBuilder().withCaching().withLifecycle().build();
 
         Predicate<MutablePicoContainer> mutablePicoContainerPredicate = ENVIRONMENT_CONFIGURATIONS.get(environment);
 
