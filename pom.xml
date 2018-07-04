@@ -30,7 +30,7 @@
     <distributionManagement>
         <snapshotRepository>
             <id>claymoresnapshots</id>
-            <url>http://claymoreminds.com:8040/artifactory/libs-snapshots</url>
+            <url>http://claymoreminds.com:8040/artifactory/libs-snapshot</url>
         </snapshotRepository>
         <repository>
             <id>claymorereleases</id>
