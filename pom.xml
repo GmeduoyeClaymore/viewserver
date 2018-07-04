@@ -23,7 +23,7 @@
  <version>1.0.28</version>
     <packaging>pom</packaging>
     <scm>
-        <connection>scm:git:https://github.com/shotgunsolutions/shotgun-viewserver.git</connection>
+        <connection>scm:git:https://github.com/GmeduoyeClaymore/viewserver.git</connection>
         <tag>HEAD</tag>
     </scm>
 
