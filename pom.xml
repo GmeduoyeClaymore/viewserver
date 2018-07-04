@@ -20,19 +20,13 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
- <version>1.0.31</version>
+ <version>1.0.32</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/GmeduoyeClaymore/viewserver.git</connection>
         <tag>HEAD</tag>
     </scm>
 
-    <distributionManagement>
-            <repository>
-                <id>central</id>
-                <url>http://claymoreminds.com:8040/artifactory/libs-release</url>
-            </repository>
-    </distributionManagement>
 
     <properties>
         <slf4j.version>1.7.7</slf4j.version>
