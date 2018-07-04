@@ -21,6 +21,7 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -32,6 +33,7 @@ import io.viewserver.schema.column.IColumnInt;
 import io.viewserver.schema.column.chunked.ChunkedColumnInt;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -41,12 +43,13 @@ import java.util.*;
  */
 public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
+    @Ignore
     public void benchmark() throws Exception {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -118,7 +121,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -174,7 +177,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void canUpdateRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -229,7 +232,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -279,7 +282,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -331,7 +334,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -385,7 +388,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void whenRemovingAColumnUsedByACalculationShouldRemoveCalculationColumn() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -437,7 +440,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
     @Test
     public void testRegexCalcCol() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();

@@ -21,6 +21,7 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
@@ -48,7 +49,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -112,7 +113,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -174,7 +175,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -243,7 +244,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void canUpdateRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -311,7 +312,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -374,7 +375,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void removingLastRowInGroupRemovesGroup() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -437,7 +438,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void canAddColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -502,7 +503,7 @@ public class StdDevSummaryTest extends BenchmarkTestBase {
     @Test
     public void canRemoveColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();

@@ -23,6 +23,7 @@ import io.viewserver.core.ExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -30,6 +31,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.IColumnString;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -37,11 +39,13 @@ import java.util.*;
 
 public class UnEnumOperatorTest extends BenchmarkTestBase {
     @Test
+    @Ignore
     public void benchmark() throws Exception {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
+                executionContext.setReactor(new TestReactor());
                 FunctionRegistry functionRegistry = new FunctionRegistry();
                 Catalog catalog = new Catalog(executionContext);
 
@@ -116,10 +120,12 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
         final DataSource dataSource = new DataSource();
+        dataSource.setSchema(new SchemaConfig());
         dataSource.setName("test");
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
                 new Column("market", ContentType.String),
@@ -188,11 +194,13 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
     @Test
     public void canUpdateRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
         final DataSource dataSource = new DataSource();
         dataSource.setName("test");
+        dataSource.setSchema(new SchemaConfig());
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
                 new Column("market", ContentType.String),
                 new Column("product", ContentType.Int)
@@ -261,11 +269,13 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
         final DataSource dataSource = new DataSource();
         dataSource.setName("test");
+        dataSource.setSchema(new SchemaConfig());
         dataSource.getSchema().getColumns().addAll(Arrays.asList(
                 new Column("market", ContentType.String),
                 new Column("product", ContentType.Int)

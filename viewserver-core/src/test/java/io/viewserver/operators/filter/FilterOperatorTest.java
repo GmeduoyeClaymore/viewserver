@@ -22,6 +22,7 @@ import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.NullableBool;
 import io.viewserver.expression.function.FunctionRegistry;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -47,6 +48,7 @@ public class FilterOperatorTest {
             System.gc(); System.gc();
 
             ExecutionContext executionContext = new ExecutionContext();
+            executionContext.setReactor(new TestReactor());
             FunctionRegistry functionRegistry = new FunctionRegistry();
             Catalog catalog = new Catalog(executionContext);
 
@@ -115,6 +117,7 @@ public class FilterOperatorTest {
     @Test
     public void canUpdateRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -178,6 +181,7 @@ public class FilterOperatorTest {
     @Test
     public void canFilterOnNullableBool() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -224,6 +228,8 @@ public class FilterOperatorTest {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
+
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -273,6 +279,7 @@ public class FilterOperatorTest {
     @Test
     public void canAddColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -324,6 +331,7 @@ public class FilterOperatorTest {
     @Test
     public void canRemoveUnfilteredColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -373,6 +381,7 @@ public class FilterOperatorTest {
     @Test
     public void canRemoveFilteredColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 
@@ -422,6 +431,7 @@ public class FilterOperatorTest {
     @Test
     public void reusesRowNumbers() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         FunctionRegistry functionRegistry = new FunctionRegistry();
         Catalog catalog = new Catalog(executionContext);
 

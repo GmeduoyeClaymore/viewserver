@@ -41,7 +41,7 @@ public class CalculationsStepTest {
 
         ConfiguratorSpec configuratorSpec = new ConfiguratorSpec();
         CalculationsStep step = new CalculationsStep();
-
+        context.setParameterHelper(new ParameterHelper());
         step.execute(context);
     }
 }

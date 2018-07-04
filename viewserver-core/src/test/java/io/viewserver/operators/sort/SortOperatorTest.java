@@ -22,6 +22,7 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -32,6 +33,7 @@ import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnInt;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
@@ -48,7 +50,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 IExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -106,12 +108,13 @@ public class SortOperatorTest extends BenchmarkTestBase {
     }
 
     @Test
+    @Ignore
     public void benchmarkStrings() throws Exception {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -171,7 +174,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -231,7 +234,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -288,7 +291,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canSetRange() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -339,7 +342,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -402,7 +405,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canUpdateRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -464,7 +467,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canMixRowEvents() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -524,7 +527,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -589,7 +592,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canMixRowEventsWithStrings() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -667,7 +670,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -718,7 +721,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -767,7 +770,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void whenRemovingSortedColumnShouldRemoveRankColumn() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -818,7 +821,7 @@ public class SortOperatorTest extends BenchmarkTestBase {
     @Test
     public void canHandleUpdatesWithUnchangedValues() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();

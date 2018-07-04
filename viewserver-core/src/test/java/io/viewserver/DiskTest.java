@@ -17,6 +17,7 @@
 package io.viewserver;
 
 import io.viewserver.operators.sort.RadixSort;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.RandomAccessFile;
@@ -85,6 +86,7 @@ public class DiskTest extends BenchmarkTestBase {
     }
 
     @Test
+    @Ignore
     public void test2() throws Exception {
         benchmark(new IBenchmarkRunner() {
             @Override

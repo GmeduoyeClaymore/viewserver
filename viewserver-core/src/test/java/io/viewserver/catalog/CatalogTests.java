@@ -19,6 +19,7 @@ package io.viewserver.catalog;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.filter.FilterOperator;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -26,6 +27,7 @@ import org.junit.Test;
  */
 public class CatalogTests {
     @Test
+    @Ignore
     public void canGetOperatorsTest() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
 

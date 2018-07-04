@@ -20,6 +20,7 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
 import io.viewserver.operators.table.Table;
@@ -35,7 +36,7 @@ public class JoinOperatorTest {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();
@@ -144,7 +145,7 @@ public class JoinOperatorTest {
     @Test
     public void canUpdateRows_JoinColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();
@@ -245,7 +246,7 @@ public class JoinOperatorTest {
     @Test
     public void canUpdateRows_OtherColumns() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();
@@ -348,7 +349,7 @@ public class JoinOperatorTest {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();
@@ -455,7 +456,7 @@ public class JoinOperatorTest {
     @Test
     public void crossJoin() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();
@@ -548,7 +549,7 @@ public class JoinOperatorTest {
     @Test
     public void outerJoinTest() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema leftSchema = new Schema();

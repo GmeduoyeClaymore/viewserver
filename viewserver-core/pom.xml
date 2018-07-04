@@ -121,6 +121,7 @@
                 <configuration>
                     <includes>
                         <include>**/CucumberTest.class</include>
+                        <include>**/**Test.class</include>
                     </includes>
                 </configuration>
                 <dependencies>

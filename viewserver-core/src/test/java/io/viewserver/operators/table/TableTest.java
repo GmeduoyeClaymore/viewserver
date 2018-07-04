@@ -26,6 +26,7 @@ import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.Dimension;
 import io.viewserver.operators.ChangeRecorder;
 import io.viewserver.operators.IOutput;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.index.IIndexConfig;
 import io.viewserver.operators.index.IndexOperator;
 import io.viewserver.operators.index.QueryHolderConfig;
@@ -34,6 +35,7 @@ import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.schema.column.disk.DiskColumnStorage;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Files;
@@ -53,6 +55,7 @@ public class TableTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -87,11 +90,13 @@ public class TableTest extends BenchmarkTestBase {
     }
 
     @Test
+    @Ignore
     public void testDiskStorage() throws Exception {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 ExecutionContext executionContext = new ExecutionContext();
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -162,7 +167,7 @@ public class TableTest extends BenchmarkTestBase {
 
                 storage.unloadAllRows(schema);
 
-                IOutput indexOutput = index.getOrCreateOutput(Constants.OUT, new QueryHolderConfig(getDimension("product"),false,1));
+                IOutput indexOutput = index.getOrCreateOutput(Constants.OUT+"1", new QueryHolderConfig(getDimension("product"),false,1));
                 indexOutput.plugIn(new ChangeRecorder("index_rec", executionContext, catalog).getInput());
 
                 benchmarks.startBenchmark("commit 2");

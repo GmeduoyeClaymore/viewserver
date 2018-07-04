@@ -20,6 +20,7 @@ import io.viewserver.catalog.Catalog;
 import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.operators.calccol.ICalcColConfig;
 import io.viewserver.operators.table.ITableRow;
@@ -41,7 +42,7 @@ public class TransposeOperatorTest {
     @Test
     public void canAddRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -105,7 +106,7 @@ public class TransposeOperatorTest {
     @Test
     public void canRemoveRows() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -173,6 +174,7 @@ public class TransposeOperatorTest {
     @Test
     public void testCalcColumn() throws Exception {
         ExecutionContext executionContext = new ExecutionContext(1);
+        executionContext.setReactor(new TestReactor());
 
         Catalog catalog = new Catalog(executionContext);
 

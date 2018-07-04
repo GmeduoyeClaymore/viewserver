@@ -23,6 +23,7 @@ import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import gnu.trove.procedure.TLongProcedure;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.charset.Charset;
@@ -34,6 +35,7 @@ import java.util.UUID;
 /**
  * Created by bemm on 22/11/2014.
  */
+@Ignore
 public class ConsistentHashTest extends BenchmarkTestBase {
     @Test
     public void testConsistentHashAddBucket() throws Exception {

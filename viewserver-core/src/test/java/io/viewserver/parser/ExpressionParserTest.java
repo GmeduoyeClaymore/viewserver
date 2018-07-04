@@ -253,8 +253,8 @@ public class ExpressionParserTest {
 
     @Test
     public void testMultiply() {
-        IExpressionInt expr = (IExpressionInt) getExpression("3*4");
-        Assert.assertEquals(12, expr.getInt(0));
+        IExpressionLong expr = (IExpressionLong) getExpression("3*4");
+        Assert.assertEquals(12l, expr.getLong(0));
     }
 
     @Test

@@ -22,6 +22,7 @@ import io.viewserver.command.CommandResult;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.ChangeRecorder;
+import io.viewserver.operators.TestReactor;
 import io.viewserver.operators.group.summary.SummaryRegistry;
 import io.viewserver.operators.table.ITableRow;
 import io.viewserver.operators.table.ITableRowUpdater;
@@ -49,7 +50,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 IExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -112,7 +113,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 IExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -175,7 +176,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
                 IExecutionContext executionContext = new ExecutionContext(1);
-
+                executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
                 Schema schema = new Schema();
@@ -237,7 +238,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddRows() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -306,7 +307,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canUpdateRows() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -374,7 +375,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveRows() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -437,7 +438,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void removingLastRowInGroupRemovesGroup() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -500,7 +501,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canAddColumns() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -565,7 +566,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canHaveRegexSummaries() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -629,7 +630,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void canRemoveColumns() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -693,7 +694,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void testMinSummary() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
@@ -770,7 +771,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
     @Test
     public void resetsCorrectly() throws Exception {
         IExecutionContext executionContext = new ExecutionContext(1);
-
+        executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
         Schema schema = new Schema();
